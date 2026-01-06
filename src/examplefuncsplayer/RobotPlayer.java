@@ -59,7 +59,7 @@ public class RobotPlayer {
     public static void run(RobotController rc) throws GameActionException {
         // Hello world! Standard output is very useful for debugging.
         // Everything you say here will be directly viewable in your terminal when you run a match!
-        System.out.println("I'm alive");
+        // System.out.println("I'm alive");
 
         // You can also use indicators to save debug notes in replays.
         rc.setIndicatorString("Hello world!");
@@ -80,15 +80,15 @@ public class RobotPlayer {
 
                 // Every 10 turns, print out what type of robot we are.
                 if (turnCount % 100 == 0) {
-                    System.out.println("Turn " + turnCount + ": I am a " + rc.getType().toString());
+                    // System.out.println("Turn " + turnCount + ": I am a " + rc.getType().toString());
                 }
 
                 // Try to move forward one step.
                 if (rc.canMoveForward()) {
-                    System.out.println("Turn " + turnCount + ": Trying to move " + rc.getDirection());
+                    // System.out.println("Turn " + turnCount + ": Trying to move " + rc.getDirection());
                     rc.moveForward();
                 } else {
-                    System.out.println("couldn't move forward on turn " + turnCount + " at location " + rc.getLocation() + " facing " + rc.getDirection());
+                    // System.out.println("couldn't move forward on turn " + turnCount + " at location " + rc.getLocation() + " facing " + rc.getDirection());
                     // If we can't move forward, try to turn a random direction.
                     int randomDirection = rng.nextInt(8);
                     
@@ -100,12 +100,12 @@ public class RobotPlayer {
                 // Oh no! It looks like we did something illegal in the Battlecode world. You should
                 // handle GameActionExceptions judiciously, in case unexpected events occur in the game
                 // world. Remember, uncaught exceptions cause your robot to explode!
-                System.out.println("GameActionException");
+                // System.out.println("GameActionException");
                 e.printStackTrace();
             } catch (Exception e) {
                 // Oh no! It looks like our code tried to do something bad. This isn't a
                 // GameActionException, so it's more likely to be a bug in our code.
-                System.out.println("Exception");
+                // System.out.println("Exception");
                 e.printStackTrace();
             } finally {
                 // Signify we've done everything we want to do, thereby ending our turn.

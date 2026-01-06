@@ -2,6 +2,7 @@ package awubot;
 
 import battlecode.common.*;
 import static awubot.util.Util.*;
+import awubot.util.Rng;
 import awubot.util.Profiler;
 import static awubot.Game.*;
 
@@ -23622,10 +23623,13 @@ class BugnavInstance {
         MapLocation greedyLoc = pos.add(bottomDir);
         if(stackSize <= 1) {
             
-            if(CellTracker.isPassable(greedyLoc)) {
+            indicate("target " + target + " " + bottomDir + " " + pos + " " + pos.add(bottomDir.rotateRight()));
+            var greedyPassable = CellTracker.isPassable(greedyLoc);
+            var greedyGood = greedyPassable || !CellTracker.isSeen(greedyLoc);
+            if(greedyGood) {
                 
-            if(chebyshevDistance(rc.getLocation(), greedyLoc) <= 5) {
-                indicate("going to greedyLoc");
+            if(greedyPassable && chebyshevDistance(rc.getLocation(), greedyLoc) <= 5) {
+                indicate("greedyLoc");
                 pos = greedyLoc;
                 topDir = bottomDir;
                 stackSize = 0;
@@ -23638,11 +23642,13 @@ class BugnavInstance {
             var leftLoc = pos.add(bottomDir.rotateLeft());
             var rightLoc = pos.add(bottomDir.rotateRight());
             var leftPassable = CellTracker.isPassable(leftLoc);
+            var leftGood = (leftPassable || !CellTracker.isSeen(leftLoc)) && rc.onTheMap(leftLoc);
             var rightPassable = CellTracker.isPassable(rightLoc);
-            if(leftPassable && !rightPassable) {
+            var rightGood = (rightPassable || !CellTracker.isSeen(rightLoc)) && rc.onTheMap(rightLoc);
+            if(leftGood && !rightGood) {
                 
-            if(chebyshevDistance(rc.getLocation(), leftLoc) <= 5) {
-                indicate("going to leftLoc");
+            if(leftPassable && chebyshevDistance(rc.getLocation(), leftLoc) <= 5) {
+                indicate("leftLoc");
                 pos = leftLoc;
                 topDir = bottomDir;
                 stackSize = 0;
@@ -23652,10 +23658,10 @@ class BugnavInstance {
             return oldPos;
             
             }
-            if(!leftPassable && rightPassable) {
+            if(!leftGood && rightGood) {
                 
-            if(chebyshevDistance(rc.getLocation(), rightLoc) <= 5) {
-                indicate("going to rightLoc");
+            if(rightPassable && chebyshevDistance(rc.getLocation(), rightLoc) <= 5) {
+                indicate("rightLoc");
                 pos = rightLoc;
                 topDir = bottomDir;
                 stackSize = 0;
@@ -23665,11 +23671,11 @@ class BugnavInstance {
             return oldPos;
             
             }
-            if(leftPassable && rightPassable) {
+            if(leftGood && rightGood) {
                 if(leftLoc.distanceSquaredTo(target) < rightLoc.distanceSquaredTo(target)) {
                     
-            if(chebyshevDistance(rc.getLocation(), leftLoc) <= 5) {
-                indicate("going to leftLoc");
+            if(leftPassable && chebyshevDistance(rc.getLocation(), leftLoc) <= 5) {
+                indicate("leftLoc");
                 pos = leftLoc;
                 topDir = bottomDir;
                 stackSize = 0;
@@ -23680,8 +23686,8 @@ class BugnavInstance {
             
                 } else {
                     
-            if(chebyshevDistance(rc.getLocation(), rightLoc) <= 5) {
-                indicate("going to rightLoc");
+            if(rightPassable && chebyshevDistance(rc.getLocation(), rightLoc) <= 5) {
+                indicate("rightLoc");
                 pos = rightLoc;
                 topDir = bottomDir;
                 stackSize = 0;
@@ -23702,13 +23708,14 @@ class BugnavInstance {
         // guess rotation direction (kinda inefficient but wtv)
         if(isMaster && !justGuessed && stackSize == 0 && CellTracker.isSeen(greedyLoc)) {
             assert !CellTracker.isPassable(greedyLoc);
-            if(emptyStackTurns >= 1) {
+            if(emptyStackTurns >= 5) {
                 if(canGuess) {
                     indicate("guessing " + pos);
                     Profiler.begin();
                     // System.out.println("guessing " + pos + " " + emptyStackTurns);
                     var leftBug = new BugnavInstance(pos, true, target, false);
                     var rightBug = new BugnavInstance(pos, false, target, false);
+                    boolean leftBugBad = false, rightBugBad = false;
                     
                     
                     {
@@ -23779,12 +23786,16 @@ class BugnavInstance {
                     }
                     
                     
-                    // indicate("lookahead");
+                    var leftScore =  (int)(Math.sqrt(leftBug.pos.distanceSquaredTo(target)) + leftBug.pathLength * 0.7) ;
+                    leftScore *= leftScore * leftScore;
+                    var rightScore =  (int)(Math.sqrt(rightBug.pos.distanceSquaredTo(target)) + rightBug.pathLength * 0.7) ;
+                    rightScore *= rightScore * rightScore;
+                    indicate("lookahead");
                     // indicate(leftBug.pos);
-                    // indicate( Math.sqrt(leftBug.pos.distanceSquaredTo(target)) + leftBug.pathLength * 0.7 );
+                    indicate(leftScore);
                     // indicate(rightBug.pos);
-                    // indicate( Math.sqrt(rightBug.pos.distanceSquaredTo(target)) + rightBug.pathLength * 0.7 );
-                    leftTurn =  Math.sqrt(leftBug.pos.distanceSquaredTo(target)) + leftBug.pathLength * 0.7  <  Math.sqrt(rightBug.pos.distanceSquaredTo(target)) + rightBug.pathLength * 0.7 ;
+                    indicate(rightScore);
+                    leftTurn = Rng.mcg() % (leftScore + rightScore) < rightScore;
                     // indicate("leftTurn " + leftTurn);
                     setCurrentState();
                     Profiler.end("guess");
@@ -24426,28 +24437,43 @@ public class Pathfinder {
         bugLoop: {
             
             bugPos = bug.advance( true );
-            indicate(bugPos);
+            indicate(bug.pos);
             rc.setIndicatorDot(bugPos, 0, Math.max(0, shade -= 30), 0);
+            // if(rc.getRoundNum() >= 359) {
+            //     Clock.yield();
+            // }
             if(bugPos.equals(bug.pos)) break bugLoop;
             
             bugPos = bug.advance( false );
-            indicate(bugPos);
+            indicate(bug.pos);
             rc.setIndicatorDot(bugPos, 0, Math.max(0, shade -= 30), 0);
+            // if(rc.getRoundNum() >= 359) {
+            //     Clock.yield();
+            // }
             if(bugPos.equals(bug.pos)) break bugLoop;
             
             bugPos = bug.advance( false );
-            indicate(bugPos);
+            indicate(bug.pos);
             rc.setIndicatorDot(bugPos, 0, Math.max(0, shade -= 30), 0);
+            // if(rc.getRoundNum() >= 359) {
+            //     Clock.yield();
+            // }
             if(bugPos.equals(bug.pos)) break bugLoop;
             
             bugPos = bug.advance( false );
-            indicate(bugPos);
+            indicate(bug.pos);
             rc.setIndicatorDot(bugPos, 0, Math.max(0, shade -= 30), 0);
+            // if(rc.getRoundNum() >= 359) {
+            //     Clock.yield();
+            // }
             if(bugPos.equals(bug.pos)) break bugLoop;
             
             bugPos = bug.advance( false );
-            indicate(bugPos);
+            indicate(bug.pos);
             rc.setIndicatorDot(bugPos, 0, Math.max(0, shade -= 30), 0);
+            // if(rc.getRoundNum() >= 359) {
+            //     Clock.yield();
+            // }
             if(bugPos.equals(bug.pos)) break bugLoop;
             
         }

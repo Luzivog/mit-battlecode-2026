@@ -5,6 +5,7 @@ import awubot.Pathfinder;
 import awubot.CellTracker;
 import awubot.Game;
 import awubot.util.Util;
+import awubot.util.Rng;
 
 public class RobotPlayer {
     static MapLocation target;
@@ -12,11 +13,13 @@ public class RobotPlayer {
 
     public static void run(RobotController rc) throws GameActionException {
         Game.init(rc);
+        Rng.seed();
         int cnt = 0;
         // for(int i = 0; i < rc.getID() % 200; i++) Math.random();
         while (true) {
             try {
                 Util.indicatorString = "";
+                Rng.init();
                 switch (rc.getType()) {
                     case BABY_RAT:
                         if(target == null || target.distanceSquaredTo(rc.getLocation()) < (cnt == 2 ? 2 : 18)) {

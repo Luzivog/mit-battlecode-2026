@@ -1,0 +1,354 @@
+package awubot;
+
+import battlecode.common.*;
+import static awubot.util.Util.*;
+import static awubot.Game.*;
+
+{% set MAX_BUG_ITERS = 10 %}
+
+class BugnavInstance {
+    MapLocation target;
+    // false for the instances spawned when guessing
+    boolean canGuess;
+
+    Direction bottomDir, topDir;
+
+    // state (you can reconstruct the entire state from these variables + target/bottomDir)
+    MapLocation pos;
+    int stackSize;
+    int emptyStackTurns;
+    boolean leftTurn;
+
+    public int pathLength;
+    {% set MAX_PATH_BACKUP = 500 %}
+    {% for i in range(MAX_PATH_BACKUP) %}
+    public MapLocation path{{i}};
+    int stackSize{{i}};
+    int emptyStackTurns{{i}};
+    boolean leftTurn{{i}};
+    {% endfor %}
+
+    void reset() {
+        pos = rc.getLocation();
+        pathLength = 0;
+        stackSize = 0;
+        emptyStackTurns = 1000;
+        bottomDir = topDir = pos.directionTo(target);
+    }
+
+    BugnavInstance(boolean leftTurn, MapLocation target) {
+        this.leftTurn = leftTurn;
+        this.target = target;
+        this.canGuess = true;
+        reset();
+    }
+
+    BugnavInstance(MapLocation pos, boolean leftTurn, MapLocation target, boolean canGuess) {
+        indicate("RESET");
+        this.leftTurn = leftTurn;
+        this.target = target;
+        this.canGuess = canGuess;
+        reset();
+        this.pos = pos;
+        appendCurrentState();
+    }
+
+    {% for i in range(MAX_PATH_BACKUP) %}
+    void setCurrentState{{i + 1}}() {
+        pos = path{{i}};
+        bottomDir = pos.directionTo(target);
+        stackSize = stackSize{{i}};
+        leftTurn = leftTurn{{i}};
+        emptyStackTurns = emptyStackTurns{{i}};
+        topDir = bottomDir;
+        if(leftTurn) {
+            for(int i = stackSize; i > 0; i--) {
+                topDir = topDir.rotateLeft();
+            }
+        } else {
+            for(int i = stackSize; i > 0; i--) {
+                topDir = topDir.rotateRight();
+            }
+        }
+        pathLength = {{i + 1}};
+    }
+
+    void appendCurrentState{{i}}() {
+        path{{i}} = pos;
+        stackSize{{i}} = stackSize;
+        leftTurn{{i}} = leftTurn;
+        emptyStackTurns{{i}} = emptyStackTurns;
+        pathLength++;
+    }
+    {% endfor %}
+
+    void setCurrentState() {
+        pos = null;
+        switch(pathLength) {
+            {% for length in range(MAX_PATH_BACKUP, 0, -1) %}
+            case {{length}}:
+                if(path{{length - 1}}.distanceSquaredTo(rc.getLocation()) <= 20) {
+                    setCurrentState{{length}}();
+                    break;
+                }
+                {% endfor %}
+            default:
+                assert(pathLength <= {{MAX_PATH_BACKUP}});
+        }
+        if(pos == null) {
+            // System.out.println(pathLength + " " + path0);
+            reset();
+        }
+    }
+
+    void appendCurrentState() {
+        switch (pathLength) {
+            {% for length in range(MAX_PATH_BACKUP - 1, -1, -1) %}
+            case {{length}} -> {
+                {% if length != 0 %}
+                if (!path{{length - 1}}.equals(pos))
+                    {% endif %}
+                {
+                    appendCurrentState{{length}}();
+                }
+            }
+            {% endfor %}
+            default -> { assert(pathLength < {{MAX_PATH_BACKUP}}); }
+        }
+    }
+
+    // return the original location
+    MapLocation advance() throws GameActionException {
+        var dirToTarget = pos.directionTo(target);
+        if(dirToTarget != bottomDir) {
+            if(dirToTarget == Direction.CENTER) return pos;
+            {% macro updateBottomDir(turnDir, reverseDir) %}
+            if(dirToTarget == bottomDir.rotate{{reverseDir}}()) {
+                bottomDir = dirToTarget;
+                stackSize++;
+            } else {
+                assert dirToTarget == bottomDir.rotate{{turnDir}}() : "unexpected direction change from " + bottomDir + " to " + dirToTarget;
+                bottomDir = dirToTarget;
+                stackSize--;
+                if(stackSize < 0) {
+                    stackSize = 0;
+                    topDir = bottomDir;
+                }
+            }
+            {% endmacro %}
+            if(leftTurn) {
+                {{ updateBottomDir("Left", "Right") }}
+            } else {
+                {{ updateBottomDir("Right", "Left") }}
+            }
+        }
+
+        // System.out.println("old pos " + pos + " i am at " + rc.getLocation());
+        setCurrentState();
+        // System.out.println("bug" + pos + " " + bottomDir + " " + topDir + " " + stackSize);
+
+        // System.out.println(pos + " " + target + " " + topDir + " " + bottomDir + " " + stackSize);
+
+        // rc.setIndicatorString("" + bottomDir + " " + topDir + " " + stackSize + " " + leftTurn + " " + emptyStackTurns);
+
+        // guess rotation direction (kinda inefficient but wtv)
+        if(canGuess && stackSize == 0 && emptyStackTurns >= 1 && CellTracker.isSeen(pos.add(bottomDir)) && !CellTracker.isPassable(pos.add(bottomDir))) {
+            indicate("guessing");
+            // System.out.println("guessing " + pos + " " + emptyStackTurns);
+            var leftBug = new BugnavInstance(pos, true, target, false);
+            var rightBug = new BugnavInstance(pos, false, target, false);
+            {% macro runBug(bug) %}
+            {
+                MapLocation bugPos;
+                int shade = 255;
+                bugLoop: {
+                    {% for _ in range(MAX_BUG_ITERS) %}
+                    bugPos = {{bug}}.advance();
+                    // System.out.println(bugPos);
+                    rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
+                    if(bugPos.equals({{bug}}.pos)) break bugLoop;
+                    {% endfor %}
+                }
+            }
+            {% endmacro %}
+            {{ runBug("leftBug") }}
+            {{ runBug("rightBug") }}
+            indicate("lookahead");
+            indicate(leftBug.pos);
+            indicate(rightBug.pos);
+            {% macro score(bug) %} Math.sqrt({{bug}}.pos.distanceSquaredTo(target)) + {{bug}}.pathLength * 0.7 {% endmacro %}
+            leftTurn = {{ score("leftBug") }} < {{ score("rightBug") }};
+        }
+
+        {% macro tryDirs(turnDir, reverseDir) %}
+        // this loop only exists to allow continue
+        while(true) {
+            var oldPos = pos;
+            var tryDir = topDir.rotate{{reverseDir}}().rotate{{reverseDir}}();
+            {% for turns in range(-2, 6) %}
+            {% if turns < 0 %}
+            if(stackSize + {{turns}} >= 0)
+            {% endif %}
+            {
+                var nextPos = pos.add(tryDir);
+                if(!CellTracker.isSeen(nextPos) || rc.getLocation().distanceSquaredTo(nextPos) > 20) {
+                    // System.out.println("out of known area " + nextPos);
+                    if(rc.onTheMap(nextPos)) rc.setIndicatorDot(nextPos, 0, 255, 255);
+                    else if(canGuess) {
+                        // avoid following the edge of the map
+                        leftTurn = !leftTurn;
+                        reset();
+                        // don't guess turn direction, we know that one direction is bad already
+                        emptyStackTurns = 0;
+                        // start again
+                        continue;
+                    }
+                    return oldPos;
+                }
+                if(CellTracker.isPassable(nextPos)) {
+                    // System.out.println("moving to " + nextPos + " via " + tryDir + " with turns " + {{turns}});
+                    pos = nextPos;
+                    topDir = tryDir;
+                    {% if turns %}
+                    stackSize += {{turns}};
+                    {% endif %}
+                    // System.out.println("SS " + stackSize);
+                    if(stackSize == 0) {
+                        emptyStackTurns++;
+                    } else {
+                        emptyStackTurns = 0;
+                    }
+                    appendCurrentState();
+                    return oldPos;
+                }
+            }
+            tryDir = tryDir.rotate{{turnDir}}();
+            {% endfor %}
+            assert false : "no valid move found from " + pos;
+        }
+        {% endmacro %}
+
+        if(leftTurn) {
+            {{ tryDirs("Left", "Right") }}
+        } else {
+            {{ tryDirs("Right", "Left") }}
+        }
+    }
+}
+
+public class Pathfinder {
+    static BugnavInstance bug;
+
+    public static void makeMove(Direction dir) throws GameActionException {
+        rc.turn(dir);
+        rc.moveForward();
+        // TODO: optimise
+        CellTracker.computeLocalPassable();
+        // System.out.println(loc);
+        // for(int dy = -4; dy < 3; dy++) {
+        //     System.out.println(Long.toBinaryString(CellTracker.localPassable0 >> ((dy + 4) * 9) & 0x1ffl | 0x200l));
+        // }
+        // for(int dy = 3; dy < 5; dy++) {
+        //     System.out.println(Long.toBinaryString(CellTracker.localPassable1 >> ((dy - 3) * 9) & 0x1ffl | 0x200l));
+        // }
+    }
+
+    public static void makeMove(MapLocation target) throws GameActionException {
+        assert rc.isMovementReady();
+        // TODO: better handling when target changes
+        if(bug == null || !target.equals(bug.target)) {
+            indicate("RETARGET");
+            bug = new BugnavInstance(true, target);
+        }
+        MapLocation bugPos;
+        int shade = 255;
+        bugLoop: {
+            {% for _ in range(MAX_BUG_ITERS) %}
+            bugPos = bug.advance();
+            rc.setIndicatorDot(bugPos, 0, Math.max(0, shade -= 30), 0);
+            if(bugPos.equals(bug.pos)) break bugLoop;
+            {% endfor %}
+        }
+        rc.setIndicatorDot(bug.pos, 255, 0, 0);
+
+        // no bfs needed
+        var dir = rc.getLocation().directionTo(bugPos);
+        indicate(dir);
+        if(rc.getLocation().add(dir).equals(bugPos)) {
+            indicate("adjacent");
+            makeMove(dir);
+            return;
+        }
+        // TODO: what if location == bug.pos?
+
+        // bfs
+        CellTracker.computeLocalPassable();
+        // for(int dy = -4; dy < 3; dy++) {
+        //     System.out.println(Long.toBinaryString(CellTracker.localPassable0 >> ((dy + 4) * 9) & 0x1ffl | 0x200l));
+        // }
+        // for(int dy = 3; dy < 5; dy++) {
+        //     System.out.println(Long.toBinaryString(CellTracker.localPassable1 >> ((dy - 3) * 9) & 0x1ffl | 0x200l));
+        // }
+        // System.out.println();
+        var loc = rc.getLocation();
+        // d{i}0 + d{i}1 is the mask of reachable within i steps
+        long d00 = 0, d01 = 0;
+        if(bugPos.y < loc.y + 3) {
+            d00 |= 1l << ((bugPos.y - (loc.y - 4)) * 9 + bugPos.x - (loc.x - 4));
+        } else {
+            d01 |= 1l << ((bugPos.y - (loc.y + 3)) * 9 + bugPos.x - (loc.x - 4));
+        }
+        {% set BFS_MAX = 15 %}
+        Direction bestMove = null;
+        double bestScore = 1e18;
+        {% for i in range(1, BFS_MAX) %}
+        // for(int dy = -4; dy < 3; dy++) {
+        //     System.out.println(Long.toBinaryString(d{{i - 1}}0 >> ((dy + 4) * 9) & 0x1ffl | 0x200l));
+        // }
+        // for(int dy = 3; dy < 5; dy++) {
+        //     System.out.println(Long.toBinaryString(d{{i - 1}}1 >> ((dy - 3) * 9) & 0x1ffl | 0x200l));
+        // }
+        // System.out.println();
+        long d{{i}}0 = 0, d{{i}}1 = 0;
+        d{{i}}0 = d{{i - 1}}0;
+        d{{i}}1 = d{{i - 1}}1;
+        d{{i}}0 |= (d{{i}}0 & 0x3fdfeff7fbfdfeffl) << 1;
+        d{{i}}1 |= (d{{i}}1 & 0x3fdfeff7fbfdfeffl) << 1;
+        d{{i}}0 |= (d{{i}}0 & 0x7fbfdfeff7fbfdfel) >> 1;
+        d{{i}}1 |= (d{{i}}1 & 0x7fbfdfeff7fbfdfel) >> 1;
+        d{{i}}0 |= (d{{i}}0 & 0x3fffffffffffffl) << 9;
+        d{{i}}1 |= ((d{{i}}1 & 0x1ffl) << 9) | (d{{i}}0 >> 54);
+        d{{i}}0 |= (d{{i}}0 >> 9) | ((d{{i}}1 & 0x1ffl) << 54);
+        d{{i}}1 |= d{{i}}1 >> 9;
+        d{{i}}0 &= CellTracker.localPassable0;
+        d{{i}}1 &= CellTracker.localPassable1;
+        if((d{{i}}0 & 0x70281c0000000l) != 0) {
+            {% for dir, off in [
+                                ("Direction.SOUTH", 31),
+                                ("Direction.EAST", 41),
+                                ("Direction.NORTH", 49),
+                                ("Direction.WEST", 39),
+                                ("Direction.SOUTHWEST", 30),
+                                ("Direction.SOUTHEAST", 32),
+                                ("Direction.NORTHWEST", 48),
+                                ("Direction.NORTHEAST", 50),
+                                ] %}
+            if((d{{i}}0 & (1l << {{off}})) != 0) {
+                var nextLoc = loc.add({{dir}});
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
+                if(score < bestScore) {
+                    bestMove = {{dir}};
+                    bestScore = score;
+                }
+            }
+            {% endfor %}
+            if(bestMove != null) {
+                makeMove(bestMove);
+                // System.out.println("iterations: " + {{i}});
+                return;
+            }
+        }
+        {% endfor %}
+        assert false : "TODO: fallback when bfs can't find path";
+    }
+}

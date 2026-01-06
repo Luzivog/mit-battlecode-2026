@@ -1,0 +1,115 @@
+package awubot;
+
+import battlecode.common.*;
+
+import awubot.util.Profiler;
+import static awubot.util.Util.*;
+import static awubot.Game.*;
+
+public class CellTracker {
+    {% for i in range(MAX_MAP_SIZE) %}
+    static long seen{{i}}, passable{{i}};
+    {% endfor %}
+
+    public static void storeCell(MapInfo info) throws GameActionException {
+        var loc = info.getMapLocation();
+        // rc.setIndicatorDot(loc, 255, 255, 0);
+        switch(loc.y) {
+            {% for i in range(MAX_MAP_SIZE) %}
+            case {{i}} -> {
+                seen{{i}} |= 1l << loc.x;
+                if(info.isPassable()) passable{{i}} |= 1l << loc.x;
+            }
+            {% endfor %}
+        }
+    }
+
+    {% for mask in ["seen", "passable"] %}
+    public static boolean is{{capitalise(mask)}}(MapLocation loc) {
+        switch(loc.y) {
+            {% for i in range(MAX_MAP_SIZE) %}
+            case {{i}} -> {
+                return ({{mask}}{{i}} & (1l << loc.x)) != 0;
+            }
+            {% endfor %}
+            default -> {
+                return false;
+            }
+        }
+    }
+    {% endfor %}
+
+    public static void storeVisibleCells() throws GameActionException {
+        Profiler.begin();
+        var loc = rc.getLocation();
+        switch(rc.getDirection()) {
+            {% for dir in directions %}
+            case {{dir}} -> {
+                {% for dx in range(-5, 6) %}
+                {% for dy in range(-5, 6) %}
+
+                {% if dir == "Direction.NORTH" %}       {% set visible = dy >= (dx|abs) %}
+                {% elif dir == "Direction.NORTHEAST" %} {% set visible = dx >= 0 and dy >= 0 %}
+                {% elif dir == "Direction.EAST" %}      {% set visible = dx >= (dy|abs) %}
+                {% elif dir == "Direction.SOUTHEAST" %} {% set visible = dx >= 0 and dy <= 0 %}
+                {% elif dir == "Direction.SOUTH" %}     {% set visible = dy <= -(dx|abs) %}
+                {% elif dir == "Direction.SOUTHWEST" %} {% set visible = dx <= 0 and dy <= 0 %}
+                {% elif dir == "Direction.WEST" %}      {% set visible = dx <= -(dy|abs) %}
+                {% elif dir == "Direction.NORTHWEST" %} {% set visible = dx <= 0 and dy >= 0 %}
+                {% endif %}
+
+                {% if dx * dx + dy * dy <= 20 and visible %}
+                {
+                    int x = loc.x {% if dx %} + {{dx}} {% endif %}, y = loc.y {% if dy %} + {{dy}} {% endif %};
+                    var l = new MapLocation(x, y);
+                    if(rc.canSenseLocation(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                {% endif %}
+                {% endfor %}
+                {% endfor %}
+            }
+            {% endfor %}
+        }
+        Profiler.end();
+    }
+
+    public static long localPassable0, localPassable1;
+    static MapLocation localPassablePos = new MapLocation(-1, -1);
+    public static void computeLocalPassable() throws GameActionException {
+        if(rc.getLocation().equals(localPassablePos)) return;
+        var loc = rc.getLocation();
+
+        storeVisibleCells();
+
+        localPassablePos = loc;
+        localPassable0 = 0;
+        localPassable1 = 0;
+        switch(loc.y) {
+            {% for i in range(MAX_MAP_SIZE) %}
+            case {{i}} -> {
+                // get the 9 relevant bits from row i + dy, shifted by off
+                {% macro get9bits(dy, off) %}
+                ((loc.x - 4 >= 0
+                  ? passable{{i + dy}} >> (loc.x - 4)
+                  : passable{{i + dy}} << (4 - loc.x))
+                 & 0x1ff) {% if off %} << {{off}} {% endif %}
+                {% endmacro %}
+
+                {% for dy in range(-4, 3) %}
+                {% if i + dy >= 0 and i + dy < MAX_MAP_SIZE %}
+                localPassable0 |= {{get9bits(dy, (dy + 4) * 9)}};
+                {% endif %}
+                {% endfor %}
+
+                {% for dy in range(3, 5) %}
+                {% if i + dy < MAX_MAP_SIZE %}
+                localPassable1 |= {{get9bits(dy, (dy - 3) * 9)}};
+                {% endif %}
+                {% endfor %}
+            }
+            {% endfor %}
+        }
+    }
+}

@@ -72,7 +72,7 @@ public class CellTracker {
             }
             {% endfor %}
         }
-        Profiler.end();
+        Profiler.end("storeVisibleCells");
     }
 
     public static long localPassable0, localPassable1;
@@ -89,27 +89,45 @@ public class CellTracker {
         switch(loc.y) {
             {% for i in range(MAX_MAP_SIZE) %}
             case {{i}} -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
-                {% macro get9bits(dy, off) %}
-                ((loc.x - 4 >= 0
-                  ? passable{{i + dy}} >> (loc.x - 4)
-                  : passable{{i + dy}} << (4 - loc.x))
-                 & 0x1ff) {% if off %} << {{off}} {% endif %}
+                // get the 11 relevant bits from row i + dy, shifted by off
+                {% macro get11bits(dy, off) %}
+                ((loc.x - 5 >= 0
+                  ? passable{{i + dy}} >> (loc.x - 5)
+                  : passable{{i + dy}} << (5 - loc.x))
+                 & 0x7ff) {% if off %} << {{off}} {% endif %}
                 {% endmacro %}
 
-                {% for dy in range(-4, 3) %}
+                {% for dy in range(-5, 0) %}
                 {% if i + dy >= 0 and i + dy < MAX_MAP_SIZE %}
-                localPassable0 |= {{get9bits(dy, (dy + 4) * 9)}};
+                localPassable0 |= {{ get11bits(dy, (dy + 5) * 11) }};
                 {% endif %}
                 {% endfor %}
 
-                {% for dy in range(3, 5) %}
+                localPassable0 |= {{ get11bits(0, 55) }} & 0x1f80000000000000l;
+                localPassable1 |= {{ get11bits(0, 0) }} >> 6;
+
+                {% for dy in range(1, 6) %}
                 {% if i + dy < MAX_MAP_SIZE %}
-                localPassable1 |= {{get9bits(dy, (dy - 3) * 9)}};
+                localPassable1 |= {{ get11bits(dy, (dy - 1) * 11 + 5) }};
                 {% endif %}
                 {% endfor %}
             }
             {% endfor %}
+        }
+    }
+
+    public static void printLocalMask(long m1, long m2) {
+        indicate("\n");
+        for(int i = 10; i >= 0; i--) {
+            long row;
+            if(i < 5) row = (m1 >> (i * 11)) & 0x7ff;
+            else if(i == 5) row = (m1 >> 55) | ((m2 & 0x3f) << 6);
+            else row = (m2 >> ((i - 6) * 11 + 5)) & 0x7ff;
+            String s = "";
+            for(int j = 0; j < 11; j++) {
+                s += ((row & (1 << j)) != 0 ? "X " : ". ");
+            }
+            indicate(s + "\n");
         }
     }
 }

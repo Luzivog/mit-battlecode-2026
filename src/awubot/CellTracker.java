@@ -8966,7 +8966,7 @@ public class CellTracker {
             }
             
         }
-        Profiler.end();
+        Profiler.end("storeVisibleCells");
     }
 
     public static long localPassable0, localPassable1;
@@ -8983,7 +8983,7 @@ public class CellTracker {
         switch(loc.y) {
             
             case 0 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
@@ -8996,56 +8996,71 @@ public class CellTracker {
                 
                 
                 
+                
+
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable0 >> (loc.x - 4)
-                  : passable0 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable1 >> (loc.x - 4)
-                  : passable1 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable2 >> (loc.x - 4)
-                  : passable2 << (4 - loc.x))
-                 & 0x1ff)  << 54 
-                ;
-                
-                
+                ((loc.x - 5 >= 0
+                  ? passable0 >> (loc.x - 5)
+                  : passable0 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable0 >> (loc.x - 5)
+                  : passable0 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable3 >> (loc.x - 4)
-                  : passable3 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable1 >> (loc.x - 5)
+                  : passable1 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable4 >> (loc.x - 4)
-                  : passable4 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable2 >> (loc.x - 5)
+                  : passable2 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable3 >> (loc.x - 5)
+                  : passable3 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable4 >> (loc.x - 5)
+                  : passable4 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable5 >> (loc.x - 5)
+                  : passable5 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 1 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
@@ -9056,65 +9071,80 @@ public class CellTracker {
                 
                 
                 
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable0 >> (loc.x - 4)
-                  : passable0 << (4 - loc.x))
-                 & 0x1ff)  << 27 
-                ;
-                
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable1 >> (loc.x - 4)
-                  : passable1 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable2 >> (loc.x - 4)
-                  : passable2 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable3 >> (loc.x - 4)
-                  : passable3 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable0 >> (loc.x - 5)
+                  : passable0 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable1 >> (loc.x - 5)
+                  : passable1 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable1 >> (loc.x - 5)
+                  : passable1 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable4 >> (loc.x - 4)
-                  : passable4 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable2 >> (loc.x - 5)
+                  : passable2 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable5 >> (loc.x - 4)
-                  : passable5 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable3 >> (loc.x - 5)
+                  : passable3 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable4 >> (loc.x - 5)
+                  : passable4 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable5 >> (loc.x - 5)
+                  : passable5 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable6 >> (loc.x - 5)
+                  : passable6 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 2 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
@@ -9123,4912 +9153,6087 @@ public class CellTracker {
                 
                 
                 
+                
+                
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable0 >> (loc.x - 4)
-                  : passable0 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable0 >> (loc.x - 5)
+                  : passable0 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable1 >> (loc.x - 4)
-                  : passable1 << (4 - loc.x))
-                 & 0x1ff)  << 27 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable2 >> (loc.x - 4)
-                  : passable2 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable3 >> (loc.x - 4)
-                  : passable3 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable4 >> (loc.x - 4)
-                  : passable4 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable1 >> (loc.x - 5)
+                  : passable1 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable2 >> (loc.x - 5)
+                  : passable2 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable2 >> (loc.x - 5)
+                  : passable2 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable5 >> (loc.x - 4)
-                  : passable5 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable3 >> (loc.x - 5)
+                  : passable3 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable6 >> (loc.x - 4)
-                  : passable6 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable4 >> (loc.x - 5)
+                  : passable4 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable5 >> (loc.x - 5)
+                  : passable5 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable6 >> (loc.x - 5)
+                  : passable6 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable7 >> (loc.x - 5)
+                  : passable7 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 3 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 
                 
+                
+                
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable0 >> (loc.x - 4)
-                  : passable0 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable0 >> (loc.x - 5)
+                  : passable0 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable1 >> (loc.x - 4)
-                  : passable1 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable1 >> (loc.x - 5)
+                  : passable1 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable2 >> (loc.x - 4)
-                  : passable2 << (4 - loc.x))
-                 & 0x1ff)  << 27 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable3 >> (loc.x - 4)
-                  : passable3 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable4 >> (loc.x - 4)
-                  : passable4 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable5 >> (loc.x - 4)
-                  : passable5 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable2 >> (loc.x - 5)
+                  : passable2 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable3 >> (loc.x - 5)
+                  : passable3 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable3 >> (loc.x - 5)
+                  : passable3 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable6 >> (loc.x - 4)
-                  : passable6 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable4 >> (loc.x - 5)
+                  : passable4 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable7 >> (loc.x - 4)
-                  : passable7 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable5 >> (loc.x - 5)
+                  : passable5 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable6 >> (loc.x - 5)
+                  : passable6 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable7 >> (loc.x - 5)
+                  : passable7 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable8 >> (loc.x - 5)
+                  : passable8 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 4 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
+                
+                
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable0 >> (loc.x - 4)
-                  : passable0 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable0 >> (loc.x - 5)
+                  : passable0 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable1 >> (loc.x - 4)
-                  : passable1 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable1 >> (loc.x - 5)
+                  : passable1 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable2 >> (loc.x - 4)
-                  : passable2 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable2 >> (loc.x - 5)
+                  : passable2 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable3 >> (loc.x - 4)
-                  : passable3 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable3 >> (loc.x - 5)
+                  : passable3 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
-                
+
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable4 >> (loc.x - 4)
-                  : passable4 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable5 >> (loc.x - 4)
-                  : passable5 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable6 >> (loc.x - 4)
-                  : passable6 << (4 - loc.x))
-                 & 0x1ff)  << 54 
-                ;
-                
-                
+                ((loc.x - 5 >= 0
+                  ? passable4 >> (loc.x - 5)
+                  : passable4 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable4 >> (loc.x - 5)
+                  : passable4 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable7 >> (loc.x - 4)
-                  : passable7 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable5 >> (loc.x - 5)
+                  : passable5 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable8 >> (loc.x - 4)
-                  : passable8 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable6 >> (loc.x - 5)
+                  : passable6 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable7 >> (loc.x - 5)
+                  : passable7 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable8 >> (loc.x - 5)
+                  : passable8 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable9 >> (loc.x - 5)
+                  : passable9 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 5 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable1 >> (loc.x - 4)
-                  : passable1 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable0 >> (loc.x - 5)
+                  : passable0 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable2 >> (loc.x - 4)
-                  : passable2 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable1 >> (loc.x - 5)
+                  : passable1 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable3 >> (loc.x - 4)
-                  : passable3 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable2 >> (loc.x - 5)
+                  : passable2 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable4 >> (loc.x - 4)
-                  : passable4 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable3 >> (loc.x - 5)
+                  : passable3 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable5 >> (loc.x - 4)
-                  : passable5 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable6 >> (loc.x - 4)
-                  : passable6 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable7 >> (loc.x - 4)
-                  : passable7 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable4 >> (loc.x - 5)
+                  : passable4 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable5 >> (loc.x - 5)
+                  : passable5 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable5 >> (loc.x - 5)
+                  : passable5 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable8 >> (loc.x - 4)
-                  : passable8 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable6 >> (loc.x - 5)
+                  : passable6 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable9 >> (loc.x - 4)
-                  : passable9 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable7 >> (loc.x - 5)
+                  : passable7 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable8 >> (loc.x - 5)
+                  : passable8 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable9 >> (loc.x - 5)
+                  : passable9 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable10 >> (loc.x - 5)
+                  : passable10 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 6 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable2 >> (loc.x - 4)
-                  : passable2 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable1 >> (loc.x - 5)
+                  : passable1 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable3 >> (loc.x - 4)
-                  : passable3 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable2 >> (loc.x - 5)
+                  : passable2 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable4 >> (loc.x - 4)
-                  : passable4 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable3 >> (loc.x - 5)
+                  : passable3 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable5 >> (loc.x - 4)
-                  : passable5 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable4 >> (loc.x - 5)
+                  : passable4 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable6 >> (loc.x - 4)
-                  : passable6 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable7 >> (loc.x - 4)
-                  : passable7 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable8 >> (loc.x - 4)
-                  : passable8 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable5 >> (loc.x - 5)
+                  : passable5 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable6 >> (loc.x - 5)
+                  : passable6 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable6 >> (loc.x - 5)
+                  : passable6 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable9 >> (loc.x - 4)
-                  : passable9 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable7 >> (loc.x - 5)
+                  : passable7 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable10 >> (loc.x - 4)
-                  : passable10 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable8 >> (loc.x - 5)
+                  : passable8 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable9 >> (loc.x - 5)
+                  : passable9 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable10 >> (loc.x - 5)
+                  : passable10 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable11 >> (loc.x - 5)
+                  : passable11 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 7 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable3 >> (loc.x - 4)
-                  : passable3 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable2 >> (loc.x - 5)
+                  : passable2 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable4 >> (loc.x - 4)
-                  : passable4 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable3 >> (loc.x - 5)
+                  : passable3 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable5 >> (loc.x - 4)
-                  : passable5 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable4 >> (loc.x - 5)
+                  : passable4 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable6 >> (loc.x - 4)
-                  : passable6 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable5 >> (loc.x - 5)
+                  : passable5 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable7 >> (loc.x - 4)
-                  : passable7 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable8 >> (loc.x - 4)
-                  : passable8 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable9 >> (loc.x - 4)
-                  : passable9 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable6 >> (loc.x - 5)
+                  : passable6 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable7 >> (loc.x - 5)
+                  : passable7 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable7 >> (loc.x - 5)
+                  : passable7 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable10 >> (loc.x - 4)
-                  : passable10 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable8 >> (loc.x - 5)
+                  : passable8 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable11 >> (loc.x - 4)
-                  : passable11 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable9 >> (loc.x - 5)
+                  : passable9 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable10 >> (loc.x - 5)
+                  : passable10 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable11 >> (loc.x - 5)
+                  : passable11 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable12 >> (loc.x - 5)
+                  : passable12 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 8 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable4 >> (loc.x - 4)
-                  : passable4 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable3 >> (loc.x - 5)
+                  : passable3 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable5 >> (loc.x - 4)
-                  : passable5 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable4 >> (loc.x - 5)
+                  : passable4 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable6 >> (loc.x - 4)
-                  : passable6 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable5 >> (loc.x - 5)
+                  : passable5 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable7 >> (loc.x - 4)
-                  : passable7 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable6 >> (loc.x - 5)
+                  : passable6 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable8 >> (loc.x - 4)
-                  : passable8 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable9 >> (loc.x - 4)
-                  : passable9 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable10 >> (loc.x - 4)
-                  : passable10 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable7 >> (loc.x - 5)
+                  : passable7 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable8 >> (loc.x - 5)
+                  : passable8 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable8 >> (loc.x - 5)
+                  : passable8 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable11 >> (loc.x - 4)
-                  : passable11 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable9 >> (loc.x - 5)
+                  : passable9 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable12 >> (loc.x - 4)
-                  : passable12 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable10 >> (loc.x - 5)
+                  : passable10 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable11 >> (loc.x - 5)
+                  : passable11 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable12 >> (loc.x - 5)
+                  : passable12 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable13 >> (loc.x - 5)
+                  : passable13 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 9 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable5 >> (loc.x - 4)
-                  : passable5 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable4 >> (loc.x - 5)
+                  : passable4 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable6 >> (loc.x - 4)
-                  : passable6 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable5 >> (loc.x - 5)
+                  : passable5 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable7 >> (loc.x - 4)
-                  : passable7 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable6 >> (loc.x - 5)
+                  : passable6 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable8 >> (loc.x - 4)
-                  : passable8 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable7 >> (loc.x - 5)
+                  : passable7 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable9 >> (loc.x - 4)
-                  : passable9 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable10 >> (loc.x - 4)
-                  : passable10 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable11 >> (loc.x - 4)
-                  : passable11 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable8 >> (loc.x - 5)
+                  : passable8 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable9 >> (loc.x - 5)
+                  : passable9 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable9 >> (loc.x - 5)
+                  : passable9 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable12 >> (loc.x - 4)
-                  : passable12 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable10 >> (loc.x - 5)
+                  : passable10 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable13 >> (loc.x - 4)
-                  : passable13 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable11 >> (loc.x - 5)
+                  : passable11 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable12 >> (loc.x - 5)
+                  : passable12 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable13 >> (loc.x - 5)
+                  : passable13 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable14 >> (loc.x - 5)
+                  : passable14 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 10 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable6 >> (loc.x - 4)
-                  : passable6 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable5 >> (loc.x - 5)
+                  : passable5 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable7 >> (loc.x - 4)
-                  : passable7 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable6 >> (loc.x - 5)
+                  : passable6 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable8 >> (loc.x - 4)
-                  : passable8 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable7 >> (loc.x - 5)
+                  : passable7 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable9 >> (loc.x - 4)
-                  : passable9 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable8 >> (loc.x - 5)
+                  : passable8 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable10 >> (loc.x - 4)
-                  : passable10 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable11 >> (loc.x - 4)
-                  : passable11 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable12 >> (loc.x - 4)
-                  : passable12 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable9 >> (loc.x - 5)
+                  : passable9 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable10 >> (loc.x - 5)
+                  : passable10 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable10 >> (loc.x - 5)
+                  : passable10 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable13 >> (loc.x - 4)
-                  : passable13 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable11 >> (loc.x - 5)
+                  : passable11 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable14 >> (loc.x - 4)
-                  : passable14 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable12 >> (loc.x - 5)
+                  : passable12 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable13 >> (loc.x - 5)
+                  : passable13 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable14 >> (loc.x - 5)
+                  : passable14 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable15 >> (loc.x - 5)
+                  : passable15 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 11 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable7 >> (loc.x - 4)
-                  : passable7 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable6 >> (loc.x - 5)
+                  : passable6 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable8 >> (loc.x - 4)
-                  : passable8 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable7 >> (loc.x - 5)
+                  : passable7 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable9 >> (loc.x - 4)
-                  : passable9 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable8 >> (loc.x - 5)
+                  : passable8 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable10 >> (loc.x - 4)
-                  : passable10 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable9 >> (loc.x - 5)
+                  : passable9 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable11 >> (loc.x - 4)
-                  : passable11 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable12 >> (loc.x - 4)
-                  : passable12 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable13 >> (loc.x - 4)
-                  : passable13 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable10 >> (loc.x - 5)
+                  : passable10 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable11 >> (loc.x - 5)
+                  : passable11 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable11 >> (loc.x - 5)
+                  : passable11 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable14 >> (loc.x - 4)
-                  : passable14 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable12 >> (loc.x - 5)
+                  : passable12 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable15 >> (loc.x - 4)
-                  : passable15 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable13 >> (loc.x - 5)
+                  : passable13 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable14 >> (loc.x - 5)
+                  : passable14 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable15 >> (loc.x - 5)
+                  : passable15 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable16 >> (loc.x - 5)
+                  : passable16 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 12 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable8 >> (loc.x - 4)
-                  : passable8 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable7 >> (loc.x - 5)
+                  : passable7 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable9 >> (loc.x - 4)
-                  : passable9 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable8 >> (loc.x - 5)
+                  : passable8 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable10 >> (loc.x - 4)
-                  : passable10 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable9 >> (loc.x - 5)
+                  : passable9 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable11 >> (loc.x - 4)
-                  : passable11 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable10 >> (loc.x - 5)
+                  : passable10 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable12 >> (loc.x - 4)
-                  : passable12 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable13 >> (loc.x - 4)
-                  : passable13 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable14 >> (loc.x - 4)
-                  : passable14 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable11 >> (loc.x - 5)
+                  : passable11 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable12 >> (loc.x - 5)
+                  : passable12 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable12 >> (loc.x - 5)
+                  : passable12 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable15 >> (loc.x - 4)
-                  : passable15 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable13 >> (loc.x - 5)
+                  : passable13 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable16 >> (loc.x - 4)
-                  : passable16 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable14 >> (loc.x - 5)
+                  : passable14 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable15 >> (loc.x - 5)
+                  : passable15 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable16 >> (loc.x - 5)
+                  : passable16 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable17 >> (loc.x - 5)
+                  : passable17 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 13 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable9 >> (loc.x - 4)
-                  : passable9 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable8 >> (loc.x - 5)
+                  : passable8 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable10 >> (loc.x - 4)
-                  : passable10 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable9 >> (loc.x - 5)
+                  : passable9 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable11 >> (loc.x - 4)
-                  : passable11 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable10 >> (loc.x - 5)
+                  : passable10 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable12 >> (loc.x - 4)
-                  : passable12 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable11 >> (loc.x - 5)
+                  : passable11 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable13 >> (loc.x - 4)
-                  : passable13 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable14 >> (loc.x - 4)
-                  : passable14 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable15 >> (loc.x - 4)
-                  : passable15 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable12 >> (loc.x - 5)
+                  : passable12 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable13 >> (loc.x - 5)
+                  : passable13 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable13 >> (loc.x - 5)
+                  : passable13 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable16 >> (loc.x - 4)
-                  : passable16 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable14 >> (loc.x - 5)
+                  : passable14 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable17 >> (loc.x - 4)
-                  : passable17 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable15 >> (loc.x - 5)
+                  : passable15 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable16 >> (loc.x - 5)
+                  : passable16 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable17 >> (loc.x - 5)
+                  : passable17 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable18 >> (loc.x - 5)
+                  : passable18 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 14 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable10 >> (loc.x - 4)
-                  : passable10 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable9 >> (loc.x - 5)
+                  : passable9 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable11 >> (loc.x - 4)
-                  : passable11 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable10 >> (loc.x - 5)
+                  : passable10 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable12 >> (loc.x - 4)
-                  : passable12 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable11 >> (loc.x - 5)
+                  : passable11 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable13 >> (loc.x - 4)
-                  : passable13 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable12 >> (loc.x - 5)
+                  : passable12 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable14 >> (loc.x - 4)
-                  : passable14 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable15 >> (loc.x - 4)
-                  : passable15 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable16 >> (loc.x - 4)
-                  : passable16 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable13 >> (loc.x - 5)
+                  : passable13 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable14 >> (loc.x - 5)
+                  : passable14 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable14 >> (loc.x - 5)
+                  : passable14 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable17 >> (loc.x - 4)
-                  : passable17 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable15 >> (loc.x - 5)
+                  : passable15 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable18 >> (loc.x - 4)
-                  : passable18 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable16 >> (loc.x - 5)
+                  : passable16 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable17 >> (loc.x - 5)
+                  : passable17 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable18 >> (loc.x - 5)
+                  : passable18 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable19 >> (loc.x - 5)
+                  : passable19 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 15 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable11 >> (loc.x - 4)
-                  : passable11 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable10 >> (loc.x - 5)
+                  : passable10 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable12 >> (loc.x - 4)
-                  : passable12 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable11 >> (loc.x - 5)
+                  : passable11 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable13 >> (loc.x - 4)
-                  : passable13 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable12 >> (loc.x - 5)
+                  : passable12 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable14 >> (loc.x - 4)
-                  : passable14 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable13 >> (loc.x - 5)
+                  : passable13 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable15 >> (loc.x - 4)
-                  : passable15 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable16 >> (loc.x - 4)
-                  : passable16 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable17 >> (loc.x - 4)
-                  : passable17 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable14 >> (loc.x - 5)
+                  : passable14 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable15 >> (loc.x - 5)
+                  : passable15 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable15 >> (loc.x - 5)
+                  : passable15 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable18 >> (loc.x - 4)
-                  : passable18 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable16 >> (loc.x - 5)
+                  : passable16 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable19 >> (loc.x - 4)
-                  : passable19 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable17 >> (loc.x - 5)
+                  : passable17 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable18 >> (loc.x - 5)
+                  : passable18 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable19 >> (loc.x - 5)
+                  : passable19 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable20 >> (loc.x - 5)
+                  : passable20 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 16 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable12 >> (loc.x - 4)
-                  : passable12 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable11 >> (loc.x - 5)
+                  : passable11 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable13 >> (loc.x - 4)
-                  : passable13 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable12 >> (loc.x - 5)
+                  : passable12 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable14 >> (loc.x - 4)
-                  : passable14 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable13 >> (loc.x - 5)
+                  : passable13 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable15 >> (loc.x - 4)
-                  : passable15 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable14 >> (loc.x - 5)
+                  : passable14 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable16 >> (loc.x - 4)
-                  : passable16 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable17 >> (loc.x - 4)
-                  : passable17 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable18 >> (loc.x - 4)
-                  : passable18 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable15 >> (loc.x - 5)
+                  : passable15 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable16 >> (loc.x - 5)
+                  : passable16 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable16 >> (loc.x - 5)
+                  : passable16 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable19 >> (loc.x - 4)
-                  : passable19 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable17 >> (loc.x - 5)
+                  : passable17 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable20 >> (loc.x - 4)
-                  : passable20 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable18 >> (loc.x - 5)
+                  : passable18 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable19 >> (loc.x - 5)
+                  : passable19 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable20 >> (loc.x - 5)
+                  : passable20 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable21 >> (loc.x - 5)
+                  : passable21 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 17 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable13 >> (loc.x - 4)
-                  : passable13 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable12 >> (loc.x - 5)
+                  : passable12 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable14 >> (loc.x - 4)
-                  : passable14 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable13 >> (loc.x - 5)
+                  : passable13 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable15 >> (loc.x - 4)
-                  : passable15 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable14 >> (loc.x - 5)
+                  : passable14 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable16 >> (loc.x - 4)
-                  : passable16 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable15 >> (loc.x - 5)
+                  : passable15 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable17 >> (loc.x - 4)
-                  : passable17 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable18 >> (loc.x - 4)
-                  : passable18 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable19 >> (loc.x - 4)
-                  : passable19 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable16 >> (loc.x - 5)
+                  : passable16 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable17 >> (loc.x - 5)
+                  : passable17 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable17 >> (loc.x - 5)
+                  : passable17 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable20 >> (loc.x - 4)
-                  : passable20 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable18 >> (loc.x - 5)
+                  : passable18 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable21 >> (loc.x - 4)
-                  : passable21 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable19 >> (loc.x - 5)
+                  : passable19 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable20 >> (loc.x - 5)
+                  : passable20 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable21 >> (loc.x - 5)
+                  : passable21 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable22 >> (loc.x - 5)
+                  : passable22 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 18 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable14 >> (loc.x - 4)
-                  : passable14 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable13 >> (loc.x - 5)
+                  : passable13 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable15 >> (loc.x - 4)
-                  : passable15 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable14 >> (loc.x - 5)
+                  : passable14 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable16 >> (loc.x - 4)
-                  : passable16 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable15 >> (loc.x - 5)
+                  : passable15 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable17 >> (loc.x - 4)
-                  : passable17 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable16 >> (loc.x - 5)
+                  : passable16 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable18 >> (loc.x - 4)
-                  : passable18 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable19 >> (loc.x - 4)
-                  : passable19 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable20 >> (loc.x - 4)
-                  : passable20 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable17 >> (loc.x - 5)
+                  : passable17 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable18 >> (loc.x - 5)
+                  : passable18 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable18 >> (loc.x - 5)
+                  : passable18 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable21 >> (loc.x - 4)
-                  : passable21 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable19 >> (loc.x - 5)
+                  : passable19 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable22 >> (loc.x - 4)
-                  : passable22 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable20 >> (loc.x - 5)
+                  : passable20 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable21 >> (loc.x - 5)
+                  : passable21 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable22 >> (loc.x - 5)
+                  : passable22 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable23 >> (loc.x - 5)
+                  : passable23 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 19 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable15 >> (loc.x - 4)
-                  : passable15 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable14 >> (loc.x - 5)
+                  : passable14 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable16 >> (loc.x - 4)
-                  : passable16 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable15 >> (loc.x - 5)
+                  : passable15 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable17 >> (loc.x - 4)
-                  : passable17 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable16 >> (loc.x - 5)
+                  : passable16 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable18 >> (loc.x - 4)
-                  : passable18 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable17 >> (loc.x - 5)
+                  : passable17 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable19 >> (loc.x - 4)
-                  : passable19 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable20 >> (loc.x - 4)
-                  : passable20 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable21 >> (loc.x - 4)
-                  : passable21 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable18 >> (loc.x - 5)
+                  : passable18 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable19 >> (loc.x - 5)
+                  : passable19 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable19 >> (loc.x - 5)
+                  : passable19 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable22 >> (loc.x - 4)
-                  : passable22 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable20 >> (loc.x - 5)
+                  : passable20 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable23 >> (loc.x - 4)
-                  : passable23 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable21 >> (loc.x - 5)
+                  : passable21 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable22 >> (loc.x - 5)
+                  : passable22 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable23 >> (loc.x - 5)
+                  : passable23 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable24 >> (loc.x - 5)
+                  : passable24 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 20 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable16 >> (loc.x - 4)
-                  : passable16 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable15 >> (loc.x - 5)
+                  : passable15 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable17 >> (loc.x - 4)
-                  : passable17 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable16 >> (loc.x - 5)
+                  : passable16 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable18 >> (loc.x - 4)
-                  : passable18 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable17 >> (loc.x - 5)
+                  : passable17 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable19 >> (loc.x - 4)
-                  : passable19 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable18 >> (loc.x - 5)
+                  : passable18 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable20 >> (loc.x - 4)
-                  : passable20 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable21 >> (loc.x - 4)
-                  : passable21 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable22 >> (loc.x - 4)
-                  : passable22 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable19 >> (loc.x - 5)
+                  : passable19 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable20 >> (loc.x - 5)
+                  : passable20 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable20 >> (loc.x - 5)
+                  : passable20 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable23 >> (loc.x - 4)
-                  : passable23 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable21 >> (loc.x - 5)
+                  : passable21 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable24 >> (loc.x - 4)
-                  : passable24 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable22 >> (loc.x - 5)
+                  : passable22 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable23 >> (loc.x - 5)
+                  : passable23 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable24 >> (loc.x - 5)
+                  : passable24 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable25 >> (loc.x - 5)
+                  : passable25 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 21 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable17 >> (loc.x - 4)
-                  : passable17 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable16 >> (loc.x - 5)
+                  : passable16 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable18 >> (loc.x - 4)
-                  : passable18 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable17 >> (loc.x - 5)
+                  : passable17 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable19 >> (loc.x - 4)
-                  : passable19 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable18 >> (loc.x - 5)
+                  : passable18 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable20 >> (loc.x - 4)
-                  : passable20 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable19 >> (loc.x - 5)
+                  : passable19 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable21 >> (loc.x - 4)
-                  : passable21 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable22 >> (loc.x - 4)
-                  : passable22 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable23 >> (loc.x - 4)
-                  : passable23 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable20 >> (loc.x - 5)
+                  : passable20 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable21 >> (loc.x - 5)
+                  : passable21 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable21 >> (loc.x - 5)
+                  : passable21 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable24 >> (loc.x - 4)
-                  : passable24 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable22 >> (loc.x - 5)
+                  : passable22 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable25 >> (loc.x - 4)
-                  : passable25 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable23 >> (loc.x - 5)
+                  : passable23 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable24 >> (loc.x - 5)
+                  : passable24 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable25 >> (loc.x - 5)
+                  : passable25 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable26 >> (loc.x - 5)
+                  : passable26 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 22 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable18 >> (loc.x - 4)
-                  : passable18 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable17 >> (loc.x - 5)
+                  : passable17 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable19 >> (loc.x - 4)
-                  : passable19 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable18 >> (loc.x - 5)
+                  : passable18 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable20 >> (loc.x - 4)
-                  : passable20 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable19 >> (loc.x - 5)
+                  : passable19 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable21 >> (loc.x - 4)
-                  : passable21 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable20 >> (loc.x - 5)
+                  : passable20 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable22 >> (loc.x - 4)
-                  : passable22 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable23 >> (loc.x - 4)
-                  : passable23 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable24 >> (loc.x - 4)
-                  : passable24 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable21 >> (loc.x - 5)
+                  : passable21 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable22 >> (loc.x - 5)
+                  : passable22 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable22 >> (loc.x - 5)
+                  : passable22 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable25 >> (loc.x - 4)
-                  : passable25 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable23 >> (loc.x - 5)
+                  : passable23 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable26 >> (loc.x - 4)
-                  : passable26 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable24 >> (loc.x - 5)
+                  : passable24 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable25 >> (loc.x - 5)
+                  : passable25 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable26 >> (loc.x - 5)
+                  : passable26 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable27 >> (loc.x - 5)
+                  : passable27 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 23 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable19 >> (loc.x - 4)
-                  : passable19 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable18 >> (loc.x - 5)
+                  : passable18 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable20 >> (loc.x - 4)
-                  : passable20 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable19 >> (loc.x - 5)
+                  : passable19 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable21 >> (loc.x - 4)
-                  : passable21 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable20 >> (loc.x - 5)
+                  : passable20 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable22 >> (loc.x - 4)
-                  : passable22 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable21 >> (loc.x - 5)
+                  : passable21 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable23 >> (loc.x - 4)
-                  : passable23 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable24 >> (loc.x - 4)
-                  : passable24 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable25 >> (loc.x - 4)
-                  : passable25 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable22 >> (loc.x - 5)
+                  : passable22 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable23 >> (loc.x - 5)
+                  : passable23 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable23 >> (loc.x - 5)
+                  : passable23 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable26 >> (loc.x - 4)
-                  : passable26 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable24 >> (loc.x - 5)
+                  : passable24 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable27 >> (loc.x - 4)
-                  : passable27 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable25 >> (loc.x - 5)
+                  : passable25 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable26 >> (loc.x - 5)
+                  : passable26 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable27 >> (loc.x - 5)
+                  : passable27 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable28 >> (loc.x - 5)
+                  : passable28 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 24 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable20 >> (loc.x - 4)
-                  : passable20 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable19 >> (loc.x - 5)
+                  : passable19 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable21 >> (loc.x - 4)
-                  : passable21 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable20 >> (loc.x - 5)
+                  : passable20 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable22 >> (loc.x - 4)
-                  : passable22 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable21 >> (loc.x - 5)
+                  : passable21 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable23 >> (loc.x - 4)
-                  : passable23 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable22 >> (loc.x - 5)
+                  : passable22 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable24 >> (loc.x - 4)
-                  : passable24 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable25 >> (loc.x - 4)
-                  : passable25 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable26 >> (loc.x - 4)
-                  : passable26 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable23 >> (loc.x - 5)
+                  : passable23 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable24 >> (loc.x - 5)
+                  : passable24 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable24 >> (loc.x - 5)
+                  : passable24 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable27 >> (loc.x - 4)
-                  : passable27 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable25 >> (loc.x - 5)
+                  : passable25 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable28 >> (loc.x - 4)
-                  : passable28 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable26 >> (loc.x - 5)
+                  : passable26 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable27 >> (loc.x - 5)
+                  : passable27 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable28 >> (loc.x - 5)
+                  : passable28 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable29 >> (loc.x - 5)
+                  : passable29 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 25 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable21 >> (loc.x - 4)
-                  : passable21 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable20 >> (loc.x - 5)
+                  : passable20 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable22 >> (loc.x - 4)
-                  : passable22 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable21 >> (loc.x - 5)
+                  : passable21 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable23 >> (loc.x - 4)
-                  : passable23 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable22 >> (loc.x - 5)
+                  : passable22 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable24 >> (loc.x - 4)
-                  : passable24 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable23 >> (loc.x - 5)
+                  : passable23 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable25 >> (loc.x - 4)
-                  : passable25 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable26 >> (loc.x - 4)
-                  : passable26 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable27 >> (loc.x - 4)
-                  : passable27 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable24 >> (loc.x - 5)
+                  : passable24 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable25 >> (loc.x - 5)
+                  : passable25 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable25 >> (loc.x - 5)
+                  : passable25 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable28 >> (loc.x - 4)
-                  : passable28 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable26 >> (loc.x - 5)
+                  : passable26 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable29 >> (loc.x - 4)
-                  : passable29 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable27 >> (loc.x - 5)
+                  : passable27 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable28 >> (loc.x - 5)
+                  : passable28 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable29 >> (loc.x - 5)
+                  : passable29 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable30 >> (loc.x - 5)
+                  : passable30 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 26 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable22 >> (loc.x - 4)
-                  : passable22 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable21 >> (loc.x - 5)
+                  : passable21 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable23 >> (loc.x - 4)
-                  : passable23 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable22 >> (loc.x - 5)
+                  : passable22 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable24 >> (loc.x - 4)
-                  : passable24 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable23 >> (loc.x - 5)
+                  : passable23 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable25 >> (loc.x - 4)
-                  : passable25 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable24 >> (loc.x - 5)
+                  : passable24 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable26 >> (loc.x - 4)
-                  : passable26 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable27 >> (loc.x - 4)
-                  : passable27 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable28 >> (loc.x - 4)
-                  : passable28 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable25 >> (loc.x - 5)
+                  : passable25 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable26 >> (loc.x - 5)
+                  : passable26 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable26 >> (loc.x - 5)
+                  : passable26 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable29 >> (loc.x - 4)
-                  : passable29 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable27 >> (loc.x - 5)
+                  : passable27 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable30 >> (loc.x - 4)
-                  : passable30 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable28 >> (loc.x - 5)
+                  : passable28 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable29 >> (loc.x - 5)
+                  : passable29 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable30 >> (loc.x - 5)
+                  : passable30 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable31 >> (loc.x - 5)
+                  : passable31 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 27 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable23 >> (loc.x - 4)
-                  : passable23 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable22 >> (loc.x - 5)
+                  : passable22 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable24 >> (loc.x - 4)
-                  : passable24 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable23 >> (loc.x - 5)
+                  : passable23 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable25 >> (loc.x - 4)
-                  : passable25 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable24 >> (loc.x - 5)
+                  : passable24 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable26 >> (loc.x - 4)
-                  : passable26 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable25 >> (loc.x - 5)
+                  : passable25 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable27 >> (loc.x - 4)
-                  : passable27 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable28 >> (loc.x - 4)
-                  : passable28 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable29 >> (loc.x - 4)
-                  : passable29 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable26 >> (loc.x - 5)
+                  : passable26 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable27 >> (loc.x - 5)
+                  : passable27 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable27 >> (loc.x - 5)
+                  : passable27 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable30 >> (loc.x - 4)
-                  : passable30 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable28 >> (loc.x - 5)
+                  : passable28 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable31 >> (loc.x - 4)
-                  : passable31 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable29 >> (loc.x - 5)
+                  : passable29 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable30 >> (loc.x - 5)
+                  : passable30 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable31 >> (loc.x - 5)
+                  : passable31 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable32 >> (loc.x - 5)
+                  : passable32 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 28 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable24 >> (loc.x - 4)
-                  : passable24 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable23 >> (loc.x - 5)
+                  : passable23 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable25 >> (loc.x - 4)
-                  : passable25 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable24 >> (loc.x - 5)
+                  : passable24 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable26 >> (loc.x - 4)
-                  : passable26 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable25 >> (loc.x - 5)
+                  : passable25 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable27 >> (loc.x - 4)
-                  : passable27 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable26 >> (loc.x - 5)
+                  : passable26 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable28 >> (loc.x - 4)
-                  : passable28 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable29 >> (loc.x - 4)
-                  : passable29 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable30 >> (loc.x - 4)
-                  : passable30 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable27 >> (loc.x - 5)
+                  : passable27 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable28 >> (loc.x - 5)
+                  : passable28 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable28 >> (loc.x - 5)
+                  : passable28 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable31 >> (loc.x - 4)
-                  : passable31 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable29 >> (loc.x - 5)
+                  : passable29 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable32 >> (loc.x - 4)
-                  : passable32 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable30 >> (loc.x - 5)
+                  : passable30 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable31 >> (loc.x - 5)
+                  : passable31 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable32 >> (loc.x - 5)
+                  : passable32 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable33 >> (loc.x - 5)
+                  : passable33 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 29 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable25 >> (loc.x - 4)
-                  : passable25 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable24 >> (loc.x - 5)
+                  : passable24 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable26 >> (loc.x - 4)
-                  : passable26 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable25 >> (loc.x - 5)
+                  : passable25 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable27 >> (loc.x - 4)
-                  : passable27 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable26 >> (loc.x - 5)
+                  : passable26 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable28 >> (loc.x - 4)
-                  : passable28 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable27 >> (loc.x - 5)
+                  : passable27 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable29 >> (loc.x - 4)
-                  : passable29 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable30 >> (loc.x - 4)
-                  : passable30 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable31 >> (loc.x - 4)
-                  : passable31 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable28 >> (loc.x - 5)
+                  : passable28 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable29 >> (loc.x - 5)
+                  : passable29 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable29 >> (loc.x - 5)
+                  : passable29 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable32 >> (loc.x - 4)
-                  : passable32 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable30 >> (loc.x - 5)
+                  : passable30 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable33 >> (loc.x - 4)
-                  : passable33 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable31 >> (loc.x - 5)
+                  : passable31 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable32 >> (loc.x - 5)
+                  : passable32 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable33 >> (loc.x - 5)
+                  : passable33 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable34 >> (loc.x - 5)
+                  : passable34 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 30 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable26 >> (loc.x - 4)
-                  : passable26 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable25 >> (loc.x - 5)
+                  : passable25 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable27 >> (loc.x - 4)
-                  : passable27 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable26 >> (loc.x - 5)
+                  : passable26 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable28 >> (loc.x - 4)
-                  : passable28 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable27 >> (loc.x - 5)
+                  : passable27 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable29 >> (loc.x - 4)
-                  : passable29 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable28 >> (loc.x - 5)
+                  : passable28 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable30 >> (loc.x - 4)
-                  : passable30 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable31 >> (loc.x - 4)
-                  : passable31 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable32 >> (loc.x - 4)
-                  : passable32 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable29 >> (loc.x - 5)
+                  : passable29 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable30 >> (loc.x - 5)
+                  : passable30 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable30 >> (loc.x - 5)
+                  : passable30 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable33 >> (loc.x - 4)
-                  : passable33 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable31 >> (loc.x - 5)
+                  : passable31 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable34 >> (loc.x - 4)
-                  : passable34 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable32 >> (loc.x - 5)
+                  : passable32 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable33 >> (loc.x - 5)
+                  : passable33 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable34 >> (loc.x - 5)
+                  : passable34 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable35 >> (loc.x - 5)
+                  : passable35 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 31 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable27 >> (loc.x - 4)
-                  : passable27 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable26 >> (loc.x - 5)
+                  : passable26 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable28 >> (loc.x - 4)
-                  : passable28 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable27 >> (loc.x - 5)
+                  : passable27 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable29 >> (loc.x - 4)
-                  : passable29 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable28 >> (loc.x - 5)
+                  : passable28 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable30 >> (loc.x - 4)
-                  : passable30 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable29 >> (loc.x - 5)
+                  : passable29 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable31 >> (loc.x - 4)
-                  : passable31 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable32 >> (loc.x - 4)
-                  : passable32 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable33 >> (loc.x - 4)
-                  : passable33 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable30 >> (loc.x - 5)
+                  : passable30 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable31 >> (loc.x - 5)
+                  : passable31 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable31 >> (loc.x - 5)
+                  : passable31 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable34 >> (loc.x - 4)
-                  : passable34 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable32 >> (loc.x - 5)
+                  : passable32 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable35 >> (loc.x - 4)
-                  : passable35 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable33 >> (loc.x - 5)
+                  : passable33 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable34 >> (loc.x - 5)
+                  : passable34 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable35 >> (loc.x - 5)
+                  : passable35 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable36 >> (loc.x - 5)
+                  : passable36 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 32 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable28 >> (loc.x - 4)
-                  : passable28 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable27 >> (loc.x - 5)
+                  : passable27 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable29 >> (loc.x - 4)
-                  : passable29 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable28 >> (loc.x - 5)
+                  : passable28 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable30 >> (loc.x - 4)
-                  : passable30 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable29 >> (loc.x - 5)
+                  : passable29 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable31 >> (loc.x - 4)
-                  : passable31 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable30 >> (loc.x - 5)
+                  : passable30 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable32 >> (loc.x - 4)
-                  : passable32 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable33 >> (loc.x - 4)
-                  : passable33 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable34 >> (loc.x - 4)
-                  : passable34 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable31 >> (loc.x - 5)
+                  : passable31 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable32 >> (loc.x - 5)
+                  : passable32 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable32 >> (loc.x - 5)
+                  : passable32 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable35 >> (loc.x - 4)
-                  : passable35 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable33 >> (loc.x - 5)
+                  : passable33 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable36 >> (loc.x - 4)
-                  : passable36 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable34 >> (loc.x - 5)
+                  : passable34 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable35 >> (loc.x - 5)
+                  : passable35 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable36 >> (loc.x - 5)
+                  : passable36 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable37 >> (loc.x - 5)
+                  : passable37 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 33 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable29 >> (loc.x - 4)
-                  : passable29 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable28 >> (loc.x - 5)
+                  : passable28 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable30 >> (loc.x - 4)
-                  : passable30 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable29 >> (loc.x - 5)
+                  : passable29 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable31 >> (loc.x - 4)
-                  : passable31 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable30 >> (loc.x - 5)
+                  : passable30 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable32 >> (loc.x - 4)
-                  : passable32 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable31 >> (loc.x - 5)
+                  : passable31 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable33 >> (loc.x - 4)
-                  : passable33 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable34 >> (loc.x - 4)
-                  : passable34 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable35 >> (loc.x - 4)
-                  : passable35 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable32 >> (loc.x - 5)
+                  : passable32 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable33 >> (loc.x - 5)
+                  : passable33 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable33 >> (loc.x - 5)
+                  : passable33 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable36 >> (loc.x - 4)
-                  : passable36 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable34 >> (loc.x - 5)
+                  : passable34 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable37 >> (loc.x - 4)
-                  : passable37 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable35 >> (loc.x - 5)
+                  : passable35 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable36 >> (loc.x - 5)
+                  : passable36 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable37 >> (loc.x - 5)
+                  : passable37 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable38 >> (loc.x - 5)
+                  : passable38 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 34 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable30 >> (loc.x - 4)
-                  : passable30 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable29 >> (loc.x - 5)
+                  : passable29 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable31 >> (loc.x - 4)
-                  : passable31 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable30 >> (loc.x - 5)
+                  : passable30 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable32 >> (loc.x - 4)
-                  : passable32 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable31 >> (loc.x - 5)
+                  : passable31 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable33 >> (loc.x - 4)
-                  : passable33 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable32 >> (loc.x - 5)
+                  : passable32 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable34 >> (loc.x - 4)
-                  : passable34 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable35 >> (loc.x - 4)
-                  : passable35 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable36 >> (loc.x - 4)
-                  : passable36 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable33 >> (loc.x - 5)
+                  : passable33 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable34 >> (loc.x - 5)
+                  : passable34 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable34 >> (loc.x - 5)
+                  : passable34 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable37 >> (loc.x - 4)
-                  : passable37 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable35 >> (loc.x - 5)
+                  : passable35 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable38 >> (loc.x - 4)
-                  : passable38 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable36 >> (loc.x - 5)
+                  : passable36 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable37 >> (loc.x - 5)
+                  : passable37 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable38 >> (loc.x - 5)
+                  : passable38 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable39 >> (loc.x - 5)
+                  : passable39 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 35 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable31 >> (loc.x - 4)
-                  : passable31 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable30 >> (loc.x - 5)
+                  : passable30 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable32 >> (loc.x - 4)
-                  : passable32 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable31 >> (loc.x - 5)
+                  : passable31 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable33 >> (loc.x - 4)
-                  : passable33 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable32 >> (loc.x - 5)
+                  : passable32 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable34 >> (loc.x - 4)
-                  : passable34 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable33 >> (loc.x - 5)
+                  : passable33 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable35 >> (loc.x - 4)
-                  : passable35 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable36 >> (loc.x - 4)
-                  : passable36 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable37 >> (loc.x - 4)
-                  : passable37 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable34 >> (loc.x - 5)
+                  : passable34 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable35 >> (loc.x - 5)
+                  : passable35 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable35 >> (loc.x - 5)
+                  : passable35 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable38 >> (loc.x - 4)
-                  : passable38 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable36 >> (loc.x - 5)
+                  : passable36 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable39 >> (loc.x - 4)
-                  : passable39 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable37 >> (loc.x - 5)
+                  : passable37 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable38 >> (loc.x - 5)
+                  : passable38 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable39 >> (loc.x - 5)
+                  : passable39 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable40 >> (loc.x - 5)
+                  : passable40 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 36 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable32 >> (loc.x - 4)
-                  : passable32 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable31 >> (loc.x - 5)
+                  : passable31 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable33 >> (loc.x - 4)
-                  : passable33 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable32 >> (loc.x - 5)
+                  : passable32 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable34 >> (loc.x - 4)
-                  : passable34 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable33 >> (loc.x - 5)
+                  : passable33 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable35 >> (loc.x - 4)
-                  : passable35 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable34 >> (loc.x - 5)
+                  : passable34 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable36 >> (loc.x - 4)
-                  : passable36 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable37 >> (loc.x - 4)
-                  : passable37 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable38 >> (loc.x - 4)
-                  : passable38 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable35 >> (loc.x - 5)
+                  : passable35 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable36 >> (loc.x - 5)
+                  : passable36 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable36 >> (loc.x - 5)
+                  : passable36 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable39 >> (loc.x - 4)
-                  : passable39 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable37 >> (loc.x - 5)
+                  : passable37 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable40 >> (loc.x - 4)
-                  : passable40 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable38 >> (loc.x - 5)
+                  : passable38 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable39 >> (loc.x - 5)
+                  : passable39 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable40 >> (loc.x - 5)
+                  : passable40 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable41 >> (loc.x - 5)
+                  : passable41 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 37 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable33 >> (loc.x - 4)
-                  : passable33 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable32 >> (loc.x - 5)
+                  : passable32 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable34 >> (loc.x - 4)
-                  : passable34 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable33 >> (loc.x - 5)
+                  : passable33 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable35 >> (loc.x - 4)
-                  : passable35 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable34 >> (loc.x - 5)
+                  : passable34 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable36 >> (loc.x - 4)
-                  : passable36 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable35 >> (loc.x - 5)
+                  : passable35 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable37 >> (loc.x - 4)
-                  : passable37 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable38 >> (loc.x - 4)
-                  : passable38 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable39 >> (loc.x - 4)
-                  : passable39 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable36 >> (loc.x - 5)
+                  : passable36 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable37 >> (loc.x - 5)
+                  : passable37 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable37 >> (loc.x - 5)
+                  : passable37 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable40 >> (loc.x - 4)
-                  : passable40 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable38 >> (loc.x - 5)
+                  : passable38 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable41 >> (loc.x - 4)
-                  : passable41 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable39 >> (loc.x - 5)
+                  : passable39 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable40 >> (loc.x - 5)
+                  : passable40 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable41 >> (loc.x - 5)
+                  : passable41 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable42 >> (loc.x - 5)
+                  : passable42 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 38 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable34 >> (loc.x - 4)
-                  : passable34 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable33 >> (loc.x - 5)
+                  : passable33 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable35 >> (loc.x - 4)
-                  : passable35 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable34 >> (loc.x - 5)
+                  : passable34 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable36 >> (loc.x - 4)
-                  : passable36 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable35 >> (loc.x - 5)
+                  : passable35 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable37 >> (loc.x - 4)
-                  : passable37 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable36 >> (loc.x - 5)
+                  : passable36 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable38 >> (loc.x - 4)
-                  : passable38 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable39 >> (loc.x - 4)
-                  : passable39 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable40 >> (loc.x - 4)
-                  : passable40 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable37 >> (loc.x - 5)
+                  : passable37 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable38 >> (loc.x - 5)
+                  : passable38 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable38 >> (loc.x - 5)
+                  : passable38 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable41 >> (loc.x - 4)
-                  : passable41 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable39 >> (loc.x - 5)
+                  : passable39 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable42 >> (loc.x - 4)
-                  : passable42 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable40 >> (loc.x - 5)
+                  : passable40 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable41 >> (loc.x - 5)
+                  : passable41 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable42 >> (loc.x - 5)
+                  : passable42 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable43 >> (loc.x - 5)
+                  : passable43 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 39 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable35 >> (loc.x - 4)
-                  : passable35 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable34 >> (loc.x - 5)
+                  : passable34 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable36 >> (loc.x - 4)
-                  : passable36 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable35 >> (loc.x - 5)
+                  : passable35 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable37 >> (loc.x - 4)
-                  : passable37 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable36 >> (loc.x - 5)
+                  : passable36 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable38 >> (loc.x - 4)
-                  : passable38 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable37 >> (loc.x - 5)
+                  : passable37 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable39 >> (loc.x - 4)
-                  : passable39 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable40 >> (loc.x - 4)
-                  : passable40 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable41 >> (loc.x - 4)
-                  : passable41 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable38 >> (loc.x - 5)
+                  : passable38 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable39 >> (loc.x - 5)
+                  : passable39 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable39 >> (loc.x - 5)
+                  : passable39 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable42 >> (loc.x - 4)
-                  : passable42 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable40 >> (loc.x - 5)
+                  : passable40 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable43 >> (loc.x - 4)
-                  : passable43 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable41 >> (loc.x - 5)
+                  : passable41 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable42 >> (loc.x - 5)
+                  : passable42 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable43 >> (loc.x - 5)
+                  : passable43 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable44 >> (loc.x - 5)
+                  : passable44 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 40 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable36 >> (loc.x - 4)
-                  : passable36 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable35 >> (loc.x - 5)
+                  : passable35 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable37 >> (loc.x - 4)
-                  : passable37 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable36 >> (loc.x - 5)
+                  : passable36 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable38 >> (loc.x - 4)
-                  : passable38 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable37 >> (loc.x - 5)
+                  : passable37 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable39 >> (loc.x - 4)
-                  : passable39 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable38 >> (loc.x - 5)
+                  : passable38 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable40 >> (loc.x - 4)
-                  : passable40 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable41 >> (loc.x - 4)
-                  : passable41 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable42 >> (loc.x - 4)
-                  : passable42 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable39 >> (loc.x - 5)
+                  : passable39 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable40 >> (loc.x - 5)
+                  : passable40 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable40 >> (loc.x - 5)
+                  : passable40 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable43 >> (loc.x - 4)
-                  : passable43 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable41 >> (loc.x - 5)
+                  : passable41 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable44 >> (loc.x - 4)
-                  : passable44 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable42 >> (loc.x - 5)
+                  : passable42 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable43 >> (loc.x - 5)
+                  : passable43 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable44 >> (loc.x - 5)
+                  : passable44 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable45 >> (loc.x - 5)
+                  : passable45 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 41 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable37 >> (loc.x - 4)
-                  : passable37 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable36 >> (loc.x - 5)
+                  : passable36 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable38 >> (loc.x - 4)
-                  : passable38 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable37 >> (loc.x - 5)
+                  : passable37 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable39 >> (loc.x - 4)
-                  : passable39 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable38 >> (loc.x - 5)
+                  : passable38 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable40 >> (loc.x - 4)
-                  : passable40 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable39 >> (loc.x - 5)
+                  : passable39 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable41 >> (loc.x - 4)
-                  : passable41 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable42 >> (loc.x - 4)
-                  : passable42 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable43 >> (loc.x - 4)
-                  : passable43 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable40 >> (loc.x - 5)
+                  : passable40 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable41 >> (loc.x - 5)
+                  : passable41 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable41 >> (loc.x - 5)
+                  : passable41 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable44 >> (loc.x - 4)
-                  : passable44 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable42 >> (loc.x - 5)
+                  : passable42 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable45 >> (loc.x - 4)
-                  : passable45 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable43 >> (loc.x - 5)
+                  : passable43 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable44 >> (loc.x - 5)
+                  : passable44 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable45 >> (loc.x - 5)
+                  : passable45 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable46 >> (loc.x - 5)
+                  : passable46 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 42 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable38 >> (loc.x - 4)
-                  : passable38 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable37 >> (loc.x - 5)
+                  : passable37 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable39 >> (loc.x - 4)
-                  : passable39 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable38 >> (loc.x - 5)
+                  : passable38 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable40 >> (loc.x - 4)
-                  : passable40 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable39 >> (loc.x - 5)
+                  : passable39 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable41 >> (loc.x - 4)
-                  : passable41 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable40 >> (loc.x - 5)
+                  : passable40 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable42 >> (loc.x - 4)
-                  : passable42 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable43 >> (loc.x - 4)
-                  : passable43 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable44 >> (loc.x - 4)
-                  : passable44 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable41 >> (loc.x - 5)
+                  : passable41 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable42 >> (loc.x - 5)
+                  : passable42 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable42 >> (loc.x - 5)
+                  : passable42 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable45 >> (loc.x - 4)
-                  : passable45 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable43 >> (loc.x - 5)
+                  : passable43 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable46 >> (loc.x - 4)
-                  : passable46 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable44 >> (loc.x - 5)
+                  : passable44 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable45 >> (loc.x - 5)
+                  : passable45 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable46 >> (loc.x - 5)
+                  : passable46 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable47 >> (loc.x - 5)
+                  : passable47 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 43 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable39 >> (loc.x - 4)
-                  : passable39 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable38 >> (loc.x - 5)
+                  : passable38 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable40 >> (loc.x - 4)
-                  : passable40 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable39 >> (loc.x - 5)
+                  : passable39 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable41 >> (loc.x - 4)
-                  : passable41 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable40 >> (loc.x - 5)
+                  : passable40 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable42 >> (loc.x - 4)
-                  : passable42 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable41 >> (loc.x - 5)
+                  : passable41 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable43 >> (loc.x - 4)
-                  : passable43 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable44 >> (loc.x - 4)
-                  : passable44 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable45 >> (loc.x - 4)
-                  : passable45 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable42 >> (loc.x - 5)
+                  : passable42 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable43 >> (loc.x - 5)
+                  : passable43 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable43 >> (loc.x - 5)
+                  : passable43 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable46 >> (loc.x - 4)
-                  : passable46 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable44 >> (loc.x - 5)
+                  : passable44 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable47 >> (loc.x - 4)
-                  : passable47 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable45 >> (loc.x - 5)
+                  : passable45 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable46 >> (loc.x - 5)
+                  : passable46 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable47 >> (loc.x - 5)
+                  : passable47 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable48 >> (loc.x - 5)
+                  : passable48 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 44 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable40 >> (loc.x - 4)
-                  : passable40 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable39 >> (loc.x - 5)
+                  : passable39 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable41 >> (loc.x - 4)
-                  : passable41 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable40 >> (loc.x - 5)
+                  : passable40 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable42 >> (loc.x - 4)
-                  : passable42 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable41 >> (loc.x - 5)
+                  : passable41 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable43 >> (loc.x - 4)
-                  : passable43 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable42 >> (loc.x - 5)
+                  : passable42 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable44 >> (loc.x - 4)
-                  : passable44 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable45 >> (loc.x - 4)
-                  : passable45 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable46 >> (loc.x - 4)
-                  : passable46 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable43 >> (loc.x - 5)
+                  : passable43 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable44 >> (loc.x - 5)
+                  : passable44 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable44 >> (loc.x - 5)
+                  : passable44 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable47 >> (loc.x - 4)
-                  : passable47 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable45 >> (loc.x - 5)
+                  : passable45 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable48 >> (loc.x - 4)
-                  : passable48 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable46 >> (loc.x - 5)
+                  : passable46 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable47 >> (loc.x - 5)
+                  : passable47 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable48 >> (loc.x - 5)
+                  : passable48 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable49 >> (loc.x - 5)
+                  : passable49 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 45 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable41 >> (loc.x - 4)
-                  : passable41 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable40 >> (loc.x - 5)
+                  : passable40 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable42 >> (loc.x - 4)
-                  : passable42 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable41 >> (loc.x - 5)
+                  : passable41 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable43 >> (loc.x - 4)
-                  : passable43 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable42 >> (loc.x - 5)
+                  : passable42 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable44 >> (loc.x - 4)
-                  : passable44 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable43 >> (loc.x - 5)
+                  : passable43 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable45 >> (loc.x - 4)
-                  : passable45 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable46 >> (loc.x - 4)
-                  : passable46 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable47 >> (loc.x - 4)
-                  : passable47 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable44 >> (loc.x - 5)
+                  : passable44 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable45 >> (loc.x - 5)
+                  : passable45 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable45 >> (loc.x - 5)
+                  : passable45 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable48 >> (loc.x - 4)
-                  : passable48 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable46 >> (loc.x - 5)
+                  : passable46 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable49 >> (loc.x - 4)
-                  : passable49 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable47 >> (loc.x - 5)
+                  : passable47 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable48 >> (loc.x - 5)
+                  : passable48 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable49 >> (loc.x - 5)
+                  : passable49 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable50 >> (loc.x - 5)
+                  : passable50 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 46 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable42 >> (loc.x - 4)
-                  : passable42 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable41 >> (loc.x - 5)
+                  : passable41 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable43 >> (loc.x - 4)
-                  : passable43 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable42 >> (loc.x - 5)
+                  : passable42 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable44 >> (loc.x - 4)
-                  : passable44 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable43 >> (loc.x - 5)
+                  : passable43 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable45 >> (loc.x - 4)
-                  : passable45 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable44 >> (loc.x - 5)
+                  : passable44 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable46 >> (loc.x - 4)
-                  : passable46 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable47 >> (loc.x - 4)
-                  : passable47 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable48 >> (loc.x - 4)
-                  : passable48 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable45 >> (loc.x - 5)
+                  : passable45 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable46 >> (loc.x - 5)
+                  : passable46 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable46 >> (loc.x - 5)
+                  : passable46 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable49 >> (loc.x - 4)
-                  : passable49 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable47 >> (loc.x - 5)
+                  : passable47 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable50 >> (loc.x - 4)
-                  : passable50 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable48 >> (loc.x - 5)
+                  : passable48 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable49 >> (loc.x - 5)
+                  : passable49 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable50 >> (loc.x - 5)
+                  : passable50 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable51 >> (loc.x - 5)
+                  : passable51 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 47 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable43 >> (loc.x - 4)
-                  : passable43 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable42 >> (loc.x - 5)
+                  : passable42 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable44 >> (loc.x - 4)
-                  : passable44 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable43 >> (loc.x - 5)
+                  : passable43 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable45 >> (loc.x - 4)
-                  : passable45 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable44 >> (loc.x - 5)
+                  : passable44 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable46 >> (loc.x - 4)
-                  : passable46 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable45 >> (loc.x - 5)
+                  : passable45 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable47 >> (loc.x - 4)
-                  : passable47 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable48 >> (loc.x - 4)
-                  : passable48 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable49 >> (loc.x - 4)
-                  : passable49 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable46 >> (loc.x - 5)
+                  : passable46 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable47 >> (loc.x - 5)
+                  : passable47 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable47 >> (loc.x - 5)
+                  : passable47 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable50 >> (loc.x - 4)
-                  : passable50 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable48 >> (loc.x - 5)
+                  : passable48 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable51 >> (loc.x - 4)
-                  : passable51 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable49 >> (loc.x - 5)
+                  : passable49 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable50 >> (loc.x - 5)
+                  : passable50 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable51 >> (loc.x - 5)
+                  : passable51 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable52 >> (loc.x - 5)
+                  : passable52 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 48 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable44 >> (loc.x - 4)
-                  : passable44 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable43 >> (loc.x - 5)
+                  : passable43 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable45 >> (loc.x - 4)
-                  : passable45 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable44 >> (loc.x - 5)
+                  : passable44 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable46 >> (loc.x - 4)
-                  : passable46 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable45 >> (loc.x - 5)
+                  : passable45 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable47 >> (loc.x - 4)
-                  : passable47 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable46 >> (loc.x - 5)
+                  : passable46 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable48 >> (loc.x - 4)
-                  : passable48 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable49 >> (loc.x - 4)
-                  : passable49 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable50 >> (loc.x - 4)
-                  : passable50 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable47 >> (loc.x - 5)
+                  : passable47 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable48 >> (loc.x - 5)
+                  : passable48 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable48 >> (loc.x - 5)
+                  : passable48 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable51 >> (loc.x - 4)
-                  : passable51 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable49 >> (loc.x - 5)
+                  : passable49 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable52 >> (loc.x - 4)
-                  : passable52 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable50 >> (loc.x - 5)
+                  : passable50 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable51 >> (loc.x - 5)
+                  : passable51 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable52 >> (loc.x - 5)
+                  : passable52 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable53 >> (loc.x - 5)
+                  : passable53 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 49 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable45 >> (loc.x - 4)
-                  : passable45 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable44 >> (loc.x - 5)
+                  : passable44 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable46 >> (loc.x - 4)
-                  : passable46 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable45 >> (loc.x - 5)
+                  : passable45 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable47 >> (loc.x - 4)
-                  : passable47 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable46 >> (loc.x - 5)
+                  : passable46 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable48 >> (loc.x - 4)
-                  : passable48 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable47 >> (loc.x - 5)
+                  : passable47 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable49 >> (loc.x - 4)
-                  : passable49 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable50 >> (loc.x - 4)
-                  : passable50 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable51 >> (loc.x - 4)
-                  : passable51 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable48 >> (loc.x - 5)
+                  : passable48 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable49 >> (loc.x - 5)
+                  : passable49 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable49 >> (loc.x - 5)
+                  : passable49 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable52 >> (loc.x - 4)
-                  : passable52 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable50 >> (loc.x - 5)
+                  : passable50 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable53 >> (loc.x - 4)
-                  : passable53 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable51 >> (loc.x - 5)
+                  : passable51 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable52 >> (loc.x - 5)
+                  : passable52 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable53 >> (loc.x - 5)
+                  : passable53 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable54 >> (loc.x - 5)
+                  : passable54 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 50 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable46 >> (loc.x - 4)
-                  : passable46 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable45 >> (loc.x - 5)
+                  : passable45 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable47 >> (loc.x - 4)
-                  : passable47 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable46 >> (loc.x - 5)
+                  : passable46 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable48 >> (loc.x - 4)
-                  : passable48 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable47 >> (loc.x - 5)
+                  : passable47 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable49 >> (loc.x - 4)
-                  : passable49 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable48 >> (loc.x - 5)
+                  : passable48 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable50 >> (loc.x - 4)
-                  : passable50 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable51 >> (loc.x - 4)
-                  : passable51 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable52 >> (loc.x - 4)
-                  : passable52 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable49 >> (loc.x - 5)
+                  : passable49 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable50 >> (loc.x - 5)
+                  : passable50 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable50 >> (loc.x - 5)
+                  : passable50 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable53 >> (loc.x - 4)
-                  : passable53 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable51 >> (loc.x - 5)
+                  : passable51 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable54 >> (loc.x - 4)
-                  : passable54 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable52 >> (loc.x - 5)
+                  : passable52 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable53 >> (loc.x - 5)
+                  : passable53 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable54 >> (loc.x - 5)
+                  : passable54 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable55 >> (loc.x - 5)
+                  : passable55 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 51 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable47 >> (loc.x - 4)
-                  : passable47 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable46 >> (loc.x - 5)
+                  : passable46 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable48 >> (loc.x - 4)
-                  : passable48 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable47 >> (loc.x - 5)
+                  : passable47 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable49 >> (loc.x - 4)
-                  : passable49 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable48 >> (loc.x - 5)
+                  : passable48 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable50 >> (loc.x - 4)
-                  : passable50 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable49 >> (loc.x - 5)
+                  : passable49 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable51 >> (loc.x - 4)
-                  : passable51 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable52 >> (loc.x - 4)
-                  : passable52 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable53 >> (loc.x - 4)
-                  : passable53 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable50 >> (loc.x - 5)
+                  : passable50 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable51 >> (loc.x - 5)
+                  : passable51 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable51 >> (loc.x - 5)
+                  : passable51 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable54 >> (loc.x - 4)
-                  : passable54 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable52 >> (loc.x - 5)
+                  : passable52 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable55 >> (loc.x - 4)
-                  : passable55 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable53 >> (loc.x - 5)
+                  : passable53 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable54 >> (loc.x - 5)
+                  : passable54 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable55 >> (loc.x - 5)
+                  : passable55 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable56 >> (loc.x - 5)
+                  : passable56 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 52 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable48 >> (loc.x - 4)
-                  : passable48 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable47 >> (loc.x - 5)
+                  : passable47 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable49 >> (loc.x - 4)
-                  : passable49 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable48 >> (loc.x - 5)
+                  : passable48 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable50 >> (loc.x - 4)
-                  : passable50 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable49 >> (loc.x - 5)
+                  : passable49 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable51 >> (loc.x - 4)
-                  : passable51 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable50 >> (loc.x - 5)
+                  : passable50 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable52 >> (loc.x - 4)
-                  : passable52 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable53 >> (loc.x - 4)
-                  : passable53 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable54 >> (loc.x - 4)
-                  : passable54 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable51 >> (loc.x - 5)
+                  : passable51 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable52 >> (loc.x - 5)
+                  : passable52 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable52 >> (loc.x - 5)
+                  : passable52 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable55 >> (loc.x - 4)
-                  : passable55 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable53 >> (loc.x - 5)
+                  : passable53 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable56 >> (loc.x - 4)
-                  : passable56 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable54 >> (loc.x - 5)
+                  : passable54 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable55 >> (loc.x - 5)
+                  : passable55 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable56 >> (loc.x - 5)
+                  : passable56 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable57 >> (loc.x - 5)
+                  : passable57 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 53 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable49 >> (loc.x - 4)
-                  : passable49 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable48 >> (loc.x - 5)
+                  : passable48 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable50 >> (loc.x - 4)
-                  : passable50 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable49 >> (loc.x - 5)
+                  : passable49 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable51 >> (loc.x - 4)
-                  : passable51 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable50 >> (loc.x - 5)
+                  : passable50 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable52 >> (loc.x - 4)
-                  : passable52 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable51 >> (loc.x - 5)
+                  : passable51 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable53 >> (loc.x - 4)
-                  : passable53 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable54 >> (loc.x - 4)
-                  : passable54 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable55 >> (loc.x - 4)
-                  : passable55 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable52 >> (loc.x - 5)
+                  : passable52 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable53 >> (loc.x - 5)
+                  : passable53 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable53 >> (loc.x - 5)
+                  : passable53 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable56 >> (loc.x - 4)
-                  : passable56 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable54 >> (loc.x - 5)
+                  : passable54 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable57 >> (loc.x - 4)
-                  : passable57 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable55 >> (loc.x - 5)
+                  : passable55 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable56 >> (loc.x - 5)
+                  : passable56 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable57 >> (loc.x - 5)
+                  : passable57 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable58 >> (loc.x - 5)
+                  : passable58 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 54 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable50 >> (loc.x - 4)
-                  : passable50 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable49 >> (loc.x - 5)
+                  : passable49 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable51 >> (loc.x - 4)
-                  : passable51 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable50 >> (loc.x - 5)
+                  : passable50 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable52 >> (loc.x - 4)
-                  : passable52 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable51 >> (loc.x - 5)
+                  : passable51 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable53 >> (loc.x - 4)
-                  : passable53 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable52 >> (loc.x - 5)
+                  : passable52 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable54 >> (loc.x - 4)
-                  : passable54 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable55 >> (loc.x - 4)
-                  : passable55 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable56 >> (loc.x - 4)
-                  : passable56 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable53 >> (loc.x - 5)
+                  : passable53 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable54 >> (loc.x - 5)
+                  : passable54 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable54 >> (loc.x - 5)
+                  : passable54 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable57 >> (loc.x - 4)
-                  : passable57 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable55 >> (loc.x - 5)
+                  : passable55 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable58 >> (loc.x - 4)
-                  : passable58 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable56 >> (loc.x - 5)
+                  : passable56 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable57 >> (loc.x - 5)
+                  : passable57 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable58 >> (loc.x - 5)
+                  : passable58 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable59 >> (loc.x - 5)
+                  : passable59 << (5 - loc.x))
+                 & 0x7ff)  << 49 
                 ;
                 
                 
             }
             
             case 55 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable51 >> (loc.x - 4)
-                  : passable51 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable50 >> (loc.x - 5)
+                  : passable50 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable52 >> (loc.x - 4)
-                  : passable52 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable51 >> (loc.x - 5)
+                  : passable51 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable53 >> (loc.x - 4)
-                  : passable53 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable52 >> (loc.x - 5)
+                  : passable52 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable54 >> (loc.x - 4)
-                  : passable54 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable53 >> (loc.x - 5)
+                  : passable53 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable55 >> (loc.x - 4)
-                  : passable55 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable56 >> (loc.x - 4)
-                  : passable56 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable57 >> (loc.x - 4)
-                  : passable57 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable54 >> (loc.x - 5)
+                  : passable54 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable55 >> (loc.x - 5)
+                  : passable55 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable55 >> (loc.x - 5)
+                  : passable55 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable58 >> (loc.x - 4)
-                  : passable58 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable56 >> (loc.x - 5)
+                  : passable56 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
                 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable59 >> (loc.x - 4)
-                  : passable59 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable57 >> (loc.x - 5)
+                  : passable57 << (5 - loc.x))
+                 & 0x7ff)  << 16 
                 ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable58 >> (loc.x - 5)
+                  : passable58 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable59 >> (loc.x - 5)
+                  : passable59 << (5 - loc.x))
+                 & 0x7ff)  << 38 
+                ;
+                
+                
                 
                 
             }
             
             case 56 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable52 >> (loc.x - 4)
-                  : passable52 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable51 >> (loc.x - 5)
+                  : passable51 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable53 >> (loc.x - 4)
-                  : passable53 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable52 >> (loc.x - 5)
+                  : passable52 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable54 >> (loc.x - 4)
-                  : passable54 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable53 >> (loc.x - 5)
+                  : passable53 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable55 >> (loc.x - 4)
-                  : passable55 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable54 >> (loc.x - 5)
+                  : passable54 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable56 >> (loc.x - 4)
-                  : passable56 << (4 - loc.x))
-                 & 0x1ff)  << 36 
+                ((loc.x - 5 >= 0
+                  ? passable55 >> (loc.x - 5)
+                  : passable55 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
-                
+
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable57 >> (loc.x - 4)
-                  : passable57 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable58 >> (loc.x - 4)
-                  : passable58 << (4 - loc.x))
-                 & 0x1ff)  << 54 
-                ;
-                
-                
+                ((loc.x - 5 >= 0
+                  ? passable56 >> (loc.x - 5)
+                  : passable56 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable56 >> (loc.x - 5)
+                  : passable56 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
 
                 
                 
                 localPassable1 |= 
-                ((loc.x - 4 >= 0
-                  ? passable59 >> (loc.x - 4)
-                  : passable59 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable57 >> (loc.x - 5)
+                  : passable57 << (5 - loc.x))
+                 & 0x7ff)  << 5 
                 ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable58 >> (loc.x - 5)
+                  : passable58 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable59 >> (loc.x - 5)
+                  : passable59 << (5 - loc.x))
+                 & 0x7ff)  << 27 
+                ;
+                
+                
                 
                 
                 
@@ -14036,74 +15241,89 @@ public class CellTracker {
             }
             
             case 57 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable53 >> (loc.x - 4)
-                  : passable53 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable52 >> (loc.x - 5)
+                  : passable52 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable54 >> (loc.x - 4)
-                  : passable54 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable53 >> (loc.x - 5)
+                  : passable53 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable55 >> (loc.x - 4)
-                  : passable55 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable54 >> (loc.x - 5)
+                  : passable54 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable56 >> (loc.x - 4)
-                  : passable56 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable55 >> (loc.x - 5)
+                  : passable55 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable57 >> (loc.x - 4)
-                  : passable57 << (4 - loc.x))
-                 & 0x1ff)  << 36 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable58 >> (loc.x - 4)
-                  : passable58 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable59 >> (loc.x - 4)
-                  : passable59 << (4 - loc.x))
-                 & 0x1ff)  << 54 
+                ((loc.x - 5 >= 0
+                  ? passable56 >> (loc.x - 5)
+                  : passable56 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable57 >> (loc.x - 5)
+                  : passable57 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable57 >> (loc.x - 5)
+                  : passable57 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable58 >> (loc.x - 5)
+                  : passable58 << (5 - loc.x))
+                 & 0x7ff)  << 5 
+                ;
+                
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable59 >> (loc.x - 5)
+                  : passable59 << (5 - loc.x))
+                 & 0x7ff)  << 16 
+                ;
+                
+                
+                
                 
                 
                 
@@ -14112,67 +15332,82 @@ public class CellTracker {
             }
             
             case 58 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable54 >> (loc.x - 4)
-                  : passable54 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable53 >> (loc.x - 5)
+                  : passable53 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable55 >> (loc.x - 4)
-                  : passable55 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable54 >> (loc.x - 5)
+                  : passable54 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable56 >> (loc.x - 4)
-                  : passable56 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable55 >> (loc.x - 5)
+                  : passable55 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable57 >> (loc.x - 4)
-                  : passable57 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable56 >> (loc.x - 5)
+                  : passable56 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable58 >> (loc.x - 4)
-                  : passable58 << (4 - loc.x))
-                 & 0x1ff)  << 36 
+                ((loc.x - 5 >= 0
+                  ? passable57 >> (loc.x - 5)
+                  : passable57 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
-                
-                
-                
-                localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable59 >> (loc.x - 4)
-                  : passable59 << (4 - loc.x))
-                 & 0x1ff)  << 45 
-                ;
-                
-                
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable58 >> (loc.x - 5)
+                  : passable58 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable58 >> (loc.x - 5)
+                  : passable58 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
+                
+                
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable59 >> (loc.x - 5)
+                  : passable59 << (5 - loc.x))
+                 & 0x7ff)  << 5 
+                ;
+                
+                
+                
+                
+                
                 
                 
                 
@@ -14181,60 +15416,75 @@ public class CellTracker {
             }
             
             case 59 -> {
-                // get the 9 relevant bits from row i + dy, shifted by off
+                // get the 11 relevant bits from row i + dy, shifted by off
                 
 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable55 >> (loc.x - 4)
-                  : passable55 << (4 - loc.x))
-                 & 0x1ff) 
+                ((loc.x - 5 >= 0
+                  ? passable54 >> (loc.x - 5)
+                  : passable54 << (5 - loc.x))
+                 & 0x7ff) 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable56 >> (loc.x - 4)
-                  : passable56 << (4 - loc.x))
-                 & 0x1ff)  << 9 
+                ((loc.x - 5 >= 0
+                  ? passable55 >> (loc.x - 5)
+                  : passable55 << (5 - loc.x))
+                 & 0x7ff)  << 11 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable57 >> (loc.x - 4)
-                  : passable57 << (4 - loc.x))
-                 & 0x1ff)  << 18 
+                ((loc.x - 5 >= 0
+                  ? passable56 >> (loc.x - 5)
+                  : passable56 << (5 - loc.x))
+                 & 0x7ff)  << 22 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable58 >> (loc.x - 4)
-                  : passable58 << (4 - loc.x))
-                 & 0x1ff)  << 27 
+                ((loc.x - 5 >= 0
+                  ? passable57 >> (loc.x - 5)
+                  : passable57 << (5 - loc.x))
+                 & 0x7ff)  << 33 
                 ;
                 
                 
                 
                 localPassable0 |= 
-                ((loc.x - 4 >= 0
-                  ? passable59 >> (loc.x - 4)
-                  : passable59 << (4 - loc.x))
-                 & 0x1ff)  << 36 
+                ((loc.x - 5 >= 0
+                  ? passable58 >> (loc.x - 5)
+                  : passable58 << (5 - loc.x))
+                 & 0x7ff)  << 44 
                 ;
-                
-                
-                
-                
                 
                 
 
+                localPassable0 |= 
+                ((loc.x - 5 >= 0
+                  ? passable59 >> (loc.x - 5)
+                  : passable59 << (5 - loc.x))
+                 & 0x7ff)  << 55 
+                 & 0x1f80000000000000l;
+                localPassable1 |= 
+                ((loc.x - 5 >= 0
+                  ? passable59 >> (loc.x - 5)
+                  : passable59 << (5 - loc.x))
+                 & 0x7ff) 
+                 >> 6;
+
+                
+                
+                
+                
+                
+                
                 
                 
                 
@@ -14242,6 +15492,21 @@ public class CellTracker {
                 
             }
             
+        }
+    }
+
+    public static void printLocalMask(long m1, long m2) {
+        indicate("\n");
+        for(int i = 10; i >= 0; i--) {
+            long row;
+            if(i < 5) row = (m1 >> (i * 11)) & 0x7ff;
+            else if(i == 5) row = (m1 >> 55) | ((m2 & 0x3f) << 6);
+            else row = (m2 >> ((i - 6) * 11 + 5)) & 0x7ff;
+            String s = "";
+            for(int j = 0; j < 11; j++) {
+                s += ((row & (1 << j)) != 0 ? "X " : ". ");
+            }
+            indicate(s + "\n");
         }
     }
 }

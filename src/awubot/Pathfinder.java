@@ -2,6 +2,7 @@ package awubot;
 
 import battlecode.common.*;
 import static awubot.util.Util.*;
+import awubot.util.Profiler;
 import static awubot.Game.*;
 
 
@@ -9,7 +10,9 @@ import static awubot.Game.*;
 class BugnavInstance {
     MapLocation target;
     // false for the instances spawned when guessing
-    boolean canGuess;
+    boolean isMaster;
+    // i guessed last turn, so i don't need to guess again
+    boolean justGuessed = false;
 
     Direction bottomDir, topDir;
 
@@ -2523,26 +2526,29 @@ class BugnavInstance {
     boolean leftTurn499;
     
 
+    // used to speed up the hot path of setCurrentState (which is a noop)
+    static MapLocation lastLoc;
     void reset() {
         pos = rc.getLocation();
         pathLength = 0;
         stackSize = 0;
         emptyStackTurns = 1000;
         bottomDir = topDir = pos.directionTo(target);
+        lastLoc = new MapLocation(-1, -1);
     }
 
     BugnavInstance(boolean leftTurn, MapLocation target) {
         this.leftTurn = leftTurn;
         this.target = target;
-        this.canGuess = true;
+        this.isMaster = true;
         reset();
     }
 
-    BugnavInstance(MapLocation pos, boolean leftTurn, MapLocation target, boolean canGuess) {
+    BugnavInstance(MapLocation pos, boolean leftTurn, MapLocation target, boolean isMaster) {
         indicate("RESET");
         this.leftTurn = leftTurn;
         this.target = target;
-        this.canGuess = canGuess;
+        this.isMaster = isMaster;
         reset();
         this.pos = pos;
         appendCurrentState();
@@ -16051,3015 +16057,3011 @@ class BugnavInstance {
     
 
     void setCurrentState() {
-        pos = null;
         switch(pathLength) {
             
             case 500:
-                if(path499.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState500();
+                if(chebyshevDistance(path499, rc.getLocation()) <= 5) {
+                    if(pathLength != 500) setCurrentState500();
                     break;
                 }
                 
             case 499:
-                if(path498.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState499();
+                if(chebyshevDistance(path498, rc.getLocation()) <= 5) {
+                    if(pathLength != 499) setCurrentState499();
                     break;
                 }
                 
             case 498:
-                if(path497.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState498();
+                if(chebyshevDistance(path497, rc.getLocation()) <= 5) {
+                    if(pathLength != 498) setCurrentState498();
                     break;
                 }
                 
             case 497:
-                if(path496.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState497();
+                if(chebyshevDistance(path496, rc.getLocation()) <= 5) {
+                    if(pathLength != 497) setCurrentState497();
                     break;
                 }
                 
             case 496:
-                if(path495.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState496();
+                if(chebyshevDistance(path495, rc.getLocation()) <= 5) {
+                    if(pathLength != 496) setCurrentState496();
                     break;
                 }
                 
             case 495:
-                if(path494.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState495();
+                if(chebyshevDistance(path494, rc.getLocation()) <= 5) {
+                    if(pathLength != 495) setCurrentState495();
                     break;
                 }
                 
             case 494:
-                if(path493.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState494();
+                if(chebyshevDistance(path493, rc.getLocation()) <= 5) {
+                    if(pathLength != 494) setCurrentState494();
                     break;
                 }
                 
             case 493:
-                if(path492.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState493();
+                if(chebyshevDistance(path492, rc.getLocation()) <= 5) {
+                    if(pathLength != 493) setCurrentState493();
                     break;
                 }
                 
             case 492:
-                if(path491.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState492();
+                if(chebyshevDistance(path491, rc.getLocation()) <= 5) {
+                    if(pathLength != 492) setCurrentState492();
                     break;
                 }
                 
             case 491:
-                if(path490.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState491();
+                if(chebyshevDistance(path490, rc.getLocation()) <= 5) {
+                    if(pathLength != 491) setCurrentState491();
                     break;
                 }
                 
             case 490:
-                if(path489.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState490();
+                if(chebyshevDistance(path489, rc.getLocation()) <= 5) {
+                    if(pathLength != 490) setCurrentState490();
                     break;
                 }
                 
             case 489:
-                if(path488.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState489();
+                if(chebyshevDistance(path488, rc.getLocation()) <= 5) {
+                    if(pathLength != 489) setCurrentState489();
                     break;
                 }
                 
             case 488:
-                if(path487.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState488();
+                if(chebyshevDistance(path487, rc.getLocation()) <= 5) {
+                    if(pathLength != 488) setCurrentState488();
                     break;
                 }
                 
             case 487:
-                if(path486.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState487();
+                if(chebyshevDistance(path486, rc.getLocation()) <= 5) {
+                    if(pathLength != 487) setCurrentState487();
                     break;
                 }
                 
             case 486:
-                if(path485.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState486();
+                if(chebyshevDistance(path485, rc.getLocation()) <= 5) {
+                    if(pathLength != 486) setCurrentState486();
                     break;
                 }
                 
             case 485:
-                if(path484.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState485();
+                if(chebyshevDistance(path484, rc.getLocation()) <= 5) {
+                    if(pathLength != 485) setCurrentState485();
                     break;
                 }
                 
             case 484:
-                if(path483.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState484();
+                if(chebyshevDistance(path483, rc.getLocation()) <= 5) {
+                    if(pathLength != 484) setCurrentState484();
                     break;
                 }
                 
             case 483:
-                if(path482.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState483();
+                if(chebyshevDistance(path482, rc.getLocation()) <= 5) {
+                    if(pathLength != 483) setCurrentState483();
                     break;
                 }
                 
             case 482:
-                if(path481.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState482();
+                if(chebyshevDistance(path481, rc.getLocation()) <= 5) {
+                    if(pathLength != 482) setCurrentState482();
                     break;
                 }
                 
             case 481:
-                if(path480.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState481();
+                if(chebyshevDistance(path480, rc.getLocation()) <= 5) {
+                    if(pathLength != 481) setCurrentState481();
                     break;
                 }
                 
             case 480:
-                if(path479.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState480();
+                if(chebyshevDistance(path479, rc.getLocation()) <= 5) {
+                    if(pathLength != 480) setCurrentState480();
                     break;
                 }
                 
             case 479:
-                if(path478.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState479();
+                if(chebyshevDistance(path478, rc.getLocation()) <= 5) {
+                    if(pathLength != 479) setCurrentState479();
                     break;
                 }
                 
             case 478:
-                if(path477.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState478();
+                if(chebyshevDistance(path477, rc.getLocation()) <= 5) {
+                    if(pathLength != 478) setCurrentState478();
                     break;
                 }
                 
             case 477:
-                if(path476.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState477();
+                if(chebyshevDistance(path476, rc.getLocation()) <= 5) {
+                    if(pathLength != 477) setCurrentState477();
                     break;
                 }
                 
             case 476:
-                if(path475.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState476();
+                if(chebyshevDistance(path475, rc.getLocation()) <= 5) {
+                    if(pathLength != 476) setCurrentState476();
                     break;
                 }
                 
             case 475:
-                if(path474.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState475();
+                if(chebyshevDistance(path474, rc.getLocation()) <= 5) {
+                    if(pathLength != 475) setCurrentState475();
                     break;
                 }
                 
             case 474:
-                if(path473.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState474();
+                if(chebyshevDistance(path473, rc.getLocation()) <= 5) {
+                    if(pathLength != 474) setCurrentState474();
                     break;
                 }
                 
             case 473:
-                if(path472.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState473();
+                if(chebyshevDistance(path472, rc.getLocation()) <= 5) {
+                    if(pathLength != 473) setCurrentState473();
                     break;
                 }
                 
             case 472:
-                if(path471.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState472();
+                if(chebyshevDistance(path471, rc.getLocation()) <= 5) {
+                    if(pathLength != 472) setCurrentState472();
                     break;
                 }
                 
             case 471:
-                if(path470.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState471();
+                if(chebyshevDistance(path470, rc.getLocation()) <= 5) {
+                    if(pathLength != 471) setCurrentState471();
                     break;
                 }
                 
             case 470:
-                if(path469.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState470();
+                if(chebyshevDistance(path469, rc.getLocation()) <= 5) {
+                    if(pathLength != 470) setCurrentState470();
                     break;
                 }
                 
             case 469:
-                if(path468.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState469();
+                if(chebyshevDistance(path468, rc.getLocation()) <= 5) {
+                    if(pathLength != 469) setCurrentState469();
                     break;
                 }
                 
             case 468:
-                if(path467.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState468();
+                if(chebyshevDistance(path467, rc.getLocation()) <= 5) {
+                    if(pathLength != 468) setCurrentState468();
                     break;
                 }
                 
             case 467:
-                if(path466.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState467();
+                if(chebyshevDistance(path466, rc.getLocation()) <= 5) {
+                    if(pathLength != 467) setCurrentState467();
                     break;
                 }
                 
             case 466:
-                if(path465.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState466();
+                if(chebyshevDistance(path465, rc.getLocation()) <= 5) {
+                    if(pathLength != 466) setCurrentState466();
                     break;
                 }
                 
             case 465:
-                if(path464.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState465();
+                if(chebyshevDistance(path464, rc.getLocation()) <= 5) {
+                    if(pathLength != 465) setCurrentState465();
                     break;
                 }
                 
             case 464:
-                if(path463.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState464();
+                if(chebyshevDistance(path463, rc.getLocation()) <= 5) {
+                    if(pathLength != 464) setCurrentState464();
                     break;
                 }
                 
             case 463:
-                if(path462.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState463();
+                if(chebyshevDistance(path462, rc.getLocation()) <= 5) {
+                    if(pathLength != 463) setCurrentState463();
                     break;
                 }
                 
             case 462:
-                if(path461.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState462();
+                if(chebyshevDistance(path461, rc.getLocation()) <= 5) {
+                    if(pathLength != 462) setCurrentState462();
                     break;
                 }
                 
             case 461:
-                if(path460.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState461();
+                if(chebyshevDistance(path460, rc.getLocation()) <= 5) {
+                    if(pathLength != 461) setCurrentState461();
                     break;
                 }
                 
             case 460:
-                if(path459.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState460();
+                if(chebyshevDistance(path459, rc.getLocation()) <= 5) {
+                    if(pathLength != 460) setCurrentState460();
                     break;
                 }
                 
             case 459:
-                if(path458.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState459();
+                if(chebyshevDistance(path458, rc.getLocation()) <= 5) {
+                    if(pathLength != 459) setCurrentState459();
                     break;
                 }
                 
             case 458:
-                if(path457.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState458();
+                if(chebyshevDistance(path457, rc.getLocation()) <= 5) {
+                    if(pathLength != 458) setCurrentState458();
                     break;
                 }
                 
             case 457:
-                if(path456.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState457();
+                if(chebyshevDistance(path456, rc.getLocation()) <= 5) {
+                    if(pathLength != 457) setCurrentState457();
                     break;
                 }
                 
             case 456:
-                if(path455.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState456();
+                if(chebyshevDistance(path455, rc.getLocation()) <= 5) {
+                    if(pathLength != 456) setCurrentState456();
                     break;
                 }
                 
             case 455:
-                if(path454.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState455();
+                if(chebyshevDistance(path454, rc.getLocation()) <= 5) {
+                    if(pathLength != 455) setCurrentState455();
                     break;
                 }
                 
             case 454:
-                if(path453.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState454();
+                if(chebyshevDistance(path453, rc.getLocation()) <= 5) {
+                    if(pathLength != 454) setCurrentState454();
                     break;
                 }
                 
             case 453:
-                if(path452.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState453();
+                if(chebyshevDistance(path452, rc.getLocation()) <= 5) {
+                    if(pathLength != 453) setCurrentState453();
                     break;
                 }
                 
             case 452:
-                if(path451.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState452();
+                if(chebyshevDistance(path451, rc.getLocation()) <= 5) {
+                    if(pathLength != 452) setCurrentState452();
                     break;
                 }
                 
             case 451:
-                if(path450.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState451();
+                if(chebyshevDistance(path450, rc.getLocation()) <= 5) {
+                    if(pathLength != 451) setCurrentState451();
                     break;
                 }
                 
             case 450:
-                if(path449.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState450();
+                if(chebyshevDistance(path449, rc.getLocation()) <= 5) {
+                    if(pathLength != 450) setCurrentState450();
                     break;
                 }
                 
             case 449:
-                if(path448.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState449();
+                if(chebyshevDistance(path448, rc.getLocation()) <= 5) {
+                    if(pathLength != 449) setCurrentState449();
                     break;
                 }
                 
             case 448:
-                if(path447.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState448();
+                if(chebyshevDistance(path447, rc.getLocation()) <= 5) {
+                    if(pathLength != 448) setCurrentState448();
                     break;
                 }
                 
             case 447:
-                if(path446.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState447();
+                if(chebyshevDistance(path446, rc.getLocation()) <= 5) {
+                    if(pathLength != 447) setCurrentState447();
                     break;
                 }
                 
             case 446:
-                if(path445.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState446();
+                if(chebyshevDistance(path445, rc.getLocation()) <= 5) {
+                    if(pathLength != 446) setCurrentState446();
                     break;
                 }
                 
             case 445:
-                if(path444.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState445();
+                if(chebyshevDistance(path444, rc.getLocation()) <= 5) {
+                    if(pathLength != 445) setCurrentState445();
                     break;
                 }
                 
             case 444:
-                if(path443.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState444();
+                if(chebyshevDistance(path443, rc.getLocation()) <= 5) {
+                    if(pathLength != 444) setCurrentState444();
                     break;
                 }
                 
             case 443:
-                if(path442.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState443();
+                if(chebyshevDistance(path442, rc.getLocation()) <= 5) {
+                    if(pathLength != 443) setCurrentState443();
                     break;
                 }
                 
             case 442:
-                if(path441.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState442();
+                if(chebyshevDistance(path441, rc.getLocation()) <= 5) {
+                    if(pathLength != 442) setCurrentState442();
                     break;
                 }
                 
             case 441:
-                if(path440.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState441();
+                if(chebyshevDistance(path440, rc.getLocation()) <= 5) {
+                    if(pathLength != 441) setCurrentState441();
                     break;
                 }
                 
             case 440:
-                if(path439.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState440();
+                if(chebyshevDistance(path439, rc.getLocation()) <= 5) {
+                    if(pathLength != 440) setCurrentState440();
                     break;
                 }
                 
             case 439:
-                if(path438.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState439();
+                if(chebyshevDistance(path438, rc.getLocation()) <= 5) {
+                    if(pathLength != 439) setCurrentState439();
                     break;
                 }
                 
             case 438:
-                if(path437.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState438();
+                if(chebyshevDistance(path437, rc.getLocation()) <= 5) {
+                    if(pathLength != 438) setCurrentState438();
                     break;
                 }
                 
             case 437:
-                if(path436.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState437();
+                if(chebyshevDistance(path436, rc.getLocation()) <= 5) {
+                    if(pathLength != 437) setCurrentState437();
                     break;
                 }
                 
             case 436:
-                if(path435.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState436();
+                if(chebyshevDistance(path435, rc.getLocation()) <= 5) {
+                    if(pathLength != 436) setCurrentState436();
                     break;
                 }
                 
             case 435:
-                if(path434.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState435();
+                if(chebyshevDistance(path434, rc.getLocation()) <= 5) {
+                    if(pathLength != 435) setCurrentState435();
                     break;
                 }
                 
             case 434:
-                if(path433.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState434();
+                if(chebyshevDistance(path433, rc.getLocation()) <= 5) {
+                    if(pathLength != 434) setCurrentState434();
                     break;
                 }
                 
             case 433:
-                if(path432.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState433();
+                if(chebyshevDistance(path432, rc.getLocation()) <= 5) {
+                    if(pathLength != 433) setCurrentState433();
                     break;
                 }
                 
             case 432:
-                if(path431.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState432();
+                if(chebyshevDistance(path431, rc.getLocation()) <= 5) {
+                    if(pathLength != 432) setCurrentState432();
                     break;
                 }
                 
             case 431:
-                if(path430.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState431();
+                if(chebyshevDistance(path430, rc.getLocation()) <= 5) {
+                    if(pathLength != 431) setCurrentState431();
                     break;
                 }
                 
             case 430:
-                if(path429.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState430();
+                if(chebyshevDistance(path429, rc.getLocation()) <= 5) {
+                    if(pathLength != 430) setCurrentState430();
                     break;
                 }
                 
             case 429:
-                if(path428.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState429();
+                if(chebyshevDistance(path428, rc.getLocation()) <= 5) {
+                    if(pathLength != 429) setCurrentState429();
                     break;
                 }
                 
             case 428:
-                if(path427.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState428();
+                if(chebyshevDistance(path427, rc.getLocation()) <= 5) {
+                    if(pathLength != 428) setCurrentState428();
                     break;
                 }
                 
             case 427:
-                if(path426.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState427();
+                if(chebyshevDistance(path426, rc.getLocation()) <= 5) {
+                    if(pathLength != 427) setCurrentState427();
                     break;
                 }
                 
             case 426:
-                if(path425.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState426();
+                if(chebyshevDistance(path425, rc.getLocation()) <= 5) {
+                    if(pathLength != 426) setCurrentState426();
                     break;
                 }
                 
             case 425:
-                if(path424.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState425();
+                if(chebyshevDistance(path424, rc.getLocation()) <= 5) {
+                    if(pathLength != 425) setCurrentState425();
                     break;
                 }
                 
             case 424:
-                if(path423.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState424();
+                if(chebyshevDistance(path423, rc.getLocation()) <= 5) {
+                    if(pathLength != 424) setCurrentState424();
                     break;
                 }
                 
             case 423:
-                if(path422.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState423();
+                if(chebyshevDistance(path422, rc.getLocation()) <= 5) {
+                    if(pathLength != 423) setCurrentState423();
                     break;
                 }
                 
             case 422:
-                if(path421.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState422();
+                if(chebyshevDistance(path421, rc.getLocation()) <= 5) {
+                    if(pathLength != 422) setCurrentState422();
                     break;
                 }
                 
             case 421:
-                if(path420.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState421();
+                if(chebyshevDistance(path420, rc.getLocation()) <= 5) {
+                    if(pathLength != 421) setCurrentState421();
                     break;
                 }
                 
             case 420:
-                if(path419.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState420();
+                if(chebyshevDistance(path419, rc.getLocation()) <= 5) {
+                    if(pathLength != 420) setCurrentState420();
                     break;
                 }
                 
             case 419:
-                if(path418.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState419();
+                if(chebyshevDistance(path418, rc.getLocation()) <= 5) {
+                    if(pathLength != 419) setCurrentState419();
                     break;
                 }
                 
             case 418:
-                if(path417.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState418();
+                if(chebyshevDistance(path417, rc.getLocation()) <= 5) {
+                    if(pathLength != 418) setCurrentState418();
                     break;
                 }
                 
             case 417:
-                if(path416.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState417();
+                if(chebyshevDistance(path416, rc.getLocation()) <= 5) {
+                    if(pathLength != 417) setCurrentState417();
                     break;
                 }
                 
             case 416:
-                if(path415.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState416();
+                if(chebyshevDistance(path415, rc.getLocation()) <= 5) {
+                    if(pathLength != 416) setCurrentState416();
                     break;
                 }
                 
             case 415:
-                if(path414.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState415();
+                if(chebyshevDistance(path414, rc.getLocation()) <= 5) {
+                    if(pathLength != 415) setCurrentState415();
                     break;
                 }
                 
             case 414:
-                if(path413.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState414();
+                if(chebyshevDistance(path413, rc.getLocation()) <= 5) {
+                    if(pathLength != 414) setCurrentState414();
                     break;
                 }
                 
             case 413:
-                if(path412.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState413();
+                if(chebyshevDistance(path412, rc.getLocation()) <= 5) {
+                    if(pathLength != 413) setCurrentState413();
                     break;
                 }
                 
             case 412:
-                if(path411.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState412();
+                if(chebyshevDistance(path411, rc.getLocation()) <= 5) {
+                    if(pathLength != 412) setCurrentState412();
                     break;
                 }
                 
             case 411:
-                if(path410.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState411();
+                if(chebyshevDistance(path410, rc.getLocation()) <= 5) {
+                    if(pathLength != 411) setCurrentState411();
                     break;
                 }
                 
             case 410:
-                if(path409.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState410();
+                if(chebyshevDistance(path409, rc.getLocation()) <= 5) {
+                    if(pathLength != 410) setCurrentState410();
                     break;
                 }
                 
             case 409:
-                if(path408.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState409();
+                if(chebyshevDistance(path408, rc.getLocation()) <= 5) {
+                    if(pathLength != 409) setCurrentState409();
                     break;
                 }
                 
             case 408:
-                if(path407.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState408();
+                if(chebyshevDistance(path407, rc.getLocation()) <= 5) {
+                    if(pathLength != 408) setCurrentState408();
                     break;
                 }
                 
             case 407:
-                if(path406.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState407();
+                if(chebyshevDistance(path406, rc.getLocation()) <= 5) {
+                    if(pathLength != 407) setCurrentState407();
                     break;
                 }
                 
             case 406:
-                if(path405.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState406();
+                if(chebyshevDistance(path405, rc.getLocation()) <= 5) {
+                    if(pathLength != 406) setCurrentState406();
                     break;
                 }
                 
             case 405:
-                if(path404.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState405();
+                if(chebyshevDistance(path404, rc.getLocation()) <= 5) {
+                    if(pathLength != 405) setCurrentState405();
                     break;
                 }
                 
             case 404:
-                if(path403.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState404();
+                if(chebyshevDistance(path403, rc.getLocation()) <= 5) {
+                    if(pathLength != 404) setCurrentState404();
                     break;
                 }
                 
             case 403:
-                if(path402.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState403();
+                if(chebyshevDistance(path402, rc.getLocation()) <= 5) {
+                    if(pathLength != 403) setCurrentState403();
                     break;
                 }
                 
             case 402:
-                if(path401.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState402();
+                if(chebyshevDistance(path401, rc.getLocation()) <= 5) {
+                    if(pathLength != 402) setCurrentState402();
                     break;
                 }
                 
             case 401:
-                if(path400.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState401();
+                if(chebyshevDistance(path400, rc.getLocation()) <= 5) {
+                    if(pathLength != 401) setCurrentState401();
                     break;
                 }
                 
             case 400:
-                if(path399.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState400();
+                if(chebyshevDistance(path399, rc.getLocation()) <= 5) {
+                    if(pathLength != 400) setCurrentState400();
                     break;
                 }
                 
             case 399:
-                if(path398.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState399();
+                if(chebyshevDistance(path398, rc.getLocation()) <= 5) {
+                    if(pathLength != 399) setCurrentState399();
                     break;
                 }
                 
             case 398:
-                if(path397.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState398();
+                if(chebyshevDistance(path397, rc.getLocation()) <= 5) {
+                    if(pathLength != 398) setCurrentState398();
                     break;
                 }
                 
             case 397:
-                if(path396.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState397();
+                if(chebyshevDistance(path396, rc.getLocation()) <= 5) {
+                    if(pathLength != 397) setCurrentState397();
                     break;
                 }
                 
             case 396:
-                if(path395.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState396();
+                if(chebyshevDistance(path395, rc.getLocation()) <= 5) {
+                    if(pathLength != 396) setCurrentState396();
                     break;
                 }
                 
             case 395:
-                if(path394.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState395();
+                if(chebyshevDistance(path394, rc.getLocation()) <= 5) {
+                    if(pathLength != 395) setCurrentState395();
                     break;
                 }
                 
             case 394:
-                if(path393.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState394();
+                if(chebyshevDistance(path393, rc.getLocation()) <= 5) {
+                    if(pathLength != 394) setCurrentState394();
                     break;
                 }
                 
             case 393:
-                if(path392.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState393();
+                if(chebyshevDistance(path392, rc.getLocation()) <= 5) {
+                    if(pathLength != 393) setCurrentState393();
                     break;
                 }
                 
             case 392:
-                if(path391.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState392();
+                if(chebyshevDistance(path391, rc.getLocation()) <= 5) {
+                    if(pathLength != 392) setCurrentState392();
                     break;
                 }
                 
             case 391:
-                if(path390.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState391();
+                if(chebyshevDistance(path390, rc.getLocation()) <= 5) {
+                    if(pathLength != 391) setCurrentState391();
                     break;
                 }
                 
             case 390:
-                if(path389.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState390();
+                if(chebyshevDistance(path389, rc.getLocation()) <= 5) {
+                    if(pathLength != 390) setCurrentState390();
                     break;
                 }
                 
             case 389:
-                if(path388.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState389();
+                if(chebyshevDistance(path388, rc.getLocation()) <= 5) {
+                    if(pathLength != 389) setCurrentState389();
                     break;
                 }
                 
             case 388:
-                if(path387.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState388();
+                if(chebyshevDistance(path387, rc.getLocation()) <= 5) {
+                    if(pathLength != 388) setCurrentState388();
                     break;
                 }
                 
             case 387:
-                if(path386.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState387();
+                if(chebyshevDistance(path386, rc.getLocation()) <= 5) {
+                    if(pathLength != 387) setCurrentState387();
                     break;
                 }
                 
             case 386:
-                if(path385.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState386();
+                if(chebyshevDistance(path385, rc.getLocation()) <= 5) {
+                    if(pathLength != 386) setCurrentState386();
                     break;
                 }
                 
             case 385:
-                if(path384.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState385();
+                if(chebyshevDistance(path384, rc.getLocation()) <= 5) {
+                    if(pathLength != 385) setCurrentState385();
                     break;
                 }
                 
             case 384:
-                if(path383.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState384();
+                if(chebyshevDistance(path383, rc.getLocation()) <= 5) {
+                    if(pathLength != 384) setCurrentState384();
                     break;
                 }
                 
             case 383:
-                if(path382.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState383();
+                if(chebyshevDistance(path382, rc.getLocation()) <= 5) {
+                    if(pathLength != 383) setCurrentState383();
                     break;
                 }
                 
             case 382:
-                if(path381.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState382();
+                if(chebyshevDistance(path381, rc.getLocation()) <= 5) {
+                    if(pathLength != 382) setCurrentState382();
                     break;
                 }
                 
             case 381:
-                if(path380.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState381();
+                if(chebyshevDistance(path380, rc.getLocation()) <= 5) {
+                    if(pathLength != 381) setCurrentState381();
                     break;
                 }
                 
             case 380:
-                if(path379.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState380();
+                if(chebyshevDistance(path379, rc.getLocation()) <= 5) {
+                    if(pathLength != 380) setCurrentState380();
                     break;
                 }
                 
             case 379:
-                if(path378.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState379();
+                if(chebyshevDistance(path378, rc.getLocation()) <= 5) {
+                    if(pathLength != 379) setCurrentState379();
                     break;
                 }
                 
             case 378:
-                if(path377.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState378();
+                if(chebyshevDistance(path377, rc.getLocation()) <= 5) {
+                    if(pathLength != 378) setCurrentState378();
                     break;
                 }
                 
             case 377:
-                if(path376.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState377();
+                if(chebyshevDistance(path376, rc.getLocation()) <= 5) {
+                    if(pathLength != 377) setCurrentState377();
                     break;
                 }
                 
             case 376:
-                if(path375.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState376();
+                if(chebyshevDistance(path375, rc.getLocation()) <= 5) {
+                    if(pathLength != 376) setCurrentState376();
                     break;
                 }
                 
             case 375:
-                if(path374.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState375();
+                if(chebyshevDistance(path374, rc.getLocation()) <= 5) {
+                    if(pathLength != 375) setCurrentState375();
                     break;
                 }
                 
             case 374:
-                if(path373.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState374();
+                if(chebyshevDistance(path373, rc.getLocation()) <= 5) {
+                    if(pathLength != 374) setCurrentState374();
                     break;
                 }
                 
             case 373:
-                if(path372.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState373();
+                if(chebyshevDistance(path372, rc.getLocation()) <= 5) {
+                    if(pathLength != 373) setCurrentState373();
                     break;
                 }
                 
             case 372:
-                if(path371.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState372();
+                if(chebyshevDistance(path371, rc.getLocation()) <= 5) {
+                    if(pathLength != 372) setCurrentState372();
                     break;
                 }
                 
             case 371:
-                if(path370.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState371();
+                if(chebyshevDistance(path370, rc.getLocation()) <= 5) {
+                    if(pathLength != 371) setCurrentState371();
                     break;
                 }
                 
             case 370:
-                if(path369.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState370();
+                if(chebyshevDistance(path369, rc.getLocation()) <= 5) {
+                    if(pathLength != 370) setCurrentState370();
                     break;
                 }
                 
             case 369:
-                if(path368.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState369();
+                if(chebyshevDistance(path368, rc.getLocation()) <= 5) {
+                    if(pathLength != 369) setCurrentState369();
                     break;
                 }
                 
             case 368:
-                if(path367.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState368();
+                if(chebyshevDistance(path367, rc.getLocation()) <= 5) {
+                    if(pathLength != 368) setCurrentState368();
                     break;
                 }
                 
             case 367:
-                if(path366.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState367();
+                if(chebyshevDistance(path366, rc.getLocation()) <= 5) {
+                    if(pathLength != 367) setCurrentState367();
                     break;
                 }
                 
             case 366:
-                if(path365.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState366();
+                if(chebyshevDistance(path365, rc.getLocation()) <= 5) {
+                    if(pathLength != 366) setCurrentState366();
                     break;
                 }
                 
             case 365:
-                if(path364.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState365();
+                if(chebyshevDistance(path364, rc.getLocation()) <= 5) {
+                    if(pathLength != 365) setCurrentState365();
                     break;
                 }
                 
             case 364:
-                if(path363.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState364();
+                if(chebyshevDistance(path363, rc.getLocation()) <= 5) {
+                    if(pathLength != 364) setCurrentState364();
                     break;
                 }
                 
             case 363:
-                if(path362.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState363();
+                if(chebyshevDistance(path362, rc.getLocation()) <= 5) {
+                    if(pathLength != 363) setCurrentState363();
                     break;
                 }
                 
             case 362:
-                if(path361.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState362();
+                if(chebyshevDistance(path361, rc.getLocation()) <= 5) {
+                    if(pathLength != 362) setCurrentState362();
                     break;
                 }
                 
             case 361:
-                if(path360.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState361();
+                if(chebyshevDistance(path360, rc.getLocation()) <= 5) {
+                    if(pathLength != 361) setCurrentState361();
                     break;
                 }
                 
             case 360:
-                if(path359.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState360();
+                if(chebyshevDistance(path359, rc.getLocation()) <= 5) {
+                    if(pathLength != 360) setCurrentState360();
                     break;
                 }
                 
             case 359:
-                if(path358.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState359();
+                if(chebyshevDistance(path358, rc.getLocation()) <= 5) {
+                    if(pathLength != 359) setCurrentState359();
                     break;
                 }
                 
             case 358:
-                if(path357.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState358();
+                if(chebyshevDistance(path357, rc.getLocation()) <= 5) {
+                    if(pathLength != 358) setCurrentState358();
                     break;
                 }
                 
             case 357:
-                if(path356.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState357();
+                if(chebyshevDistance(path356, rc.getLocation()) <= 5) {
+                    if(pathLength != 357) setCurrentState357();
                     break;
                 }
                 
             case 356:
-                if(path355.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState356();
+                if(chebyshevDistance(path355, rc.getLocation()) <= 5) {
+                    if(pathLength != 356) setCurrentState356();
                     break;
                 }
                 
             case 355:
-                if(path354.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState355();
+                if(chebyshevDistance(path354, rc.getLocation()) <= 5) {
+                    if(pathLength != 355) setCurrentState355();
                     break;
                 }
                 
             case 354:
-                if(path353.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState354();
+                if(chebyshevDistance(path353, rc.getLocation()) <= 5) {
+                    if(pathLength != 354) setCurrentState354();
                     break;
                 }
                 
             case 353:
-                if(path352.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState353();
+                if(chebyshevDistance(path352, rc.getLocation()) <= 5) {
+                    if(pathLength != 353) setCurrentState353();
                     break;
                 }
                 
             case 352:
-                if(path351.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState352();
+                if(chebyshevDistance(path351, rc.getLocation()) <= 5) {
+                    if(pathLength != 352) setCurrentState352();
                     break;
                 }
                 
             case 351:
-                if(path350.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState351();
+                if(chebyshevDistance(path350, rc.getLocation()) <= 5) {
+                    if(pathLength != 351) setCurrentState351();
                     break;
                 }
                 
             case 350:
-                if(path349.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState350();
+                if(chebyshevDistance(path349, rc.getLocation()) <= 5) {
+                    if(pathLength != 350) setCurrentState350();
                     break;
                 }
                 
             case 349:
-                if(path348.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState349();
+                if(chebyshevDistance(path348, rc.getLocation()) <= 5) {
+                    if(pathLength != 349) setCurrentState349();
                     break;
                 }
                 
             case 348:
-                if(path347.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState348();
+                if(chebyshevDistance(path347, rc.getLocation()) <= 5) {
+                    if(pathLength != 348) setCurrentState348();
                     break;
                 }
                 
             case 347:
-                if(path346.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState347();
+                if(chebyshevDistance(path346, rc.getLocation()) <= 5) {
+                    if(pathLength != 347) setCurrentState347();
                     break;
                 }
                 
             case 346:
-                if(path345.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState346();
+                if(chebyshevDistance(path345, rc.getLocation()) <= 5) {
+                    if(pathLength != 346) setCurrentState346();
                     break;
                 }
                 
             case 345:
-                if(path344.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState345();
+                if(chebyshevDistance(path344, rc.getLocation()) <= 5) {
+                    if(pathLength != 345) setCurrentState345();
                     break;
                 }
                 
             case 344:
-                if(path343.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState344();
+                if(chebyshevDistance(path343, rc.getLocation()) <= 5) {
+                    if(pathLength != 344) setCurrentState344();
                     break;
                 }
                 
             case 343:
-                if(path342.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState343();
+                if(chebyshevDistance(path342, rc.getLocation()) <= 5) {
+                    if(pathLength != 343) setCurrentState343();
                     break;
                 }
                 
             case 342:
-                if(path341.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState342();
+                if(chebyshevDistance(path341, rc.getLocation()) <= 5) {
+                    if(pathLength != 342) setCurrentState342();
                     break;
                 }
                 
             case 341:
-                if(path340.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState341();
+                if(chebyshevDistance(path340, rc.getLocation()) <= 5) {
+                    if(pathLength != 341) setCurrentState341();
                     break;
                 }
                 
             case 340:
-                if(path339.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState340();
+                if(chebyshevDistance(path339, rc.getLocation()) <= 5) {
+                    if(pathLength != 340) setCurrentState340();
                     break;
                 }
                 
             case 339:
-                if(path338.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState339();
+                if(chebyshevDistance(path338, rc.getLocation()) <= 5) {
+                    if(pathLength != 339) setCurrentState339();
                     break;
                 }
                 
             case 338:
-                if(path337.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState338();
+                if(chebyshevDistance(path337, rc.getLocation()) <= 5) {
+                    if(pathLength != 338) setCurrentState338();
                     break;
                 }
                 
             case 337:
-                if(path336.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState337();
+                if(chebyshevDistance(path336, rc.getLocation()) <= 5) {
+                    if(pathLength != 337) setCurrentState337();
                     break;
                 }
                 
             case 336:
-                if(path335.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState336();
+                if(chebyshevDistance(path335, rc.getLocation()) <= 5) {
+                    if(pathLength != 336) setCurrentState336();
                     break;
                 }
                 
             case 335:
-                if(path334.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState335();
+                if(chebyshevDistance(path334, rc.getLocation()) <= 5) {
+                    if(pathLength != 335) setCurrentState335();
                     break;
                 }
                 
             case 334:
-                if(path333.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState334();
+                if(chebyshevDistance(path333, rc.getLocation()) <= 5) {
+                    if(pathLength != 334) setCurrentState334();
                     break;
                 }
                 
             case 333:
-                if(path332.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState333();
+                if(chebyshevDistance(path332, rc.getLocation()) <= 5) {
+                    if(pathLength != 333) setCurrentState333();
                     break;
                 }
                 
             case 332:
-                if(path331.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState332();
+                if(chebyshevDistance(path331, rc.getLocation()) <= 5) {
+                    if(pathLength != 332) setCurrentState332();
                     break;
                 }
                 
             case 331:
-                if(path330.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState331();
+                if(chebyshevDistance(path330, rc.getLocation()) <= 5) {
+                    if(pathLength != 331) setCurrentState331();
                     break;
                 }
                 
             case 330:
-                if(path329.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState330();
+                if(chebyshevDistance(path329, rc.getLocation()) <= 5) {
+                    if(pathLength != 330) setCurrentState330();
                     break;
                 }
                 
             case 329:
-                if(path328.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState329();
+                if(chebyshevDistance(path328, rc.getLocation()) <= 5) {
+                    if(pathLength != 329) setCurrentState329();
                     break;
                 }
                 
             case 328:
-                if(path327.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState328();
+                if(chebyshevDistance(path327, rc.getLocation()) <= 5) {
+                    if(pathLength != 328) setCurrentState328();
                     break;
                 }
                 
             case 327:
-                if(path326.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState327();
+                if(chebyshevDistance(path326, rc.getLocation()) <= 5) {
+                    if(pathLength != 327) setCurrentState327();
                     break;
                 }
                 
             case 326:
-                if(path325.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState326();
+                if(chebyshevDistance(path325, rc.getLocation()) <= 5) {
+                    if(pathLength != 326) setCurrentState326();
                     break;
                 }
                 
             case 325:
-                if(path324.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState325();
+                if(chebyshevDistance(path324, rc.getLocation()) <= 5) {
+                    if(pathLength != 325) setCurrentState325();
                     break;
                 }
                 
             case 324:
-                if(path323.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState324();
+                if(chebyshevDistance(path323, rc.getLocation()) <= 5) {
+                    if(pathLength != 324) setCurrentState324();
                     break;
                 }
                 
             case 323:
-                if(path322.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState323();
+                if(chebyshevDistance(path322, rc.getLocation()) <= 5) {
+                    if(pathLength != 323) setCurrentState323();
                     break;
                 }
                 
             case 322:
-                if(path321.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState322();
+                if(chebyshevDistance(path321, rc.getLocation()) <= 5) {
+                    if(pathLength != 322) setCurrentState322();
                     break;
                 }
                 
             case 321:
-                if(path320.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState321();
+                if(chebyshevDistance(path320, rc.getLocation()) <= 5) {
+                    if(pathLength != 321) setCurrentState321();
                     break;
                 }
                 
             case 320:
-                if(path319.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState320();
+                if(chebyshevDistance(path319, rc.getLocation()) <= 5) {
+                    if(pathLength != 320) setCurrentState320();
                     break;
                 }
                 
             case 319:
-                if(path318.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState319();
+                if(chebyshevDistance(path318, rc.getLocation()) <= 5) {
+                    if(pathLength != 319) setCurrentState319();
                     break;
                 }
                 
             case 318:
-                if(path317.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState318();
+                if(chebyshevDistance(path317, rc.getLocation()) <= 5) {
+                    if(pathLength != 318) setCurrentState318();
                     break;
                 }
                 
             case 317:
-                if(path316.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState317();
+                if(chebyshevDistance(path316, rc.getLocation()) <= 5) {
+                    if(pathLength != 317) setCurrentState317();
                     break;
                 }
                 
             case 316:
-                if(path315.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState316();
+                if(chebyshevDistance(path315, rc.getLocation()) <= 5) {
+                    if(pathLength != 316) setCurrentState316();
                     break;
                 }
                 
             case 315:
-                if(path314.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState315();
+                if(chebyshevDistance(path314, rc.getLocation()) <= 5) {
+                    if(pathLength != 315) setCurrentState315();
                     break;
                 }
                 
             case 314:
-                if(path313.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState314();
+                if(chebyshevDistance(path313, rc.getLocation()) <= 5) {
+                    if(pathLength != 314) setCurrentState314();
                     break;
                 }
                 
             case 313:
-                if(path312.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState313();
+                if(chebyshevDistance(path312, rc.getLocation()) <= 5) {
+                    if(pathLength != 313) setCurrentState313();
                     break;
                 }
                 
             case 312:
-                if(path311.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState312();
+                if(chebyshevDistance(path311, rc.getLocation()) <= 5) {
+                    if(pathLength != 312) setCurrentState312();
                     break;
                 }
                 
             case 311:
-                if(path310.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState311();
+                if(chebyshevDistance(path310, rc.getLocation()) <= 5) {
+                    if(pathLength != 311) setCurrentState311();
                     break;
                 }
                 
             case 310:
-                if(path309.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState310();
+                if(chebyshevDistance(path309, rc.getLocation()) <= 5) {
+                    if(pathLength != 310) setCurrentState310();
                     break;
                 }
                 
             case 309:
-                if(path308.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState309();
+                if(chebyshevDistance(path308, rc.getLocation()) <= 5) {
+                    if(pathLength != 309) setCurrentState309();
                     break;
                 }
                 
             case 308:
-                if(path307.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState308();
+                if(chebyshevDistance(path307, rc.getLocation()) <= 5) {
+                    if(pathLength != 308) setCurrentState308();
                     break;
                 }
                 
             case 307:
-                if(path306.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState307();
+                if(chebyshevDistance(path306, rc.getLocation()) <= 5) {
+                    if(pathLength != 307) setCurrentState307();
                     break;
                 }
                 
             case 306:
-                if(path305.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState306();
+                if(chebyshevDistance(path305, rc.getLocation()) <= 5) {
+                    if(pathLength != 306) setCurrentState306();
                     break;
                 }
                 
             case 305:
-                if(path304.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState305();
+                if(chebyshevDistance(path304, rc.getLocation()) <= 5) {
+                    if(pathLength != 305) setCurrentState305();
                     break;
                 }
                 
             case 304:
-                if(path303.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState304();
+                if(chebyshevDistance(path303, rc.getLocation()) <= 5) {
+                    if(pathLength != 304) setCurrentState304();
                     break;
                 }
                 
             case 303:
-                if(path302.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState303();
+                if(chebyshevDistance(path302, rc.getLocation()) <= 5) {
+                    if(pathLength != 303) setCurrentState303();
                     break;
                 }
                 
             case 302:
-                if(path301.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState302();
+                if(chebyshevDistance(path301, rc.getLocation()) <= 5) {
+                    if(pathLength != 302) setCurrentState302();
                     break;
                 }
                 
             case 301:
-                if(path300.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState301();
+                if(chebyshevDistance(path300, rc.getLocation()) <= 5) {
+                    if(pathLength != 301) setCurrentState301();
                     break;
                 }
                 
             case 300:
-                if(path299.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState300();
+                if(chebyshevDistance(path299, rc.getLocation()) <= 5) {
+                    if(pathLength != 300) setCurrentState300();
                     break;
                 }
                 
             case 299:
-                if(path298.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState299();
+                if(chebyshevDistance(path298, rc.getLocation()) <= 5) {
+                    if(pathLength != 299) setCurrentState299();
                     break;
                 }
                 
             case 298:
-                if(path297.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState298();
+                if(chebyshevDistance(path297, rc.getLocation()) <= 5) {
+                    if(pathLength != 298) setCurrentState298();
                     break;
                 }
                 
             case 297:
-                if(path296.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState297();
+                if(chebyshevDistance(path296, rc.getLocation()) <= 5) {
+                    if(pathLength != 297) setCurrentState297();
                     break;
                 }
                 
             case 296:
-                if(path295.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState296();
+                if(chebyshevDistance(path295, rc.getLocation()) <= 5) {
+                    if(pathLength != 296) setCurrentState296();
                     break;
                 }
                 
             case 295:
-                if(path294.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState295();
+                if(chebyshevDistance(path294, rc.getLocation()) <= 5) {
+                    if(pathLength != 295) setCurrentState295();
                     break;
                 }
                 
             case 294:
-                if(path293.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState294();
+                if(chebyshevDistance(path293, rc.getLocation()) <= 5) {
+                    if(pathLength != 294) setCurrentState294();
                     break;
                 }
                 
             case 293:
-                if(path292.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState293();
+                if(chebyshevDistance(path292, rc.getLocation()) <= 5) {
+                    if(pathLength != 293) setCurrentState293();
                     break;
                 }
                 
             case 292:
-                if(path291.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState292();
+                if(chebyshevDistance(path291, rc.getLocation()) <= 5) {
+                    if(pathLength != 292) setCurrentState292();
                     break;
                 }
                 
             case 291:
-                if(path290.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState291();
+                if(chebyshevDistance(path290, rc.getLocation()) <= 5) {
+                    if(pathLength != 291) setCurrentState291();
                     break;
                 }
                 
             case 290:
-                if(path289.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState290();
+                if(chebyshevDistance(path289, rc.getLocation()) <= 5) {
+                    if(pathLength != 290) setCurrentState290();
                     break;
                 }
                 
             case 289:
-                if(path288.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState289();
+                if(chebyshevDistance(path288, rc.getLocation()) <= 5) {
+                    if(pathLength != 289) setCurrentState289();
                     break;
                 }
                 
             case 288:
-                if(path287.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState288();
+                if(chebyshevDistance(path287, rc.getLocation()) <= 5) {
+                    if(pathLength != 288) setCurrentState288();
                     break;
                 }
                 
             case 287:
-                if(path286.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState287();
+                if(chebyshevDistance(path286, rc.getLocation()) <= 5) {
+                    if(pathLength != 287) setCurrentState287();
                     break;
                 }
                 
             case 286:
-                if(path285.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState286();
+                if(chebyshevDistance(path285, rc.getLocation()) <= 5) {
+                    if(pathLength != 286) setCurrentState286();
                     break;
                 }
                 
             case 285:
-                if(path284.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState285();
+                if(chebyshevDistance(path284, rc.getLocation()) <= 5) {
+                    if(pathLength != 285) setCurrentState285();
                     break;
                 }
                 
             case 284:
-                if(path283.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState284();
+                if(chebyshevDistance(path283, rc.getLocation()) <= 5) {
+                    if(pathLength != 284) setCurrentState284();
                     break;
                 }
                 
             case 283:
-                if(path282.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState283();
+                if(chebyshevDistance(path282, rc.getLocation()) <= 5) {
+                    if(pathLength != 283) setCurrentState283();
                     break;
                 }
                 
             case 282:
-                if(path281.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState282();
+                if(chebyshevDistance(path281, rc.getLocation()) <= 5) {
+                    if(pathLength != 282) setCurrentState282();
                     break;
                 }
                 
             case 281:
-                if(path280.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState281();
+                if(chebyshevDistance(path280, rc.getLocation()) <= 5) {
+                    if(pathLength != 281) setCurrentState281();
                     break;
                 }
                 
             case 280:
-                if(path279.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState280();
+                if(chebyshevDistance(path279, rc.getLocation()) <= 5) {
+                    if(pathLength != 280) setCurrentState280();
                     break;
                 }
                 
             case 279:
-                if(path278.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState279();
+                if(chebyshevDistance(path278, rc.getLocation()) <= 5) {
+                    if(pathLength != 279) setCurrentState279();
                     break;
                 }
                 
             case 278:
-                if(path277.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState278();
+                if(chebyshevDistance(path277, rc.getLocation()) <= 5) {
+                    if(pathLength != 278) setCurrentState278();
                     break;
                 }
                 
             case 277:
-                if(path276.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState277();
+                if(chebyshevDistance(path276, rc.getLocation()) <= 5) {
+                    if(pathLength != 277) setCurrentState277();
                     break;
                 }
                 
             case 276:
-                if(path275.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState276();
+                if(chebyshevDistance(path275, rc.getLocation()) <= 5) {
+                    if(pathLength != 276) setCurrentState276();
                     break;
                 }
                 
             case 275:
-                if(path274.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState275();
+                if(chebyshevDistance(path274, rc.getLocation()) <= 5) {
+                    if(pathLength != 275) setCurrentState275();
                     break;
                 }
                 
             case 274:
-                if(path273.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState274();
+                if(chebyshevDistance(path273, rc.getLocation()) <= 5) {
+                    if(pathLength != 274) setCurrentState274();
                     break;
                 }
                 
             case 273:
-                if(path272.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState273();
+                if(chebyshevDistance(path272, rc.getLocation()) <= 5) {
+                    if(pathLength != 273) setCurrentState273();
                     break;
                 }
                 
             case 272:
-                if(path271.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState272();
+                if(chebyshevDistance(path271, rc.getLocation()) <= 5) {
+                    if(pathLength != 272) setCurrentState272();
                     break;
                 }
                 
             case 271:
-                if(path270.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState271();
+                if(chebyshevDistance(path270, rc.getLocation()) <= 5) {
+                    if(pathLength != 271) setCurrentState271();
                     break;
                 }
                 
             case 270:
-                if(path269.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState270();
+                if(chebyshevDistance(path269, rc.getLocation()) <= 5) {
+                    if(pathLength != 270) setCurrentState270();
                     break;
                 }
                 
             case 269:
-                if(path268.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState269();
+                if(chebyshevDistance(path268, rc.getLocation()) <= 5) {
+                    if(pathLength != 269) setCurrentState269();
                     break;
                 }
                 
             case 268:
-                if(path267.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState268();
+                if(chebyshevDistance(path267, rc.getLocation()) <= 5) {
+                    if(pathLength != 268) setCurrentState268();
                     break;
                 }
                 
             case 267:
-                if(path266.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState267();
+                if(chebyshevDistance(path266, rc.getLocation()) <= 5) {
+                    if(pathLength != 267) setCurrentState267();
                     break;
                 }
                 
             case 266:
-                if(path265.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState266();
+                if(chebyshevDistance(path265, rc.getLocation()) <= 5) {
+                    if(pathLength != 266) setCurrentState266();
                     break;
                 }
                 
             case 265:
-                if(path264.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState265();
+                if(chebyshevDistance(path264, rc.getLocation()) <= 5) {
+                    if(pathLength != 265) setCurrentState265();
                     break;
                 }
                 
             case 264:
-                if(path263.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState264();
+                if(chebyshevDistance(path263, rc.getLocation()) <= 5) {
+                    if(pathLength != 264) setCurrentState264();
                     break;
                 }
                 
             case 263:
-                if(path262.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState263();
+                if(chebyshevDistance(path262, rc.getLocation()) <= 5) {
+                    if(pathLength != 263) setCurrentState263();
                     break;
                 }
                 
             case 262:
-                if(path261.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState262();
+                if(chebyshevDistance(path261, rc.getLocation()) <= 5) {
+                    if(pathLength != 262) setCurrentState262();
                     break;
                 }
                 
             case 261:
-                if(path260.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState261();
+                if(chebyshevDistance(path260, rc.getLocation()) <= 5) {
+                    if(pathLength != 261) setCurrentState261();
                     break;
                 }
                 
             case 260:
-                if(path259.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState260();
+                if(chebyshevDistance(path259, rc.getLocation()) <= 5) {
+                    if(pathLength != 260) setCurrentState260();
                     break;
                 }
                 
             case 259:
-                if(path258.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState259();
+                if(chebyshevDistance(path258, rc.getLocation()) <= 5) {
+                    if(pathLength != 259) setCurrentState259();
                     break;
                 }
                 
             case 258:
-                if(path257.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState258();
+                if(chebyshevDistance(path257, rc.getLocation()) <= 5) {
+                    if(pathLength != 258) setCurrentState258();
                     break;
                 }
                 
             case 257:
-                if(path256.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState257();
+                if(chebyshevDistance(path256, rc.getLocation()) <= 5) {
+                    if(pathLength != 257) setCurrentState257();
                     break;
                 }
                 
             case 256:
-                if(path255.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState256();
+                if(chebyshevDistance(path255, rc.getLocation()) <= 5) {
+                    if(pathLength != 256) setCurrentState256();
                     break;
                 }
                 
             case 255:
-                if(path254.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState255();
+                if(chebyshevDistance(path254, rc.getLocation()) <= 5) {
+                    if(pathLength != 255) setCurrentState255();
                     break;
                 }
                 
             case 254:
-                if(path253.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState254();
+                if(chebyshevDistance(path253, rc.getLocation()) <= 5) {
+                    if(pathLength != 254) setCurrentState254();
                     break;
                 }
                 
             case 253:
-                if(path252.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState253();
+                if(chebyshevDistance(path252, rc.getLocation()) <= 5) {
+                    if(pathLength != 253) setCurrentState253();
                     break;
                 }
                 
             case 252:
-                if(path251.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState252();
+                if(chebyshevDistance(path251, rc.getLocation()) <= 5) {
+                    if(pathLength != 252) setCurrentState252();
                     break;
                 }
                 
             case 251:
-                if(path250.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState251();
+                if(chebyshevDistance(path250, rc.getLocation()) <= 5) {
+                    if(pathLength != 251) setCurrentState251();
                     break;
                 }
                 
             case 250:
-                if(path249.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState250();
+                if(chebyshevDistance(path249, rc.getLocation()) <= 5) {
+                    if(pathLength != 250) setCurrentState250();
                     break;
                 }
                 
             case 249:
-                if(path248.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState249();
+                if(chebyshevDistance(path248, rc.getLocation()) <= 5) {
+                    if(pathLength != 249) setCurrentState249();
                     break;
                 }
                 
             case 248:
-                if(path247.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState248();
+                if(chebyshevDistance(path247, rc.getLocation()) <= 5) {
+                    if(pathLength != 248) setCurrentState248();
                     break;
                 }
                 
             case 247:
-                if(path246.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState247();
+                if(chebyshevDistance(path246, rc.getLocation()) <= 5) {
+                    if(pathLength != 247) setCurrentState247();
                     break;
                 }
                 
             case 246:
-                if(path245.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState246();
+                if(chebyshevDistance(path245, rc.getLocation()) <= 5) {
+                    if(pathLength != 246) setCurrentState246();
                     break;
                 }
                 
             case 245:
-                if(path244.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState245();
+                if(chebyshevDistance(path244, rc.getLocation()) <= 5) {
+                    if(pathLength != 245) setCurrentState245();
                     break;
                 }
                 
             case 244:
-                if(path243.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState244();
+                if(chebyshevDistance(path243, rc.getLocation()) <= 5) {
+                    if(pathLength != 244) setCurrentState244();
                     break;
                 }
                 
             case 243:
-                if(path242.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState243();
+                if(chebyshevDistance(path242, rc.getLocation()) <= 5) {
+                    if(pathLength != 243) setCurrentState243();
                     break;
                 }
                 
             case 242:
-                if(path241.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState242();
+                if(chebyshevDistance(path241, rc.getLocation()) <= 5) {
+                    if(pathLength != 242) setCurrentState242();
                     break;
                 }
                 
             case 241:
-                if(path240.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState241();
+                if(chebyshevDistance(path240, rc.getLocation()) <= 5) {
+                    if(pathLength != 241) setCurrentState241();
                     break;
                 }
                 
             case 240:
-                if(path239.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState240();
+                if(chebyshevDistance(path239, rc.getLocation()) <= 5) {
+                    if(pathLength != 240) setCurrentState240();
                     break;
                 }
                 
             case 239:
-                if(path238.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState239();
+                if(chebyshevDistance(path238, rc.getLocation()) <= 5) {
+                    if(pathLength != 239) setCurrentState239();
                     break;
                 }
                 
             case 238:
-                if(path237.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState238();
+                if(chebyshevDistance(path237, rc.getLocation()) <= 5) {
+                    if(pathLength != 238) setCurrentState238();
                     break;
                 }
                 
             case 237:
-                if(path236.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState237();
+                if(chebyshevDistance(path236, rc.getLocation()) <= 5) {
+                    if(pathLength != 237) setCurrentState237();
                     break;
                 }
                 
             case 236:
-                if(path235.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState236();
+                if(chebyshevDistance(path235, rc.getLocation()) <= 5) {
+                    if(pathLength != 236) setCurrentState236();
                     break;
                 }
                 
             case 235:
-                if(path234.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState235();
+                if(chebyshevDistance(path234, rc.getLocation()) <= 5) {
+                    if(pathLength != 235) setCurrentState235();
                     break;
                 }
                 
             case 234:
-                if(path233.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState234();
+                if(chebyshevDistance(path233, rc.getLocation()) <= 5) {
+                    if(pathLength != 234) setCurrentState234();
                     break;
                 }
                 
             case 233:
-                if(path232.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState233();
+                if(chebyshevDistance(path232, rc.getLocation()) <= 5) {
+                    if(pathLength != 233) setCurrentState233();
                     break;
                 }
                 
             case 232:
-                if(path231.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState232();
+                if(chebyshevDistance(path231, rc.getLocation()) <= 5) {
+                    if(pathLength != 232) setCurrentState232();
                     break;
                 }
                 
             case 231:
-                if(path230.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState231();
+                if(chebyshevDistance(path230, rc.getLocation()) <= 5) {
+                    if(pathLength != 231) setCurrentState231();
                     break;
                 }
                 
             case 230:
-                if(path229.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState230();
+                if(chebyshevDistance(path229, rc.getLocation()) <= 5) {
+                    if(pathLength != 230) setCurrentState230();
                     break;
                 }
                 
             case 229:
-                if(path228.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState229();
+                if(chebyshevDistance(path228, rc.getLocation()) <= 5) {
+                    if(pathLength != 229) setCurrentState229();
                     break;
                 }
                 
             case 228:
-                if(path227.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState228();
+                if(chebyshevDistance(path227, rc.getLocation()) <= 5) {
+                    if(pathLength != 228) setCurrentState228();
                     break;
                 }
                 
             case 227:
-                if(path226.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState227();
+                if(chebyshevDistance(path226, rc.getLocation()) <= 5) {
+                    if(pathLength != 227) setCurrentState227();
                     break;
                 }
                 
             case 226:
-                if(path225.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState226();
+                if(chebyshevDistance(path225, rc.getLocation()) <= 5) {
+                    if(pathLength != 226) setCurrentState226();
                     break;
                 }
                 
             case 225:
-                if(path224.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState225();
+                if(chebyshevDistance(path224, rc.getLocation()) <= 5) {
+                    if(pathLength != 225) setCurrentState225();
                     break;
                 }
                 
             case 224:
-                if(path223.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState224();
+                if(chebyshevDistance(path223, rc.getLocation()) <= 5) {
+                    if(pathLength != 224) setCurrentState224();
                     break;
                 }
                 
             case 223:
-                if(path222.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState223();
+                if(chebyshevDistance(path222, rc.getLocation()) <= 5) {
+                    if(pathLength != 223) setCurrentState223();
                     break;
                 }
                 
             case 222:
-                if(path221.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState222();
+                if(chebyshevDistance(path221, rc.getLocation()) <= 5) {
+                    if(pathLength != 222) setCurrentState222();
                     break;
                 }
                 
             case 221:
-                if(path220.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState221();
+                if(chebyshevDistance(path220, rc.getLocation()) <= 5) {
+                    if(pathLength != 221) setCurrentState221();
                     break;
                 }
                 
             case 220:
-                if(path219.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState220();
+                if(chebyshevDistance(path219, rc.getLocation()) <= 5) {
+                    if(pathLength != 220) setCurrentState220();
                     break;
                 }
                 
             case 219:
-                if(path218.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState219();
+                if(chebyshevDistance(path218, rc.getLocation()) <= 5) {
+                    if(pathLength != 219) setCurrentState219();
                     break;
                 }
                 
             case 218:
-                if(path217.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState218();
+                if(chebyshevDistance(path217, rc.getLocation()) <= 5) {
+                    if(pathLength != 218) setCurrentState218();
                     break;
                 }
                 
             case 217:
-                if(path216.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState217();
+                if(chebyshevDistance(path216, rc.getLocation()) <= 5) {
+                    if(pathLength != 217) setCurrentState217();
                     break;
                 }
                 
             case 216:
-                if(path215.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState216();
+                if(chebyshevDistance(path215, rc.getLocation()) <= 5) {
+                    if(pathLength != 216) setCurrentState216();
                     break;
                 }
                 
             case 215:
-                if(path214.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState215();
+                if(chebyshevDistance(path214, rc.getLocation()) <= 5) {
+                    if(pathLength != 215) setCurrentState215();
                     break;
                 }
                 
             case 214:
-                if(path213.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState214();
+                if(chebyshevDistance(path213, rc.getLocation()) <= 5) {
+                    if(pathLength != 214) setCurrentState214();
                     break;
                 }
                 
             case 213:
-                if(path212.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState213();
+                if(chebyshevDistance(path212, rc.getLocation()) <= 5) {
+                    if(pathLength != 213) setCurrentState213();
                     break;
                 }
                 
             case 212:
-                if(path211.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState212();
+                if(chebyshevDistance(path211, rc.getLocation()) <= 5) {
+                    if(pathLength != 212) setCurrentState212();
                     break;
                 }
                 
             case 211:
-                if(path210.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState211();
+                if(chebyshevDistance(path210, rc.getLocation()) <= 5) {
+                    if(pathLength != 211) setCurrentState211();
                     break;
                 }
                 
             case 210:
-                if(path209.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState210();
+                if(chebyshevDistance(path209, rc.getLocation()) <= 5) {
+                    if(pathLength != 210) setCurrentState210();
                     break;
                 }
                 
             case 209:
-                if(path208.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState209();
+                if(chebyshevDistance(path208, rc.getLocation()) <= 5) {
+                    if(pathLength != 209) setCurrentState209();
                     break;
                 }
                 
             case 208:
-                if(path207.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState208();
+                if(chebyshevDistance(path207, rc.getLocation()) <= 5) {
+                    if(pathLength != 208) setCurrentState208();
                     break;
                 }
                 
             case 207:
-                if(path206.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState207();
+                if(chebyshevDistance(path206, rc.getLocation()) <= 5) {
+                    if(pathLength != 207) setCurrentState207();
                     break;
                 }
                 
             case 206:
-                if(path205.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState206();
+                if(chebyshevDistance(path205, rc.getLocation()) <= 5) {
+                    if(pathLength != 206) setCurrentState206();
                     break;
                 }
                 
             case 205:
-                if(path204.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState205();
+                if(chebyshevDistance(path204, rc.getLocation()) <= 5) {
+                    if(pathLength != 205) setCurrentState205();
                     break;
                 }
                 
             case 204:
-                if(path203.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState204();
+                if(chebyshevDistance(path203, rc.getLocation()) <= 5) {
+                    if(pathLength != 204) setCurrentState204();
                     break;
                 }
                 
             case 203:
-                if(path202.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState203();
+                if(chebyshevDistance(path202, rc.getLocation()) <= 5) {
+                    if(pathLength != 203) setCurrentState203();
                     break;
                 }
                 
             case 202:
-                if(path201.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState202();
+                if(chebyshevDistance(path201, rc.getLocation()) <= 5) {
+                    if(pathLength != 202) setCurrentState202();
                     break;
                 }
                 
             case 201:
-                if(path200.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState201();
+                if(chebyshevDistance(path200, rc.getLocation()) <= 5) {
+                    if(pathLength != 201) setCurrentState201();
                     break;
                 }
                 
             case 200:
-                if(path199.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState200();
+                if(chebyshevDistance(path199, rc.getLocation()) <= 5) {
+                    if(pathLength != 200) setCurrentState200();
                     break;
                 }
                 
             case 199:
-                if(path198.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState199();
+                if(chebyshevDistance(path198, rc.getLocation()) <= 5) {
+                    if(pathLength != 199) setCurrentState199();
                     break;
                 }
                 
             case 198:
-                if(path197.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState198();
+                if(chebyshevDistance(path197, rc.getLocation()) <= 5) {
+                    if(pathLength != 198) setCurrentState198();
                     break;
                 }
                 
             case 197:
-                if(path196.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState197();
+                if(chebyshevDistance(path196, rc.getLocation()) <= 5) {
+                    if(pathLength != 197) setCurrentState197();
                     break;
                 }
                 
             case 196:
-                if(path195.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState196();
+                if(chebyshevDistance(path195, rc.getLocation()) <= 5) {
+                    if(pathLength != 196) setCurrentState196();
                     break;
                 }
                 
             case 195:
-                if(path194.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState195();
+                if(chebyshevDistance(path194, rc.getLocation()) <= 5) {
+                    if(pathLength != 195) setCurrentState195();
                     break;
                 }
                 
             case 194:
-                if(path193.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState194();
+                if(chebyshevDistance(path193, rc.getLocation()) <= 5) {
+                    if(pathLength != 194) setCurrentState194();
                     break;
                 }
                 
             case 193:
-                if(path192.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState193();
+                if(chebyshevDistance(path192, rc.getLocation()) <= 5) {
+                    if(pathLength != 193) setCurrentState193();
                     break;
                 }
                 
             case 192:
-                if(path191.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState192();
+                if(chebyshevDistance(path191, rc.getLocation()) <= 5) {
+                    if(pathLength != 192) setCurrentState192();
                     break;
                 }
                 
             case 191:
-                if(path190.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState191();
+                if(chebyshevDistance(path190, rc.getLocation()) <= 5) {
+                    if(pathLength != 191) setCurrentState191();
                     break;
                 }
                 
             case 190:
-                if(path189.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState190();
+                if(chebyshevDistance(path189, rc.getLocation()) <= 5) {
+                    if(pathLength != 190) setCurrentState190();
                     break;
                 }
                 
             case 189:
-                if(path188.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState189();
+                if(chebyshevDistance(path188, rc.getLocation()) <= 5) {
+                    if(pathLength != 189) setCurrentState189();
                     break;
                 }
                 
             case 188:
-                if(path187.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState188();
+                if(chebyshevDistance(path187, rc.getLocation()) <= 5) {
+                    if(pathLength != 188) setCurrentState188();
                     break;
                 }
                 
             case 187:
-                if(path186.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState187();
+                if(chebyshevDistance(path186, rc.getLocation()) <= 5) {
+                    if(pathLength != 187) setCurrentState187();
                     break;
                 }
                 
             case 186:
-                if(path185.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState186();
+                if(chebyshevDistance(path185, rc.getLocation()) <= 5) {
+                    if(pathLength != 186) setCurrentState186();
                     break;
                 }
                 
             case 185:
-                if(path184.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState185();
+                if(chebyshevDistance(path184, rc.getLocation()) <= 5) {
+                    if(pathLength != 185) setCurrentState185();
                     break;
                 }
                 
             case 184:
-                if(path183.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState184();
+                if(chebyshevDistance(path183, rc.getLocation()) <= 5) {
+                    if(pathLength != 184) setCurrentState184();
                     break;
                 }
                 
             case 183:
-                if(path182.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState183();
+                if(chebyshevDistance(path182, rc.getLocation()) <= 5) {
+                    if(pathLength != 183) setCurrentState183();
                     break;
                 }
                 
             case 182:
-                if(path181.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState182();
+                if(chebyshevDistance(path181, rc.getLocation()) <= 5) {
+                    if(pathLength != 182) setCurrentState182();
                     break;
                 }
                 
             case 181:
-                if(path180.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState181();
+                if(chebyshevDistance(path180, rc.getLocation()) <= 5) {
+                    if(pathLength != 181) setCurrentState181();
                     break;
                 }
                 
             case 180:
-                if(path179.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState180();
+                if(chebyshevDistance(path179, rc.getLocation()) <= 5) {
+                    if(pathLength != 180) setCurrentState180();
                     break;
                 }
                 
             case 179:
-                if(path178.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState179();
+                if(chebyshevDistance(path178, rc.getLocation()) <= 5) {
+                    if(pathLength != 179) setCurrentState179();
                     break;
                 }
                 
             case 178:
-                if(path177.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState178();
+                if(chebyshevDistance(path177, rc.getLocation()) <= 5) {
+                    if(pathLength != 178) setCurrentState178();
                     break;
                 }
                 
             case 177:
-                if(path176.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState177();
+                if(chebyshevDistance(path176, rc.getLocation()) <= 5) {
+                    if(pathLength != 177) setCurrentState177();
                     break;
                 }
                 
             case 176:
-                if(path175.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState176();
+                if(chebyshevDistance(path175, rc.getLocation()) <= 5) {
+                    if(pathLength != 176) setCurrentState176();
                     break;
                 }
                 
             case 175:
-                if(path174.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState175();
+                if(chebyshevDistance(path174, rc.getLocation()) <= 5) {
+                    if(pathLength != 175) setCurrentState175();
                     break;
                 }
                 
             case 174:
-                if(path173.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState174();
+                if(chebyshevDistance(path173, rc.getLocation()) <= 5) {
+                    if(pathLength != 174) setCurrentState174();
                     break;
                 }
                 
             case 173:
-                if(path172.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState173();
+                if(chebyshevDistance(path172, rc.getLocation()) <= 5) {
+                    if(pathLength != 173) setCurrentState173();
                     break;
                 }
                 
             case 172:
-                if(path171.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState172();
+                if(chebyshevDistance(path171, rc.getLocation()) <= 5) {
+                    if(pathLength != 172) setCurrentState172();
                     break;
                 }
                 
             case 171:
-                if(path170.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState171();
+                if(chebyshevDistance(path170, rc.getLocation()) <= 5) {
+                    if(pathLength != 171) setCurrentState171();
                     break;
                 }
                 
             case 170:
-                if(path169.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState170();
+                if(chebyshevDistance(path169, rc.getLocation()) <= 5) {
+                    if(pathLength != 170) setCurrentState170();
                     break;
                 }
                 
             case 169:
-                if(path168.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState169();
+                if(chebyshevDistance(path168, rc.getLocation()) <= 5) {
+                    if(pathLength != 169) setCurrentState169();
                     break;
                 }
                 
             case 168:
-                if(path167.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState168();
+                if(chebyshevDistance(path167, rc.getLocation()) <= 5) {
+                    if(pathLength != 168) setCurrentState168();
                     break;
                 }
                 
             case 167:
-                if(path166.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState167();
+                if(chebyshevDistance(path166, rc.getLocation()) <= 5) {
+                    if(pathLength != 167) setCurrentState167();
                     break;
                 }
                 
             case 166:
-                if(path165.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState166();
+                if(chebyshevDistance(path165, rc.getLocation()) <= 5) {
+                    if(pathLength != 166) setCurrentState166();
                     break;
                 }
                 
             case 165:
-                if(path164.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState165();
+                if(chebyshevDistance(path164, rc.getLocation()) <= 5) {
+                    if(pathLength != 165) setCurrentState165();
                     break;
                 }
                 
             case 164:
-                if(path163.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState164();
+                if(chebyshevDistance(path163, rc.getLocation()) <= 5) {
+                    if(pathLength != 164) setCurrentState164();
                     break;
                 }
                 
             case 163:
-                if(path162.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState163();
+                if(chebyshevDistance(path162, rc.getLocation()) <= 5) {
+                    if(pathLength != 163) setCurrentState163();
                     break;
                 }
                 
             case 162:
-                if(path161.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState162();
+                if(chebyshevDistance(path161, rc.getLocation()) <= 5) {
+                    if(pathLength != 162) setCurrentState162();
                     break;
                 }
                 
             case 161:
-                if(path160.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState161();
+                if(chebyshevDistance(path160, rc.getLocation()) <= 5) {
+                    if(pathLength != 161) setCurrentState161();
                     break;
                 }
                 
             case 160:
-                if(path159.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState160();
+                if(chebyshevDistance(path159, rc.getLocation()) <= 5) {
+                    if(pathLength != 160) setCurrentState160();
                     break;
                 }
                 
             case 159:
-                if(path158.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState159();
+                if(chebyshevDistance(path158, rc.getLocation()) <= 5) {
+                    if(pathLength != 159) setCurrentState159();
                     break;
                 }
                 
             case 158:
-                if(path157.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState158();
+                if(chebyshevDistance(path157, rc.getLocation()) <= 5) {
+                    if(pathLength != 158) setCurrentState158();
                     break;
                 }
                 
             case 157:
-                if(path156.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState157();
+                if(chebyshevDistance(path156, rc.getLocation()) <= 5) {
+                    if(pathLength != 157) setCurrentState157();
                     break;
                 }
                 
             case 156:
-                if(path155.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState156();
+                if(chebyshevDistance(path155, rc.getLocation()) <= 5) {
+                    if(pathLength != 156) setCurrentState156();
                     break;
                 }
                 
             case 155:
-                if(path154.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState155();
+                if(chebyshevDistance(path154, rc.getLocation()) <= 5) {
+                    if(pathLength != 155) setCurrentState155();
                     break;
                 }
                 
             case 154:
-                if(path153.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState154();
+                if(chebyshevDistance(path153, rc.getLocation()) <= 5) {
+                    if(pathLength != 154) setCurrentState154();
                     break;
                 }
                 
             case 153:
-                if(path152.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState153();
+                if(chebyshevDistance(path152, rc.getLocation()) <= 5) {
+                    if(pathLength != 153) setCurrentState153();
                     break;
                 }
                 
             case 152:
-                if(path151.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState152();
+                if(chebyshevDistance(path151, rc.getLocation()) <= 5) {
+                    if(pathLength != 152) setCurrentState152();
                     break;
                 }
                 
             case 151:
-                if(path150.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState151();
+                if(chebyshevDistance(path150, rc.getLocation()) <= 5) {
+                    if(pathLength != 151) setCurrentState151();
                     break;
                 }
                 
             case 150:
-                if(path149.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState150();
+                if(chebyshevDistance(path149, rc.getLocation()) <= 5) {
+                    if(pathLength != 150) setCurrentState150();
                     break;
                 }
                 
             case 149:
-                if(path148.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState149();
+                if(chebyshevDistance(path148, rc.getLocation()) <= 5) {
+                    if(pathLength != 149) setCurrentState149();
                     break;
                 }
                 
             case 148:
-                if(path147.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState148();
+                if(chebyshevDistance(path147, rc.getLocation()) <= 5) {
+                    if(pathLength != 148) setCurrentState148();
                     break;
                 }
                 
             case 147:
-                if(path146.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState147();
+                if(chebyshevDistance(path146, rc.getLocation()) <= 5) {
+                    if(pathLength != 147) setCurrentState147();
                     break;
                 }
                 
             case 146:
-                if(path145.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState146();
+                if(chebyshevDistance(path145, rc.getLocation()) <= 5) {
+                    if(pathLength != 146) setCurrentState146();
                     break;
                 }
                 
             case 145:
-                if(path144.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState145();
+                if(chebyshevDistance(path144, rc.getLocation()) <= 5) {
+                    if(pathLength != 145) setCurrentState145();
                     break;
                 }
                 
             case 144:
-                if(path143.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState144();
+                if(chebyshevDistance(path143, rc.getLocation()) <= 5) {
+                    if(pathLength != 144) setCurrentState144();
                     break;
                 }
                 
             case 143:
-                if(path142.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState143();
+                if(chebyshevDistance(path142, rc.getLocation()) <= 5) {
+                    if(pathLength != 143) setCurrentState143();
                     break;
                 }
                 
             case 142:
-                if(path141.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState142();
+                if(chebyshevDistance(path141, rc.getLocation()) <= 5) {
+                    if(pathLength != 142) setCurrentState142();
                     break;
                 }
                 
             case 141:
-                if(path140.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState141();
+                if(chebyshevDistance(path140, rc.getLocation()) <= 5) {
+                    if(pathLength != 141) setCurrentState141();
                     break;
                 }
                 
             case 140:
-                if(path139.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState140();
+                if(chebyshevDistance(path139, rc.getLocation()) <= 5) {
+                    if(pathLength != 140) setCurrentState140();
                     break;
                 }
                 
             case 139:
-                if(path138.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState139();
+                if(chebyshevDistance(path138, rc.getLocation()) <= 5) {
+                    if(pathLength != 139) setCurrentState139();
                     break;
                 }
                 
             case 138:
-                if(path137.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState138();
+                if(chebyshevDistance(path137, rc.getLocation()) <= 5) {
+                    if(pathLength != 138) setCurrentState138();
                     break;
                 }
                 
             case 137:
-                if(path136.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState137();
+                if(chebyshevDistance(path136, rc.getLocation()) <= 5) {
+                    if(pathLength != 137) setCurrentState137();
                     break;
                 }
                 
             case 136:
-                if(path135.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState136();
+                if(chebyshevDistance(path135, rc.getLocation()) <= 5) {
+                    if(pathLength != 136) setCurrentState136();
                     break;
                 }
                 
             case 135:
-                if(path134.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState135();
+                if(chebyshevDistance(path134, rc.getLocation()) <= 5) {
+                    if(pathLength != 135) setCurrentState135();
                     break;
                 }
                 
             case 134:
-                if(path133.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState134();
+                if(chebyshevDistance(path133, rc.getLocation()) <= 5) {
+                    if(pathLength != 134) setCurrentState134();
                     break;
                 }
                 
             case 133:
-                if(path132.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState133();
+                if(chebyshevDistance(path132, rc.getLocation()) <= 5) {
+                    if(pathLength != 133) setCurrentState133();
                     break;
                 }
                 
             case 132:
-                if(path131.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState132();
+                if(chebyshevDistance(path131, rc.getLocation()) <= 5) {
+                    if(pathLength != 132) setCurrentState132();
                     break;
                 }
                 
             case 131:
-                if(path130.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState131();
+                if(chebyshevDistance(path130, rc.getLocation()) <= 5) {
+                    if(pathLength != 131) setCurrentState131();
                     break;
                 }
                 
             case 130:
-                if(path129.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState130();
+                if(chebyshevDistance(path129, rc.getLocation()) <= 5) {
+                    if(pathLength != 130) setCurrentState130();
                     break;
                 }
                 
             case 129:
-                if(path128.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState129();
+                if(chebyshevDistance(path128, rc.getLocation()) <= 5) {
+                    if(pathLength != 129) setCurrentState129();
                     break;
                 }
                 
             case 128:
-                if(path127.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState128();
+                if(chebyshevDistance(path127, rc.getLocation()) <= 5) {
+                    if(pathLength != 128) setCurrentState128();
                     break;
                 }
                 
             case 127:
-                if(path126.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState127();
+                if(chebyshevDistance(path126, rc.getLocation()) <= 5) {
+                    if(pathLength != 127) setCurrentState127();
                     break;
                 }
                 
             case 126:
-                if(path125.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState126();
+                if(chebyshevDistance(path125, rc.getLocation()) <= 5) {
+                    if(pathLength != 126) setCurrentState126();
                     break;
                 }
                 
             case 125:
-                if(path124.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState125();
+                if(chebyshevDistance(path124, rc.getLocation()) <= 5) {
+                    if(pathLength != 125) setCurrentState125();
                     break;
                 }
                 
             case 124:
-                if(path123.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState124();
+                if(chebyshevDistance(path123, rc.getLocation()) <= 5) {
+                    if(pathLength != 124) setCurrentState124();
                     break;
                 }
                 
             case 123:
-                if(path122.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState123();
+                if(chebyshevDistance(path122, rc.getLocation()) <= 5) {
+                    if(pathLength != 123) setCurrentState123();
                     break;
                 }
                 
             case 122:
-                if(path121.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState122();
+                if(chebyshevDistance(path121, rc.getLocation()) <= 5) {
+                    if(pathLength != 122) setCurrentState122();
                     break;
                 }
                 
             case 121:
-                if(path120.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState121();
+                if(chebyshevDistance(path120, rc.getLocation()) <= 5) {
+                    if(pathLength != 121) setCurrentState121();
                     break;
                 }
                 
             case 120:
-                if(path119.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState120();
+                if(chebyshevDistance(path119, rc.getLocation()) <= 5) {
+                    if(pathLength != 120) setCurrentState120();
                     break;
                 }
                 
             case 119:
-                if(path118.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState119();
+                if(chebyshevDistance(path118, rc.getLocation()) <= 5) {
+                    if(pathLength != 119) setCurrentState119();
                     break;
                 }
                 
             case 118:
-                if(path117.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState118();
+                if(chebyshevDistance(path117, rc.getLocation()) <= 5) {
+                    if(pathLength != 118) setCurrentState118();
                     break;
                 }
                 
             case 117:
-                if(path116.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState117();
+                if(chebyshevDistance(path116, rc.getLocation()) <= 5) {
+                    if(pathLength != 117) setCurrentState117();
                     break;
                 }
                 
             case 116:
-                if(path115.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState116();
+                if(chebyshevDistance(path115, rc.getLocation()) <= 5) {
+                    if(pathLength != 116) setCurrentState116();
                     break;
                 }
                 
             case 115:
-                if(path114.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState115();
+                if(chebyshevDistance(path114, rc.getLocation()) <= 5) {
+                    if(pathLength != 115) setCurrentState115();
                     break;
                 }
                 
             case 114:
-                if(path113.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState114();
+                if(chebyshevDistance(path113, rc.getLocation()) <= 5) {
+                    if(pathLength != 114) setCurrentState114();
                     break;
                 }
                 
             case 113:
-                if(path112.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState113();
+                if(chebyshevDistance(path112, rc.getLocation()) <= 5) {
+                    if(pathLength != 113) setCurrentState113();
                     break;
                 }
                 
             case 112:
-                if(path111.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState112();
+                if(chebyshevDistance(path111, rc.getLocation()) <= 5) {
+                    if(pathLength != 112) setCurrentState112();
                     break;
                 }
                 
             case 111:
-                if(path110.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState111();
+                if(chebyshevDistance(path110, rc.getLocation()) <= 5) {
+                    if(pathLength != 111) setCurrentState111();
                     break;
                 }
                 
             case 110:
-                if(path109.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState110();
+                if(chebyshevDistance(path109, rc.getLocation()) <= 5) {
+                    if(pathLength != 110) setCurrentState110();
                     break;
                 }
                 
             case 109:
-                if(path108.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState109();
+                if(chebyshevDistance(path108, rc.getLocation()) <= 5) {
+                    if(pathLength != 109) setCurrentState109();
                     break;
                 }
                 
             case 108:
-                if(path107.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState108();
+                if(chebyshevDistance(path107, rc.getLocation()) <= 5) {
+                    if(pathLength != 108) setCurrentState108();
                     break;
                 }
                 
             case 107:
-                if(path106.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState107();
+                if(chebyshevDistance(path106, rc.getLocation()) <= 5) {
+                    if(pathLength != 107) setCurrentState107();
                     break;
                 }
                 
             case 106:
-                if(path105.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState106();
+                if(chebyshevDistance(path105, rc.getLocation()) <= 5) {
+                    if(pathLength != 106) setCurrentState106();
                     break;
                 }
                 
             case 105:
-                if(path104.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState105();
+                if(chebyshevDistance(path104, rc.getLocation()) <= 5) {
+                    if(pathLength != 105) setCurrentState105();
                     break;
                 }
                 
             case 104:
-                if(path103.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState104();
+                if(chebyshevDistance(path103, rc.getLocation()) <= 5) {
+                    if(pathLength != 104) setCurrentState104();
                     break;
                 }
                 
             case 103:
-                if(path102.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState103();
+                if(chebyshevDistance(path102, rc.getLocation()) <= 5) {
+                    if(pathLength != 103) setCurrentState103();
                     break;
                 }
                 
             case 102:
-                if(path101.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState102();
+                if(chebyshevDistance(path101, rc.getLocation()) <= 5) {
+                    if(pathLength != 102) setCurrentState102();
                     break;
                 }
                 
             case 101:
-                if(path100.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState101();
+                if(chebyshevDistance(path100, rc.getLocation()) <= 5) {
+                    if(pathLength != 101) setCurrentState101();
                     break;
                 }
                 
             case 100:
-                if(path99.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState100();
+                if(chebyshevDistance(path99, rc.getLocation()) <= 5) {
+                    if(pathLength != 100) setCurrentState100();
                     break;
                 }
                 
             case 99:
-                if(path98.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState99();
+                if(chebyshevDistance(path98, rc.getLocation()) <= 5) {
+                    if(pathLength != 99) setCurrentState99();
                     break;
                 }
                 
             case 98:
-                if(path97.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState98();
+                if(chebyshevDistance(path97, rc.getLocation()) <= 5) {
+                    if(pathLength != 98) setCurrentState98();
                     break;
                 }
                 
             case 97:
-                if(path96.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState97();
+                if(chebyshevDistance(path96, rc.getLocation()) <= 5) {
+                    if(pathLength != 97) setCurrentState97();
                     break;
                 }
                 
             case 96:
-                if(path95.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState96();
+                if(chebyshevDistance(path95, rc.getLocation()) <= 5) {
+                    if(pathLength != 96) setCurrentState96();
                     break;
                 }
                 
             case 95:
-                if(path94.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState95();
+                if(chebyshevDistance(path94, rc.getLocation()) <= 5) {
+                    if(pathLength != 95) setCurrentState95();
                     break;
                 }
                 
             case 94:
-                if(path93.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState94();
+                if(chebyshevDistance(path93, rc.getLocation()) <= 5) {
+                    if(pathLength != 94) setCurrentState94();
                     break;
                 }
                 
             case 93:
-                if(path92.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState93();
+                if(chebyshevDistance(path92, rc.getLocation()) <= 5) {
+                    if(pathLength != 93) setCurrentState93();
                     break;
                 }
                 
             case 92:
-                if(path91.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState92();
+                if(chebyshevDistance(path91, rc.getLocation()) <= 5) {
+                    if(pathLength != 92) setCurrentState92();
                     break;
                 }
                 
             case 91:
-                if(path90.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState91();
+                if(chebyshevDistance(path90, rc.getLocation()) <= 5) {
+                    if(pathLength != 91) setCurrentState91();
                     break;
                 }
                 
             case 90:
-                if(path89.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState90();
+                if(chebyshevDistance(path89, rc.getLocation()) <= 5) {
+                    if(pathLength != 90) setCurrentState90();
                     break;
                 }
                 
             case 89:
-                if(path88.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState89();
+                if(chebyshevDistance(path88, rc.getLocation()) <= 5) {
+                    if(pathLength != 89) setCurrentState89();
                     break;
                 }
                 
             case 88:
-                if(path87.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState88();
+                if(chebyshevDistance(path87, rc.getLocation()) <= 5) {
+                    if(pathLength != 88) setCurrentState88();
                     break;
                 }
                 
             case 87:
-                if(path86.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState87();
+                if(chebyshevDistance(path86, rc.getLocation()) <= 5) {
+                    if(pathLength != 87) setCurrentState87();
                     break;
                 }
                 
             case 86:
-                if(path85.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState86();
+                if(chebyshevDistance(path85, rc.getLocation()) <= 5) {
+                    if(pathLength != 86) setCurrentState86();
                     break;
                 }
                 
             case 85:
-                if(path84.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState85();
+                if(chebyshevDistance(path84, rc.getLocation()) <= 5) {
+                    if(pathLength != 85) setCurrentState85();
                     break;
                 }
                 
             case 84:
-                if(path83.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState84();
+                if(chebyshevDistance(path83, rc.getLocation()) <= 5) {
+                    if(pathLength != 84) setCurrentState84();
                     break;
                 }
                 
             case 83:
-                if(path82.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState83();
+                if(chebyshevDistance(path82, rc.getLocation()) <= 5) {
+                    if(pathLength != 83) setCurrentState83();
                     break;
                 }
                 
             case 82:
-                if(path81.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState82();
+                if(chebyshevDistance(path81, rc.getLocation()) <= 5) {
+                    if(pathLength != 82) setCurrentState82();
                     break;
                 }
                 
             case 81:
-                if(path80.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState81();
+                if(chebyshevDistance(path80, rc.getLocation()) <= 5) {
+                    if(pathLength != 81) setCurrentState81();
                     break;
                 }
                 
             case 80:
-                if(path79.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState80();
+                if(chebyshevDistance(path79, rc.getLocation()) <= 5) {
+                    if(pathLength != 80) setCurrentState80();
                     break;
                 }
                 
             case 79:
-                if(path78.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState79();
+                if(chebyshevDistance(path78, rc.getLocation()) <= 5) {
+                    if(pathLength != 79) setCurrentState79();
                     break;
                 }
                 
             case 78:
-                if(path77.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState78();
+                if(chebyshevDistance(path77, rc.getLocation()) <= 5) {
+                    if(pathLength != 78) setCurrentState78();
                     break;
                 }
                 
             case 77:
-                if(path76.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState77();
+                if(chebyshevDistance(path76, rc.getLocation()) <= 5) {
+                    if(pathLength != 77) setCurrentState77();
                     break;
                 }
                 
             case 76:
-                if(path75.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState76();
+                if(chebyshevDistance(path75, rc.getLocation()) <= 5) {
+                    if(pathLength != 76) setCurrentState76();
                     break;
                 }
                 
             case 75:
-                if(path74.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState75();
+                if(chebyshevDistance(path74, rc.getLocation()) <= 5) {
+                    if(pathLength != 75) setCurrentState75();
                     break;
                 }
                 
             case 74:
-                if(path73.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState74();
+                if(chebyshevDistance(path73, rc.getLocation()) <= 5) {
+                    if(pathLength != 74) setCurrentState74();
                     break;
                 }
                 
             case 73:
-                if(path72.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState73();
+                if(chebyshevDistance(path72, rc.getLocation()) <= 5) {
+                    if(pathLength != 73) setCurrentState73();
                     break;
                 }
                 
             case 72:
-                if(path71.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState72();
+                if(chebyshevDistance(path71, rc.getLocation()) <= 5) {
+                    if(pathLength != 72) setCurrentState72();
                     break;
                 }
                 
             case 71:
-                if(path70.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState71();
+                if(chebyshevDistance(path70, rc.getLocation()) <= 5) {
+                    if(pathLength != 71) setCurrentState71();
                     break;
                 }
                 
             case 70:
-                if(path69.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState70();
+                if(chebyshevDistance(path69, rc.getLocation()) <= 5) {
+                    if(pathLength != 70) setCurrentState70();
                     break;
                 }
                 
             case 69:
-                if(path68.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState69();
+                if(chebyshevDistance(path68, rc.getLocation()) <= 5) {
+                    if(pathLength != 69) setCurrentState69();
                     break;
                 }
                 
             case 68:
-                if(path67.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState68();
+                if(chebyshevDistance(path67, rc.getLocation()) <= 5) {
+                    if(pathLength != 68) setCurrentState68();
                     break;
                 }
                 
             case 67:
-                if(path66.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState67();
+                if(chebyshevDistance(path66, rc.getLocation()) <= 5) {
+                    if(pathLength != 67) setCurrentState67();
                     break;
                 }
                 
             case 66:
-                if(path65.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState66();
+                if(chebyshevDistance(path65, rc.getLocation()) <= 5) {
+                    if(pathLength != 66) setCurrentState66();
                     break;
                 }
                 
             case 65:
-                if(path64.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState65();
+                if(chebyshevDistance(path64, rc.getLocation()) <= 5) {
+                    if(pathLength != 65) setCurrentState65();
                     break;
                 }
                 
             case 64:
-                if(path63.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState64();
+                if(chebyshevDistance(path63, rc.getLocation()) <= 5) {
+                    if(pathLength != 64) setCurrentState64();
                     break;
                 }
                 
             case 63:
-                if(path62.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState63();
+                if(chebyshevDistance(path62, rc.getLocation()) <= 5) {
+                    if(pathLength != 63) setCurrentState63();
                     break;
                 }
                 
             case 62:
-                if(path61.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState62();
+                if(chebyshevDistance(path61, rc.getLocation()) <= 5) {
+                    if(pathLength != 62) setCurrentState62();
                     break;
                 }
                 
             case 61:
-                if(path60.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState61();
+                if(chebyshevDistance(path60, rc.getLocation()) <= 5) {
+                    if(pathLength != 61) setCurrentState61();
                     break;
                 }
                 
             case 60:
-                if(path59.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState60();
+                if(chebyshevDistance(path59, rc.getLocation()) <= 5) {
+                    if(pathLength != 60) setCurrentState60();
                     break;
                 }
                 
             case 59:
-                if(path58.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState59();
+                if(chebyshevDistance(path58, rc.getLocation()) <= 5) {
+                    if(pathLength != 59) setCurrentState59();
                     break;
                 }
                 
             case 58:
-                if(path57.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState58();
+                if(chebyshevDistance(path57, rc.getLocation()) <= 5) {
+                    if(pathLength != 58) setCurrentState58();
                     break;
                 }
                 
             case 57:
-                if(path56.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState57();
+                if(chebyshevDistance(path56, rc.getLocation()) <= 5) {
+                    if(pathLength != 57) setCurrentState57();
                     break;
                 }
                 
             case 56:
-                if(path55.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState56();
+                if(chebyshevDistance(path55, rc.getLocation()) <= 5) {
+                    if(pathLength != 56) setCurrentState56();
                     break;
                 }
                 
             case 55:
-                if(path54.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState55();
+                if(chebyshevDistance(path54, rc.getLocation()) <= 5) {
+                    if(pathLength != 55) setCurrentState55();
                     break;
                 }
                 
             case 54:
-                if(path53.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState54();
+                if(chebyshevDistance(path53, rc.getLocation()) <= 5) {
+                    if(pathLength != 54) setCurrentState54();
                     break;
                 }
                 
             case 53:
-                if(path52.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState53();
+                if(chebyshevDistance(path52, rc.getLocation()) <= 5) {
+                    if(pathLength != 53) setCurrentState53();
                     break;
                 }
                 
             case 52:
-                if(path51.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState52();
+                if(chebyshevDistance(path51, rc.getLocation()) <= 5) {
+                    if(pathLength != 52) setCurrentState52();
                     break;
                 }
                 
             case 51:
-                if(path50.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState51();
+                if(chebyshevDistance(path50, rc.getLocation()) <= 5) {
+                    if(pathLength != 51) setCurrentState51();
                     break;
                 }
                 
             case 50:
-                if(path49.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState50();
+                if(chebyshevDistance(path49, rc.getLocation()) <= 5) {
+                    if(pathLength != 50) setCurrentState50();
                     break;
                 }
                 
             case 49:
-                if(path48.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState49();
+                if(chebyshevDistance(path48, rc.getLocation()) <= 5) {
+                    if(pathLength != 49) setCurrentState49();
                     break;
                 }
                 
             case 48:
-                if(path47.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState48();
+                if(chebyshevDistance(path47, rc.getLocation()) <= 5) {
+                    if(pathLength != 48) setCurrentState48();
                     break;
                 }
                 
             case 47:
-                if(path46.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState47();
+                if(chebyshevDistance(path46, rc.getLocation()) <= 5) {
+                    if(pathLength != 47) setCurrentState47();
                     break;
                 }
                 
             case 46:
-                if(path45.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState46();
+                if(chebyshevDistance(path45, rc.getLocation()) <= 5) {
+                    if(pathLength != 46) setCurrentState46();
                     break;
                 }
                 
             case 45:
-                if(path44.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState45();
+                if(chebyshevDistance(path44, rc.getLocation()) <= 5) {
+                    if(pathLength != 45) setCurrentState45();
                     break;
                 }
                 
             case 44:
-                if(path43.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState44();
+                if(chebyshevDistance(path43, rc.getLocation()) <= 5) {
+                    if(pathLength != 44) setCurrentState44();
                     break;
                 }
                 
             case 43:
-                if(path42.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState43();
+                if(chebyshevDistance(path42, rc.getLocation()) <= 5) {
+                    if(pathLength != 43) setCurrentState43();
                     break;
                 }
                 
             case 42:
-                if(path41.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState42();
+                if(chebyshevDistance(path41, rc.getLocation()) <= 5) {
+                    if(pathLength != 42) setCurrentState42();
                     break;
                 }
                 
             case 41:
-                if(path40.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState41();
+                if(chebyshevDistance(path40, rc.getLocation()) <= 5) {
+                    if(pathLength != 41) setCurrentState41();
                     break;
                 }
                 
             case 40:
-                if(path39.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState40();
+                if(chebyshevDistance(path39, rc.getLocation()) <= 5) {
+                    if(pathLength != 40) setCurrentState40();
                     break;
                 }
                 
             case 39:
-                if(path38.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState39();
+                if(chebyshevDistance(path38, rc.getLocation()) <= 5) {
+                    if(pathLength != 39) setCurrentState39();
                     break;
                 }
                 
             case 38:
-                if(path37.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState38();
+                if(chebyshevDistance(path37, rc.getLocation()) <= 5) {
+                    if(pathLength != 38) setCurrentState38();
                     break;
                 }
                 
             case 37:
-                if(path36.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState37();
+                if(chebyshevDistance(path36, rc.getLocation()) <= 5) {
+                    if(pathLength != 37) setCurrentState37();
                     break;
                 }
                 
             case 36:
-                if(path35.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState36();
+                if(chebyshevDistance(path35, rc.getLocation()) <= 5) {
+                    if(pathLength != 36) setCurrentState36();
                     break;
                 }
                 
             case 35:
-                if(path34.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState35();
+                if(chebyshevDistance(path34, rc.getLocation()) <= 5) {
+                    if(pathLength != 35) setCurrentState35();
                     break;
                 }
                 
             case 34:
-                if(path33.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState34();
+                if(chebyshevDistance(path33, rc.getLocation()) <= 5) {
+                    if(pathLength != 34) setCurrentState34();
                     break;
                 }
                 
             case 33:
-                if(path32.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState33();
+                if(chebyshevDistance(path32, rc.getLocation()) <= 5) {
+                    if(pathLength != 33) setCurrentState33();
                     break;
                 }
                 
             case 32:
-                if(path31.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState32();
+                if(chebyshevDistance(path31, rc.getLocation()) <= 5) {
+                    if(pathLength != 32) setCurrentState32();
                     break;
                 }
                 
             case 31:
-                if(path30.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState31();
+                if(chebyshevDistance(path30, rc.getLocation()) <= 5) {
+                    if(pathLength != 31) setCurrentState31();
                     break;
                 }
                 
             case 30:
-                if(path29.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState30();
+                if(chebyshevDistance(path29, rc.getLocation()) <= 5) {
+                    if(pathLength != 30) setCurrentState30();
                     break;
                 }
                 
             case 29:
-                if(path28.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState29();
+                if(chebyshevDistance(path28, rc.getLocation()) <= 5) {
+                    if(pathLength != 29) setCurrentState29();
                     break;
                 }
                 
             case 28:
-                if(path27.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState28();
+                if(chebyshevDistance(path27, rc.getLocation()) <= 5) {
+                    if(pathLength != 28) setCurrentState28();
                     break;
                 }
                 
             case 27:
-                if(path26.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState27();
+                if(chebyshevDistance(path26, rc.getLocation()) <= 5) {
+                    if(pathLength != 27) setCurrentState27();
                     break;
                 }
                 
             case 26:
-                if(path25.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState26();
+                if(chebyshevDistance(path25, rc.getLocation()) <= 5) {
+                    if(pathLength != 26) setCurrentState26();
                     break;
                 }
                 
             case 25:
-                if(path24.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState25();
+                if(chebyshevDistance(path24, rc.getLocation()) <= 5) {
+                    if(pathLength != 25) setCurrentState25();
                     break;
                 }
                 
             case 24:
-                if(path23.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState24();
+                if(chebyshevDistance(path23, rc.getLocation()) <= 5) {
+                    if(pathLength != 24) setCurrentState24();
                     break;
                 }
                 
             case 23:
-                if(path22.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState23();
+                if(chebyshevDistance(path22, rc.getLocation()) <= 5) {
+                    if(pathLength != 23) setCurrentState23();
                     break;
                 }
                 
             case 22:
-                if(path21.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState22();
+                if(chebyshevDistance(path21, rc.getLocation()) <= 5) {
+                    if(pathLength != 22) setCurrentState22();
                     break;
                 }
                 
             case 21:
-                if(path20.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState21();
+                if(chebyshevDistance(path20, rc.getLocation()) <= 5) {
+                    if(pathLength != 21) setCurrentState21();
                     break;
                 }
                 
             case 20:
-                if(path19.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState20();
+                if(chebyshevDistance(path19, rc.getLocation()) <= 5) {
+                    if(pathLength != 20) setCurrentState20();
                     break;
                 }
                 
             case 19:
-                if(path18.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState19();
+                if(chebyshevDistance(path18, rc.getLocation()) <= 5) {
+                    if(pathLength != 19) setCurrentState19();
                     break;
                 }
                 
             case 18:
-                if(path17.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState18();
+                if(chebyshevDistance(path17, rc.getLocation()) <= 5) {
+                    if(pathLength != 18) setCurrentState18();
                     break;
                 }
                 
             case 17:
-                if(path16.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState17();
+                if(chebyshevDistance(path16, rc.getLocation()) <= 5) {
+                    if(pathLength != 17) setCurrentState17();
                     break;
                 }
                 
             case 16:
-                if(path15.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState16();
+                if(chebyshevDistance(path15, rc.getLocation()) <= 5) {
+                    if(pathLength != 16) setCurrentState16();
                     break;
                 }
                 
             case 15:
-                if(path14.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState15();
+                if(chebyshevDistance(path14, rc.getLocation()) <= 5) {
+                    if(pathLength != 15) setCurrentState15();
                     break;
                 }
                 
             case 14:
-                if(path13.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState14();
+                if(chebyshevDistance(path13, rc.getLocation()) <= 5) {
+                    if(pathLength != 14) setCurrentState14();
                     break;
                 }
                 
             case 13:
-                if(path12.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState13();
+                if(chebyshevDistance(path12, rc.getLocation()) <= 5) {
+                    if(pathLength != 13) setCurrentState13();
                     break;
                 }
                 
             case 12:
-                if(path11.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState12();
+                if(chebyshevDistance(path11, rc.getLocation()) <= 5) {
+                    if(pathLength != 12) setCurrentState12();
                     break;
                 }
                 
             case 11:
-                if(path10.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState11();
+                if(chebyshevDistance(path10, rc.getLocation()) <= 5) {
+                    if(pathLength != 11) setCurrentState11();
                     break;
                 }
                 
             case 10:
-                if(path9.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState10();
+                if(chebyshevDistance(path9, rc.getLocation()) <= 5) {
+                    if(pathLength != 10) setCurrentState10();
                     break;
                 }
                 
             case 9:
-                if(path8.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState9();
+                if(chebyshevDistance(path8, rc.getLocation()) <= 5) {
+                    if(pathLength != 9) setCurrentState9();
                     break;
                 }
                 
             case 8:
-                if(path7.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState8();
+                if(chebyshevDistance(path7, rc.getLocation()) <= 5) {
+                    if(pathLength != 8) setCurrentState8();
                     break;
                 }
                 
             case 7:
-                if(path6.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState7();
+                if(chebyshevDistance(path6, rc.getLocation()) <= 5) {
+                    if(pathLength != 7) setCurrentState7();
                     break;
                 }
                 
             case 6:
-                if(path5.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState6();
+                if(chebyshevDistance(path5, rc.getLocation()) <= 5) {
+                    if(pathLength != 6) setCurrentState6();
                     break;
                 }
                 
             case 5:
-                if(path4.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState5();
+                if(chebyshevDistance(path4, rc.getLocation()) <= 5) {
+                    if(pathLength != 5) setCurrentState5();
                     break;
                 }
                 
             case 4:
-                if(path3.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState4();
+                if(chebyshevDistance(path3, rc.getLocation()) <= 5) {
+                    if(pathLength != 4) setCurrentState4();
                     break;
                 }
                 
             case 3:
-                if(path2.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState3();
+                if(chebyshevDistance(path2, rc.getLocation()) <= 5) {
+                    if(pathLength != 3) setCurrentState3();
                     break;
                 }
                 
             case 2:
-                if(path1.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState2();
+                if(chebyshevDistance(path1, rc.getLocation()) <= 5) {
+                    if(pathLength != 2) setCurrentState2();
                     break;
                 }
                 
             case 1:
-                if(path0.distanceSquaredTo(rc.getLocation()) <= 20) {
-                    setCurrentState1();
+                if(chebyshevDistance(path0, rc.getLocation()) <= 5) {
+                    if(pathLength != 1) setCurrentState1();
                     break;
                 }
                 
             default:
                 assert(pathLength <= 500);
-        }
-        if(pos == null) {
-            // System.out.println(pathLength + " " + path0);
-            reset();
+                reset();
         }
     }
 
@@ -23569,7 +23571,15 @@ class BugnavInstance {
     }
 
     // return the original location
-    MapLocation advance() throws GameActionException {
+    MapLocation advance(boolean canGuess) throws GameActionException {
+        // System.out.println("old pos " + pos + " i am at " + rc.getLocation());
+        if(!rc.getLocation().equals(lastLoc)) {
+            lastLoc = rc.getLocation();
+            setCurrentState();
+        }
+
+        if(pos.isAdjacentTo(target)) return pos;
+
         var dirToTarget = pos.directionTo(target);
         if(dirToTarget != bottomDir) {
             if(dirToTarget == Direction.CENTER) return pos;
@@ -23607,8 +23617,82 @@ class BugnavInstance {
             }
         }
 
-        // System.out.println("old pos " + pos + " i am at " + rc.getLocation());
-        setCurrentState();
+        var oldPos = pos;
+
+        MapLocation greedyLoc = pos.add(bottomDir);
+        if(stackSize <= 1) {
+            
+            if(CellTracker.isPassable(greedyLoc)) {
+                
+            if(chebyshevDistance(rc.getLocation(), greedyLoc) <= 5) {
+                indicate("going to greedyLoc");
+                pos = greedyLoc;
+                topDir = bottomDir;
+                stackSize = 0;
+                emptyStackTurns++;
+                appendCurrentState();
+            }
+            return oldPos;
+            
+            }
+            var leftLoc = pos.add(bottomDir.rotateLeft());
+            var rightLoc = pos.add(bottomDir.rotateRight());
+            var leftPassable = CellTracker.isPassable(leftLoc);
+            var rightPassable = CellTracker.isPassable(rightLoc);
+            if(leftPassable && !rightPassable) {
+                
+            if(chebyshevDistance(rc.getLocation(), leftLoc) <= 5) {
+                indicate("going to leftLoc");
+                pos = leftLoc;
+                topDir = bottomDir;
+                stackSize = 0;
+                emptyStackTurns++;
+                appendCurrentState();
+            }
+            return oldPos;
+            
+            }
+            if(!leftPassable && rightPassable) {
+                
+            if(chebyshevDistance(rc.getLocation(), rightLoc) <= 5) {
+                indicate("going to rightLoc");
+                pos = rightLoc;
+                topDir = bottomDir;
+                stackSize = 0;
+                emptyStackTurns++;
+                appendCurrentState();
+            }
+            return oldPos;
+            
+            }
+            if(leftPassable && rightPassable) {
+                if(leftLoc.distanceSquaredTo(target) < rightLoc.distanceSquaredTo(target)) {
+                    
+            if(chebyshevDistance(rc.getLocation(), leftLoc) <= 5) {
+                indicate("going to leftLoc");
+                pos = leftLoc;
+                topDir = bottomDir;
+                stackSize = 0;
+                emptyStackTurns++;
+                appendCurrentState();
+            }
+            return oldPos;
+            
+                } else {
+                    
+            if(chebyshevDistance(rc.getLocation(), rightLoc) <= 5) {
+                indicate("going to rightLoc");
+                pos = rightLoc;
+                topDir = bottomDir;
+                stackSize = 0;
+                emptyStackTurns++;
+                appendCurrentState();
+            }
+            return oldPos;
+            
+                }
+            }
+        }
         // System.out.println("bug" + pos + " " + bottomDir + " " + topDir + " " + stackSize);
 
         // System.out.println(pos + " " + target + " " + topDir + " " + bottomDir + " " + stackSize);
@@ -23616,144 +23700,110 @@ class BugnavInstance {
         // rc.setIndicatorString("" + bottomDir + " " + topDir + " " + stackSize + " " + leftTurn + " " + emptyStackTurns);
 
         // guess rotation direction (kinda inefficient but wtv)
-        if(canGuess && stackSize == 0 && emptyStackTurns >= 1 && CellTracker.isSeen(pos.add(bottomDir)) && !CellTracker.isPassable(pos.add(bottomDir))) {
-            indicate("guessing");
-            // System.out.println("guessing " + pos + " " + emptyStackTurns);
-            var leftBug = new BugnavInstance(pos, true, target, false);
-            var rightBug = new BugnavInstance(pos, false, target, false);
-            
-            
-            {
-                MapLocation bugPos;
-                int shade = 255;
-                bugLoop: {
+        if(isMaster && !justGuessed && stackSize == 0 && CellTracker.isSeen(greedyLoc)) {
+            assert !CellTracker.isPassable(greedyLoc);
+            if(emptyStackTurns >= 1) {
+                if(canGuess) {
+                    indicate("guessing " + pos);
+                    Profiler.begin();
+                    // System.out.println("guessing " + pos + " " + emptyStackTurns);
+                    var leftBug = new BugnavInstance(pos, true, target, false);
+                    var rightBug = new BugnavInstance(pos, false, target, false);
                     
-                    bugPos = leftBug.advance();
-                    // System.out.println(bugPos);
-                    rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                    if(bugPos.equals(leftBug.pos)) break bugLoop;
                     
-                    bugPos = leftBug.advance();
-                    // System.out.println(bugPos);
-                    rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                    if(bugPos.equals(leftBug.pos)) break bugLoop;
+                    {
+                        MapLocation bugPos;
+                        int shade = 255;
+                        bugLoop: {
+                            
+                            bugPos = leftBug.advance(false);
+                            // System.out.println(bugPos);
+                            rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
+                            if(bugPos.equals(leftBug.pos)) break bugLoop;
+                            
+                            bugPos = leftBug.advance(false);
+                            // System.out.println(bugPos);
+                            rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
+                            if(bugPos.equals(leftBug.pos)) break bugLoop;
+                            
+                            bugPos = leftBug.advance(false);
+                            // System.out.println(bugPos);
+                            rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
+                            if(bugPos.equals(leftBug.pos)) break bugLoop;
+                            
+                            bugPos = leftBug.advance(false);
+                            // System.out.println(bugPos);
+                            rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
+                            if(bugPos.equals(leftBug.pos)) break bugLoop;
+                            
+                            bugPos = leftBug.advance(false);
+                            // System.out.println(bugPos);
+                            rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
+                            if(bugPos.equals(leftBug.pos)) break bugLoop;
+                            
+                        }
+                    }
                     
-                    bugPos = leftBug.advance();
-                    // System.out.println(bugPos);
-                    rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                    if(bugPos.equals(leftBug.pos)) break bugLoop;
                     
-                    bugPos = leftBug.advance();
-                    // System.out.println(bugPos);
-                    rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                    if(bugPos.equals(leftBug.pos)) break bugLoop;
+                    {
+                        MapLocation bugPos;
+                        int shade = 255;
+                        bugLoop: {
+                            
+                            bugPos = rightBug.advance(false);
+                            // System.out.println(bugPos);
+                            rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
+                            if(bugPos.equals(rightBug.pos)) break bugLoop;
+                            
+                            bugPos = rightBug.advance(false);
+                            // System.out.println(bugPos);
+                            rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
+                            if(bugPos.equals(rightBug.pos)) break bugLoop;
+                            
+                            bugPos = rightBug.advance(false);
+                            // System.out.println(bugPos);
+                            rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
+                            if(bugPos.equals(rightBug.pos)) break bugLoop;
+                            
+                            bugPos = rightBug.advance(false);
+                            // System.out.println(bugPos);
+                            rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
+                            if(bugPos.equals(rightBug.pos)) break bugLoop;
+                            
+                            bugPos = rightBug.advance(false);
+                            // System.out.println(bugPos);
+                            rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
+                            if(bugPos.equals(rightBug.pos)) break bugLoop;
+                            
+                        }
+                    }
                     
-                    bugPos = leftBug.advance();
-                    // System.out.println(bugPos);
-                    rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                    if(bugPos.equals(leftBug.pos)) break bugLoop;
                     
-                    bugPos = leftBug.advance();
-                    // System.out.println(bugPos);
-                    rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                    if(bugPos.equals(leftBug.pos)) break bugLoop;
-                    
-                    bugPos = leftBug.advance();
-                    // System.out.println(bugPos);
-                    rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                    if(bugPos.equals(leftBug.pos)) break bugLoop;
-                    
-                    bugPos = leftBug.advance();
-                    // System.out.println(bugPos);
-                    rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                    if(bugPos.equals(leftBug.pos)) break bugLoop;
-                    
-                    bugPos = leftBug.advance();
-                    // System.out.println(bugPos);
-                    rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                    if(bugPos.equals(leftBug.pos)) break bugLoop;
-                    
-                    bugPos = leftBug.advance();
-                    // System.out.println(bugPos);
-                    rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                    if(bugPos.equals(leftBug.pos)) break bugLoop;
-                    
+                    // indicate("lookahead");
+                    // indicate(leftBug.pos);
+                    // indicate( Math.sqrt(leftBug.pos.distanceSquaredTo(target)) + leftBug.pathLength * 0.7 );
+                    // indicate(rightBug.pos);
+                    // indicate( Math.sqrt(rightBug.pos.distanceSquaredTo(target)) + rightBug.pathLength * 0.7 );
+                    leftTurn =  Math.sqrt(leftBug.pos.distanceSquaredTo(target)) + leftBug.pathLength * 0.7  <  Math.sqrt(rightBug.pos.distanceSquaredTo(target)) + rightBug.pathLength * 0.7 ;
+                    // indicate("leftTurn " + leftTurn);
+                    setCurrentState();
+                    Profiler.end("guess");
+                    justGuessed = true;
                 }
+                return pos;
+            } else if(emptyStackTurns < 0) {
+                emptyStackTurns = 0;
             }
-            
-            
-            {
-                MapLocation bugPos;
-                int shade = 255;
-                bugLoop: {
-                    
-                    bugPos = rightBug.advance();
-                    // System.out.println(bugPos);
-                    rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                    if(bugPos.equals(rightBug.pos)) break bugLoop;
-                    
-                    bugPos = rightBug.advance();
-                    // System.out.println(bugPos);
-                    rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                    if(bugPos.equals(rightBug.pos)) break bugLoop;
-                    
-                    bugPos = rightBug.advance();
-                    // System.out.println(bugPos);
-                    rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                    if(bugPos.equals(rightBug.pos)) break bugLoop;
-                    
-                    bugPos = rightBug.advance();
-                    // System.out.println(bugPos);
-                    rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                    if(bugPos.equals(rightBug.pos)) break bugLoop;
-                    
-                    bugPos = rightBug.advance();
-                    // System.out.println(bugPos);
-                    rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                    if(bugPos.equals(rightBug.pos)) break bugLoop;
-                    
-                    bugPos = rightBug.advance();
-                    // System.out.println(bugPos);
-                    rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                    if(bugPos.equals(rightBug.pos)) break bugLoop;
-                    
-                    bugPos = rightBug.advance();
-                    // System.out.println(bugPos);
-                    rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                    if(bugPos.equals(rightBug.pos)) break bugLoop;
-                    
-                    bugPos = rightBug.advance();
-                    // System.out.println(bugPos);
-                    rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                    if(bugPos.equals(rightBug.pos)) break bugLoop;
-                    
-                    bugPos = rightBug.advance();
-                    // System.out.println(bugPos);
-                    rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                    if(bugPos.equals(rightBug.pos)) break bugLoop;
-                    
-                    bugPos = rightBug.advance();
-                    // System.out.println(bugPos);
-                    rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                    if(bugPos.equals(rightBug.pos)) break bugLoop;
-                    
-                }
-            }
-            
-            indicate("lookahead");
-            indicate(leftBug.pos);
-            indicate(rightBug.pos);
-            
-            leftTurn =  Math.sqrt(leftBug.pos.distanceSquaredTo(target)) + leftBug.pathLength * 0.7  <  Math.sqrt(rightBug.pos.distanceSquaredTo(target)) + rightBug.pathLength * 0.7 ;
         }
+        justGuessed = false;
 
+        // Profiler.begin();
         
 
         if(leftTurn) {
             
         // this loop only exists to allow continue
         while(true) {
-            var oldPos = pos;
             var tryDir = topDir.rotateRight().rotateRight();
             
             
@@ -23761,34 +23811,34 @@ class BugnavInstance {
             
             {
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || rc.getLocation().distanceSquaredTo(nextPos) > 20) {
-                    // System.out.println("out of known area " + nextPos);
+                if(!CellTracker.isSeen(nextPos) || chebyshevDistance(rc.getLocation(), nextPos) > 5) {
                     if(rc.onTheMap(nextPos)) rc.setIndicatorDot(nextPos, 0, 255, 255);
-                    else if(canGuess) {
+                    else if(isMaster) {
                         // avoid following the edge of the map
+                        indicate("bugnav hit edge of map");
                         leftTurn = !leftTurn;
                         reset();
                         // don't guess turn direction, we know that one direction is bad already
-                        emptyStackTurns = 0;
+                        emptyStackTurns = -1000;
                         // start again
                         continue;
                     }
+                    // Profiler.end("bugnav");
                     return oldPos;
                 }
                 if(CellTracker.isPassable(nextPos)) {
-                    // System.out.println("moving to " + nextPos + " via " + tryDir + " with turns " + -2);
                     pos = nextPos;
                     topDir = tryDir;
                     
                     stackSize += -2;
                     
-                    // System.out.println("SS " + stackSize);
                     if(stackSize == 0) {
                         emptyStackTurns++;
                     } else {
                         emptyStackTurns = 0;
                     }
                     appendCurrentState();
+                    // Profiler.end("bugnav");
                     return oldPos;
                 }
             }
@@ -23799,34 +23849,34 @@ class BugnavInstance {
             
             {
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || rc.getLocation().distanceSquaredTo(nextPos) > 20) {
-                    // System.out.println("out of known area " + nextPos);
+                if(!CellTracker.isSeen(nextPos) || chebyshevDistance(rc.getLocation(), nextPos) > 5) {
                     if(rc.onTheMap(nextPos)) rc.setIndicatorDot(nextPos, 0, 255, 255);
-                    else if(canGuess) {
+                    else if(isMaster) {
                         // avoid following the edge of the map
+                        indicate("bugnav hit edge of map");
                         leftTurn = !leftTurn;
                         reset();
                         // don't guess turn direction, we know that one direction is bad already
-                        emptyStackTurns = 0;
+                        emptyStackTurns = -1000;
                         // start again
                         continue;
                     }
+                    // Profiler.end("bugnav");
                     return oldPos;
                 }
                 if(CellTracker.isPassable(nextPos)) {
-                    // System.out.println("moving to " + nextPos + " via " + tryDir + " with turns " + -1);
                     pos = nextPos;
                     topDir = tryDir;
                     
                     stackSize += -1;
                     
-                    // System.out.println("SS " + stackSize);
                     if(stackSize == 0) {
                         emptyStackTurns++;
                     } else {
                         emptyStackTurns = 0;
                     }
                     appendCurrentState();
+                    // Profiler.end("bugnav");
                     return oldPos;
                 }
             }
@@ -23835,32 +23885,32 @@ class BugnavInstance {
             
             {
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || rc.getLocation().distanceSquaredTo(nextPos) > 20) {
-                    // System.out.println("out of known area " + nextPos);
+                if(!CellTracker.isSeen(nextPos) || chebyshevDistance(rc.getLocation(), nextPos) > 5) {
                     if(rc.onTheMap(nextPos)) rc.setIndicatorDot(nextPos, 0, 255, 255);
-                    else if(canGuess) {
+                    else if(isMaster) {
                         // avoid following the edge of the map
+                        indicate("bugnav hit edge of map");
                         leftTurn = !leftTurn;
                         reset();
                         // don't guess turn direction, we know that one direction is bad already
-                        emptyStackTurns = 0;
+                        emptyStackTurns = -1000;
                         // start again
                         continue;
                     }
+                    // Profiler.end("bugnav");
                     return oldPos;
                 }
                 if(CellTracker.isPassable(nextPos)) {
-                    // System.out.println("moving to " + nextPos + " via " + tryDir + " with turns " + 0);
                     pos = nextPos;
                     topDir = tryDir;
                     
-                    // System.out.println("SS " + stackSize);
                     if(stackSize == 0) {
                         emptyStackTurns++;
                     } else {
                         emptyStackTurns = 0;
                     }
                     appendCurrentState();
+                    // Profiler.end("bugnav");
                     return oldPos;
                 }
             }
@@ -23869,34 +23919,34 @@ class BugnavInstance {
             
             {
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || rc.getLocation().distanceSquaredTo(nextPos) > 20) {
-                    // System.out.println("out of known area " + nextPos);
+                if(!CellTracker.isSeen(nextPos) || chebyshevDistance(rc.getLocation(), nextPos) > 5) {
                     if(rc.onTheMap(nextPos)) rc.setIndicatorDot(nextPos, 0, 255, 255);
-                    else if(canGuess) {
+                    else if(isMaster) {
                         // avoid following the edge of the map
+                        indicate("bugnav hit edge of map");
                         leftTurn = !leftTurn;
                         reset();
                         // don't guess turn direction, we know that one direction is bad already
-                        emptyStackTurns = 0;
+                        emptyStackTurns = -1000;
                         // start again
                         continue;
                     }
+                    // Profiler.end("bugnav");
                     return oldPos;
                 }
                 if(CellTracker.isPassable(nextPos)) {
-                    // System.out.println("moving to " + nextPos + " via " + tryDir + " with turns " + 1);
                     pos = nextPos;
                     topDir = tryDir;
                     
                     stackSize += 1;
                     
-                    // System.out.println("SS " + stackSize);
                     if(stackSize == 0) {
                         emptyStackTurns++;
                     } else {
                         emptyStackTurns = 0;
                     }
                     appendCurrentState();
+                    // Profiler.end("bugnav");
                     return oldPos;
                 }
             }
@@ -23905,34 +23955,34 @@ class BugnavInstance {
             
             {
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || rc.getLocation().distanceSquaredTo(nextPos) > 20) {
-                    // System.out.println("out of known area " + nextPos);
+                if(!CellTracker.isSeen(nextPos) || chebyshevDistance(rc.getLocation(), nextPos) > 5) {
                     if(rc.onTheMap(nextPos)) rc.setIndicatorDot(nextPos, 0, 255, 255);
-                    else if(canGuess) {
+                    else if(isMaster) {
                         // avoid following the edge of the map
+                        indicate("bugnav hit edge of map");
                         leftTurn = !leftTurn;
                         reset();
                         // don't guess turn direction, we know that one direction is bad already
-                        emptyStackTurns = 0;
+                        emptyStackTurns = -1000;
                         // start again
                         continue;
                     }
+                    // Profiler.end("bugnav");
                     return oldPos;
                 }
                 if(CellTracker.isPassable(nextPos)) {
-                    // System.out.println("moving to " + nextPos + " via " + tryDir + " with turns " + 2);
                     pos = nextPos;
                     topDir = tryDir;
                     
                     stackSize += 2;
                     
-                    // System.out.println("SS " + stackSize);
                     if(stackSize == 0) {
                         emptyStackTurns++;
                     } else {
                         emptyStackTurns = 0;
                     }
                     appendCurrentState();
+                    // Profiler.end("bugnav");
                     return oldPos;
                 }
             }
@@ -23941,34 +23991,34 @@ class BugnavInstance {
             
             {
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || rc.getLocation().distanceSquaredTo(nextPos) > 20) {
-                    // System.out.println("out of known area " + nextPos);
+                if(!CellTracker.isSeen(nextPos) || chebyshevDistance(rc.getLocation(), nextPos) > 5) {
                     if(rc.onTheMap(nextPos)) rc.setIndicatorDot(nextPos, 0, 255, 255);
-                    else if(canGuess) {
+                    else if(isMaster) {
                         // avoid following the edge of the map
+                        indicate("bugnav hit edge of map");
                         leftTurn = !leftTurn;
                         reset();
                         // don't guess turn direction, we know that one direction is bad already
-                        emptyStackTurns = 0;
+                        emptyStackTurns = -1000;
                         // start again
                         continue;
                     }
+                    // Profiler.end("bugnav");
                     return oldPos;
                 }
                 if(CellTracker.isPassable(nextPos)) {
-                    // System.out.println("moving to " + nextPos + " via " + tryDir + " with turns " + 3);
                     pos = nextPos;
                     topDir = tryDir;
                     
                     stackSize += 3;
                     
-                    // System.out.println("SS " + stackSize);
                     if(stackSize == 0) {
                         emptyStackTurns++;
                     } else {
                         emptyStackTurns = 0;
                     }
                     appendCurrentState();
+                    // Profiler.end("bugnav");
                     return oldPos;
                 }
             }
@@ -23977,34 +24027,34 @@ class BugnavInstance {
             
             {
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || rc.getLocation().distanceSquaredTo(nextPos) > 20) {
-                    // System.out.println("out of known area " + nextPos);
+                if(!CellTracker.isSeen(nextPos) || chebyshevDistance(rc.getLocation(), nextPos) > 5) {
                     if(rc.onTheMap(nextPos)) rc.setIndicatorDot(nextPos, 0, 255, 255);
-                    else if(canGuess) {
+                    else if(isMaster) {
                         // avoid following the edge of the map
+                        indicate("bugnav hit edge of map");
                         leftTurn = !leftTurn;
                         reset();
                         // don't guess turn direction, we know that one direction is bad already
-                        emptyStackTurns = 0;
+                        emptyStackTurns = -1000;
                         // start again
                         continue;
                     }
+                    // Profiler.end("bugnav");
                     return oldPos;
                 }
                 if(CellTracker.isPassable(nextPos)) {
-                    // System.out.println("moving to " + nextPos + " via " + tryDir + " with turns " + 4);
                     pos = nextPos;
                     topDir = tryDir;
                     
                     stackSize += 4;
                     
-                    // System.out.println("SS " + stackSize);
                     if(stackSize == 0) {
                         emptyStackTurns++;
                     } else {
                         emptyStackTurns = 0;
                     }
                     appendCurrentState();
+                    // Profiler.end("bugnav");
                     return oldPos;
                 }
             }
@@ -24013,34 +24063,34 @@ class BugnavInstance {
             
             {
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || rc.getLocation().distanceSquaredTo(nextPos) > 20) {
-                    // System.out.println("out of known area " + nextPos);
+                if(!CellTracker.isSeen(nextPos) || chebyshevDistance(rc.getLocation(), nextPos) > 5) {
                     if(rc.onTheMap(nextPos)) rc.setIndicatorDot(nextPos, 0, 255, 255);
-                    else if(canGuess) {
+                    else if(isMaster) {
                         // avoid following the edge of the map
+                        indicate("bugnav hit edge of map");
                         leftTurn = !leftTurn;
                         reset();
                         // don't guess turn direction, we know that one direction is bad already
-                        emptyStackTurns = 0;
+                        emptyStackTurns = -1000;
                         // start again
                         continue;
                     }
+                    // Profiler.end("bugnav");
                     return oldPos;
                 }
                 if(CellTracker.isPassable(nextPos)) {
-                    // System.out.println("moving to " + nextPos + " via " + tryDir + " with turns " + 5);
                     pos = nextPos;
                     topDir = tryDir;
                     
                     stackSize += 5;
                     
-                    // System.out.println("SS " + stackSize);
                     if(stackSize == 0) {
                         emptyStackTurns++;
                     } else {
                         emptyStackTurns = 0;
                     }
                     appendCurrentState();
+                    // Profiler.end("bugnav");
                     return oldPos;
                 }
             }
@@ -24053,7 +24103,6 @@ class BugnavInstance {
             
         // this loop only exists to allow continue
         while(true) {
-            var oldPos = pos;
             var tryDir = topDir.rotateLeft().rotateLeft();
             
             
@@ -24061,34 +24110,34 @@ class BugnavInstance {
             
             {
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || rc.getLocation().distanceSquaredTo(nextPos) > 20) {
-                    // System.out.println("out of known area " + nextPos);
+                if(!CellTracker.isSeen(nextPos) || chebyshevDistance(rc.getLocation(), nextPos) > 5) {
                     if(rc.onTheMap(nextPos)) rc.setIndicatorDot(nextPos, 0, 255, 255);
-                    else if(canGuess) {
+                    else if(isMaster) {
                         // avoid following the edge of the map
+                        indicate("bugnav hit edge of map");
                         leftTurn = !leftTurn;
                         reset();
                         // don't guess turn direction, we know that one direction is bad already
-                        emptyStackTurns = 0;
+                        emptyStackTurns = -1000;
                         // start again
                         continue;
                     }
+                    // Profiler.end("bugnav");
                     return oldPos;
                 }
                 if(CellTracker.isPassable(nextPos)) {
-                    // System.out.println("moving to " + nextPos + " via " + tryDir + " with turns " + -2);
                     pos = nextPos;
                     topDir = tryDir;
                     
                     stackSize += -2;
                     
-                    // System.out.println("SS " + stackSize);
                     if(stackSize == 0) {
                         emptyStackTurns++;
                     } else {
                         emptyStackTurns = 0;
                     }
                     appendCurrentState();
+                    // Profiler.end("bugnav");
                     return oldPos;
                 }
             }
@@ -24099,34 +24148,34 @@ class BugnavInstance {
             
             {
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || rc.getLocation().distanceSquaredTo(nextPos) > 20) {
-                    // System.out.println("out of known area " + nextPos);
+                if(!CellTracker.isSeen(nextPos) || chebyshevDistance(rc.getLocation(), nextPos) > 5) {
                     if(rc.onTheMap(nextPos)) rc.setIndicatorDot(nextPos, 0, 255, 255);
-                    else if(canGuess) {
+                    else if(isMaster) {
                         // avoid following the edge of the map
+                        indicate("bugnav hit edge of map");
                         leftTurn = !leftTurn;
                         reset();
                         // don't guess turn direction, we know that one direction is bad already
-                        emptyStackTurns = 0;
+                        emptyStackTurns = -1000;
                         // start again
                         continue;
                     }
+                    // Profiler.end("bugnav");
                     return oldPos;
                 }
                 if(CellTracker.isPassable(nextPos)) {
-                    // System.out.println("moving to " + nextPos + " via " + tryDir + " with turns " + -1);
                     pos = nextPos;
                     topDir = tryDir;
                     
                     stackSize += -1;
                     
-                    // System.out.println("SS " + stackSize);
                     if(stackSize == 0) {
                         emptyStackTurns++;
                     } else {
                         emptyStackTurns = 0;
                     }
                     appendCurrentState();
+                    // Profiler.end("bugnav");
                     return oldPos;
                 }
             }
@@ -24135,32 +24184,32 @@ class BugnavInstance {
             
             {
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || rc.getLocation().distanceSquaredTo(nextPos) > 20) {
-                    // System.out.println("out of known area " + nextPos);
+                if(!CellTracker.isSeen(nextPos) || chebyshevDistance(rc.getLocation(), nextPos) > 5) {
                     if(rc.onTheMap(nextPos)) rc.setIndicatorDot(nextPos, 0, 255, 255);
-                    else if(canGuess) {
+                    else if(isMaster) {
                         // avoid following the edge of the map
+                        indicate("bugnav hit edge of map");
                         leftTurn = !leftTurn;
                         reset();
                         // don't guess turn direction, we know that one direction is bad already
-                        emptyStackTurns = 0;
+                        emptyStackTurns = -1000;
                         // start again
                         continue;
                     }
+                    // Profiler.end("bugnav");
                     return oldPos;
                 }
                 if(CellTracker.isPassable(nextPos)) {
-                    // System.out.println("moving to " + nextPos + " via " + tryDir + " with turns " + 0);
                     pos = nextPos;
                     topDir = tryDir;
                     
-                    // System.out.println("SS " + stackSize);
                     if(stackSize == 0) {
                         emptyStackTurns++;
                     } else {
                         emptyStackTurns = 0;
                     }
                     appendCurrentState();
+                    // Profiler.end("bugnav");
                     return oldPos;
                 }
             }
@@ -24169,34 +24218,34 @@ class BugnavInstance {
             
             {
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || rc.getLocation().distanceSquaredTo(nextPos) > 20) {
-                    // System.out.println("out of known area " + nextPos);
+                if(!CellTracker.isSeen(nextPos) || chebyshevDistance(rc.getLocation(), nextPos) > 5) {
                     if(rc.onTheMap(nextPos)) rc.setIndicatorDot(nextPos, 0, 255, 255);
-                    else if(canGuess) {
+                    else if(isMaster) {
                         // avoid following the edge of the map
+                        indicate("bugnav hit edge of map");
                         leftTurn = !leftTurn;
                         reset();
                         // don't guess turn direction, we know that one direction is bad already
-                        emptyStackTurns = 0;
+                        emptyStackTurns = -1000;
                         // start again
                         continue;
                     }
+                    // Profiler.end("bugnav");
                     return oldPos;
                 }
                 if(CellTracker.isPassable(nextPos)) {
-                    // System.out.println("moving to " + nextPos + " via " + tryDir + " with turns " + 1);
                     pos = nextPos;
                     topDir = tryDir;
                     
                     stackSize += 1;
                     
-                    // System.out.println("SS " + stackSize);
                     if(stackSize == 0) {
                         emptyStackTurns++;
                     } else {
                         emptyStackTurns = 0;
                     }
                     appendCurrentState();
+                    // Profiler.end("bugnav");
                     return oldPos;
                 }
             }
@@ -24205,34 +24254,34 @@ class BugnavInstance {
             
             {
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || rc.getLocation().distanceSquaredTo(nextPos) > 20) {
-                    // System.out.println("out of known area " + nextPos);
+                if(!CellTracker.isSeen(nextPos) || chebyshevDistance(rc.getLocation(), nextPos) > 5) {
                     if(rc.onTheMap(nextPos)) rc.setIndicatorDot(nextPos, 0, 255, 255);
-                    else if(canGuess) {
+                    else if(isMaster) {
                         // avoid following the edge of the map
+                        indicate("bugnav hit edge of map");
                         leftTurn = !leftTurn;
                         reset();
                         // don't guess turn direction, we know that one direction is bad already
-                        emptyStackTurns = 0;
+                        emptyStackTurns = -1000;
                         // start again
                         continue;
                     }
+                    // Profiler.end("bugnav");
                     return oldPos;
                 }
                 if(CellTracker.isPassable(nextPos)) {
-                    // System.out.println("moving to " + nextPos + " via " + tryDir + " with turns " + 2);
                     pos = nextPos;
                     topDir = tryDir;
                     
                     stackSize += 2;
                     
-                    // System.out.println("SS " + stackSize);
                     if(stackSize == 0) {
                         emptyStackTurns++;
                     } else {
                         emptyStackTurns = 0;
                     }
                     appendCurrentState();
+                    // Profiler.end("bugnav");
                     return oldPos;
                 }
             }
@@ -24241,34 +24290,34 @@ class BugnavInstance {
             
             {
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || rc.getLocation().distanceSquaredTo(nextPos) > 20) {
-                    // System.out.println("out of known area " + nextPos);
+                if(!CellTracker.isSeen(nextPos) || chebyshevDistance(rc.getLocation(), nextPos) > 5) {
                     if(rc.onTheMap(nextPos)) rc.setIndicatorDot(nextPos, 0, 255, 255);
-                    else if(canGuess) {
+                    else if(isMaster) {
                         // avoid following the edge of the map
+                        indicate("bugnav hit edge of map");
                         leftTurn = !leftTurn;
                         reset();
                         // don't guess turn direction, we know that one direction is bad already
-                        emptyStackTurns = 0;
+                        emptyStackTurns = -1000;
                         // start again
                         continue;
                     }
+                    // Profiler.end("bugnav");
                     return oldPos;
                 }
                 if(CellTracker.isPassable(nextPos)) {
-                    // System.out.println("moving to " + nextPos + " via " + tryDir + " with turns " + 3);
                     pos = nextPos;
                     topDir = tryDir;
                     
                     stackSize += 3;
                     
-                    // System.out.println("SS " + stackSize);
                     if(stackSize == 0) {
                         emptyStackTurns++;
                     } else {
                         emptyStackTurns = 0;
                     }
                     appendCurrentState();
+                    // Profiler.end("bugnav");
                     return oldPos;
                 }
             }
@@ -24277,34 +24326,34 @@ class BugnavInstance {
             
             {
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || rc.getLocation().distanceSquaredTo(nextPos) > 20) {
-                    // System.out.println("out of known area " + nextPos);
+                if(!CellTracker.isSeen(nextPos) || chebyshevDistance(rc.getLocation(), nextPos) > 5) {
                     if(rc.onTheMap(nextPos)) rc.setIndicatorDot(nextPos, 0, 255, 255);
-                    else if(canGuess) {
+                    else if(isMaster) {
                         // avoid following the edge of the map
+                        indicate("bugnav hit edge of map");
                         leftTurn = !leftTurn;
                         reset();
                         // don't guess turn direction, we know that one direction is bad already
-                        emptyStackTurns = 0;
+                        emptyStackTurns = -1000;
                         // start again
                         continue;
                     }
+                    // Profiler.end("bugnav");
                     return oldPos;
                 }
                 if(CellTracker.isPassable(nextPos)) {
-                    // System.out.println("moving to " + nextPos + " via " + tryDir + " with turns " + 4);
                     pos = nextPos;
                     topDir = tryDir;
                     
                     stackSize += 4;
                     
-                    // System.out.println("SS " + stackSize);
                     if(stackSize == 0) {
                         emptyStackTurns++;
                     } else {
                         emptyStackTurns = 0;
                     }
                     appendCurrentState();
+                    // Profiler.end("bugnav");
                     return oldPos;
                 }
             }
@@ -24313,34 +24362,34 @@ class BugnavInstance {
             
             {
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || rc.getLocation().distanceSquaredTo(nextPos) > 20) {
-                    // System.out.println("out of known area " + nextPos);
+                if(!CellTracker.isSeen(nextPos) || chebyshevDistance(rc.getLocation(), nextPos) > 5) {
                     if(rc.onTheMap(nextPos)) rc.setIndicatorDot(nextPos, 0, 255, 255);
-                    else if(canGuess) {
+                    else if(isMaster) {
                         // avoid following the edge of the map
+                        indicate("bugnav hit edge of map");
                         leftTurn = !leftTurn;
                         reset();
                         // don't guess turn direction, we know that one direction is bad already
-                        emptyStackTurns = 0;
+                        emptyStackTurns = -1000;
                         // start again
                         continue;
                     }
+                    // Profiler.end("bugnav");
                     return oldPos;
                 }
                 if(CellTracker.isPassable(nextPos)) {
-                    // System.out.println("moving to " + nextPos + " via " + tryDir + " with turns " + 5);
                     pos = nextPos;
                     topDir = tryDir;
                     
                     stackSize += 5;
                     
-                    // System.out.println("SS " + stackSize);
                     if(stackSize == 0) {
                         emptyStackTurns++;
                     } else {
                         emptyStackTurns = 0;
                     }
                     appendCurrentState();
+                    // Profiler.end("bugnav");
                     return oldPos;
                 }
             }
@@ -24361,17 +24410,12 @@ public class Pathfinder {
         rc.moveForward();
         // TODO: optimise
         CellTracker.computeLocalPassable();
-        // System.out.println(loc);
-        // for(int dy = -4; dy < 3; dy++) {
-        //     System.out.println(Long.toBinaryString(CellTracker.localPassable0 >> ((dy + 4) * 9) & 0x1ffl | 0x200l));
-        // }
-        // for(int dy = 3; dy < 5; dy++) {
-        //     System.out.println(Long.toBinaryString(CellTracker.localPassable1 >> ((dy - 3) * 9) & 0x1ffl | 0x200l));
-        // }
     }
 
     public static void makeMove(MapLocation target) throws GameActionException {
         assert rc.isMovementReady();
+        // TODO: optimise
+        CellTracker.computeLocalPassable();
         // TODO: better handling when target changes
         if(bug == null || !target.equals(bug.target)) {
             indicate("RETARGET");
@@ -24381,43 +24425,28 @@ public class Pathfinder {
         int shade = 255;
         bugLoop: {
             
-            bugPos = bug.advance();
+            bugPos = bug.advance( true );
+            indicate(bugPos);
             rc.setIndicatorDot(bugPos, 0, Math.max(0, shade -= 30), 0);
             if(bugPos.equals(bug.pos)) break bugLoop;
             
-            bugPos = bug.advance();
+            bugPos = bug.advance( false );
+            indicate(bugPos);
             rc.setIndicatorDot(bugPos, 0, Math.max(0, shade -= 30), 0);
             if(bugPos.equals(bug.pos)) break bugLoop;
             
-            bugPos = bug.advance();
+            bugPos = bug.advance( false );
+            indicate(bugPos);
             rc.setIndicatorDot(bugPos, 0, Math.max(0, shade -= 30), 0);
             if(bugPos.equals(bug.pos)) break bugLoop;
             
-            bugPos = bug.advance();
+            bugPos = bug.advance( false );
+            indicate(bugPos);
             rc.setIndicatorDot(bugPos, 0, Math.max(0, shade -= 30), 0);
             if(bugPos.equals(bug.pos)) break bugLoop;
             
-            bugPos = bug.advance();
-            rc.setIndicatorDot(bugPos, 0, Math.max(0, shade -= 30), 0);
-            if(bugPos.equals(bug.pos)) break bugLoop;
-            
-            bugPos = bug.advance();
-            rc.setIndicatorDot(bugPos, 0, Math.max(0, shade -= 30), 0);
-            if(bugPos.equals(bug.pos)) break bugLoop;
-            
-            bugPos = bug.advance();
-            rc.setIndicatorDot(bugPos, 0, Math.max(0, shade -= 30), 0);
-            if(bugPos.equals(bug.pos)) break bugLoop;
-            
-            bugPos = bug.advance();
-            rc.setIndicatorDot(bugPos, 0, Math.max(0, shade -= 30), 0);
-            if(bugPos.equals(bug.pos)) break bugLoop;
-            
-            bugPos = bug.advance();
-            rc.setIndicatorDot(bugPos, 0, Math.max(0, shade -= 30), 0);
-            if(bugPos.equals(bug.pos)) break bugLoop;
-            
-            bugPos = bug.advance();
+            bugPos = bug.advance( false );
+            indicate(bugPos);
             rc.setIndicatorDot(bugPos, 0, Math.max(0, shade -= 30), 0);
             if(bugPos.equals(bug.pos)) break bugLoop;
             
@@ -24426,7 +24455,7 @@ public class Pathfinder {
 
         // no bfs needed
         var dir = rc.getLocation().directionTo(bugPos);
-        indicate(dir);
+        // indicate(dir);
         if(rc.getLocation().add(dir).equals(bugPos)) {
             indicate("adjacent");
             makeMove(dir);
@@ -24435,49 +24464,51 @@ public class Pathfinder {
         // TODO: what if location == bug.pos?
 
         // bfs
-        CellTracker.computeLocalPassable();
-        // for(int dy = -4; dy < 3; dy++) {
-        //     System.out.println(Long.toBinaryString(CellTracker.localPassable0 >> ((dy + 4) * 9) & 0x1ffl | 0x200l));
-        // }
-        // for(int dy = 3; dy < 5; dy++) {
-        //     System.out.println(Long.toBinaryString(CellTracker.localPassable1 >> ((dy - 3) * 9) & 0x1ffl | 0x200l));
-        // }
-        // System.out.println();
         var loc = rc.getLocation();
         // d{i}0 + d{i}1 is the mask of reachable within i steps
         long d00 = 0, d01 = 0;
-        if(bugPos.y < loc.y + 3) {
-            d00 |= 1l << ((bugPos.y - (loc.y - 4)) * 9 + bugPos.x - (loc.x - 4));
+        int idx = (bugPos.y - loc.y + 5) * 11 + (bugPos.x - loc.x + 5);
+        if(idx < 61) {
+            d00 |= 1l << idx;
         } else {
-            d01 |= 1l << ((bugPos.y - (loc.y + 3)) * 9 + bugPos.x - (loc.x - 4));
+            d01 |= 1l << (idx - 61);
         }
         
         Direction bestMove = null;
         double bestScore = 1e18;
         
-        // for(int dy = -4; dy < 3; dy++) {
-        //     System.out.println(Long.toBinaryString(d00 >> ((dy + 4) * 9) & 0x1ffl | 0x200l));
-        // }
-        // for(int dy = 3; dy < 5; dy++) {
-        //     System.out.println(Long.toBinaryString(d01 >> ((dy - 3) * 9) & 0x1ffl | 0x200l));
-        // }
-        // System.out.println();
         long d10 = 0, d11 = 0;
         d10 = d00;
         d11 = d01;
-        d10 |= (d10 & 0x3fdfeff7fbfdfeffl) << 1;
-        d11 |= (d11 & 0x3fdfeff7fbfdfeffl) << 1;
-        d10 |= (d10 & 0x7fbfdfeff7fbfdfel) >> 1;
-        d11 |= (d11 & 0x7fbfdfeff7fbfdfel) >> 1;
-        d10 |= (d10 & 0x3fffffffffffffl) << 9;
-        d11 |= ((d11 & 0x1ffl) << 9) | (d10 >> 54);
-        d10 |= (d10 >> 9) | ((d11 & 0x1ffl) << 54);
-        d11 |= d11 >> 9;
+
+        // if(rc.getRoundNum() >= 303) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(CellTracker.localPassable0, CellTracker.localPassable1);
+        //     Clock.yield();
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d10, d11);
+        //     Clock.yield();
+        // }
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d10 |= (d10 & 0xfbff7feffdffbffl) << 1;
+        d11 |= (d11 & 0x7feffdffbff7fefl) << 1;
+        d10 |= (d10 & 0x1f7feffdffbff7fel) >> 1;
+        d11 |= (d11 & 0xffdffbff7feffdel) >> 1;
+
+        d11 |= ((d11 & 0x1ffffffffffffl) << 11) | (d10 >> 50);
+        d10 |= (d10 & 0x3ffffffffffffl) << 11;
+        d10 |= (d10 >> 11) | ((d11 & 0x7ffl) << 50);
+        d11 |= d11 >> 11;
         d10 &= CellTracker.localPassable0;
         d11 &= CellTracker.localPassable1;
-        if((d10 & 0x70281c0000000l) != 0) {
+        if((d10 & 0x807000000000000l) != 0 || (d11 & 0xe01) != 0) {
             
-            if((d10 & (1l << 31)) != 0) {
+            if(
+               
+               (d10 & (1l << 49))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24486,7 +24517,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d10 & (1l << 41)) != 0) {
+            if(
+               
+               (d11 & (1l << 0))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24495,7 +24530,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d10 & (1l << 49)) != 0) {
+            if(
+               
+               (d11 & (1l << 10))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24504,7 +24543,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d10 & (1l << 39)) != 0) {
+            if(
+               
+               (d10 & (1l << 59))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24513,7 +24556,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d10 & (1l << 30)) != 0) {
+            if(
+               
+               (d10 & (1l << 48))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24522,7 +24569,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d10 & (1l << 32)) != 0) {
+            if(
+               
+               (d10 & (1l << 50))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24531,7 +24582,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d10 & (1l << 48)) != 0) {
+            if(
+               
+               (d11 & (1l << 9))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24540,7 +24595,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d10 & (1l << 50)) != 0) {
+            if(
+               
+               (d11 & (1l << 11))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24556,29 +24615,38 @@ public class Pathfinder {
             }
         }
         
-        // for(int dy = -4; dy < 3; dy++) {
-        //     System.out.println(Long.toBinaryString(d10 >> ((dy + 4) * 9) & 0x1ffl | 0x200l));
-        // }
-        // for(int dy = 3; dy < 5; dy++) {
-        //     System.out.println(Long.toBinaryString(d11 >> ((dy - 3) * 9) & 0x1ffl | 0x200l));
-        // }
-        // System.out.println();
         long d20 = 0, d21 = 0;
         d20 = d10;
         d21 = d11;
-        d20 |= (d20 & 0x3fdfeff7fbfdfeffl) << 1;
-        d21 |= (d21 & 0x3fdfeff7fbfdfeffl) << 1;
-        d20 |= (d20 & 0x7fbfdfeff7fbfdfel) >> 1;
-        d21 |= (d21 & 0x7fbfdfeff7fbfdfel) >> 1;
-        d20 |= (d20 & 0x3fffffffffffffl) << 9;
-        d21 |= ((d21 & 0x1ffl) << 9) | (d20 >> 54);
-        d20 |= (d20 >> 9) | ((d21 & 0x1ffl) << 54);
-        d21 |= d21 >> 9;
+
+        // if(rc.getRoundNum() >= 303) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(CellTracker.localPassable0, CellTracker.localPassable1);
+        //     Clock.yield();
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d20, d21);
+        //     Clock.yield();
+        // }
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d20 |= (d20 & 0xfbff7feffdffbffl) << 1;
+        d21 |= (d21 & 0x7feffdffbff7fefl) << 1;
+        d20 |= (d20 & 0x1f7feffdffbff7fel) >> 1;
+        d21 |= (d21 & 0xffdffbff7feffdel) >> 1;
+
+        d21 |= ((d21 & 0x1ffffffffffffl) << 11) | (d20 >> 50);
+        d20 |= (d20 & 0x3ffffffffffffl) << 11;
+        d20 |= (d20 >> 11) | ((d21 & 0x7ffl) << 50);
+        d21 |= d21 >> 11;
         d20 &= CellTracker.localPassable0;
         d21 &= CellTracker.localPassable1;
-        if((d20 & 0x70281c0000000l) != 0) {
+        if((d20 & 0x807000000000000l) != 0 || (d21 & 0xe01) != 0) {
             
-            if((d20 & (1l << 31)) != 0) {
+            if(
+               
+               (d20 & (1l << 49))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24587,7 +24655,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d20 & (1l << 41)) != 0) {
+            if(
+               
+               (d21 & (1l << 0))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24596,7 +24668,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d20 & (1l << 49)) != 0) {
+            if(
+               
+               (d21 & (1l << 10))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24605,7 +24681,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d20 & (1l << 39)) != 0) {
+            if(
+               
+               (d20 & (1l << 59))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24614,7 +24694,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d20 & (1l << 30)) != 0) {
+            if(
+               
+               (d20 & (1l << 48))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24623,7 +24707,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d20 & (1l << 32)) != 0) {
+            if(
+               
+               (d20 & (1l << 50))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24632,7 +24720,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d20 & (1l << 48)) != 0) {
+            if(
+               
+               (d21 & (1l << 9))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24641,7 +24733,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d20 & (1l << 50)) != 0) {
+            if(
+               
+               (d21 & (1l << 11))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24657,29 +24753,38 @@ public class Pathfinder {
             }
         }
         
-        // for(int dy = -4; dy < 3; dy++) {
-        //     System.out.println(Long.toBinaryString(d20 >> ((dy + 4) * 9) & 0x1ffl | 0x200l));
-        // }
-        // for(int dy = 3; dy < 5; dy++) {
-        //     System.out.println(Long.toBinaryString(d21 >> ((dy - 3) * 9) & 0x1ffl | 0x200l));
-        // }
-        // System.out.println();
         long d30 = 0, d31 = 0;
         d30 = d20;
         d31 = d21;
-        d30 |= (d30 & 0x3fdfeff7fbfdfeffl) << 1;
-        d31 |= (d31 & 0x3fdfeff7fbfdfeffl) << 1;
-        d30 |= (d30 & 0x7fbfdfeff7fbfdfel) >> 1;
-        d31 |= (d31 & 0x7fbfdfeff7fbfdfel) >> 1;
-        d30 |= (d30 & 0x3fffffffffffffl) << 9;
-        d31 |= ((d31 & 0x1ffl) << 9) | (d30 >> 54);
-        d30 |= (d30 >> 9) | ((d31 & 0x1ffl) << 54);
-        d31 |= d31 >> 9;
+
+        // if(rc.getRoundNum() >= 303) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(CellTracker.localPassable0, CellTracker.localPassable1);
+        //     Clock.yield();
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d30, d31);
+        //     Clock.yield();
+        // }
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d30 |= (d30 & 0xfbff7feffdffbffl) << 1;
+        d31 |= (d31 & 0x7feffdffbff7fefl) << 1;
+        d30 |= (d30 & 0x1f7feffdffbff7fel) >> 1;
+        d31 |= (d31 & 0xffdffbff7feffdel) >> 1;
+
+        d31 |= ((d31 & 0x1ffffffffffffl) << 11) | (d30 >> 50);
+        d30 |= (d30 & 0x3ffffffffffffl) << 11;
+        d30 |= (d30 >> 11) | ((d31 & 0x7ffl) << 50);
+        d31 |= d31 >> 11;
         d30 &= CellTracker.localPassable0;
         d31 &= CellTracker.localPassable1;
-        if((d30 & 0x70281c0000000l) != 0) {
+        if((d30 & 0x807000000000000l) != 0 || (d31 & 0xe01) != 0) {
             
-            if((d30 & (1l << 31)) != 0) {
+            if(
+               
+               (d30 & (1l << 49))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24688,7 +24793,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d30 & (1l << 41)) != 0) {
+            if(
+               
+               (d31 & (1l << 0))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24697,7 +24806,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d30 & (1l << 49)) != 0) {
+            if(
+               
+               (d31 & (1l << 10))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24706,7 +24819,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d30 & (1l << 39)) != 0) {
+            if(
+               
+               (d30 & (1l << 59))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24715,7 +24832,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d30 & (1l << 30)) != 0) {
+            if(
+               
+               (d30 & (1l << 48))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24724,7 +24845,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d30 & (1l << 32)) != 0) {
+            if(
+               
+               (d30 & (1l << 50))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24733,7 +24858,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d30 & (1l << 48)) != 0) {
+            if(
+               
+               (d31 & (1l << 9))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24742,7 +24871,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d30 & (1l << 50)) != 0) {
+            if(
+               
+               (d31 & (1l << 11))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24758,29 +24891,38 @@ public class Pathfinder {
             }
         }
         
-        // for(int dy = -4; dy < 3; dy++) {
-        //     System.out.println(Long.toBinaryString(d30 >> ((dy + 4) * 9) & 0x1ffl | 0x200l));
-        // }
-        // for(int dy = 3; dy < 5; dy++) {
-        //     System.out.println(Long.toBinaryString(d31 >> ((dy - 3) * 9) & 0x1ffl | 0x200l));
-        // }
-        // System.out.println();
         long d40 = 0, d41 = 0;
         d40 = d30;
         d41 = d31;
-        d40 |= (d40 & 0x3fdfeff7fbfdfeffl) << 1;
-        d41 |= (d41 & 0x3fdfeff7fbfdfeffl) << 1;
-        d40 |= (d40 & 0x7fbfdfeff7fbfdfel) >> 1;
-        d41 |= (d41 & 0x7fbfdfeff7fbfdfel) >> 1;
-        d40 |= (d40 & 0x3fffffffffffffl) << 9;
-        d41 |= ((d41 & 0x1ffl) << 9) | (d40 >> 54);
-        d40 |= (d40 >> 9) | ((d41 & 0x1ffl) << 54);
-        d41 |= d41 >> 9;
+
+        // if(rc.getRoundNum() >= 303) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(CellTracker.localPassable0, CellTracker.localPassable1);
+        //     Clock.yield();
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d40, d41);
+        //     Clock.yield();
+        // }
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d40 |= (d40 & 0xfbff7feffdffbffl) << 1;
+        d41 |= (d41 & 0x7feffdffbff7fefl) << 1;
+        d40 |= (d40 & 0x1f7feffdffbff7fel) >> 1;
+        d41 |= (d41 & 0xffdffbff7feffdel) >> 1;
+
+        d41 |= ((d41 & 0x1ffffffffffffl) << 11) | (d40 >> 50);
+        d40 |= (d40 & 0x3ffffffffffffl) << 11;
+        d40 |= (d40 >> 11) | ((d41 & 0x7ffl) << 50);
+        d41 |= d41 >> 11;
         d40 &= CellTracker.localPassable0;
         d41 &= CellTracker.localPassable1;
-        if((d40 & 0x70281c0000000l) != 0) {
+        if((d40 & 0x807000000000000l) != 0 || (d41 & 0xe01) != 0) {
             
-            if((d40 & (1l << 31)) != 0) {
+            if(
+               
+               (d40 & (1l << 49))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24789,7 +24931,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d40 & (1l << 41)) != 0) {
+            if(
+               
+               (d41 & (1l << 0))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24798,7 +24944,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d40 & (1l << 49)) != 0) {
+            if(
+               
+               (d41 & (1l << 10))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24807,7 +24957,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d40 & (1l << 39)) != 0) {
+            if(
+               
+               (d40 & (1l << 59))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24816,7 +24970,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d40 & (1l << 30)) != 0) {
+            if(
+               
+               (d40 & (1l << 48))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24825,7 +24983,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d40 & (1l << 32)) != 0) {
+            if(
+               
+               (d40 & (1l << 50))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24834,7 +24996,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d40 & (1l << 48)) != 0) {
+            if(
+               
+               (d41 & (1l << 9))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24843,7 +25009,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d40 & (1l << 50)) != 0) {
+            if(
+               
+               (d41 & (1l << 11))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24859,29 +25029,38 @@ public class Pathfinder {
             }
         }
         
-        // for(int dy = -4; dy < 3; dy++) {
-        //     System.out.println(Long.toBinaryString(d40 >> ((dy + 4) * 9) & 0x1ffl | 0x200l));
-        // }
-        // for(int dy = 3; dy < 5; dy++) {
-        //     System.out.println(Long.toBinaryString(d41 >> ((dy - 3) * 9) & 0x1ffl | 0x200l));
-        // }
-        // System.out.println();
         long d50 = 0, d51 = 0;
         d50 = d40;
         d51 = d41;
-        d50 |= (d50 & 0x3fdfeff7fbfdfeffl) << 1;
-        d51 |= (d51 & 0x3fdfeff7fbfdfeffl) << 1;
-        d50 |= (d50 & 0x7fbfdfeff7fbfdfel) >> 1;
-        d51 |= (d51 & 0x7fbfdfeff7fbfdfel) >> 1;
-        d50 |= (d50 & 0x3fffffffffffffl) << 9;
-        d51 |= ((d51 & 0x1ffl) << 9) | (d50 >> 54);
-        d50 |= (d50 >> 9) | ((d51 & 0x1ffl) << 54);
-        d51 |= d51 >> 9;
+
+        // if(rc.getRoundNum() >= 303) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(CellTracker.localPassable0, CellTracker.localPassable1);
+        //     Clock.yield();
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d50, d51);
+        //     Clock.yield();
+        // }
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d50 |= (d50 & 0xfbff7feffdffbffl) << 1;
+        d51 |= (d51 & 0x7feffdffbff7fefl) << 1;
+        d50 |= (d50 & 0x1f7feffdffbff7fel) >> 1;
+        d51 |= (d51 & 0xffdffbff7feffdel) >> 1;
+
+        d51 |= ((d51 & 0x1ffffffffffffl) << 11) | (d50 >> 50);
+        d50 |= (d50 & 0x3ffffffffffffl) << 11;
+        d50 |= (d50 >> 11) | ((d51 & 0x7ffl) << 50);
+        d51 |= d51 >> 11;
         d50 &= CellTracker.localPassable0;
         d51 &= CellTracker.localPassable1;
-        if((d50 & 0x70281c0000000l) != 0) {
+        if((d50 & 0x807000000000000l) != 0 || (d51 & 0xe01) != 0) {
             
-            if((d50 & (1l << 31)) != 0) {
+            if(
+               
+               (d50 & (1l << 49))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24890,7 +25069,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d50 & (1l << 41)) != 0) {
+            if(
+               
+               (d51 & (1l << 0))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24899,7 +25082,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d50 & (1l << 49)) != 0) {
+            if(
+               
+               (d51 & (1l << 10))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24908,7 +25095,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d50 & (1l << 39)) != 0) {
+            if(
+               
+               (d50 & (1l << 59))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24917,7 +25108,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d50 & (1l << 30)) != 0) {
+            if(
+               
+               (d50 & (1l << 48))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24926,7 +25121,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d50 & (1l << 32)) != 0) {
+            if(
+               
+               (d50 & (1l << 50))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24935,7 +25134,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d50 & (1l << 48)) != 0) {
+            if(
+               
+               (d51 & (1l << 9))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24944,7 +25147,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d50 & (1l << 50)) != 0) {
+            if(
+               
+               (d51 & (1l << 11))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24960,29 +25167,38 @@ public class Pathfinder {
             }
         }
         
-        // for(int dy = -4; dy < 3; dy++) {
-        //     System.out.println(Long.toBinaryString(d50 >> ((dy + 4) * 9) & 0x1ffl | 0x200l));
-        // }
-        // for(int dy = 3; dy < 5; dy++) {
-        //     System.out.println(Long.toBinaryString(d51 >> ((dy - 3) * 9) & 0x1ffl | 0x200l));
-        // }
-        // System.out.println();
         long d60 = 0, d61 = 0;
         d60 = d50;
         d61 = d51;
-        d60 |= (d60 & 0x3fdfeff7fbfdfeffl) << 1;
-        d61 |= (d61 & 0x3fdfeff7fbfdfeffl) << 1;
-        d60 |= (d60 & 0x7fbfdfeff7fbfdfel) >> 1;
-        d61 |= (d61 & 0x7fbfdfeff7fbfdfel) >> 1;
-        d60 |= (d60 & 0x3fffffffffffffl) << 9;
-        d61 |= ((d61 & 0x1ffl) << 9) | (d60 >> 54);
-        d60 |= (d60 >> 9) | ((d61 & 0x1ffl) << 54);
-        d61 |= d61 >> 9;
+
+        // if(rc.getRoundNum() >= 303) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(CellTracker.localPassable0, CellTracker.localPassable1);
+        //     Clock.yield();
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d60, d61);
+        //     Clock.yield();
+        // }
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d60 |= (d60 & 0xfbff7feffdffbffl) << 1;
+        d61 |= (d61 & 0x7feffdffbff7fefl) << 1;
+        d60 |= (d60 & 0x1f7feffdffbff7fel) >> 1;
+        d61 |= (d61 & 0xffdffbff7feffdel) >> 1;
+
+        d61 |= ((d61 & 0x1ffffffffffffl) << 11) | (d60 >> 50);
+        d60 |= (d60 & 0x3ffffffffffffl) << 11;
+        d60 |= (d60 >> 11) | ((d61 & 0x7ffl) << 50);
+        d61 |= d61 >> 11;
         d60 &= CellTracker.localPassable0;
         d61 &= CellTracker.localPassable1;
-        if((d60 & 0x70281c0000000l) != 0) {
+        if((d60 & 0x807000000000000l) != 0 || (d61 & 0xe01) != 0) {
             
-            if((d60 & (1l << 31)) != 0) {
+            if(
+               
+               (d60 & (1l << 49))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -24991,7 +25207,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d60 & (1l << 41)) != 0) {
+            if(
+               
+               (d61 & (1l << 0))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25000,7 +25220,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d60 & (1l << 49)) != 0) {
+            if(
+               
+               (d61 & (1l << 10))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25009,7 +25233,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d60 & (1l << 39)) != 0) {
+            if(
+               
+               (d60 & (1l << 59))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25018,7 +25246,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d60 & (1l << 30)) != 0) {
+            if(
+               
+               (d60 & (1l << 48))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25027,7 +25259,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d60 & (1l << 32)) != 0) {
+            if(
+               
+               (d60 & (1l << 50))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25036,7 +25272,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d60 & (1l << 48)) != 0) {
+            if(
+               
+               (d61 & (1l << 9))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25045,7 +25285,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d60 & (1l << 50)) != 0) {
+            if(
+               
+               (d61 & (1l << 11))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25061,29 +25305,38 @@ public class Pathfinder {
             }
         }
         
-        // for(int dy = -4; dy < 3; dy++) {
-        //     System.out.println(Long.toBinaryString(d60 >> ((dy + 4) * 9) & 0x1ffl | 0x200l));
-        // }
-        // for(int dy = 3; dy < 5; dy++) {
-        //     System.out.println(Long.toBinaryString(d61 >> ((dy - 3) * 9) & 0x1ffl | 0x200l));
-        // }
-        // System.out.println();
         long d70 = 0, d71 = 0;
         d70 = d60;
         d71 = d61;
-        d70 |= (d70 & 0x3fdfeff7fbfdfeffl) << 1;
-        d71 |= (d71 & 0x3fdfeff7fbfdfeffl) << 1;
-        d70 |= (d70 & 0x7fbfdfeff7fbfdfel) >> 1;
-        d71 |= (d71 & 0x7fbfdfeff7fbfdfel) >> 1;
-        d70 |= (d70 & 0x3fffffffffffffl) << 9;
-        d71 |= ((d71 & 0x1ffl) << 9) | (d70 >> 54);
-        d70 |= (d70 >> 9) | ((d71 & 0x1ffl) << 54);
-        d71 |= d71 >> 9;
+
+        // if(rc.getRoundNum() >= 303) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(CellTracker.localPassable0, CellTracker.localPassable1);
+        //     Clock.yield();
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d70, d71);
+        //     Clock.yield();
+        // }
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d70 |= (d70 & 0xfbff7feffdffbffl) << 1;
+        d71 |= (d71 & 0x7feffdffbff7fefl) << 1;
+        d70 |= (d70 & 0x1f7feffdffbff7fel) >> 1;
+        d71 |= (d71 & 0xffdffbff7feffdel) >> 1;
+
+        d71 |= ((d71 & 0x1ffffffffffffl) << 11) | (d70 >> 50);
+        d70 |= (d70 & 0x3ffffffffffffl) << 11;
+        d70 |= (d70 >> 11) | ((d71 & 0x7ffl) << 50);
+        d71 |= d71 >> 11;
         d70 &= CellTracker.localPassable0;
         d71 &= CellTracker.localPassable1;
-        if((d70 & 0x70281c0000000l) != 0) {
+        if((d70 & 0x807000000000000l) != 0 || (d71 & 0xe01) != 0) {
             
-            if((d70 & (1l << 31)) != 0) {
+            if(
+               
+               (d70 & (1l << 49))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25092,7 +25345,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d70 & (1l << 41)) != 0) {
+            if(
+               
+               (d71 & (1l << 0))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25101,7 +25358,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d70 & (1l << 49)) != 0) {
+            if(
+               
+               (d71 & (1l << 10))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25110,7 +25371,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d70 & (1l << 39)) != 0) {
+            if(
+               
+               (d70 & (1l << 59))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25119,7 +25384,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d70 & (1l << 30)) != 0) {
+            if(
+               
+               (d70 & (1l << 48))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25128,7 +25397,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d70 & (1l << 32)) != 0) {
+            if(
+               
+               (d70 & (1l << 50))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25137,7 +25410,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d70 & (1l << 48)) != 0) {
+            if(
+               
+               (d71 & (1l << 9))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25146,7 +25423,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d70 & (1l << 50)) != 0) {
+            if(
+               
+               (d71 & (1l << 11))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25162,29 +25443,38 @@ public class Pathfinder {
             }
         }
         
-        // for(int dy = -4; dy < 3; dy++) {
-        //     System.out.println(Long.toBinaryString(d70 >> ((dy + 4) * 9) & 0x1ffl | 0x200l));
-        // }
-        // for(int dy = 3; dy < 5; dy++) {
-        //     System.out.println(Long.toBinaryString(d71 >> ((dy - 3) * 9) & 0x1ffl | 0x200l));
-        // }
-        // System.out.println();
         long d80 = 0, d81 = 0;
         d80 = d70;
         d81 = d71;
-        d80 |= (d80 & 0x3fdfeff7fbfdfeffl) << 1;
-        d81 |= (d81 & 0x3fdfeff7fbfdfeffl) << 1;
-        d80 |= (d80 & 0x7fbfdfeff7fbfdfel) >> 1;
-        d81 |= (d81 & 0x7fbfdfeff7fbfdfel) >> 1;
-        d80 |= (d80 & 0x3fffffffffffffl) << 9;
-        d81 |= ((d81 & 0x1ffl) << 9) | (d80 >> 54);
-        d80 |= (d80 >> 9) | ((d81 & 0x1ffl) << 54);
-        d81 |= d81 >> 9;
+
+        // if(rc.getRoundNum() >= 303) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(CellTracker.localPassable0, CellTracker.localPassable1);
+        //     Clock.yield();
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d80, d81);
+        //     Clock.yield();
+        // }
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d80 |= (d80 & 0xfbff7feffdffbffl) << 1;
+        d81 |= (d81 & 0x7feffdffbff7fefl) << 1;
+        d80 |= (d80 & 0x1f7feffdffbff7fel) >> 1;
+        d81 |= (d81 & 0xffdffbff7feffdel) >> 1;
+
+        d81 |= ((d81 & 0x1ffffffffffffl) << 11) | (d80 >> 50);
+        d80 |= (d80 & 0x3ffffffffffffl) << 11;
+        d80 |= (d80 >> 11) | ((d81 & 0x7ffl) << 50);
+        d81 |= d81 >> 11;
         d80 &= CellTracker.localPassable0;
         d81 &= CellTracker.localPassable1;
-        if((d80 & 0x70281c0000000l) != 0) {
+        if((d80 & 0x807000000000000l) != 0 || (d81 & 0xe01) != 0) {
             
-            if((d80 & (1l << 31)) != 0) {
+            if(
+               
+               (d80 & (1l << 49))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25193,7 +25483,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d80 & (1l << 41)) != 0) {
+            if(
+               
+               (d81 & (1l << 0))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25202,7 +25496,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d80 & (1l << 49)) != 0) {
+            if(
+               
+               (d81 & (1l << 10))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25211,7 +25509,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d80 & (1l << 39)) != 0) {
+            if(
+               
+               (d80 & (1l << 59))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25220,7 +25522,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d80 & (1l << 30)) != 0) {
+            if(
+               
+               (d80 & (1l << 48))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25229,7 +25535,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d80 & (1l << 32)) != 0) {
+            if(
+               
+               (d80 & (1l << 50))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25238,7 +25548,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d80 & (1l << 48)) != 0) {
+            if(
+               
+               (d81 & (1l << 9))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25247,7 +25561,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d80 & (1l << 50)) != 0) {
+            if(
+               
+               (d81 & (1l << 11))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25263,29 +25581,38 @@ public class Pathfinder {
             }
         }
         
-        // for(int dy = -4; dy < 3; dy++) {
-        //     System.out.println(Long.toBinaryString(d80 >> ((dy + 4) * 9) & 0x1ffl | 0x200l));
-        // }
-        // for(int dy = 3; dy < 5; dy++) {
-        //     System.out.println(Long.toBinaryString(d81 >> ((dy - 3) * 9) & 0x1ffl | 0x200l));
-        // }
-        // System.out.println();
         long d90 = 0, d91 = 0;
         d90 = d80;
         d91 = d81;
-        d90 |= (d90 & 0x3fdfeff7fbfdfeffl) << 1;
-        d91 |= (d91 & 0x3fdfeff7fbfdfeffl) << 1;
-        d90 |= (d90 & 0x7fbfdfeff7fbfdfel) >> 1;
-        d91 |= (d91 & 0x7fbfdfeff7fbfdfel) >> 1;
-        d90 |= (d90 & 0x3fffffffffffffl) << 9;
-        d91 |= ((d91 & 0x1ffl) << 9) | (d90 >> 54);
-        d90 |= (d90 >> 9) | ((d91 & 0x1ffl) << 54);
-        d91 |= d91 >> 9;
+
+        // if(rc.getRoundNum() >= 303) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(CellTracker.localPassable0, CellTracker.localPassable1);
+        //     Clock.yield();
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d90, d91);
+        //     Clock.yield();
+        // }
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d90 |= (d90 & 0xfbff7feffdffbffl) << 1;
+        d91 |= (d91 & 0x7feffdffbff7fefl) << 1;
+        d90 |= (d90 & 0x1f7feffdffbff7fel) >> 1;
+        d91 |= (d91 & 0xffdffbff7feffdel) >> 1;
+
+        d91 |= ((d91 & 0x1ffffffffffffl) << 11) | (d90 >> 50);
+        d90 |= (d90 & 0x3ffffffffffffl) << 11;
+        d90 |= (d90 >> 11) | ((d91 & 0x7ffl) << 50);
+        d91 |= d91 >> 11;
         d90 &= CellTracker.localPassable0;
         d91 &= CellTracker.localPassable1;
-        if((d90 & 0x70281c0000000l) != 0) {
+        if((d90 & 0x807000000000000l) != 0 || (d91 & 0xe01) != 0) {
             
-            if((d90 & (1l << 31)) != 0) {
+            if(
+               
+               (d90 & (1l << 49))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25294,7 +25621,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d90 & (1l << 41)) != 0) {
+            if(
+               
+               (d91 & (1l << 0))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25303,7 +25634,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d90 & (1l << 49)) != 0) {
+            if(
+               
+               (d91 & (1l << 10))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25312,7 +25647,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d90 & (1l << 39)) != 0) {
+            if(
+               
+               (d90 & (1l << 59))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25321,7 +25660,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d90 & (1l << 30)) != 0) {
+            if(
+               
+               (d90 & (1l << 48))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25330,7 +25673,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d90 & (1l << 32)) != 0) {
+            if(
+               
+               (d90 & (1l << 50))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25339,7 +25686,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d90 & (1l << 48)) != 0) {
+            if(
+               
+               (d91 & (1l << 9))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25348,7 +25699,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d90 & (1l << 50)) != 0) {
+            if(
+               
+               (d91 & (1l << 11))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25364,29 +25719,38 @@ public class Pathfinder {
             }
         }
         
-        // for(int dy = -4; dy < 3; dy++) {
-        //     System.out.println(Long.toBinaryString(d90 >> ((dy + 4) * 9) & 0x1ffl | 0x200l));
-        // }
-        // for(int dy = 3; dy < 5; dy++) {
-        //     System.out.println(Long.toBinaryString(d91 >> ((dy - 3) * 9) & 0x1ffl | 0x200l));
-        // }
-        // System.out.println();
         long d100 = 0, d101 = 0;
         d100 = d90;
         d101 = d91;
-        d100 |= (d100 & 0x3fdfeff7fbfdfeffl) << 1;
-        d101 |= (d101 & 0x3fdfeff7fbfdfeffl) << 1;
-        d100 |= (d100 & 0x7fbfdfeff7fbfdfel) >> 1;
-        d101 |= (d101 & 0x7fbfdfeff7fbfdfel) >> 1;
-        d100 |= (d100 & 0x3fffffffffffffl) << 9;
-        d101 |= ((d101 & 0x1ffl) << 9) | (d100 >> 54);
-        d100 |= (d100 >> 9) | ((d101 & 0x1ffl) << 54);
-        d101 |= d101 >> 9;
+
+        // if(rc.getRoundNum() >= 303) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(CellTracker.localPassable0, CellTracker.localPassable1);
+        //     Clock.yield();
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d100, d101);
+        //     Clock.yield();
+        // }
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d100 |= (d100 & 0xfbff7feffdffbffl) << 1;
+        d101 |= (d101 & 0x7feffdffbff7fefl) << 1;
+        d100 |= (d100 & 0x1f7feffdffbff7fel) >> 1;
+        d101 |= (d101 & 0xffdffbff7feffdel) >> 1;
+
+        d101 |= ((d101 & 0x1ffffffffffffl) << 11) | (d100 >> 50);
+        d100 |= (d100 & 0x3ffffffffffffl) << 11;
+        d100 |= (d100 >> 11) | ((d101 & 0x7ffl) << 50);
+        d101 |= d101 >> 11;
         d100 &= CellTracker.localPassable0;
         d101 &= CellTracker.localPassable1;
-        if((d100 & 0x70281c0000000l) != 0) {
+        if((d100 & 0x807000000000000l) != 0 || (d101 & 0xe01) != 0) {
             
-            if((d100 & (1l << 31)) != 0) {
+            if(
+               
+               (d100 & (1l << 49))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25395,7 +25759,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d100 & (1l << 41)) != 0) {
+            if(
+               
+               (d101 & (1l << 0))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25404,7 +25772,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d100 & (1l << 49)) != 0) {
+            if(
+               
+               (d101 & (1l << 10))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25413,7 +25785,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d100 & (1l << 39)) != 0) {
+            if(
+               
+               (d100 & (1l << 59))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25422,7 +25798,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d100 & (1l << 30)) != 0) {
+            if(
+               
+               (d100 & (1l << 48))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25431,7 +25811,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d100 & (1l << 32)) != 0) {
+            if(
+               
+               (d100 & (1l << 50))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25440,7 +25824,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d100 & (1l << 48)) != 0) {
+            if(
+               
+               (d101 & (1l << 9))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25449,7 +25837,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d100 & (1l << 50)) != 0) {
+            if(
+               
+               (d101 & (1l << 11))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25465,29 +25857,38 @@ public class Pathfinder {
             }
         }
         
-        // for(int dy = -4; dy < 3; dy++) {
-        //     System.out.println(Long.toBinaryString(d100 >> ((dy + 4) * 9) & 0x1ffl | 0x200l));
-        // }
-        // for(int dy = 3; dy < 5; dy++) {
-        //     System.out.println(Long.toBinaryString(d101 >> ((dy - 3) * 9) & 0x1ffl | 0x200l));
-        // }
-        // System.out.println();
         long d110 = 0, d111 = 0;
         d110 = d100;
         d111 = d101;
-        d110 |= (d110 & 0x3fdfeff7fbfdfeffl) << 1;
-        d111 |= (d111 & 0x3fdfeff7fbfdfeffl) << 1;
-        d110 |= (d110 & 0x7fbfdfeff7fbfdfel) >> 1;
-        d111 |= (d111 & 0x7fbfdfeff7fbfdfel) >> 1;
-        d110 |= (d110 & 0x3fffffffffffffl) << 9;
-        d111 |= ((d111 & 0x1ffl) << 9) | (d110 >> 54);
-        d110 |= (d110 >> 9) | ((d111 & 0x1ffl) << 54);
-        d111 |= d111 >> 9;
+
+        // if(rc.getRoundNum() >= 303) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(CellTracker.localPassable0, CellTracker.localPassable1);
+        //     Clock.yield();
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d110, d111);
+        //     Clock.yield();
+        // }
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d110 |= (d110 & 0xfbff7feffdffbffl) << 1;
+        d111 |= (d111 & 0x7feffdffbff7fefl) << 1;
+        d110 |= (d110 & 0x1f7feffdffbff7fel) >> 1;
+        d111 |= (d111 & 0xffdffbff7feffdel) >> 1;
+
+        d111 |= ((d111 & 0x1ffffffffffffl) << 11) | (d110 >> 50);
+        d110 |= (d110 & 0x3ffffffffffffl) << 11;
+        d110 |= (d110 >> 11) | ((d111 & 0x7ffl) << 50);
+        d111 |= d111 >> 11;
         d110 &= CellTracker.localPassable0;
         d111 &= CellTracker.localPassable1;
-        if((d110 & 0x70281c0000000l) != 0) {
+        if((d110 & 0x807000000000000l) != 0 || (d111 & 0xe01) != 0) {
             
-            if((d110 & (1l << 31)) != 0) {
+            if(
+               
+               (d110 & (1l << 49))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25496,7 +25897,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d110 & (1l << 41)) != 0) {
+            if(
+               
+               (d111 & (1l << 0))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25505,7 +25910,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d110 & (1l << 49)) != 0) {
+            if(
+               
+               (d111 & (1l << 10))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25514,7 +25923,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d110 & (1l << 39)) != 0) {
+            if(
+               
+               (d110 & (1l << 59))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25523,7 +25936,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d110 & (1l << 30)) != 0) {
+            if(
+               
+               (d110 & (1l << 48))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25532,7 +25949,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d110 & (1l << 32)) != 0) {
+            if(
+               
+               (d110 & (1l << 50))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25541,7 +25962,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d110 & (1l << 48)) != 0) {
+            if(
+               
+               (d111 & (1l << 9))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25550,7 +25975,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d110 & (1l << 50)) != 0) {
+            if(
+               
+               (d111 & (1l << 11))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25566,29 +25995,38 @@ public class Pathfinder {
             }
         }
         
-        // for(int dy = -4; dy < 3; dy++) {
-        //     System.out.println(Long.toBinaryString(d110 >> ((dy + 4) * 9) & 0x1ffl | 0x200l));
-        // }
-        // for(int dy = 3; dy < 5; dy++) {
-        //     System.out.println(Long.toBinaryString(d111 >> ((dy - 3) * 9) & 0x1ffl | 0x200l));
-        // }
-        // System.out.println();
         long d120 = 0, d121 = 0;
         d120 = d110;
         d121 = d111;
-        d120 |= (d120 & 0x3fdfeff7fbfdfeffl) << 1;
-        d121 |= (d121 & 0x3fdfeff7fbfdfeffl) << 1;
-        d120 |= (d120 & 0x7fbfdfeff7fbfdfel) >> 1;
-        d121 |= (d121 & 0x7fbfdfeff7fbfdfel) >> 1;
-        d120 |= (d120 & 0x3fffffffffffffl) << 9;
-        d121 |= ((d121 & 0x1ffl) << 9) | (d120 >> 54);
-        d120 |= (d120 >> 9) | ((d121 & 0x1ffl) << 54);
-        d121 |= d121 >> 9;
+
+        // if(rc.getRoundNum() >= 303) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(CellTracker.localPassable0, CellTracker.localPassable1);
+        //     Clock.yield();
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d120, d121);
+        //     Clock.yield();
+        // }
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d120 |= (d120 & 0xfbff7feffdffbffl) << 1;
+        d121 |= (d121 & 0x7feffdffbff7fefl) << 1;
+        d120 |= (d120 & 0x1f7feffdffbff7fel) >> 1;
+        d121 |= (d121 & 0xffdffbff7feffdel) >> 1;
+
+        d121 |= ((d121 & 0x1ffffffffffffl) << 11) | (d120 >> 50);
+        d120 |= (d120 & 0x3ffffffffffffl) << 11;
+        d120 |= (d120 >> 11) | ((d121 & 0x7ffl) << 50);
+        d121 |= d121 >> 11;
         d120 &= CellTracker.localPassable0;
         d121 &= CellTracker.localPassable1;
-        if((d120 & 0x70281c0000000l) != 0) {
+        if((d120 & 0x807000000000000l) != 0 || (d121 & 0xe01) != 0) {
             
-            if((d120 & (1l << 31)) != 0) {
+            if(
+               
+               (d120 & (1l << 49))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25597,7 +26035,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d120 & (1l << 41)) != 0) {
+            if(
+               
+               (d121 & (1l << 0))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25606,7 +26048,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d120 & (1l << 49)) != 0) {
+            if(
+               
+               (d121 & (1l << 10))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25615,7 +26061,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d120 & (1l << 39)) != 0) {
+            if(
+               
+               (d120 & (1l << 59))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25624,7 +26074,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d120 & (1l << 30)) != 0) {
+            if(
+               
+               (d120 & (1l << 48))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25633,7 +26087,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d120 & (1l << 32)) != 0) {
+            if(
+               
+               (d120 & (1l << 50))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25642,7 +26100,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d120 & (1l << 48)) != 0) {
+            if(
+               
+               (d121 & (1l << 9))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25651,7 +26113,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d120 & (1l << 50)) != 0) {
+            if(
+               
+               (d121 & (1l << 11))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25667,29 +26133,38 @@ public class Pathfinder {
             }
         }
         
-        // for(int dy = -4; dy < 3; dy++) {
-        //     System.out.println(Long.toBinaryString(d120 >> ((dy + 4) * 9) & 0x1ffl | 0x200l));
-        // }
-        // for(int dy = 3; dy < 5; dy++) {
-        //     System.out.println(Long.toBinaryString(d121 >> ((dy - 3) * 9) & 0x1ffl | 0x200l));
-        // }
-        // System.out.println();
         long d130 = 0, d131 = 0;
         d130 = d120;
         d131 = d121;
-        d130 |= (d130 & 0x3fdfeff7fbfdfeffl) << 1;
-        d131 |= (d131 & 0x3fdfeff7fbfdfeffl) << 1;
-        d130 |= (d130 & 0x7fbfdfeff7fbfdfel) >> 1;
-        d131 |= (d131 & 0x7fbfdfeff7fbfdfel) >> 1;
-        d130 |= (d130 & 0x3fffffffffffffl) << 9;
-        d131 |= ((d131 & 0x1ffl) << 9) | (d130 >> 54);
-        d130 |= (d130 >> 9) | ((d131 & 0x1ffl) << 54);
-        d131 |= d131 >> 9;
+
+        // if(rc.getRoundNum() >= 303) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(CellTracker.localPassable0, CellTracker.localPassable1);
+        //     Clock.yield();
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d130, d131);
+        //     Clock.yield();
+        // }
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d130 |= (d130 & 0xfbff7feffdffbffl) << 1;
+        d131 |= (d131 & 0x7feffdffbff7fefl) << 1;
+        d130 |= (d130 & 0x1f7feffdffbff7fel) >> 1;
+        d131 |= (d131 & 0xffdffbff7feffdel) >> 1;
+
+        d131 |= ((d131 & 0x1ffffffffffffl) << 11) | (d130 >> 50);
+        d130 |= (d130 & 0x3ffffffffffffl) << 11;
+        d130 |= (d130 >> 11) | ((d131 & 0x7ffl) << 50);
+        d131 |= d131 >> 11;
         d130 &= CellTracker.localPassable0;
         d131 &= CellTracker.localPassable1;
-        if((d130 & 0x70281c0000000l) != 0) {
+        if((d130 & 0x807000000000000l) != 0 || (d131 & 0xe01) != 0) {
             
-            if((d130 & (1l << 31)) != 0) {
+            if(
+               
+               (d130 & (1l << 49))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25698,7 +26173,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d130 & (1l << 41)) != 0) {
+            if(
+               
+               (d131 & (1l << 0))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25707,7 +26186,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d130 & (1l << 49)) != 0) {
+            if(
+               
+               (d131 & (1l << 10))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25716,7 +26199,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d130 & (1l << 39)) != 0) {
+            if(
+               
+               (d130 & (1l << 59))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25725,7 +26212,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d130 & (1l << 30)) != 0) {
+            if(
+               
+               (d130 & (1l << 48))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25734,7 +26225,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d130 & (1l << 32)) != 0) {
+            if(
+               
+               (d130 & (1l << 50))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25743,7 +26238,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d130 & (1l << 48)) != 0) {
+            if(
+               
+               (d131 & (1l << 9))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25752,7 +26251,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d130 & (1l << 50)) != 0) {
+            if(
+               
+               (d131 & (1l << 11))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25768,29 +26271,38 @@ public class Pathfinder {
             }
         }
         
-        // for(int dy = -4; dy < 3; dy++) {
-        //     System.out.println(Long.toBinaryString(d130 >> ((dy + 4) * 9) & 0x1ffl | 0x200l));
-        // }
-        // for(int dy = 3; dy < 5; dy++) {
-        //     System.out.println(Long.toBinaryString(d131 >> ((dy - 3) * 9) & 0x1ffl | 0x200l));
-        // }
-        // System.out.println();
         long d140 = 0, d141 = 0;
         d140 = d130;
         d141 = d131;
-        d140 |= (d140 & 0x3fdfeff7fbfdfeffl) << 1;
-        d141 |= (d141 & 0x3fdfeff7fbfdfeffl) << 1;
-        d140 |= (d140 & 0x7fbfdfeff7fbfdfel) >> 1;
-        d141 |= (d141 & 0x7fbfdfeff7fbfdfel) >> 1;
-        d140 |= (d140 & 0x3fffffffffffffl) << 9;
-        d141 |= ((d141 & 0x1ffl) << 9) | (d140 >> 54);
-        d140 |= (d140 >> 9) | ((d141 & 0x1ffl) << 54);
-        d141 |= d141 >> 9;
+
+        // if(rc.getRoundNum() >= 303) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(CellTracker.localPassable0, CellTracker.localPassable1);
+        //     Clock.yield();
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d140, d141);
+        //     Clock.yield();
+        // }
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d140 |= (d140 & 0xfbff7feffdffbffl) << 1;
+        d141 |= (d141 & 0x7feffdffbff7fefl) << 1;
+        d140 |= (d140 & 0x1f7feffdffbff7fel) >> 1;
+        d141 |= (d141 & 0xffdffbff7feffdel) >> 1;
+
+        d141 |= ((d141 & 0x1ffffffffffffl) << 11) | (d140 >> 50);
+        d140 |= (d140 & 0x3ffffffffffffl) << 11;
+        d140 |= (d140 >> 11) | ((d141 & 0x7ffl) << 50);
+        d141 |= d141 >> 11;
         d140 &= CellTracker.localPassable0;
         d141 &= CellTracker.localPassable1;
-        if((d140 & 0x70281c0000000l) != 0) {
+        if((d140 & 0x807000000000000l) != 0 || (d141 & 0xe01) != 0) {
             
-            if((d140 & (1l << 31)) != 0) {
+            if(
+               
+               (d140 & (1l << 49))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25799,7 +26311,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d140 & (1l << 41)) != 0) {
+            if(
+               
+               (d141 & (1l << 0))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25808,7 +26324,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d140 & (1l << 49)) != 0) {
+            if(
+               
+               (d141 & (1l << 10))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25817,7 +26337,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d140 & (1l << 39)) != 0) {
+            if(
+               
+               (d140 & (1l << 59))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25826,7 +26350,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d140 & (1l << 30)) != 0) {
+            if(
+               
+               (d140 & (1l << 48))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25835,7 +26363,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d140 & (1l << 32)) != 0) {
+            if(
+               
+               (d140 & (1l << 50))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25844,7 +26376,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d140 & (1l << 48)) != 0) {
+            if(
+               
+               (d141 & (1l << 9))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {
@@ -25853,7 +26389,11 @@ public class Pathfinder {
                 }
             }
             
-            if((d140 & (1l << 50)) != 0) {
+            if(
+               
+               (d141 & (1l << 11))
+               
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
                 if(score < bestScore) {

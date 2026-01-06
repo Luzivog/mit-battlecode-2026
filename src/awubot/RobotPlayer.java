@@ -25,6 +25,10 @@ public class RobotPlayer {
                         }
                         rc.setIndicatorLine(rc.getLocation(), target, 255, 0, 0);
                         if(rc.isMovementReady()) Pathfinder.makeMove(target);
+                        // CellTracker.storeVisibleCells();
+                        // CellTracker.computeLocalPassable();
+                        // CellTracker.printLocalMask(CellTracker.localPassable0, CellTracker.localPassable1);
+                        // rc.resign();
                         break;
                     case RAT_KING:
                         if(!built) rc.buildRat(rc.getLocation().add(Direction.NORTHEAST).add(Direction.NORTHEAST));

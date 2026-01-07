@@ -47,7 +47,6 @@ public class CellTracker {
             case {{dir}} -> {
                 {% for dx in range(-5, 6) %}
                 {% for dy in range(-5, 6) %}
-
                 {% if dir == "Direction.NORTH" %}       {% set visible = dy >= (dx|abs) %}
                 {% elif dir == "Direction.NORTHEAST" %} {% set visible = dx >= 0 and dy >= 0 %}
                 {% elif dir == "Direction.EAST" %}      {% set visible = dx >= (dy|abs) %}
@@ -57,7 +56,6 @@ public class CellTracker {
                 {% elif dir == "Direction.WEST" %}      {% set visible = dx <= -(dy|abs) %}
                 {% elif dir == "Direction.NORTHWEST" %} {% set visible = dx <= 0 and dy >= 0 %}
                 {% endif %}
-
                 {% if dx * dx + dy * dy <= 20 and visible %}
                 {
                     int x = loc.x {% if dx %} + {{dx}} {% endif %}, y = loc.y {% if dy %} + {{dy}} {% endif %};

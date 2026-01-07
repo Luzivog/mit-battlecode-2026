@@ -169,7 +169,7 @@ class BugnavInstance {
             }
             return oldPos;
             {% endmacro %}
-            indicate("target " + target + " " + bottomDir + " " + pos + " " + pos.add(bottomDir.rotateRight()));
+            // indicate("target " + target + " " + bottomDir + " " + pos + " " + pos.add(bottomDir.rotateRight()));
             var greedyPassable = CellTracker.isPassable(greedyLoc);
             var greedyGood = greedyPassable || !CellTracker.isSeen(greedyLoc);
             if(greedyGood) {
@@ -204,7 +204,7 @@ class BugnavInstance {
         // guess rotation direction (kinda inefficient but wtv)
         if(isMaster && !justGuessed && stackSize == 0 && CellTracker.isSeen(greedyLoc)) {
             assert !CellTracker.isPassable(greedyLoc);
-            if(emptyStackTurns >= 5) {
+            if(emptyStackTurns >= 3) {
                 if(canGuess) {
                     indicate("guessing " + pos);
                     Profiler.begin();
@@ -228,17 +228,18 @@ class BugnavInstance {
                     {% endmacro %}
                     {{ runBug("leftBug") }}
                     {{ runBug("rightBug") }}
-                    {% macro score(bug) %} (int)(Math.sqrt({{bug}}.pos.distanceSquaredTo(target)) + {{bug}}.pathLength * 0.7) {% endmacro %}
+                    {% macro score(bug) %} Math.pow(Math.sqrt({{bug}}.pos.distanceSquaredTo(target)) + {{bug}}.pathLength * 0.7, 8) {% endmacro %}
                     var leftScore = {{ score("leftBug") }};
-                    leftScore *= leftScore * leftScore;
                     var rightScore = {{ score("rightBug") }};
-                    rightScore *= rightScore * rightScore;
+                    var total = leftScore + rightScore;
+                    leftScore /= total;
+                    rightScore /= total;
                     indicate("lookahead");
                     // indicate(leftBug.pos);
                     indicate(leftScore);
                     // indicate(rightBug.pos);
                     indicate(rightScore);
-                    leftTurn = Rng.mcg() % (leftScore + rightScore) < rightScore;
+                    leftTurn = Rng.mcg() < rightScore * 0x7fffffff;
                     // indicate("leftTurn " + leftTurn);
                     setCurrentState();
                     Profiler.end("guess");
@@ -410,6 +411,9 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = loc.add({{dir}});
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
+                if(dir == loc.directionTo(target)) {
+                    score = 0;
+                }
                 if(score < bestScore) {
                     bestMove = {{dir}};
                     bestScore = score;

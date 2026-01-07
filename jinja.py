@@ -65,7 +65,11 @@ def radialMask(rsqr, cx, cy):
 
 
 def make_env():
-    env = Environment(loader=FileSystemLoader("./"))
+    env = Environment(
+        loader=FileSystemLoader("./"),
+        trim_blocks=True,
+        lstrip_blocks=True,
+    )
     env.add_extension(DebugExtension)
     env.globals.update({
         "bitAnd": bitAnd,

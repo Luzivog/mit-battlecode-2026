@@ -84,7 +84,7 @@ public class Util {
     // for debugging purposes
     public static String indicatorString = "";
     public static void indicate(Object o) {
-        indicatorString += o + ";";
+        indicatorString += o + "\n";
         rc.setIndicatorString(indicatorString);
     }
 

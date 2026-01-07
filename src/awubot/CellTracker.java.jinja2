@@ -146,7 +146,6 @@ public class CellTracker {
     }
 
     public static void printLocalMask(long m1, long m2) {
-        indicate("\n");
         for(int i = 10; i >= 0; i--) {
             long row;
             if(i < 5) row = (m1 >> (i * 11)) & 0x7ff;
@@ -156,7 +155,7 @@ public class CellTracker {
             for(int j = 0; j < 11; j++) {
                 s += ((row & (1 << j)) != 0 ? "X " : ". ");
             }
-            indicate(s + "\n");
+            indicate(s);
         }
     }
 }

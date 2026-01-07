@@ -9,7 +9,8 @@ import static awubot.Game.*;
 
 class BugnavInstance {
     MapLocation target;
-    // false for the instances spawned when guessing
+
+    // false for the instances spawned for lookahead
     boolean isMaster;
     // i guessed last turn, so i don't need to guess again
     // set to false when i move successfully
@@ -108,155 +109,155 @@ class BugnavInstance {
         appendCurrentPosition();
     }
 
-    void appendCurrentPosition() {
+    void appendPosition(MapLocation loc) {
         switch (nextPathIndex) {
             case 0 -> {
-                if (!path24.equals(pos)) {
-                    path0 = pos;
+                if (!path24.equals(loc)) {
+                    path0 = loc;
                     nextPathIndex = 1;
                 }
             }
             case 1 -> {
-                if (!path0.equals(pos)) {
-                    path1 = pos;
+                if (!path0.equals(loc)) {
+                    path1 = loc;
                     nextPathIndex = 2;
                 }
             }
             case 2 -> {
-                if (!path1.equals(pos)) {
-                    path2 = pos;
+                if (!path1.equals(loc)) {
+                    path2 = loc;
                     nextPathIndex = 3;
                 }
             }
             case 3 -> {
-                if (!path2.equals(pos)) {
-                    path3 = pos;
+                if (!path2.equals(loc)) {
+                    path3 = loc;
                     nextPathIndex = 4;
                 }
             }
             case 4 -> {
-                if (!path3.equals(pos)) {
-                    path4 = pos;
+                if (!path3.equals(loc)) {
+                    path4 = loc;
                     nextPathIndex = 5;
                 }
             }
             case 5 -> {
-                if (!path4.equals(pos)) {
-                    path5 = pos;
+                if (!path4.equals(loc)) {
+                    path5 = loc;
                     nextPathIndex = 6;
                 }
             }
             case 6 -> {
-                if (!path5.equals(pos)) {
-                    path6 = pos;
+                if (!path5.equals(loc)) {
+                    path6 = loc;
                     nextPathIndex = 7;
                 }
             }
             case 7 -> {
-                if (!path6.equals(pos)) {
-                    path7 = pos;
+                if (!path6.equals(loc)) {
+                    path7 = loc;
                     nextPathIndex = 8;
                 }
             }
             case 8 -> {
-                if (!path7.equals(pos)) {
-                    path8 = pos;
+                if (!path7.equals(loc)) {
+                    path8 = loc;
                     nextPathIndex = 9;
                 }
             }
             case 9 -> {
-                if (!path8.equals(pos)) {
-                    path9 = pos;
+                if (!path8.equals(loc)) {
+                    path9 = loc;
                     nextPathIndex = 10;
                 }
             }
             case 10 -> {
-                if (!path9.equals(pos)) {
-                    path10 = pos;
+                if (!path9.equals(loc)) {
+                    path10 = loc;
                     nextPathIndex = 11;
                 }
             }
             case 11 -> {
-                if (!path10.equals(pos)) {
-                    path11 = pos;
+                if (!path10.equals(loc)) {
+                    path11 = loc;
                     nextPathIndex = 12;
                 }
             }
             case 12 -> {
-                if (!path11.equals(pos)) {
-                    path12 = pos;
+                if (!path11.equals(loc)) {
+                    path12 = loc;
                     nextPathIndex = 13;
                 }
             }
             case 13 -> {
-                if (!path12.equals(pos)) {
-                    path13 = pos;
+                if (!path12.equals(loc)) {
+                    path13 = loc;
                     nextPathIndex = 14;
                 }
             }
             case 14 -> {
-                if (!path13.equals(pos)) {
-                    path14 = pos;
+                if (!path13.equals(loc)) {
+                    path14 = loc;
                     nextPathIndex = 15;
                 }
             }
             case 15 -> {
-                if (!path14.equals(pos)) {
-                    path15 = pos;
+                if (!path14.equals(loc)) {
+                    path15 = loc;
                     nextPathIndex = 16;
                 }
             }
             case 16 -> {
-                if (!path15.equals(pos)) {
-                    path16 = pos;
+                if (!path15.equals(loc)) {
+                    path16 = loc;
                     nextPathIndex = 17;
                 }
             }
             case 17 -> {
-                if (!path16.equals(pos)) {
-                    path17 = pos;
+                if (!path16.equals(loc)) {
+                    path17 = loc;
                     nextPathIndex = 18;
                 }
             }
             case 18 -> {
-                if (!path17.equals(pos)) {
-                    path18 = pos;
+                if (!path17.equals(loc)) {
+                    path18 = loc;
                     nextPathIndex = 19;
                 }
             }
             case 19 -> {
-                if (!path18.equals(pos)) {
-                    path19 = pos;
+                if (!path18.equals(loc)) {
+                    path19 = loc;
                     nextPathIndex = 20;
                 }
             }
             case 20 -> {
-                if (!path19.equals(pos)) {
-                    path20 = pos;
+                if (!path19.equals(loc)) {
+                    path20 = loc;
                     nextPathIndex = 21;
                 }
             }
             case 21 -> {
-                if (!path20.equals(pos)) {
-                    path21 = pos;
+                if (!path20.equals(loc)) {
+                    path21 = loc;
                     nextPathIndex = 22;
                 }
             }
             case 22 -> {
-                if (!path21.equals(pos)) {
-                    path22 = pos;
+                if (!path21.equals(loc)) {
+                    path22 = loc;
                     nextPathIndex = 23;
                 }
             }
             case 23 -> {
-                if (!path22.equals(pos)) {
-                    path23 = pos;
+                if (!path22.equals(loc)) {
+                    path23 = loc;
                     nextPathIndex = 24;
                 }
             }
             case 24 -> {
-                if (!path23.equals(pos)) {
-                    path24 = pos;
+                if (!path23.equals(loc)) {
+                    path24 = loc;
                     nextPathIndex = 0;
                 }
             }
@@ -264,6 +265,10 @@ class BugnavInstance {
                 assert false;
             }
         }
+    }
+
+    void appendCurrentPosition() {
+        appendPosition(pos);
     }
 
     MapLocation getRecentPos(int i) {
@@ -505,7 +510,7 @@ class BugnavInstance {
                     leftTurn = true;
                 } else {
                     if(canLookahead) {
-                        // Profiler.begin();
+                        Profiler.begin();
                         // System.out.println("guessing " + pos + " " + emptyStackTurns);
                         var leftBug = new BugnavInstance(pos, true, target, false);
                         var rightBug = new BugnavInstance(pos, false, target, false);
@@ -551,11 +556,68 @@ class BugnavInstance {
 
 
                         if(leftBug.hitEdge != rightBug.hitEdge) {
-                                                    leftTurn = rightBug.hitEdge;
-                        if(leftTurn) {
+                                                    var bug = rightBug.hitEdge ? leftBug : rightBug;
+                        if(bug.leftTurn) {
                             guessedLeft[pos.y] |= 1l << pos.x;
                         } else {
                             guessedRight[pos.y] |= 1l << pos.x;
+                        }
+                        pos = bug.pos;
+                        stackSize = bug.stackSize;
+                        emptyStackTurns = bug.emptyStackTurns;
+                        leftTurn = bug.leftTurn;
+                        bottomDir = bug.bottomDir;
+                        topDir = bug.topDir;
+                        copyPath: {
+                            appendPosition(bug.path0);
+                            if(bug.nextPathIndex == 1) break copyPath;
+                            appendPosition(bug.path1);
+                            if(bug.nextPathIndex == 2) break copyPath;
+                            appendPosition(bug.path2);
+                            if(bug.nextPathIndex == 3) break copyPath;
+                            appendPosition(bug.path3);
+                            if(bug.nextPathIndex == 4) break copyPath;
+                            appendPosition(bug.path4);
+                            if(bug.nextPathIndex == 5) break copyPath;
+                            appendPosition(bug.path5);
+                            if(bug.nextPathIndex == 6) break copyPath;
+                            appendPosition(bug.path6);
+                            if(bug.nextPathIndex == 7) break copyPath;
+                            appendPosition(bug.path7);
+                            if(bug.nextPathIndex == 8) break copyPath;
+                            appendPosition(bug.path8);
+                            if(bug.nextPathIndex == 9) break copyPath;
+                            appendPosition(bug.path9);
+                            if(bug.nextPathIndex == 10) break copyPath;
+                            appendPosition(bug.path10);
+                            if(bug.nextPathIndex == 11) break copyPath;
+                            appendPosition(bug.path11);
+                            if(bug.nextPathIndex == 12) break copyPath;
+                            appendPosition(bug.path12);
+                            if(bug.nextPathIndex == 13) break copyPath;
+                            appendPosition(bug.path13);
+                            if(bug.nextPathIndex == 14) break copyPath;
+                            appendPosition(bug.path14);
+                            if(bug.nextPathIndex == 15) break copyPath;
+                            appendPosition(bug.path15);
+                            if(bug.nextPathIndex == 16) break copyPath;
+                            appendPosition(bug.path16);
+                            if(bug.nextPathIndex == 17) break copyPath;
+                            appendPosition(bug.path17);
+                            if(bug.nextPathIndex == 18) break copyPath;
+                            appendPosition(bug.path18);
+                            if(bug.nextPathIndex == 19) break copyPath;
+                            appendPosition(bug.path19);
+                            if(bug.nextPathIndex == 20) break copyPath;
+                            appendPosition(bug.path20);
+                            if(bug.nextPathIndex == 21) break copyPath;
+                            appendPosition(bug.path21);
+                            if(bug.nextPathIndex == 22) break copyPath;
+                            appendPosition(bug.path22);
+                            if(bug.nextPathIndex == 23) break copyPath;
+                            appendPosition(bug.path23);
+                            if(bug.nextPathIndex == 24) break copyPath;
+                            appendPosition(bug.path24);
                         }
                         indicate("just guessed " + leftTurn);
                         justGuessed = true;
@@ -565,11 +627,68 @@ class BugnavInstance {
                             var worse = leftScore < rightScore ? rightBug : leftBug;
                             if(!better.outOfSight && worse.outOfSight) {
                                 indicate("clear winner");
-                                                        leftTurn = leftScore < rightScore;
-                        if(leftTurn) {
+                                                        var bug = better;
+                        if(bug.leftTurn) {
                             guessedLeft[pos.y] |= 1l << pos.x;
                         } else {
                             guessedRight[pos.y] |= 1l << pos.x;
+                        }
+                        pos = bug.pos;
+                        stackSize = bug.stackSize;
+                        emptyStackTurns = bug.emptyStackTurns;
+                        leftTurn = bug.leftTurn;
+                        bottomDir = bug.bottomDir;
+                        topDir = bug.topDir;
+                        copyPath: {
+                            appendPosition(bug.path0);
+                            if(bug.nextPathIndex == 1) break copyPath;
+                            appendPosition(bug.path1);
+                            if(bug.nextPathIndex == 2) break copyPath;
+                            appendPosition(bug.path2);
+                            if(bug.nextPathIndex == 3) break copyPath;
+                            appendPosition(bug.path3);
+                            if(bug.nextPathIndex == 4) break copyPath;
+                            appendPosition(bug.path4);
+                            if(bug.nextPathIndex == 5) break copyPath;
+                            appendPosition(bug.path5);
+                            if(bug.nextPathIndex == 6) break copyPath;
+                            appendPosition(bug.path6);
+                            if(bug.nextPathIndex == 7) break copyPath;
+                            appendPosition(bug.path7);
+                            if(bug.nextPathIndex == 8) break copyPath;
+                            appendPosition(bug.path8);
+                            if(bug.nextPathIndex == 9) break copyPath;
+                            appendPosition(bug.path9);
+                            if(bug.nextPathIndex == 10) break copyPath;
+                            appendPosition(bug.path10);
+                            if(bug.nextPathIndex == 11) break copyPath;
+                            appendPosition(bug.path11);
+                            if(bug.nextPathIndex == 12) break copyPath;
+                            appendPosition(bug.path12);
+                            if(bug.nextPathIndex == 13) break copyPath;
+                            appendPosition(bug.path13);
+                            if(bug.nextPathIndex == 14) break copyPath;
+                            appendPosition(bug.path14);
+                            if(bug.nextPathIndex == 15) break copyPath;
+                            appendPosition(bug.path15);
+                            if(bug.nextPathIndex == 16) break copyPath;
+                            appendPosition(bug.path16);
+                            if(bug.nextPathIndex == 17) break copyPath;
+                            appendPosition(bug.path17);
+                            if(bug.nextPathIndex == 18) break copyPath;
+                            appendPosition(bug.path18);
+                            if(bug.nextPathIndex == 19) break copyPath;
+                            appendPosition(bug.path19);
+                            if(bug.nextPathIndex == 20) break copyPath;
+                            appendPosition(bug.path20);
+                            if(bug.nextPathIndex == 21) break copyPath;
+                            appendPosition(bug.path21);
+                            if(bug.nextPathIndex == 22) break copyPath;
+                            appendPosition(bug.path22);
+                            if(bug.nextPathIndex == 23) break copyPath;
+                            appendPosition(bug.path23);
+                            if(bug.nextPathIndex == 24) break copyPath;
+                            appendPosition(bug.path24);
                         }
                         indicate("just guessed " + leftTurn);
                         justGuessed = true;
@@ -580,20 +699,68 @@ class BugnavInstance {
                                 var total = leftScore + rightScore;
                                 leftScore /= total;
                                 rightScore /= total;
-                                //                         leftTurn = leftScore < rightScore;
-                        if(leftTurn) {
+                                                        var bug = Rng.mcg() < rightScore * 0x7fffffff ? leftBug : rightBug;
+                        if(bug.leftTurn) {
                             guessedLeft[pos.y] |= 1l << pos.x;
                         } else {
                             guessedRight[pos.y] |= 1l << pos.x;
                         }
-                        indicate("just guessed " + leftTurn);
-                        justGuessed = true;
-
-                                                        leftTurn = Rng.mcg() < rightScore * 0x7fffffff;
-                        if(leftTurn) {
-                            guessedLeft[pos.y] |= 1l << pos.x;
-                        } else {
-                            guessedRight[pos.y] |= 1l << pos.x;
+                        pos = bug.pos;
+                        stackSize = bug.stackSize;
+                        emptyStackTurns = bug.emptyStackTurns;
+                        leftTurn = bug.leftTurn;
+                        bottomDir = bug.bottomDir;
+                        topDir = bug.topDir;
+                        copyPath: {
+                            appendPosition(bug.path0);
+                            if(bug.nextPathIndex == 1) break copyPath;
+                            appendPosition(bug.path1);
+                            if(bug.nextPathIndex == 2) break copyPath;
+                            appendPosition(bug.path2);
+                            if(bug.nextPathIndex == 3) break copyPath;
+                            appendPosition(bug.path3);
+                            if(bug.nextPathIndex == 4) break copyPath;
+                            appendPosition(bug.path4);
+                            if(bug.nextPathIndex == 5) break copyPath;
+                            appendPosition(bug.path5);
+                            if(bug.nextPathIndex == 6) break copyPath;
+                            appendPosition(bug.path6);
+                            if(bug.nextPathIndex == 7) break copyPath;
+                            appendPosition(bug.path7);
+                            if(bug.nextPathIndex == 8) break copyPath;
+                            appendPosition(bug.path8);
+                            if(bug.nextPathIndex == 9) break copyPath;
+                            appendPosition(bug.path9);
+                            if(bug.nextPathIndex == 10) break copyPath;
+                            appendPosition(bug.path10);
+                            if(bug.nextPathIndex == 11) break copyPath;
+                            appendPosition(bug.path11);
+                            if(bug.nextPathIndex == 12) break copyPath;
+                            appendPosition(bug.path12);
+                            if(bug.nextPathIndex == 13) break copyPath;
+                            appendPosition(bug.path13);
+                            if(bug.nextPathIndex == 14) break copyPath;
+                            appendPosition(bug.path14);
+                            if(bug.nextPathIndex == 15) break copyPath;
+                            appendPosition(bug.path15);
+                            if(bug.nextPathIndex == 16) break copyPath;
+                            appendPosition(bug.path16);
+                            if(bug.nextPathIndex == 17) break copyPath;
+                            appendPosition(bug.path17);
+                            if(bug.nextPathIndex == 18) break copyPath;
+                            appendPosition(bug.path18);
+                            if(bug.nextPathIndex == 19) break copyPath;
+                            appendPosition(bug.path19);
+                            if(bug.nextPathIndex == 20) break copyPath;
+                            appendPosition(bug.path20);
+                            if(bug.nextPathIndex == 21) break copyPath;
+                            appendPosition(bug.path21);
+                            if(bug.nextPathIndex == 22) break copyPath;
+                            appendPosition(bug.path22);
+                            if(bug.nextPathIndex == 23) break copyPath;
+                            appendPosition(bug.path23);
+                            if(bug.nextPathIndex == 24) break copyPath;
+                            appendPosition(bug.path24);
                         }
                         indicate("just guessed " + leftTurn);
                         justGuessed = true;
@@ -601,7 +768,7 @@ class BugnavInstance {
                             }
                         }
                         // indicate("leftTurn " + leftTurn);
-                        // Profiler.end("guess");
+                        Profiler.end("lookahead");
                     }
                     return false;
                 }
@@ -1266,7 +1433,7 @@ public class Pathfinder {
             bug = new BugnavInstance(true, target);
         }
         int shade = 255;
-        Profiler.begin();
+        // Profiler.begin();
         bugLoop: {
             rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
             if(!bug.advance( true )) break bugLoop;
@@ -1279,7 +1446,7 @@ public class Pathfinder {
             rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
             if(!bug.advance( false )) break bugLoop;
         }
-        Profiler.end("bug");
+        // Profiler.end("bug");
         rc.setIndicatorDot(bug.pos, 255, 0, 0);
 
         // no bfs needed

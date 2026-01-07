@@ -11,7 +11,8 @@ import static awubot.Game.*;
 
 class BugnavInstance {
     MapLocation target;
-    // false for the instances spawned when guessing
+
+    // false for the instances spawned for lookahead
     boolean isMaster;
     // i guessed last turn, so i don't need to guess again
     // set to false when i move successfully
@@ -66,12 +67,12 @@ class BugnavInstance {
         appendCurrentPosition();
     }
 
-    void appendCurrentPosition() {
+    void appendPosition(MapLocation loc) {
         switch (nextPathIndex) {
             {% for i in range(MAX_PATH) %}
             case {{i}} -> {
-                if (!path{{(i - 1 + MAX_PATH) % MAX_PATH}}.equals(pos)) {
-                    path{{i}} = pos;
+                if (!path{{(i - 1 + MAX_PATH) % MAX_PATH}}.equals(loc)) {
+                    path{{i}} = loc;
                     nextPathIndex = {{(i + 1) % MAX_PATH}};
                 }
             }
@@ -80,6 +81,10 @@ class BugnavInstance {
                 assert false;
             }
         }
+    }
+
+    void appendCurrentPosition() {
+        appendPosition(pos);
     }
 
     MapLocation getRecentPos(int i) {
@@ -199,7 +204,7 @@ class BugnavInstance {
                     leftTurn = true;
                 } else {
                     if(canLookahead) {
-                        // Profiler.begin();
+                        Profiler.begin();
                         // System.out.println("guessing " + pos + " " + emptyStackTurns);
                         var leftBug = new BugnavInstance(pos, true, target, false);
                         var rightBug = new BugnavInstance(pos, false, target, false);
@@ -225,37 +230,47 @@ class BugnavInstance {
                         // indicate(rightBug.pos);
                         indicate(rightScore);
 
-                        {% macro setLeftTurn(val) %}
-                        leftTurn = {{val}};
-                        if(leftTurn) {
+                        {% macro chooseBug(bug) %}
+                        var bug = {{bug}};
+                        if(bug.leftTurn) {
                             guessedLeft[pos.y] |= 1l << pos.x;
                         } else {
                             guessedRight[pos.y] |= 1l << pos.x;
+                        }
+                        {% for field in ["pos", "stackSize", "emptyStackTurns", "leftTurn", "bottomDir", "topDir"] %}
+                        {{field}} = bug.{{field}};
+                        {% endfor %}
+                        copyPath: {
+                            {% for i in range(MAX_PATH) %}
+                            {% if i %}
+                            if(bug.nextPathIndex == {{i}}) break copyPath;
+                            {% endif %}
+                            appendPosition(bug.path{{i}});
+                            {% endfor %}
                         }
                         indicate("just guessed " + leftTurn);
                         justGuessed = true;
                         {% endmacro %}
 
                         if(leftBug.hitEdge != rightBug.hitEdge) {
-                            {{ setLeftTurn("rightBug.hitEdge") }}
+                            {{ chooseBug("rightBug.hitEdge ? leftBug : rightBug") }}
                         } else {
                             var better = leftScore < rightScore ? leftBug : rightBug;
                             var worse = leftScore < rightScore ? rightBug : leftBug;
                             if(!better.outOfSight && worse.outOfSight) {
                                 indicate("clear winner");
-                                {{ setLeftTurn("leftScore < rightScore") }}
+                                {{ chooseBug("better") }}
                             } else if(!better.outOfSight || rc.getLocation().isAdjacentTo(pos)) {
                                 leftScore = Math.pow(leftScore, 15);
                                 rightScore = Math.pow(rightScore, 15);
                                 var total = leftScore + rightScore;
                                 leftScore /= total;
                                 rightScore /= total;
-                                // {{ setLeftTurn("leftScore < rightScore") }}
-                                {{ setLeftTurn("Rng.mcg() < rightScore * 0x7fffffff") }}
+                                {{ chooseBug("Rng.mcg() < rightScore * 0x7fffffff ? leftBug : rightBug") }}
                             }
                         }
                         // indicate("leftTurn " + leftTurn);
-                        // Profiler.end("guess");
+                        Profiler.end("lookahead");
                     }
                     return false;
                 }
@@ -352,14 +367,14 @@ public class Pathfinder {
             bug = new BugnavInstance(true, target);
         }
         int shade = 255;
-        Profiler.begin();
+        // Profiler.begin();
         bugLoop: {
             {% for i in range(MAX_BUG_ITERS) %}
             rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
             if(!bug.advance({% if i %} false {% else %} true {% endif %})) break bugLoop;
             {% endfor %}
         }
-        Profiler.end("bug");
+        // Profiler.end("bug");
         rc.setIndicatorDot(bug.pos, 255, 0, 0);
 
         // no bfs needed

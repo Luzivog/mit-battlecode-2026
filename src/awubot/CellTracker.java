@@ -7,69 +7,504 @@ import static awubot.util.Util.*;
 import static awubot.Game.*;
 
 public class CellTracker {
-    static long seen0, passable0;
-    static long seen1, passable1;
-    static long seen2, passable2;
-    static long seen3, passable3;
-    static long seen4, passable4;
-    static long seen5, passable5;
-    static long seen6, passable6;
-    static long seen7, passable7;
-    static long seen8, passable8;
-    static long seen9, passable9;
-    static long seen10, passable10;
-    static long seen11, passable11;
-    static long seen12, passable12;
-    static long seen13, passable13;
-    static long seen14, passable14;
-    static long seen15, passable15;
-    static long seen16, passable16;
-    static long seen17, passable17;
-    static long seen18, passable18;
-    static long seen19, passable19;
-    static long seen20, passable20;
-    static long seen21, passable21;
-    static long seen22, passable22;
-    static long seen23, passable23;
-    static long seen24, passable24;
-    static long seen25, passable25;
-    static long seen26, passable26;
-    static long seen27, passable27;
-    static long seen28, passable28;
-    static long seen29, passable29;
-    static long seen30, passable30;
-    static long seen31, passable31;
-    static long seen32, passable32;
-    static long seen33, passable33;
-    static long seen34, passable34;
-    static long seen35, passable35;
-    static long seen36, passable36;
-    static long seen37, passable37;
-    static long seen38, passable38;
-    static long seen39, passable39;
-    static long seen40, passable40;
-    static long seen41, passable41;
-    static long seen42, passable42;
-    static long seen43, passable43;
-    static long seen44, passable44;
-    static long seen45, passable45;
-    static long seen46, passable46;
-    static long seen47, passable47;
-    static long seen48, passable48;
-    static long seen49, passable49;
-    static long seen50, passable50;
-    static long seen51, passable51;
-    static long seen52, passable52;
-    static long seen53, passable53;
-    static long seen54, passable54;
-    static long seen55, passable55;
-    static long seen56, passable56;
-    static long seen57, passable57;
-    static long seen58, passable58;
-    static long seen59, passable59;
+    static long seen0;
+    static long seen1;
+    static long seen2;
+    static long seen3;
+    static long seen4;
+    static long seen5;
+    static long seen6;
+    static long seen7;
+    static long seen8;
+    static long seen9;
+    static long seen10;
+    static long seen11;
+    static long seen12;
+    static long seen13;
+    static long seen14;
+    static long seen15;
+    static long seen16;
+    static long seen17;
+    static long seen18;
+    static long seen19;
+    static long seen20;
+    static long seen21;
+    static long seen22;
+    static long seen23;
+    static long seen24;
+    static long seen25;
+    static long seen26;
+    static long seen27;
+    static long seen28;
+    static long seen29;
+    static long seen30;
+    static long seen31;
+    static long seen32;
+    static long seen33;
+    static long seen34;
+    static long seen35;
+    static long seen36;
+    static long seen37;
+    static long seen38;
+    static long seen39;
+    static long seen40;
+    static long seen41;
+    static long seen42;
+    static long seen43;
+    static long seen44;
+    static long seen45;
+    static long seen46;
+    static long seen47;
+    static long seen48;
+    static long seen49;
+    static long seen50;
+    static long seen51;
+    static long seen52;
+    static long seen53;
+    static long seen54;
+    static long seen55;
+    static long seen56;
+    static long seen57;
+    static long seen58;
+    static long seen59;
+    public static boolean isSeen(MapLocation loc) {
+        switch(loc.y) {
+            case 0 -> {
+                return (seen0 & (1l << loc.x)) != 0;
+            }
+            case 1 -> {
+                return (seen1 & (1l << loc.x)) != 0;
+            }
+            case 2 -> {
+                return (seen2 & (1l << loc.x)) != 0;
+            }
+            case 3 -> {
+                return (seen3 & (1l << loc.x)) != 0;
+            }
+            case 4 -> {
+                return (seen4 & (1l << loc.x)) != 0;
+            }
+            case 5 -> {
+                return (seen5 & (1l << loc.x)) != 0;
+            }
+            case 6 -> {
+                return (seen6 & (1l << loc.x)) != 0;
+            }
+            case 7 -> {
+                return (seen7 & (1l << loc.x)) != 0;
+            }
+            case 8 -> {
+                return (seen8 & (1l << loc.x)) != 0;
+            }
+            case 9 -> {
+                return (seen9 & (1l << loc.x)) != 0;
+            }
+            case 10 -> {
+                return (seen10 & (1l << loc.x)) != 0;
+            }
+            case 11 -> {
+                return (seen11 & (1l << loc.x)) != 0;
+            }
+            case 12 -> {
+                return (seen12 & (1l << loc.x)) != 0;
+            }
+            case 13 -> {
+                return (seen13 & (1l << loc.x)) != 0;
+            }
+            case 14 -> {
+                return (seen14 & (1l << loc.x)) != 0;
+            }
+            case 15 -> {
+                return (seen15 & (1l << loc.x)) != 0;
+            }
+            case 16 -> {
+                return (seen16 & (1l << loc.x)) != 0;
+            }
+            case 17 -> {
+                return (seen17 & (1l << loc.x)) != 0;
+            }
+            case 18 -> {
+                return (seen18 & (1l << loc.x)) != 0;
+            }
+            case 19 -> {
+                return (seen19 & (1l << loc.x)) != 0;
+            }
+            case 20 -> {
+                return (seen20 & (1l << loc.x)) != 0;
+            }
+            case 21 -> {
+                return (seen21 & (1l << loc.x)) != 0;
+            }
+            case 22 -> {
+                return (seen22 & (1l << loc.x)) != 0;
+            }
+            case 23 -> {
+                return (seen23 & (1l << loc.x)) != 0;
+            }
+            case 24 -> {
+                return (seen24 & (1l << loc.x)) != 0;
+            }
+            case 25 -> {
+                return (seen25 & (1l << loc.x)) != 0;
+            }
+            case 26 -> {
+                return (seen26 & (1l << loc.x)) != 0;
+            }
+            case 27 -> {
+                return (seen27 & (1l << loc.x)) != 0;
+            }
+            case 28 -> {
+                return (seen28 & (1l << loc.x)) != 0;
+            }
+            case 29 -> {
+                return (seen29 & (1l << loc.x)) != 0;
+            }
+            case 30 -> {
+                return (seen30 & (1l << loc.x)) != 0;
+            }
+            case 31 -> {
+                return (seen31 & (1l << loc.x)) != 0;
+            }
+            case 32 -> {
+                return (seen32 & (1l << loc.x)) != 0;
+            }
+            case 33 -> {
+                return (seen33 & (1l << loc.x)) != 0;
+            }
+            case 34 -> {
+                return (seen34 & (1l << loc.x)) != 0;
+            }
+            case 35 -> {
+                return (seen35 & (1l << loc.x)) != 0;
+            }
+            case 36 -> {
+                return (seen36 & (1l << loc.x)) != 0;
+            }
+            case 37 -> {
+                return (seen37 & (1l << loc.x)) != 0;
+            }
+            case 38 -> {
+                return (seen38 & (1l << loc.x)) != 0;
+            }
+            case 39 -> {
+                return (seen39 & (1l << loc.x)) != 0;
+            }
+            case 40 -> {
+                return (seen40 & (1l << loc.x)) != 0;
+            }
+            case 41 -> {
+                return (seen41 & (1l << loc.x)) != 0;
+            }
+            case 42 -> {
+                return (seen42 & (1l << loc.x)) != 0;
+            }
+            case 43 -> {
+                return (seen43 & (1l << loc.x)) != 0;
+            }
+            case 44 -> {
+                return (seen44 & (1l << loc.x)) != 0;
+            }
+            case 45 -> {
+                return (seen45 & (1l << loc.x)) != 0;
+            }
+            case 46 -> {
+                return (seen46 & (1l << loc.x)) != 0;
+            }
+            case 47 -> {
+                return (seen47 & (1l << loc.x)) != 0;
+            }
+            case 48 -> {
+                return (seen48 & (1l << loc.x)) != 0;
+            }
+            case 49 -> {
+                return (seen49 & (1l << loc.x)) != 0;
+            }
+            case 50 -> {
+                return (seen50 & (1l << loc.x)) != 0;
+            }
+            case 51 -> {
+                return (seen51 & (1l << loc.x)) != 0;
+            }
+            case 52 -> {
+                return (seen52 & (1l << loc.x)) != 0;
+            }
+            case 53 -> {
+                return (seen53 & (1l << loc.x)) != 0;
+            }
+            case 54 -> {
+                return (seen54 & (1l << loc.x)) != 0;
+            }
+            case 55 -> {
+                return (seen55 & (1l << loc.x)) != 0;
+            }
+            case 56 -> {
+                return (seen56 & (1l << loc.x)) != 0;
+            }
+            case 57 -> {
+                return (seen57 & (1l << loc.x)) != 0;
+            }
+            case 58 -> {
+                return (seen58 & (1l << loc.x)) != 0;
+            }
+            case 59 -> {
+                return (seen59 & (1l << loc.x)) != 0;
+            }
+            default -> {
+                return false;
+            }
+        }
+    }
+    static long passable0;
+    static long passable1;
+    static long passable2;
+    static long passable3;
+    static long passable4;
+    static long passable5;
+    static long passable6;
+    static long passable7;
+    static long passable8;
+    static long passable9;
+    static long passable10;
+    static long passable11;
+    static long passable12;
+    static long passable13;
+    static long passable14;
+    static long passable15;
+    static long passable16;
+    static long passable17;
+    static long passable18;
+    static long passable19;
+    static long passable20;
+    static long passable21;
+    static long passable22;
+    static long passable23;
+    static long passable24;
+    static long passable25;
+    static long passable26;
+    static long passable27;
+    static long passable28;
+    static long passable29;
+    static long passable30;
+    static long passable31;
+    static long passable32;
+    static long passable33;
+    static long passable34;
+    static long passable35;
+    static long passable36;
+    static long passable37;
+    static long passable38;
+    static long passable39;
+    static long passable40;
+    static long passable41;
+    static long passable42;
+    static long passable43;
+    static long passable44;
+    static long passable45;
+    static long passable46;
+    static long passable47;
+    static long passable48;
+    static long passable49;
+    static long passable50;
+    static long passable51;
+    static long passable52;
+    static long passable53;
+    static long passable54;
+    static long passable55;
+    static long passable56;
+    static long passable57;
+    static long passable58;
+    static long passable59;
+    public static boolean isPassable(MapLocation loc) {
+        switch(loc.y) {
+            case 0 -> {
+                return (passable0 & (1l << loc.x)) != 0;
+            }
+            case 1 -> {
+                return (passable1 & (1l << loc.x)) != 0;
+            }
+            case 2 -> {
+                return (passable2 & (1l << loc.x)) != 0;
+            }
+            case 3 -> {
+                return (passable3 & (1l << loc.x)) != 0;
+            }
+            case 4 -> {
+                return (passable4 & (1l << loc.x)) != 0;
+            }
+            case 5 -> {
+                return (passable5 & (1l << loc.x)) != 0;
+            }
+            case 6 -> {
+                return (passable6 & (1l << loc.x)) != 0;
+            }
+            case 7 -> {
+                return (passable7 & (1l << loc.x)) != 0;
+            }
+            case 8 -> {
+                return (passable8 & (1l << loc.x)) != 0;
+            }
+            case 9 -> {
+                return (passable9 & (1l << loc.x)) != 0;
+            }
+            case 10 -> {
+                return (passable10 & (1l << loc.x)) != 0;
+            }
+            case 11 -> {
+                return (passable11 & (1l << loc.x)) != 0;
+            }
+            case 12 -> {
+                return (passable12 & (1l << loc.x)) != 0;
+            }
+            case 13 -> {
+                return (passable13 & (1l << loc.x)) != 0;
+            }
+            case 14 -> {
+                return (passable14 & (1l << loc.x)) != 0;
+            }
+            case 15 -> {
+                return (passable15 & (1l << loc.x)) != 0;
+            }
+            case 16 -> {
+                return (passable16 & (1l << loc.x)) != 0;
+            }
+            case 17 -> {
+                return (passable17 & (1l << loc.x)) != 0;
+            }
+            case 18 -> {
+                return (passable18 & (1l << loc.x)) != 0;
+            }
+            case 19 -> {
+                return (passable19 & (1l << loc.x)) != 0;
+            }
+            case 20 -> {
+                return (passable20 & (1l << loc.x)) != 0;
+            }
+            case 21 -> {
+                return (passable21 & (1l << loc.x)) != 0;
+            }
+            case 22 -> {
+                return (passable22 & (1l << loc.x)) != 0;
+            }
+            case 23 -> {
+                return (passable23 & (1l << loc.x)) != 0;
+            }
+            case 24 -> {
+                return (passable24 & (1l << loc.x)) != 0;
+            }
+            case 25 -> {
+                return (passable25 & (1l << loc.x)) != 0;
+            }
+            case 26 -> {
+                return (passable26 & (1l << loc.x)) != 0;
+            }
+            case 27 -> {
+                return (passable27 & (1l << loc.x)) != 0;
+            }
+            case 28 -> {
+                return (passable28 & (1l << loc.x)) != 0;
+            }
+            case 29 -> {
+                return (passable29 & (1l << loc.x)) != 0;
+            }
+            case 30 -> {
+                return (passable30 & (1l << loc.x)) != 0;
+            }
+            case 31 -> {
+                return (passable31 & (1l << loc.x)) != 0;
+            }
+            case 32 -> {
+                return (passable32 & (1l << loc.x)) != 0;
+            }
+            case 33 -> {
+                return (passable33 & (1l << loc.x)) != 0;
+            }
+            case 34 -> {
+                return (passable34 & (1l << loc.x)) != 0;
+            }
+            case 35 -> {
+                return (passable35 & (1l << loc.x)) != 0;
+            }
+            case 36 -> {
+                return (passable36 & (1l << loc.x)) != 0;
+            }
+            case 37 -> {
+                return (passable37 & (1l << loc.x)) != 0;
+            }
+            case 38 -> {
+                return (passable38 & (1l << loc.x)) != 0;
+            }
+            case 39 -> {
+                return (passable39 & (1l << loc.x)) != 0;
+            }
+            case 40 -> {
+                return (passable40 & (1l << loc.x)) != 0;
+            }
+            case 41 -> {
+                return (passable41 & (1l << loc.x)) != 0;
+            }
+            case 42 -> {
+                return (passable42 & (1l << loc.x)) != 0;
+            }
+            case 43 -> {
+                return (passable43 & (1l << loc.x)) != 0;
+            }
+            case 44 -> {
+                return (passable44 & (1l << loc.x)) != 0;
+            }
+            case 45 -> {
+                return (passable45 & (1l << loc.x)) != 0;
+            }
+            case 46 -> {
+                return (passable46 & (1l << loc.x)) != 0;
+            }
+            case 47 -> {
+                return (passable47 & (1l << loc.x)) != 0;
+            }
+            case 48 -> {
+                return (passable48 & (1l << loc.x)) != 0;
+            }
+            case 49 -> {
+                return (passable49 & (1l << loc.x)) != 0;
+            }
+            case 50 -> {
+                return (passable50 & (1l << loc.x)) != 0;
+            }
+            case 51 -> {
+                return (passable51 & (1l << loc.x)) != 0;
+            }
+            case 52 -> {
+                return (passable52 & (1l << loc.x)) != 0;
+            }
+            case 53 -> {
+                return (passable53 & (1l << loc.x)) != 0;
+            }
+            case 54 -> {
+                return (passable54 & (1l << loc.x)) != 0;
+            }
+            case 55 -> {
+                return (passable55 & (1l << loc.x)) != 0;
+            }
+            case 56 -> {
+                return (passable56 & (1l << loc.x)) != 0;
+            }
+            case 57 -> {
+                return (passable57 & (1l << loc.x)) != 0;
+            }
+            case 58 -> {
+                return (passable58 & (1l << loc.x)) != 0;
+            }
+            case 59 -> {
+                return (passable59 & (1l << loc.x)) != 0;
+            }
+            default -> {
+                return false;
+            }
+        }
+    }
 
     public static void storeCell(MapInfo info) throws GameActionException {
         var loc = info.getMapLocation();
+        // rc.setIndicatorDot(loc, 255, 255, 0);
         switch(loc.y) {
             case 0 -> {
                 seen0 |= 1l << loc.x;
@@ -310,381 +745,6 @@ public class CellTracker {
             case 59 -> {
                 seen59 |= 1l << loc.x;
                 if(info.isPassable()) passable59 |= 1l << loc.x;
-            }
-        }
-    }
-
-    public static boolean isSeen(MapLocation loc) {
-        switch(loc.y) {
-            case 0 -> {
-                return (seen0 & (1l << loc.x)) != 0;
-            }
-            case 1 -> {
-                return (seen1 & (1l << loc.x)) != 0;
-            }
-            case 2 -> {
-                return (seen2 & (1l << loc.x)) != 0;
-            }
-            case 3 -> {
-                return (seen3 & (1l << loc.x)) != 0;
-            }
-            case 4 -> {
-                return (seen4 & (1l << loc.x)) != 0;
-            }
-            case 5 -> {
-                return (seen5 & (1l << loc.x)) != 0;
-            }
-            case 6 -> {
-                return (seen6 & (1l << loc.x)) != 0;
-            }
-            case 7 -> {
-                return (seen7 & (1l << loc.x)) != 0;
-            }
-            case 8 -> {
-                return (seen8 & (1l << loc.x)) != 0;
-            }
-            case 9 -> {
-                return (seen9 & (1l << loc.x)) != 0;
-            }
-            case 10 -> {
-                return (seen10 & (1l << loc.x)) != 0;
-            }
-            case 11 -> {
-                return (seen11 & (1l << loc.x)) != 0;
-            }
-            case 12 -> {
-                return (seen12 & (1l << loc.x)) != 0;
-            }
-            case 13 -> {
-                return (seen13 & (1l << loc.x)) != 0;
-            }
-            case 14 -> {
-                return (seen14 & (1l << loc.x)) != 0;
-            }
-            case 15 -> {
-                return (seen15 & (1l << loc.x)) != 0;
-            }
-            case 16 -> {
-                return (seen16 & (1l << loc.x)) != 0;
-            }
-            case 17 -> {
-                return (seen17 & (1l << loc.x)) != 0;
-            }
-            case 18 -> {
-                return (seen18 & (1l << loc.x)) != 0;
-            }
-            case 19 -> {
-                return (seen19 & (1l << loc.x)) != 0;
-            }
-            case 20 -> {
-                return (seen20 & (1l << loc.x)) != 0;
-            }
-            case 21 -> {
-                return (seen21 & (1l << loc.x)) != 0;
-            }
-            case 22 -> {
-                return (seen22 & (1l << loc.x)) != 0;
-            }
-            case 23 -> {
-                return (seen23 & (1l << loc.x)) != 0;
-            }
-            case 24 -> {
-                return (seen24 & (1l << loc.x)) != 0;
-            }
-            case 25 -> {
-                return (seen25 & (1l << loc.x)) != 0;
-            }
-            case 26 -> {
-                return (seen26 & (1l << loc.x)) != 0;
-            }
-            case 27 -> {
-                return (seen27 & (1l << loc.x)) != 0;
-            }
-            case 28 -> {
-                return (seen28 & (1l << loc.x)) != 0;
-            }
-            case 29 -> {
-                return (seen29 & (1l << loc.x)) != 0;
-            }
-            case 30 -> {
-                return (seen30 & (1l << loc.x)) != 0;
-            }
-            case 31 -> {
-                return (seen31 & (1l << loc.x)) != 0;
-            }
-            case 32 -> {
-                return (seen32 & (1l << loc.x)) != 0;
-            }
-            case 33 -> {
-                return (seen33 & (1l << loc.x)) != 0;
-            }
-            case 34 -> {
-                return (seen34 & (1l << loc.x)) != 0;
-            }
-            case 35 -> {
-                return (seen35 & (1l << loc.x)) != 0;
-            }
-            case 36 -> {
-                return (seen36 & (1l << loc.x)) != 0;
-            }
-            case 37 -> {
-                return (seen37 & (1l << loc.x)) != 0;
-            }
-            case 38 -> {
-                return (seen38 & (1l << loc.x)) != 0;
-            }
-            case 39 -> {
-                return (seen39 & (1l << loc.x)) != 0;
-            }
-            case 40 -> {
-                return (seen40 & (1l << loc.x)) != 0;
-            }
-            case 41 -> {
-                return (seen41 & (1l << loc.x)) != 0;
-            }
-            case 42 -> {
-                return (seen42 & (1l << loc.x)) != 0;
-            }
-            case 43 -> {
-                return (seen43 & (1l << loc.x)) != 0;
-            }
-            case 44 -> {
-                return (seen44 & (1l << loc.x)) != 0;
-            }
-            case 45 -> {
-                return (seen45 & (1l << loc.x)) != 0;
-            }
-            case 46 -> {
-                return (seen46 & (1l << loc.x)) != 0;
-            }
-            case 47 -> {
-                return (seen47 & (1l << loc.x)) != 0;
-            }
-            case 48 -> {
-                return (seen48 & (1l << loc.x)) != 0;
-            }
-            case 49 -> {
-                return (seen49 & (1l << loc.x)) != 0;
-            }
-            case 50 -> {
-                return (seen50 & (1l << loc.x)) != 0;
-            }
-            case 51 -> {
-                return (seen51 & (1l << loc.x)) != 0;
-            }
-            case 52 -> {
-                return (seen52 & (1l << loc.x)) != 0;
-            }
-            case 53 -> {
-                return (seen53 & (1l << loc.x)) != 0;
-            }
-            case 54 -> {
-                return (seen54 & (1l << loc.x)) != 0;
-            }
-            case 55 -> {
-                return (seen55 & (1l << loc.x)) != 0;
-            }
-            case 56 -> {
-                return (seen56 & (1l << loc.x)) != 0;
-            }
-            case 57 -> {
-                return (seen57 & (1l << loc.x)) != 0;
-            }
-            case 58 -> {
-                return (seen58 & (1l << loc.x)) != 0;
-            }
-            case 59 -> {
-                return (seen59 & (1l << loc.x)) != 0;
-            }
-            default -> {
-                return false;
-            }
-        }
-    }
-    public static boolean isPassable(MapLocation loc) {
-        switch(loc.y) {
-            case 0 -> {
-                return (passable0 & (1l << loc.x)) != 0;
-            }
-            case 1 -> {
-                return (passable1 & (1l << loc.x)) != 0;
-            }
-            case 2 -> {
-                return (passable2 & (1l << loc.x)) != 0;
-            }
-            case 3 -> {
-                return (passable3 & (1l << loc.x)) != 0;
-            }
-            case 4 -> {
-                return (passable4 & (1l << loc.x)) != 0;
-            }
-            case 5 -> {
-                return (passable5 & (1l << loc.x)) != 0;
-            }
-            case 6 -> {
-                return (passable6 & (1l << loc.x)) != 0;
-            }
-            case 7 -> {
-                return (passable7 & (1l << loc.x)) != 0;
-            }
-            case 8 -> {
-                return (passable8 & (1l << loc.x)) != 0;
-            }
-            case 9 -> {
-                return (passable9 & (1l << loc.x)) != 0;
-            }
-            case 10 -> {
-                return (passable10 & (1l << loc.x)) != 0;
-            }
-            case 11 -> {
-                return (passable11 & (1l << loc.x)) != 0;
-            }
-            case 12 -> {
-                return (passable12 & (1l << loc.x)) != 0;
-            }
-            case 13 -> {
-                return (passable13 & (1l << loc.x)) != 0;
-            }
-            case 14 -> {
-                return (passable14 & (1l << loc.x)) != 0;
-            }
-            case 15 -> {
-                return (passable15 & (1l << loc.x)) != 0;
-            }
-            case 16 -> {
-                return (passable16 & (1l << loc.x)) != 0;
-            }
-            case 17 -> {
-                return (passable17 & (1l << loc.x)) != 0;
-            }
-            case 18 -> {
-                return (passable18 & (1l << loc.x)) != 0;
-            }
-            case 19 -> {
-                return (passable19 & (1l << loc.x)) != 0;
-            }
-            case 20 -> {
-                return (passable20 & (1l << loc.x)) != 0;
-            }
-            case 21 -> {
-                return (passable21 & (1l << loc.x)) != 0;
-            }
-            case 22 -> {
-                return (passable22 & (1l << loc.x)) != 0;
-            }
-            case 23 -> {
-                return (passable23 & (1l << loc.x)) != 0;
-            }
-            case 24 -> {
-                return (passable24 & (1l << loc.x)) != 0;
-            }
-            case 25 -> {
-                return (passable25 & (1l << loc.x)) != 0;
-            }
-            case 26 -> {
-                return (passable26 & (1l << loc.x)) != 0;
-            }
-            case 27 -> {
-                return (passable27 & (1l << loc.x)) != 0;
-            }
-            case 28 -> {
-                return (passable28 & (1l << loc.x)) != 0;
-            }
-            case 29 -> {
-                return (passable29 & (1l << loc.x)) != 0;
-            }
-            case 30 -> {
-                return (passable30 & (1l << loc.x)) != 0;
-            }
-            case 31 -> {
-                return (passable31 & (1l << loc.x)) != 0;
-            }
-            case 32 -> {
-                return (passable32 & (1l << loc.x)) != 0;
-            }
-            case 33 -> {
-                return (passable33 & (1l << loc.x)) != 0;
-            }
-            case 34 -> {
-                return (passable34 & (1l << loc.x)) != 0;
-            }
-            case 35 -> {
-                return (passable35 & (1l << loc.x)) != 0;
-            }
-            case 36 -> {
-                return (passable36 & (1l << loc.x)) != 0;
-            }
-            case 37 -> {
-                return (passable37 & (1l << loc.x)) != 0;
-            }
-            case 38 -> {
-                return (passable38 & (1l << loc.x)) != 0;
-            }
-            case 39 -> {
-                return (passable39 & (1l << loc.x)) != 0;
-            }
-            case 40 -> {
-                return (passable40 & (1l << loc.x)) != 0;
-            }
-            case 41 -> {
-                return (passable41 & (1l << loc.x)) != 0;
-            }
-            case 42 -> {
-                return (passable42 & (1l << loc.x)) != 0;
-            }
-            case 43 -> {
-                return (passable43 & (1l << loc.x)) != 0;
-            }
-            case 44 -> {
-                return (passable44 & (1l << loc.x)) != 0;
-            }
-            case 45 -> {
-                return (passable45 & (1l << loc.x)) != 0;
-            }
-            case 46 -> {
-                return (passable46 & (1l << loc.x)) != 0;
-            }
-            case 47 -> {
-                return (passable47 & (1l << loc.x)) != 0;
-            }
-            case 48 -> {
-                return (passable48 & (1l << loc.x)) != 0;
-            }
-            case 49 -> {
-                return (passable49 & (1l << loc.x)) != 0;
-            }
-            case 50 -> {
-                return (passable50 & (1l << loc.x)) != 0;
-            }
-            case 51 -> {
-                return (passable51 & (1l << loc.x)) != 0;
-            }
-            case 52 -> {
-                return (passable52 & (1l << loc.x)) != 0;
-            }
-            case 53 -> {
-                return (passable53 & (1l << loc.x)) != 0;
-            }
-            case 54 -> {
-                return (passable54 & (1l << loc.x)) != 0;
-            }
-            case 55 -> {
-                return (passable55 & (1l << loc.x)) != 0;
-            }
-            case 56 -> {
-                return (passable56 & (1l << loc.x)) != 0;
-            }
-            case 57 -> {
-                return (passable57 & (1l << loc.x)) != 0;
-            }
-            case 58 -> {
-                return (passable58 & (1l << loc.x)) != 0;
-            }
-            case 59 -> {
-                return (passable59 & (1l << loc.x)) != 0;
-            }
-            default -> {
-                return false;
             }
         }
     }

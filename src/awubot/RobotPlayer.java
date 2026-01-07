@@ -3,13 +3,15 @@ package awubot;
 import battlecode.common.*;
 import awubot.Pathfinder;
 import awubot.CellTracker;
-import awubot.Game;
-import awubot.util.Util;
+import static awubot.Game.*;
+import static awubot.util.Util.*;
 import awubot.util.Rng;
 
 public class RobotPlayer {
     static MapLocation target;
     static boolean built = false;
+
+    static boolean glanceLeft = true;
 
     public static void run(RobotController rc) throws GameActionException {
         Game.init(rc);
@@ -26,16 +28,20 @@ public class RobotPlayer {
                 Rng.init();
                 switch (rc.getType()) {
                     case BABY_RAT:
-                        if(target == null || target.distanceSquaredTo(rc.getLocation()) < (cnt == 2 ? 2 : 18)) {
+                        if(target == null || target.distanceSquaredTo(rc.getLocation()) <= 2) {
                             target = new MapLocation((int)(Math.random() * rc.getMapWidth()), (int)(Math.random() * rc.getMapHeight()));
                             cnt++;
                         }
                         rc.setIndicatorLine(rc.getLocation(), target, 255, 0, 0);
                         if(rc.isMovementReady()) Pathfinder.makeMove(target);
-                        // CellTracker.storeVisibleCells();
-                        // CellTracker.computeLocalPassable();
-                        // CellTracker.printLocalMask(CellTracker.localPassable0, CellTracker.localPassable1);
-                        // rc.resign();
+                        if(rc.canTurn()) {
+                            if(glanceLeft) {
+                                Pathfinder.turn(rc.getDirection().rotateLeft().rotateLeft());
+                            } else {
+                                Pathfinder.turn(rc.getDirection().rotateRight().rotateRight());
+                            }
+                            glanceLeft = !glanceLeft;
+                        }
                         break;
                     case RAT_KING:
                         if(!built) rc.buildRat(rc.getLocation().add(Direction.NORTHEAST).add(Direction.NORTHEAST));
@@ -48,7 +54,7 @@ public class RobotPlayer {
                 e.printStackTrace();
             } finally {
                 Clock.yield();
-                Util.indicatorString = "";
+                indicatorString = "";
             }
         }
     }

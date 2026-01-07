@@ -7,23 +7,10 @@ import static awubot.util.Util.*;
 import static awubot.Game.*;
 
 public class CellTracker {
-    {% for i in range(MAX_MAP_SIZE) %}
-    static long seen{{i}}, passable{{i}};
-    {% endfor %}
-
-    public static void storeCell(MapInfo info) throws GameActionException {
-        var loc = info.getMapLocation();
-        switch(loc.y) {
-            {% for i in range(MAX_MAP_SIZE) %}
-            case {{i}} -> {
-                seen{{i}} |= 1l << loc.x;
-                if(info.isPassable()) passable{{i}} |= 1l << loc.x;
-            }
-            {% endfor %}
-        }
-    }
-
     {% for mask in ["seen", "passable"] %}
+    {% for i in range(MAX_MAP_SIZE) %}
+    static long {{mask}}{{i}};
+    {% endfor %}
     public static boolean is{{capitalise(mask)}}(MapLocation loc) {
         switch(loc.y) {
             {% for i in range(MAX_MAP_SIZE) %}
@@ -37,6 +24,19 @@ public class CellTracker {
         }
     }
     {% endfor %}
+
+    public static void storeCell(MapInfo info) throws GameActionException {
+        var loc = info.getMapLocation();
+        // rc.setIndicatorDot(loc, 255, 255, 0);
+        switch(loc.y) {
+            {% for i in range(MAX_MAP_SIZE) %}
+            case {{i}} -> {
+                seen{{i}} |= 1l << loc.x;
+                if(info.isPassable()) passable{{i}} |= 1l << loc.x;
+            }
+            {% endfor %}
+        }
+    }
 
     public static void storeVisibleCells() throws GameActionException {
         Profiler.begin();

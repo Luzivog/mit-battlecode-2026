@@ -14,6 +14,12 @@ class BugnavInstance {
 
     // false for the instances spawned for lookahead
     boolean isMaster;
+    // child instances for lookahead
+    BugnavInstance leftBug, rightBug;
+    // these are reset when we physically move
+    boolean leftDone, rightDone;
+    // detect movement with this
+    MapLocation myLoc;
     // i guessed last turn, so i don't need to guess again
     // set to false when i move successfully
     boolean justGuessed;
@@ -102,7 +108,7 @@ class BugnavInstance {
     }
 
     // false = halt bug
-    boolean advance(boolean canLookahead) throws GameActionException {
+    boolean advance() throws GameActionException {
         // System.out.println("old pos " + pos + " i am at " + rc.getLocation());
 
         if(pos.isAdjacentTo(target)) return false;
@@ -188,7 +194,7 @@ class BugnavInstance {
         // guess rotation direction (kinda inefficient but wtv)
         if(isMaster && !justGuessed && stackSize == 0 && CellTracker.isSeen(greedyLoc)) {
             assert !CellTracker.isPassable(greedyLoc);
-            if(emptyStackTurns >= 3) {
+            if(emptyStackTurns >= 2) {
                 boolean pastLeft = ((guessedLeft[pos.y] >> pos.x) & 1l) != 0;
                 boolean pastRight = ((guessedRight[pos.y] >> pos.x) & 1l) != 0;
                 if(pastLeft && pastRight) {
@@ -203,74 +209,91 @@ class BugnavInstance {
                     indicate("past right");
                     leftTurn = true;
                 } else {
-                    if(canLookahead) {
-                        Profiler.begin();
-                        // System.out.println("guessing " + pos + " " + emptyStackTurns);
-                        var leftBug = new BugnavInstance(pos, true, target, false);
-                        var rightBug = new BugnavInstance(pos, false, target, false);
-                        {% macro runBug(bug) %}
-                        {
-                            int shade = 255;
-                            bugLoop: {
-                                {% for _ in range(MAX_BUG_ITERS) %}
-                                rc.setIndicatorDot({{bug}}.pos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                                if(!{{bug}}.advance(false)) break bugLoop;
-                                {% endfor %}
-                            }
-                        }
-                        {% endmacro %}
-                        {{ runBug("leftBug") }}
-                        {{ runBug("rightBug") }}
-                        {% macro score(bug) %} Math.sqrt({{bug}}.pos.distanceSquaredTo(target)) + {{bug}}.nextPathIndex * 0.7 {% endmacro %}
-                        var leftScore = {{ score("leftBug") }};
-                        var rightScore = {{ score("rightBug") }};
-                        indicate("lookahead" + pos);
-                        // indicate(leftBug.pos);
-                        indicate(leftScore);
-                        // indicate(rightBug.pos);
-                        indicate(rightScore);
+                    if(leftBug == null) {
+                        // initialise
+                        leftBug = new BugnavInstance(pos, true, target, false);
+                        rightBug = new BugnavInstance(pos, false, target, false);
+                        myLoc = new MapLocation(-1, -1);
+                        return true;
+                    }
+                    if(!rc.getLocation().equals(myLoc)) {
+                        // we moved, so we might be able to advance previously stuck stuff further
+                        myLoc = rc.getLocation();
+                        leftDone = leftBug.hitEdge || leftBug.nextPathIndex == {{MAX_PATH - 1}};
+                        rightDone = rightBug.hitEdge || leftBug.nextPathIndex == {{MAX_PATH - 1}};
+                    }
 
-                        {% macro chooseBug(bug) %}
-                        var bug = {{bug}};
-                        if(bug.leftTurn) {
-                            guessedLeft[pos.y] |= 1l << pos.x;
+                    if(!(leftDone && rightDone)) {
+                        {% macro advance(side) %}
+                        {{side}}Bug.outOfSight = false;
+                        {{side}}Done = !{{side}}Bug.advance();
+                        rc.setIndicatorDot({{side}}Bug.pos, 255, 0, 255);
+                        {% endmacro %}
+                        if(rightDone) {
+                            {{ advance("left") }}
+                        } else if(leftDone) {
+                            {{ advance("right") }}
+                        } else if(leftBug.nextPathIndex > rightBug.nextPathIndex) {
+                            {{ advance("right") }}
                         } else {
-                            guessedRight[pos.y] |= 1l << pos.x;
+                            {{ advance("left") }}
                         }
-                        {% for field in ["pos", "stackSize", "emptyStackTurns", "leftTurn", "bottomDir", "topDir"] %}
-                        {{field}} = bug.{{field}};
+                    }
+
+                    boolean leftReady = leftBug.nextPathIndex >= 5 || leftBug.hitEdge || leftBug.outOfSight;
+                    boolean rightReady = rightBug.nextPathIndex >= 5 || rightBug.hitEdge || rightBug.outOfSight;
+                    indicate("ready " + leftReady + " " + rightReady);
+                    if(!leftReady || !rightReady) return !(leftDone && rightDone);
+
+                    {% macro score(bug) %} Math.sqrt({{bug}}.pos.distanceSquaredTo(target)) + {{bug}}.nextPathIndex * 0.7 {% endmacro %}
+                    var leftScore = {{ score("leftBug") }};
+                    var rightScore = {{ score("rightBug") }};
+                    indicate("lookahead" + pos);
+                    // indicate(leftBug.pos);
+                    indicate(leftScore);
+                    // indicate(rightBug.pos);
+                    indicate(rightScore);
+
+                    {% macro chooseBug(bug) %}
+                    var bug = {{bug}};
+                    if(bug.leftTurn) {
+                        guessedLeft[pos.y] |= 1l << pos.x;
+                    } else {
+                        guessedRight[pos.y] |= 1l << pos.x;
+                    }
+                    {% for field in ["pos", "stackSize", "emptyStackTurns", "leftTurn", "bottomDir", "topDir"] %}
+                    {{field}} = bug.{{field}};
+                    {% endfor %}
+                    copyPath: {
+                        {% for i in range(MAX_PATH) %}
+                        {% if i %}
+                        if(bug.nextPathIndex == {{i}}) break copyPath;
+                        {% endif %}
+                        appendPosition(bug.path{{i}});
                         {% endfor %}
-                        copyPath: {
-                            {% for i in range(MAX_PATH) %}
-                            {% if i %}
-                            if(bug.nextPathIndex == {{i}}) break copyPath;
-                            {% endif %}
-                            appendPosition(bug.path{{i}});
-                            {% endfor %}
-                        }
-                        indicate("just guessed " + leftTurn);
-                        justGuessed = true;
-                        {% endmacro %}
+                    }
+                    leftBug = null;
+                    rightBug = null;
+                    indicate("just guessed " + leftTurn);
+                    justGuessed = true;
+                    {% endmacro %}
 
-                        if(leftBug.hitEdge != rightBug.hitEdge) {
-                            {{ chooseBug("rightBug.hitEdge ? leftBug : rightBug") }}
-                        } else {
-                            var better = leftScore < rightScore ? leftBug : rightBug;
-                            var worse = leftScore < rightScore ? rightBug : leftBug;
-                            if(!better.outOfSight && worse.outOfSight) {
-                                indicate("clear winner");
-                                {{ chooseBug("better") }}
-                            } else if(!better.outOfSight || rc.getLocation().isAdjacentTo(pos)) {
-                                leftScore = Math.pow(leftScore, 15);
-                                rightScore = Math.pow(rightScore, 15);
-                                var total = leftScore + rightScore;
-                                leftScore /= total;
-                                rightScore /= total;
-                                {{ chooseBug("Rng.mcg() < rightScore * 0x7fffffff ? leftBug : rightBug") }}
-                            }
+                    if(leftBug.hitEdge != rightBug.hitEdge) {
+                        {{ chooseBug("rightBug.hitEdge ? leftBug : rightBug") }}
+                    } else {
+                        var better = leftScore < rightScore ? leftBug : rightBug;
+                        var worse = leftScore < rightScore ? rightBug : leftBug;
+                        if(!better.outOfSight && worse.outOfSight) {
+                            indicate("clear winner");
+                            {{ chooseBug("better") }}
+                        } else if(!better.outOfSight || rc.getLocation().isAdjacentTo(pos)) {
+                            leftScore = Math.pow(leftScore, 15);
+                            rightScore = Math.pow(rightScore, 15);
+                            var total = leftScore + rightScore;
+                            leftScore /= total;
+                            rightScore /= total;
+                            {{ chooseBug("Rng.mcg() < rightScore * 0x7fffffff ? leftBug : rightBug") }}
                         }
-                        // indicate("leftTurn " + leftTurn);
-                        Profiler.end("lookahead");
                     }
                     return false;
                 }
@@ -291,7 +314,7 @@ class BugnavInstance {
             {
                 // indicate("trying " + tryDir);
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
                     if(rc.onTheMap(nextPos)) {
                         rc.setIndicatorDot(nextPos, 0, 255, 255);
                         outOfSight = true;
@@ -371,7 +394,9 @@ public class Pathfinder {
         bugLoop: {
             {% for i in range(MAX_BUG_ITERS) %}
             rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
-            if(!bug.advance({% if i %} false {% else %} true {% endif %})) break bugLoop;
+            Profiler.begin();
+            if(!bug.advance()) break bugLoop;
+            Profiler.end("bug");
             {% endfor %}
         }
         // Profiler.end("bug");

@@ -12,6 +12,12 @@ class BugnavInstance {
 
     // false for the instances spawned for lookahead
     boolean isMaster;
+    // child instances for lookahead
+    BugnavInstance leftBug, rightBug;
+    // these are reset when we physically move
+    boolean leftDone, rightDone;
+    // detect movement with this
+    MapLocation myLoc;
     // i guessed last turn, so i don't need to guess again
     // set to false when i move successfully
     boolean justGuessed;
@@ -356,7 +362,7 @@ class BugnavInstance {
     }
 
     // false = halt bug
-    boolean advance(boolean canLookahead) throws GameActionException {
+    boolean advance() throws GameActionException {
         // System.out.println("old pos " + pos + " i am at " + rc.getLocation());
 
         if(pos.isAdjacentTo(target)) return false;
@@ -494,7 +500,7 @@ class BugnavInstance {
         // guess rotation direction (kinda inefficient but wtv)
         if(isMaster && !justGuessed && stackSize == 0 && CellTracker.isSeen(greedyLoc)) {
             assert !CellTracker.isPassable(greedyLoc);
-            if(emptyStackTurns >= 3) {
+            if(emptyStackTurns >= 2) {
                 boolean pastLeft = ((guessedLeft[pos.y] >> pos.x) & 1l) != 0;
                 boolean pastRight = ((guessedRight[pos.y] >> pos.x) & 1l) != 0;
                 if(pastLeft && pastRight) {
@@ -509,266 +515,275 @@ class BugnavInstance {
                     indicate("past right");
                     leftTurn = true;
                 } else {
-                    if(canLookahead) {
-                        Profiler.begin();
-                        // System.out.println("guessing " + pos + " " + emptyStackTurns);
-                        var leftBug = new BugnavInstance(pos, true, target, false);
-                        var rightBug = new BugnavInstance(pos, false, target, false);
-                                                {
-                            int shade = 255;
-                            bugLoop: {
-                                rc.setIndicatorDot(leftBug.pos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                                if(!leftBug.advance(false)) break bugLoop;
-                                rc.setIndicatorDot(leftBug.pos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                                if(!leftBug.advance(false)) break bugLoop;
-                                rc.setIndicatorDot(leftBug.pos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                                if(!leftBug.advance(false)) break bugLoop;
-                                rc.setIndicatorDot(leftBug.pos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                                if(!leftBug.advance(false)) break bugLoop;
-                                rc.setIndicatorDot(leftBug.pos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                                if(!leftBug.advance(false)) break bugLoop;
-                            }
-                        }
+                    if(leftBug == null) {
+                        // initialise
+                        leftBug = new BugnavInstance(pos, true, target, false);
+                        rightBug = new BugnavInstance(pos, false, target, false);
+                        myLoc = new MapLocation(-1, -1);
+                        return true;
+                    }
+                    if(!rc.getLocation().equals(myLoc)) {
+                        // we moved, so we might be able to advance previously stuck stuff further
+                        myLoc = rc.getLocation();
+                        leftDone = leftBug.hitEdge || leftBug.nextPathIndex == 24;
+                        rightDone = rightBug.hitEdge || leftBug.nextPathIndex == 24;
+                    }
 
-                                                {
-                            int shade = 255;
-                            bugLoop: {
-                                rc.setIndicatorDot(rightBug.pos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                                if(!rightBug.advance(false)) break bugLoop;
-                                rc.setIndicatorDot(rightBug.pos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                                if(!rightBug.advance(false)) break bugLoop;
-                                rc.setIndicatorDot(rightBug.pos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                                if(!rightBug.advance(false)) break bugLoop;
-                                rc.setIndicatorDot(rightBug.pos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                                if(!rightBug.advance(false)) break bugLoop;
-                                rc.setIndicatorDot(rightBug.pos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                                if(!rightBug.advance(false)) break bugLoop;
-                            }
-                        }
+                    if(!(leftDone && rightDone)) {
+                        if(rightDone) {
+                                                    leftBug.outOfSight = false;
+                        leftDone = !leftBug.advance();
+                        rc.setIndicatorDot(leftBug.pos, 255, 0, 255);
 
-                        var leftScore =  Math.sqrt(leftBug.pos.distanceSquaredTo(target)) + leftBug.nextPathIndex * 0.7 ;
-                        var rightScore =  Math.sqrt(rightBug.pos.distanceSquaredTo(target)) + rightBug.nextPathIndex * 0.7 ;
-                        indicate("lookahead" + pos);
-                        // indicate(leftBug.pos);
-                        indicate(leftScore);
-                        // indicate(rightBug.pos);
-                        indicate(rightScore);
+                        } else if(leftDone) {
+                                                    rightBug.outOfSight = false;
+                        rightDone = !rightBug.advance();
+                        rc.setIndicatorDot(rightBug.pos, 255, 0, 255);
 
-
-                        if(leftBug.hitEdge != rightBug.hitEdge) {
-                                                    var bug = rightBug.hitEdge ? leftBug : rightBug;
-                        if(bug.leftTurn) {
-                            guessedLeft[pos.y] |= 1l << pos.x;
-                        } else {
-                            guessedRight[pos.y] |= 1l << pos.x;
-                        }
-                        pos = bug.pos;
-                        stackSize = bug.stackSize;
-                        emptyStackTurns = bug.emptyStackTurns;
-                        leftTurn = bug.leftTurn;
-                        bottomDir = bug.bottomDir;
-                        topDir = bug.topDir;
-                        copyPath: {
-                            appendPosition(bug.path0);
-                            if(bug.nextPathIndex == 1) break copyPath;
-                            appendPosition(bug.path1);
-                            if(bug.nextPathIndex == 2) break copyPath;
-                            appendPosition(bug.path2);
-                            if(bug.nextPathIndex == 3) break copyPath;
-                            appendPosition(bug.path3);
-                            if(bug.nextPathIndex == 4) break copyPath;
-                            appendPosition(bug.path4);
-                            if(bug.nextPathIndex == 5) break copyPath;
-                            appendPosition(bug.path5);
-                            if(bug.nextPathIndex == 6) break copyPath;
-                            appendPosition(bug.path6);
-                            if(bug.nextPathIndex == 7) break copyPath;
-                            appendPosition(bug.path7);
-                            if(bug.nextPathIndex == 8) break copyPath;
-                            appendPosition(bug.path8);
-                            if(bug.nextPathIndex == 9) break copyPath;
-                            appendPosition(bug.path9);
-                            if(bug.nextPathIndex == 10) break copyPath;
-                            appendPosition(bug.path10);
-                            if(bug.nextPathIndex == 11) break copyPath;
-                            appendPosition(bug.path11);
-                            if(bug.nextPathIndex == 12) break copyPath;
-                            appendPosition(bug.path12);
-                            if(bug.nextPathIndex == 13) break copyPath;
-                            appendPosition(bug.path13);
-                            if(bug.nextPathIndex == 14) break copyPath;
-                            appendPosition(bug.path14);
-                            if(bug.nextPathIndex == 15) break copyPath;
-                            appendPosition(bug.path15);
-                            if(bug.nextPathIndex == 16) break copyPath;
-                            appendPosition(bug.path16);
-                            if(bug.nextPathIndex == 17) break copyPath;
-                            appendPosition(bug.path17);
-                            if(bug.nextPathIndex == 18) break copyPath;
-                            appendPosition(bug.path18);
-                            if(bug.nextPathIndex == 19) break copyPath;
-                            appendPosition(bug.path19);
-                            if(bug.nextPathIndex == 20) break copyPath;
-                            appendPosition(bug.path20);
-                            if(bug.nextPathIndex == 21) break copyPath;
-                            appendPosition(bug.path21);
-                            if(bug.nextPathIndex == 22) break copyPath;
-                            appendPosition(bug.path22);
-                            if(bug.nextPathIndex == 23) break copyPath;
-                            appendPosition(bug.path23);
-                            if(bug.nextPathIndex == 24) break copyPath;
-                            appendPosition(bug.path24);
-                        }
-                        indicate("just guessed " + leftTurn);
-                        justGuessed = true;
+                        } else if(leftBug.nextPathIndex > rightBug.nextPathIndex) {
+                                                    rightBug.outOfSight = false;
+                        rightDone = !rightBug.advance();
+                        rc.setIndicatorDot(rightBug.pos, 255, 0, 255);
 
                         } else {
-                            var better = leftScore < rightScore ? leftBug : rightBug;
-                            var worse = leftScore < rightScore ? rightBug : leftBug;
-                            if(!better.outOfSight && worse.outOfSight) {
-                                indicate("clear winner");
-                                                        var bug = better;
-                        if(bug.leftTurn) {
-                            guessedLeft[pos.y] |= 1l << pos.x;
-                        } else {
-                            guessedRight[pos.y] |= 1l << pos.x;
-                        }
-                        pos = bug.pos;
-                        stackSize = bug.stackSize;
-                        emptyStackTurns = bug.emptyStackTurns;
-                        leftTurn = bug.leftTurn;
-                        bottomDir = bug.bottomDir;
-                        topDir = bug.topDir;
-                        copyPath: {
-                            appendPosition(bug.path0);
-                            if(bug.nextPathIndex == 1) break copyPath;
-                            appendPosition(bug.path1);
-                            if(bug.nextPathIndex == 2) break copyPath;
-                            appendPosition(bug.path2);
-                            if(bug.nextPathIndex == 3) break copyPath;
-                            appendPosition(bug.path3);
-                            if(bug.nextPathIndex == 4) break copyPath;
-                            appendPosition(bug.path4);
-                            if(bug.nextPathIndex == 5) break copyPath;
-                            appendPosition(bug.path5);
-                            if(bug.nextPathIndex == 6) break copyPath;
-                            appendPosition(bug.path6);
-                            if(bug.nextPathIndex == 7) break copyPath;
-                            appendPosition(bug.path7);
-                            if(bug.nextPathIndex == 8) break copyPath;
-                            appendPosition(bug.path8);
-                            if(bug.nextPathIndex == 9) break copyPath;
-                            appendPosition(bug.path9);
-                            if(bug.nextPathIndex == 10) break copyPath;
-                            appendPosition(bug.path10);
-                            if(bug.nextPathIndex == 11) break copyPath;
-                            appendPosition(bug.path11);
-                            if(bug.nextPathIndex == 12) break copyPath;
-                            appendPosition(bug.path12);
-                            if(bug.nextPathIndex == 13) break copyPath;
-                            appendPosition(bug.path13);
-                            if(bug.nextPathIndex == 14) break copyPath;
-                            appendPosition(bug.path14);
-                            if(bug.nextPathIndex == 15) break copyPath;
-                            appendPosition(bug.path15);
-                            if(bug.nextPathIndex == 16) break copyPath;
-                            appendPosition(bug.path16);
-                            if(bug.nextPathIndex == 17) break copyPath;
-                            appendPosition(bug.path17);
-                            if(bug.nextPathIndex == 18) break copyPath;
-                            appendPosition(bug.path18);
-                            if(bug.nextPathIndex == 19) break copyPath;
-                            appendPosition(bug.path19);
-                            if(bug.nextPathIndex == 20) break copyPath;
-                            appendPosition(bug.path20);
-                            if(bug.nextPathIndex == 21) break copyPath;
-                            appendPosition(bug.path21);
-                            if(bug.nextPathIndex == 22) break copyPath;
-                            appendPosition(bug.path22);
-                            if(bug.nextPathIndex == 23) break copyPath;
-                            appendPosition(bug.path23);
-                            if(bug.nextPathIndex == 24) break copyPath;
-                            appendPosition(bug.path24);
-                        }
-                        indicate("just guessed " + leftTurn);
-                        justGuessed = true;
+                                                    leftBug.outOfSight = false;
+                        leftDone = !leftBug.advance();
+                        rc.setIndicatorDot(leftBug.pos, 255, 0, 255);
 
-                            } else if(!better.outOfSight || rc.getLocation().isAdjacentTo(pos)) {
-                                leftScore = Math.pow(leftScore, 15);
-                                rightScore = Math.pow(rightScore, 15);
-                                var total = leftScore + rightScore;
-                                leftScore /= total;
-                                rightScore /= total;
-                                                        var bug = Rng.mcg() < rightScore * 0x7fffffff ? leftBug : rightBug;
-                        if(bug.leftTurn) {
-                            guessedLeft[pos.y] |= 1l << pos.x;
-                        } else {
-                            guessedRight[pos.y] |= 1l << pos.x;
                         }
-                        pos = bug.pos;
-                        stackSize = bug.stackSize;
-                        emptyStackTurns = bug.emptyStackTurns;
-                        leftTurn = bug.leftTurn;
-                        bottomDir = bug.bottomDir;
-                        topDir = bug.topDir;
-                        copyPath: {
-                            appendPosition(bug.path0);
-                            if(bug.nextPathIndex == 1) break copyPath;
-                            appendPosition(bug.path1);
-                            if(bug.nextPathIndex == 2) break copyPath;
-                            appendPosition(bug.path2);
-                            if(bug.nextPathIndex == 3) break copyPath;
-                            appendPosition(bug.path3);
-                            if(bug.nextPathIndex == 4) break copyPath;
-                            appendPosition(bug.path4);
-                            if(bug.nextPathIndex == 5) break copyPath;
-                            appendPosition(bug.path5);
-                            if(bug.nextPathIndex == 6) break copyPath;
-                            appendPosition(bug.path6);
-                            if(bug.nextPathIndex == 7) break copyPath;
-                            appendPosition(bug.path7);
-                            if(bug.nextPathIndex == 8) break copyPath;
-                            appendPosition(bug.path8);
-                            if(bug.nextPathIndex == 9) break copyPath;
-                            appendPosition(bug.path9);
-                            if(bug.nextPathIndex == 10) break copyPath;
-                            appendPosition(bug.path10);
-                            if(bug.nextPathIndex == 11) break copyPath;
-                            appendPosition(bug.path11);
-                            if(bug.nextPathIndex == 12) break copyPath;
-                            appendPosition(bug.path12);
-                            if(bug.nextPathIndex == 13) break copyPath;
-                            appendPosition(bug.path13);
-                            if(bug.nextPathIndex == 14) break copyPath;
-                            appendPosition(bug.path14);
-                            if(bug.nextPathIndex == 15) break copyPath;
-                            appendPosition(bug.path15);
-                            if(bug.nextPathIndex == 16) break copyPath;
-                            appendPosition(bug.path16);
-                            if(bug.nextPathIndex == 17) break copyPath;
-                            appendPosition(bug.path17);
-                            if(bug.nextPathIndex == 18) break copyPath;
-                            appendPosition(bug.path18);
-                            if(bug.nextPathIndex == 19) break copyPath;
-                            appendPosition(bug.path19);
-                            if(bug.nextPathIndex == 20) break copyPath;
-                            appendPosition(bug.path20);
-                            if(bug.nextPathIndex == 21) break copyPath;
-                            appendPosition(bug.path21);
-                            if(bug.nextPathIndex == 22) break copyPath;
-                            appendPosition(bug.path22);
-                            if(bug.nextPathIndex == 23) break copyPath;
-                            appendPosition(bug.path23);
-                            if(bug.nextPathIndex == 24) break copyPath;
-                            appendPosition(bug.path24);
-                        }
-                        indicate("just guessed " + leftTurn);
-                        justGuessed = true;
+                    }
 
-                            }
+                    boolean leftReady = leftBug.nextPathIndex >= 5 || leftBug.hitEdge || leftBug.outOfSight;
+                    boolean rightReady = rightBug.nextPathIndex >= 5 || rightBug.hitEdge || rightBug.outOfSight;
+                    indicate("ready " + leftReady + " " + rightReady);
+                    if(!leftReady || !rightReady) return !(leftDone && rightDone);
+
+                    var leftScore =  Math.sqrt(leftBug.pos.distanceSquaredTo(target)) + leftBug.nextPathIndex * 0.7 ;
+                    var rightScore =  Math.sqrt(rightBug.pos.distanceSquaredTo(target)) + rightBug.nextPathIndex * 0.7 ;
+                    indicate("lookahead" + pos);
+                    // indicate(leftBug.pos);
+                    indicate(leftScore);
+                    // indicate(rightBug.pos);
+                    indicate(rightScore);
+
+
+                    if(leftBug.hitEdge != rightBug.hitEdge) {
+                                            var bug = rightBug.hitEdge ? leftBug : rightBug;
+                    if(bug.leftTurn) {
+                        guessedLeft[pos.y] |= 1l << pos.x;
+                    } else {
+                        guessedRight[pos.y] |= 1l << pos.x;
+                    }
+                    pos = bug.pos;
+                    stackSize = bug.stackSize;
+                    emptyStackTurns = bug.emptyStackTurns;
+                    leftTurn = bug.leftTurn;
+                    bottomDir = bug.bottomDir;
+                    topDir = bug.topDir;
+                    copyPath: {
+                        appendPosition(bug.path0);
+                        if(bug.nextPathIndex == 1) break copyPath;
+                        appendPosition(bug.path1);
+                        if(bug.nextPathIndex == 2) break copyPath;
+                        appendPosition(bug.path2);
+                        if(bug.nextPathIndex == 3) break copyPath;
+                        appendPosition(bug.path3);
+                        if(bug.nextPathIndex == 4) break copyPath;
+                        appendPosition(bug.path4);
+                        if(bug.nextPathIndex == 5) break copyPath;
+                        appendPosition(bug.path5);
+                        if(bug.nextPathIndex == 6) break copyPath;
+                        appendPosition(bug.path6);
+                        if(bug.nextPathIndex == 7) break copyPath;
+                        appendPosition(bug.path7);
+                        if(bug.nextPathIndex == 8) break copyPath;
+                        appendPosition(bug.path8);
+                        if(bug.nextPathIndex == 9) break copyPath;
+                        appendPosition(bug.path9);
+                        if(bug.nextPathIndex == 10) break copyPath;
+                        appendPosition(bug.path10);
+                        if(bug.nextPathIndex == 11) break copyPath;
+                        appendPosition(bug.path11);
+                        if(bug.nextPathIndex == 12) break copyPath;
+                        appendPosition(bug.path12);
+                        if(bug.nextPathIndex == 13) break copyPath;
+                        appendPosition(bug.path13);
+                        if(bug.nextPathIndex == 14) break copyPath;
+                        appendPosition(bug.path14);
+                        if(bug.nextPathIndex == 15) break copyPath;
+                        appendPosition(bug.path15);
+                        if(bug.nextPathIndex == 16) break copyPath;
+                        appendPosition(bug.path16);
+                        if(bug.nextPathIndex == 17) break copyPath;
+                        appendPosition(bug.path17);
+                        if(bug.nextPathIndex == 18) break copyPath;
+                        appendPosition(bug.path18);
+                        if(bug.nextPathIndex == 19) break copyPath;
+                        appendPosition(bug.path19);
+                        if(bug.nextPathIndex == 20) break copyPath;
+                        appendPosition(bug.path20);
+                        if(bug.nextPathIndex == 21) break copyPath;
+                        appendPosition(bug.path21);
+                        if(bug.nextPathIndex == 22) break copyPath;
+                        appendPosition(bug.path22);
+                        if(bug.nextPathIndex == 23) break copyPath;
+                        appendPosition(bug.path23);
+                        if(bug.nextPathIndex == 24) break copyPath;
+                        appendPosition(bug.path24);
+                    }
+                    leftBug = null;
+                    rightBug = null;
+                    indicate("just guessed " + leftTurn);
+                    justGuessed = true;
+
+                    } else {
+                        var better = leftScore < rightScore ? leftBug : rightBug;
+                        var worse = leftScore < rightScore ? rightBug : leftBug;
+                        if(!better.outOfSight && worse.outOfSight) {
+                            indicate("clear winner");
+                                                var bug = better;
+                    if(bug.leftTurn) {
+                        guessedLeft[pos.y] |= 1l << pos.x;
+                    } else {
+                        guessedRight[pos.y] |= 1l << pos.x;
+                    }
+                    pos = bug.pos;
+                    stackSize = bug.stackSize;
+                    emptyStackTurns = bug.emptyStackTurns;
+                    leftTurn = bug.leftTurn;
+                    bottomDir = bug.bottomDir;
+                    topDir = bug.topDir;
+                    copyPath: {
+                        appendPosition(bug.path0);
+                        if(bug.nextPathIndex == 1) break copyPath;
+                        appendPosition(bug.path1);
+                        if(bug.nextPathIndex == 2) break copyPath;
+                        appendPosition(bug.path2);
+                        if(bug.nextPathIndex == 3) break copyPath;
+                        appendPosition(bug.path3);
+                        if(bug.nextPathIndex == 4) break copyPath;
+                        appendPosition(bug.path4);
+                        if(bug.nextPathIndex == 5) break copyPath;
+                        appendPosition(bug.path5);
+                        if(bug.nextPathIndex == 6) break copyPath;
+                        appendPosition(bug.path6);
+                        if(bug.nextPathIndex == 7) break copyPath;
+                        appendPosition(bug.path7);
+                        if(bug.nextPathIndex == 8) break copyPath;
+                        appendPosition(bug.path8);
+                        if(bug.nextPathIndex == 9) break copyPath;
+                        appendPosition(bug.path9);
+                        if(bug.nextPathIndex == 10) break copyPath;
+                        appendPosition(bug.path10);
+                        if(bug.nextPathIndex == 11) break copyPath;
+                        appendPosition(bug.path11);
+                        if(bug.nextPathIndex == 12) break copyPath;
+                        appendPosition(bug.path12);
+                        if(bug.nextPathIndex == 13) break copyPath;
+                        appendPosition(bug.path13);
+                        if(bug.nextPathIndex == 14) break copyPath;
+                        appendPosition(bug.path14);
+                        if(bug.nextPathIndex == 15) break copyPath;
+                        appendPosition(bug.path15);
+                        if(bug.nextPathIndex == 16) break copyPath;
+                        appendPosition(bug.path16);
+                        if(bug.nextPathIndex == 17) break copyPath;
+                        appendPosition(bug.path17);
+                        if(bug.nextPathIndex == 18) break copyPath;
+                        appendPosition(bug.path18);
+                        if(bug.nextPathIndex == 19) break copyPath;
+                        appendPosition(bug.path19);
+                        if(bug.nextPathIndex == 20) break copyPath;
+                        appendPosition(bug.path20);
+                        if(bug.nextPathIndex == 21) break copyPath;
+                        appendPosition(bug.path21);
+                        if(bug.nextPathIndex == 22) break copyPath;
+                        appendPosition(bug.path22);
+                        if(bug.nextPathIndex == 23) break copyPath;
+                        appendPosition(bug.path23);
+                        if(bug.nextPathIndex == 24) break copyPath;
+                        appendPosition(bug.path24);
+                    }
+                    leftBug = null;
+                    rightBug = null;
+                    indicate("just guessed " + leftTurn);
+                    justGuessed = true;
+
+                        } else if(!better.outOfSight || rc.getLocation().isAdjacentTo(pos)) {
+                            leftScore = Math.pow(leftScore, 15);
+                            rightScore = Math.pow(rightScore, 15);
+                            var total = leftScore + rightScore;
+                            leftScore /= total;
+                            rightScore /= total;
+                                                var bug = Rng.mcg() < rightScore * 0x7fffffff ? leftBug : rightBug;
+                    if(bug.leftTurn) {
+                        guessedLeft[pos.y] |= 1l << pos.x;
+                    } else {
+                        guessedRight[pos.y] |= 1l << pos.x;
+                    }
+                    pos = bug.pos;
+                    stackSize = bug.stackSize;
+                    emptyStackTurns = bug.emptyStackTurns;
+                    leftTurn = bug.leftTurn;
+                    bottomDir = bug.bottomDir;
+                    topDir = bug.topDir;
+                    copyPath: {
+                        appendPosition(bug.path0);
+                        if(bug.nextPathIndex == 1) break copyPath;
+                        appendPosition(bug.path1);
+                        if(bug.nextPathIndex == 2) break copyPath;
+                        appendPosition(bug.path2);
+                        if(bug.nextPathIndex == 3) break copyPath;
+                        appendPosition(bug.path3);
+                        if(bug.nextPathIndex == 4) break copyPath;
+                        appendPosition(bug.path4);
+                        if(bug.nextPathIndex == 5) break copyPath;
+                        appendPosition(bug.path5);
+                        if(bug.nextPathIndex == 6) break copyPath;
+                        appendPosition(bug.path6);
+                        if(bug.nextPathIndex == 7) break copyPath;
+                        appendPosition(bug.path7);
+                        if(bug.nextPathIndex == 8) break copyPath;
+                        appendPosition(bug.path8);
+                        if(bug.nextPathIndex == 9) break copyPath;
+                        appendPosition(bug.path9);
+                        if(bug.nextPathIndex == 10) break copyPath;
+                        appendPosition(bug.path10);
+                        if(bug.nextPathIndex == 11) break copyPath;
+                        appendPosition(bug.path11);
+                        if(bug.nextPathIndex == 12) break copyPath;
+                        appendPosition(bug.path12);
+                        if(bug.nextPathIndex == 13) break copyPath;
+                        appendPosition(bug.path13);
+                        if(bug.nextPathIndex == 14) break copyPath;
+                        appendPosition(bug.path14);
+                        if(bug.nextPathIndex == 15) break copyPath;
+                        appendPosition(bug.path15);
+                        if(bug.nextPathIndex == 16) break copyPath;
+                        appendPosition(bug.path16);
+                        if(bug.nextPathIndex == 17) break copyPath;
+                        appendPosition(bug.path17);
+                        if(bug.nextPathIndex == 18) break copyPath;
+                        appendPosition(bug.path18);
+                        if(bug.nextPathIndex == 19) break copyPath;
+                        appendPosition(bug.path19);
+                        if(bug.nextPathIndex == 20) break copyPath;
+                        appendPosition(bug.path20);
+                        if(bug.nextPathIndex == 21) break copyPath;
+                        appendPosition(bug.path21);
+                        if(bug.nextPathIndex == 22) break copyPath;
+                        appendPosition(bug.path22);
+                        if(bug.nextPathIndex == 23) break copyPath;
+                        appendPosition(bug.path23);
+                        if(bug.nextPathIndex == 24) break copyPath;
+                        appendPosition(bug.path24);
+                    }
+                    leftBug = null;
+                    rightBug = null;
+                    indicate("just guessed " + leftTurn);
+                    justGuessed = true;
+
                         }
-                        // indicate("leftTurn " + leftTurn);
-                        Profiler.end("lookahead");
                     }
                     return false;
                 }
@@ -787,7 +802,7 @@ class BugnavInstance {
             {
                 // indicate("trying " + tryDir);
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
                     if(rc.onTheMap(nextPos)) {
                         rc.setIndicatorDot(nextPos, 0, 255, 255);
                         outOfSight = true;
@@ -826,7 +841,7 @@ class BugnavInstance {
             {
                 // indicate("trying " + tryDir);
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
                     if(rc.onTheMap(nextPos)) {
                         rc.setIndicatorDot(nextPos, 0, 255, 255);
                         outOfSight = true;
@@ -864,7 +879,7 @@ class BugnavInstance {
             {
                 // indicate("trying " + tryDir);
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
                     if(rc.onTheMap(nextPos)) {
                         rc.setIndicatorDot(nextPos, 0, 255, 255);
                         outOfSight = true;
@@ -901,7 +916,7 @@ class BugnavInstance {
             {
                 // indicate("trying " + tryDir);
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
                     if(rc.onTheMap(nextPos)) {
                         rc.setIndicatorDot(nextPos, 0, 255, 255);
                         outOfSight = true;
@@ -939,7 +954,7 @@ class BugnavInstance {
             {
                 // indicate("trying " + tryDir);
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
                     if(rc.onTheMap(nextPos)) {
                         rc.setIndicatorDot(nextPos, 0, 255, 255);
                         outOfSight = true;
@@ -977,7 +992,7 @@ class BugnavInstance {
             {
                 // indicate("trying " + tryDir);
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
                     if(rc.onTheMap(nextPos)) {
                         rc.setIndicatorDot(nextPos, 0, 255, 255);
                         outOfSight = true;
@@ -1015,7 +1030,7 @@ class BugnavInstance {
             {
                 // indicate("trying " + tryDir);
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
                     if(rc.onTheMap(nextPos)) {
                         rc.setIndicatorDot(nextPos, 0, 255, 255);
                         outOfSight = true;
@@ -1053,7 +1068,7 @@ class BugnavInstance {
             {
                 // indicate("trying " + tryDir);
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
                     if(rc.onTheMap(nextPos)) {
                         rc.setIndicatorDot(nextPos, 0, 255, 255);
                         outOfSight = true;
@@ -1099,7 +1114,7 @@ class BugnavInstance {
             {
                 // indicate("trying " + tryDir);
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
                     if(rc.onTheMap(nextPos)) {
                         rc.setIndicatorDot(nextPos, 0, 255, 255);
                         outOfSight = true;
@@ -1138,7 +1153,7 @@ class BugnavInstance {
             {
                 // indicate("trying " + tryDir);
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
                     if(rc.onTheMap(nextPos)) {
                         rc.setIndicatorDot(nextPos, 0, 255, 255);
                         outOfSight = true;
@@ -1176,7 +1191,7 @@ class BugnavInstance {
             {
                 // indicate("trying " + tryDir);
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
                     if(rc.onTheMap(nextPos)) {
                         rc.setIndicatorDot(nextPos, 0, 255, 255);
                         outOfSight = true;
@@ -1213,7 +1228,7 @@ class BugnavInstance {
             {
                 // indicate("trying " + tryDir);
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
                     if(rc.onTheMap(nextPos)) {
                         rc.setIndicatorDot(nextPos, 0, 255, 255);
                         outOfSight = true;
@@ -1251,7 +1266,7 @@ class BugnavInstance {
             {
                 // indicate("trying " + tryDir);
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
                     if(rc.onTheMap(nextPos)) {
                         rc.setIndicatorDot(nextPos, 0, 255, 255);
                         outOfSight = true;
@@ -1289,7 +1304,7 @@ class BugnavInstance {
             {
                 // indicate("trying " + tryDir);
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
                     if(rc.onTheMap(nextPos)) {
                         rc.setIndicatorDot(nextPos, 0, 255, 255);
                         outOfSight = true;
@@ -1327,7 +1342,7 @@ class BugnavInstance {
             {
                 // indicate("trying " + tryDir);
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
                     if(rc.onTheMap(nextPos)) {
                         rc.setIndicatorDot(nextPos, 0, 255, 255);
                         outOfSight = true;
@@ -1365,7 +1380,7 @@ class BugnavInstance {
             {
                 // indicate("trying " + tryDir);
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
                     if(rc.onTheMap(nextPos)) {
                         rc.setIndicatorDot(nextPos, 0, 255, 255);
                         outOfSight = true;
@@ -1436,15 +1451,25 @@ public class Pathfinder {
         // Profiler.begin();
         bugLoop: {
             rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
-            if(!bug.advance( true )) break bugLoop;
+            Profiler.begin();
+            if(!bug.advance()) break bugLoop;
+            Profiler.end("bug");
             rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
-            if(!bug.advance( false )) break bugLoop;
+            Profiler.begin();
+            if(!bug.advance()) break bugLoop;
+            Profiler.end("bug");
             rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
-            if(!bug.advance( false )) break bugLoop;
+            Profiler.begin();
+            if(!bug.advance()) break bugLoop;
+            Profiler.end("bug");
             rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
-            if(!bug.advance( false )) break bugLoop;
+            Profiler.begin();
+            if(!bug.advance()) break bugLoop;
+            Profiler.end("bug");
             rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
-            if(!bug.advance( false )) break bugLoop;
+            Profiler.begin();
+            if(!bug.advance()) break bugLoop;
+            Profiler.end("bug");
         }
         // Profiler.end("bug");
         rc.setIndicatorDot(bug.pos, 255, 0, 0);

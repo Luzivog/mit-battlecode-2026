@@ -32,7 +32,7 @@ public class BabyRat {
                 }
             }
             rc.setIndicatorLine(rc.getLocation(), home, 0, 255, 0);
-            if(rc.isMovementReady()) Pathfinder.makeMove(home);
+            Pathfinder.makeMove(home);
             var transferTarget = rc.getLocation().add(rc.getLocation().directionTo(home));
             if(rc.canTransferCheese(transferTarget, rc.getRawCheese())) {
                 rc.transferCheese(transferTarget, rc.getRawCheese());
@@ -58,7 +58,7 @@ public class BabyRat {
                 return;
             }
             rc.setIndicatorLine(rc.getLocation(), cheeseTarget, 255, 0, 0);
-            if(rc.isMovementReady()) Pathfinder.makeMove(cheeseTarget);
+            Pathfinder.makeMove(cheeseTarget);
             return;
         }
 
@@ -77,7 +77,7 @@ public class BabyRat {
                 } while(!rc.onTheMap(mineTarget));
             }
             rc.setIndicatorLine(rc.getLocation(), mineTarget, 255, 0, 0);
-            if(rc.isMovementReady()) Pathfinder.makeMove(mineTarget);
+            Pathfinder.makeMove(mineTarget);
             return;
         }
 
@@ -86,7 +86,7 @@ public class BabyRat {
             exploreTarget = new MapLocation((int)(Math.random() * rc.getMapWidth()), (int)(Math.random() * rc.getMapHeight()));
         }
         rc.setIndicatorLine(rc.getLocation(), exploreTarget, 255, 0, 0);
-        if(rc.isMovementReady()) Pathfinder.makeMove(exploreTarget);
+        Pathfinder.makeMove(exploreTarget);
     }
 
     public static void run() throws GameActionException {

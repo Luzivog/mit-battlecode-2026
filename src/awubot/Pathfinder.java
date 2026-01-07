@@ -832,7 +832,6 @@ class BugnavInstance {
                             if(greedyPassable && chebyshevDistance(rc.getLocation(), greedyLoc) <= 5) {
                 indicate("greedyLoc " + greedyLoc);
                 pos = greedyLoc;
-                
                 topDir = bottomDir;
                 stackSize = 0;
                 emptyStackTurns++;
@@ -852,7 +851,6 @@ class BugnavInstance {
                             if(leftPassable && chebyshevDistance(rc.getLocation(), leftLoc) <= 5) {
                 indicate("leftLoc " + leftLoc);
                 pos = leftLoc;
-                
                 topDir = bottomDir;
                 stackSize = 0;
                 emptyStackTurns++;
@@ -866,7 +864,6 @@ class BugnavInstance {
                             if(rightPassable && chebyshevDistance(rc.getLocation(), rightLoc) <= 5) {
                 indicate("rightLoc " + rightLoc);
                 pos = rightLoc;
-                
                 topDir = bottomDir;
                 stackSize = 0;
                 emptyStackTurns++;
@@ -881,7 +878,6 @@ class BugnavInstance {
                                 if(leftPassable && chebyshevDistance(rc.getLocation(), leftLoc) <= 5) {
                 indicate("leftLoc " + leftLoc);
                 pos = leftLoc;
-                
                 topDir = bottomDir;
                 stackSize = 0;
                 emptyStackTurns++;
@@ -894,7 +890,6 @@ class BugnavInstance {
                                 if(rightPassable && chebyshevDistance(rc.getLocation(), rightLoc) <= 5) {
                 indicate("rightLoc " + rightLoc);
                 pos = rightLoc;
-                
                 topDir = bottomDir;
                 stackSize = 0;
                 emptyStackTurns++;
@@ -1612,8 +1607,6 @@ public class Pathfinder {
     }
 
     public static void makeMove(MapLocation target) throws GameActionException {
-        assert rc.isMovementReady();
-
         // TODO: better handling when target changes
         if(bug == null || !target.equals(bug.target)) {
             indicate("RETARGET");
@@ -1646,9 +1639,10 @@ public class Pathfinder {
         // Profiler.end("bug");
         rc.setIndicatorDot(bug.pos, 255, 0, 0);
 
+        if(!rc.isMovementReady()) return;
+
         // no bfs needed
         var dir = rc.getLocation().directionTo(bug.pos);
-        // indicate(dir);
         if(rc.getLocation().add(dir).equals(bug.pos)) {
             indicate("adjacent");
             makeMove(dir);
@@ -1656,12 +1650,9 @@ public class Pathfinder {
         }
         // TODO: what if location == bug.pos?
 
+        // bfs
         Profiler.begin();
         CellTracker.computeLocalPassable();
-        Profiler.end("computeLocalPassable");
-
-        Profiler.begin();
-        // bfs
         var loc = rc.getLocation();
         // d{i}0 + d{i}1 is the mask of reachable within i steps
         long d00 = 0, d01 = 0;

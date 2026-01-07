@@ -19,15 +19,13 @@ class BugnavInstance {
     // these are reset when we physically move
     boolean leftDone, rightDone;
     // detect movement with this
-    MapLocation myLoc;
-    // i guessed last turn, so i don't need to guess again
-    // set to false when i move successfully
-    boolean justGuessed;
+    MapLocation lastLoc;
+    Direction lastDir;;
     // loop detection
     long[] guessedLeft, guessedRight;
 
     // extra "return variables" for lookahead instances
-    boolean hitEdge = false, outOfSight = false;
+    boolean hitEdge = false, outOfSight = false, arrived = false;
 
     Direction bottomDir, topDir;
 
@@ -44,7 +42,6 @@ class BugnavInstance {
 
     void clearPath() {
         pos = rc.getLocation();
-        justGuessed = false;
         nextPathIndex = 0;
         stackSize = 0;
         emptyStackTurns = 1000;
@@ -64,7 +61,6 @@ class BugnavInstance {
     }
 
     BugnavInstance(MapLocation pos, boolean leftTurn, MapLocation target, boolean isMaster) {
-        indicate("RESET");
         this.leftTurn = leftTurn;
         this.target = target;
         this.isMaster = isMaster;
@@ -108,17 +104,22 @@ class BugnavInstance {
     }
 
     boolean doLookahead() throws GameActionException {
+        // indicate("lookahead!!");
         if(leftBug == null) {
             // initialise
             leftBug = new BugnavInstance(pos, true, target, false);
             rightBug = new BugnavInstance(pos, false, target, false);
-            myLoc = new MapLocation(-1, -1);
+            lastLoc = new MapLocation(-1, -1);
+            lastDir = Direction.CENTER;
             return true;
         }
+        rc.setIndicatorDot(leftBug.pos, 255, 255, 0);
+        rc.setIndicatorDot(rightBug.pos, 255, 255, 0);
         // Profiler.begin();
-        if(!rc.getLocation().equals(myLoc)) {
+        if(!rc.getLocation().equals(lastLoc) || !rc.getDirection().equals(lastDir)) {
             // we moved, so we might be able to advance previously stuck stuff further
-            myLoc = rc.getLocation();
+            lastLoc = rc.getLocation();
+            lastDir = rc.getDirection();
             leftDone = leftBug.hitEdge || leftBug.nextPathIndex == {{MAX_PATH - 1}};
             rightDone = rightBug.hitEdge || leftBug.nextPathIndex == {{MAX_PATH - 1}};
         }
@@ -141,8 +142,8 @@ class BugnavInstance {
         }
         // Profiler.end("lookahead");
 
-        boolean leftReady = leftBug.nextPathIndex >= 5 || leftBug.hitEdge || leftBug.outOfSight;
-        boolean rightReady = rightBug.nextPathIndex >= 5 || rightBug.hitEdge || rightBug.outOfSight;
+        boolean leftReady = leftBug.nextPathIndex >= 5 || leftBug.hitEdge || leftBug.outOfSight || leftBug.arrived;
+        boolean rightReady = rightBug.nextPathIndex >= 5 || rightBug.hitEdge || rightBug.outOfSight || rightBug.arrived;
         indicate("ready " + leftReady + " " + rightReady);
         if(!leftReady || !rightReady) return !(leftDone && rightDone);
 
@@ -175,11 +176,13 @@ class BugnavInstance {
         }
         leftBug = null;
         rightBug = null;
-        indicate("just guessed " + leftTurn);
-        justGuessed = true;
         {% endmacro %}
 
-        if(leftBug.hitEdge != rightBug.hitEdge) {
+        if(leftBug.arrived) {
+            {{ chooseBug("leftBug") }}
+        } else if(leftBug.arrived) {
+            {{ chooseBug("rightBug") }}
+        } else if(leftBug.hitEdge != rightBug.hitEdge) {
             {{ chooseBug("rightBug.hitEdge ? leftBug : rightBug") }}
         } else {
             var better = leftScore < rightScore ? leftBug : rightBug;
@@ -188,11 +191,14 @@ class BugnavInstance {
                 indicate("clear winner");
                 {{ chooseBug("better") }}
             } else if(!better.outOfSight || rc.getLocation().isAdjacentTo(pos)) {
+                indicate("unclear, guessing");
                 leftScore = Math.pow(leftScore, 15);
                 rightScore = Math.pow(rightScore, 15);
                 var total = leftScore + rightScore;
                 leftScore /= total;
                 rightScore /= total;
+                indicate(leftScore);
+                indicate(rightScore);
                 {{ chooseBug("Rng.mcg() < rightScore * 0x7fffffff ? leftBug : rightBug") }}
             }
         }
@@ -205,8 +211,14 @@ class BugnavInstance {
             // we are currently in the middle of a lookahead
             return doLookahead();
         }
+        indicate("leftTurn " + leftTurn);
 
-        if(pos.isAdjacentTo(target)) return false;
+        if(pos.isAdjacentTo(target)) {
+            pos = target;
+            appendCurrentPosition();
+            arrived = true;
+            return false;
+        }
 
         var dirToTarget = pos.directionTo(target);
         if(dirToTarget != bottomDir) {
@@ -242,9 +254,9 @@ class BugnavInstance {
         if(stackSize <= 1) {
             {% macro go(where) %}
             if({{where}}Passable && chebyshevDistance(rc.getLocation(), {{where}}Loc) <= 5) {
-                indicate("{{where}}Loc");
+                indicate("{{where}}Loc " + {{where}}Loc);
                 pos = {{where}}Loc;
-                justGuessed = false;
+                
                 topDir = bottomDir;
                 stackSize = 0;
                 emptyStackTurns++;
@@ -280,23 +292,27 @@ class BugnavInstance {
         }
 
         // guess rotation direction (kinda inefficient but wtv)
-        if(isMaster && !justGuessed && stackSize == 0 && CellTracker.isSeen(greedyLoc)) {
+        if(isMaster && stackSize == 0 && CellTracker.isSeen(greedyLoc)) {
             assert !CellTracker.isPassable(greedyLoc);
             if(emptyStackTurns >= 2) {
                 boolean pastLeft = ((guessedLeft[pos.y] >> pos.x) & 1l) != 0;
                 boolean pastRight = ((guessedRight[pos.y] >> pos.x) & 1l) != 0;
                 if(pastLeft && pastRight) {
-                    indicate("guessing");
+                    indicate("idk which way");
                     // just pick randomly, we have no idea what's going on
-                    leftTurn = Rng.mcg() >> 30 == 0;
+                    // leftTurn = Rng.mcg() >> 30 == 0;
+                    // keep going the same way, we'll get there eventually
                 } else if(pastLeft) {
                     indicate("past left");
                     // try the other way
                     leftTurn = false;
+                    guessedRight[pos.y] |= 1l << pos.x;
                 } else if(pastRight) {
                     indicate("past right");
                     leftTurn = true;
+                    guessedLeft[pos.y] |= 1l << pos.x;
                 } else {
+                    indicate("looking ahead");
                     return doLookahead();
                 }
             } else if(emptyStackTurns < 0) {
@@ -338,12 +354,11 @@ class BugnavInstance {
                         hitEdge = true;
                     }
                     // Profiler.end("bugnav " + {{turns}} + " " + isMaster);
-                    indicate("bugnav " + {{turns}} + " " + isMaster);
+                    // indicate("bugnav " + {{turns}} + " " + isMaster);
                     return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
                     pos = nextPos;
-                    justGuessed = false;
                     topDir = tryDir;
                     {% if turns %}
                     stackSize += {{turns}};
@@ -355,7 +370,7 @@ class BugnavInstance {
                     }
                     appendCurrentPosition();
                     // Profiler.end("bugnav " + {{turns}} + " " + isMaster);
-                    indicate("bugnav " + {{turns}} + " " + isMaster);
+                    // indicate("bugnav " + {{turns}} + " " + isMaster);
                     return true;
                 }
             }
@@ -387,12 +402,14 @@ public class Pathfinder {
     }
 
     public static void makeMove(Direction dir) throws GameActionException {
+        if(dir == Direction.CENTER) return;
         if(dir != rc.getDirection()) turn(dir);
         moveForward();
     }
 
     public static void makeMove(MapLocation target) throws GameActionException {
         assert rc.isMovementReady();
+
         // TODO: better handling when target changes
         if(bug == null || !target.equals(bug.target)) {
             indicate("RETARGET");
@@ -499,7 +516,7 @@ public class Pathfinder {
                {% else %}
                (d{{i}}1 & (1l << {{off - 61}}))
                {% endif %}
-               != 0) {
+               != 0 && rc.canMove({{dir}})) {
                 var nextLoc = loc.add({{dir}});
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(

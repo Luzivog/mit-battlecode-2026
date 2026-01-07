@@ -17,15 +17,13 @@ class BugnavInstance {
     // these are reset when we physically move
     boolean leftDone, rightDone;
     // detect movement with this
-    MapLocation myLoc;
-    // i guessed last turn, so i don't need to guess again
-    // set to false when i move successfully
-    boolean justGuessed;
+    MapLocation lastLoc;
+    Direction lastDir;;
     // loop detection
     long[] guessedLeft, guessedRight;
 
     // extra "return variables" for lookahead instances
-    boolean hitEdge = false, outOfSight = false;
+    boolean hitEdge = false, outOfSight = false, arrived = false;
 
     Direction bottomDir, topDir;
 
@@ -64,7 +62,6 @@ class BugnavInstance {
 
     void clearPath() {
         pos = rc.getLocation();
-        justGuessed = false;
         nextPathIndex = 0;
         stackSize = 0;
         emptyStackTurns = 1000;
@@ -106,7 +103,6 @@ class BugnavInstance {
     }
 
     BugnavInstance(MapLocation pos, boolean leftTurn, MapLocation target, boolean isMaster) {
-        indicate("RESET");
         this.leftTurn = leftTurn;
         this.target = target;
         this.isMaster = isMaster;
@@ -362,17 +358,22 @@ class BugnavInstance {
     }
 
     boolean doLookahead() throws GameActionException {
+        // indicate("lookahead!!");
         if(leftBug == null) {
             // initialise
             leftBug = new BugnavInstance(pos, true, target, false);
             rightBug = new BugnavInstance(pos, false, target, false);
-            myLoc = new MapLocation(-1, -1);
+            lastLoc = new MapLocation(-1, -1);
+            lastDir = Direction.CENTER;
             return true;
         }
+        rc.setIndicatorDot(leftBug.pos, 255, 255, 0);
+        rc.setIndicatorDot(rightBug.pos, 255, 255, 0);
         // Profiler.begin();
-        if(!rc.getLocation().equals(myLoc)) {
+        if(!rc.getLocation().equals(lastLoc) || !rc.getDirection().equals(lastDir)) {
             // we moved, so we might be able to advance previously stuck stuff further
-            myLoc = rc.getLocation();
+            lastLoc = rc.getLocation();
+            lastDir = rc.getDirection();
             leftDone = leftBug.hitEdge || leftBug.nextPathIndex == 24;
             rightDone = rightBug.hitEdge || leftBug.nextPathIndex == 24;
         }
@@ -402,8 +403,8 @@ class BugnavInstance {
         }
         // Profiler.end("lookahead");
 
-        boolean leftReady = leftBug.nextPathIndex >= 5 || leftBug.hitEdge || leftBug.outOfSight;
-        boolean rightReady = rightBug.nextPathIndex >= 5 || rightBug.hitEdge || rightBug.outOfSight;
+        boolean leftReady = leftBug.nextPathIndex >= 5 || leftBug.hitEdge || leftBug.outOfSight || leftBug.arrived;
+        boolean rightReady = rightBug.nextPathIndex >= 5 || rightBug.hitEdge || rightBug.outOfSight || rightBug.arrived;
         indicate("ready " + leftReady + " " + rightReady);
         if(!leftReady || !rightReady) return !(leftDone && rightDone);
 
@@ -416,7 +417,141 @@ class BugnavInstance {
         indicate(rightScore);
 
 
-        if(leftBug.hitEdge != rightBug.hitEdge) {
+        if(leftBug.arrived) {
+                    var bug = leftBug;
+        if(bug.leftTurn) {
+            guessedLeft[pos.y] |= 1l << pos.x;
+        } else {
+            guessedRight[pos.y] |= 1l << pos.x;
+        }
+        pos = bug.pos;
+        stackSize = bug.stackSize;
+        emptyStackTurns = bug.emptyStackTurns;
+        leftTurn = bug.leftTurn;
+        bottomDir = bug.bottomDir;
+        topDir = bug.topDir;
+        copyPath: {
+            appendPosition(bug.path0);
+            if(bug.nextPathIndex == 1) break copyPath;
+            appendPosition(bug.path1);
+            if(bug.nextPathIndex == 2) break copyPath;
+            appendPosition(bug.path2);
+            if(bug.nextPathIndex == 3) break copyPath;
+            appendPosition(bug.path3);
+            if(bug.nextPathIndex == 4) break copyPath;
+            appendPosition(bug.path4);
+            if(bug.nextPathIndex == 5) break copyPath;
+            appendPosition(bug.path5);
+            if(bug.nextPathIndex == 6) break copyPath;
+            appendPosition(bug.path6);
+            if(bug.nextPathIndex == 7) break copyPath;
+            appendPosition(bug.path7);
+            if(bug.nextPathIndex == 8) break copyPath;
+            appendPosition(bug.path8);
+            if(bug.nextPathIndex == 9) break copyPath;
+            appendPosition(bug.path9);
+            if(bug.nextPathIndex == 10) break copyPath;
+            appendPosition(bug.path10);
+            if(bug.nextPathIndex == 11) break copyPath;
+            appendPosition(bug.path11);
+            if(bug.nextPathIndex == 12) break copyPath;
+            appendPosition(bug.path12);
+            if(bug.nextPathIndex == 13) break copyPath;
+            appendPosition(bug.path13);
+            if(bug.nextPathIndex == 14) break copyPath;
+            appendPosition(bug.path14);
+            if(bug.nextPathIndex == 15) break copyPath;
+            appendPosition(bug.path15);
+            if(bug.nextPathIndex == 16) break copyPath;
+            appendPosition(bug.path16);
+            if(bug.nextPathIndex == 17) break copyPath;
+            appendPosition(bug.path17);
+            if(bug.nextPathIndex == 18) break copyPath;
+            appendPosition(bug.path18);
+            if(bug.nextPathIndex == 19) break copyPath;
+            appendPosition(bug.path19);
+            if(bug.nextPathIndex == 20) break copyPath;
+            appendPosition(bug.path20);
+            if(bug.nextPathIndex == 21) break copyPath;
+            appendPosition(bug.path21);
+            if(bug.nextPathIndex == 22) break copyPath;
+            appendPosition(bug.path22);
+            if(bug.nextPathIndex == 23) break copyPath;
+            appendPosition(bug.path23);
+            if(bug.nextPathIndex == 24) break copyPath;
+            appendPosition(bug.path24);
+        }
+        leftBug = null;
+        rightBug = null;
+
+        } else if(leftBug.arrived) {
+                    var bug = rightBug;
+        if(bug.leftTurn) {
+            guessedLeft[pos.y] |= 1l << pos.x;
+        } else {
+            guessedRight[pos.y] |= 1l << pos.x;
+        }
+        pos = bug.pos;
+        stackSize = bug.stackSize;
+        emptyStackTurns = bug.emptyStackTurns;
+        leftTurn = bug.leftTurn;
+        bottomDir = bug.bottomDir;
+        topDir = bug.topDir;
+        copyPath: {
+            appendPosition(bug.path0);
+            if(bug.nextPathIndex == 1) break copyPath;
+            appendPosition(bug.path1);
+            if(bug.nextPathIndex == 2) break copyPath;
+            appendPosition(bug.path2);
+            if(bug.nextPathIndex == 3) break copyPath;
+            appendPosition(bug.path3);
+            if(bug.nextPathIndex == 4) break copyPath;
+            appendPosition(bug.path4);
+            if(bug.nextPathIndex == 5) break copyPath;
+            appendPosition(bug.path5);
+            if(bug.nextPathIndex == 6) break copyPath;
+            appendPosition(bug.path6);
+            if(bug.nextPathIndex == 7) break copyPath;
+            appendPosition(bug.path7);
+            if(bug.nextPathIndex == 8) break copyPath;
+            appendPosition(bug.path8);
+            if(bug.nextPathIndex == 9) break copyPath;
+            appendPosition(bug.path9);
+            if(bug.nextPathIndex == 10) break copyPath;
+            appendPosition(bug.path10);
+            if(bug.nextPathIndex == 11) break copyPath;
+            appendPosition(bug.path11);
+            if(bug.nextPathIndex == 12) break copyPath;
+            appendPosition(bug.path12);
+            if(bug.nextPathIndex == 13) break copyPath;
+            appendPosition(bug.path13);
+            if(bug.nextPathIndex == 14) break copyPath;
+            appendPosition(bug.path14);
+            if(bug.nextPathIndex == 15) break copyPath;
+            appendPosition(bug.path15);
+            if(bug.nextPathIndex == 16) break copyPath;
+            appendPosition(bug.path16);
+            if(bug.nextPathIndex == 17) break copyPath;
+            appendPosition(bug.path17);
+            if(bug.nextPathIndex == 18) break copyPath;
+            appendPosition(bug.path18);
+            if(bug.nextPathIndex == 19) break copyPath;
+            appendPosition(bug.path19);
+            if(bug.nextPathIndex == 20) break copyPath;
+            appendPosition(bug.path20);
+            if(bug.nextPathIndex == 21) break copyPath;
+            appendPosition(bug.path21);
+            if(bug.nextPathIndex == 22) break copyPath;
+            appendPosition(bug.path22);
+            if(bug.nextPathIndex == 23) break copyPath;
+            appendPosition(bug.path23);
+            if(bug.nextPathIndex == 24) break copyPath;
+            appendPosition(bug.path24);
+        }
+        leftBug = null;
+        rightBug = null;
+
+        } else if(leftBug.hitEdge != rightBug.hitEdge) {
                     var bug = rightBug.hitEdge ? leftBug : rightBug;
         if(bug.leftTurn) {
             guessedLeft[pos.y] |= 1l << pos.x;
@@ -482,8 +617,6 @@ class BugnavInstance {
         }
         leftBug = null;
         rightBug = null;
-        indicate("just guessed " + leftTurn);
-        justGuessed = true;
 
         } else {
             var better = leftScore < rightScore ? leftBug : rightBug;
@@ -555,15 +688,16 @@ class BugnavInstance {
         }
         leftBug = null;
         rightBug = null;
-        indicate("just guessed " + leftTurn);
-        justGuessed = true;
 
             } else if(!better.outOfSight || rc.getLocation().isAdjacentTo(pos)) {
+                indicate("unclear, guessing");
                 leftScore = Math.pow(leftScore, 15);
                 rightScore = Math.pow(rightScore, 15);
                 var total = leftScore + rightScore;
                 leftScore /= total;
                 rightScore /= total;
+                indicate(leftScore);
+                indicate(rightScore);
                         var bug = Rng.mcg() < rightScore * 0x7fffffff ? leftBug : rightBug;
         if(bug.leftTurn) {
             guessedLeft[pos.y] |= 1l << pos.x;
@@ -629,8 +763,6 @@ class BugnavInstance {
         }
         leftBug = null;
         rightBug = null;
-        indicate("just guessed " + leftTurn);
-        justGuessed = true;
 
             }
         }
@@ -643,8 +775,14 @@ class BugnavInstance {
             // we are currently in the middle of a lookahead
             return doLookahead();
         }
+        indicate("leftTurn " + leftTurn);
 
-        if(pos.isAdjacentTo(target)) return false;
+        if(pos.isAdjacentTo(target)) {
+            pos = target;
+            appendCurrentPosition();
+            arrived = true;
+            return false;
+        }
 
         var dirToTarget = pos.directionTo(target);
         if(dirToTarget != bottomDir) {
@@ -692,9 +830,9 @@ class BugnavInstance {
             var greedyGood = greedyPassable || !CellTracker.isSeen(greedyLoc);
             if(greedyGood) {
                             if(greedyPassable && chebyshevDistance(rc.getLocation(), greedyLoc) <= 5) {
-                indicate("greedyLoc");
+                indicate("greedyLoc " + greedyLoc);
                 pos = greedyLoc;
-                justGuessed = false;
+                
                 topDir = bottomDir;
                 stackSize = 0;
                 emptyStackTurns++;
@@ -712,9 +850,9 @@ class BugnavInstance {
             var rightGood = (rightPassable || !CellTracker.isSeen(rightLoc)) && rc.onTheMap(rightLoc);
             if(leftGood && !rightGood) {
                             if(leftPassable && chebyshevDistance(rc.getLocation(), leftLoc) <= 5) {
-                indicate("leftLoc");
+                indicate("leftLoc " + leftLoc);
                 pos = leftLoc;
-                justGuessed = false;
+                
                 topDir = bottomDir;
                 stackSize = 0;
                 emptyStackTurns++;
@@ -726,9 +864,9 @@ class BugnavInstance {
             }
             if(!leftGood && rightGood) {
                             if(rightPassable && chebyshevDistance(rc.getLocation(), rightLoc) <= 5) {
-                indicate("rightLoc");
+                indicate("rightLoc " + rightLoc);
                 pos = rightLoc;
-                justGuessed = false;
+                
                 topDir = bottomDir;
                 stackSize = 0;
                 emptyStackTurns++;
@@ -741,9 +879,9 @@ class BugnavInstance {
             if(leftGood && rightGood) {
                 if(leftLoc.distanceSquaredTo(target) < rightLoc.distanceSquaredTo(target)) {
                                 if(leftPassable && chebyshevDistance(rc.getLocation(), leftLoc) <= 5) {
-                indicate("leftLoc");
+                indicate("leftLoc " + leftLoc);
                 pos = leftLoc;
-                justGuessed = false;
+                
                 topDir = bottomDir;
                 stackSize = 0;
                 emptyStackTurns++;
@@ -754,9 +892,9 @@ class BugnavInstance {
 
                 } else {
                                 if(rightPassable && chebyshevDistance(rc.getLocation(), rightLoc) <= 5) {
-                indicate("rightLoc");
+                indicate("rightLoc " + rightLoc);
                 pos = rightLoc;
-                justGuessed = false;
+                
                 topDir = bottomDir;
                 stackSize = 0;
                 emptyStackTurns++;
@@ -770,23 +908,27 @@ class BugnavInstance {
         }
 
         // guess rotation direction (kinda inefficient but wtv)
-        if(isMaster && !justGuessed && stackSize == 0 && CellTracker.isSeen(greedyLoc)) {
+        if(isMaster && stackSize == 0 && CellTracker.isSeen(greedyLoc)) {
             assert !CellTracker.isPassable(greedyLoc);
             if(emptyStackTurns >= 2) {
                 boolean pastLeft = ((guessedLeft[pos.y] >> pos.x) & 1l) != 0;
                 boolean pastRight = ((guessedRight[pos.y] >> pos.x) & 1l) != 0;
                 if(pastLeft && pastRight) {
-                    indicate("guessing");
+                    indicate("idk which way");
                     // just pick randomly, we have no idea what's going on
-                    leftTurn = Rng.mcg() >> 30 == 0;
+                    // leftTurn = Rng.mcg() >> 30 == 0;
+                    // keep going the same way, we'll get there eventually
                 } else if(pastLeft) {
                     indicate("past left");
                     // try the other way
                     leftTurn = false;
+                    guessedRight[pos.y] |= 1l << pos.x;
                 } else if(pastRight) {
                     indicate("past right");
                     leftTurn = true;
+                    guessedLeft[pos.y] |= 1l << pos.x;
                 } else {
+                    indicate("looking ahead");
                     return doLookahead();
                 }
             } else if(emptyStackTurns < 0) {
@@ -824,12 +966,11 @@ class BugnavInstance {
                         hitEdge = true;
                     }
                     // Profiler.end("bugnav " + -2 + " " + isMaster);
-                    indicate("bugnav " + -2 + " " + isMaster);
+                    // indicate("bugnav " + -2 + " " + isMaster);
                     return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
                     pos = nextPos;
-                    justGuessed = false;
                     topDir = tryDir;
                     stackSize += -2;
                     if(stackSize == 0) {
@@ -839,7 +980,7 @@ class BugnavInstance {
                     }
                     appendCurrentPosition();
                     // Profiler.end("bugnav " + -2 + " " + isMaster);
-                    indicate("bugnav " + -2 + " " + isMaster);
+                    // indicate("bugnav " + -2 + " " + isMaster);
                     return true;
                 }
             }
@@ -867,12 +1008,11 @@ class BugnavInstance {
                         hitEdge = true;
                     }
                     // Profiler.end("bugnav " + -1 + " " + isMaster);
-                    indicate("bugnav " + -1 + " " + isMaster);
+                    // indicate("bugnav " + -1 + " " + isMaster);
                     return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
                     pos = nextPos;
-                    justGuessed = false;
                     topDir = tryDir;
                     stackSize += -1;
                     if(stackSize == 0) {
@@ -882,7 +1022,7 @@ class BugnavInstance {
                     }
                     appendCurrentPosition();
                     // Profiler.end("bugnav " + -1 + " " + isMaster);
-                    indicate("bugnav " + -1 + " " + isMaster);
+                    // indicate("bugnav " + -1 + " " + isMaster);
                     return true;
                 }
             }
@@ -907,12 +1047,11 @@ class BugnavInstance {
                         hitEdge = true;
                     }
                     // Profiler.end("bugnav " + 0 + " " + isMaster);
-                    indicate("bugnav " + 0 + " " + isMaster);
+                    // indicate("bugnav " + 0 + " " + isMaster);
                     return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
                     pos = nextPos;
-                    justGuessed = false;
                     topDir = tryDir;
                     if(stackSize == 0) {
                         emptyStackTurns++;
@@ -921,7 +1060,7 @@ class BugnavInstance {
                     }
                     appendCurrentPosition();
                     // Profiler.end("bugnav " + 0 + " " + isMaster);
-                    indicate("bugnav " + 0 + " " + isMaster);
+                    // indicate("bugnav " + 0 + " " + isMaster);
                     return true;
                 }
             }
@@ -946,12 +1085,11 @@ class BugnavInstance {
                         hitEdge = true;
                     }
                     // Profiler.end("bugnav " + 1 + " " + isMaster);
-                    indicate("bugnav " + 1 + " " + isMaster);
+                    // indicate("bugnav " + 1 + " " + isMaster);
                     return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
                     pos = nextPos;
-                    justGuessed = false;
                     topDir = tryDir;
                     stackSize += 1;
                     if(stackSize == 0) {
@@ -961,7 +1099,7 @@ class BugnavInstance {
                     }
                     appendCurrentPosition();
                     // Profiler.end("bugnav " + 1 + " " + isMaster);
-                    indicate("bugnav " + 1 + " " + isMaster);
+                    // indicate("bugnav " + 1 + " " + isMaster);
                     return true;
                 }
             }
@@ -986,12 +1124,11 @@ class BugnavInstance {
                         hitEdge = true;
                     }
                     // Profiler.end("bugnav " + 2 + " " + isMaster);
-                    indicate("bugnav " + 2 + " " + isMaster);
+                    // indicate("bugnav " + 2 + " " + isMaster);
                     return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
                     pos = nextPos;
-                    justGuessed = false;
                     topDir = tryDir;
                     stackSize += 2;
                     if(stackSize == 0) {
@@ -1001,7 +1138,7 @@ class BugnavInstance {
                     }
                     appendCurrentPosition();
                     // Profiler.end("bugnav " + 2 + " " + isMaster);
-                    indicate("bugnav " + 2 + " " + isMaster);
+                    // indicate("bugnav " + 2 + " " + isMaster);
                     return true;
                 }
             }
@@ -1026,12 +1163,11 @@ class BugnavInstance {
                         hitEdge = true;
                     }
                     // Profiler.end("bugnav " + 3 + " " + isMaster);
-                    indicate("bugnav " + 3 + " " + isMaster);
+                    // indicate("bugnav " + 3 + " " + isMaster);
                     return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
                     pos = nextPos;
-                    justGuessed = false;
                     topDir = tryDir;
                     stackSize += 3;
                     if(stackSize == 0) {
@@ -1041,7 +1177,7 @@ class BugnavInstance {
                     }
                     appendCurrentPosition();
                     // Profiler.end("bugnav " + 3 + " " + isMaster);
-                    indicate("bugnav " + 3 + " " + isMaster);
+                    // indicate("bugnav " + 3 + " " + isMaster);
                     return true;
                 }
             }
@@ -1066,12 +1202,11 @@ class BugnavInstance {
                         hitEdge = true;
                     }
                     // Profiler.end("bugnav " + 4 + " " + isMaster);
-                    indicate("bugnav " + 4 + " " + isMaster);
+                    // indicate("bugnav " + 4 + " " + isMaster);
                     return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
                     pos = nextPos;
-                    justGuessed = false;
                     topDir = tryDir;
                     stackSize += 4;
                     if(stackSize == 0) {
@@ -1081,7 +1216,7 @@ class BugnavInstance {
                     }
                     appendCurrentPosition();
                     // Profiler.end("bugnav " + 4 + " " + isMaster);
-                    indicate("bugnav " + 4 + " " + isMaster);
+                    // indicate("bugnav " + 4 + " " + isMaster);
                     return true;
                 }
             }
@@ -1106,12 +1241,11 @@ class BugnavInstance {
                         hitEdge = true;
                     }
                     // Profiler.end("bugnav " + 5 + " " + isMaster);
-                    indicate("bugnav " + 5 + " " + isMaster);
+                    // indicate("bugnav " + 5 + " " + isMaster);
                     return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
                     pos = nextPos;
-                    justGuessed = false;
                     topDir = tryDir;
                     stackSize += 5;
                     if(stackSize == 0) {
@@ -1121,7 +1255,7 @@ class BugnavInstance {
                     }
                     appendCurrentPosition();
                     // Profiler.end("bugnav " + 5 + " " + isMaster);
-                    indicate("bugnav " + 5 + " " + isMaster);
+                    // indicate("bugnav " + 5 + " " + isMaster);
                     return true;
                 }
             }
@@ -1157,12 +1291,11 @@ class BugnavInstance {
                         hitEdge = true;
                     }
                     // Profiler.end("bugnav " + -2 + " " + isMaster);
-                    indicate("bugnav " + -2 + " " + isMaster);
+                    // indicate("bugnav " + -2 + " " + isMaster);
                     return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
                     pos = nextPos;
-                    justGuessed = false;
                     topDir = tryDir;
                     stackSize += -2;
                     if(stackSize == 0) {
@@ -1172,7 +1305,7 @@ class BugnavInstance {
                     }
                     appendCurrentPosition();
                     // Profiler.end("bugnav " + -2 + " " + isMaster);
-                    indicate("bugnav " + -2 + " " + isMaster);
+                    // indicate("bugnav " + -2 + " " + isMaster);
                     return true;
                 }
             }
@@ -1200,12 +1333,11 @@ class BugnavInstance {
                         hitEdge = true;
                     }
                     // Profiler.end("bugnav " + -1 + " " + isMaster);
-                    indicate("bugnav " + -1 + " " + isMaster);
+                    // indicate("bugnav " + -1 + " " + isMaster);
                     return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
                     pos = nextPos;
-                    justGuessed = false;
                     topDir = tryDir;
                     stackSize += -1;
                     if(stackSize == 0) {
@@ -1215,7 +1347,7 @@ class BugnavInstance {
                     }
                     appendCurrentPosition();
                     // Profiler.end("bugnav " + -1 + " " + isMaster);
-                    indicate("bugnav " + -1 + " " + isMaster);
+                    // indicate("bugnav " + -1 + " " + isMaster);
                     return true;
                 }
             }
@@ -1240,12 +1372,11 @@ class BugnavInstance {
                         hitEdge = true;
                     }
                     // Profiler.end("bugnav " + 0 + " " + isMaster);
-                    indicate("bugnav " + 0 + " " + isMaster);
+                    // indicate("bugnav " + 0 + " " + isMaster);
                     return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
                     pos = nextPos;
-                    justGuessed = false;
                     topDir = tryDir;
                     if(stackSize == 0) {
                         emptyStackTurns++;
@@ -1254,7 +1385,7 @@ class BugnavInstance {
                     }
                     appendCurrentPosition();
                     // Profiler.end("bugnav " + 0 + " " + isMaster);
-                    indicate("bugnav " + 0 + " " + isMaster);
+                    // indicate("bugnav " + 0 + " " + isMaster);
                     return true;
                 }
             }
@@ -1279,12 +1410,11 @@ class BugnavInstance {
                         hitEdge = true;
                     }
                     // Profiler.end("bugnav " + 1 + " " + isMaster);
-                    indicate("bugnav " + 1 + " " + isMaster);
+                    // indicate("bugnav " + 1 + " " + isMaster);
                     return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
                     pos = nextPos;
-                    justGuessed = false;
                     topDir = tryDir;
                     stackSize += 1;
                     if(stackSize == 0) {
@@ -1294,7 +1424,7 @@ class BugnavInstance {
                     }
                     appendCurrentPosition();
                     // Profiler.end("bugnav " + 1 + " " + isMaster);
-                    indicate("bugnav " + 1 + " " + isMaster);
+                    // indicate("bugnav " + 1 + " " + isMaster);
                     return true;
                 }
             }
@@ -1319,12 +1449,11 @@ class BugnavInstance {
                         hitEdge = true;
                     }
                     // Profiler.end("bugnav " + 2 + " " + isMaster);
-                    indicate("bugnav " + 2 + " " + isMaster);
+                    // indicate("bugnav " + 2 + " " + isMaster);
                     return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
                     pos = nextPos;
-                    justGuessed = false;
                     topDir = tryDir;
                     stackSize += 2;
                     if(stackSize == 0) {
@@ -1334,7 +1463,7 @@ class BugnavInstance {
                     }
                     appendCurrentPosition();
                     // Profiler.end("bugnav " + 2 + " " + isMaster);
-                    indicate("bugnav " + 2 + " " + isMaster);
+                    // indicate("bugnav " + 2 + " " + isMaster);
                     return true;
                 }
             }
@@ -1359,12 +1488,11 @@ class BugnavInstance {
                         hitEdge = true;
                     }
                     // Profiler.end("bugnav " + 3 + " " + isMaster);
-                    indicate("bugnav " + 3 + " " + isMaster);
+                    // indicate("bugnav " + 3 + " " + isMaster);
                     return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
                     pos = nextPos;
-                    justGuessed = false;
                     topDir = tryDir;
                     stackSize += 3;
                     if(stackSize == 0) {
@@ -1374,7 +1502,7 @@ class BugnavInstance {
                     }
                     appendCurrentPosition();
                     // Profiler.end("bugnav " + 3 + " " + isMaster);
-                    indicate("bugnav " + 3 + " " + isMaster);
+                    // indicate("bugnav " + 3 + " " + isMaster);
                     return true;
                 }
             }
@@ -1399,12 +1527,11 @@ class BugnavInstance {
                         hitEdge = true;
                     }
                     // Profiler.end("bugnav " + 4 + " " + isMaster);
-                    indicate("bugnav " + 4 + " " + isMaster);
+                    // indicate("bugnav " + 4 + " " + isMaster);
                     return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
                     pos = nextPos;
-                    justGuessed = false;
                     topDir = tryDir;
                     stackSize += 4;
                     if(stackSize == 0) {
@@ -1414,7 +1541,7 @@ class BugnavInstance {
                     }
                     appendCurrentPosition();
                     // Profiler.end("bugnav " + 4 + " " + isMaster);
-                    indicate("bugnav " + 4 + " " + isMaster);
+                    // indicate("bugnav " + 4 + " " + isMaster);
                     return true;
                 }
             }
@@ -1439,12 +1566,11 @@ class BugnavInstance {
                         hitEdge = true;
                     }
                     // Profiler.end("bugnav " + 5 + " " + isMaster);
-                    indicate("bugnav " + 5 + " " + isMaster);
+                    // indicate("bugnav " + 5 + " " + isMaster);
                     return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
                     pos = nextPos;
-                    justGuessed = false;
                     topDir = tryDir;
                     stackSize += 5;
                     if(stackSize == 0) {
@@ -1454,7 +1580,7 @@ class BugnavInstance {
                     }
                     appendCurrentPosition();
                     // Profiler.end("bugnav " + 5 + " " + isMaster);
-                    indicate("bugnav " + 5 + " " + isMaster);
+                    // indicate("bugnav " + 5 + " " + isMaster);
                     return true;
                 }
             }
@@ -1480,12 +1606,14 @@ public class Pathfinder {
     }
 
     public static void makeMove(Direction dir) throws GameActionException {
+        if(dir == Direction.CENTER) return;
         if(dir != rc.getDirection()) turn(dir);
         moveForward();
     }
 
     public static void makeMove(MapLocation target) throws GameActionException {
         assert rc.isMovementReady();
+
         // TODO: better handling when target changes
         if(bug == null || !target.equals(bug.target)) {
             indicate("RETARGET");
@@ -1601,7 +1729,7 @@ public class Pathfinder {
 
             if(
                (d10 & (1l << 49))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTH)) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -1617,7 +1745,7 @@ public class Pathfinder {
             }
             if(
                (d11 & (1l << 0))
-               != 0) {
+               != 0 && rc.canMove(Direction.EAST)) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -1633,7 +1761,7 @@ public class Pathfinder {
             }
             if(
                (d11 & (1l << 10))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTH)) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -1649,7 +1777,7 @@ public class Pathfinder {
             }
             if(
                (d10 & (1l << 59))
-               != 0) {
+               != 0 && rc.canMove(Direction.WEST)) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -1665,7 +1793,7 @@ public class Pathfinder {
             }
             if(
                (d10 & (1l << 48))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHWEST)) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -1681,7 +1809,7 @@ public class Pathfinder {
             }
             if(
                (d10 & (1l << 50))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHEAST)) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -1697,7 +1825,7 @@ public class Pathfinder {
             }
             if(
                (d11 & (1l << 9))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHWEST)) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -1713,7 +1841,7 @@ public class Pathfinder {
             }
             if(
                (d11 & (1l << 11))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHEAST)) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -1783,7 +1911,7 @@ public class Pathfinder {
 
             if(
                (d20 & (1l << 49))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTH)) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -1799,7 +1927,7 @@ public class Pathfinder {
             }
             if(
                (d21 & (1l << 0))
-               != 0) {
+               != 0 && rc.canMove(Direction.EAST)) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -1815,7 +1943,7 @@ public class Pathfinder {
             }
             if(
                (d21 & (1l << 10))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTH)) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -1831,7 +1959,7 @@ public class Pathfinder {
             }
             if(
                (d20 & (1l << 59))
-               != 0) {
+               != 0 && rc.canMove(Direction.WEST)) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -1847,7 +1975,7 @@ public class Pathfinder {
             }
             if(
                (d20 & (1l << 48))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHWEST)) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -1863,7 +1991,7 @@ public class Pathfinder {
             }
             if(
                (d20 & (1l << 50))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHEAST)) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -1879,7 +2007,7 @@ public class Pathfinder {
             }
             if(
                (d21 & (1l << 9))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHWEST)) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -1895,7 +2023,7 @@ public class Pathfinder {
             }
             if(
                (d21 & (1l << 11))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHEAST)) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -1965,7 +2093,7 @@ public class Pathfinder {
 
             if(
                (d30 & (1l << 49))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTH)) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -1981,7 +2109,7 @@ public class Pathfinder {
             }
             if(
                (d31 & (1l << 0))
-               != 0) {
+               != 0 && rc.canMove(Direction.EAST)) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -1997,7 +2125,7 @@ public class Pathfinder {
             }
             if(
                (d31 & (1l << 10))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTH)) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2013,7 +2141,7 @@ public class Pathfinder {
             }
             if(
                (d30 & (1l << 59))
-               != 0) {
+               != 0 && rc.canMove(Direction.WEST)) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2029,7 +2157,7 @@ public class Pathfinder {
             }
             if(
                (d30 & (1l << 48))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHWEST)) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2045,7 +2173,7 @@ public class Pathfinder {
             }
             if(
                (d30 & (1l << 50))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHEAST)) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2061,7 +2189,7 @@ public class Pathfinder {
             }
             if(
                (d31 & (1l << 9))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHWEST)) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2077,7 +2205,7 @@ public class Pathfinder {
             }
             if(
                (d31 & (1l << 11))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHEAST)) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2147,7 +2275,7 @@ public class Pathfinder {
 
             if(
                (d40 & (1l << 49))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTH)) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2163,7 +2291,7 @@ public class Pathfinder {
             }
             if(
                (d41 & (1l << 0))
-               != 0) {
+               != 0 && rc.canMove(Direction.EAST)) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2179,7 +2307,7 @@ public class Pathfinder {
             }
             if(
                (d41 & (1l << 10))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTH)) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2195,7 +2323,7 @@ public class Pathfinder {
             }
             if(
                (d40 & (1l << 59))
-               != 0) {
+               != 0 && rc.canMove(Direction.WEST)) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2211,7 +2339,7 @@ public class Pathfinder {
             }
             if(
                (d40 & (1l << 48))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHWEST)) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2227,7 +2355,7 @@ public class Pathfinder {
             }
             if(
                (d40 & (1l << 50))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHEAST)) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2243,7 +2371,7 @@ public class Pathfinder {
             }
             if(
                (d41 & (1l << 9))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHWEST)) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2259,7 +2387,7 @@ public class Pathfinder {
             }
             if(
                (d41 & (1l << 11))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHEAST)) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2329,7 +2457,7 @@ public class Pathfinder {
 
             if(
                (d50 & (1l << 49))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTH)) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2345,7 +2473,7 @@ public class Pathfinder {
             }
             if(
                (d51 & (1l << 0))
-               != 0) {
+               != 0 && rc.canMove(Direction.EAST)) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2361,7 +2489,7 @@ public class Pathfinder {
             }
             if(
                (d51 & (1l << 10))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTH)) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2377,7 +2505,7 @@ public class Pathfinder {
             }
             if(
                (d50 & (1l << 59))
-               != 0) {
+               != 0 && rc.canMove(Direction.WEST)) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2393,7 +2521,7 @@ public class Pathfinder {
             }
             if(
                (d50 & (1l << 48))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHWEST)) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2409,7 +2537,7 @@ public class Pathfinder {
             }
             if(
                (d50 & (1l << 50))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHEAST)) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2425,7 +2553,7 @@ public class Pathfinder {
             }
             if(
                (d51 & (1l << 9))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHWEST)) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2441,7 +2569,7 @@ public class Pathfinder {
             }
             if(
                (d51 & (1l << 11))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHEAST)) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2511,7 +2639,7 @@ public class Pathfinder {
 
             if(
                (d60 & (1l << 49))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTH)) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2527,7 +2655,7 @@ public class Pathfinder {
             }
             if(
                (d61 & (1l << 0))
-               != 0) {
+               != 0 && rc.canMove(Direction.EAST)) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2543,7 +2671,7 @@ public class Pathfinder {
             }
             if(
                (d61 & (1l << 10))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTH)) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2559,7 +2687,7 @@ public class Pathfinder {
             }
             if(
                (d60 & (1l << 59))
-               != 0) {
+               != 0 && rc.canMove(Direction.WEST)) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2575,7 +2703,7 @@ public class Pathfinder {
             }
             if(
                (d60 & (1l << 48))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHWEST)) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2591,7 +2719,7 @@ public class Pathfinder {
             }
             if(
                (d60 & (1l << 50))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHEAST)) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2607,7 +2735,7 @@ public class Pathfinder {
             }
             if(
                (d61 & (1l << 9))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHWEST)) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2623,7 +2751,7 @@ public class Pathfinder {
             }
             if(
                (d61 & (1l << 11))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHEAST)) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2693,7 +2821,7 @@ public class Pathfinder {
 
             if(
                (d70 & (1l << 49))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTH)) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2709,7 +2837,7 @@ public class Pathfinder {
             }
             if(
                (d71 & (1l << 0))
-               != 0) {
+               != 0 && rc.canMove(Direction.EAST)) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2725,7 +2853,7 @@ public class Pathfinder {
             }
             if(
                (d71 & (1l << 10))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTH)) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2741,7 +2869,7 @@ public class Pathfinder {
             }
             if(
                (d70 & (1l << 59))
-               != 0) {
+               != 0 && rc.canMove(Direction.WEST)) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2757,7 +2885,7 @@ public class Pathfinder {
             }
             if(
                (d70 & (1l << 48))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHWEST)) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2773,7 +2901,7 @@ public class Pathfinder {
             }
             if(
                (d70 & (1l << 50))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHEAST)) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2789,7 +2917,7 @@ public class Pathfinder {
             }
             if(
                (d71 & (1l << 9))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHWEST)) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2805,7 +2933,7 @@ public class Pathfinder {
             }
             if(
                (d71 & (1l << 11))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHEAST)) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2875,7 +3003,7 @@ public class Pathfinder {
 
             if(
                (d80 & (1l << 49))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTH)) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2891,7 +3019,7 @@ public class Pathfinder {
             }
             if(
                (d81 & (1l << 0))
-               != 0) {
+               != 0 && rc.canMove(Direction.EAST)) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2907,7 +3035,7 @@ public class Pathfinder {
             }
             if(
                (d81 & (1l << 10))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTH)) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2923,7 +3051,7 @@ public class Pathfinder {
             }
             if(
                (d80 & (1l << 59))
-               != 0) {
+               != 0 && rc.canMove(Direction.WEST)) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2939,7 +3067,7 @@ public class Pathfinder {
             }
             if(
                (d80 & (1l << 48))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHWEST)) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2955,7 +3083,7 @@ public class Pathfinder {
             }
             if(
                (d80 & (1l << 50))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHEAST)) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2971,7 +3099,7 @@ public class Pathfinder {
             }
             if(
                (d81 & (1l << 9))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHWEST)) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -2987,7 +3115,7 @@ public class Pathfinder {
             }
             if(
                (d81 & (1l << 11))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHEAST)) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3057,7 +3185,7 @@ public class Pathfinder {
 
             if(
                (d90 & (1l << 49))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTH)) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3073,7 +3201,7 @@ public class Pathfinder {
             }
             if(
                (d91 & (1l << 0))
-               != 0) {
+               != 0 && rc.canMove(Direction.EAST)) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3089,7 +3217,7 @@ public class Pathfinder {
             }
             if(
                (d91 & (1l << 10))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTH)) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3105,7 +3233,7 @@ public class Pathfinder {
             }
             if(
                (d90 & (1l << 59))
-               != 0) {
+               != 0 && rc.canMove(Direction.WEST)) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3121,7 +3249,7 @@ public class Pathfinder {
             }
             if(
                (d90 & (1l << 48))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHWEST)) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3137,7 +3265,7 @@ public class Pathfinder {
             }
             if(
                (d90 & (1l << 50))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHEAST)) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3153,7 +3281,7 @@ public class Pathfinder {
             }
             if(
                (d91 & (1l << 9))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHWEST)) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3169,7 +3297,7 @@ public class Pathfinder {
             }
             if(
                (d91 & (1l << 11))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHEAST)) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3239,7 +3367,7 @@ public class Pathfinder {
 
             if(
                (d100 & (1l << 49))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTH)) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3255,7 +3383,7 @@ public class Pathfinder {
             }
             if(
                (d101 & (1l << 0))
-               != 0) {
+               != 0 && rc.canMove(Direction.EAST)) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3271,7 +3399,7 @@ public class Pathfinder {
             }
             if(
                (d101 & (1l << 10))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTH)) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3287,7 +3415,7 @@ public class Pathfinder {
             }
             if(
                (d100 & (1l << 59))
-               != 0) {
+               != 0 && rc.canMove(Direction.WEST)) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3303,7 +3431,7 @@ public class Pathfinder {
             }
             if(
                (d100 & (1l << 48))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHWEST)) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3319,7 +3447,7 @@ public class Pathfinder {
             }
             if(
                (d100 & (1l << 50))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHEAST)) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3335,7 +3463,7 @@ public class Pathfinder {
             }
             if(
                (d101 & (1l << 9))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHWEST)) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3351,7 +3479,7 @@ public class Pathfinder {
             }
             if(
                (d101 & (1l << 11))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHEAST)) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3421,7 +3549,7 @@ public class Pathfinder {
 
             if(
                (d110 & (1l << 49))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTH)) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3437,7 +3565,7 @@ public class Pathfinder {
             }
             if(
                (d111 & (1l << 0))
-               != 0) {
+               != 0 && rc.canMove(Direction.EAST)) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3453,7 +3581,7 @@ public class Pathfinder {
             }
             if(
                (d111 & (1l << 10))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTH)) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3469,7 +3597,7 @@ public class Pathfinder {
             }
             if(
                (d110 & (1l << 59))
-               != 0) {
+               != 0 && rc.canMove(Direction.WEST)) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3485,7 +3613,7 @@ public class Pathfinder {
             }
             if(
                (d110 & (1l << 48))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHWEST)) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3501,7 +3629,7 @@ public class Pathfinder {
             }
             if(
                (d110 & (1l << 50))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHEAST)) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3517,7 +3645,7 @@ public class Pathfinder {
             }
             if(
                (d111 & (1l << 9))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHWEST)) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3533,7 +3661,7 @@ public class Pathfinder {
             }
             if(
                (d111 & (1l << 11))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHEAST)) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3603,7 +3731,7 @@ public class Pathfinder {
 
             if(
                (d120 & (1l << 49))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTH)) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3619,7 +3747,7 @@ public class Pathfinder {
             }
             if(
                (d121 & (1l << 0))
-               != 0) {
+               != 0 && rc.canMove(Direction.EAST)) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3635,7 +3763,7 @@ public class Pathfinder {
             }
             if(
                (d121 & (1l << 10))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTH)) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3651,7 +3779,7 @@ public class Pathfinder {
             }
             if(
                (d120 & (1l << 59))
-               != 0) {
+               != 0 && rc.canMove(Direction.WEST)) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3667,7 +3795,7 @@ public class Pathfinder {
             }
             if(
                (d120 & (1l << 48))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHWEST)) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3683,7 +3811,7 @@ public class Pathfinder {
             }
             if(
                (d120 & (1l << 50))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHEAST)) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3699,7 +3827,7 @@ public class Pathfinder {
             }
             if(
                (d121 & (1l << 9))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHWEST)) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3715,7 +3843,7 @@ public class Pathfinder {
             }
             if(
                (d121 & (1l << 11))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHEAST)) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3785,7 +3913,7 @@ public class Pathfinder {
 
             if(
                (d130 & (1l << 49))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTH)) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3801,7 +3929,7 @@ public class Pathfinder {
             }
             if(
                (d131 & (1l << 0))
-               != 0) {
+               != 0 && rc.canMove(Direction.EAST)) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3817,7 +3945,7 @@ public class Pathfinder {
             }
             if(
                (d131 & (1l << 10))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTH)) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3833,7 +3961,7 @@ public class Pathfinder {
             }
             if(
                (d130 & (1l << 59))
-               != 0) {
+               != 0 && rc.canMove(Direction.WEST)) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3849,7 +3977,7 @@ public class Pathfinder {
             }
             if(
                (d130 & (1l << 48))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHWEST)) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3865,7 +3993,7 @@ public class Pathfinder {
             }
             if(
                (d130 & (1l << 50))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHEAST)) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3881,7 +4009,7 @@ public class Pathfinder {
             }
             if(
                (d131 & (1l << 9))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHWEST)) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3897,7 +4025,7 @@ public class Pathfinder {
             }
             if(
                (d131 & (1l << 11))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHEAST)) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3967,7 +4095,7 @@ public class Pathfinder {
 
             if(
                (d140 & (1l << 49))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTH)) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3983,7 +4111,7 @@ public class Pathfinder {
             }
             if(
                (d141 & (1l << 0))
-               != 0) {
+               != 0 && rc.canMove(Direction.EAST)) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -3999,7 +4127,7 @@ public class Pathfinder {
             }
             if(
                (d141 & (1l << 10))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTH)) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4015,7 +4143,7 @@ public class Pathfinder {
             }
             if(
                (d140 & (1l << 59))
-               != 0) {
+               != 0 && rc.canMove(Direction.WEST)) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4031,7 +4159,7 @@ public class Pathfinder {
             }
             if(
                (d140 & (1l << 48))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHWEST)) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4047,7 +4175,7 @@ public class Pathfinder {
             }
             if(
                (d140 & (1l << 50))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHEAST)) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4063,7 +4191,7 @@ public class Pathfinder {
             }
             if(
                (d141 & (1l << 9))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHWEST)) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4079,7 +4207,7 @@ public class Pathfinder {
             }
             if(
                (d141 & (1l << 11))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHEAST)) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4149,7 +4277,7 @@ public class Pathfinder {
 
             if(
                (d150 & (1l << 49))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTH)) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4165,7 +4293,7 @@ public class Pathfinder {
             }
             if(
                (d151 & (1l << 0))
-               != 0) {
+               != 0 && rc.canMove(Direction.EAST)) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4181,7 +4309,7 @@ public class Pathfinder {
             }
             if(
                (d151 & (1l << 10))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTH)) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4197,7 +4325,7 @@ public class Pathfinder {
             }
             if(
                (d150 & (1l << 59))
-               != 0) {
+               != 0 && rc.canMove(Direction.WEST)) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4213,7 +4341,7 @@ public class Pathfinder {
             }
             if(
                (d150 & (1l << 48))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHWEST)) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4229,7 +4357,7 @@ public class Pathfinder {
             }
             if(
                (d150 & (1l << 50))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHEAST)) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4245,7 +4373,7 @@ public class Pathfinder {
             }
             if(
                (d151 & (1l << 9))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHWEST)) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4261,7 +4389,7 @@ public class Pathfinder {
             }
             if(
                (d151 & (1l << 11))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHEAST)) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4331,7 +4459,7 @@ public class Pathfinder {
 
             if(
                (d160 & (1l << 49))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTH)) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4347,7 +4475,7 @@ public class Pathfinder {
             }
             if(
                (d161 & (1l << 0))
-               != 0) {
+               != 0 && rc.canMove(Direction.EAST)) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4363,7 +4491,7 @@ public class Pathfinder {
             }
             if(
                (d161 & (1l << 10))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTH)) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4379,7 +4507,7 @@ public class Pathfinder {
             }
             if(
                (d160 & (1l << 59))
-               != 0) {
+               != 0 && rc.canMove(Direction.WEST)) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4395,7 +4523,7 @@ public class Pathfinder {
             }
             if(
                (d160 & (1l << 48))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHWEST)) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4411,7 +4539,7 @@ public class Pathfinder {
             }
             if(
                (d160 & (1l << 50))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHEAST)) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4427,7 +4555,7 @@ public class Pathfinder {
             }
             if(
                (d161 & (1l << 9))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHWEST)) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4443,7 +4571,7 @@ public class Pathfinder {
             }
             if(
                (d161 & (1l << 11))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHEAST)) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4513,7 +4641,7 @@ public class Pathfinder {
 
             if(
                (d170 & (1l << 49))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTH)) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4529,7 +4657,7 @@ public class Pathfinder {
             }
             if(
                (d171 & (1l << 0))
-               != 0) {
+               != 0 && rc.canMove(Direction.EAST)) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4545,7 +4673,7 @@ public class Pathfinder {
             }
             if(
                (d171 & (1l << 10))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTH)) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4561,7 +4689,7 @@ public class Pathfinder {
             }
             if(
                (d170 & (1l << 59))
-               != 0) {
+               != 0 && rc.canMove(Direction.WEST)) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4577,7 +4705,7 @@ public class Pathfinder {
             }
             if(
                (d170 & (1l << 48))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHWEST)) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4593,7 +4721,7 @@ public class Pathfinder {
             }
             if(
                (d170 & (1l << 50))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHEAST)) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4609,7 +4737,7 @@ public class Pathfinder {
             }
             if(
                (d171 & (1l << 9))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHWEST)) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4625,7 +4753,7 @@ public class Pathfinder {
             }
             if(
                (d171 & (1l << 11))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHEAST)) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4695,7 +4823,7 @@ public class Pathfinder {
 
             if(
                (d180 & (1l << 49))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTH)) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4711,7 +4839,7 @@ public class Pathfinder {
             }
             if(
                (d181 & (1l << 0))
-               != 0) {
+               != 0 && rc.canMove(Direction.EAST)) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4727,7 +4855,7 @@ public class Pathfinder {
             }
             if(
                (d181 & (1l << 10))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTH)) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4743,7 +4871,7 @@ public class Pathfinder {
             }
             if(
                (d180 & (1l << 59))
-               != 0) {
+               != 0 && rc.canMove(Direction.WEST)) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4759,7 +4887,7 @@ public class Pathfinder {
             }
             if(
                (d180 & (1l << 48))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHWEST)) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4775,7 +4903,7 @@ public class Pathfinder {
             }
             if(
                (d180 & (1l << 50))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHEAST)) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4791,7 +4919,7 @@ public class Pathfinder {
             }
             if(
                (d181 & (1l << 9))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHWEST)) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4807,7 +4935,7 @@ public class Pathfinder {
             }
             if(
                (d181 & (1l << 11))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHEAST)) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4877,7 +5005,7 @@ public class Pathfinder {
 
             if(
                (d190 & (1l << 49))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTH)) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4893,7 +5021,7 @@ public class Pathfinder {
             }
             if(
                (d191 & (1l << 0))
-               != 0) {
+               != 0 && rc.canMove(Direction.EAST)) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4909,7 +5037,7 @@ public class Pathfinder {
             }
             if(
                (d191 & (1l << 10))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTH)) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4925,7 +5053,7 @@ public class Pathfinder {
             }
             if(
                (d190 & (1l << 59))
-               != 0) {
+               != 0 && rc.canMove(Direction.WEST)) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4941,7 +5069,7 @@ public class Pathfinder {
             }
             if(
                (d190 & (1l << 48))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHWEST)) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4957,7 +5085,7 @@ public class Pathfinder {
             }
             if(
                (d190 & (1l << 50))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHEAST)) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4973,7 +5101,7 @@ public class Pathfinder {
             }
             if(
                (d191 & (1l << 9))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHWEST)) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -4989,7 +5117,7 @@ public class Pathfinder {
             }
             if(
                (d191 & (1l << 11))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHEAST)) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5059,7 +5187,7 @@ public class Pathfinder {
 
             if(
                (d200 & (1l << 49))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTH)) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5075,7 +5203,7 @@ public class Pathfinder {
             }
             if(
                (d201 & (1l << 0))
-               != 0) {
+               != 0 && rc.canMove(Direction.EAST)) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5091,7 +5219,7 @@ public class Pathfinder {
             }
             if(
                (d201 & (1l << 10))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTH)) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5107,7 +5235,7 @@ public class Pathfinder {
             }
             if(
                (d200 & (1l << 59))
-               != 0) {
+               != 0 && rc.canMove(Direction.WEST)) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5123,7 +5251,7 @@ public class Pathfinder {
             }
             if(
                (d200 & (1l << 48))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHWEST)) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5139,7 +5267,7 @@ public class Pathfinder {
             }
             if(
                (d200 & (1l << 50))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHEAST)) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5155,7 +5283,7 @@ public class Pathfinder {
             }
             if(
                (d201 & (1l << 9))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHWEST)) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5171,7 +5299,7 @@ public class Pathfinder {
             }
             if(
                (d201 & (1l << 11))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHEAST)) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5241,7 +5369,7 @@ public class Pathfinder {
 
             if(
                (d210 & (1l << 49))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTH)) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5257,7 +5385,7 @@ public class Pathfinder {
             }
             if(
                (d211 & (1l << 0))
-               != 0) {
+               != 0 && rc.canMove(Direction.EAST)) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5273,7 +5401,7 @@ public class Pathfinder {
             }
             if(
                (d211 & (1l << 10))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTH)) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5289,7 +5417,7 @@ public class Pathfinder {
             }
             if(
                (d210 & (1l << 59))
-               != 0) {
+               != 0 && rc.canMove(Direction.WEST)) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5305,7 +5433,7 @@ public class Pathfinder {
             }
             if(
                (d210 & (1l << 48))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHWEST)) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5321,7 +5449,7 @@ public class Pathfinder {
             }
             if(
                (d210 & (1l << 50))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHEAST)) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5337,7 +5465,7 @@ public class Pathfinder {
             }
             if(
                (d211 & (1l << 9))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHWEST)) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5353,7 +5481,7 @@ public class Pathfinder {
             }
             if(
                (d211 & (1l << 11))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHEAST)) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5423,7 +5551,7 @@ public class Pathfinder {
 
             if(
                (d220 & (1l << 49))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTH)) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5439,7 +5567,7 @@ public class Pathfinder {
             }
             if(
                (d221 & (1l << 0))
-               != 0) {
+               != 0 && rc.canMove(Direction.EAST)) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5455,7 +5583,7 @@ public class Pathfinder {
             }
             if(
                (d221 & (1l << 10))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTH)) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5471,7 +5599,7 @@ public class Pathfinder {
             }
             if(
                (d220 & (1l << 59))
-               != 0) {
+               != 0 && rc.canMove(Direction.WEST)) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5487,7 +5615,7 @@ public class Pathfinder {
             }
             if(
                (d220 & (1l << 48))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHWEST)) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5503,7 +5631,7 @@ public class Pathfinder {
             }
             if(
                (d220 & (1l << 50))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHEAST)) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5519,7 +5647,7 @@ public class Pathfinder {
             }
             if(
                (d221 & (1l << 9))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHWEST)) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5535,7 +5663,7 @@ public class Pathfinder {
             }
             if(
                (d221 & (1l << 11))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHEAST)) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5605,7 +5733,7 @@ public class Pathfinder {
 
             if(
                (d230 & (1l << 49))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTH)) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5621,7 +5749,7 @@ public class Pathfinder {
             }
             if(
                (d231 & (1l << 0))
-               != 0) {
+               != 0 && rc.canMove(Direction.EAST)) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5637,7 +5765,7 @@ public class Pathfinder {
             }
             if(
                (d231 & (1l << 10))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTH)) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5653,7 +5781,7 @@ public class Pathfinder {
             }
             if(
                (d230 & (1l << 59))
-               != 0) {
+               != 0 && rc.canMove(Direction.WEST)) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5669,7 +5797,7 @@ public class Pathfinder {
             }
             if(
                (d230 & (1l << 48))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHWEST)) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5685,7 +5813,7 @@ public class Pathfinder {
             }
             if(
                (d230 & (1l << 50))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHEAST)) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5701,7 +5829,7 @@ public class Pathfinder {
             }
             if(
                (d231 & (1l << 9))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHWEST)) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5717,7 +5845,7 @@ public class Pathfinder {
             }
             if(
                (d231 & (1l << 11))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHEAST)) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5787,7 +5915,7 @@ public class Pathfinder {
 
             if(
                (d240 & (1l << 49))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTH)) {
                 var nextLoc = loc.add(Direction.SOUTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5803,7 +5931,7 @@ public class Pathfinder {
             }
             if(
                (d241 & (1l << 0))
-               != 0) {
+               != 0 && rc.canMove(Direction.EAST)) {
                 var nextLoc = loc.add(Direction.EAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5819,7 +5947,7 @@ public class Pathfinder {
             }
             if(
                (d241 & (1l << 10))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTH)) {
                 var nextLoc = loc.add(Direction.NORTH);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5835,7 +5963,7 @@ public class Pathfinder {
             }
             if(
                (d240 & (1l << 59))
-               != 0) {
+               != 0 && rc.canMove(Direction.WEST)) {
                 var nextLoc = loc.add(Direction.WEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5851,7 +5979,7 @@ public class Pathfinder {
             }
             if(
                (d240 & (1l << 48))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHWEST)) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5867,7 +5995,7 @@ public class Pathfinder {
             }
             if(
                (d240 & (1l << 50))
-               != 0) {
+               != 0 && rc.canMove(Direction.SOUTHEAST)) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5883,7 +6011,7 @@ public class Pathfinder {
             }
             if(
                (d241 & (1l << 9))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHWEST)) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(
@@ -5899,7 +6027,7 @@ public class Pathfinder {
             }
             if(
                (d241 & (1l << 11))
-               != 0) {
+               != 0 && rc.canMove(Direction.NORTHEAST)) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
                 double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(

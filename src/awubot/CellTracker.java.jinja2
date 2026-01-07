@@ -13,7 +13,6 @@ public class CellTracker {
 
     public static void storeCell(MapInfo info) throws GameActionException {
         var loc = info.getMapLocation();
-        // rc.setIndicatorDot(loc, 255, 255, 0);
         switch(loc.y) {
             {% for i in range(MAX_MAP_SIZE) %}
             case {{i}} -> {
@@ -42,6 +41,7 @@ public class CellTracker {
     public static void storeVisibleCells() throws GameActionException {
         Profiler.begin();
         var loc = rc.getLocation();
+        int x = loc.x, y = loc.y;
         switch(rc.getDirection()) {
             {% for dir in directions %}
             case {{dir}} -> {
@@ -58,9 +58,8 @@ public class CellTracker {
                 {% endif %}
                 {% if dx * dx + dy * dy <= 20 and visible %}
                 {
-                    int x = loc.x {% if dx %} + {{dx}} {% endif %}, y = loc.y {% if dy %} + {{dy}} {% endif %};
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x {% if dx %} + {{dx}} {% endif %}, y {% if dy %} + {{dy}} {% endif %});
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
@@ -73,13 +72,45 @@ public class CellTracker {
         Profiler.end("storeVisibleCells");
     }
 
+    public static void storeVisibleCellsPostMove() throws GameActionException {
+        Profiler.begin();
+        var loc = rc.getLocation();
+        int x = loc.x, y = loc.y;
+        switch(rc.getDirection()) {
+            {% for dir in directions %}
+            case {{dir}} -> {
+                {% for dx in range(-5, 6) %}
+                {% for dy in range(-5, 6) %}
+                {% if dir == "Direction.NORTH" %}       {% set visible = dy >= (dx|abs)      and dx ** 2 + (dy + 1) ** 2 > 20 %}
+                {% elif dir == "Direction.NORTHEAST" %} {% set visible = dx >= 0 and dy >= 0 and (dx + 1) ** 2 + (dy + 1) ** 2 > 20 %}
+                {% elif dir == "Direction.EAST" %}      {% set visible = dx >= (dy|abs)      and (dx + 1) ** 2 + dy ** 2 > 20 %}
+                {% elif dir == "Direction.SOUTHEAST" %} {% set visible = dx >= 0 and dy <= 0 and (dx + 1) ** 2 + (dy - 1) ** 2 > 20 %}
+                {% elif dir == "Direction.SOUTH" %}     {% set visible = dy <= -(dx|abs)     and dx ** 2 + (dy - 1) ** 2 > 20 %}
+                {% elif dir == "Direction.SOUTHWEST" %} {% set visible = dx <= 0 and dy <= 0 and (dx - 1) ** 2 + (dy - 1) ** 2 > 20 %}
+                {% elif dir == "Direction.WEST" %}      {% set visible = dx <= -(dy|abs)     and (dx - 1) ** 2 + dy ** 2 > 20 %}
+                {% elif dir == "Direction.NORTHWEST" %} {% set visible = dx <= 0 and dy >= 0 and (dx - 1) ** 2 + (dy + 1) ** 2 > 20%}
+                {% endif %}
+                {% if dx * dx + dy * dy <= 20 and visible %}
+                {
+                    var l = new MapLocation(x {% if dx %} + {{dx}} {% endif %}, y {% if dy %} + {{dy}} {% endif %});
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                {% endif %}
+                {% endfor %}
+                {% endfor %}
+            }
+            {% endfor %}
+        }
+        Profiler.end("storeVisibleCellsPostMove");
+    }
+
     public static long localPassable0, localPassable1;
     static MapLocation localPassablePos = new MapLocation(-1, -1);
     public static void computeLocalPassable() throws GameActionException {
         if(rc.getLocation().equals(localPassablePos)) return;
         var loc = rc.getLocation();
-
-        storeVisibleCells();
 
         localPassablePos = loc;
         localPassable0 = 0;

@@ -15,10 +15,14 @@ public class RobotPlayer {
         Game.init(rc);
         Rng.seed();
         int cnt = 0;
+
+        if(rc.getType() == UnitType.BABY_RAT) {
+            CellTracker.storeVisibleCells();
+        }
+
         // for(int i = 0; i < rc.getID() % 200; i++) Math.random();
         while (true) {
             try {
-                Util.indicatorString = "";
                 Rng.init();
                 switch (rc.getType()) {
                     case BABY_RAT:
@@ -44,6 +48,7 @@ public class RobotPlayer {
                 e.printStackTrace();
             } finally {
                 Clock.yield();
+                Util.indicatorString = "";
             }
         }
     }

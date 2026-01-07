@@ -70,7 +70,6 @@ public class CellTracker {
 
     public static void storeCell(MapInfo info) throws GameActionException {
         var loc = info.getMapLocation();
-        // rc.setIndicatorDot(loc, 255, 255, 0);
         switch(loc.y) {
             case 0 -> {
                 seen0 |= 1l << loc.x;
@@ -693,1223 +692,1052 @@ public class CellTracker {
     public static void storeVisibleCells() throws GameActionException {
         Profiler.begin();
         var loc = rc.getLocation();
+        int x = loc.x, y = loc.y;
         switch(rc.getDirection()) {
             case Direction.NORTH -> {
                                                                                                                                                                                                                                          {
-                    int x = loc.x  + -3 , y = loc.y  + 3 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -3 , y  + 3 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                                                                                       {
-                    int x = loc.x  + -2 , y = loc.y  + 2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -2 , y  + 2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                        {
-                    int x = loc.x  + -2 , y = loc.y  + 3 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -2 , y  + 3 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                        {
-                    int x = loc.x  + -2 , y = loc.y  + 4 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -2 , y  + 4 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                                                                         {
-                    int x = loc.x  + -1 , y = loc.y  + 1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -1 , y  + 1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                        {
-                    int x = loc.x  + -1 , y = loc.y  + 2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -1 , y  + 2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                        {
-                    int x = loc.x  + -1 , y = loc.y  + 3 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -1 , y  + 3 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                        {
-                    int x = loc.x  + -1 , y = loc.y  + 4 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -1 , y  + 4 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                                                                  {
-                    int x = loc.x , y = loc.y ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x , y );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                        {
-                    int x = loc.x , y = loc.y  + 1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x , y  + 1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                        {
-                    int x = loc.x , y = loc.y  + 2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x , y  + 2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                        {
-                    int x = loc.x , y = loc.y  + 3 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x , y  + 3 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                        {
-                    int x = loc.x , y = loc.y  + 4 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x , y  + 4 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                                                                         {
-                    int x = loc.x  + 1 , y = loc.y  + 1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 1 , y  + 1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                        {
-                    int x = loc.x  + 1 , y = loc.y  + 2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 1 , y  + 2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                        {
-                    int x = loc.x  + 1 , y = loc.y  + 3 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 1 , y  + 3 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                        {
-                    int x = loc.x  + 1 , y = loc.y  + 4 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 1 , y  + 4 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                                                                                {
-                    int x = loc.x  + 2 , y = loc.y  + 2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 2 , y  + 2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                        {
-                    int x = loc.x  + 2 , y = loc.y  + 3 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 2 , y  + 3 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                        {
-                    int x = loc.x  + 2 , y = loc.y  + 4 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 2 , y  + 4 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                                                                                       {
-                    int x = loc.x  + 3 , y = loc.y  + 3 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 3 , y  + 3 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                                                                                                                                                                                     }
             case Direction.NORTHEAST -> {
                                                                              {
-                    int x = loc.x , y = loc.y ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x , y );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x , y = loc.y  + 1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x , y  + 1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x , y = loc.y  + 2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x , y  + 2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x , y = loc.y  + 3 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x , y  + 3 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x , y = loc.y  + 4 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x , y  + 4 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                        {
-                    int x = loc.x  + 1 , y = loc.y ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 1 , y );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + 1 , y = loc.y  + 1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 1 , y  + 1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + 1 , y = loc.y  + 2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 1 , y  + 2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + 1 , y = loc.y  + 3 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 1 , y  + 3 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + 1 , y = loc.y  + 4 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 1 , y  + 4 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                        {
-                    int x = loc.x  + 2 , y = loc.y ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 2 , y );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + 2 , y = loc.y  + 1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 2 , y  + 1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + 2 , y = loc.y  + 2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 2 , y  + 2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + 2 , y = loc.y  + 3 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 2 , y  + 3 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + 2 , y = loc.y  + 4 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 2 , y  + 4 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                        {
-                    int x = loc.x  + 3 , y = loc.y ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 3 , y );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + 3 , y = loc.y  + 1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 3 , y  + 1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + 3 , y = loc.y  + 2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 3 , y  + 2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + 3 , y = loc.y  + 3 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 3 , y  + 3 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                         {
-                    int x = loc.x  + 4 , y = loc.y ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 4 , y );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + 4 , y = loc.y  + 1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 4 , y  + 1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + 4 , y = loc.y  + 2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 4 , y  + 2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                           }
             case Direction.EAST -> {
                                                                                                                                                                                                                                                                                                                                                                                               {
-                    int x = loc.x , y = loc.y ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x , y );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                                                                             {
-                    int x = loc.x  + 1 , y = loc.y  + -1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 1 , y  + -1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                       {
-                    int x = loc.x  + 1 , y = loc.y ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 1 , y );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                       {
-                    int x = loc.x  + 1 , y = loc.y  + 1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 1 , y  + 1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                                                                 {
-                    int x = loc.x  + 2 , y = loc.y  + -2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 2 , y  + -2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                       {
-                    int x = loc.x  + 2 , y = loc.y  + -1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 2 , y  + -1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                       {
-                    int x = loc.x  + 2 , y = loc.y ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 2 , y );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                       {
-                    int x = loc.x  + 2 , y = loc.y  + 1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 2 , y  + 1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                       {
-                    int x = loc.x  + 2 , y = loc.y  + 2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 2 , y  + 2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                                                     {
-                    int x = loc.x  + 3 , y = loc.y  + -3 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 3 , y  + -3 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                       {
-                    int x = loc.x  + 3 , y = loc.y  + -2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 3 , y  + -2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                       {
-                    int x = loc.x  + 3 , y = loc.y  + -1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 3 , y  + -1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                       {
-                    int x = loc.x  + 3 , y = loc.y ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 3 , y );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                       {
-                    int x = loc.x  + 3 , y = loc.y  + 1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 3 , y  + 1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                       {
-                    int x = loc.x  + 3 , y = loc.y  + 2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 3 , y  + 2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                       {
-                    int x = loc.x  + 3 , y = loc.y  + 3 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 3 , y  + 3 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                                                     {
-                    int x = loc.x  + 4 , y = loc.y  + -2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 4 , y  + -2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                       {
-                    int x = loc.x  + 4 , y = loc.y  + -1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 4 , y  + -1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                       {
-                    int x = loc.x  + 4 , y = loc.y ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 4 , y );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                       {
-                    int x = loc.x  + 4 , y = loc.y  + 1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 4 , y  + 1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                       {
-                    int x = loc.x  + 4 , y = loc.y  + 2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 4 , y  + 2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                                                                                                 }
             case Direction.SOUTHEAST -> {
                                                                          {
-                    int x = loc.x , y = loc.y  + -4 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x , y  + -4 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x , y = loc.y  + -3 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x , y  + -3 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x , y = loc.y  + -2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x , y  + -2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x , y = loc.y  + -1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x , y  + -1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x , y = loc.y ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x , y );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                        {
-                    int x = loc.x  + 1 , y = loc.y  + -4 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 1 , y  + -4 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + 1 , y = loc.y  + -3 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 1 , y  + -3 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + 1 , y = loc.y  + -2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 1 , y  + -2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + 1 , y = loc.y  + -1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 1 , y  + -1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + 1 , y = loc.y ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 1 , y );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                        {
-                    int x = loc.x  + 2 , y = loc.y  + -4 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 2 , y  + -4 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + 2 , y = loc.y  + -3 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 2 , y  + -3 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + 2 , y = loc.y  + -2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 2 , y  + -2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + 2 , y = loc.y  + -1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 2 , y  + -1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + 2 , y = loc.y ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 2 , y );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                         {
-                    int x = loc.x  + 3 , y = loc.y  + -3 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 3 , y  + -3 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + 3 , y = loc.y  + -2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 3 , y  + -2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + 3 , y = loc.y  + -1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 3 , y  + -1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + 3 , y = loc.y ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 3 , y );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                          {
-                    int x = loc.x  + 4 , y = loc.y  + -2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 4 , y  + -2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + 4 , y = loc.y  + -1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 4 , y  + -1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + 4 , y = loc.y ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 4 , y );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                             }
             case Direction.SOUTH -> {
                                                                                                                                              {
-                    int x = loc.x  + -3 , y = loc.y  + -3 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -3 , y  + -3 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                                                                   {
-                    int x = loc.x  + -2 , y = loc.y  + -4 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -2 , y  + -4 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                      {
-                    int x = loc.x  + -2 , y = loc.y  + -3 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -2 , y  + -3 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                      {
-                    int x = loc.x  + -2 , y = loc.y  + -2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -2 , y  + -2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                                                              {
-                    int x = loc.x  + -1 , y = loc.y  + -4 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -1 , y  + -4 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                      {
-                    int x = loc.x  + -1 , y = loc.y  + -3 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -1 , y  + -3 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                      {
-                    int x = loc.x  + -1 , y = loc.y  + -2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -1 , y  + -2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                      {
-                    int x = loc.x  + -1 , y = loc.y  + -1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -1 , y  + -1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                                                         {
-                    int x = loc.x , y = loc.y  + -4 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x , y  + -4 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                      {
-                    int x = loc.x , y = loc.y  + -3 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x , y  + -3 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                      {
-                    int x = loc.x , y = loc.y  + -2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x , y  + -2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                      {
-                    int x = loc.x , y = loc.y  + -1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x , y  + -1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                      {
-                    int x = loc.x , y = loc.y ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x , y );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                                                    {
-                    int x = loc.x  + 1 , y = loc.y  + -4 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 1 , y  + -4 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                      {
-                    int x = loc.x  + 1 , y = loc.y  + -3 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 1 , y  + -3 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                      {
-                    int x = loc.x  + 1 , y = loc.y  + -2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 1 , y  + -2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                      {
-                    int x = loc.x  + 1 , y = loc.y  + -1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 1 , y  + -1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                                                         {
-                    int x = loc.x  + 2 , y = loc.y  + -4 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 2 , y  + -4 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                      {
-                    int x = loc.x  + 2 , y = loc.y  + -3 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 2 , y  + -3 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                      {
-                    int x = loc.x  + 2 , y = loc.y  + -2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 2 , y  + -2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                                                                   {
-                    int x = loc.x  + 3 , y = loc.y  + -3 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + 3 , y  + -3 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                                                                                                                                                                   }
             case Direction.SOUTHWEST -> {
                                {
-                    int x = loc.x  + -4 , y = loc.y  + -2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -4 , y  + -2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + -4 , y = loc.y  + -1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -4 , y  + -1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + -4 , y = loc.y ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -4 , y );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                         {
-                    int x = loc.x  + -3 , y = loc.y  + -3 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -3 , y  + -3 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + -3 , y = loc.y  + -2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -3 , y  + -2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + -3 , y = loc.y  + -1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -3 , y  + -1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + -3 , y = loc.y ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -3 , y );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                        {
-                    int x = loc.x  + -2 , y = loc.y  + -4 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -2 , y  + -4 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + -2 , y = loc.y  + -3 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -2 , y  + -3 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + -2 , y = loc.y  + -2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -2 , y  + -2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + -2 , y = loc.y  + -1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -2 , y  + -1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + -2 , y = loc.y ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -2 , y );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                        {
-                    int x = loc.x  + -1 , y = loc.y  + -4 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -1 , y  + -4 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + -1 , y = loc.y  + -3 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -1 , y  + -3 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + -1 , y = loc.y  + -2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -1 , y  + -2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + -1 , y = loc.y  + -1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -1 , y  + -1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + -1 , y = loc.y ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -1 , y );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                        {
-                    int x = loc.x , y = loc.y  + -4 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x , y  + -4 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x , y = loc.y  + -3 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x , y  + -3 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x , y = loc.y  + -2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x , y  + -2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x , y = loc.y  + -1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x , y  + -1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x , y = loc.y ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x , y );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                                                                         }
             case Direction.WEST -> {
                                                                                                           {
-                    int x = loc.x  + -4 , y = loc.y  + -2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -4 , y  + -2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                       {
-                    int x = loc.x  + -4 , y = loc.y  + -1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -4 , y  + -1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                       {
-                    int x = loc.x  + -4 , y = loc.y ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -4 , y );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                       {
-                    int x = loc.x  + -4 , y = loc.y  + 1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -4 , y  + 1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                       {
-                    int x = loc.x  + -4 , y = loc.y  + 2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -4 , y  + 2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                                                     {
-                    int x = loc.x  + -3 , y = loc.y  + -3 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -3 , y  + -3 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                       {
-                    int x = loc.x  + -3 , y = loc.y  + -2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -3 , y  + -2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                       {
-                    int x = loc.x  + -3 , y = loc.y  + -1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -3 , y  + -1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                       {
-                    int x = loc.x  + -3 , y = loc.y ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -3 , y );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                       {
-                    int x = loc.x  + -3 , y = loc.y  + 1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -3 , y  + 1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                       {
-                    int x = loc.x  + -3 , y = loc.y  + 2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -3 , y  + 2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                       {
-                    int x = loc.x  + -3 , y = loc.y  + 3 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -3 , y  + 3 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                                                     {
-                    int x = loc.x  + -2 , y = loc.y  + -2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -2 , y  + -2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                       {
-                    int x = loc.x  + -2 , y = loc.y  + -1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -2 , y  + -1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                       {
-                    int x = loc.x  + -2 , y = loc.y ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -2 , y );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                       {
-                    int x = loc.x  + -2 , y = loc.y  + 1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -2 , y  + 1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                       {
-                    int x = loc.x  + -2 , y = loc.y  + 2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -2 , y  + 2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                                                                 {
-                    int x = loc.x  + -1 , y = loc.y  + -1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -1 , y  + -1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                       {
-                    int x = loc.x  + -1 , y = loc.y ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -1 , y );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                       {
-                    int x = loc.x  + -1 , y = loc.y  + 1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -1 , y  + 1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                                                                             {
-                    int x = loc.x , y = loc.y ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x , y );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                                                                                                                                                                                                                                                                                                                                                                                     }
             case Direction.NORTHWEST -> {
                                  {
-                    int x = loc.x  + -4 , y = loc.y ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -4 , y );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + -4 , y = loc.y  + 1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -4 , y  + 1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + -4 , y = loc.y  + 2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -4 , y  + 2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                          {
-                    int x = loc.x  + -3 , y = loc.y ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -3 , y );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + -3 , y = loc.y  + 1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -3 , y  + 1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + -3 , y = loc.y  + 2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -3 , y  + 2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + -3 , y = loc.y  + 3 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -3 , y  + 3 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                         {
-                    int x = loc.x  + -2 , y = loc.y ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -2 , y );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + -2 , y = loc.y  + 1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -2 , y  + 1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + -2 , y = loc.y  + 2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -2 , y  + 2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + -2 , y = loc.y  + 3 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -2 , y  + 3 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + -2 , y = loc.y  + 4 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -2 , y  + 4 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                        {
-                    int x = loc.x  + -1 , y = loc.y ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -1 , y );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + -1 , y = loc.y  + 1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -1 , y  + 1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + -1 , y = loc.y  + 2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -1 , y  + 2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + -1 , y = loc.y  + 3 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -1 , y  + 3 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x  + -1 , y = loc.y  + 4 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x  + -1 , y  + 4 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                        {
-                    int x = loc.x , y = loc.y ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x , y );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x , y = loc.y  + 1 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x , y  + 1 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x , y = loc.y  + 2 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x , y  + 2 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x , y = loc.y  + 3 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x , y  + 3 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
                  {
-                    int x = loc.x , y = loc.y  + 4 ;
-                    var l = new MapLocation(x, y);
-                    if(rc.canSenseLocation(l)) {
+                    var l = new MapLocation(x , y  + 4 );
+                    if(rc.onTheMap(l)) {
                         CellTracker.storeCell(rc.senseMapInfo(l));
                     }
                 }
@@ -1920,13 +1748,422 @@ public class CellTracker {
         Profiler.end("storeVisibleCells");
     }
 
+    public static void storeVisibleCellsPostMove() throws GameActionException {
+        Profiler.begin();
+        var loc = rc.getLocation();
+        int x = loc.x, y = loc.y;
+        switch(rc.getDirection()) {
+            case Direction.NORTH -> {
+                                                                                                                                                                                                                                         {
+                    var l = new MapLocation(x  + -3 , y  + 3 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                                                                                                    {
+                    var l = new MapLocation(x  + -2 , y  + 4 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                                                                                             {
+                    var l = new MapLocation(x  + -1 , y  + 4 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                                                                                             {
+                    var l = new MapLocation(x , y  + 4 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                                                                                             {
+                    var l = new MapLocation(x  + 1 , y  + 4 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                                                                                             {
+                    var l = new MapLocation(x  + 2 , y  + 4 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                                                                                      {
+                    var l = new MapLocation(x  + 3 , y  + 3 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                                                                                                                                                                                    }
+            case Direction.NORTHEAST -> {
+                                                                                 {
+                    var l = new MapLocation(x , y  + 4 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                           {
+                    var l = new MapLocation(x  + 1 , y  + 4 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                          {
+                    var l = new MapLocation(x  + 2 , y  + 3 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                 {
+                    var l = new MapLocation(x  + 2 , y  + 4 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                         {
+                    var l = new MapLocation(x  + 3 , y  + 2 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                 {
+                    var l = new MapLocation(x  + 3 , y  + 3 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                        {
+                    var l = new MapLocation(x  + 4 , y );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                 {
+                    var l = new MapLocation(x  + 4 , y  + 1 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                 {
+                    var l = new MapLocation(x  + 4 , y  + 2 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                          }
+            case Direction.EAST -> {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  {
+                    var l = new MapLocation(x  + 3 , y  + -3 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                                                    {
+                    var l = new MapLocation(x  + 3 , y  + 3 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                                                    {
+                    var l = new MapLocation(x  + 4 , y  + -2 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                      {
+                    var l = new MapLocation(x  + 4 , y  + -1 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                      {
+                    var l = new MapLocation(x  + 4 , y );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                      {
+                    var l = new MapLocation(x  + 4 , y  + 1 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                      {
+                    var l = new MapLocation(x  + 4 , y  + 2 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                                                                                                }
+            case Direction.SOUTHEAST -> {
+                                                                         {
+                    var l = new MapLocation(x , y  + -4 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                           {
+                    var l = new MapLocation(x  + 1 , y  + -4 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                           {
+                    var l = new MapLocation(x  + 2 , y  + -4 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                 {
+                    var l = new MapLocation(x  + 2 , y  + -3 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                           {
+                    var l = new MapLocation(x  + 3 , y  + -3 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                 {
+                    var l = new MapLocation(x  + 3 , y  + -2 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                           {
+                    var l = new MapLocation(x  + 4 , y  + -2 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                 {
+                    var l = new MapLocation(x  + 4 , y  + -1 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                 {
+                    var l = new MapLocation(x  + 4 , y );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                            }
+            case Direction.SOUTH -> {
+                                                                                                                                             {
+                    var l = new MapLocation(x  + -3 , y  + -3 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                                                                  {
+                    var l = new MapLocation(x  + -2 , y  + -4 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                                                                       {
+                    var l = new MapLocation(x  + -1 , y  + -4 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                                                                       {
+                    var l = new MapLocation(x , y  + -4 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                                                                       {
+                    var l = new MapLocation(x  + 1 , y  + -4 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                                                                       {
+                    var l = new MapLocation(x  + 2 , y  + -4 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                                                                            {
+                    var l = new MapLocation(x  + 3 , y  + -3 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                                                                                                                                                                  }
+            case Direction.SOUTHWEST -> {
+                               {
+                    var l = new MapLocation(x  + -4 , y  + -2 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                 {
+                    var l = new MapLocation(x  + -4 , y  + -1 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                 {
+                    var l = new MapLocation(x  + -4 , y );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                        {
+                    var l = new MapLocation(x  + -3 , y  + -3 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                 {
+                    var l = new MapLocation(x  + -3 , y  + -2 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                         {
+                    var l = new MapLocation(x  + -2 , y  + -4 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                 {
+                    var l = new MapLocation(x  + -2 , y  + -3 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                          {
+                    var l = new MapLocation(x  + -1 , y  + -4 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                           {
+                    var l = new MapLocation(x , y  + -4 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                                                                            }
+            case Direction.WEST -> {
+                                                                                                          {
+                    var l = new MapLocation(x  + -4 , y  + -2 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                      {
+                    var l = new MapLocation(x  + -4 , y  + -1 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                      {
+                    var l = new MapLocation(x  + -4 , y );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                      {
+                    var l = new MapLocation(x  + -4 , y  + 1 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                      {
+                    var l = new MapLocation(x  + -4 , y  + 2 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                                                    {
+                    var l = new MapLocation(x  + -3 , y  + -3 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                                                    {
+                    var l = new MapLocation(x  + -3 , y  + 3 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        }
+            case Direction.NORTHWEST -> {
+                                 {
+                    var l = new MapLocation(x  + -4 , y );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                 {
+                    var l = new MapLocation(x  + -4 , y  + 1 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                 {
+                    var l = new MapLocation(x  + -4 , y  + 2 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                           {
+                    var l = new MapLocation(x  + -3 , y  + 2 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                 {
+                    var l = new MapLocation(x  + -3 , y  + 3 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                           {
+                    var l = new MapLocation(x  + -2 , y  + 3 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                 {
+                    var l = new MapLocation(x  + -2 , y  + 4 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                           {
+                    var l = new MapLocation(x  + -1 , y  + 4 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                           {
+                    var l = new MapLocation(x , y  + 4 );
+                    if(rc.onTheMap(l)) {
+                        CellTracker.storeCell(rc.senseMapInfo(l));
+                    }
+                }
+                                                                    }
+            case Direction.CENTER -> {
+            }
+        }
+        Profiler.end("storeVisibleCellsPostMove");
+    }
+
     public static long localPassable0, localPassable1;
     static MapLocation localPassablePos = new MapLocation(-1, -1);
     public static void computeLocalPassable() throws GameActionException {
         if(rc.getLocation().equals(localPassablePos)) return;
         var loc = rc.getLocation();
-
-        storeVisibleCells();
 
         localPassablePos = loc;
         localPassable0 = 0;

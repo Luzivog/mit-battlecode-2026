@@ -2076,7 +2076,7 @@ class BugnavInstance {
         stackSize0 = stackSize;
         leftTurn0 = leftTurn;
         emptyStackTurns0 = emptyStackTurns;
-        pathLength++;
+        pathLength = 1;
     }
     void setCurrentState2() {
         pos = path1;
@@ -2102,7 +2102,7 @@ class BugnavInstance {
         stackSize1 = stackSize;
         leftTurn1 = leftTurn;
         emptyStackTurns1 = emptyStackTurns;
-        pathLength++;
+        pathLength = 2;
     }
     void setCurrentState3() {
         pos = path2;
@@ -2128,7 +2128,7 @@ class BugnavInstance {
         stackSize2 = stackSize;
         leftTurn2 = leftTurn;
         emptyStackTurns2 = emptyStackTurns;
-        pathLength++;
+        pathLength = 3;
     }
     void setCurrentState4() {
         pos = path3;
@@ -2154,7 +2154,7 @@ class BugnavInstance {
         stackSize3 = stackSize;
         leftTurn3 = leftTurn;
         emptyStackTurns3 = emptyStackTurns;
-        pathLength++;
+        pathLength = 4;
     }
     void setCurrentState5() {
         pos = path4;
@@ -2180,7 +2180,7 @@ class BugnavInstance {
         stackSize4 = stackSize;
         leftTurn4 = leftTurn;
         emptyStackTurns4 = emptyStackTurns;
-        pathLength++;
+        pathLength = 5;
     }
     void setCurrentState6() {
         pos = path5;
@@ -2206,7 +2206,7 @@ class BugnavInstance {
         stackSize5 = stackSize;
         leftTurn5 = leftTurn;
         emptyStackTurns5 = emptyStackTurns;
-        pathLength++;
+        pathLength = 6;
     }
     void setCurrentState7() {
         pos = path6;
@@ -2232,7 +2232,7 @@ class BugnavInstance {
         stackSize6 = stackSize;
         leftTurn6 = leftTurn;
         emptyStackTurns6 = emptyStackTurns;
-        pathLength++;
+        pathLength = 7;
     }
     void setCurrentState8() {
         pos = path7;
@@ -2258,7 +2258,7 @@ class BugnavInstance {
         stackSize7 = stackSize;
         leftTurn7 = leftTurn;
         emptyStackTurns7 = emptyStackTurns;
-        pathLength++;
+        pathLength = 8;
     }
     void setCurrentState9() {
         pos = path8;
@@ -2284,7 +2284,7 @@ class BugnavInstance {
         stackSize8 = stackSize;
         leftTurn8 = leftTurn;
         emptyStackTurns8 = emptyStackTurns;
-        pathLength++;
+        pathLength = 9;
     }
     void setCurrentState10() {
         pos = path9;
@@ -2310,7 +2310,7 @@ class BugnavInstance {
         stackSize9 = stackSize;
         leftTurn9 = leftTurn;
         emptyStackTurns9 = emptyStackTurns;
-        pathLength++;
+        pathLength = 10;
     }
     void setCurrentState11() {
         pos = path10;
@@ -2336,7 +2336,7 @@ class BugnavInstance {
         stackSize10 = stackSize;
         leftTurn10 = leftTurn;
         emptyStackTurns10 = emptyStackTurns;
-        pathLength++;
+        pathLength = 11;
     }
     void setCurrentState12() {
         pos = path11;
@@ -2362,7 +2362,7 @@ class BugnavInstance {
         stackSize11 = stackSize;
         leftTurn11 = leftTurn;
         emptyStackTurns11 = emptyStackTurns;
-        pathLength++;
+        pathLength = 12;
     }
     void setCurrentState13() {
         pos = path12;
@@ -2388,7 +2388,7 @@ class BugnavInstance {
         stackSize12 = stackSize;
         leftTurn12 = leftTurn;
         emptyStackTurns12 = emptyStackTurns;
-        pathLength++;
+        pathLength = 13;
     }
     void setCurrentState14() {
         pos = path13;
@@ -2414,7 +2414,7 @@ class BugnavInstance {
         stackSize13 = stackSize;
         leftTurn13 = leftTurn;
         emptyStackTurns13 = emptyStackTurns;
-        pathLength++;
+        pathLength = 14;
     }
     void setCurrentState15() {
         pos = path14;
@@ -2440,7 +2440,7 @@ class BugnavInstance {
         stackSize14 = stackSize;
         leftTurn14 = leftTurn;
         emptyStackTurns14 = emptyStackTurns;
-        pathLength++;
+        pathLength = 15;
     }
     void setCurrentState16() {
         pos = path15;
@@ -2466,7 +2466,7 @@ class BugnavInstance {
         stackSize15 = stackSize;
         leftTurn15 = leftTurn;
         emptyStackTurns15 = emptyStackTurns;
-        pathLength++;
+        pathLength = 16;
     }
     void setCurrentState17() {
         pos = path16;
@@ -2492,7 +2492,7 @@ class BugnavInstance {
         stackSize16 = stackSize;
         leftTurn16 = leftTurn;
         emptyStackTurns16 = emptyStackTurns;
-        pathLength++;
+        pathLength = 17;
     }
     void setCurrentState18() {
         pos = path17;
@@ -2518,7 +2518,7 @@ class BugnavInstance {
         stackSize17 = stackSize;
         leftTurn17 = leftTurn;
         emptyStackTurns17 = emptyStackTurns;
-        pathLength++;
+        pathLength = 18;
     }
     void setCurrentState19() {
         pos = path18;
@@ -2544,7 +2544,7 @@ class BugnavInstance {
         stackSize18 = stackSize;
         leftTurn18 = leftTurn;
         emptyStackTurns18 = emptyStackTurns;
-        pathLength++;
+        pathLength = 19;
     }
     void setCurrentState20() {
         pos = path19;
@@ -2570,7 +2570,7 @@ class BugnavInstance {
         stackSize19 = stackSize;
         leftTurn19 = leftTurn;
         emptyStackTurns19 = emptyStackTurns;
-        pathLength++;
+        pathLength = 20;
     }
     void setCurrentState21() {
         pos = path20;
@@ -2596,7 +2596,7 @@ class BugnavInstance {
         stackSize20 = stackSize;
         leftTurn20 = leftTurn;
         emptyStackTurns20 = emptyStackTurns;
-        pathLength++;
+        pathLength = 21;
     }
     void setCurrentState22() {
         pos = path21;
@@ -2622,7 +2622,7 @@ class BugnavInstance {
         stackSize21 = stackSize;
         leftTurn21 = leftTurn;
         emptyStackTurns21 = emptyStackTurns;
-        pathLength++;
+        pathLength = 22;
     }
     void setCurrentState23() {
         pos = path22;
@@ -2648,7 +2648,7 @@ class BugnavInstance {
         stackSize22 = stackSize;
         leftTurn22 = leftTurn;
         emptyStackTurns22 = emptyStackTurns;
-        pathLength++;
+        pathLength = 23;
     }
     void setCurrentState24() {
         pos = path23;
@@ -2674,7 +2674,7 @@ class BugnavInstance {
         stackSize23 = stackSize;
         leftTurn23 = leftTurn;
         emptyStackTurns23 = emptyStackTurns;
-        pathLength++;
+        pathLength = 24;
     }
     void setCurrentState25() {
         pos = path24;
@@ -2700,7 +2700,7 @@ class BugnavInstance {
         stackSize24 = stackSize;
         leftTurn24 = leftTurn;
         emptyStackTurns24 = emptyStackTurns;
-        pathLength++;
+        pathLength = 25;
     }
     void setCurrentState26() {
         pos = path25;
@@ -2726,7 +2726,7 @@ class BugnavInstance {
         stackSize25 = stackSize;
         leftTurn25 = leftTurn;
         emptyStackTurns25 = emptyStackTurns;
-        pathLength++;
+        pathLength = 26;
     }
     void setCurrentState27() {
         pos = path26;
@@ -2752,7 +2752,7 @@ class BugnavInstance {
         stackSize26 = stackSize;
         leftTurn26 = leftTurn;
         emptyStackTurns26 = emptyStackTurns;
-        pathLength++;
+        pathLength = 27;
     }
     void setCurrentState28() {
         pos = path27;
@@ -2778,7 +2778,7 @@ class BugnavInstance {
         stackSize27 = stackSize;
         leftTurn27 = leftTurn;
         emptyStackTurns27 = emptyStackTurns;
-        pathLength++;
+        pathLength = 28;
     }
     void setCurrentState29() {
         pos = path28;
@@ -2804,7 +2804,7 @@ class BugnavInstance {
         stackSize28 = stackSize;
         leftTurn28 = leftTurn;
         emptyStackTurns28 = emptyStackTurns;
-        pathLength++;
+        pathLength = 29;
     }
     void setCurrentState30() {
         pos = path29;
@@ -2830,7 +2830,7 @@ class BugnavInstance {
         stackSize29 = stackSize;
         leftTurn29 = leftTurn;
         emptyStackTurns29 = emptyStackTurns;
-        pathLength++;
+        pathLength = 30;
     }
     void setCurrentState31() {
         pos = path30;
@@ -2856,7 +2856,7 @@ class BugnavInstance {
         stackSize30 = stackSize;
         leftTurn30 = leftTurn;
         emptyStackTurns30 = emptyStackTurns;
-        pathLength++;
+        pathLength = 31;
     }
     void setCurrentState32() {
         pos = path31;
@@ -2882,7 +2882,7 @@ class BugnavInstance {
         stackSize31 = stackSize;
         leftTurn31 = leftTurn;
         emptyStackTurns31 = emptyStackTurns;
-        pathLength++;
+        pathLength = 32;
     }
     void setCurrentState33() {
         pos = path32;
@@ -2908,7 +2908,7 @@ class BugnavInstance {
         stackSize32 = stackSize;
         leftTurn32 = leftTurn;
         emptyStackTurns32 = emptyStackTurns;
-        pathLength++;
+        pathLength = 33;
     }
     void setCurrentState34() {
         pos = path33;
@@ -2934,7 +2934,7 @@ class BugnavInstance {
         stackSize33 = stackSize;
         leftTurn33 = leftTurn;
         emptyStackTurns33 = emptyStackTurns;
-        pathLength++;
+        pathLength = 34;
     }
     void setCurrentState35() {
         pos = path34;
@@ -2960,7 +2960,7 @@ class BugnavInstance {
         stackSize34 = stackSize;
         leftTurn34 = leftTurn;
         emptyStackTurns34 = emptyStackTurns;
-        pathLength++;
+        pathLength = 35;
     }
     void setCurrentState36() {
         pos = path35;
@@ -2986,7 +2986,7 @@ class BugnavInstance {
         stackSize35 = stackSize;
         leftTurn35 = leftTurn;
         emptyStackTurns35 = emptyStackTurns;
-        pathLength++;
+        pathLength = 36;
     }
     void setCurrentState37() {
         pos = path36;
@@ -3012,7 +3012,7 @@ class BugnavInstance {
         stackSize36 = stackSize;
         leftTurn36 = leftTurn;
         emptyStackTurns36 = emptyStackTurns;
-        pathLength++;
+        pathLength = 37;
     }
     void setCurrentState38() {
         pos = path37;
@@ -3038,7 +3038,7 @@ class BugnavInstance {
         stackSize37 = stackSize;
         leftTurn37 = leftTurn;
         emptyStackTurns37 = emptyStackTurns;
-        pathLength++;
+        pathLength = 38;
     }
     void setCurrentState39() {
         pos = path38;
@@ -3064,7 +3064,7 @@ class BugnavInstance {
         stackSize38 = stackSize;
         leftTurn38 = leftTurn;
         emptyStackTurns38 = emptyStackTurns;
-        pathLength++;
+        pathLength = 39;
     }
     void setCurrentState40() {
         pos = path39;
@@ -3090,7 +3090,7 @@ class BugnavInstance {
         stackSize39 = stackSize;
         leftTurn39 = leftTurn;
         emptyStackTurns39 = emptyStackTurns;
-        pathLength++;
+        pathLength = 40;
     }
     void setCurrentState41() {
         pos = path40;
@@ -3116,7 +3116,7 @@ class BugnavInstance {
         stackSize40 = stackSize;
         leftTurn40 = leftTurn;
         emptyStackTurns40 = emptyStackTurns;
-        pathLength++;
+        pathLength = 41;
     }
     void setCurrentState42() {
         pos = path41;
@@ -3142,7 +3142,7 @@ class BugnavInstance {
         stackSize41 = stackSize;
         leftTurn41 = leftTurn;
         emptyStackTurns41 = emptyStackTurns;
-        pathLength++;
+        pathLength = 42;
     }
     void setCurrentState43() {
         pos = path42;
@@ -3168,7 +3168,7 @@ class BugnavInstance {
         stackSize42 = stackSize;
         leftTurn42 = leftTurn;
         emptyStackTurns42 = emptyStackTurns;
-        pathLength++;
+        pathLength = 43;
     }
     void setCurrentState44() {
         pos = path43;
@@ -3194,7 +3194,7 @@ class BugnavInstance {
         stackSize43 = stackSize;
         leftTurn43 = leftTurn;
         emptyStackTurns43 = emptyStackTurns;
-        pathLength++;
+        pathLength = 44;
     }
     void setCurrentState45() {
         pos = path44;
@@ -3220,7 +3220,7 @@ class BugnavInstance {
         stackSize44 = stackSize;
         leftTurn44 = leftTurn;
         emptyStackTurns44 = emptyStackTurns;
-        pathLength++;
+        pathLength = 45;
     }
     void setCurrentState46() {
         pos = path45;
@@ -3246,7 +3246,7 @@ class BugnavInstance {
         stackSize45 = stackSize;
         leftTurn45 = leftTurn;
         emptyStackTurns45 = emptyStackTurns;
-        pathLength++;
+        pathLength = 46;
     }
     void setCurrentState47() {
         pos = path46;
@@ -3272,7 +3272,7 @@ class BugnavInstance {
         stackSize46 = stackSize;
         leftTurn46 = leftTurn;
         emptyStackTurns46 = emptyStackTurns;
-        pathLength++;
+        pathLength = 47;
     }
     void setCurrentState48() {
         pos = path47;
@@ -3298,7 +3298,7 @@ class BugnavInstance {
         stackSize47 = stackSize;
         leftTurn47 = leftTurn;
         emptyStackTurns47 = emptyStackTurns;
-        pathLength++;
+        pathLength = 48;
     }
     void setCurrentState49() {
         pos = path48;
@@ -3324,7 +3324,7 @@ class BugnavInstance {
         stackSize48 = stackSize;
         leftTurn48 = leftTurn;
         emptyStackTurns48 = emptyStackTurns;
-        pathLength++;
+        pathLength = 49;
     }
     void setCurrentState50() {
         pos = path49;
@@ -3350,7 +3350,7 @@ class BugnavInstance {
         stackSize49 = stackSize;
         leftTurn49 = leftTurn;
         emptyStackTurns49 = emptyStackTurns;
-        pathLength++;
+        pathLength = 50;
     }
     void setCurrentState51() {
         pos = path50;
@@ -3376,7 +3376,7 @@ class BugnavInstance {
         stackSize50 = stackSize;
         leftTurn50 = leftTurn;
         emptyStackTurns50 = emptyStackTurns;
-        pathLength++;
+        pathLength = 51;
     }
     void setCurrentState52() {
         pos = path51;
@@ -3402,7 +3402,7 @@ class BugnavInstance {
         stackSize51 = stackSize;
         leftTurn51 = leftTurn;
         emptyStackTurns51 = emptyStackTurns;
-        pathLength++;
+        pathLength = 52;
     }
     void setCurrentState53() {
         pos = path52;
@@ -3428,7 +3428,7 @@ class BugnavInstance {
         stackSize52 = stackSize;
         leftTurn52 = leftTurn;
         emptyStackTurns52 = emptyStackTurns;
-        pathLength++;
+        pathLength = 53;
     }
     void setCurrentState54() {
         pos = path53;
@@ -3454,7 +3454,7 @@ class BugnavInstance {
         stackSize53 = stackSize;
         leftTurn53 = leftTurn;
         emptyStackTurns53 = emptyStackTurns;
-        pathLength++;
+        pathLength = 54;
     }
     void setCurrentState55() {
         pos = path54;
@@ -3480,7 +3480,7 @@ class BugnavInstance {
         stackSize54 = stackSize;
         leftTurn54 = leftTurn;
         emptyStackTurns54 = emptyStackTurns;
-        pathLength++;
+        pathLength = 55;
     }
     void setCurrentState56() {
         pos = path55;
@@ -3506,7 +3506,7 @@ class BugnavInstance {
         stackSize55 = stackSize;
         leftTurn55 = leftTurn;
         emptyStackTurns55 = emptyStackTurns;
-        pathLength++;
+        pathLength = 56;
     }
     void setCurrentState57() {
         pos = path56;
@@ -3532,7 +3532,7 @@ class BugnavInstance {
         stackSize56 = stackSize;
         leftTurn56 = leftTurn;
         emptyStackTurns56 = emptyStackTurns;
-        pathLength++;
+        pathLength = 57;
     }
     void setCurrentState58() {
         pos = path57;
@@ -3558,7 +3558,7 @@ class BugnavInstance {
         stackSize57 = stackSize;
         leftTurn57 = leftTurn;
         emptyStackTurns57 = emptyStackTurns;
-        pathLength++;
+        pathLength = 58;
     }
     void setCurrentState59() {
         pos = path58;
@@ -3584,7 +3584,7 @@ class BugnavInstance {
         stackSize58 = stackSize;
         leftTurn58 = leftTurn;
         emptyStackTurns58 = emptyStackTurns;
-        pathLength++;
+        pathLength = 59;
     }
     void setCurrentState60() {
         pos = path59;
@@ -3610,7 +3610,7 @@ class BugnavInstance {
         stackSize59 = stackSize;
         leftTurn59 = leftTurn;
         emptyStackTurns59 = emptyStackTurns;
-        pathLength++;
+        pathLength = 60;
     }
     void setCurrentState61() {
         pos = path60;
@@ -3636,7 +3636,7 @@ class BugnavInstance {
         stackSize60 = stackSize;
         leftTurn60 = leftTurn;
         emptyStackTurns60 = emptyStackTurns;
-        pathLength++;
+        pathLength = 61;
     }
     void setCurrentState62() {
         pos = path61;
@@ -3662,7 +3662,7 @@ class BugnavInstance {
         stackSize61 = stackSize;
         leftTurn61 = leftTurn;
         emptyStackTurns61 = emptyStackTurns;
-        pathLength++;
+        pathLength = 62;
     }
     void setCurrentState63() {
         pos = path62;
@@ -3688,7 +3688,7 @@ class BugnavInstance {
         stackSize62 = stackSize;
         leftTurn62 = leftTurn;
         emptyStackTurns62 = emptyStackTurns;
-        pathLength++;
+        pathLength = 63;
     }
     void setCurrentState64() {
         pos = path63;
@@ -3714,7 +3714,7 @@ class BugnavInstance {
         stackSize63 = stackSize;
         leftTurn63 = leftTurn;
         emptyStackTurns63 = emptyStackTurns;
-        pathLength++;
+        pathLength = 64;
     }
     void setCurrentState65() {
         pos = path64;
@@ -3740,7 +3740,7 @@ class BugnavInstance {
         stackSize64 = stackSize;
         leftTurn64 = leftTurn;
         emptyStackTurns64 = emptyStackTurns;
-        pathLength++;
+        pathLength = 65;
     }
     void setCurrentState66() {
         pos = path65;
@@ -3766,7 +3766,7 @@ class BugnavInstance {
         stackSize65 = stackSize;
         leftTurn65 = leftTurn;
         emptyStackTurns65 = emptyStackTurns;
-        pathLength++;
+        pathLength = 66;
     }
     void setCurrentState67() {
         pos = path66;
@@ -3792,7 +3792,7 @@ class BugnavInstance {
         stackSize66 = stackSize;
         leftTurn66 = leftTurn;
         emptyStackTurns66 = emptyStackTurns;
-        pathLength++;
+        pathLength = 67;
     }
     void setCurrentState68() {
         pos = path67;
@@ -3818,7 +3818,7 @@ class BugnavInstance {
         stackSize67 = stackSize;
         leftTurn67 = leftTurn;
         emptyStackTurns67 = emptyStackTurns;
-        pathLength++;
+        pathLength = 68;
     }
     void setCurrentState69() {
         pos = path68;
@@ -3844,7 +3844,7 @@ class BugnavInstance {
         stackSize68 = stackSize;
         leftTurn68 = leftTurn;
         emptyStackTurns68 = emptyStackTurns;
-        pathLength++;
+        pathLength = 69;
     }
     void setCurrentState70() {
         pos = path69;
@@ -3870,7 +3870,7 @@ class BugnavInstance {
         stackSize69 = stackSize;
         leftTurn69 = leftTurn;
         emptyStackTurns69 = emptyStackTurns;
-        pathLength++;
+        pathLength = 70;
     }
     void setCurrentState71() {
         pos = path70;
@@ -3896,7 +3896,7 @@ class BugnavInstance {
         stackSize70 = stackSize;
         leftTurn70 = leftTurn;
         emptyStackTurns70 = emptyStackTurns;
-        pathLength++;
+        pathLength = 71;
     }
     void setCurrentState72() {
         pos = path71;
@@ -3922,7 +3922,7 @@ class BugnavInstance {
         stackSize71 = stackSize;
         leftTurn71 = leftTurn;
         emptyStackTurns71 = emptyStackTurns;
-        pathLength++;
+        pathLength = 72;
     }
     void setCurrentState73() {
         pos = path72;
@@ -3948,7 +3948,7 @@ class BugnavInstance {
         stackSize72 = stackSize;
         leftTurn72 = leftTurn;
         emptyStackTurns72 = emptyStackTurns;
-        pathLength++;
+        pathLength = 73;
     }
     void setCurrentState74() {
         pos = path73;
@@ -3974,7 +3974,7 @@ class BugnavInstance {
         stackSize73 = stackSize;
         leftTurn73 = leftTurn;
         emptyStackTurns73 = emptyStackTurns;
-        pathLength++;
+        pathLength = 74;
     }
     void setCurrentState75() {
         pos = path74;
@@ -4000,7 +4000,7 @@ class BugnavInstance {
         stackSize74 = stackSize;
         leftTurn74 = leftTurn;
         emptyStackTurns74 = emptyStackTurns;
-        pathLength++;
+        pathLength = 75;
     }
     void setCurrentState76() {
         pos = path75;
@@ -4026,7 +4026,7 @@ class BugnavInstance {
         stackSize75 = stackSize;
         leftTurn75 = leftTurn;
         emptyStackTurns75 = emptyStackTurns;
-        pathLength++;
+        pathLength = 76;
     }
     void setCurrentState77() {
         pos = path76;
@@ -4052,7 +4052,7 @@ class BugnavInstance {
         stackSize76 = stackSize;
         leftTurn76 = leftTurn;
         emptyStackTurns76 = emptyStackTurns;
-        pathLength++;
+        pathLength = 77;
     }
     void setCurrentState78() {
         pos = path77;
@@ -4078,7 +4078,7 @@ class BugnavInstance {
         stackSize77 = stackSize;
         leftTurn77 = leftTurn;
         emptyStackTurns77 = emptyStackTurns;
-        pathLength++;
+        pathLength = 78;
     }
     void setCurrentState79() {
         pos = path78;
@@ -4104,7 +4104,7 @@ class BugnavInstance {
         stackSize78 = stackSize;
         leftTurn78 = leftTurn;
         emptyStackTurns78 = emptyStackTurns;
-        pathLength++;
+        pathLength = 79;
     }
     void setCurrentState80() {
         pos = path79;
@@ -4130,7 +4130,7 @@ class BugnavInstance {
         stackSize79 = stackSize;
         leftTurn79 = leftTurn;
         emptyStackTurns79 = emptyStackTurns;
-        pathLength++;
+        pathLength = 80;
     }
     void setCurrentState81() {
         pos = path80;
@@ -4156,7 +4156,7 @@ class BugnavInstance {
         stackSize80 = stackSize;
         leftTurn80 = leftTurn;
         emptyStackTurns80 = emptyStackTurns;
-        pathLength++;
+        pathLength = 81;
     }
     void setCurrentState82() {
         pos = path81;
@@ -4182,7 +4182,7 @@ class BugnavInstance {
         stackSize81 = stackSize;
         leftTurn81 = leftTurn;
         emptyStackTurns81 = emptyStackTurns;
-        pathLength++;
+        pathLength = 82;
     }
     void setCurrentState83() {
         pos = path82;
@@ -4208,7 +4208,7 @@ class BugnavInstance {
         stackSize82 = stackSize;
         leftTurn82 = leftTurn;
         emptyStackTurns82 = emptyStackTurns;
-        pathLength++;
+        pathLength = 83;
     }
     void setCurrentState84() {
         pos = path83;
@@ -4234,7 +4234,7 @@ class BugnavInstance {
         stackSize83 = stackSize;
         leftTurn83 = leftTurn;
         emptyStackTurns83 = emptyStackTurns;
-        pathLength++;
+        pathLength = 84;
     }
     void setCurrentState85() {
         pos = path84;
@@ -4260,7 +4260,7 @@ class BugnavInstance {
         stackSize84 = stackSize;
         leftTurn84 = leftTurn;
         emptyStackTurns84 = emptyStackTurns;
-        pathLength++;
+        pathLength = 85;
     }
     void setCurrentState86() {
         pos = path85;
@@ -4286,7 +4286,7 @@ class BugnavInstance {
         stackSize85 = stackSize;
         leftTurn85 = leftTurn;
         emptyStackTurns85 = emptyStackTurns;
-        pathLength++;
+        pathLength = 86;
     }
     void setCurrentState87() {
         pos = path86;
@@ -4312,7 +4312,7 @@ class BugnavInstance {
         stackSize86 = stackSize;
         leftTurn86 = leftTurn;
         emptyStackTurns86 = emptyStackTurns;
-        pathLength++;
+        pathLength = 87;
     }
     void setCurrentState88() {
         pos = path87;
@@ -4338,7 +4338,7 @@ class BugnavInstance {
         stackSize87 = stackSize;
         leftTurn87 = leftTurn;
         emptyStackTurns87 = emptyStackTurns;
-        pathLength++;
+        pathLength = 88;
     }
     void setCurrentState89() {
         pos = path88;
@@ -4364,7 +4364,7 @@ class BugnavInstance {
         stackSize88 = stackSize;
         leftTurn88 = leftTurn;
         emptyStackTurns88 = emptyStackTurns;
-        pathLength++;
+        pathLength = 89;
     }
     void setCurrentState90() {
         pos = path89;
@@ -4390,7 +4390,7 @@ class BugnavInstance {
         stackSize89 = stackSize;
         leftTurn89 = leftTurn;
         emptyStackTurns89 = emptyStackTurns;
-        pathLength++;
+        pathLength = 90;
     }
     void setCurrentState91() {
         pos = path90;
@@ -4416,7 +4416,7 @@ class BugnavInstance {
         stackSize90 = stackSize;
         leftTurn90 = leftTurn;
         emptyStackTurns90 = emptyStackTurns;
-        pathLength++;
+        pathLength = 91;
     }
     void setCurrentState92() {
         pos = path91;
@@ -4442,7 +4442,7 @@ class BugnavInstance {
         stackSize91 = stackSize;
         leftTurn91 = leftTurn;
         emptyStackTurns91 = emptyStackTurns;
-        pathLength++;
+        pathLength = 92;
     }
     void setCurrentState93() {
         pos = path92;
@@ -4468,7 +4468,7 @@ class BugnavInstance {
         stackSize92 = stackSize;
         leftTurn92 = leftTurn;
         emptyStackTurns92 = emptyStackTurns;
-        pathLength++;
+        pathLength = 93;
     }
     void setCurrentState94() {
         pos = path93;
@@ -4494,7 +4494,7 @@ class BugnavInstance {
         stackSize93 = stackSize;
         leftTurn93 = leftTurn;
         emptyStackTurns93 = emptyStackTurns;
-        pathLength++;
+        pathLength = 94;
     }
     void setCurrentState95() {
         pos = path94;
@@ -4520,7 +4520,7 @@ class BugnavInstance {
         stackSize94 = stackSize;
         leftTurn94 = leftTurn;
         emptyStackTurns94 = emptyStackTurns;
-        pathLength++;
+        pathLength = 95;
     }
     void setCurrentState96() {
         pos = path95;
@@ -4546,7 +4546,7 @@ class BugnavInstance {
         stackSize95 = stackSize;
         leftTurn95 = leftTurn;
         emptyStackTurns95 = emptyStackTurns;
-        pathLength++;
+        pathLength = 96;
     }
     void setCurrentState97() {
         pos = path96;
@@ -4572,7 +4572,7 @@ class BugnavInstance {
         stackSize96 = stackSize;
         leftTurn96 = leftTurn;
         emptyStackTurns96 = emptyStackTurns;
-        pathLength++;
+        pathLength = 97;
     }
     void setCurrentState98() {
         pos = path97;
@@ -4598,7 +4598,7 @@ class BugnavInstance {
         stackSize97 = stackSize;
         leftTurn97 = leftTurn;
         emptyStackTurns97 = emptyStackTurns;
-        pathLength++;
+        pathLength = 98;
     }
     void setCurrentState99() {
         pos = path98;
@@ -4624,7 +4624,7 @@ class BugnavInstance {
         stackSize98 = stackSize;
         leftTurn98 = leftTurn;
         emptyStackTurns98 = emptyStackTurns;
-        pathLength++;
+        pathLength = 99;
     }
     void setCurrentState100() {
         pos = path99;
@@ -4650,7 +4650,7 @@ class BugnavInstance {
         stackSize99 = stackSize;
         leftTurn99 = leftTurn;
         emptyStackTurns99 = emptyStackTurns;
-        pathLength++;
+        pathLength = 100;
     }
     void setCurrentState101() {
         pos = path100;
@@ -4676,7 +4676,7 @@ class BugnavInstance {
         stackSize100 = stackSize;
         leftTurn100 = leftTurn;
         emptyStackTurns100 = emptyStackTurns;
-        pathLength++;
+        pathLength = 101;
     }
     void setCurrentState102() {
         pos = path101;
@@ -4702,7 +4702,7 @@ class BugnavInstance {
         stackSize101 = stackSize;
         leftTurn101 = leftTurn;
         emptyStackTurns101 = emptyStackTurns;
-        pathLength++;
+        pathLength = 102;
     }
     void setCurrentState103() {
         pos = path102;
@@ -4728,7 +4728,7 @@ class BugnavInstance {
         stackSize102 = stackSize;
         leftTurn102 = leftTurn;
         emptyStackTurns102 = emptyStackTurns;
-        pathLength++;
+        pathLength = 103;
     }
     void setCurrentState104() {
         pos = path103;
@@ -4754,7 +4754,7 @@ class BugnavInstance {
         stackSize103 = stackSize;
         leftTurn103 = leftTurn;
         emptyStackTurns103 = emptyStackTurns;
-        pathLength++;
+        pathLength = 104;
     }
     void setCurrentState105() {
         pos = path104;
@@ -4780,7 +4780,7 @@ class BugnavInstance {
         stackSize104 = stackSize;
         leftTurn104 = leftTurn;
         emptyStackTurns104 = emptyStackTurns;
-        pathLength++;
+        pathLength = 105;
     }
     void setCurrentState106() {
         pos = path105;
@@ -4806,7 +4806,7 @@ class BugnavInstance {
         stackSize105 = stackSize;
         leftTurn105 = leftTurn;
         emptyStackTurns105 = emptyStackTurns;
-        pathLength++;
+        pathLength = 106;
     }
     void setCurrentState107() {
         pos = path106;
@@ -4832,7 +4832,7 @@ class BugnavInstance {
         stackSize106 = stackSize;
         leftTurn106 = leftTurn;
         emptyStackTurns106 = emptyStackTurns;
-        pathLength++;
+        pathLength = 107;
     }
     void setCurrentState108() {
         pos = path107;
@@ -4858,7 +4858,7 @@ class BugnavInstance {
         stackSize107 = stackSize;
         leftTurn107 = leftTurn;
         emptyStackTurns107 = emptyStackTurns;
-        pathLength++;
+        pathLength = 108;
     }
     void setCurrentState109() {
         pos = path108;
@@ -4884,7 +4884,7 @@ class BugnavInstance {
         stackSize108 = stackSize;
         leftTurn108 = leftTurn;
         emptyStackTurns108 = emptyStackTurns;
-        pathLength++;
+        pathLength = 109;
     }
     void setCurrentState110() {
         pos = path109;
@@ -4910,7 +4910,7 @@ class BugnavInstance {
         stackSize109 = stackSize;
         leftTurn109 = leftTurn;
         emptyStackTurns109 = emptyStackTurns;
-        pathLength++;
+        pathLength = 110;
     }
     void setCurrentState111() {
         pos = path110;
@@ -4936,7 +4936,7 @@ class BugnavInstance {
         stackSize110 = stackSize;
         leftTurn110 = leftTurn;
         emptyStackTurns110 = emptyStackTurns;
-        pathLength++;
+        pathLength = 111;
     }
     void setCurrentState112() {
         pos = path111;
@@ -4962,7 +4962,7 @@ class BugnavInstance {
         stackSize111 = stackSize;
         leftTurn111 = leftTurn;
         emptyStackTurns111 = emptyStackTurns;
-        pathLength++;
+        pathLength = 112;
     }
     void setCurrentState113() {
         pos = path112;
@@ -4988,7 +4988,7 @@ class BugnavInstance {
         stackSize112 = stackSize;
         leftTurn112 = leftTurn;
         emptyStackTurns112 = emptyStackTurns;
-        pathLength++;
+        pathLength = 113;
     }
     void setCurrentState114() {
         pos = path113;
@@ -5014,7 +5014,7 @@ class BugnavInstance {
         stackSize113 = stackSize;
         leftTurn113 = leftTurn;
         emptyStackTurns113 = emptyStackTurns;
-        pathLength++;
+        pathLength = 114;
     }
     void setCurrentState115() {
         pos = path114;
@@ -5040,7 +5040,7 @@ class BugnavInstance {
         stackSize114 = stackSize;
         leftTurn114 = leftTurn;
         emptyStackTurns114 = emptyStackTurns;
-        pathLength++;
+        pathLength = 115;
     }
     void setCurrentState116() {
         pos = path115;
@@ -5066,7 +5066,7 @@ class BugnavInstance {
         stackSize115 = stackSize;
         leftTurn115 = leftTurn;
         emptyStackTurns115 = emptyStackTurns;
-        pathLength++;
+        pathLength = 116;
     }
     void setCurrentState117() {
         pos = path116;
@@ -5092,7 +5092,7 @@ class BugnavInstance {
         stackSize116 = stackSize;
         leftTurn116 = leftTurn;
         emptyStackTurns116 = emptyStackTurns;
-        pathLength++;
+        pathLength = 117;
     }
     void setCurrentState118() {
         pos = path117;
@@ -5118,7 +5118,7 @@ class BugnavInstance {
         stackSize117 = stackSize;
         leftTurn117 = leftTurn;
         emptyStackTurns117 = emptyStackTurns;
-        pathLength++;
+        pathLength = 118;
     }
     void setCurrentState119() {
         pos = path118;
@@ -5144,7 +5144,7 @@ class BugnavInstance {
         stackSize118 = stackSize;
         leftTurn118 = leftTurn;
         emptyStackTurns118 = emptyStackTurns;
-        pathLength++;
+        pathLength = 119;
     }
     void setCurrentState120() {
         pos = path119;
@@ -5170,7 +5170,7 @@ class BugnavInstance {
         stackSize119 = stackSize;
         leftTurn119 = leftTurn;
         emptyStackTurns119 = emptyStackTurns;
-        pathLength++;
+        pathLength = 120;
     }
     void setCurrentState121() {
         pos = path120;
@@ -5196,7 +5196,7 @@ class BugnavInstance {
         stackSize120 = stackSize;
         leftTurn120 = leftTurn;
         emptyStackTurns120 = emptyStackTurns;
-        pathLength++;
+        pathLength = 121;
     }
     void setCurrentState122() {
         pos = path121;
@@ -5222,7 +5222,7 @@ class BugnavInstance {
         stackSize121 = stackSize;
         leftTurn121 = leftTurn;
         emptyStackTurns121 = emptyStackTurns;
-        pathLength++;
+        pathLength = 122;
     }
     void setCurrentState123() {
         pos = path122;
@@ -5248,7 +5248,7 @@ class BugnavInstance {
         stackSize122 = stackSize;
         leftTurn122 = leftTurn;
         emptyStackTurns122 = emptyStackTurns;
-        pathLength++;
+        pathLength = 123;
     }
     void setCurrentState124() {
         pos = path123;
@@ -5274,7 +5274,7 @@ class BugnavInstance {
         stackSize123 = stackSize;
         leftTurn123 = leftTurn;
         emptyStackTurns123 = emptyStackTurns;
-        pathLength++;
+        pathLength = 124;
     }
     void setCurrentState125() {
         pos = path124;
@@ -5300,7 +5300,7 @@ class BugnavInstance {
         stackSize124 = stackSize;
         leftTurn124 = leftTurn;
         emptyStackTurns124 = emptyStackTurns;
-        pathLength++;
+        pathLength = 125;
     }
     void setCurrentState126() {
         pos = path125;
@@ -5326,7 +5326,7 @@ class BugnavInstance {
         stackSize125 = stackSize;
         leftTurn125 = leftTurn;
         emptyStackTurns125 = emptyStackTurns;
-        pathLength++;
+        pathLength = 126;
     }
     void setCurrentState127() {
         pos = path126;
@@ -5352,7 +5352,7 @@ class BugnavInstance {
         stackSize126 = stackSize;
         leftTurn126 = leftTurn;
         emptyStackTurns126 = emptyStackTurns;
-        pathLength++;
+        pathLength = 127;
     }
     void setCurrentState128() {
         pos = path127;
@@ -5378,7 +5378,7 @@ class BugnavInstance {
         stackSize127 = stackSize;
         leftTurn127 = leftTurn;
         emptyStackTurns127 = emptyStackTurns;
-        pathLength++;
+        pathLength = 128;
     }
     void setCurrentState129() {
         pos = path128;
@@ -5404,7 +5404,7 @@ class BugnavInstance {
         stackSize128 = stackSize;
         leftTurn128 = leftTurn;
         emptyStackTurns128 = emptyStackTurns;
-        pathLength++;
+        pathLength = 129;
     }
     void setCurrentState130() {
         pos = path129;
@@ -5430,7 +5430,7 @@ class BugnavInstance {
         stackSize129 = stackSize;
         leftTurn129 = leftTurn;
         emptyStackTurns129 = emptyStackTurns;
-        pathLength++;
+        pathLength = 130;
     }
     void setCurrentState131() {
         pos = path130;
@@ -5456,7 +5456,7 @@ class BugnavInstance {
         stackSize130 = stackSize;
         leftTurn130 = leftTurn;
         emptyStackTurns130 = emptyStackTurns;
-        pathLength++;
+        pathLength = 131;
     }
     void setCurrentState132() {
         pos = path131;
@@ -5482,7 +5482,7 @@ class BugnavInstance {
         stackSize131 = stackSize;
         leftTurn131 = leftTurn;
         emptyStackTurns131 = emptyStackTurns;
-        pathLength++;
+        pathLength = 132;
     }
     void setCurrentState133() {
         pos = path132;
@@ -5508,7 +5508,7 @@ class BugnavInstance {
         stackSize132 = stackSize;
         leftTurn132 = leftTurn;
         emptyStackTurns132 = emptyStackTurns;
-        pathLength++;
+        pathLength = 133;
     }
     void setCurrentState134() {
         pos = path133;
@@ -5534,7 +5534,7 @@ class BugnavInstance {
         stackSize133 = stackSize;
         leftTurn133 = leftTurn;
         emptyStackTurns133 = emptyStackTurns;
-        pathLength++;
+        pathLength = 134;
     }
     void setCurrentState135() {
         pos = path134;
@@ -5560,7 +5560,7 @@ class BugnavInstance {
         stackSize134 = stackSize;
         leftTurn134 = leftTurn;
         emptyStackTurns134 = emptyStackTurns;
-        pathLength++;
+        pathLength = 135;
     }
     void setCurrentState136() {
         pos = path135;
@@ -5586,7 +5586,7 @@ class BugnavInstance {
         stackSize135 = stackSize;
         leftTurn135 = leftTurn;
         emptyStackTurns135 = emptyStackTurns;
-        pathLength++;
+        pathLength = 136;
     }
     void setCurrentState137() {
         pos = path136;
@@ -5612,7 +5612,7 @@ class BugnavInstance {
         stackSize136 = stackSize;
         leftTurn136 = leftTurn;
         emptyStackTurns136 = emptyStackTurns;
-        pathLength++;
+        pathLength = 137;
     }
     void setCurrentState138() {
         pos = path137;
@@ -5638,7 +5638,7 @@ class BugnavInstance {
         stackSize137 = stackSize;
         leftTurn137 = leftTurn;
         emptyStackTurns137 = emptyStackTurns;
-        pathLength++;
+        pathLength = 138;
     }
     void setCurrentState139() {
         pos = path138;
@@ -5664,7 +5664,7 @@ class BugnavInstance {
         stackSize138 = stackSize;
         leftTurn138 = leftTurn;
         emptyStackTurns138 = emptyStackTurns;
-        pathLength++;
+        pathLength = 139;
     }
     void setCurrentState140() {
         pos = path139;
@@ -5690,7 +5690,7 @@ class BugnavInstance {
         stackSize139 = stackSize;
         leftTurn139 = leftTurn;
         emptyStackTurns139 = emptyStackTurns;
-        pathLength++;
+        pathLength = 140;
     }
     void setCurrentState141() {
         pos = path140;
@@ -5716,7 +5716,7 @@ class BugnavInstance {
         stackSize140 = stackSize;
         leftTurn140 = leftTurn;
         emptyStackTurns140 = emptyStackTurns;
-        pathLength++;
+        pathLength = 141;
     }
     void setCurrentState142() {
         pos = path141;
@@ -5742,7 +5742,7 @@ class BugnavInstance {
         stackSize141 = stackSize;
         leftTurn141 = leftTurn;
         emptyStackTurns141 = emptyStackTurns;
-        pathLength++;
+        pathLength = 142;
     }
     void setCurrentState143() {
         pos = path142;
@@ -5768,7 +5768,7 @@ class BugnavInstance {
         stackSize142 = stackSize;
         leftTurn142 = leftTurn;
         emptyStackTurns142 = emptyStackTurns;
-        pathLength++;
+        pathLength = 143;
     }
     void setCurrentState144() {
         pos = path143;
@@ -5794,7 +5794,7 @@ class BugnavInstance {
         stackSize143 = stackSize;
         leftTurn143 = leftTurn;
         emptyStackTurns143 = emptyStackTurns;
-        pathLength++;
+        pathLength = 144;
     }
     void setCurrentState145() {
         pos = path144;
@@ -5820,7 +5820,7 @@ class BugnavInstance {
         stackSize144 = stackSize;
         leftTurn144 = leftTurn;
         emptyStackTurns144 = emptyStackTurns;
-        pathLength++;
+        pathLength = 145;
     }
     void setCurrentState146() {
         pos = path145;
@@ -5846,7 +5846,7 @@ class BugnavInstance {
         stackSize145 = stackSize;
         leftTurn145 = leftTurn;
         emptyStackTurns145 = emptyStackTurns;
-        pathLength++;
+        pathLength = 146;
     }
     void setCurrentState147() {
         pos = path146;
@@ -5872,7 +5872,7 @@ class BugnavInstance {
         stackSize146 = stackSize;
         leftTurn146 = leftTurn;
         emptyStackTurns146 = emptyStackTurns;
-        pathLength++;
+        pathLength = 147;
     }
     void setCurrentState148() {
         pos = path147;
@@ -5898,7 +5898,7 @@ class BugnavInstance {
         stackSize147 = stackSize;
         leftTurn147 = leftTurn;
         emptyStackTurns147 = emptyStackTurns;
-        pathLength++;
+        pathLength = 148;
     }
     void setCurrentState149() {
         pos = path148;
@@ -5924,7 +5924,7 @@ class BugnavInstance {
         stackSize148 = stackSize;
         leftTurn148 = leftTurn;
         emptyStackTurns148 = emptyStackTurns;
-        pathLength++;
+        pathLength = 149;
     }
     void setCurrentState150() {
         pos = path149;
@@ -5950,7 +5950,7 @@ class BugnavInstance {
         stackSize149 = stackSize;
         leftTurn149 = leftTurn;
         emptyStackTurns149 = emptyStackTurns;
-        pathLength++;
+        pathLength = 150;
     }
     void setCurrentState151() {
         pos = path150;
@@ -5976,7 +5976,7 @@ class BugnavInstance {
         stackSize150 = stackSize;
         leftTurn150 = leftTurn;
         emptyStackTurns150 = emptyStackTurns;
-        pathLength++;
+        pathLength = 151;
     }
     void setCurrentState152() {
         pos = path151;
@@ -6002,7 +6002,7 @@ class BugnavInstance {
         stackSize151 = stackSize;
         leftTurn151 = leftTurn;
         emptyStackTurns151 = emptyStackTurns;
-        pathLength++;
+        pathLength = 152;
     }
     void setCurrentState153() {
         pos = path152;
@@ -6028,7 +6028,7 @@ class BugnavInstance {
         stackSize152 = stackSize;
         leftTurn152 = leftTurn;
         emptyStackTurns152 = emptyStackTurns;
-        pathLength++;
+        pathLength = 153;
     }
     void setCurrentState154() {
         pos = path153;
@@ -6054,7 +6054,7 @@ class BugnavInstance {
         stackSize153 = stackSize;
         leftTurn153 = leftTurn;
         emptyStackTurns153 = emptyStackTurns;
-        pathLength++;
+        pathLength = 154;
     }
     void setCurrentState155() {
         pos = path154;
@@ -6080,7 +6080,7 @@ class BugnavInstance {
         stackSize154 = stackSize;
         leftTurn154 = leftTurn;
         emptyStackTurns154 = emptyStackTurns;
-        pathLength++;
+        pathLength = 155;
     }
     void setCurrentState156() {
         pos = path155;
@@ -6106,7 +6106,7 @@ class BugnavInstance {
         stackSize155 = stackSize;
         leftTurn155 = leftTurn;
         emptyStackTurns155 = emptyStackTurns;
-        pathLength++;
+        pathLength = 156;
     }
     void setCurrentState157() {
         pos = path156;
@@ -6132,7 +6132,7 @@ class BugnavInstance {
         stackSize156 = stackSize;
         leftTurn156 = leftTurn;
         emptyStackTurns156 = emptyStackTurns;
-        pathLength++;
+        pathLength = 157;
     }
     void setCurrentState158() {
         pos = path157;
@@ -6158,7 +6158,7 @@ class BugnavInstance {
         stackSize157 = stackSize;
         leftTurn157 = leftTurn;
         emptyStackTurns157 = emptyStackTurns;
-        pathLength++;
+        pathLength = 158;
     }
     void setCurrentState159() {
         pos = path158;
@@ -6184,7 +6184,7 @@ class BugnavInstance {
         stackSize158 = stackSize;
         leftTurn158 = leftTurn;
         emptyStackTurns158 = emptyStackTurns;
-        pathLength++;
+        pathLength = 159;
     }
     void setCurrentState160() {
         pos = path159;
@@ -6210,7 +6210,7 @@ class BugnavInstance {
         stackSize159 = stackSize;
         leftTurn159 = leftTurn;
         emptyStackTurns159 = emptyStackTurns;
-        pathLength++;
+        pathLength = 160;
     }
     void setCurrentState161() {
         pos = path160;
@@ -6236,7 +6236,7 @@ class BugnavInstance {
         stackSize160 = stackSize;
         leftTurn160 = leftTurn;
         emptyStackTurns160 = emptyStackTurns;
-        pathLength++;
+        pathLength = 161;
     }
     void setCurrentState162() {
         pos = path161;
@@ -6262,7 +6262,7 @@ class BugnavInstance {
         stackSize161 = stackSize;
         leftTurn161 = leftTurn;
         emptyStackTurns161 = emptyStackTurns;
-        pathLength++;
+        pathLength = 162;
     }
     void setCurrentState163() {
         pos = path162;
@@ -6288,7 +6288,7 @@ class BugnavInstance {
         stackSize162 = stackSize;
         leftTurn162 = leftTurn;
         emptyStackTurns162 = emptyStackTurns;
-        pathLength++;
+        pathLength = 163;
     }
     void setCurrentState164() {
         pos = path163;
@@ -6314,7 +6314,7 @@ class BugnavInstance {
         stackSize163 = stackSize;
         leftTurn163 = leftTurn;
         emptyStackTurns163 = emptyStackTurns;
-        pathLength++;
+        pathLength = 164;
     }
     void setCurrentState165() {
         pos = path164;
@@ -6340,7 +6340,7 @@ class BugnavInstance {
         stackSize164 = stackSize;
         leftTurn164 = leftTurn;
         emptyStackTurns164 = emptyStackTurns;
-        pathLength++;
+        pathLength = 165;
     }
     void setCurrentState166() {
         pos = path165;
@@ -6366,7 +6366,7 @@ class BugnavInstance {
         stackSize165 = stackSize;
         leftTurn165 = leftTurn;
         emptyStackTurns165 = emptyStackTurns;
-        pathLength++;
+        pathLength = 166;
     }
     void setCurrentState167() {
         pos = path166;
@@ -6392,7 +6392,7 @@ class BugnavInstance {
         stackSize166 = stackSize;
         leftTurn166 = leftTurn;
         emptyStackTurns166 = emptyStackTurns;
-        pathLength++;
+        pathLength = 167;
     }
     void setCurrentState168() {
         pos = path167;
@@ -6418,7 +6418,7 @@ class BugnavInstance {
         stackSize167 = stackSize;
         leftTurn167 = leftTurn;
         emptyStackTurns167 = emptyStackTurns;
-        pathLength++;
+        pathLength = 168;
     }
     void setCurrentState169() {
         pos = path168;
@@ -6444,7 +6444,7 @@ class BugnavInstance {
         stackSize168 = stackSize;
         leftTurn168 = leftTurn;
         emptyStackTurns168 = emptyStackTurns;
-        pathLength++;
+        pathLength = 169;
     }
     void setCurrentState170() {
         pos = path169;
@@ -6470,7 +6470,7 @@ class BugnavInstance {
         stackSize169 = stackSize;
         leftTurn169 = leftTurn;
         emptyStackTurns169 = emptyStackTurns;
-        pathLength++;
+        pathLength = 170;
     }
     void setCurrentState171() {
         pos = path170;
@@ -6496,7 +6496,7 @@ class BugnavInstance {
         stackSize170 = stackSize;
         leftTurn170 = leftTurn;
         emptyStackTurns170 = emptyStackTurns;
-        pathLength++;
+        pathLength = 171;
     }
     void setCurrentState172() {
         pos = path171;
@@ -6522,7 +6522,7 @@ class BugnavInstance {
         stackSize171 = stackSize;
         leftTurn171 = leftTurn;
         emptyStackTurns171 = emptyStackTurns;
-        pathLength++;
+        pathLength = 172;
     }
     void setCurrentState173() {
         pos = path172;
@@ -6548,7 +6548,7 @@ class BugnavInstance {
         stackSize172 = stackSize;
         leftTurn172 = leftTurn;
         emptyStackTurns172 = emptyStackTurns;
-        pathLength++;
+        pathLength = 173;
     }
     void setCurrentState174() {
         pos = path173;
@@ -6574,7 +6574,7 @@ class BugnavInstance {
         stackSize173 = stackSize;
         leftTurn173 = leftTurn;
         emptyStackTurns173 = emptyStackTurns;
-        pathLength++;
+        pathLength = 174;
     }
     void setCurrentState175() {
         pos = path174;
@@ -6600,7 +6600,7 @@ class BugnavInstance {
         stackSize174 = stackSize;
         leftTurn174 = leftTurn;
         emptyStackTurns174 = emptyStackTurns;
-        pathLength++;
+        pathLength = 175;
     }
     void setCurrentState176() {
         pos = path175;
@@ -6626,7 +6626,7 @@ class BugnavInstance {
         stackSize175 = stackSize;
         leftTurn175 = leftTurn;
         emptyStackTurns175 = emptyStackTurns;
-        pathLength++;
+        pathLength = 176;
     }
     void setCurrentState177() {
         pos = path176;
@@ -6652,7 +6652,7 @@ class BugnavInstance {
         stackSize176 = stackSize;
         leftTurn176 = leftTurn;
         emptyStackTurns176 = emptyStackTurns;
-        pathLength++;
+        pathLength = 177;
     }
     void setCurrentState178() {
         pos = path177;
@@ -6678,7 +6678,7 @@ class BugnavInstance {
         stackSize177 = stackSize;
         leftTurn177 = leftTurn;
         emptyStackTurns177 = emptyStackTurns;
-        pathLength++;
+        pathLength = 178;
     }
     void setCurrentState179() {
         pos = path178;
@@ -6704,7 +6704,7 @@ class BugnavInstance {
         stackSize178 = stackSize;
         leftTurn178 = leftTurn;
         emptyStackTurns178 = emptyStackTurns;
-        pathLength++;
+        pathLength = 179;
     }
     void setCurrentState180() {
         pos = path179;
@@ -6730,7 +6730,7 @@ class BugnavInstance {
         stackSize179 = stackSize;
         leftTurn179 = leftTurn;
         emptyStackTurns179 = emptyStackTurns;
-        pathLength++;
+        pathLength = 180;
     }
     void setCurrentState181() {
         pos = path180;
@@ -6756,7 +6756,7 @@ class BugnavInstance {
         stackSize180 = stackSize;
         leftTurn180 = leftTurn;
         emptyStackTurns180 = emptyStackTurns;
-        pathLength++;
+        pathLength = 181;
     }
     void setCurrentState182() {
         pos = path181;
@@ -6782,7 +6782,7 @@ class BugnavInstance {
         stackSize181 = stackSize;
         leftTurn181 = leftTurn;
         emptyStackTurns181 = emptyStackTurns;
-        pathLength++;
+        pathLength = 182;
     }
     void setCurrentState183() {
         pos = path182;
@@ -6808,7 +6808,7 @@ class BugnavInstance {
         stackSize182 = stackSize;
         leftTurn182 = leftTurn;
         emptyStackTurns182 = emptyStackTurns;
-        pathLength++;
+        pathLength = 183;
     }
     void setCurrentState184() {
         pos = path183;
@@ -6834,7 +6834,7 @@ class BugnavInstance {
         stackSize183 = stackSize;
         leftTurn183 = leftTurn;
         emptyStackTurns183 = emptyStackTurns;
-        pathLength++;
+        pathLength = 184;
     }
     void setCurrentState185() {
         pos = path184;
@@ -6860,7 +6860,7 @@ class BugnavInstance {
         stackSize184 = stackSize;
         leftTurn184 = leftTurn;
         emptyStackTurns184 = emptyStackTurns;
-        pathLength++;
+        pathLength = 185;
     }
     void setCurrentState186() {
         pos = path185;
@@ -6886,7 +6886,7 @@ class BugnavInstance {
         stackSize185 = stackSize;
         leftTurn185 = leftTurn;
         emptyStackTurns185 = emptyStackTurns;
-        pathLength++;
+        pathLength = 186;
     }
     void setCurrentState187() {
         pos = path186;
@@ -6912,7 +6912,7 @@ class BugnavInstance {
         stackSize186 = stackSize;
         leftTurn186 = leftTurn;
         emptyStackTurns186 = emptyStackTurns;
-        pathLength++;
+        pathLength = 187;
     }
     void setCurrentState188() {
         pos = path187;
@@ -6938,7 +6938,7 @@ class BugnavInstance {
         stackSize187 = stackSize;
         leftTurn187 = leftTurn;
         emptyStackTurns187 = emptyStackTurns;
-        pathLength++;
+        pathLength = 188;
     }
     void setCurrentState189() {
         pos = path188;
@@ -6964,7 +6964,7 @@ class BugnavInstance {
         stackSize188 = stackSize;
         leftTurn188 = leftTurn;
         emptyStackTurns188 = emptyStackTurns;
-        pathLength++;
+        pathLength = 189;
     }
     void setCurrentState190() {
         pos = path189;
@@ -6990,7 +6990,7 @@ class BugnavInstance {
         stackSize189 = stackSize;
         leftTurn189 = leftTurn;
         emptyStackTurns189 = emptyStackTurns;
-        pathLength++;
+        pathLength = 190;
     }
     void setCurrentState191() {
         pos = path190;
@@ -7016,7 +7016,7 @@ class BugnavInstance {
         stackSize190 = stackSize;
         leftTurn190 = leftTurn;
         emptyStackTurns190 = emptyStackTurns;
-        pathLength++;
+        pathLength = 191;
     }
     void setCurrentState192() {
         pos = path191;
@@ -7042,7 +7042,7 @@ class BugnavInstance {
         stackSize191 = stackSize;
         leftTurn191 = leftTurn;
         emptyStackTurns191 = emptyStackTurns;
-        pathLength++;
+        pathLength = 192;
     }
     void setCurrentState193() {
         pos = path192;
@@ -7068,7 +7068,7 @@ class BugnavInstance {
         stackSize192 = stackSize;
         leftTurn192 = leftTurn;
         emptyStackTurns192 = emptyStackTurns;
-        pathLength++;
+        pathLength = 193;
     }
     void setCurrentState194() {
         pos = path193;
@@ -7094,7 +7094,7 @@ class BugnavInstance {
         stackSize193 = stackSize;
         leftTurn193 = leftTurn;
         emptyStackTurns193 = emptyStackTurns;
-        pathLength++;
+        pathLength = 194;
     }
     void setCurrentState195() {
         pos = path194;
@@ -7120,7 +7120,7 @@ class BugnavInstance {
         stackSize194 = stackSize;
         leftTurn194 = leftTurn;
         emptyStackTurns194 = emptyStackTurns;
-        pathLength++;
+        pathLength = 195;
     }
     void setCurrentState196() {
         pos = path195;
@@ -7146,7 +7146,7 @@ class BugnavInstance {
         stackSize195 = stackSize;
         leftTurn195 = leftTurn;
         emptyStackTurns195 = emptyStackTurns;
-        pathLength++;
+        pathLength = 196;
     }
     void setCurrentState197() {
         pos = path196;
@@ -7172,7 +7172,7 @@ class BugnavInstance {
         stackSize196 = stackSize;
         leftTurn196 = leftTurn;
         emptyStackTurns196 = emptyStackTurns;
-        pathLength++;
+        pathLength = 197;
     }
     void setCurrentState198() {
         pos = path197;
@@ -7198,7 +7198,7 @@ class BugnavInstance {
         stackSize197 = stackSize;
         leftTurn197 = leftTurn;
         emptyStackTurns197 = emptyStackTurns;
-        pathLength++;
+        pathLength = 198;
     }
     void setCurrentState199() {
         pos = path198;
@@ -7224,7 +7224,7 @@ class BugnavInstance {
         stackSize198 = stackSize;
         leftTurn198 = leftTurn;
         emptyStackTurns198 = emptyStackTurns;
-        pathLength++;
+        pathLength = 199;
     }
     void setCurrentState200() {
         pos = path199;
@@ -7250,7 +7250,7 @@ class BugnavInstance {
         stackSize199 = stackSize;
         leftTurn199 = leftTurn;
         emptyStackTurns199 = emptyStackTurns;
-        pathLength++;
+        pathLength = 200;
     }
     void setCurrentState201() {
         pos = path200;
@@ -7276,7 +7276,7 @@ class BugnavInstance {
         stackSize200 = stackSize;
         leftTurn200 = leftTurn;
         emptyStackTurns200 = emptyStackTurns;
-        pathLength++;
+        pathLength = 201;
     }
     void setCurrentState202() {
         pos = path201;
@@ -7302,7 +7302,7 @@ class BugnavInstance {
         stackSize201 = stackSize;
         leftTurn201 = leftTurn;
         emptyStackTurns201 = emptyStackTurns;
-        pathLength++;
+        pathLength = 202;
     }
     void setCurrentState203() {
         pos = path202;
@@ -7328,7 +7328,7 @@ class BugnavInstance {
         stackSize202 = stackSize;
         leftTurn202 = leftTurn;
         emptyStackTurns202 = emptyStackTurns;
-        pathLength++;
+        pathLength = 203;
     }
     void setCurrentState204() {
         pos = path203;
@@ -7354,7 +7354,7 @@ class BugnavInstance {
         stackSize203 = stackSize;
         leftTurn203 = leftTurn;
         emptyStackTurns203 = emptyStackTurns;
-        pathLength++;
+        pathLength = 204;
     }
     void setCurrentState205() {
         pos = path204;
@@ -7380,7 +7380,7 @@ class BugnavInstance {
         stackSize204 = stackSize;
         leftTurn204 = leftTurn;
         emptyStackTurns204 = emptyStackTurns;
-        pathLength++;
+        pathLength = 205;
     }
     void setCurrentState206() {
         pos = path205;
@@ -7406,7 +7406,7 @@ class BugnavInstance {
         stackSize205 = stackSize;
         leftTurn205 = leftTurn;
         emptyStackTurns205 = emptyStackTurns;
-        pathLength++;
+        pathLength = 206;
     }
     void setCurrentState207() {
         pos = path206;
@@ -7432,7 +7432,7 @@ class BugnavInstance {
         stackSize206 = stackSize;
         leftTurn206 = leftTurn;
         emptyStackTurns206 = emptyStackTurns;
-        pathLength++;
+        pathLength = 207;
     }
     void setCurrentState208() {
         pos = path207;
@@ -7458,7 +7458,7 @@ class BugnavInstance {
         stackSize207 = stackSize;
         leftTurn207 = leftTurn;
         emptyStackTurns207 = emptyStackTurns;
-        pathLength++;
+        pathLength = 208;
     }
     void setCurrentState209() {
         pos = path208;
@@ -7484,7 +7484,7 @@ class BugnavInstance {
         stackSize208 = stackSize;
         leftTurn208 = leftTurn;
         emptyStackTurns208 = emptyStackTurns;
-        pathLength++;
+        pathLength = 209;
     }
     void setCurrentState210() {
         pos = path209;
@@ -7510,7 +7510,7 @@ class BugnavInstance {
         stackSize209 = stackSize;
         leftTurn209 = leftTurn;
         emptyStackTurns209 = emptyStackTurns;
-        pathLength++;
+        pathLength = 210;
     }
     void setCurrentState211() {
         pos = path210;
@@ -7536,7 +7536,7 @@ class BugnavInstance {
         stackSize210 = stackSize;
         leftTurn210 = leftTurn;
         emptyStackTurns210 = emptyStackTurns;
-        pathLength++;
+        pathLength = 211;
     }
     void setCurrentState212() {
         pos = path211;
@@ -7562,7 +7562,7 @@ class BugnavInstance {
         stackSize211 = stackSize;
         leftTurn211 = leftTurn;
         emptyStackTurns211 = emptyStackTurns;
-        pathLength++;
+        pathLength = 212;
     }
     void setCurrentState213() {
         pos = path212;
@@ -7588,7 +7588,7 @@ class BugnavInstance {
         stackSize212 = stackSize;
         leftTurn212 = leftTurn;
         emptyStackTurns212 = emptyStackTurns;
-        pathLength++;
+        pathLength = 213;
     }
     void setCurrentState214() {
         pos = path213;
@@ -7614,7 +7614,7 @@ class BugnavInstance {
         stackSize213 = stackSize;
         leftTurn213 = leftTurn;
         emptyStackTurns213 = emptyStackTurns;
-        pathLength++;
+        pathLength = 214;
     }
     void setCurrentState215() {
         pos = path214;
@@ -7640,7 +7640,7 @@ class BugnavInstance {
         stackSize214 = stackSize;
         leftTurn214 = leftTurn;
         emptyStackTurns214 = emptyStackTurns;
-        pathLength++;
+        pathLength = 215;
     }
     void setCurrentState216() {
         pos = path215;
@@ -7666,7 +7666,7 @@ class BugnavInstance {
         stackSize215 = stackSize;
         leftTurn215 = leftTurn;
         emptyStackTurns215 = emptyStackTurns;
-        pathLength++;
+        pathLength = 216;
     }
     void setCurrentState217() {
         pos = path216;
@@ -7692,7 +7692,7 @@ class BugnavInstance {
         stackSize216 = stackSize;
         leftTurn216 = leftTurn;
         emptyStackTurns216 = emptyStackTurns;
-        pathLength++;
+        pathLength = 217;
     }
     void setCurrentState218() {
         pos = path217;
@@ -7718,7 +7718,7 @@ class BugnavInstance {
         stackSize217 = stackSize;
         leftTurn217 = leftTurn;
         emptyStackTurns217 = emptyStackTurns;
-        pathLength++;
+        pathLength = 218;
     }
     void setCurrentState219() {
         pos = path218;
@@ -7744,7 +7744,7 @@ class BugnavInstance {
         stackSize218 = stackSize;
         leftTurn218 = leftTurn;
         emptyStackTurns218 = emptyStackTurns;
-        pathLength++;
+        pathLength = 219;
     }
     void setCurrentState220() {
         pos = path219;
@@ -7770,7 +7770,7 @@ class BugnavInstance {
         stackSize219 = stackSize;
         leftTurn219 = leftTurn;
         emptyStackTurns219 = emptyStackTurns;
-        pathLength++;
+        pathLength = 220;
     }
     void setCurrentState221() {
         pos = path220;
@@ -7796,7 +7796,7 @@ class BugnavInstance {
         stackSize220 = stackSize;
         leftTurn220 = leftTurn;
         emptyStackTurns220 = emptyStackTurns;
-        pathLength++;
+        pathLength = 221;
     }
     void setCurrentState222() {
         pos = path221;
@@ -7822,7 +7822,7 @@ class BugnavInstance {
         stackSize221 = stackSize;
         leftTurn221 = leftTurn;
         emptyStackTurns221 = emptyStackTurns;
-        pathLength++;
+        pathLength = 222;
     }
     void setCurrentState223() {
         pos = path222;
@@ -7848,7 +7848,7 @@ class BugnavInstance {
         stackSize222 = stackSize;
         leftTurn222 = leftTurn;
         emptyStackTurns222 = emptyStackTurns;
-        pathLength++;
+        pathLength = 223;
     }
     void setCurrentState224() {
         pos = path223;
@@ -7874,7 +7874,7 @@ class BugnavInstance {
         stackSize223 = stackSize;
         leftTurn223 = leftTurn;
         emptyStackTurns223 = emptyStackTurns;
-        pathLength++;
+        pathLength = 224;
     }
     void setCurrentState225() {
         pos = path224;
@@ -7900,7 +7900,7 @@ class BugnavInstance {
         stackSize224 = stackSize;
         leftTurn224 = leftTurn;
         emptyStackTurns224 = emptyStackTurns;
-        pathLength++;
+        pathLength = 225;
     }
     void setCurrentState226() {
         pos = path225;
@@ -7926,7 +7926,7 @@ class BugnavInstance {
         stackSize225 = stackSize;
         leftTurn225 = leftTurn;
         emptyStackTurns225 = emptyStackTurns;
-        pathLength++;
+        pathLength = 226;
     }
     void setCurrentState227() {
         pos = path226;
@@ -7952,7 +7952,7 @@ class BugnavInstance {
         stackSize226 = stackSize;
         leftTurn226 = leftTurn;
         emptyStackTurns226 = emptyStackTurns;
-        pathLength++;
+        pathLength = 227;
     }
     void setCurrentState228() {
         pos = path227;
@@ -7978,7 +7978,7 @@ class BugnavInstance {
         stackSize227 = stackSize;
         leftTurn227 = leftTurn;
         emptyStackTurns227 = emptyStackTurns;
-        pathLength++;
+        pathLength = 228;
     }
     void setCurrentState229() {
         pos = path228;
@@ -8004,7 +8004,7 @@ class BugnavInstance {
         stackSize228 = stackSize;
         leftTurn228 = leftTurn;
         emptyStackTurns228 = emptyStackTurns;
-        pathLength++;
+        pathLength = 229;
     }
     void setCurrentState230() {
         pos = path229;
@@ -8030,7 +8030,7 @@ class BugnavInstance {
         stackSize229 = stackSize;
         leftTurn229 = leftTurn;
         emptyStackTurns229 = emptyStackTurns;
-        pathLength++;
+        pathLength = 230;
     }
     void setCurrentState231() {
         pos = path230;
@@ -8056,7 +8056,7 @@ class BugnavInstance {
         stackSize230 = stackSize;
         leftTurn230 = leftTurn;
         emptyStackTurns230 = emptyStackTurns;
-        pathLength++;
+        pathLength = 231;
     }
     void setCurrentState232() {
         pos = path231;
@@ -8082,7 +8082,7 @@ class BugnavInstance {
         stackSize231 = stackSize;
         leftTurn231 = leftTurn;
         emptyStackTurns231 = emptyStackTurns;
-        pathLength++;
+        pathLength = 232;
     }
     void setCurrentState233() {
         pos = path232;
@@ -8108,7 +8108,7 @@ class BugnavInstance {
         stackSize232 = stackSize;
         leftTurn232 = leftTurn;
         emptyStackTurns232 = emptyStackTurns;
-        pathLength++;
+        pathLength = 233;
     }
     void setCurrentState234() {
         pos = path233;
@@ -8134,7 +8134,7 @@ class BugnavInstance {
         stackSize233 = stackSize;
         leftTurn233 = leftTurn;
         emptyStackTurns233 = emptyStackTurns;
-        pathLength++;
+        pathLength = 234;
     }
     void setCurrentState235() {
         pos = path234;
@@ -8160,7 +8160,7 @@ class BugnavInstance {
         stackSize234 = stackSize;
         leftTurn234 = leftTurn;
         emptyStackTurns234 = emptyStackTurns;
-        pathLength++;
+        pathLength = 235;
     }
     void setCurrentState236() {
         pos = path235;
@@ -8186,7 +8186,7 @@ class BugnavInstance {
         stackSize235 = stackSize;
         leftTurn235 = leftTurn;
         emptyStackTurns235 = emptyStackTurns;
-        pathLength++;
+        pathLength = 236;
     }
     void setCurrentState237() {
         pos = path236;
@@ -8212,7 +8212,7 @@ class BugnavInstance {
         stackSize236 = stackSize;
         leftTurn236 = leftTurn;
         emptyStackTurns236 = emptyStackTurns;
-        pathLength++;
+        pathLength = 237;
     }
     void setCurrentState238() {
         pos = path237;
@@ -8238,7 +8238,7 @@ class BugnavInstance {
         stackSize237 = stackSize;
         leftTurn237 = leftTurn;
         emptyStackTurns237 = emptyStackTurns;
-        pathLength++;
+        pathLength = 238;
     }
     void setCurrentState239() {
         pos = path238;
@@ -8264,7 +8264,7 @@ class BugnavInstance {
         stackSize238 = stackSize;
         leftTurn238 = leftTurn;
         emptyStackTurns238 = emptyStackTurns;
-        pathLength++;
+        pathLength = 239;
     }
     void setCurrentState240() {
         pos = path239;
@@ -8290,7 +8290,7 @@ class BugnavInstance {
         stackSize239 = stackSize;
         leftTurn239 = leftTurn;
         emptyStackTurns239 = emptyStackTurns;
-        pathLength++;
+        pathLength = 240;
     }
     void setCurrentState241() {
         pos = path240;
@@ -8316,7 +8316,7 @@ class BugnavInstance {
         stackSize240 = stackSize;
         leftTurn240 = leftTurn;
         emptyStackTurns240 = emptyStackTurns;
-        pathLength++;
+        pathLength = 241;
     }
     void setCurrentState242() {
         pos = path241;
@@ -8342,7 +8342,7 @@ class BugnavInstance {
         stackSize241 = stackSize;
         leftTurn241 = leftTurn;
         emptyStackTurns241 = emptyStackTurns;
-        pathLength++;
+        pathLength = 242;
     }
     void setCurrentState243() {
         pos = path242;
@@ -8368,7 +8368,7 @@ class BugnavInstance {
         stackSize242 = stackSize;
         leftTurn242 = leftTurn;
         emptyStackTurns242 = emptyStackTurns;
-        pathLength++;
+        pathLength = 243;
     }
     void setCurrentState244() {
         pos = path243;
@@ -8394,7 +8394,7 @@ class BugnavInstance {
         stackSize243 = stackSize;
         leftTurn243 = leftTurn;
         emptyStackTurns243 = emptyStackTurns;
-        pathLength++;
+        pathLength = 244;
     }
     void setCurrentState245() {
         pos = path244;
@@ -8420,7 +8420,7 @@ class BugnavInstance {
         stackSize244 = stackSize;
         leftTurn244 = leftTurn;
         emptyStackTurns244 = emptyStackTurns;
-        pathLength++;
+        pathLength = 245;
     }
     void setCurrentState246() {
         pos = path245;
@@ -8446,7 +8446,7 @@ class BugnavInstance {
         stackSize245 = stackSize;
         leftTurn245 = leftTurn;
         emptyStackTurns245 = emptyStackTurns;
-        pathLength++;
+        pathLength = 246;
     }
     void setCurrentState247() {
         pos = path246;
@@ -8472,7 +8472,7 @@ class BugnavInstance {
         stackSize246 = stackSize;
         leftTurn246 = leftTurn;
         emptyStackTurns246 = emptyStackTurns;
-        pathLength++;
+        pathLength = 247;
     }
     void setCurrentState248() {
         pos = path247;
@@ -8498,7 +8498,7 @@ class BugnavInstance {
         stackSize247 = stackSize;
         leftTurn247 = leftTurn;
         emptyStackTurns247 = emptyStackTurns;
-        pathLength++;
+        pathLength = 248;
     }
     void setCurrentState249() {
         pos = path248;
@@ -8524,7 +8524,7 @@ class BugnavInstance {
         stackSize248 = stackSize;
         leftTurn248 = leftTurn;
         emptyStackTurns248 = emptyStackTurns;
-        pathLength++;
+        pathLength = 249;
     }
     void setCurrentState250() {
         pos = path249;
@@ -8550,7 +8550,7 @@ class BugnavInstance {
         stackSize249 = stackSize;
         leftTurn249 = leftTurn;
         emptyStackTurns249 = emptyStackTurns;
-        pathLength++;
+        pathLength = 250;
     }
     void setCurrentState251() {
         pos = path250;
@@ -8576,7 +8576,7 @@ class BugnavInstance {
         stackSize250 = stackSize;
         leftTurn250 = leftTurn;
         emptyStackTurns250 = emptyStackTurns;
-        pathLength++;
+        pathLength = 251;
     }
     void setCurrentState252() {
         pos = path251;
@@ -8602,7 +8602,7 @@ class BugnavInstance {
         stackSize251 = stackSize;
         leftTurn251 = leftTurn;
         emptyStackTurns251 = emptyStackTurns;
-        pathLength++;
+        pathLength = 252;
     }
     void setCurrentState253() {
         pos = path252;
@@ -8628,7 +8628,7 @@ class BugnavInstance {
         stackSize252 = stackSize;
         leftTurn252 = leftTurn;
         emptyStackTurns252 = emptyStackTurns;
-        pathLength++;
+        pathLength = 253;
     }
     void setCurrentState254() {
         pos = path253;
@@ -8654,7 +8654,7 @@ class BugnavInstance {
         stackSize253 = stackSize;
         leftTurn253 = leftTurn;
         emptyStackTurns253 = emptyStackTurns;
-        pathLength++;
+        pathLength = 254;
     }
     void setCurrentState255() {
         pos = path254;
@@ -8680,7 +8680,7 @@ class BugnavInstance {
         stackSize254 = stackSize;
         leftTurn254 = leftTurn;
         emptyStackTurns254 = emptyStackTurns;
-        pathLength++;
+        pathLength = 255;
     }
     void setCurrentState256() {
         pos = path255;
@@ -8706,7 +8706,7 @@ class BugnavInstance {
         stackSize255 = stackSize;
         leftTurn255 = leftTurn;
         emptyStackTurns255 = emptyStackTurns;
-        pathLength++;
+        pathLength = 256;
     }
     void setCurrentState257() {
         pos = path256;
@@ -8732,7 +8732,7 @@ class BugnavInstance {
         stackSize256 = stackSize;
         leftTurn256 = leftTurn;
         emptyStackTurns256 = emptyStackTurns;
-        pathLength++;
+        pathLength = 257;
     }
     void setCurrentState258() {
         pos = path257;
@@ -8758,7 +8758,7 @@ class BugnavInstance {
         stackSize257 = stackSize;
         leftTurn257 = leftTurn;
         emptyStackTurns257 = emptyStackTurns;
-        pathLength++;
+        pathLength = 258;
     }
     void setCurrentState259() {
         pos = path258;
@@ -8784,7 +8784,7 @@ class BugnavInstance {
         stackSize258 = stackSize;
         leftTurn258 = leftTurn;
         emptyStackTurns258 = emptyStackTurns;
-        pathLength++;
+        pathLength = 259;
     }
     void setCurrentState260() {
         pos = path259;
@@ -8810,7 +8810,7 @@ class BugnavInstance {
         stackSize259 = stackSize;
         leftTurn259 = leftTurn;
         emptyStackTurns259 = emptyStackTurns;
-        pathLength++;
+        pathLength = 260;
     }
     void setCurrentState261() {
         pos = path260;
@@ -8836,7 +8836,7 @@ class BugnavInstance {
         stackSize260 = stackSize;
         leftTurn260 = leftTurn;
         emptyStackTurns260 = emptyStackTurns;
-        pathLength++;
+        pathLength = 261;
     }
     void setCurrentState262() {
         pos = path261;
@@ -8862,7 +8862,7 @@ class BugnavInstance {
         stackSize261 = stackSize;
         leftTurn261 = leftTurn;
         emptyStackTurns261 = emptyStackTurns;
-        pathLength++;
+        pathLength = 262;
     }
     void setCurrentState263() {
         pos = path262;
@@ -8888,7 +8888,7 @@ class BugnavInstance {
         stackSize262 = stackSize;
         leftTurn262 = leftTurn;
         emptyStackTurns262 = emptyStackTurns;
-        pathLength++;
+        pathLength = 263;
     }
     void setCurrentState264() {
         pos = path263;
@@ -8914,7 +8914,7 @@ class BugnavInstance {
         stackSize263 = stackSize;
         leftTurn263 = leftTurn;
         emptyStackTurns263 = emptyStackTurns;
-        pathLength++;
+        pathLength = 264;
     }
     void setCurrentState265() {
         pos = path264;
@@ -8940,7 +8940,7 @@ class BugnavInstance {
         stackSize264 = stackSize;
         leftTurn264 = leftTurn;
         emptyStackTurns264 = emptyStackTurns;
-        pathLength++;
+        pathLength = 265;
     }
     void setCurrentState266() {
         pos = path265;
@@ -8966,7 +8966,7 @@ class BugnavInstance {
         stackSize265 = stackSize;
         leftTurn265 = leftTurn;
         emptyStackTurns265 = emptyStackTurns;
-        pathLength++;
+        pathLength = 266;
     }
     void setCurrentState267() {
         pos = path266;
@@ -8992,7 +8992,7 @@ class BugnavInstance {
         stackSize266 = stackSize;
         leftTurn266 = leftTurn;
         emptyStackTurns266 = emptyStackTurns;
-        pathLength++;
+        pathLength = 267;
     }
     void setCurrentState268() {
         pos = path267;
@@ -9018,7 +9018,7 @@ class BugnavInstance {
         stackSize267 = stackSize;
         leftTurn267 = leftTurn;
         emptyStackTurns267 = emptyStackTurns;
-        pathLength++;
+        pathLength = 268;
     }
     void setCurrentState269() {
         pos = path268;
@@ -9044,7 +9044,7 @@ class BugnavInstance {
         stackSize268 = stackSize;
         leftTurn268 = leftTurn;
         emptyStackTurns268 = emptyStackTurns;
-        pathLength++;
+        pathLength = 269;
     }
     void setCurrentState270() {
         pos = path269;
@@ -9070,7 +9070,7 @@ class BugnavInstance {
         stackSize269 = stackSize;
         leftTurn269 = leftTurn;
         emptyStackTurns269 = emptyStackTurns;
-        pathLength++;
+        pathLength = 270;
     }
     void setCurrentState271() {
         pos = path270;
@@ -9096,7 +9096,7 @@ class BugnavInstance {
         stackSize270 = stackSize;
         leftTurn270 = leftTurn;
         emptyStackTurns270 = emptyStackTurns;
-        pathLength++;
+        pathLength = 271;
     }
     void setCurrentState272() {
         pos = path271;
@@ -9122,7 +9122,7 @@ class BugnavInstance {
         stackSize271 = stackSize;
         leftTurn271 = leftTurn;
         emptyStackTurns271 = emptyStackTurns;
-        pathLength++;
+        pathLength = 272;
     }
     void setCurrentState273() {
         pos = path272;
@@ -9148,7 +9148,7 @@ class BugnavInstance {
         stackSize272 = stackSize;
         leftTurn272 = leftTurn;
         emptyStackTurns272 = emptyStackTurns;
-        pathLength++;
+        pathLength = 273;
     }
     void setCurrentState274() {
         pos = path273;
@@ -9174,7 +9174,7 @@ class BugnavInstance {
         stackSize273 = stackSize;
         leftTurn273 = leftTurn;
         emptyStackTurns273 = emptyStackTurns;
-        pathLength++;
+        pathLength = 274;
     }
     void setCurrentState275() {
         pos = path274;
@@ -9200,7 +9200,7 @@ class BugnavInstance {
         stackSize274 = stackSize;
         leftTurn274 = leftTurn;
         emptyStackTurns274 = emptyStackTurns;
-        pathLength++;
+        pathLength = 275;
     }
     void setCurrentState276() {
         pos = path275;
@@ -9226,7 +9226,7 @@ class BugnavInstance {
         stackSize275 = stackSize;
         leftTurn275 = leftTurn;
         emptyStackTurns275 = emptyStackTurns;
-        pathLength++;
+        pathLength = 276;
     }
     void setCurrentState277() {
         pos = path276;
@@ -9252,7 +9252,7 @@ class BugnavInstance {
         stackSize276 = stackSize;
         leftTurn276 = leftTurn;
         emptyStackTurns276 = emptyStackTurns;
-        pathLength++;
+        pathLength = 277;
     }
     void setCurrentState278() {
         pos = path277;
@@ -9278,7 +9278,7 @@ class BugnavInstance {
         stackSize277 = stackSize;
         leftTurn277 = leftTurn;
         emptyStackTurns277 = emptyStackTurns;
-        pathLength++;
+        pathLength = 278;
     }
     void setCurrentState279() {
         pos = path278;
@@ -9304,7 +9304,7 @@ class BugnavInstance {
         stackSize278 = stackSize;
         leftTurn278 = leftTurn;
         emptyStackTurns278 = emptyStackTurns;
-        pathLength++;
+        pathLength = 279;
     }
     void setCurrentState280() {
         pos = path279;
@@ -9330,7 +9330,7 @@ class BugnavInstance {
         stackSize279 = stackSize;
         leftTurn279 = leftTurn;
         emptyStackTurns279 = emptyStackTurns;
-        pathLength++;
+        pathLength = 280;
     }
     void setCurrentState281() {
         pos = path280;
@@ -9356,7 +9356,7 @@ class BugnavInstance {
         stackSize280 = stackSize;
         leftTurn280 = leftTurn;
         emptyStackTurns280 = emptyStackTurns;
-        pathLength++;
+        pathLength = 281;
     }
     void setCurrentState282() {
         pos = path281;
@@ -9382,7 +9382,7 @@ class BugnavInstance {
         stackSize281 = stackSize;
         leftTurn281 = leftTurn;
         emptyStackTurns281 = emptyStackTurns;
-        pathLength++;
+        pathLength = 282;
     }
     void setCurrentState283() {
         pos = path282;
@@ -9408,7 +9408,7 @@ class BugnavInstance {
         stackSize282 = stackSize;
         leftTurn282 = leftTurn;
         emptyStackTurns282 = emptyStackTurns;
-        pathLength++;
+        pathLength = 283;
     }
     void setCurrentState284() {
         pos = path283;
@@ -9434,7 +9434,7 @@ class BugnavInstance {
         stackSize283 = stackSize;
         leftTurn283 = leftTurn;
         emptyStackTurns283 = emptyStackTurns;
-        pathLength++;
+        pathLength = 284;
     }
     void setCurrentState285() {
         pos = path284;
@@ -9460,7 +9460,7 @@ class BugnavInstance {
         stackSize284 = stackSize;
         leftTurn284 = leftTurn;
         emptyStackTurns284 = emptyStackTurns;
-        pathLength++;
+        pathLength = 285;
     }
     void setCurrentState286() {
         pos = path285;
@@ -9486,7 +9486,7 @@ class BugnavInstance {
         stackSize285 = stackSize;
         leftTurn285 = leftTurn;
         emptyStackTurns285 = emptyStackTurns;
-        pathLength++;
+        pathLength = 286;
     }
     void setCurrentState287() {
         pos = path286;
@@ -9512,7 +9512,7 @@ class BugnavInstance {
         stackSize286 = stackSize;
         leftTurn286 = leftTurn;
         emptyStackTurns286 = emptyStackTurns;
-        pathLength++;
+        pathLength = 287;
     }
     void setCurrentState288() {
         pos = path287;
@@ -9538,7 +9538,7 @@ class BugnavInstance {
         stackSize287 = stackSize;
         leftTurn287 = leftTurn;
         emptyStackTurns287 = emptyStackTurns;
-        pathLength++;
+        pathLength = 288;
     }
     void setCurrentState289() {
         pos = path288;
@@ -9564,7 +9564,7 @@ class BugnavInstance {
         stackSize288 = stackSize;
         leftTurn288 = leftTurn;
         emptyStackTurns288 = emptyStackTurns;
-        pathLength++;
+        pathLength = 289;
     }
     void setCurrentState290() {
         pos = path289;
@@ -9590,7 +9590,7 @@ class BugnavInstance {
         stackSize289 = stackSize;
         leftTurn289 = leftTurn;
         emptyStackTurns289 = emptyStackTurns;
-        pathLength++;
+        pathLength = 290;
     }
     void setCurrentState291() {
         pos = path290;
@@ -9616,7 +9616,7 @@ class BugnavInstance {
         stackSize290 = stackSize;
         leftTurn290 = leftTurn;
         emptyStackTurns290 = emptyStackTurns;
-        pathLength++;
+        pathLength = 291;
     }
     void setCurrentState292() {
         pos = path291;
@@ -9642,7 +9642,7 @@ class BugnavInstance {
         stackSize291 = stackSize;
         leftTurn291 = leftTurn;
         emptyStackTurns291 = emptyStackTurns;
-        pathLength++;
+        pathLength = 292;
     }
     void setCurrentState293() {
         pos = path292;
@@ -9668,7 +9668,7 @@ class BugnavInstance {
         stackSize292 = stackSize;
         leftTurn292 = leftTurn;
         emptyStackTurns292 = emptyStackTurns;
-        pathLength++;
+        pathLength = 293;
     }
     void setCurrentState294() {
         pos = path293;
@@ -9694,7 +9694,7 @@ class BugnavInstance {
         stackSize293 = stackSize;
         leftTurn293 = leftTurn;
         emptyStackTurns293 = emptyStackTurns;
-        pathLength++;
+        pathLength = 294;
     }
     void setCurrentState295() {
         pos = path294;
@@ -9720,7 +9720,7 @@ class BugnavInstance {
         stackSize294 = stackSize;
         leftTurn294 = leftTurn;
         emptyStackTurns294 = emptyStackTurns;
-        pathLength++;
+        pathLength = 295;
     }
     void setCurrentState296() {
         pos = path295;
@@ -9746,7 +9746,7 @@ class BugnavInstance {
         stackSize295 = stackSize;
         leftTurn295 = leftTurn;
         emptyStackTurns295 = emptyStackTurns;
-        pathLength++;
+        pathLength = 296;
     }
     void setCurrentState297() {
         pos = path296;
@@ -9772,7 +9772,7 @@ class BugnavInstance {
         stackSize296 = stackSize;
         leftTurn296 = leftTurn;
         emptyStackTurns296 = emptyStackTurns;
-        pathLength++;
+        pathLength = 297;
     }
     void setCurrentState298() {
         pos = path297;
@@ -9798,7 +9798,7 @@ class BugnavInstance {
         stackSize297 = stackSize;
         leftTurn297 = leftTurn;
         emptyStackTurns297 = emptyStackTurns;
-        pathLength++;
+        pathLength = 298;
     }
     void setCurrentState299() {
         pos = path298;
@@ -9824,7 +9824,7 @@ class BugnavInstance {
         stackSize298 = stackSize;
         leftTurn298 = leftTurn;
         emptyStackTurns298 = emptyStackTurns;
-        pathLength++;
+        pathLength = 299;
     }
     void setCurrentState300() {
         pos = path299;
@@ -9850,7 +9850,7 @@ class BugnavInstance {
         stackSize299 = stackSize;
         leftTurn299 = leftTurn;
         emptyStackTurns299 = emptyStackTurns;
-        pathLength++;
+        pathLength = 300;
     }
     void setCurrentState301() {
         pos = path300;
@@ -9876,7 +9876,7 @@ class BugnavInstance {
         stackSize300 = stackSize;
         leftTurn300 = leftTurn;
         emptyStackTurns300 = emptyStackTurns;
-        pathLength++;
+        pathLength = 301;
     }
     void setCurrentState302() {
         pos = path301;
@@ -9902,7 +9902,7 @@ class BugnavInstance {
         stackSize301 = stackSize;
         leftTurn301 = leftTurn;
         emptyStackTurns301 = emptyStackTurns;
-        pathLength++;
+        pathLength = 302;
     }
     void setCurrentState303() {
         pos = path302;
@@ -9928,7 +9928,7 @@ class BugnavInstance {
         stackSize302 = stackSize;
         leftTurn302 = leftTurn;
         emptyStackTurns302 = emptyStackTurns;
-        pathLength++;
+        pathLength = 303;
     }
     void setCurrentState304() {
         pos = path303;
@@ -9954,7 +9954,7 @@ class BugnavInstance {
         stackSize303 = stackSize;
         leftTurn303 = leftTurn;
         emptyStackTurns303 = emptyStackTurns;
-        pathLength++;
+        pathLength = 304;
     }
     void setCurrentState305() {
         pos = path304;
@@ -9980,7 +9980,7 @@ class BugnavInstance {
         stackSize304 = stackSize;
         leftTurn304 = leftTurn;
         emptyStackTurns304 = emptyStackTurns;
-        pathLength++;
+        pathLength = 305;
     }
     void setCurrentState306() {
         pos = path305;
@@ -10006,7 +10006,7 @@ class BugnavInstance {
         stackSize305 = stackSize;
         leftTurn305 = leftTurn;
         emptyStackTurns305 = emptyStackTurns;
-        pathLength++;
+        pathLength = 306;
     }
     void setCurrentState307() {
         pos = path306;
@@ -10032,7 +10032,7 @@ class BugnavInstance {
         stackSize306 = stackSize;
         leftTurn306 = leftTurn;
         emptyStackTurns306 = emptyStackTurns;
-        pathLength++;
+        pathLength = 307;
     }
     void setCurrentState308() {
         pos = path307;
@@ -10058,7 +10058,7 @@ class BugnavInstance {
         stackSize307 = stackSize;
         leftTurn307 = leftTurn;
         emptyStackTurns307 = emptyStackTurns;
-        pathLength++;
+        pathLength = 308;
     }
     void setCurrentState309() {
         pos = path308;
@@ -10084,7 +10084,7 @@ class BugnavInstance {
         stackSize308 = stackSize;
         leftTurn308 = leftTurn;
         emptyStackTurns308 = emptyStackTurns;
-        pathLength++;
+        pathLength = 309;
     }
     void setCurrentState310() {
         pos = path309;
@@ -10110,7 +10110,7 @@ class BugnavInstance {
         stackSize309 = stackSize;
         leftTurn309 = leftTurn;
         emptyStackTurns309 = emptyStackTurns;
-        pathLength++;
+        pathLength = 310;
     }
     void setCurrentState311() {
         pos = path310;
@@ -10136,7 +10136,7 @@ class BugnavInstance {
         stackSize310 = stackSize;
         leftTurn310 = leftTurn;
         emptyStackTurns310 = emptyStackTurns;
-        pathLength++;
+        pathLength = 311;
     }
     void setCurrentState312() {
         pos = path311;
@@ -10162,7 +10162,7 @@ class BugnavInstance {
         stackSize311 = stackSize;
         leftTurn311 = leftTurn;
         emptyStackTurns311 = emptyStackTurns;
-        pathLength++;
+        pathLength = 312;
     }
     void setCurrentState313() {
         pos = path312;
@@ -10188,7 +10188,7 @@ class BugnavInstance {
         stackSize312 = stackSize;
         leftTurn312 = leftTurn;
         emptyStackTurns312 = emptyStackTurns;
-        pathLength++;
+        pathLength = 313;
     }
     void setCurrentState314() {
         pos = path313;
@@ -10214,7 +10214,7 @@ class BugnavInstance {
         stackSize313 = stackSize;
         leftTurn313 = leftTurn;
         emptyStackTurns313 = emptyStackTurns;
-        pathLength++;
+        pathLength = 314;
     }
     void setCurrentState315() {
         pos = path314;
@@ -10240,7 +10240,7 @@ class BugnavInstance {
         stackSize314 = stackSize;
         leftTurn314 = leftTurn;
         emptyStackTurns314 = emptyStackTurns;
-        pathLength++;
+        pathLength = 315;
     }
     void setCurrentState316() {
         pos = path315;
@@ -10266,7 +10266,7 @@ class BugnavInstance {
         stackSize315 = stackSize;
         leftTurn315 = leftTurn;
         emptyStackTurns315 = emptyStackTurns;
-        pathLength++;
+        pathLength = 316;
     }
     void setCurrentState317() {
         pos = path316;
@@ -10292,7 +10292,7 @@ class BugnavInstance {
         stackSize316 = stackSize;
         leftTurn316 = leftTurn;
         emptyStackTurns316 = emptyStackTurns;
-        pathLength++;
+        pathLength = 317;
     }
     void setCurrentState318() {
         pos = path317;
@@ -10318,7 +10318,7 @@ class BugnavInstance {
         stackSize317 = stackSize;
         leftTurn317 = leftTurn;
         emptyStackTurns317 = emptyStackTurns;
-        pathLength++;
+        pathLength = 318;
     }
     void setCurrentState319() {
         pos = path318;
@@ -10344,7 +10344,7 @@ class BugnavInstance {
         stackSize318 = stackSize;
         leftTurn318 = leftTurn;
         emptyStackTurns318 = emptyStackTurns;
-        pathLength++;
+        pathLength = 319;
     }
     void setCurrentState320() {
         pos = path319;
@@ -10370,7 +10370,7 @@ class BugnavInstance {
         stackSize319 = stackSize;
         leftTurn319 = leftTurn;
         emptyStackTurns319 = emptyStackTurns;
-        pathLength++;
+        pathLength = 320;
     }
     void setCurrentState321() {
         pos = path320;
@@ -10396,7 +10396,7 @@ class BugnavInstance {
         stackSize320 = stackSize;
         leftTurn320 = leftTurn;
         emptyStackTurns320 = emptyStackTurns;
-        pathLength++;
+        pathLength = 321;
     }
     void setCurrentState322() {
         pos = path321;
@@ -10422,7 +10422,7 @@ class BugnavInstance {
         stackSize321 = stackSize;
         leftTurn321 = leftTurn;
         emptyStackTurns321 = emptyStackTurns;
-        pathLength++;
+        pathLength = 322;
     }
     void setCurrentState323() {
         pos = path322;
@@ -10448,7 +10448,7 @@ class BugnavInstance {
         stackSize322 = stackSize;
         leftTurn322 = leftTurn;
         emptyStackTurns322 = emptyStackTurns;
-        pathLength++;
+        pathLength = 323;
     }
     void setCurrentState324() {
         pos = path323;
@@ -10474,7 +10474,7 @@ class BugnavInstance {
         stackSize323 = stackSize;
         leftTurn323 = leftTurn;
         emptyStackTurns323 = emptyStackTurns;
-        pathLength++;
+        pathLength = 324;
     }
     void setCurrentState325() {
         pos = path324;
@@ -10500,7 +10500,7 @@ class BugnavInstance {
         stackSize324 = stackSize;
         leftTurn324 = leftTurn;
         emptyStackTurns324 = emptyStackTurns;
-        pathLength++;
+        pathLength = 325;
     }
     void setCurrentState326() {
         pos = path325;
@@ -10526,7 +10526,7 @@ class BugnavInstance {
         stackSize325 = stackSize;
         leftTurn325 = leftTurn;
         emptyStackTurns325 = emptyStackTurns;
-        pathLength++;
+        pathLength = 326;
     }
     void setCurrentState327() {
         pos = path326;
@@ -10552,7 +10552,7 @@ class BugnavInstance {
         stackSize326 = stackSize;
         leftTurn326 = leftTurn;
         emptyStackTurns326 = emptyStackTurns;
-        pathLength++;
+        pathLength = 327;
     }
     void setCurrentState328() {
         pos = path327;
@@ -10578,7 +10578,7 @@ class BugnavInstance {
         stackSize327 = stackSize;
         leftTurn327 = leftTurn;
         emptyStackTurns327 = emptyStackTurns;
-        pathLength++;
+        pathLength = 328;
     }
     void setCurrentState329() {
         pos = path328;
@@ -10604,7 +10604,7 @@ class BugnavInstance {
         stackSize328 = stackSize;
         leftTurn328 = leftTurn;
         emptyStackTurns328 = emptyStackTurns;
-        pathLength++;
+        pathLength = 329;
     }
     void setCurrentState330() {
         pos = path329;
@@ -10630,7 +10630,7 @@ class BugnavInstance {
         stackSize329 = stackSize;
         leftTurn329 = leftTurn;
         emptyStackTurns329 = emptyStackTurns;
-        pathLength++;
+        pathLength = 330;
     }
     void setCurrentState331() {
         pos = path330;
@@ -10656,7 +10656,7 @@ class BugnavInstance {
         stackSize330 = stackSize;
         leftTurn330 = leftTurn;
         emptyStackTurns330 = emptyStackTurns;
-        pathLength++;
+        pathLength = 331;
     }
     void setCurrentState332() {
         pos = path331;
@@ -10682,7 +10682,7 @@ class BugnavInstance {
         stackSize331 = stackSize;
         leftTurn331 = leftTurn;
         emptyStackTurns331 = emptyStackTurns;
-        pathLength++;
+        pathLength = 332;
     }
     void setCurrentState333() {
         pos = path332;
@@ -10708,7 +10708,7 @@ class BugnavInstance {
         stackSize332 = stackSize;
         leftTurn332 = leftTurn;
         emptyStackTurns332 = emptyStackTurns;
-        pathLength++;
+        pathLength = 333;
     }
     void setCurrentState334() {
         pos = path333;
@@ -10734,7 +10734,7 @@ class BugnavInstance {
         stackSize333 = stackSize;
         leftTurn333 = leftTurn;
         emptyStackTurns333 = emptyStackTurns;
-        pathLength++;
+        pathLength = 334;
     }
     void setCurrentState335() {
         pos = path334;
@@ -10760,7 +10760,7 @@ class BugnavInstance {
         stackSize334 = stackSize;
         leftTurn334 = leftTurn;
         emptyStackTurns334 = emptyStackTurns;
-        pathLength++;
+        pathLength = 335;
     }
     void setCurrentState336() {
         pos = path335;
@@ -10786,7 +10786,7 @@ class BugnavInstance {
         stackSize335 = stackSize;
         leftTurn335 = leftTurn;
         emptyStackTurns335 = emptyStackTurns;
-        pathLength++;
+        pathLength = 336;
     }
     void setCurrentState337() {
         pos = path336;
@@ -10812,7 +10812,7 @@ class BugnavInstance {
         stackSize336 = stackSize;
         leftTurn336 = leftTurn;
         emptyStackTurns336 = emptyStackTurns;
-        pathLength++;
+        pathLength = 337;
     }
     void setCurrentState338() {
         pos = path337;
@@ -10838,7 +10838,7 @@ class BugnavInstance {
         stackSize337 = stackSize;
         leftTurn337 = leftTurn;
         emptyStackTurns337 = emptyStackTurns;
-        pathLength++;
+        pathLength = 338;
     }
     void setCurrentState339() {
         pos = path338;
@@ -10864,7 +10864,7 @@ class BugnavInstance {
         stackSize338 = stackSize;
         leftTurn338 = leftTurn;
         emptyStackTurns338 = emptyStackTurns;
-        pathLength++;
+        pathLength = 339;
     }
     void setCurrentState340() {
         pos = path339;
@@ -10890,7 +10890,7 @@ class BugnavInstance {
         stackSize339 = stackSize;
         leftTurn339 = leftTurn;
         emptyStackTurns339 = emptyStackTurns;
-        pathLength++;
+        pathLength = 340;
     }
     void setCurrentState341() {
         pos = path340;
@@ -10916,7 +10916,7 @@ class BugnavInstance {
         stackSize340 = stackSize;
         leftTurn340 = leftTurn;
         emptyStackTurns340 = emptyStackTurns;
-        pathLength++;
+        pathLength = 341;
     }
     void setCurrentState342() {
         pos = path341;
@@ -10942,7 +10942,7 @@ class BugnavInstance {
         stackSize341 = stackSize;
         leftTurn341 = leftTurn;
         emptyStackTurns341 = emptyStackTurns;
-        pathLength++;
+        pathLength = 342;
     }
     void setCurrentState343() {
         pos = path342;
@@ -10968,7 +10968,7 @@ class BugnavInstance {
         stackSize342 = stackSize;
         leftTurn342 = leftTurn;
         emptyStackTurns342 = emptyStackTurns;
-        pathLength++;
+        pathLength = 343;
     }
     void setCurrentState344() {
         pos = path343;
@@ -10994,7 +10994,7 @@ class BugnavInstance {
         stackSize343 = stackSize;
         leftTurn343 = leftTurn;
         emptyStackTurns343 = emptyStackTurns;
-        pathLength++;
+        pathLength = 344;
     }
     void setCurrentState345() {
         pos = path344;
@@ -11020,7 +11020,7 @@ class BugnavInstance {
         stackSize344 = stackSize;
         leftTurn344 = leftTurn;
         emptyStackTurns344 = emptyStackTurns;
-        pathLength++;
+        pathLength = 345;
     }
     void setCurrentState346() {
         pos = path345;
@@ -11046,7 +11046,7 @@ class BugnavInstance {
         stackSize345 = stackSize;
         leftTurn345 = leftTurn;
         emptyStackTurns345 = emptyStackTurns;
-        pathLength++;
+        pathLength = 346;
     }
     void setCurrentState347() {
         pos = path346;
@@ -11072,7 +11072,7 @@ class BugnavInstance {
         stackSize346 = stackSize;
         leftTurn346 = leftTurn;
         emptyStackTurns346 = emptyStackTurns;
-        pathLength++;
+        pathLength = 347;
     }
     void setCurrentState348() {
         pos = path347;
@@ -11098,7 +11098,7 @@ class BugnavInstance {
         stackSize347 = stackSize;
         leftTurn347 = leftTurn;
         emptyStackTurns347 = emptyStackTurns;
-        pathLength++;
+        pathLength = 348;
     }
     void setCurrentState349() {
         pos = path348;
@@ -11124,7 +11124,7 @@ class BugnavInstance {
         stackSize348 = stackSize;
         leftTurn348 = leftTurn;
         emptyStackTurns348 = emptyStackTurns;
-        pathLength++;
+        pathLength = 349;
     }
     void setCurrentState350() {
         pos = path349;
@@ -11150,7 +11150,7 @@ class BugnavInstance {
         stackSize349 = stackSize;
         leftTurn349 = leftTurn;
         emptyStackTurns349 = emptyStackTurns;
-        pathLength++;
+        pathLength = 350;
     }
     void setCurrentState351() {
         pos = path350;
@@ -11176,7 +11176,7 @@ class BugnavInstance {
         stackSize350 = stackSize;
         leftTurn350 = leftTurn;
         emptyStackTurns350 = emptyStackTurns;
-        pathLength++;
+        pathLength = 351;
     }
     void setCurrentState352() {
         pos = path351;
@@ -11202,7 +11202,7 @@ class BugnavInstance {
         stackSize351 = stackSize;
         leftTurn351 = leftTurn;
         emptyStackTurns351 = emptyStackTurns;
-        pathLength++;
+        pathLength = 352;
     }
     void setCurrentState353() {
         pos = path352;
@@ -11228,7 +11228,7 @@ class BugnavInstance {
         stackSize352 = stackSize;
         leftTurn352 = leftTurn;
         emptyStackTurns352 = emptyStackTurns;
-        pathLength++;
+        pathLength = 353;
     }
     void setCurrentState354() {
         pos = path353;
@@ -11254,7 +11254,7 @@ class BugnavInstance {
         stackSize353 = stackSize;
         leftTurn353 = leftTurn;
         emptyStackTurns353 = emptyStackTurns;
-        pathLength++;
+        pathLength = 354;
     }
     void setCurrentState355() {
         pos = path354;
@@ -11280,7 +11280,7 @@ class BugnavInstance {
         stackSize354 = stackSize;
         leftTurn354 = leftTurn;
         emptyStackTurns354 = emptyStackTurns;
-        pathLength++;
+        pathLength = 355;
     }
     void setCurrentState356() {
         pos = path355;
@@ -11306,7 +11306,7 @@ class BugnavInstance {
         stackSize355 = stackSize;
         leftTurn355 = leftTurn;
         emptyStackTurns355 = emptyStackTurns;
-        pathLength++;
+        pathLength = 356;
     }
     void setCurrentState357() {
         pos = path356;
@@ -11332,7 +11332,7 @@ class BugnavInstance {
         stackSize356 = stackSize;
         leftTurn356 = leftTurn;
         emptyStackTurns356 = emptyStackTurns;
-        pathLength++;
+        pathLength = 357;
     }
     void setCurrentState358() {
         pos = path357;
@@ -11358,7 +11358,7 @@ class BugnavInstance {
         stackSize357 = stackSize;
         leftTurn357 = leftTurn;
         emptyStackTurns357 = emptyStackTurns;
-        pathLength++;
+        pathLength = 358;
     }
     void setCurrentState359() {
         pos = path358;
@@ -11384,7 +11384,7 @@ class BugnavInstance {
         stackSize358 = stackSize;
         leftTurn358 = leftTurn;
         emptyStackTurns358 = emptyStackTurns;
-        pathLength++;
+        pathLength = 359;
     }
     void setCurrentState360() {
         pos = path359;
@@ -11410,7 +11410,7 @@ class BugnavInstance {
         stackSize359 = stackSize;
         leftTurn359 = leftTurn;
         emptyStackTurns359 = emptyStackTurns;
-        pathLength++;
+        pathLength = 360;
     }
     void setCurrentState361() {
         pos = path360;
@@ -11436,7 +11436,7 @@ class BugnavInstance {
         stackSize360 = stackSize;
         leftTurn360 = leftTurn;
         emptyStackTurns360 = emptyStackTurns;
-        pathLength++;
+        pathLength = 361;
     }
     void setCurrentState362() {
         pos = path361;
@@ -11462,7 +11462,7 @@ class BugnavInstance {
         stackSize361 = stackSize;
         leftTurn361 = leftTurn;
         emptyStackTurns361 = emptyStackTurns;
-        pathLength++;
+        pathLength = 362;
     }
     void setCurrentState363() {
         pos = path362;
@@ -11488,7 +11488,7 @@ class BugnavInstance {
         stackSize362 = stackSize;
         leftTurn362 = leftTurn;
         emptyStackTurns362 = emptyStackTurns;
-        pathLength++;
+        pathLength = 363;
     }
     void setCurrentState364() {
         pos = path363;
@@ -11514,7 +11514,7 @@ class BugnavInstance {
         stackSize363 = stackSize;
         leftTurn363 = leftTurn;
         emptyStackTurns363 = emptyStackTurns;
-        pathLength++;
+        pathLength = 364;
     }
     void setCurrentState365() {
         pos = path364;
@@ -11540,7 +11540,7 @@ class BugnavInstance {
         stackSize364 = stackSize;
         leftTurn364 = leftTurn;
         emptyStackTurns364 = emptyStackTurns;
-        pathLength++;
+        pathLength = 365;
     }
     void setCurrentState366() {
         pos = path365;
@@ -11566,7 +11566,7 @@ class BugnavInstance {
         stackSize365 = stackSize;
         leftTurn365 = leftTurn;
         emptyStackTurns365 = emptyStackTurns;
-        pathLength++;
+        pathLength = 366;
     }
     void setCurrentState367() {
         pos = path366;
@@ -11592,7 +11592,7 @@ class BugnavInstance {
         stackSize366 = stackSize;
         leftTurn366 = leftTurn;
         emptyStackTurns366 = emptyStackTurns;
-        pathLength++;
+        pathLength = 367;
     }
     void setCurrentState368() {
         pos = path367;
@@ -11618,7 +11618,7 @@ class BugnavInstance {
         stackSize367 = stackSize;
         leftTurn367 = leftTurn;
         emptyStackTurns367 = emptyStackTurns;
-        pathLength++;
+        pathLength = 368;
     }
     void setCurrentState369() {
         pos = path368;
@@ -11644,7 +11644,7 @@ class BugnavInstance {
         stackSize368 = stackSize;
         leftTurn368 = leftTurn;
         emptyStackTurns368 = emptyStackTurns;
-        pathLength++;
+        pathLength = 369;
     }
     void setCurrentState370() {
         pos = path369;
@@ -11670,7 +11670,7 @@ class BugnavInstance {
         stackSize369 = stackSize;
         leftTurn369 = leftTurn;
         emptyStackTurns369 = emptyStackTurns;
-        pathLength++;
+        pathLength = 370;
     }
     void setCurrentState371() {
         pos = path370;
@@ -11696,7 +11696,7 @@ class BugnavInstance {
         stackSize370 = stackSize;
         leftTurn370 = leftTurn;
         emptyStackTurns370 = emptyStackTurns;
-        pathLength++;
+        pathLength = 371;
     }
     void setCurrentState372() {
         pos = path371;
@@ -11722,7 +11722,7 @@ class BugnavInstance {
         stackSize371 = stackSize;
         leftTurn371 = leftTurn;
         emptyStackTurns371 = emptyStackTurns;
-        pathLength++;
+        pathLength = 372;
     }
     void setCurrentState373() {
         pos = path372;
@@ -11748,7 +11748,7 @@ class BugnavInstance {
         stackSize372 = stackSize;
         leftTurn372 = leftTurn;
         emptyStackTurns372 = emptyStackTurns;
-        pathLength++;
+        pathLength = 373;
     }
     void setCurrentState374() {
         pos = path373;
@@ -11774,7 +11774,7 @@ class BugnavInstance {
         stackSize373 = stackSize;
         leftTurn373 = leftTurn;
         emptyStackTurns373 = emptyStackTurns;
-        pathLength++;
+        pathLength = 374;
     }
     void setCurrentState375() {
         pos = path374;
@@ -11800,7 +11800,7 @@ class BugnavInstance {
         stackSize374 = stackSize;
         leftTurn374 = leftTurn;
         emptyStackTurns374 = emptyStackTurns;
-        pathLength++;
+        pathLength = 375;
     }
     void setCurrentState376() {
         pos = path375;
@@ -11826,7 +11826,7 @@ class BugnavInstance {
         stackSize375 = stackSize;
         leftTurn375 = leftTurn;
         emptyStackTurns375 = emptyStackTurns;
-        pathLength++;
+        pathLength = 376;
     }
     void setCurrentState377() {
         pos = path376;
@@ -11852,7 +11852,7 @@ class BugnavInstance {
         stackSize376 = stackSize;
         leftTurn376 = leftTurn;
         emptyStackTurns376 = emptyStackTurns;
-        pathLength++;
+        pathLength = 377;
     }
     void setCurrentState378() {
         pos = path377;
@@ -11878,7 +11878,7 @@ class BugnavInstance {
         stackSize377 = stackSize;
         leftTurn377 = leftTurn;
         emptyStackTurns377 = emptyStackTurns;
-        pathLength++;
+        pathLength = 378;
     }
     void setCurrentState379() {
         pos = path378;
@@ -11904,7 +11904,7 @@ class BugnavInstance {
         stackSize378 = stackSize;
         leftTurn378 = leftTurn;
         emptyStackTurns378 = emptyStackTurns;
-        pathLength++;
+        pathLength = 379;
     }
     void setCurrentState380() {
         pos = path379;
@@ -11930,7 +11930,7 @@ class BugnavInstance {
         stackSize379 = stackSize;
         leftTurn379 = leftTurn;
         emptyStackTurns379 = emptyStackTurns;
-        pathLength++;
+        pathLength = 380;
     }
     void setCurrentState381() {
         pos = path380;
@@ -11956,7 +11956,7 @@ class BugnavInstance {
         stackSize380 = stackSize;
         leftTurn380 = leftTurn;
         emptyStackTurns380 = emptyStackTurns;
-        pathLength++;
+        pathLength = 381;
     }
     void setCurrentState382() {
         pos = path381;
@@ -11982,7 +11982,7 @@ class BugnavInstance {
         stackSize381 = stackSize;
         leftTurn381 = leftTurn;
         emptyStackTurns381 = emptyStackTurns;
-        pathLength++;
+        pathLength = 382;
     }
     void setCurrentState383() {
         pos = path382;
@@ -12008,7 +12008,7 @@ class BugnavInstance {
         stackSize382 = stackSize;
         leftTurn382 = leftTurn;
         emptyStackTurns382 = emptyStackTurns;
-        pathLength++;
+        pathLength = 383;
     }
     void setCurrentState384() {
         pos = path383;
@@ -12034,7 +12034,7 @@ class BugnavInstance {
         stackSize383 = stackSize;
         leftTurn383 = leftTurn;
         emptyStackTurns383 = emptyStackTurns;
-        pathLength++;
+        pathLength = 384;
     }
     void setCurrentState385() {
         pos = path384;
@@ -12060,7 +12060,7 @@ class BugnavInstance {
         stackSize384 = stackSize;
         leftTurn384 = leftTurn;
         emptyStackTurns384 = emptyStackTurns;
-        pathLength++;
+        pathLength = 385;
     }
     void setCurrentState386() {
         pos = path385;
@@ -12086,7 +12086,7 @@ class BugnavInstance {
         stackSize385 = stackSize;
         leftTurn385 = leftTurn;
         emptyStackTurns385 = emptyStackTurns;
-        pathLength++;
+        pathLength = 386;
     }
     void setCurrentState387() {
         pos = path386;
@@ -12112,7 +12112,7 @@ class BugnavInstance {
         stackSize386 = stackSize;
         leftTurn386 = leftTurn;
         emptyStackTurns386 = emptyStackTurns;
-        pathLength++;
+        pathLength = 387;
     }
     void setCurrentState388() {
         pos = path387;
@@ -12138,7 +12138,7 @@ class BugnavInstance {
         stackSize387 = stackSize;
         leftTurn387 = leftTurn;
         emptyStackTurns387 = emptyStackTurns;
-        pathLength++;
+        pathLength = 388;
     }
     void setCurrentState389() {
         pos = path388;
@@ -12164,7 +12164,7 @@ class BugnavInstance {
         stackSize388 = stackSize;
         leftTurn388 = leftTurn;
         emptyStackTurns388 = emptyStackTurns;
-        pathLength++;
+        pathLength = 389;
     }
     void setCurrentState390() {
         pos = path389;
@@ -12190,7 +12190,7 @@ class BugnavInstance {
         stackSize389 = stackSize;
         leftTurn389 = leftTurn;
         emptyStackTurns389 = emptyStackTurns;
-        pathLength++;
+        pathLength = 390;
     }
     void setCurrentState391() {
         pos = path390;
@@ -12216,7 +12216,7 @@ class BugnavInstance {
         stackSize390 = stackSize;
         leftTurn390 = leftTurn;
         emptyStackTurns390 = emptyStackTurns;
-        pathLength++;
+        pathLength = 391;
     }
     void setCurrentState392() {
         pos = path391;
@@ -12242,7 +12242,7 @@ class BugnavInstance {
         stackSize391 = stackSize;
         leftTurn391 = leftTurn;
         emptyStackTurns391 = emptyStackTurns;
-        pathLength++;
+        pathLength = 392;
     }
     void setCurrentState393() {
         pos = path392;
@@ -12268,7 +12268,7 @@ class BugnavInstance {
         stackSize392 = stackSize;
         leftTurn392 = leftTurn;
         emptyStackTurns392 = emptyStackTurns;
-        pathLength++;
+        pathLength = 393;
     }
     void setCurrentState394() {
         pos = path393;
@@ -12294,7 +12294,7 @@ class BugnavInstance {
         stackSize393 = stackSize;
         leftTurn393 = leftTurn;
         emptyStackTurns393 = emptyStackTurns;
-        pathLength++;
+        pathLength = 394;
     }
     void setCurrentState395() {
         pos = path394;
@@ -12320,7 +12320,7 @@ class BugnavInstance {
         stackSize394 = stackSize;
         leftTurn394 = leftTurn;
         emptyStackTurns394 = emptyStackTurns;
-        pathLength++;
+        pathLength = 395;
     }
     void setCurrentState396() {
         pos = path395;
@@ -12346,7 +12346,7 @@ class BugnavInstance {
         stackSize395 = stackSize;
         leftTurn395 = leftTurn;
         emptyStackTurns395 = emptyStackTurns;
-        pathLength++;
+        pathLength = 396;
     }
     void setCurrentState397() {
         pos = path396;
@@ -12372,7 +12372,7 @@ class BugnavInstance {
         stackSize396 = stackSize;
         leftTurn396 = leftTurn;
         emptyStackTurns396 = emptyStackTurns;
-        pathLength++;
+        pathLength = 397;
     }
     void setCurrentState398() {
         pos = path397;
@@ -12398,7 +12398,7 @@ class BugnavInstance {
         stackSize397 = stackSize;
         leftTurn397 = leftTurn;
         emptyStackTurns397 = emptyStackTurns;
-        pathLength++;
+        pathLength = 398;
     }
     void setCurrentState399() {
         pos = path398;
@@ -12424,7 +12424,7 @@ class BugnavInstance {
         stackSize398 = stackSize;
         leftTurn398 = leftTurn;
         emptyStackTurns398 = emptyStackTurns;
-        pathLength++;
+        pathLength = 399;
     }
     void setCurrentState400() {
         pos = path399;
@@ -12450,7 +12450,7 @@ class BugnavInstance {
         stackSize399 = stackSize;
         leftTurn399 = leftTurn;
         emptyStackTurns399 = emptyStackTurns;
-        pathLength++;
+        pathLength = 400;
     }
     void setCurrentState401() {
         pos = path400;
@@ -12476,7 +12476,7 @@ class BugnavInstance {
         stackSize400 = stackSize;
         leftTurn400 = leftTurn;
         emptyStackTurns400 = emptyStackTurns;
-        pathLength++;
+        pathLength = 401;
     }
     void setCurrentState402() {
         pos = path401;
@@ -12502,7 +12502,7 @@ class BugnavInstance {
         stackSize401 = stackSize;
         leftTurn401 = leftTurn;
         emptyStackTurns401 = emptyStackTurns;
-        pathLength++;
+        pathLength = 402;
     }
     void setCurrentState403() {
         pos = path402;
@@ -12528,7 +12528,7 @@ class BugnavInstance {
         stackSize402 = stackSize;
         leftTurn402 = leftTurn;
         emptyStackTurns402 = emptyStackTurns;
-        pathLength++;
+        pathLength = 403;
     }
     void setCurrentState404() {
         pos = path403;
@@ -12554,7 +12554,7 @@ class BugnavInstance {
         stackSize403 = stackSize;
         leftTurn403 = leftTurn;
         emptyStackTurns403 = emptyStackTurns;
-        pathLength++;
+        pathLength = 404;
     }
     void setCurrentState405() {
         pos = path404;
@@ -12580,7 +12580,7 @@ class BugnavInstance {
         stackSize404 = stackSize;
         leftTurn404 = leftTurn;
         emptyStackTurns404 = emptyStackTurns;
-        pathLength++;
+        pathLength = 405;
     }
     void setCurrentState406() {
         pos = path405;
@@ -12606,7 +12606,7 @@ class BugnavInstance {
         stackSize405 = stackSize;
         leftTurn405 = leftTurn;
         emptyStackTurns405 = emptyStackTurns;
-        pathLength++;
+        pathLength = 406;
     }
     void setCurrentState407() {
         pos = path406;
@@ -12632,7 +12632,7 @@ class BugnavInstance {
         stackSize406 = stackSize;
         leftTurn406 = leftTurn;
         emptyStackTurns406 = emptyStackTurns;
-        pathLength++;
+        pathLength = 407;
     }
     void setCurrentState408() {
         pos = path407;
@@ -12658,7 +12658,7 @@ class BugnavInstance {
         stackSize407 = stackSize;
         leftTurn407 = leftTurn;
         emptyStackTurns407 = emptyStackTurns;
-        pathLength++;
+        pathLength = 408;
     }
     void setCurrentState409() {
         pos = path408;
@@ -12684,7 +12684,7 @@ class BugnavInstance {
         stackSize408 = stackSize;
         leftTurn408 = leftTurn;
         emptyStackTurns408 = emptyStackTurns;
-        pathLength++;
+        pathLength = 409;
     }
     void setCurrentState410() {
         pos = path409;
@@ -12710,7 +12710,7 @@ class BugnavInstance {
         stackSize409 = stackSize;
         leftTurn409 = leftTurn;
         emptyStackTurns409 = emptyStackTurns;
-        pathLength++;
+        pathLength = 410;
     }
     void setCurrentState411() {
         pos = path410;
@@ -12736,7 +12736,7 @@ class BugnavInstance {
         stackSize410 = stackSize;
         leftTurn410 = leftTurn;
         emptyStackTurns410 = emptyStackTurns;
-        pathLength++;
+        pathLength = 411;
     }
     void setCurrentState412() {
         pos = path411;
@@ -12762,7 +12762,7 @@ class BugnavInstance {
         stackSize411 = stackSize;
         leftTurn411 = leftTurn;
         emptyStackTurns411 = emptyStackTurns;
-        pathLength++;
+        pathLength = 412;
     }
     void setCurrentState413() {
         pos = path412;
@@ -12788,7 +12788,7 @@ class BugnavInstance {
         stackSize412 = stackSize;
         leftTurn412 = leftTurn;
         emptyStackTurns412 = emptyStackTurns;
-        pathLength++;
+        pathLength = 413;
     }
     void setCurrentState414() {
         pos = path413;
@@ -12814,7 +12814,7 @@ class BugnavInstance {
         stackSize413 = stackSize;
         leftTurn413 = leftTurn;
         emptyStackTurns413 = emptyStackTurns;
-        pathLength++;
+        pathLength = 414;
     }
     void setCurrentState415() {
         pos = path414;
@@ -12840,7 +12840,7 @@ class BugnavInstance {
         stackSize414 = stackSize;
         leftTurn414 = leftTurn;
         emptyStackTurns414 = emptyStackTurns;
-        pathLength++;
+        pathLength = 415;
     }
     void setCurrentState416() {
         pos = path415;
@@ -12866,7 +12866,7 @@ class BugnavInstance {
         stackSize415 = stackSize;
         leftTurn415 = leftTurn;
         emptyStackTurns415 = emptyStackTurns;
-        pathLength++;
+        pathLength = 416;
     }
     void setCurrentState417() {
         pos = path416;
@@ -12892,7 +12892,7 @@ class BugnavInstance {
         stackSize416 = stackSize;
         leftTurn416 = leftTurn;
         emptyStackTurns416 = emptyStackTurns;
-        pathLength++;
+        pathLength = 417;
     }
     void setCurrentState418() {
         pos = path417;
@@ -12918,7 +12918,7 @@ class BugnavInstance {
         stackSize417 = stackSize;
         leftTurn417 = leftTurn;
         emptyStackTurns417 = emptyStackTurns;
-        pathLength++;
+        pathLength = 418;
     }
     void setCurrentState419() {
         pos = path418;
@@ -12944,7 +12944,7 @@ class BugnavInstance {
         stackSize418 = stackSize;
         leftTurn418 = leftTurn;
         emptyStackTurns418 = emptyStackTurns;
-        pathLength++;
+        pathLength = 419;
     }
     void setCurrentState420() {
         pos = path419;
@@ -12970,7 +12970,7 @@ class BugnavInstance {
         stackSize419 = stackSize;
         leftTurn419 = leftTurn;
         emptyStackTurns419 = emptyStackTurns;
-        pathLength++;
+        pathLength = 420;
     }
     void setCurrentState421() {
         pos = path420;
@@ -12996,7 +12996,7 @@ class BugnavInstance {
         stackSize420 = stackSize;
         leftTurn420 = leftTurn;
         emptyStackTurns420 = emptyStackTurns;
-        pathLength++;
+        pathLength = 421;
     }
     void setCurrentState422() {
         pos = path421;
@@ -13022,7 +13022,7 @@ class BugnavInstance {
         stackSize421 = stackSize;
         leftTurn421 = leftTurn;
         emptyStackTurns421 = emptyStackTurns;
-        pathLength++;
+        pathLength = 422;
     }
     void setCurrentState423() {
         pos = path422;
@@ -13048,7 +13048,7 @@ class BugnavInstance {
         stackSize422 = stackSize;
         leftTurn422 = leftTurn;
         emptyStackTurns422 = emptyStackTurns;
-        pathLength++;
+        pathLength = 423;
     }
     void setCurrentState424() {
         pos = path423;
@@ -13074,7 +13074,7 @@ class BugnavInstance {
         stackSize423 = stackSize;
         leftTurn423 = leftTurn;
         emptyStackTurns423 = emptyStackTurns;
-        pathLength++;
+        pathLength = 424;
     }
     void setCurrentState425() {
         pos = path424;
@@ -13100,7 +13100,7 @@ class BugnavInstance {
         stackSize424 = stackSize;
         leftTurn424 = leftTurn;
         emptyStackTurns424 = emptyStackTurns;
-        pathLength++;
+        pathLength = 425;
     }
     void setCurrentState426() {
         pos = path425;
@@ -13126,7 +13126,7 @@ class BugnavInstance {
         stackSize425 = stackSize;
         leftTurn425 = leftTurn;
         emptyStackTurns425 = emptyStackTurns;
-        pathLength++;
+        pathLength = 426;
     }
     void setCurrentState427() {
         pos = path426;
@@ -13152,7 +13152,7 @@ class BugnavInstance {
         stackSize426 = stackSize;
         leftTurn426 = leftTurn;
         emptyStackTurns426 = emptyStackTurns;
-        pathLength++;
+        pathLength = 427;
     }
     void setCurrentState428() {
         pos = path427;
@@ -13178,7 +13178,7 @@ class BugnavInstance {
         stackSize427 = stackSize;
         leftTurn427 = leftTurn;
         emptyStackTurns427 = emptyStackTurns;
-        pathLength++;
+        pathLength = 428;
     }
     void setCurrentState429() {
         pos = path428;
@@ -13204,7 +13204,7 @@ class BugnavInstance {
         stackSize428 = stackSize;
         leftTurn428 = leftTurn;
         emptyStackTurns428 = emptyStackTurns;
-        pathLength++;
+        pathLength = 429;
     }
     void setCurrentState430() {
         pos = path429;
@@ -13230,7 +13230,7 @@ class BugnavInstance {
         stackSize429 = stackSize;
         leftTurn429 = leftTurn;
         emptyStackTurns429 = emptyStackTurns;
-        pathLength++;
+        pathLength = 430;
     }
     void setCurrentState431() {
         pos = path430;
@@ -13256,7 +13256,7 @@ class BugnavInstance {
         stackSize430 = stackSize;
         leftTurn430 = leftTurn;
         emptyStackTurns430 = emptyStackTurns;
-        pathLength++;
+        pathLength = 431;
     }
     void setCurrentState432() {
         pos = path431;
@@ -13282,7 +13282,7 @@ class BugnavInstance {
         stackSize431 = stackSize;
         leftTurn431 = leftTurn;
         emptyStackTurns431 = emptyStackTurns;
-        pathLength++;
+        pathLength = 432;
     }
     void setCurrentState433() {
         pos = path432;
@@ -13308,7 +13308,7 @@ class BugnavInstance {
         stackSize432 = stackSize;
         leftTurn432 = leftTurn;
         emptyStackTurns432 = emptyStackTurns;
-        pathLength++;
+        pathLength = 433;
     }
     void setCurrentState434() {
         pos = path433;
@@ -13334,7 +13334,7 @@ class BugnavInstance {
         stackSize433 = stackSize;
         leftTurn433 = leftTurn;
         emptyStackTurns433 = emptyStackTurns;
-        pathLength++;
+        pathLength = 434;
     }
     void setCurrentState435() {
         pos = path434;
@@ -13360,7 +13360,7 @@ class BugnavInstance {
         stackSize434 = stackSize;
         leftTurn434 = leftTurn;
         emptyStackTurns434 = emptyStackTurns;
-        pathLength++;
+        pathLength = 435;
     }
     void setCurrentState436() {
         pos = path435;
@@ -13386,7 +13386,7 @@ class BugnavInstance {
         stackSize435 = stackSize;
         leftTurn435 = leftTurn;
         emptyStackTurns435 = emptyStackTurns;
-        pathLength++;
+        pathLength = 436;
     }
     void setCurrentState437() {
         pos = path436;
@@ -13412,7 +13412,7 @@ class BugnavInstance {
         stackSize436 = stackSize;
         leftTurn436 = leftTurn;
         emptyStackTurns436 = emptyStackTurns;
-        pathLength++;
+        pathLength = 437;
     }
     void setCurrentState438() {
         pos = path437;
@@ -13438,7 +13438,7 @@ class BugnavInstance {
         stackSize437 = stackSize;
         leftTurn437 = leftTurn;
         emptyStackTurns437 = emptyStackTurns;
-        pathLength++;
+        pathLength = 438;
     }
     void setCurrentState439() {
         pos = path438;
@@ -13464,7 +13464,7 @@ class BugnavInstance {
         stackSize438 = stackSize;
         leftTurn438 = leftTurn;
         emptyStackTurns438 = emptyStackTurns;
-        pathLength++;
+        pathLength = 439;
     }
     void setCurrentState440() {
         pos = path439;
@@ -13490,7 +13490,7 @@ class BugnavInstance {
         stackSize439 = stackSize;
         leftTurn439 = leftTurn;
         emptyStackTurns439 = emptyStackTurns;
-        pathLength++;
+        pathLength = 440;
     }
     void setCurrentState441() {
         pos = path440;
@@ -13516,7 +13516,7 @@ class BugnavInstance {
         stackSize440 = stackSize;
         leftTurn440 = leftTurn;
         emptyStackTurns440 = emptyStackTurns;
-        pathLength++;
+        pathLength = 441;
     }
     void setCurrentState442() {
         pos = path441;
@@ -13542,7 +13542,7 @@ class BugnavInstance {
         stackSize441 = stackSize;
         leftTurn441 = leftTurn;
         emptyStackTurns441 = emptyStackTurns;
-        pathLength++;
+        pathLength = 442;
     }
     void setCurrentState443() {
         pos = path442;
@@ -13568,7 +13568,7 @@ class BugnavInstance {
         stackSize442 = stackSize;
         leftTurn442 = leftTurn;
         emptyStackTurns442 = emptyStackTurns;
-        pathLength++;
+        pathLength = 443;
     }
     void setCurrentState444() {
         pos = path443;
@@ -13594,7 +13594,7 @@ class BugnavInstance {
         stackSize443 = stackSize;
         leftTurn443 = leftTurn;
         emptyStackTurns443 = emptyStackTurns;
-        pathLength++;
+        pathLength = 444;
     }
     void setCurrentState445() {
         pos = path444;
@@ -13620,7 +13620,7 @@ class BugnavInstance {
         stackSize444 = stackSize;
         leftTurn444 = leftTurn;
         emptyStackTurns444 = emptyStackTurns;
-        pathLength++;
+        pathLength = 445;
     }
     void setCurrentState446() {
         pos = path445;
@@ -13646,7 +13646,7 @@ class BugnavInstance {
         stackSize445 = stackSize;
         leftTurn445 = leftTurn;
         emptyStackTurns445 = emptyStackTurns;
-        pathLength++;
+        pathLength = 446;
     }
     void setCurrentState447() {
         pos = path446;
@@ -13672,7 +13672,7 @@ class BugnavInstance {
         stackSize446 = stackSize;
         leftTurn446 = leftTurn;
         emptyStackTurns446 = emptyStackTurns;
-        pathLength++;
+        pathLength = 447;
     }
     void setCurrentState448() {
         pos = path447;
@@ -13698,7 +13698,7 @@ class BugnavInstance {
         stackSize447 = stackSize;
         leftTurn447 = leftTurn;
         emptyStackTurns447 = emptyStackTurns;
-        pathLength++;
+        pathLength = 448;
     }
     void setCurrentState449() {
         pos = path448;
@@ -13724,7 +13724,7 @@ class BugnavInstance {
         stackSize448 = stackSize;
         leftTurn448 = leftTurn;
         emptyStackTurns448 = emptyStackTurns;
-        pathLength++;
+        pathLength = 449;
     }
     void setCurrentState450() {
         pos = path449;
@@ -13750,7 +13750,7 @@ class BugnavInstance {
         stackSize449 = stackSize;
         leftTurn449 = leftTurn;
         emptyStackTurns449 = emptyStackTurns;
-        pathLength++;
+        pathLength = 450;
     }
     void setCurrentState451() {
         pos = path450;
@@ -13776,7 +13776,7 @@ class BugnavInstance {
         stackSize450 = stackSize;
         leftTurn450 = leftTurn;
         emptyStackTurns450 = emptyStackTurns;
-        pathLength++;
+        pathLength = 451;
     }
     void setCurrentState452() {
         pos = path451;
@@ -13802,7 +13802,7 @@ class BugnavInstance {
         stackSize451 = stackSize;
         leftTurn451 = leftTurn;
         emptyStackTurns451 = emptyStackTurns;
-        pathLength++;
+        pathLength = 452;
     }
     void setCurrentState453() {
         pos = path452;
@@ -13828,7 +13828,7 @@ class BugnavInstance {
         stackSize452 = stackSize;
         leftTurn452 = leftTurn;
         emptyStackTurns452 = emptyStackTurns;
-        pathLength++;
+        pathLength = 453;
     }
     void setCurrentState454() {
         pos = path453;
@@ -13854,7 +13854,7 @@ class BugnavInstance {
         stackSize453 = stackSize;
         leftTurn453 = leftTurn;
         emptyStackTurns453 = emptyStackTurns;
-        pathLength++;
+        pathLength = 454;
     }
     void setCurrentState455() {
         pos = path454;
@@ -13880,7 +13880,7 @@ class BugnavInstance {
         stackSize454 = stackSize;
         leftTurn454 = leftTurn;
         emptyStackTurns454 = emptyStackTurns;
-        pathLength++;
+        pathLength = 455;
     }
     void setCurrentState456() {
         pos = path455;
@@ -13906,7 +13906,7 @@ class BugnavInstance {
         stackSize455 = stackSize;
         leftTurn455 = leftTurn;
         emptyStackTurns455 = emptyStackTurns;
-        pathLength++;
+        pathLength = 456;
     }
     void setCurrentState457() {
         pos = path456;
@@ -13932,7 +13932,7 @@ class BugnavInstance {
         stackSize456 = stackSize;
         leftTurn456 = leftTurn;
         emptyStackTurns456 = emptyStackTurns;
-        pathLength++;
+        pathLength = 457;
     }
     void setCurrentState458() {
         pos = path457;
@@ -13958,7 +13958,7 @@ class BugnavInstance {
         stackSize457 = stackSize;
         leftTurn457 = leftTurn;
         emptyStackTurns457 = emptyStackTurns;
-        pathLength++;
+        pathLength = 458;
     }
     void setCurrentState459() {
         pos = path458;
@@ -13984,7 +13984,7 @@ class BugnavInstance {
         stackSize458 = stackSize;
         leftTurn458 = leftTurn;
         emptyStackTurns458 = emptyStackTurns;
-        pathLength++;
+        pathLength = 459;
     }
     void setCurrentState460() {
         pos = path459;
@@ -14010,7 +14010,7 @@ class BugnavInstance {
         stackSize459 = stackSize;
         leftTurn459 = leftTurn;
         emptyStackTurns459 = emptyStackTurns;
-        pathLength++;
+        pathLength = 460;
     }
     void setCurrentState461() {
         pos = path460;
@@ -14036,7 +14036,7 @@ class BugnavInstance {
         stackSize460 = stackSize;
         leftTurn460 = leftTurn;
         emptyStackTurns460 = emptyStackTurns;
-        pathLength++;
+        pathLength = 461;
     }
     void setCurrentState462() {
         pos = path461;
@@ -14062,7 +14062,7 @@ class BugnavInstance {
         stackSize461 = stackSize;
         leftTurn461 = leftTurn;
         emptyStackTurns461 = emptyStackTurns;
-        pathLength++;
+        pathLength = 462;
     }
     void setCurrentState463() {
         pos = path462;
@@ -14088,7 +14088,7 @@ class BugnavInstance {
         stackSize462 = stackSize;
         leftTurn462 = leftTurn;
         emptyStackTurns462 = emptyStackTurns;
-        pathLength++;
+        pathLength = 463;
     }
     void setCurrentState464() {
         pos = path463;
@@ -14114,7 +14114,7 @@ class BugnavInstance {
         stackSize463 = stackSize;
         leftTurn463 = leftTurn;
         emptyStackTurns463 = emptyStackTurns;
-        pathLength++;
+        pathLength = 464;
     }
     void setCurrentState465() {
         pos = path464;
@@ -14140,7 +14140,7 @@ class BugnavInstance {
         stackSize464 = stackSize;
         leftTurn464 = leftTurn;
         emptyStackTurns464 = emptyStackTurns;
-        pathLength++;
+        pathLength = 465;
     }
     void setCurrentState466() {
         pos = path465;
@@ -14166,7 +14166,7 @@ class BugnavInstance {
         stackSize465 = stackSize;
         leftTurn465 = leftTurn;
         emptyStackTurns465 = emptyStackTurns;
-        pathLength++;
+        pathLength = 466;
     }
     void setCurrentState467() {
         pos = path466;
@@ -14192,7 +14192,7 @@ class BugnavInstance {
         stackSize466 = stackSize;
         leftTurn466 = leftTurn;
         emptyStackTurns466 = emptyStackTurns;
-        pathLength++;
+        pathLength = 467;
     }
     void setCurrentState468() {
         pos = path467;
@@ -14218,7 +14218,7 @@ class BugnavInstance {
         stackSize467 = stackSize;
         leftTurn467 = leftTurn;
         emptyStackTurns467 = emptyStackTurns;
-        pathLength++;
+        pathLength = 468;
     }
     void setCurrentState469() {
         pos = path468;
@@ -14244,7 +14244,7 @@ class BugnavInstance {
         stackSize468 = stackSize;
         leftTurn468 = leftTurn;
         emptyStackTurns468 = emptyStackTurns;
-        pathLength++;
+        pathLength = 469;
     }
     void setCurrentState470() {
         pos = path469;
@@ -14270,7 +14270,7 @@ class BugnavInstance {
         stackSize469 = stackSize;
         leftTurn469 = leftTurn;
         emptyStackTurns469 = emptyStackTurns;
-        pathLength++;
+        pathLength = 470;
     }
     void setCurrentState471() {
         pos = path470;
@@ -14296,7 +14296,7 @@ class BugnavInstance {
         stackSize470 = stackSize;
         leftTurn470 = leftTurn;
         emptyStackTurns470 = emptyStackTurns;
-        pathLength++;
+        pathLength = 471;
     }
     void setCurrentState472() {
         pos = path471;
@@ -14322,7 +14322,7 @@ class BugnavInstance {
         stackSize471 = stackSize;
         leftTurn471 = leftTurn;
         emptyStackTurns471 = emptyStackTurns;
-        pathLength++;
+        pathLength = 472;
     }
     void setCurrentState473() {
         pos = path472;
@@ -14348,7 +14348,7 @@ class BugnavInstance {
         stackSize472 = stackSize;
         leftTurn472 = leftTurn;
         emptyStackTurns472 = emptyStackTurns;
-        pathLength++;
+        pathLength = 473;
     }
     void setCurrentState474() {
         pos = path473;
@@ -14374,7 +14374,7 @@ class BugnavInstance {
         stackSize473 = stackSize;
         leftTurn473 = leftTurn;
         emptyStackTurns473 = emptyStackTurns;
-        pathLength++;
+        pathLength = 474;
     }
     void setCurrentState475() {
         pos = path474;
@@ -14400,7 +14400,7 @@ class BugnavInstance {
         stackSize474 = stackSize;
         leftTurn474 = leftTurn;
         emptyStackTurns474 = emptyStackTurns;
-        pathLength++;
+        pathLength = 475;
     }
     void setCurrentState476() {
         pos = path475;
@@ -14426,7 +14426,7 @@ class BugnavInstance {
         stackSize475 = stackSize;
         leftTurn475 = leftTurn;
         emptyStackTurns475 = emptyStackTurns;
-        pathLength++;
+        pathLength = 476;
     }
     void setCurrentState477() {
         pos = path476;
@@ -14452,7 +14452,7 @@ class BugnavInstance {
         stackSize476 = stackSize;
         leftTurn476 = leftTurn;
         emptyStackTurns476 = emptyStackTurns;
-        pathLength++;
+        pathLength = 477;
     }
     void setCurrentState478() {
         pos = path477;
@@ -14478,7 +14478,7 @@ class BugnavInstance {
         stackSize477 = stackSize;
         leftTurn477 = leftTurn;
         emptyStackTurns477 = emptyStackTurns;
-        pathLength++;
+        pathLength = 478;
     }
     void setCurrentState479() {
         pos = path478;
@@ -14504,7 +14504,7 @@ class BugnavInstance {
         stackSize478 = stackSize;
         leftTurn478 = leftTurn;
         emptyStackTurns478 = emptyStackTurns;
-        pathLength++;
+        pathLength = 479;
     }
     void setCurrentState480() {
         pos = path479;
@@ -14530,7 +14530,7 @@ class BugnavInstance {
         stackSize479 = stackSize;
         leftTurn479 = leftTurn;
         emptyStackTurns479 = emptyStackTurns;
-        pathLength++;
+        pathLength = 480;
     }
     void setCurrentState481() {
         pos = path480;
@@ -14556,7 +14556,7 @@ class BugnavInstance {
         stackSize480 = stackSize;
         leftTurn480 = leftTurn;
         emptyStackTurns480 = emptyStackTurns;
-        pathLength++;
+        pathLength = 481;
     }
     void setCurrentState482() {
         pos = path481;
@@ -14582,7 +14582,7 @@ class BugnavInstance {
         stackSize481 = stackSize;
         leftTurn481 = leftTurn;
         emptyStackTurns481 = emptyStackTurns;
-        pathLength++;
+        pathLength = 482;
     }
     void setCurrentState483() {
         pos = path482;
@@ -14608,7 +14608,7 @@ class BugnavInstance {
         stackSize482 = stackSize;
         leftTurn482 = leftTurn;
         emptyStackTurns482 = emptyStackTurns;
-        pathLength++;
+        pathLength = 483;
     }
     void setCurrentState484() {
         pos = path483;
@@ -14634,7 +14634,7 @@ class BugnavInstance {
         stackSize483 = stackSize;
         leftTurn483 = leftTurn;
         emptyStackTurns483 = emptyStackTurns;
-        pathLength++;
+        pathLength = 484;
     }
     void setCurrentState485() {
         pos = path484;
@@ -14660,7 +14660,7 @@ class BugnavInstance {
         stackSize484 = stackSize;
         leftTurn484 = leftTurn;
         emptyStackTurns484 = emptyStackTurns;
-        pathLength++;
+        pathLength = 485;
     }
     void setCurrentState486() {
         pos = path485;
@@ -14686,7 +14686,7 @@ class BugnavInstance {
         stackSize485 = stackSize;
         leftTurn485 = leftTurn;
         emptyStackTurns485 = emptyStackTurns;
-        pathLength++;
+        pathLength = 486;
     }
     void setCurrentState487() {
         pos = path486;
@@ -14712,7 +14712,7 @@ class BugnavInstance {
         stackSize486 = stackSize;
         leftTurn486 = leftTurn;
         emptyStackTurns486 = emptyStackTurns;
-        pathLength++;
+        pathLength = 487;
     }
     void setCurrentState488() {
         pos = path487;
@@ -14738,7 +14738,7 @@ class BugnavInstance {
         stackSize487 = stackSize;
         leftTurn487 = leftTurn;
         emptyStackTurns487 = emptyStackTurns;
-        pathLength++;
+        pathLength = 488;
     }
     void setCurrentState489() {
         pos = path488;
@@ -14764,7 +14764,7 @@ class BugnavInstance {
         stackSize488 = stackSize;
         leftTurn488 = leftTurn;
         emptyStackTurns488 = emptyStackTurns;
-        pathLength++;
+        pathLength = 489;
     }
     void setCurrentState490() {
         pos = path489;
@@ -14790,7 +14790,7 @@ class BugnavInstance {
         stackSize489 = stackSize;
         leftTurn489 = leftTurn;
         emptyStackTurns489 = emptyStackTurns;
-        pathLength++;
+        pathLength = 490;
     }
     void setCurrentState491() {
         pos = path490;
@@ -14816,7 +14816,7 @@ class BugnavInstance {
         stackSize490 = stackSize;
         leftTurn490 = leftTurn;
         emptyStackTurns490 = emptyStackTurns;
-        pathLength++;
+        pathLength = 491;
     }
     void setCurrentState492() {
         pos = path491;
@@ -14842,7 +14842,7 @@ class BugnavInstance {
         stackSize491 = stackSize;
         leftTurn491 = leftTurn;
         emptyStackTurns491 = emptyStackTurns;
-        pathLength++;
+        pathLength = 492;
     }
     void setCurrentState493() {
         pos = path492;
@@ -14868,7 +14868,7 @@ class BugnavInstance {
         stackSize492 = stackSize;
         leftTurn492 = leftTurn;
         emptyStackTurns492 = emptyStackTurns;
-        pathLength++;
+        pathLength = 493;
     }
     void setCurrentState494() {
         pos = path493;
@@ -14894,7 +14894,7 @@ class BugnavInstance {
         stackSize493 = stackSize;
         leftTurn493 = leftTurn;
         emptyStackTurns493 = emptyStackTurns;
-        pathLength++;
+        pathLength = 494;
     }
     void setCurrentState495() {
         pos = path494;
@@ -14920,7 +14920,7 @@ class BugnavInstance {
         stackSize494 = stackSize;
         leftTurn494 = leftTurn;
         emptyStackTurns494 = emptyStackTurns;
-        pathLength++;
+        pathLength = 495;
     }
     void setCurrentState496() {
         pos = path495;
@@ -14946,7 +14946,7 @@ class BugnavInstance {
         stackSize495 = stackSize;
         leftTurn495 = leftTurn;
         emptyStackTurns495 = emptyStackTurns;
-        pathLength++;
+        pathLength = 496;
     }
     void setCurrentState497() {
         pos = path496;
@@ -14972,7 +14972,7 @@ class BugnavInstance {
         stackSize496 = stackSize;
         leftTurn496 = leftTurn;
         emptyStackTurns496 = emptyStackTurns;
-        pathLength++;
+        pathLength = 497;
     }
     void setCurrentState498() {
         pos = path497;
@@ -14998,7 +14998,7 @@ class BugnavInstance {
         stackSize497 = stackSize;
         leftTurn497 = leftTurn;
         emptyStackTurns497 = emptyStackTurns;
-        pathLength++;
+        pathLength = 498;
     }
     void setCurrentState499() {
         pos = path498;
@@ -15024,7 +15024,7 @@ class BugnavInstance {
         stackSize498 = stackSize;
         leftTurn498 = leftTurn;
         emptyStackTurns498 = emptyStackTurns;
-        pathLength++;
+        pathLength = 499;
     }
     void setCurrentState500() {
         pos = path499;
@@ -15050,7 +15050,7 @@ class BugnavInstance {
         stackSize499 = stackSize;
         leftTurn499 = leftTurn;
         emptyStackTurns499 = emptyStackTurns;
-        pathLength++;
+        pathLength = 500;
     }
 
     void setCurrentState() {
@@ -17564,3021 +17564,3518 @@ class BugnavInstance {
     void appendCurrentState() {
         switch (pathLength) {
             case 499 -> {
-                if (!path498.equals(pos))
-                {
+                if (!path498.equals(pos)) {
                     appendCurrentState499();
-                }
-            }
-            case 498 -> {
-                if (!path497.equals(pos))
-                {
+                } else {
                     appendCurrentState498();
                 }
             }
-            case 497 -> {
-                if (!path496.equals(pos))
-                {
+            case 498 -> {
+                if (!path497.equals(pos)) {
+                    appendCurrentState498();
+                } else {
                     appendCurrentState497();
                 }
             }
-            case 496 -> {
-                if (!path495.equals(pos))
-                {
+            case 497 -> {
+                if (!path496.equals(pos)) {
+                    appendCurrentState497();
+                } else {
                     appendCurrentState496();
                 }
             }
-            case 495 -> {
-                if (!path494.equals(pos))
-                {
+            case 496 -> {
+                if (!path495.equals(pos)) {
+                    appendCurrentState496();
+                } else {
                     appendCurrentState495();
                 }
             }
-            case 494 -> {
-                if (!path493.equals(pos))
-                {
+            case 495 -> {
+                if (!path494.equals(pos)) {
+                    appendCurrentState495();
+                } else {
                     appendCurrentState494();
                 }
             }
-            case 493 -> {
-                if (!path492.equals(pos))
-                {
+            case 494 -> {
+                if (!path493.equals(pos)) {
+                    appendCurrentState494();
+                } else {
                     appendCurrentState493();
                 }
             }
-            case 492 -> {
-                if (!path491.equals(pos))
-                {
+            case 493 -> {
+                if (!path492.equals(pos)) {
+                    appendCurrentState493();
+                } else {
                     appendCurrentState492();
                 }
             }
-            case 491 -> {
-                if (!path490.equals(pos))
-                {
+            case 492 -> {
+                if (!path491.equals(pos)) {
+                    appendCurrentState492();
+                } else {
                     appendCurrentState491();
                 }
             }
-            case 490 -> {
-                if (!path489.equals(pos))
-                {
+            case 491 -> {
+                if (!path490.equals(pos)) {
+                    appendCurrentState491();
+                } else {
                     appendCurrentState490();
                 }
             }
-            case 489 -> {
-                if (!path488.equals(pos))
-                {
+            case 490 -> {
+                if (!path489.equals(pos)) {
+                    appendCurrentState490();
+                } else {
                     appendCurrentState489();
                 }
             }
-            case 488 -> {
-                if (!path487.equals(pos))
-                {
+            case 489 -> {
+                if (!path488.equals(pos)) {
+                    appendCurrentState489();
+                } else {
                     appendCurrentState488();
                 }
             }
-            case 487 -> {
-                if (!path486.equals(pos))
-                {
+            case 488 -> {
+                if (!path487.equals(pos)) {
+                    appendCurrentState488();
+                } else {
                     appendCurrentState487();
                 }
             }
-            case 486 -> {
-                if (!path485.equals(pos))
-                {
+            case 487 -> {
+                if (!path486.equals(pos)) {
+                    appendCurrentState487();
+                } else {
                     appendCurrentState486();
                 }
             }
-            case 485 -> {
-                if (!path484.equals(pos))
-                {
+            case 486 -> {
+                if (!path485.equals(pos)) {
+                    appendCurrentState486();
+                } else {
                     appendCurrentState485();
                 }
             }
-            case 484 -> {
-                if (!path483.equals(pos))
-                {
+            case 485 -> {
+                if (!path484.equals(pos)) {
+                    appendCurrentState485();
+                } else {
                     appendCurrentState484();
                 }
             }
-            case 483 -> {
-                if (!path482.equals(pos))
-                {
+            case 484 -> {
+                if (!path483.equals(pos)) {
+                    appendCurrentState484();
+                } else {
                     appendCurrentState483();
                 }
             }
-            case 482 -> {
-                if (!path481.equals(pos))
-                {
+            case 483 -> {
+                if (!path482.equals(pos)) {
+                    appendCurrentState483();
+                } else {
                     appendCurrentState482();
                 }
             }
-            case 481 -> {
-                if (!path480.equals(pos))
-                {
+            case 482 -> {
+                if (!path481.equals(pos)) {
+                    appendCurrentState482();
+                } else {
                     appendCurrentState481();
                 }
             }
-            case 480 -> {
-                if (!path479.equals(pos))
-                {
+            case 481 -> {
+                if (!path480.equals(pos)) {
+                    appendCurrentState481();
+                } else {
                     appendCurrentState480();
                 }
             }
-            case 479 -> {
-                if (!path478.equals(pos))
-                {
+            case 480 -> {
+                if (!path479.equals(pos)) {
+                    appendCurrentState480();
+                } else {
                     appendCurrentState479();
                 }
             }
-            case 478 -> {
-                if (!path477.equals(pos))
-                {
+            case 479 -> {
+                if (!path478.equals(pos)) {
+                    appendCurrentState479();
+                } else {
                     appendCurrentState478();
                 }
             }
-            case 477 -> {
-                if (!path476.equals(pos))
-                {
+            case 478 -> {
+                if (!path477.equals(pos)) {
+                    appendCurrentState478();
+                } else {
                     appendCurrentState477();
                 }
             }
-            case 476 -> {
-                if (!path475.equals(pos))
-                {
+            case 477 -> {
+                if (!path476.equals(pos)) {
+                    appendCurrentState477();
+                } else {
                     appendCurrentState476();
                 }
             }
-            case 475 -> {
-                if (!path474.equals(pos))
-                {
+            case 476 -> {
+                if (!path475.equals(pos)) {
+                    appendCurrentState476();
+                } else {
                     appendCurrentState475();
                 }
             }
-            case 474 -> {
-                if (!path473.equals(pos))
-                {
+            case 475 -> {
+                if (!path474.equals(pos)) {
+                    appendCurrentState475();
+                } else {
                     appendCurrentState474();
                 }
             }
-            case 473 -> {
-                if (!path472.equals(pos))
-                {
+            case 474 -> {
+                if (!path473.equals(pos)) {
+                    appendCurrentState474();
+                } else {
                     appendCurrentState473();
                 }
             }
-            case 472 -> {
-                if (!path471.equals(pos))
-                {
+            case 473 -> {
+                if (!path472.equals(pos)) {
+                    appendCurrentState473();
+                } else {
                     appendCurrentState472();
                 }
             }
-            case 471 -> {
-                if (!path470.equals(pos))
-                {
+            case 472 -> {
+                if (!path471.equals(pos)) {
+                    appendCurrentState472();
+                } else {
                     appendCurrentState471();
                 }
             }
-            case 470 -> {
-                if (!path469.equals(pos))
-                {
+            case 471 -> {
+                if (!path470.equals(pos)) {
+                    appendCurrentState471();
+                } else {
                     appendCurrentState470();
                 }
             }
-            case 469 -> {
-                if (!path468.equals(pos))
-                {
+            case 470 -> {
+                if (!path469.equals(pos)) {
+                    appendCurrentState470();
+                } else {
                     appendCurrentState469();
                 }
             }
-            case 468 -> {
-                if (!path467.equals(pos))
-                {
+            case 469 -> {
+                if (!path468.equals(pos)) {
+                    appendCurrentState469();
+                } else {
                     appendCurrentState468();
                 }
             }
-            case 467 -> {
-                if (!path466.equals(pos))
-                {
+            case 468 -> {
+                if (!path467.equals(pos)) {
+                    appendCurrentState468();
+                } else {
                     appendCurrentState467();
                 }
             }
-            case 466 -> {
-                if (!path465.equals(pos))
-                {
+            case 467 -> {
+                if (!path466.equals(pos)) {
+                    appendCurrentState467();
+                } else {
                     appendCurrentState466();
                 }
             }
-            case 465 -> {
-                if (!path464.equals(pos))
-                {
+            case 466 -> {
+                if (!path465.equals(pos)) {
+                    appendCurrentState466();
+                } else {
                     appendCurrentState465();
                 }
             }
-            case 464 -> {
-                if (!path463.equals(pos))
-                {
+            case 465 -> {
+                if (!path464.equals(pos)) {
+                    appendCurrentState465();
+                } else {
                     appendCurrentState464();
                 }
             }
-            case 463 -> {
-                if (!path462.equals(pos))
-                {
+            case 464 -> {
+                if (!path463.equals(pos)) {
+                    appendCurrentState464();
+                } else {
                     appendCurrentState463();
                 }
             }
-            case 462 -> {
-                if (!path461.equals(pos))
-                {
+            case 463 -> {
+                if (!path462.equals(pos)) {
+                    appendCurrentState463();
+                } else {
                     appendCurrentState462();
                 }
             }
-            case 461 -> {
-                if (!path460.equals(pos))
-                {
+            case 462 -> {
+                if (!path461.equals(pos)) {
+                    appendCurrentState462();
+                } else {
                     appendCurrentState461();
                 }
             }
-            case 460 -> {
-                if (!path459.equals(pos))
-                {
+            case 461 -> {
+                if (!path460.equals(pos)) {
+                    appendCurrentState461();
+                } else {
                     appendCurrentState460();
                 }
             }
-            case 459 -> {
-                if (!path458.equals(pos))
-                {
+            case 460 -> {
+                if (!path459.equals(pos)) {
+                    appendCurrentState460();
+                } else {
                     appendCurrentState459();
                 }
             }
-            case 458 -> {
-                if (!path457.equals(pos))
-                {
+            case 459 -> {
+                if (!path458.equals(pos)) {
+                    appendCurrentState459();
+                } else {
                     appendCurrentState458();
                 }
             }
-            case 457 -> {
-                if (!path456.equals(pos))
-                {
+            case 458 -> {
+                if (!path457.equals(pos)) {
+                    appendCurrentState458();
+                } else {
                     appendCurrentState457();
                 }
             }
-            case 456 -> {
-                if (!path455.equals(pos))
-                {
+            case 457 -> {
+                if (!path456.equals(pos)) {
+                    appendCurrentState457();
+                } else {
                     appendCurrentState456();
                 }
             }
-            case 455 -> {
-                if (!path454.equals(pos))
-                {
+            case 456 -> {
+                if (!path455.equals(pos)) {
+                    appendCurrentState456();
+                } else {
                     appendCurrentState455();
                 }
             }
-            case 454 -> {
-                if (!path453.equals(pos))
-                {
+            case 455 -> {
+                if (!path454.equals(pos)) {
+                    appendCurrentState455();
+                } else {
                     appendCurrentState454();
                 }
             }
-            case 453 -> {
-                if (!path452.equals(pos))
-                {
+            case 454 -> {
+                if (!path453.equals(pos)) {
+                    appendCurrentState454();
+                } else {
                     appendCurrentState453();
                 }
             }
-            case 452 -> {
-                if (!path451.equals(pos))
-                {
+            case 453 -> {
+                if (!path452.equals(pos)) {
+                    appendCurrentState453();
+                } else {
                     appendCurrentState452();
                 }
             }
-            case 451 -> {
-                if (!path450.equals(pos))
-                {
+            case 452 -> {
+                if (!path451.equals(pos)) {
+                    appendCurrentState452();
+                } else {
                     appendCurrentState451();
                 }
             }
-            case 450 -> {
-                if (!path449.equals(pos))
-                {
+            case 451 -> {
+                if (!path450.equals(pos)) {
+                    appendCurrentState451();
+                } else {
                     appendCurrentState450();
                 }
             }
-            case 449 -> {
-                if (!path448.equals(pos))
-                {
+            case 450 -> {
+                if (!path449.equals(pos)) {
+                    appendCurrentState450();
+                } else {
                     appendCurrentState449();
                 }
             }
-            case 448 -> {
-                if (!path447.equals(pos))
-                {
+            case 449 -> {
+                if (!path448.equals(pos)) {
+                    appendCurrentState449();
+                } else {
                     appendCurrentState448();
                 }
             }
-            case 447 -> {
-                if (!path446.equals(pos))
-                {
+            case 448 -> {
+                if (!path447.equals(pos)) {
+                    appendCurrentState448();
+                } else {
                     appendCurrentState447();
                 }
             }
-            case 446 -> {
-                if (!path445.equals(pos))
-                {
+            case 447 -> {
+                if (!path446.equals(pos)) {
+                    appendCurrentState447();
+                } else {
                     appendCurrentState446();
                 }
             }
-            case 445 -> {
-                if (!path444.equals(pos))
-                {
+            case 446 -> {
+                if (!path445.equals(pos)) {
+                    appendCurrentState446();
+                } else {
                     appendCurrentState445();
                 }
             }
-            case 444 -> {
-                if (!path443.equals(pos))
-                {
+            case 445 -> {
+                if (!path444.equals(pos)) {
+                    appendCurrentState445();
+                } else {
                     appendCurrentState444();
                 }
             }
-            case 443 -> {
-                if (!path442.equals(pos))
-                {
+            case 444 -> {
+                if (!path443.equals(pos)) {
+                    appendCurrentState444();
+                } else {
                     appendCurrentState443();
                 }
             }
-            case 442 -> {
-                if (!path441.equals(pos))
-                {
+            case 443 -> {
+                if (!path442.equals(pos)) {
+                    appendCurrentState443();
+                } else {
                     appendCurrentState442();
                 }
             }
-            case 441 -> {
-                if (!path440.equals(pos))
-                {
+            case 442 -> {
+                if (!path441.equals(pos)) {
+                    appendCurrentState442();
+                } else {
                     appendCurrentState441();
                 }
             }
-            case 440 -> {
-                if (!path439.equals(pos))
-                {
+            case 441 -> {
+                if (!path440.equals(pos)) {
+                    appendCurrentState441();
+                } else {
                     appendCurrentState440();
                 }
             }
-            case 439 -> {
-                if (!path438.equals(pos))
-                {
+            case 440 -> {
+                if (!path439.equals(pos)) {
+                    appendCurrentState440();
+                } else {
                     appendCurrentState439();
                 }
             }
-            case 438 -> {
-                if (!path437.equals(pos))
-                {
+            case 439 -> {
+                if (!path438.equals(pos)) {
+                    appendCurrentState439();
+                } else {
                     appendCurrentState438();
                 }
             }
-            case 437 -> {
-                if (!path436.equals(pos))
-                {
+            case 438 -> {
+                if (!path437.equals(pos)) {
+                    appendCurrentState438();
+                } else {
                     appendCurrentState437();
                 }
             }
-            case 436 -> {
-                if (!path435.equals(pos))
-                {
+            case 437 -> {
+                if (!path436.equals(pos)) {
+                    appendCurrentState437();
+                } else {
                     appendCurrentState436();
                 }
             }
-            case 435 -> {
-                if (!path434.equals(pos))
-                {
+            case 436 -> {
+                if (!path435.equals(pos)) {
+                    appendCurrentState436();
+                } else {
                     appendCurrentState435();
                 }
             }
-            case 434 -> {
-                if (!path433.equals(pos))
-                {
+            case 435 -> {
+                if (!path434.equals(pos)) {
+                    appendCurrentState435();
+                } else {
                     appendCurrentState434();
                 }
             }
-            case 433 -> {
-                if (!path432.equals(pos))
-                {
+            case 434 -> {
+                if (!path433.equals(pos)) {
+                    appendCurrentState434();
+                } else {
                     appendCurrentState433();
                 }
             }
-            case 432 -> {
-                if (!path431.equals(pos))
-                {
+            case 433 -> {
+                if (!path432.equals(pos)) {
+                    appendCurrentState433();
+                } else {
                     appendCurrentState432();
                 }
             }
-            case 431 -> {
-                if (!path430.equals(pos))
-                {
+            case 432 -> {
+                if (!path431.equals(pos)) {
+                    appendCurrentState432();
+                } else {
                     appendCurrentState431();
                 }
             }
-            case 430 -> {
-                if (!path429.equals(pos))
-                {
+            case 431 -> {
+                if (!path430.equals(pos)) {
+                    appendCurrentState431();
+                } else {
                     appendCurrentState430();
                 }
             }
-            case 429 -> {
-                if (!path428.equals(pos))
-                {
+            case 430 -> {
+                if (!path429.equals(pos)) {
+                    appendCurrentState430();
+                } else {
                     appendCurrentState429();
                 }
             }
-            case 428 -> {
-                if (!path427.equals(pos))
-                {
+            case 429 -> {
+                if (!path428.equals(pos)) {
+                    appendCurrentState429();
+                } else {
                     appendCurrentState428();
                 }
             }
-            case 427 -> {
-                if (!path426.equals(pos))
-                {
+            case 428 -> {
+                if (!path427.equals(pos)) {
+                    appendCurrentState428();
+                } else {
                     appendCurrentState427();
                 }
             }
-            case 426 -> {
-                if (!path425.equals(pos))
-                {
+            case 427 -> {
+                if (!path426.equals(pos)) {
+                    appendCurrentState427();
+                } else {
                     appendCurrentState426();
                 }
             }
-            case 425 -> {
-                if (!path424.equals(pos))
-                {
+            case 426 -> {
+                if (!path425.equals(pos)) {
+                    appendCurrentState426();
+                } else {
                     appendCurrentState425();
                 }
             }
-            case 424 -> {
-                if (!path423.equals(pos))
-                {
+            case 425 -> {
+                if (!path424.equals(pos)) {
+                    appendCurrentState425();
+                } else {
                     appendCurrentState424();
                 }
             }
-            case 423 -> {
-                if (!path422.equals(pos))
-                {
+            case 424 -> {
+                if (!path423.equals(pos)) {
+                    appendCurrentState424();
+                } else {
                     appendCurrentState423();
                 }
             }
-            case 422 -> {
-                if (!path421.equals(pos))
-                {
+            case 423 -> {
+                if (!path422.equals(pos)) {
+                    appendCurrentState423();
+                } else {
                     appendCurrentState422();
                 }
             }
-            case 421 -> {
-                if (!path420.equals(pos))
-                {
+            case 422 -> {
+                if (!path421.equals(pos)) {
+                    appendCurrentState422();
+                } else {
                     appendCurrentState421();
                 }
             }
-            case 420 -> {
-                if (!path419.equals(pos))
-                {
+            case 421 -> {
+                if (!path420.equals(pos)) {
+                    appendCurrentState421();
+                } else {
                     appendCurrentState420();
                 }
             }
-            case 419 -> {
-                if (!path418.equals(pos))
-                {
+            case 420 -> {
+                if (!path419.equals(pos)) {
+                    appendCurrentState420();
+                } else {
                     appendCurrentState419();
                 }
             }
-            case 418 -> {
-                if (!path417.equals(pos))
-                {
+            case 419 -> {
+                if (!path418.equals(pos)) {
+                    appendCurrentState419();
+                } else {
                     appendCurrentState418();
                 }
             }
-            case 417 -> {
-                if (!path416.equals(pos))
-                {
+            case 418 -> {
+                if (!path417.equals(pos)) {
+                    appendCurrentState418();
+                } else {
                     appendCurrentState417();
                 }
             }
-            case 416 -> {
-                if (!path415.equals(pos))
-                {
+            case 417 -> {
+                if (!path416.equals(pos)) {
+                    appendCurrentState417();
+                } else {
                     appendCurrentState416();
                 }
             }
-            case 415 -> {
-                if (!path414.equals(pos))
-                {
+            case 416 -> {
+                if (!path415.equals(pos)) {
+                    appendCurrentState416();
+                } else {
                     appendCurrentState415();
                 }
             }
-            case 414 -> {
-                if (!path413.equals(pos))
-                {
+            case 415 -> {
+                if (!path414.equals(pos)) {
+                    appendCurrentState415();
+                } else {
                     appendCurrentState414();
                 }
             }
-            case 413 -> {
-                if (!path412.equals(pos))
-                {
+            case 414 -> {
+                if (!path413.equals(pos)) {
+                    appendCurrentState414();
+                } else {
                     appendCurrentState413();
                 }
             }
-            case 412 -> {
-                if (!path411.equals(pos))
-                {
+            case 413 -> {
+                if (!path412.equals(pos)) {
+                    appendCurrentState413();
+                } else {
                     appendCurrentState412();
                 }
             }
-            case 411 -> {
-                if (!path410.equals(pos))
-                {
+            case 412 -> {
+                if (!path411.equals(pos)) {
+                    appendCurrentState412();
+                } else {
                     appendCurrentState411();
                 }
             }
-            case 410 -> {
-                if (!path409.equals(pos))
-                {
+            case 411 -> {
+                if (!path410.equals(pos)) {
+                    appendCurrentState411();
+                } else {
                     appendCurrentState410();
                 }
             }
-            case 409 -> {
-                if (!path408.equals(pos))
-                {
+            case 410 -> {
+                if (!path409.equals(pos)) {
+                    appendCurrentState410();
+                } else {
                     appendCurrentState409();
                 }
             }
-            case 408 -> {
-                if (!path407.equals(pos))
-                {
+            case 409 -> {
+                if (!path408.equals(pos)) {
+                    appendCurrentState409();
+                } else {
                     appendCurrentState408();
                 }
             }
-            case 407 -> {
-                if (!path406.equals(pos))
-                {
+            case 408 -> {
+                if (!path407.equals(pos)) {
+                    appendCurrentState408();
+                } else {
                     appendCurrentState407();
                 }
             }
-            case 406 -> {
-                if (!path405.equals(pos))
-                {
+            case 407 -> {
+                if (!path406.equals(pos)) {
+                    appendCurrentState407();
+                } else {
                     appendCurrentState406();
                 }
             }
-            case 405 -> {
-                if (!path404.equals(pos))
-                {
+            case 406 -> {
+                if (!path405.equals(pos)) {
+                    appendCurrentState406();
+                } else {
                     appendCurrentState405();
                 }
             }
-            case 404 -> {
-                if (!path403.equals(pos))
-                {
+            case 405 -> {
+                if (!path404.equals(pos)) {
+                    appendCurrentState405();
+                } else {
                     appendCurrentState404();
                 }
             }
-            case 403 -> {
-                if (!path402.equals(pos))
-                {
+            case 404 -> {
+                if (!path403.equals(pos)) {
+                    appendCurrentState404();
+                } else {
                     appendCurrentState403();
                 }
             }
-            case 402 -> {
-                if (!path401.equals(pos))
-                {
+            case 403 -> {
+                if (!path402.equals(pos)) {
+                    appendCurrentState403();
+                } else {
                     appendCurrentState402();
                 }
             }
-            case 401 -> {
-                if (!path400.equals(pos))
-                {
+            case 402 -> {
+                if (!path401.equals(pos)) {
+                    appendCurrentState402();
+                } else {
                     appendCurrentState401();
                 }
             }
-            case 400 -> {
-                if (!path399.equals(pos))
-                {
+            case 401 -> {
+                if (!path400.equals(pos)) {
+                    appendCurrentState401();
+                } else {
                     appendCurrentState400();
                 }
             }
-            case 399 -> {
-                if (!path398.equals(pos))
-                {
+            case 400 -> {
+                if (!path399.equals(pos)) {
+                    appendCurrentState400();
+                } else {
                     appendCurrentState399();
                 }
             }
-            case 398 -> {
-                if (!path397.equals(pos))
-                {
+            case 399 -> {
+                if (!path398.equals(pos)) {
+                    appendCurrentState399();
+                } else {
                     appendCurrentState398();
                 }
             }
-            case 397 -> {
-                if (!path396.equals(pos))
-                {
+            case 398 -> {
+                if (!path397.equals(pos)) {
+                    appendCurrentState398();
+                } else {
                     appendCurrentState397();
                 }
             }
-            case 396 -> {
-                if (!path395.equals(pos))
-                {
+            case 397 -> {
+                if (!path396.equals(pos)) {
+                    appendCurrentState397();
+                } else {
                     appendCurrentState396();
                 }
             }
-            case 395 -> {
-                if (!path394.equals(pos))
-                {
+            case 396 -> {
+                if (!path395.equals(pos)) {
+                    appendCurrentState396();
+                } else {
                     appendCurrentState395();
                 }
             }
-            case 394 -> {
-                if (!path393.equals(pos))
-                {
+            case 395 -> {
+                if (!path394.equals(pos)) {
+                    appendCurrentState395();
+                } else {
                     appendCurrentState394();
                 }
             }
-            case 393 -> {
-                if (!path392.equals(pos))
-                {
+            case 394 -> {
+                if (!path393.equals(pos)) {
+                    appendCurrentState394();
+                } else {
                     appendCurrentState393();
                 }
             }
-            case 392 -> {
-                if (!path391.equals(pos))
-                {
+            case 393 -> {
+                if (!path392.equals(pos)) {
+                    appendCurrentState393();
+                } else {
                     appendCurrentState392();
                 }
             }
-            case 391 -> {
-                if (!path390.equals(pos))
-                {
+            case 392 -> {
+                if (!path391.equals(pos)) {
+                    appendCurrentState392();
+                } else {
                     appendCurrentState391();
                 }
             }
-            case 390 -> {
-                if (!path389.equals(pos))
-                {
+            case 391 -> {
+                if (!path390.equals(pos)) {
+                    appendCurrentState391();
+                } else {
                     appendCurrentState390();
                 }
             }
-            case 389 -> {
-                if (!path388.equals(pos))
-                {
+            case 390 -> {
+                if (!path389.equals(pos)) {
+                    appendCurrentState390();
+                } else {
                     appendCurrentState389();
                 }
             }
-            case 388 -> {
-                if (!path387.equals(pos))
-                {
+            case 389 -> {
+                if (!path388.equals(pos)) {
+                    appendCurrentState389();
+                } else {
                     appendCurrentState388();
                 }
             }
-            case 387 -> {
-                if (!path386.equals(pos))
-                {
+            case 388 -> {
+                if (!path387.equals(pos)) {
+                    appendCurrentState388();
+                } else {
                     appendCurrentState387();
                 }
             }
-            case 386 -> {
-                if (!path385.equals(pos))
-                {
+            case 387 -> {
+                if (!path386.equals(pos)) {
+                    appendCurrentState387();
+                } else {
                     appendCurrentState386();
                 }
             }
-            case 385 -> {
-                if (!path384.equals(pos))
-                {
+            case 386 -> {
+                if (!path385.equals(pos)) {
+                    appendCurrentState386();
+                } else {
                     appendCurrentState385();
                 }
             }
-            case 384 -> {
-                if (!path383.equals(pos))
-                {
+            case 385 -> {
+                if (!path384.equals(pos)) {
+                    appendCurrentState385();
+                } else {
                     appendCurrentState384();
                 }
             }
-            case 383 -> {
-                if (!path382.equals(pos))
-                {
+            case 384 -> {
+                if (!path383.equals(pos)) {
+                    appendCurrentState384();
+                } else {
                     appendCurrentState383();
                 }
             }
-            case 382 -> {
-                if (!path381.equals(pos))
-                {
+            case 383 -> {
+                if (!path382.equals(pos)) {
+                    appendCurrentState383();
+                } else {
                     appendCurrentState382();
                 }
             }
-            case 381 -> {
-                if (!path380.equals(pos))
-                {
+            case 382 -> {
+                if (!path381.equals(pos)) {
+                    appendCurrentState382();
+                } else {
                     appendCurrentState381();
                 }
             }
-            case 380 -> {
-                if (!path379.equals(pos))
-                {
+            case 381 -> {
+                if (!path380.equals(pos)) {
+                    appendCurrentState381();
+                } else {
                     appendCurrentState380();
                 }
             }
-            case 379 -> {
-                if (!path378.equals(pos))
-                {
+            case 380 -> {
+                if (!path379.equals(pos)) {
+                    appendCurrentState380();
+                } else {
                     appendCurrentState379();
                 }
             }
-            case 378 -> {
-                if (!path377.equals(pos))
-                {
+            case 379 -> {
+                if (!path378.equals(pos)) {
+                    appendCurrentState379();
+                } else {
                     appendCurrentState378();
                 }
             }
-            case 377 -> {
-                if (!path376.equals(pos))
-                {
+            case 378 -> {
+                if (!path377.equals(pos)) {
+                    appendCurrentState378();
+                } else {
                     appendCurrentState377();
                 }
             }
-            case 376 -> {
-                if (!path375.equals(pos))
-                {
+            case 377 -> {
+                if (!path376.equals(pos)) {
+                    appendCurrentState377();
+                } else {
                     appendCurrentState376();
                 }
             }
-            case 375 -> {
-                if (!path374.equals(pos))
-                {
+            case 376 -> {
+                if (!path375.equals(pos)) {
+                    appendCurrentState376();
+                } else {
                     appendCurrentState375();
                 }
             }
-            case 374 -> {
-                if (!path373.equals(pos))
-                {
+            case 375 -> {
+                if (!path374.equals(pos)) {
+                    appendCurrentState375();
+                } else {
                     appendCurrentState374();
                 }
             }
-            case 373 -> {
-                if (!path372.equals(pos))
-                {
+            case 374 -> {
+                if (!path373.equals(pos)) {
+                    appendCurrentState374();
+                } else {
                     appendCurrentState373();
                 }
             }
-            case 372 -> {
-                if (!path371.equals(pos))
-                {
+            case 373 -> {
+                if (!path372.equals(pos)) {
+                    appendCurrentState373();
+                } else {
                     appendCurrentState372();
                 }
             }
-            case 371 -> {
-                if (!path370.equals(pos))
-                {
+            case 372 -> {
+                if (!path371.equals(pos)) {
+                    appendCurrentState372();
+                } else {
                     appendCurrentState371();
                 }
             }
-            case 370 -> {
-                if (!path369.equals(pos))
-                {
+            case 371 -> {
+                if (!path370.equals(pos)) {
+                    appendCurrentState371();
+                } else {
                     appendCurrentState370();
                 }
             }
-            case 369 -> {
-                if (!path368.equals(pos))
-                {
+            case 370 -> {
+                if (!path369.equals(pos)) {
+                    appendCurrentState370();
+                } else {
                     appendCurrentState369();
                 }
             }
-            case 368 -> {
-                if (!path367.equals(pos))
-                {
+            case 369 -> {
+                if (!path368.equals(pos)) {
+                    appendCurrentState369();
+                } else {
                     appendCurrentState368();
                 }
             }
-            case 367 -> {
-                if (!path366.equals(pos))
-                {
+            case 368 -> {
+                if (!path367.equals(pos)) {
+                    appendCurrentState368();
+                } else {
                     appendCurrentState367();
                 }
             }
-            case 366 -> {
-                if (!path365.equals(pos))
-                {
+            case 367 -> {
+                if (!path366.equals(pos)) {
+                    appendCurrentState367();
+                } else {
                     appendCurrentState366();
                 }
             }
-            case 365 -> {
-                if (!path364.equals(pos))
-                {
+            case 366 -> {
+                if (!path365.equals(pos)) {
+                    appendCurrentState366();
+                } else {
                     appendCurrentState365();
                 }
             }
-            case 364 -> {
-                if (!path363.equals(pos))
-                {
+            case 365 -> {
+                if (!path364.equals(pos)) {
+                    appendCurrentState365();
+                } else {
                     appendCurrentState364();
                 }
             }
-            case 363 -> {
-                if (!path362.equals(pos))
-                {
+            case 364 -> {
+                if (!path363.equals(pos)) {
+                    appendCurrentState364();
+                } else {
                     appendCurrentState363();
                 }
             }
-            case 362 -> {
-                if (!path361.equals(pos))
-                {
+            case 363 -> {
+                if (!path362.equals(pos)) {
+                    appendCurrentState363();
+                } else {
                     appendCurrentState362();
                 }
             }
-            case 361 -> {
-                if (!path360.equals(pos))
-                {
+            case 362 -> {
+                if (!path361.equals(pos)) {
+                    appendCurrentState362();
+                } else {
                     appendCurrentState361();
                 }
             }
-            case 360 -> {
-                if (!path359.equals(pos))
-                {
+            case 361 -> {
+                if (!path360.equals(pos)) {
+                    appendCurrentState361();
+                } else {
                     appendCurrentState360();
                 }
             }
-            case 359 -> {
-                if (!path358.equals(pos))
-                {
+            case 360 -> {
+                if (!path359.equals(pos)) {
+                    appendCurrentState360();
+                } else {
                     appendCurrentState359();
                 }
             }
-            case 358 -> {
-                if (!path357.equals(pos))
-                {
+            case 359 -> {
+                if (!path358.equals(pos)) {
+                    appendCurrentState359();
+                } else {
                     appendCurrentState358();
                 }
             }
-            case 357 -> {
-                if (!path356.equals(pos))
-                {
+            case 358 -> {
+                if (!path357.equals(pos)) {
+                    appendCurrentState358();
+                } else {
                     appendCurrentState357();
                 }
             }
-            case 356 -> {
-                if (!path355.equals(pos))
-                {
+            case 357 -> {
+                if (!path356.equals(pos)) {
+                    appendCurrentState357();
+                } else {
                     appendCurrentState356();
                 }
             }
-            case 355 -> {
-                if (!path354.equals(pos))
-                {
+            case 356 -> {
+                if (!path355.equals(pos)) {
+                    appendCurrentState356();
+                } else {
                     appendCurrentState355();
                 }
             }
-            case 354 -> {
-                if (!path353.equals(pos))
-                {
+            case 355 -> {
+                if (!path354.equals(pos)) {
+                    appendCurrentState355();
+                } else {
                     appendCurrentState354();
                 }
             }
-            case 353 -> {
-                if (!path352.equals(pos))
-                {
+            case 354 -> {
+                if (!path353.equals(pos)) {
+                    appendCurrentState354();
+                } else {
                     appendCurrentState353();
                 }
             }
-            case 352 -> {
-                if (!path351.equals(pos))
-                {
+            case 353 -> {
+                if (!path352.equals(pos)) {
+                    appendCurrentState353();
+                } else {
                     appendCurrentState352();
                 }
             }
-            case 351 -> {
-                if (!path350.equals(pos))
-                {
+            case 352 -> {
+                if (!path351.equals(pos)) {
+                    appendCurrentState352();
+                } else {
                     appendCurrentState351();
                 }
             }
-            case 350 -> {
-                if (!path349.equals(pos))
-                {
+            case 351 -> {
+                if (!path350.equals(pos)) {
+                    appendCurrentState351();
+                } else {
                     appendCurrentState350();
                 }
             }
-            case 349 -> {
-                if (!path348.equals(pos))
-                {
+            case 350 -> {
+                if (!path349.equals(pos)) {
+                    appendCurrentState350();
+                } else {
                     appendCurrentState349();
                 }
             }
-            case 348 -> {
-                if (!path347.equals(pos))
-                {
+            case 349 -> {
+                if (!path348.equals(pos)) {
+                    appendCurrentState349();
+                } else {
                     appendCurrentState348();
                 }
             }
-            case 347 -> {
-                if (!path346.equals(pos))
-                {
+            case 348 -> {
+                if (!path347.equals(pos)) {
+                    appendCurrentState348();
+                } else {
                     appendCurrentState347();
                 }
             }
-            case 346 -> {
-                if (!path345.equals(pos))
-                {
+            case 347 -> {
+                if (!path346.equals(pos)) {
+                    appendCurrentState347();
+                } else {
                     appendCurrentState346();
                 }
             }
-            case 345 -> {
-                if (!path344.equals(pos))
-                {
+            case 346 -> {
+                if (!path345.equals(pos)) {
+                    appendCurrentState346();
+                } else {
                     appendCurrentState345();
                 }
             }
-            case 344 -> {
-                if (!path343.equals(pos))
-                {
+            case 345 -> {
+                if (!path344.equals(pos)) {
+                    appendCurrentState345();
+                } else {
                     appendCurrentState344();
                 }
             }
-            case 343 -> {
-                if (!path342.equals(pos))
-                {
+            case 344 -> {
+                if (!path343.equals(pos)) {
+                    appendCurrentState344();
+                } else {
                     appendCurrentState343();
                 }
             }
-            case 342 -> {
-                if (!path341.equals(pos))
-                {
+            case 343 -> {
+                if (!path342.equals(pos)) {
+                    appendCurrentState343();
+                } else {
                     appendCurrentState342();
                 }
             }
-            case 341 -> {
-                if (!path340.equals(pos))
-                {
+            case 342 -> {
+                if (!path341.equals(pos)) {
+                    appendCurrentState342();
+                } else {
                     appendCurrentState341();
                 }
             }
-            case 340 -> {
-                if (!path339.equals(pos))
-                {
+            case 341 -> {
+                if (!path340.equals(pos)) {
+                    appendCurrentState341();
+                } else {
                     appendCurrentState340();
                 }
             }
-            case 339 -> {
-                if (!path338.equals(pos))
-                {
+            case 340 -> {
+                if (!path339.equals(pos)) {
+                    appendCurrentState340();
+                } else {
                     appendCurrentState339();
                 }
             }
-            case 338 -> {
-                if (!path337.equals(pos))
-                {
+            case 339 -> {
+                if (!path338.equals(pos)) {
+                    appendCurrentState339();
+                } else {
                     appendCurrentState338();
                 }
             }
-            case 337 -> {
-                if (!path336.equals(pos))
-                {
+            case 338 -> {
+                if (!path337.equals(pos)) {
+                    appendCurrentState338();
+                } else {
                     appendCurrentState337();
                 }
             }
-            case 336 -> {
-                if (!path335.equals(pos))
-                {
+            case 337 -> {
+                if (!path336.equals(pos)) {
+                    appendCurrentState337();
+                } else {
                     appendCurrentState336();
                 }
             }
-            case 335 -> {
-                if (!path334.equals(pos))
-                {
+            case 336 -> {
+                if (!path335.equals(pos)) {
+                    appendCurrentState336();
+                } else {
                     appendCurrentState335();
                 }
             }
-            case 334 -> {
-                if (!path333.equals(pos))
-                {
+            case 335 -> {
+                if (!path334.equals(pos)) {
+                    appendCurrentState335();
+                } else {
                     appendCurrentState334();
                 }
             }
-            case 333 -> {
-                if (!path332.equals(pos))
-                {
+            case 334 -> {
+                if (!path333.equals(pos)) {
+                    appendCurrentState334();
+                } else {
                     appendCurrentState333();
                 }
             }
-            case 332 -> {
-                if (!path331.equals(pos))
-                {
+            case 333 -> {
+                if (!path332.equals(pos)) {
+                    appendCurrentState333();
+                } else {
                     appendCurrentState332();
                 }
             }
-            case 331 -> {
-                if (!path330.equals(pos))
-                {
+            case 332 -> {
+                if (!path331.equals(pos)) {
+                    appendCurrentState332();
+                } else {
                     appendCurrentState331();
                 }
             }
-            case 330 -> {
-                if (!path329.equals(pos))
-                {
+            case 331 -> {
+                if (!path330.equals(pos)) {
+                    appendCurrentState331();
+                } else {
                     appendCurrentState330();
                 }
             }
-            case 329 -> {
-                if (!path328.equals(pos))
-                {
+            case 330 -> {
+                if (!path329.equals(pos)) {
+                    appendCurrentState330();
+                } else {
                     appendCurrentState329();
                 }
             }
-            case 328 -> {
-                if (!path327.equals(pos))
-                {
+            case 329 -> {
+                if (!path328.equals(pos)) {
+                    appendCurrentState329();
+                } else {
                     appendCurrentState328();
                 }
             }
-            case 327 -> {
-                if (!path326.equals(pos))
-                {
+            case 328 -> {
+                if (!path327.equals(pos)) {
+                    appendCurrentState328();
+                } else {
                     appendCurrentState327();
                 }
             }
-            case 326 -> {
-                if (!path325.equals(pos))
-                {
+            case 327 -> {
+                if (!path326.equals(pos)) {
+                    appendCurrentState327();
+                } else {
                     appendCurrentState326();
                 }
             }
-            case 325 -> {
-                if (!path324.equals(pos))
-                {
+            case 326 -> {
+                if (!path325.equals(pos)) {
+                    appendCurrentState326();
+                } else {
                     appendCurrentState325();
                 }
             }
-            case 324 -> {
-                if (!path323.equals(pos))
-                {
+            case 325 -> {
+                if (!path324.equals(pos)) {
+                    appendCurrentState325();
+                } else {
                     appendCurrentState324();
                 }
             }
-            case 323 -> {
-                if (!path322.equals(pos))
-                {
+            case 324 -> {
+                if (!path323.equals(pos)) {
+                    appendCurrentState324();
+                } else {
                     appendCurrentState323();
                 }
             }
-            case 322 -> {
-                if (!path321.equals(pos))
-                {
+            case 323 -> {
+                if (!path322.equals(pos)) {
+                    appendCurrentState323();
+                } else {
                     appendCurrentState322();
                 }
             }
-            case 321 -> {
-                if (!path320.equals(pos))
-                {
+            case 322 -> {
+                if (!path321.equals(pos)) {
+                    appendCurrentState322();
+                } else {
                     appendCurrentState321();
                 }
             }
-            case 320 -> {
-                if (!path319.equals(pos))
-                {
+            case 321 -> {
+                if (!path320.equals(pos)) {
+                    appendCurrentState321();
+                } else {
                     appendCurrentState320();
                 }
             }
-            case 319 -> {
-                if (!path318.equals(pos))
-                {
+            case 320 -> {
+                if (!path319.equals(pos)) {
+                    appendCurrentState320();
+                } else {
                     appendCurrentState319();
                 }
             }
-            case 318 -> {
-                if (!path317.equals(pos))
-                {
+            case 319 -> {
+                if (!path318.equals(pos)) {
+                    appendCurrentState319();
+                } else {
                     appendCurrentState318();
                 }
             }
-            case 317 -> {
-                if (!path316.equals(pos))
-                {
+            case 318 -> {
+                if (!path317.equals(pos)) {
+                    appendCurrentState318();
+                } else {
                     appendCurrentState317();
                 }
             }
-            case 316 -> {
-                if (!path315.equals(pos))
-                {
+            case 317 -> {
+                if (!path316.equals(pos)) {
+                    appendCurrentState317();
+                } else {
                     appendCurrentState316();
                 }
             }
-            case 315 -> {
-                if (!path314.equals(pos))
-                {
+            case 316 -> {
+                if (!path315.equals(pos)) {
+                    appendCurrentState316();
+                } else {
                     appendCurrentState315();
                 }
             }
-            case 314 -> {
-                if (!path313.equals(pos))
-                {
+            case 315 -> {
+                if (!path314.equals(pos)) {
+                    appendCurrentState315();
+                } else {
                     appendCurrentState314();
                 }
             }
-            case 313 -> {
-                if (!path312.equals(pos))
-                {
+            case 314 -> {
+                if (!path313.equals(pos)) {
+                    appendCurrentState314();
+                } else {
                     appendCurrentState313();
                 }
             }
-            case 312 -> {
-                if (!path311.equals(pos))
-                {
+            case 313 -> {
+                if (!path312.equals(pos)) {
+                    appendCurrentState313();
+                } else {
                     appendCurrentState312();
                 }
             }
-            case 311 -> {
-                if (!path310.equals(pos))
-                {
+            case 312 -> {
+                if (!path311.equals(pos)) {
+                    appendCurrentState312();
+                } else {
                     appendCurrentState311();
                 }
             }
-            case 310 -> {
-                if (!path309.equals(pos))
-                {
+            case 311 -> {
+                if (!path310.equals(pos)) {
+                    appendCurrentState311();
+                } else {
                     appendCurrentState310();
                 }
             }
-            case 309 -> {
-                if (!path308.equals(pos))
-                {
+            case 310 -> {
+                if (!path309.equals(pos)) {
+                    appendCurrentState310();
+                } else {
                     appendCurrentState309();
                 }
             }
-            case 308 -> {
-                if (!path307.equals(pos))
-                {
+            case 309 -> {
+                if (!path308.equals(pos)) {
+                    appendCurrentState309();
+                } else {
                     appendCurrentState308();
                 }
             }
-            case 307 -> {
-                if (!path306.equals(pos))
-                {
+            case 308 -> {
+                if (!path307.equals(pos)) {
+                    appendCurrentState308();
+                } else {
                     appendCurrentState307();
                 }
             }
-            case 306 -> {
-                if (!path305.equals(pos))
-                {
+            case 307 -> {
+                if (!path306.equals(pos)) {
+                    appendCurrentState307();
+                } else {
                     appendCurrentState306();
                 }
             }
-            case 305 -> {
-                if (!path304.equals(pos))
-                {
+            case 306 -> {
+                if (!path305.equals(pos)) {
+                    appendCurrentState306();
+                } else {
                     appendCurrentState305();
                 }
             }
-            case 304 -> {
-                if (!path303.equals(pos))
-                {
+            case 305 -> {
+                if (!path304.equals(pos)) {
+                    appendCurrentState305();
+                } else {
                     appendCurrentState304();
                 }
             }
-            case 303 -> {
-                if (!path302.equals(pos))
-                {
+            case 304 -> {
+                if (!path303.equals(pos)) {
+                    appendCurrentState304();
+                } else {
                     appendCurrentState303();
                 }
             }
-            case 302 -> {
-                if (!path301.equals(pos))
-                {
+            case 303 -> {
+                if (!path302.equals(pos)) {
+                    appendCurrentState303();
+                } else {
                     appendCurrentState302();
                 }
             }
-            case 301 -> {
-                if (!path300.equals(pos))
-                {
+            case 302 -> {
+                if (!path301.equals(pos)) {
+                    appendCurrentState302();
+                } else {
                     appendCurrentState301();
                 }
             }
-            case 300 -> {
-                if (!path299.equals(pos))
-                {
+            case 301 -> {
+                if (!path300.equals(pos)) {
+                    appendCurrentState301();
+                } else {
                     appendCurrentState300();
                 }
             }
-            case 299 -> {
-                if (!path298.equals(pos))
-                {
+            case 300 -> {
+                if (!path299.equals(pos)) {
+                    appendCurrentState300();
+                } else {
                     appendCurrentState299();
                 }
             }
-            case 298 -> {
-                if (!path297.equals(pos))
-                {
+            case 299 -> {
+                if (!path298.equals(pos)) {
+                    appendCurrentState299();
+                } else {
                     appendCurrentState298();
                 }
             }
-            case 297 -> {
-                if (!path296.equals(pos))
-                {
+            case 298 -> {
+                if (!path297.equals(pos)) {
+                    appendCurrentState298();
+                } else {
                     appendCurrentState297();
                 }
             }
-            case 296 -> {
-                if (!path295.equals(pos))
-                {
+            case 297 -> {
+                if (!path296.equals(pos)) {
+                    appendCurrentState297();
+                } else {
                     appendCurrentState296();
                 }
             }
-            case 295 -> {
-                if (!path294.equals(pos))
-                {
+            case 296 -> {
+                if (!path295.equals(pos)) {
+                    appendCurrentState296();
+                } else {
                     appendCurrentState295();
                 }
             }
-            case 294 -> {
-                if (!path293.equals(pos))
-                {
+            case 295 -> {
+                if (!path294.equals(pos)) {
+                    appendCurrentState295();
+                } else {
                     appendCurrentState294();
                 }
             }
-            case 293 -> {
-                if (!path292.equals(pos))
-                {
+            case 294 -> {
+                if (!path293.equals(pos)) {
+                    appendCurrentState294();
+                } else {
                     appendCurrentState293();
                 }
             }
-            case 292 -> {
-                if (!path291.equals(pos))
-                {
+            case 293 -> {
+                if (!path292.equals(pos)) {
+                    appendCurrentState293();
+                } else {
                     appendCurrentState292();
                 }
             }
-            case 291 -> {
-                if (!path290.equals(pos))
-                {
+            case 292 -> {
+                if (!path291.equals(pos)) {
+                    appendCurrentState292();
+                } else {
                     appendCurrentState291();
                 }
             }
-            case 290 -> {
-                if (!path289.equals(pos))
-                {
+            case 291 -> {
+                if (!path290.equals(pos)) {
+                    appendCurrentState291();
+                } else {
                     appendCurrentState290();
                 }
             }
-            case 289 -> {
-                if (!path288.equals(pos))
-                {
+            case 290 -> {
+                if (!path289.equals(pos)) {
+                    appendCurrentState290();
+                } else {
                     appendCurrentState289();
                 }
             }
-            case 288 -> {
-                if (!path287.equals(pos))
-                {
+            case 289 -> {
+                if (!path288.equals(pos)) {
+                    appendCurrentState289();
+                } else {
                     appendCurrentState288();
                 }
             }
-            case 287 -> {
-                if (!path286.equals(pos))
-                {
+            case 288 -> {
+                if (!path287.equals(pos)) {
+                    appendCurrentState288();
+                } else {
                     appendCurrentState287();
                 }
             }
-            case 286 -> {
-                if (!path285.equals(pos))
-                {
+            case 287 -> {
+                if (!path286.equals(pos)) {
+                    appendCurrentState287();
+                } else {
                     appendCurrentState286();
                 }
             }
-            case 285 -> {
-                if (!path284.equals(pos))
-                {
+            case 286 -> {
+                if (!path285.equals(pos)) {
+                    appendCurrentState286();
+                } else {
                     appendCurrentState285();
                 }
             }
-            case 284 -> {
-                if (!path283.equals(pos))
-                {
+            case 285 -> {
+                if (!path284.equals(pos)) {
+                    appendCurrentState285();
+                } else {
                     appendCurrentState284();
                 }
             }
-            case 283 -> {
-                if (!path282.equals(pos))
-                {
+            case 284 -> {
+                if (!path283.equals(pos)) {
+                    appendCurrentState284();
+                } else {
                     appendCurrentState283();
                 }
             }
-            case 282 -> {
-                if (!path281.equals(pos))
-                {
+            case 283 -> {
+                if (!path282.equals(pos)) {
+                    appendCurrentState283();
+                } else {
                     appendCurrentState282();
                 }
             }
-            case 281 -> {
-                if (!path280.equals(pos))
-                {
+            case 282 -> {
+                if (!path281.equals(pos)) {
+                    appendCurrentState282();
+                } else {
                     appendCurrentState281();
                 }
             }
-            case 280 -> {
-                if (!path279.equals(pos))
-                {
+            case 281 -> {
+                if (!path280.equals(pos)) {
+                    appendCurrentState281();
+                } else {
                     appendCurrentState280();
                 }
             }
-            case 279 -> {
-                if (!path278.equals(pos))
-                {
+            case 280 -> {
+                if (!path279.equals(pos)) {
+                    appendCurrentState280();
+                } else {
                     appendCurrentState279();
                 }
             }
-            case 278 -> {
-                if (!path277.equals(pos))
-                {
+            case 279 -> {
+                if (!path278.equals(pos)) {
+                    appendCurrentState279();
+                } else {
                     appendCurrentState278();
                 }
             }
-            case 277 -> {
-                if (!path276.equals(pos))
-                {
+            case 278 -> {
+                if (!path277.equals(pos)) {
+                    appendCurrentState278();
+                } else {
                     appendCurrentState277();
                 }
             }
-            case 276 -> {
-                if (!path275.equals(pos))
-                {
+            case 277 -> {
+                if (!path276.equals(pos)) {
+                    appendCurrentState277();
+                } else {
                     appendCurrentState276();
                 }
             }
-            case 275 -> {
-                if (!path274.equals(pos))
-                {
+            case 276 -> {
+                if (!path275.equals(pos)) {
+                    appendCurrentState276();
+                } else {
                     appendCurrentState275();
                 }
             }
-            case 274 -> {
-                if (!path273.equals(pos))
-                {
+            case 275 -> {
+                if (!path274.equals(pos)) {
+                    appendCurrentState275();
+                } else {
                     appendCurrentState274();
                 }
             }
-            case 273 -> {
-                if (!path272.equals(pos))
-                {
+            case 274 -> {
+                if (!path273.equals(pos)) {
+                    appendCurrentState274();
+                } else {
                     appendCurrentState273();
                 }
             }
-            case 272 -> {
-                if (!path271.equals(pos))
-                {
+            case 273 -> {
+                if (!path272.equals(pos)) {
+                    appendCurrentState273();
+                } else {
                     appendCurrentState272();
                 }
             }
-            case 271 -> {
-                if (!path270.equals(pos))
-                {
+            case 272 -> {
+                if (!path271.equals(pos)) {
+                    appendCurrentState272();
+                } else {
                     appendCurrentState271();
                 }
             }
-            case 270 -> {
-                if (!path269.equals(pos))
-                {
+            case 271 -> {
+                if (!path270.equals(pos)) {
+                    appendCurrentState271();
+                } else {
                     appendCurrentState270();
                 }
             }
-            case 269 -> {
-                if (!path268.equals(pos))
-                {
+            case 270 -> {
+                if (!path269.equals(pos)) {
+                    appendCurrentState270();
+                } else {
                     appendCurrentState269();
                 }
             }
-            case 268 -> {
-                if (!path267.equals(pos))
-                {
+            case 269 -> {
+                if (!path268.equals(pos)) {
+                    appendCurrentState269();
+                } else {
                     appendCurrentState268();
                 }
             }
-            case 267 -> {
-                if (!path266.equals(pos))
-                {
+            case 268 -> {
+                if (!path267.equals(pos)) {
+                    appendCurrentState268();
+                } else {
                     appendCurrentState267();
                 }
             }
-            case 266 -> {
-                if (!path265.equals(pos))
-                {
+            case 267 -> {
+                if (!path266.equals(pos)) {
+                    appendCurrentState267();
+                } else {
                     appendCurrentState266();
                 }
             }
-            case 265 -> {
-                if (!path264.equals(pos))
-                {
+            case 266 -> {
+                if (!path265.equals(pos)) {
+                    appendCurrentState266();
+                } else {
                     appendCurrentState265();
                 }
             }
-            case 264 -> {
-                if (!path263.equals(pos))
-                {
+            case 265 -> {
+                if (!path264.equals(pos)) {
+                    appendCurrentState265();
+                } else {
                     appendCurrentState264();
                 }
             }
-            case 263 -> {
-                if (!path262.equals(pos))
-                {
+            case 264 -> {
+                if (!path263.equals(pos)) {
+                    appendCurrentState264();
+                } else {
                     appendCurrentState263();
                 }
             }
-            case 262 -> {
-                if (!path261.equals(pos))
-                {
+            case 263 -> {
+                if (!path262.equals(pos)) {
+                    appendCurrentState263();
+                } else {
                     appendCurrentState262();
                 }
             }
-            case 261 -> {
-                if (!path260.equals(pos))
-                {
+            case 262 -> {
+                if (!path261.equals(pos)) {
+                    appendCurrentState262();
+                } else {
                     appendCurrentState261();
                 }
             }
-            case 260 -> {
-                if (!path259.equals(pos))
-                {
+            case 261 -> {
+                if (!path260.equals(pos)) {
+                    appendCurrentState261();
+                } else {
                     appendCurrentState260();
                 }
             }
-            case 259 -> {
-                if (!path258.equals(pos))
-                {
+            case 260 -> {
+                if (!path259.equals(pos)) {
+                    appendCurrentState260();
+                } else {
                     appendCurrentState259();
                 }
             }
-            case 258 -> {
-                if (!path257.equals(pos))
-                {
+            case 259 -> {
+                if (!path258.equals(pos)) {
+                    appendCurrentState259();
+                } else {
                     appendCurrentState258();
                 }
             }
-            case 257 -> {
-                if (!path256.equals(pos))
-                {
+            case 258 -> {
+                if (!path257.equals(pos)) {
+                    appendCurrentState258();
+                } else {
                     appendCurrentState257();
                 }
             }
-            case 256 -> {
-                if (!path255.equals(pos))
-                {
+            case 257 -> {
+                if (!path256.equals(pos)) {
+                    appendCurrentState257();
+                } else {
                     appendCurrentState256();
                 }
             }
-            case 255 -> {
-                if (!path254.equals(pos))
-                {
+            case 256 -> {
+                if (!path255.equals(pos)) {
+                    appendCurrentState256();
+                } else {
                     appendCurrentState255();
                 }
             }
-            case 254 -> {
-                if (!path253.equals(pos))
-                {
+            case 255 -> {
+                if (!path254.equals(pos)) {
+                    appendCurrentState255();
+                } else {
                     appendCurrentState254();
                 }
             }
-            case 253 -> {
-                if (!path252.equals(pos))
-                {
+            case 254 -> {
+                if (!path253.equals(pos)) {
+                    appendCurrentState254();
+                } else {
                     appendCurrentState253();
                 }
             }
-            case 252 -> {
-                if (!path251.equals(pos))
-                {
+            case 253 -> {
+                if (!path252.equals(pos)) {
+                    appendCurrentState253();
+                } else {
                     appendCurrentState252();
                 }
             }
-            case 251 -> {
-                if (!path250.equals(pos))
-                {
+            case 252 -> {
+                if (!path251.equals(pos)) {
+                    appendCurrentState252();
+                } else {
                     appendCurrentState251();
                 }
             }
-            case 250 -> {
-                if (!path249.equals(pos))
-                {
+            case 251 -> {
+                if (!path250.equals(pos)) {
+                    appendCurrentState251();
+                } else {
                     appendCurrentState250();
                 }
             }
-            case 249 -> {
-                if (!path248.equals(pos))
-                {
+            case 250 -> {
+                if (!path249.equals(pos)) {
+                    appendCurrentState250();
+                } else {
                     appendCurrentState249();
                 }
             }
-            case 248 -> {
-                if (!path247.equals(pos))
-                {
+            case 249 -> {
+                if (!path248.equals(pos)) {
+                    appendCurrentState249();
+                } else {
                     appendCurrentState248();
                 }
             }
-            case 247 -> {
-                if (!path246.equals(pos))
-                {
+            case 248 -> {
+                if (!path247.equals(pos)) {
+                    appendCurrentState248();
+                } else {
                     appendCurrentState247();
                 }
             }
-            case 246 -> {
-                if (!path245.equals(pos))
-                {
+            case 247 -> {
+                if (!path246.equals(pos)) {
+                    appendCurrentState247();
+                } else {
                     appendCurrentState246();
                 }
             }
-            case 245 -> {
-                if (!path244.equals(pos))
-                {
+            case 246 -> {
+                if (!path245.equals(pos)) {
+                    appendCurrentState246();
+                } else {
                     appendCurrentState245();
                 }
             }
-            case 244 -> {
-                if (!path243.equals(pos))
-                {
+            case 245 -> {
+                if (!path244.equals(pos)) {
+                    appendCurrentState245();
+                } else {
                     appendCurrentState244();
                 }
             }
-            case 243 -> {
-                if (!path242.equals(pos))
-                {
+            case 244 -> {
+                if (!path243.equals(pos)) {
+                    appendCurrentState244();
+                } else {
                     appendCurrentState243();
                 }
             }
-            case 242 -> {
-                if (!path241.equals(pos))
-                {
+            case 243 -> {
+                if (!path242.equals(pos)) {
+                    appendCurrentState243();
+                } else {
                     appendCurrentState242();
                 }
             }
-            case 241 -> {
-                if (!path240.equals(pos))
-                {
+            case 242 -> {
+                if (!path241.equals(pos)) {
+                    appendCurrentState242();
+                } else {
                     appendCurrentState241();
                 }
             }
-            case 240 -> {
-                if (!path239.equals(pos))
-                {
+            case 241 -> {
+                if (!path240.equals(pos)) {
+                    appendCurrentState241();
+                } else {
                     appendCurrentState240();
                 }
             }
-            case 239 -> {
-                if (!path238.equals(pos))
-                {
+            case 240 -> {
+                if (!path239.equals(pos)) {
+                    appendCurrentState240();
+                } else {
                     appendCurrentState239();
                 }
             }
-            case 238 -> {
-                if (!path237.equals(pos))
-                {
+            case 239 -> {
+                if (!path238.equals(pos)) {
+                    appendCurrentState239();
+                } else {
                     appendCurrentState238();
                 }
             }
-            case 237 -> {
-                if (!path236.equals(pos))
-                {
+            case 238 -> {
+                if (!path237.equals(pos)) {
+                    appendCurrentState238();
+                } else {
                     appendCurrentState237();
                 }
             }
-            case 236 -> {
-                if (!path235.equals(pos))
-                {
+            case 237 -> {
+                if (!path236.equals(pos)) {
+                    appendCurrentState237();
+                } else {
                     appendCurrentState236();
                 }
             }
-            case 235 -> {
-                if (!path234.equals(pos))
-                {
+            case 236 -> {
+                if (!path235.equals(pos)) {
+                    appendCurrentState236();
+                } else {
                     appendCurrentState235();
                 }
             }
-            case 234 -> {
-                if (!path233.equals(pos))
-                {
+            case 235 -> {
+                if (!path234.equals(pos)) {
+                    appendCurrentState235();
+                } else {
                     appendCurrentState234();
                 }
             }
-            case 233 -> {
-                if (!path232.equals(pos))
-                {
+            case 234 -> {
+                if (!path233.equals(pos)) {
+                    appendCurrentState234();
+                } else {
                     appendCurrentState233();
                 }
             }
-            case 232 -> {
-                if (!path231.equals(pos))
-                {
+            case 233 -> {
+                if (!path232.equals(pos)) {
+                    appendCurrentState233();
+                } else {
                     appendCurrentState232();
                 }
             }
-            case 231 -> {
-                if (!path230.equals(pos))
-                {
+            case 232 -> {
+                if (!path231.equals(pos)) {
+                    appendCurrentState232();
+                } else {
                     appendCurrentState231();
                 }
             }
-            case 230 -> {
-                if (!path229.equals(pos))
-                {
+            case 231 -> {
+                if (!path230.equals(pos)) {
+                    appendCurrentState231();
+                } else {
                     appendCurrentState230();
                 }
             }
-            case 229 -> {
-                if (!path228.equals(pos))
-                {
+            case 230 -> {
+                if (!path229.equals(pos)) {
+                    appendCurrentState230();
+                } else {
                     appendCurrentState229();
                 }
             }
-            case 228 -> {
-                if (!path227.equals(pos))
-                {
+            case 229 -> {
+                if (!path228.equals(pos)) {
+                    appendCurrentState229();
+                } else {
                     appendCurrentState228();
                 }
             }
-            case 227 -> {
-                if (!path226.equals(pos))
-                {
+            case 228 -> {
+                if (!path227.equals(pos)) {
+                    appendCurrentState228();
+                } else {
                     appendCurrentState227();
                 }
             }
-            case 226 -> {
-                if (!path225.equals(pos))
-                {
+            case 227 -> {
+                if (!path226.equals(pos)) {
+                    appendCurrentState227();
+                } else {
                     appendCurrentState226();
                 }
             }
-            case 225 -> {
-                if (!path224.equals(pos))
-                {
+            case 226 -> {
+                if (!path225.equals(pos)) {
+                    appendCurrentState226();
+                } else {
                     appendCurrentState225();
                 }
             }
-            case 224 -> {
-                if (!path223.equals(pos))
-                {
+            case 225 -> {
+                if (!path224.equals(pos)) {
+                    appendCurrentState225();
+                } else {
                     appendCurrentState224();
                 }
             }
-            case 223 -> {
-                if (!path222.equals(pos))
-                {
+            case 224 -> {
+                if (!path223.equals(pos)) {
+                    appendCurrentState224();
+                } else {
                     appendCurrentState223();
                 }
             }
-            case 222 -> {
-                if (!path221.equals(pos))
-                {
+            case 223 -> {
+                if (!path222.equals(pos)) {
+                    appendCurrentState223();
+                } else {
                     appendCurrentState222();
                 }
             }
-            case 221 -> {
-                if (!path220.equals(pos))
-                {
+            case 222 -> {
+                if (!path221.equals(pos)) {
+                    appendCurrentState222();
+                } else {
                     appendCurrentState221();
                 }
             }
-            case 220 -> {
-                if (!path219.equals(pos))
-                {
+            case 221 -> {
+                if (!path220.equals(pos)) {
+                    appendCurrentState221();
+                } else {
                     appendCurrentState220();
                 }
             }
-            case 219 -> {
-                if (!path218.equals(pos))
-                {
+            case 220 -> {
+                if (!path219.equals(pos)) {
+                    appendCurrentState220();
+                } else {
                     appendCurrentState219();
                 }
             }
-            case 218 -> {
-                if (!path217.equals(pos))
-                {
+            case 219 -> {
+                if (!path218.equals(pos)) {
+                    appendCurrentState219();
+                } else {
                     appendCurrentState218();
                 }
             }
-            case 217 -> {
-                if (!path216.equals(pos))
-                {
+            case 218 -> {
+                if (!path217.equals(pos)) {
+                    appendCurrentState218();
+                } else {
                     appendCurrentState217();
                 }
             }
-            case 216 -> {
-                if (!path215.equals(pos))
-                {
+            case 217 -> {
+                if (!path216.equals(pos)) {
+                    appendCurrentState217();
+                } else {
                     appendCurrentState216();
                 }
             }
-            case 215 -> {
-                if (!path214.equals(pos))
-                {
+            case 216 -> {
+                if (!path215.equals(pos)) {
+                    appendCurrentState216();
+                } else {
                     appendCurrentState215();
                 }
             }
-            case 214 -> {
-                if (!path213.equals(pos))
-                {
+            case 215 -> {
+                if (!path214.equals(pos)) {
+                    appendCurrentState215();
+                } else {
                     appendCurrentState214();
                 }
             }
-            case 213 -> {
-                if (!path212.equals(pos))
-                {
+            case 214 -> {
+                if (!path213.equals(pos)) {
+                    appendCurrentState214();
+                } else {
                     appendCurrentState213();
                 }
             }
-            case 212 -> {
-                if (!path211.equals(pos))
-                {
+            case 213 -> {
+                if (!path212.equals(pos)) {
+                    appendCurrentState213();
+                } else {
                     appendCurrentState212();
                 }
             }
-            case 211 -> {
-                if (!path210.equals(pos))
-                {
+            case 212 -> {
+                if (!path211.equals(pos)) {
+                    appendCurrentState212();
+                } else {
                     appendCurrentState211();
                 }
             }
-            case 210 -> {
-                if (!path209.equals(pos))
-                {
+            case 211 -> {
+                if (!path210.equals(pos)) {
+                    appendCurrentState211();
+                } else {
                     appendCurrentState210();
                 }
             }
-            case 209 -> {
-                if (!path208.equals(pos))
-                {
+            case 210 -> {
+                if (!path209.equals(pos)) {
+                    appendCurrentState210();
+                } else {
                     appendCurrentState209();
                 }
             }
-            case 208 -> {
-                if (!path207.equals(pos))
-                {
+            case 209 -> {
+                if (!path208.equals(pos)) {
+                    appendCurrentState209();
+                } else {
                     appendCurrentState208();
                 }
             }
-            case 207 -> {
-                if (!path206.equals(pos))
-                {
+            case 208 -> {
+                if (!path207.equals(pos)) {
+                    appendCurrentState208();
+                } else {
                     appendCurrentState207();
                 }
             }
-            case 206 -> {
-                if (!path205.equals(pos))
-                {
+            case 207 -> {
+                if (!path206.equals(pos)) {
+                    appendCurrentState207();
+                } else {
                     appendCurrentState206();
                 }
             }
-            case 205 -> {
-                if (!path204.equals(pos))
-                {
+            case 206 -> {
+                if (!path205.equals(pos)) {
+                    appendCurrentState206();
+                } else {
                     appendCurrentState205();
                 }
             }
-            case 204 -> {
-                if (!path203.equals(pos))
-                {
+            case 205 -> {
+                if (!path204.equals(pos)) {
+                    appendCurrentState205();
+                } else {
                     appendCurrentState204();
                 }
             }
-            case 203 -> {
-                if (!path202.equals(pos))
-                {
+            case 204 -> {
+                if (!path203.equals(pos)) {
+                    appendCurrentState204();
+                } else {
                     appendCurrentState203();
                 }
             }
-            case 202 -> {
-                if (!path201.equals(pos))
-                {
+            case 203 -> {
+                if (!path202.equals(pos)) {
+                    appendCurrentState203();
+                } else {
                     appendCurrentState202();
                 }
             }
-            case 201 -> {
-                if (!path200.equals(pos))
-                {
+            case 202 -> {
+                if (!path201.equals(pos)) {
+                    appendCurrentState202();
+                } else {
                     appendCurrentState201();
                 }
             }
-            case 200 -> {
-                if (!path199.equals(pos))
-                {
+            case 201 -> {
+                if (!path200.equals(pos)) {
+                    appendCurrentState201();
+                } else {
                     appendCurrentState200();
                 }
             }
-            case 199 -> {
-                if (!path198.equals(pos))
-                {
+            case 200 -> {
+                if (!path199.equals(pos)) {
+                    appendCurrentState200();
+                } else {
                     appendCurrentState199();
                 }
             }
-            case 198 -> {
-                if (!path197.equals(pos))
-                {
+            case 199 -> {
+                if (!path198.equals(pos)) {
+                    appendCurrentState199();
+                } else {
                     appendCurrentState198();
                 }
             }
-            case 197 -> {
-                if (!path196.equals(pos))
-                {
+            case 198 -> {
+                if (!path197.equals(pos)) {
+                    appendCurrentState198();
+                } else {
                     appendCurrentState197();
                 }
             }
-            case 196 -> {
-                if (!path195.equals(pos))
-                {
+            case 197 -> {
+                if (!path196.equals(pos)) {
+                    appendCurrentState197();
+                } else {
                     appendCurrentState196();
                 }
             }
-            case 195 -> {
-                if (!path194.equals(pos))
-                {
+            case 196 -> {
+                if (!path195.equals(pos)) {
+                    appendCurrentState196();
+                } else {
                     appendCurrentState195();
                 }
             }
-            case 194 -> {
-                if (!path193.equals(pos))
-                {
+            case 195 -> {
+                if (!path194.equals(pos)) {
+                    appendCurrentState195();
+                } else {
                     appendCurrentState194();
                 }
             }
-            case 193 -> {
-                if (!path192.equals(pos))
-                {
+            case 194 -> {
+                if (!path193.equals(pos)) {
+                    appendCurrentState194();
+                } else {
                     appendCurrentState193();
                 }
             }
-            case 192 -> {
-                if (!path191.equals(pos))
-                {
+            case 193 -> {
+                if (!path192.equals(pos)) {
+                    appendCurrentState193();
+                } else {
                     appendCurrentState192();
                 }
             }
-            case 191 -> {
-                if (!path190.equals(pos))
-                {
+            case 192 -> {
+                if (!path191.equals(pos)) {
+                    appendCurrentState192();
+                } else {
                     appendCurrentState191();
                 }
             }
-            case 190 -> {
-                if (!path189.equals(pos))
-                {
+            case 191 -> {
+                if (!path190.equals(pos)) {
+                    appendCurrentState191();
+                } else {
                     appendCurrentState190();
                 }
             }
-            case 189 -> {
-                if (!path188.equals(pos))
-                {
+            case 190 -> {
+                if (!path189.equals(pos)) {
+                    appendCurrentState190();
+                } else {
                     appendCurrentState189();
                 }
             }
-            case 188 -> {
-                if (!path187.equals(pos))
-                {
+            case 189 -> {
+                if (!path188.equals(pos)) {
+                    appendCurrentState189();
+                } else {
                     appendCurrentState188();
                 }
             }
-            case 187 -> {
-                if (!path186.equals(pos))
-                {
+            case 188 -> {
+                if (!path187.equals(pos)) {
+                    appendCurrentState188();
+                } else {
                     appendCurrentState187();
                 }
             }
-            case 186 -> {
-                if (!path185.equals(pos))
-                {
+            case 187 -> {
+                if (!path186.equals(pos)) {
+                    appendCurrentState187();
+                } else {
                     appendCurrentState186();
                 }
             }
-            case 185 -> {
-                if (!path184.equals(pos))
-                {
+            case 186 -> {
+                if (!path185.equals(pos)) {
+                    appendCurrentState186();
+                } else {
                     appendCurrentState185();
                 }
             }
-            case 184 -> {
-                if (!path183.equals(pos))
-                {
+            case 185 -> {
+                if (!path184.equals(pos)) {
+                    appendCurrentState185();
+                } else {
                     appendCurrentState184();
                 }
             }
-            case 183 -> {
-                if (!path182.equals(pos))
-                {
+            case 184 -> {
+                if (!path183.equals(pos)) {
+                    appendCurrentState184();
+                } else {
                     appendCurrentState183();
                 }
             }
-            case 182 -> {
-                if (!path181.equals(pos))
-                {
+            case 183 -> {
+                if (!path182.equals(pos)) {
+                    appendCurrentState183();
+                } else {
                     appendCurrentState182();
                 }
             }
-            case 181 -> {
-                if (!path180.equals(pos))
-                {
+            case 182 -> {
+                if (!path181.equals(pos)) {
+                    appendCurrentState182();
+                } else {
                     appendCurrentState181();
                 }
             }
-            case 180 -> {
-                if (!path179.equals(pos))
-                {
+            case 181 -> {
+                if (!path180.equals(pos)) {
+                    appendCurrentState181();
+                } else {
                     appendCurrentState180();
                 }
             }
-            case 179 -> {
-                if (!path178.equals(pos))
-                {
+            case 180 -> {
+                if (!path179.equals(pos)) {
+                    appendCurrentState180();
+                } else {
                     appendCurrentState179();
                 }
             }
-            case 178 -> {
-                if (!path177.equals(pos))
-                {
+            case 179 -> {
+                if (!path178.equals(pos)) {
+                    appendCurrentState179();
+                } else {
                     appendCurrentState178();
                 }
             }
-            case 177 -> {
-                if (!path176.equals(pos))
-                {
+            case 178 -> {
+                if (!path177.equals(pos)) {
+                    appendCurrentState178();
+                } else {
                     appendCurrentState177();
                 }
             }
-            case 176 -> {
-                if (!path175.equals(pos))
-                {
+            case 177 -> {
+                if (!path176.equals(pos)) {
+                    appendCurrentState177();
+                } else {
                     appendCurrentState176();
                 }
             }
-            case 175 -> {
-                if (!path174.equals(pos))
-                {
+            case 176 -> {
+                if (!path175.equals(pos)) {
+                    appendCurrentState176();
+                } else {
                     appendCurrentState175();
                 }
             }
-            case 174 -> {
-                if (!path173.equals(pos))
-                {
+            case 175 -> {
+                if (!path174.equals(pos)) {
+                    appendCurrentState175();
+                } else {
                     appendCurrentState174();
                 }
             }
-            case 173 -> {
-                if (!path172.equals(pos))
-                {
+            case 174 -> {
+                if (!path173.equals(pos)) {
+                    appendCurrentState174();
+                } else {
                     appendCurrentState173();
                 }
             }
-            case 172 -> {
-                if (!path171.equals(pos))
-                {
+            case 173 -> {
+                if (!path172.equals(pos)) {
+                    appendCurrentState173();
+                } else {
                     appendCurrentState172();
                 }
             }
-            case 171 -> {
-                if (!path170.equals(pos))
-                {
+            case 172 -> {
+                if (!path171.equals(pos)) {
+                    appendCurrentState172();
+                } else {
                     appendCurrentState171();
                 }
             }
-            case 170 -> {
-                if (!path169.equals(pos))
-                {
+            case 171 -> {
+                if (!path170.equals(pos)) {
+                    appendCurrentState171();
+                } else {
                     appendCurrentState170();
                 }
             }
-            case 169 -> {
-                if (!path168.equals(pos))
-                {
+            case 170 -> {
+                if (!path169.equals(pos)) {
+                    appendCurrentState170();
+                } else {
                     appendCurrentState169();
                 }
             }
-            case 168 -> {
-                if (!path167.equals(pos))
-                {
+            case 169 -> {
+                if (!path168.equals(pos)) {
+                    appendCurrentState169();
+                } else {
                     appendCurrentState168();
                 }
             }
-            case 167 -> {
-                if (!path166.equals(pos))
-                {
+            case 168 -> {
+                if (!path167.equals(pos)) {
+                    appendCurrentState168();
+                } else {
                     appendCurrentState167();
                 }
             }
-            case 166 -> {
-                if (!path165.equals(pos))
-                {
+            case 167 -> {
+                if (!path166.equals(pos)) {
+                    appendCurrentState167();
+                } else {
                     appendCurrentState166();
                 }
             }
-            case 165 -> {
-                if (!path164.equals(pos))
-                {
+            case 166 -> {
+                if (!path165.equals(pos)) {
+                    appendCurrentState166();
+                } else {
                     appendCurrentState165();
                 }
             }
-            case 164 -> {
-                if (!path163.equals(pos))
-                {
+            case 165 -> {
+                if (!path164.equals(pos)) {
+                    appendCurrentState165();
+                } else {
                     appendCurrentState164();
                 }
             }
-            case 163 -> {
-                if (!path162.equals(pos))
-                {
+            case 164 -> {
+                if (!path163.equals(pos)) {
+                    appendCurrentState164();
+                } else {
                     appendCurrentState163();
                 }
             }
-            case 162 -> {
-                if (!path161.equals(pos))
-                {
+            case 163 -> {
+                if (!path162.equals(pos)) {
+                    appendCurrentState163();
+                } else {
                     appendCurrentState162();
                 }
             }
-            case 161 -> {
-                if (!path160.equals(pos))
-                {
+            case 162 -> {
+                if (!path161.equals(pos)) {
+                    appendCurrentState162();
+                } else {
                     appendCurrentState161();
                 }
             }
-            case 160 -> {
-                if (!path159.equals(pos))
-                {
+            case 161 -> {
+                if (!path160.equals(pos)) {
+                    appendCurrentState161();
+                } else {
                     appendCurrentState160();
                 }
             }
-            case 159 -> {
-                if (!path158.equals(pos))
-                {
+            case 160 -> {
+                if (!path159.equals(pos)) {
+                    appendCurrentState160();
+                } else {
                     appendCurrentState159();
                 }
             }
-            case 158 -> {
-                if (!path157.equals(pos))
-                {
+            case 159 -> {
+                if (!path158.equals(pos)) {
+                    appendCurrentState159();
+                } else {
                     appendCurrentState158();
                 }
             }
-            case 157 -> {
-                if (!path156.equals(pos))
-                {
+            case 158 -> {
+                if (!path157.equals(pos)) {
+                    appendCurrentState158();
+                } else {
                     appendCurrentState157();
                 }
             }
-            case 156 -> {
-                if (!path155.equals(pos))
-                {
+            case 157 -> {
+                if (!path156.equals(pos)) {
+                    appendCurrentState157();
+                } else {
                     appendCurrentState156();
                 }
             }
-            case 155 -> {
-                if (!path154.equals(pos))
-                {
+            case 156 -> {
+                if (!path155.equals(pos)) {
+                    appendCurrentState156();
+                } else {
                     appendCurrentState155();
                 }
             }
-            case 154 -> {
-                if (!path153.equals(pos))
-                {
+            case 155 -> {
+                if (!path154.equals(pos)) {
+                    appendCurrentState155();
+                } else {
                     appendCurrentState154();
                 }
             }
-            case 153 -> {
-                if (!path152.equals(pos))
-                {
+            case 154 -> {
+                if (!path153.equals(pos)) {
+                    appendCurrentState154();
+                } else {
                     appendCurrentState153();
                 }
             }
-            case 152 -> {
-                if (!path151.equals(pos))
-                {
+            case 153 -> {
+                if (!path152.equals(pos)) {
+                    appendCurrentState153();
+                } else {
                     appendCurrentState152();
                 }
             }
-            case 151 -> {
-                if (!path150.equals(pos))
-                {
+            case 152 -> {
+                if (!path151.equals(pos)) {
+                    appendCurrentState152();
+                } else {
                     appendCurrentState151();
                 }
             }
-            case 150 -> {
-                if (!path149.equals(pos))
-                {
+            case 151 -> {
+                if (!path150.equals(pos)) {
+                    appendCurrentState151();
+                } else {
                     appendCurrentState150();
                 }
             }
-            case 149 -> {
-                if (!path148.equals(pos))
-                {
+            case 150 -> {
+                if (!path149.equals(pos)) {
+                    appendCurrentState150();
+                } else {
                     appendCurrentState149();
                 }
             }
-            case 148 -> {
-                if (!path147.equals(pos))
-                {
+            case 149 -> {
+                if (!path148.equals(pos)) {
+                    appendCurrentState149();
+                } else {
                     appendCurrentState148();
                 }
             }
-            case 147 -> {
-                if (!path146.equals(pos))
-                {
+            case 148 -> {
+                if (!path147.equals(pos)) {
+                    appendCurrentState148();
+                } else {
                     appendCurrentState147();
                 }
             }
-            case 146 -> {
-                if (!path145.equals(pos))
-                {
+            case 147 -> {
+                if (!path146.equals(pos)) {
+                    appendCurrentState147();
+                } else {
                     appendCurrentState146();
                 }
             }
-            case 145 -> {
-                if (!path144.equals(pos))
-                {
+            case 146 -> {
+                if (!path145.equals(pos)) {
+                    appendCurrentState146();
+                } else {
                     appendCurrentState145();
                 }
             }
-            case 144 -> {
-                if (!path143.equals(pos))
-                {
+            case 145 -> {
+                if (!path144.equals(pos)) {
+                    appendCurrentState145();
+                } else {
                     appendCurrentState144();
                 }
             }
-            case 143 -> {
-                if (!path142.equals(pos))
-                {
+            case 144 -> {
+                if (!path143.equals(pos)) {
+                    appendCurrentState144();
+                } else {
                     appendCurrentState143();
                 }
             }
-            case 142 -> {
-                if (!path141.equals(pos))
-                {
+            case 143 -> {
+                if (!path142.equals(pos)) {
+                    appendCurrentState143();
+                } else {
                     appendCurrentState142();
                 }
             }
-            case 141 -> {
-                if (!path140.equals(pos))
-                {
+            case 142 -> {
+                if (!path141.equals(pos)) {
+                    appendCurrentState142();
+                } else {
                     appendCurrentState141();
                 }
             }
-            case 140 -> {
-                if (!path139.equals(pos))
-                {
+            case 141 -> {
+                if (!path140.equals(pos)) {
+                    appendCurrentState141();
+                } else {
                     appendCurrentState140();
                 }
             }
-            case 139 -> {
-                if (!path138.equals(pos))
-                {
+            case 140 -> {
+                if (!path139.equals(pos)) {
+                    appendCurrentState140();
+                } else {
                     appendCurrentState139();
                 }
             }
-            case 138 -> {
-                if (!path137.equals(pos))
-                {
+            case 139 -> {
+                if (!path138.equals(pos)) {
+                    appendCurrentState139();
+                } else {
                     appendCurrentState138();
                 }
             }
-            case 137 -> {
-                if (!path136.equals(pos))
-                {
+            case 138 -> {
+                if (!path137.equals(pos)) {
+                    appendCurrentState138();
+                } else {
                     appendCurrentState137();
                 }
             }
-            case 136 -> {
-                if (!path135.equals(pos))
-                {
+            case 137 -> {
+                if (!path136.equals(pos)) {
+                    appendCurrentState137();
+                } else {
                     appendCurrentState136();
                 }
             }
-            case 135 -> {
-                if (!path134.equals(pos))
-                {
+            case 136 -> {
+                if (!path135.equals(pos)) {
+                    appendCurrentState136();
+                } else {
                     appendCurrentState135();
                 }
             }
-            case 134 -> {
-                if (!path133.equals(pos))
-                {
+            case 135 -> {
+                if (!path134.equals(pos)) {
+                    appendCurrentState135();
+                } else {
                     appendCurrentState134();
                 }
             }
-            case 133 -> {
-                if (!path132.equals(pos))
-                {
+            case 134 -> {
+                if (!path133.equals(pos)) {
+                    appendCurrentState134();
+                } else {
                     appendCurrentState133();
                 }
             }
-            case 132 -> {
-                if (!path131.equals(pos))
-                {
+            case 133 -> {
+                if (!path132.equals(pos)) {
+                    appendCurrentState133();
+                } else {
                     appendCurrentState132();
                 }
             }
-            case 131 -> {
-                if (!path130.equals(pos))
-                {
+            case 132 -> {
+                if (!path131.equals(pos)) {
+                    appendCurrentState132();
+                } else {
                     appendCurrentState131();
                 }
             }
-            case 130 -> {
-                if (!path129.equals(pos))
-                {
+            case 131 -> {
+                if (!path130.equals(pos)) {
+                    appendCurrentState131();
+                } else {
                     appendCurrentState130();
                 }
             }
-            case 129 -> {
-                if (!path128.equals(pos))
-                {
+            case 130 -> {
+                if (!path129.equals(pos)) {
+                    appendCurrentState130();
+                } else {
                     appendCurrentState129();
                 }
             }
-            case 128 -> {
-                if (!path127.equals(pos))
-                {
+            case 129 -> {
+                if (!path128.equals(pos)) {
+                    appendCurrentState129();
+                } else {
                     appendCurrentState128();
                 }
             }
-            case 127 -> {
-                if (!path126.equals(pos))
-                {
+            case 128 -> {
+                if (!path127.equals(pos)) {
+                    appendCurrentState128();
+                } else {
                     appendCurrentState127();
                 }
             }
-            case 126 -> {
-                if (!path125.equals(pos))
-                {
+            case 127 -> {
+                if (!path126.equals(pos)) {
+                    appendCurrentState127();
+                } else {
                     appendCurrentState126();
                 }
             }
-            case 125 -> {
-                if (!path124.equals(pos))
-                {
+            case 126 -> {
+                if (!path125.equals(pos)) {
+                    appendCurrentState126();
+                } else {
                     appendCurrentState125();
                 }
             }
-            case 124 -> {
-                if (!path123.equals(pos))
-                {
+            case 125 -> {
+                if (!path124.equals(pos)) {
+                    appendCurrentState125();
+                } else {
                     appendCurrentState124();
                 }
             }
-            case 123 -> {
-                if (!path122.equals(pos))
-                {
+            case 124 -> {
+                if (!path123.equals(pos)) {
+                    appendCurrentState124();
+                } else {
                     appendCurrentState123();
                 }
             }
-            case 122 -> {
-                if (!path121.equals(pos))
-                {
+            case 123 -> {
+                if (!path122.equals(pos)) {
+                    appendCurrentState123();
+                } else {
                     appendCurrentState122();
                 }
             }
-            case 121 -> {
-                if (!path120.equals(pos))
-                {
+            case 122 -> {
+                if (!path121.equals(pos)) {
+                    appendCurrentState122();
+                } else {
                     appendCurrentState121();
                 }
             }
-            case 120 -> {
-                if (!path119.equals(pos))
-                {
+            case 121 -> {
+                if (!path120.equals(pos)) {
+                    appendCurrentState121();
+                } else {
                     appendCurrentState120();
                 }
             }
-            case 119 -> {
-                if (!path118.equals(pos))
-                {
+            case 120 -> {
+                if (!path119.equals(pos)) {
+                    appendCurrentState120();
+                } else {
                     appendCurrentState119();
                 }
             }
-            case 118 -> {
-                if (!path117.equals(pos))
-                {
+            case 119 -> {
+                if (!path118.equals(pos)) {
+                    appendCurrentState119();
+                } else {
                     appendCurrentState118();
                 }
             }
-            case 117 -> {
-                if (!path116.equals(pos))
-                {
+            case 118 -> {
+                if (!path117.equals(pos)) {
+                    appendCurrentState118();
+                } else {
                     appendCurrentState117();
                 }
             }
-            case 116 -> {
-                if (!path115.equals(pos))
-                {
+            case 117 -> {
+                if (!path116.equals(pos)) {
+                    appendCurrentState117();
+                } else {
                     appendCurrentState116();
                 }
             }
-            case 115 -> {
-                if (!path114.equals(pos))
-                {
+            case 116 -> {
+                if (!path115.equals(pos)) {
+                    appendCurrentState116();
+                } else {
                     appendCurrentState115();
                 }
             }
-            case 114 -> {
-                if (!path113.equals(pos))
-                {
+            case 115 -> {
+                if (!path114.equals(pos)) {
+                    appendCurrentState115();
+                } else {
                     appendCurrentState114();
                 }
             }
-            case 113 -> {
-                if (!path112.equals(pos))
-                {
+            case 114 -> {
+                if (!path113.equals(pos)) {
+                    appendCurrentState114();
+                } else {
                     appendCurrentState113();
                 }
             }
-            case 112 -> {
-                if (!path111.equals(pos))
-                {
+            case 113 -> {
+                if (!path112.equals(pos)) {
+                    appendCurrentState113();
+                } else {
                     appendCurrentState112();
                 }
             }
-            case 111 -> {
-                if (!path110.equals(pos))
-                {
+            case 112 -> {
+                if (!path111.equals(pos)) {
+                    appendCurrentState112();
+                } else {
                     appendCurrentState111();
                 }
             }
-            case 110 -> {
-                if (!path109.equals(pos))
-                {
+            case 111 -> {
+                if (!path110.equals(pos)) {
+                    appendCurrentState111();
+                } else {
                     appendCurrentState110();
                 }
             }
-            case 109 -> {
-                if (!path108.equals(pos))
-                {
+            case 110 -> {
+                if (!path109.equals(pos)) {
+                    appendCurrentState110();
+                } else {
                     appendCurrentState109();
                 }
             }
-            case 108 -> {
-                if (!path107.equals(pos))
-                {
+            case 109 -> {
+                if (!path108.equals(pos)) {
+                    appendCurrentState109();
+                } else {
                     appendCurrentState108();
                 }
             }
-            case 107 -> {
-                if (!path106.equals(pos))
-                {
+            case 108 -> {
+                if (!path107.equals(pos)) {
+                    appendCurrentState108();
+                } else {
                     appendCurrentState107();
                 }
             }
-            case 106 -> {
-                if (!path105.equals(pos))
-                {
+            case 107 -> {
+                if (!path106.equals(pos)) {
+                    appendCurrentState107();
+                } else {
                     appendCurrentState106();
                 }
             }
-            case 105 -> {
-                if (!path104.equals(pos))
-                {
+            case 106 -> {
+                if (!path105.equals(pos)) {
+                    appendCurrentState106();
+                } else {
                     appendCurrentState105();
                 }
             }
-            case 104 -> {
-                if (!path103.equals(pos))
-                {
+            case 105 -> {
+                if (!path104.equals(pos)) {
+                    appendCurrentState105();
+                } else {
                     appendCurrentState104();
                 }
             }
-            case 103 -> {
-                if (!path102.equals(pos))
-                {
+            case 104 -> {
+                if (!path103.equals(pos)) {
+                    appendCurrentState104();
+                } else {
                     appendCurrentState103();
                 }
             }
-            case 102 -> {
-                if (!path101.equals(pos))
-                {
+            case 103 -> {
+                if (!path102.equals(pos)) {
+                    appendCurrentState103();
+                } else {
                     appendCurrentState102();
                 }
             }
-            case 101 -> {
-                if (!path100.equals(pos))
-                {
+            case 102 -> {
+                if (!path101.equals(pos)) {
+                    appendCurrentState102();
+                } else {
                     appendCurrentState101();
                 }
             }
-            case 100 -> {
-                if (!path99.equals(pos))
-                {
+            case 101 -> {
+                if (!path100.equals(pos)) {
+                    appendCurrentState101();
+                } else {
                     appendCurrentState100();
                 }
             }
-            case 99 -> {
-                if (!path98.equals(pos))
-                {
+            case 100 -> {
+                if (!path99.equals(pos)) {
+                    appendCurrentState100();
+                } else {
                     appendCurrentState99();
                 }
             }
-            case 98 -> {
-                if (!path97.equals(pos))
-                {
+            case 99 -> {
+                if (!path98.equals(pos)) {
+                    appendCurrentState99();
+                } else {
                     appendCurrentState98();
                 }
             }
-            case 97 -> {
-                if (!path96.equals(pos))
-                {
+            case 98 -> {
+                if (!path97.equals(pos)) {
+                    appendCurrentState98();
+                } else {
                     appendCurrentState97();
                 }
             }
-            case 96 -> {
-                if (!path95.equals(pos))
-                {
+            case 97 -> {
+                if (!path96.equals(pos)) {
+                    appendCurrentState97();
+                } else {
                     appendCurrentState96();
                 }
             }
-            case 95 -> {
-                if (!path94.equals(pos))
-                {
+            case 96 -> {
+                if (!path95.equals(pos)) {
+                    appendCurrentState96();
+                } else {
                     appendCurrentState95();
                 }
             }
-            case 94 -> {
-                if (!path93.equals(pos))
-                {
+            case 95 -> {
+                if (!path94.equals(pos)) {
+                    appendCurrentState95();
+                } else {
                     appendCurrentState94();
                 }
             }
-            case 93 -> {
-                if (!path92.equals(pos))
-                {
+            case 94 -> {
+                if (!path93.equals(pos)) {
+                    appendCurrentState94();
+                } else {
                     appendCurrentState93();
                 }
             }
-            case 92 -> {
-                if (!path91.equals(pos))
-                {
+            case 93 -> {
+                if (!path92.equals(pos)) {
+                    appendCurrentState93();
+                } else {
                     appendCurrentState92();
                 }
             }
-            case 91 -> {
-                if (!path90.equals(pos))
-                {
+            case 92 -> {
+                if (!path91.equals(pos)) {
+                    appendCurrentState92();
+                } else {
                     appendCurrentState91();
                 }
             }
-            case 90 -> {
-                if (!path89.equals(pos))
-                {
+            case 91 -> {
+                if (!path90.equals(pos)) {
+                    appendCurrentState91();
+                } else {
                     appendCurrentState90();
                 }
             }
-            case 89 -> {
-                if (!path88.equals(pos))
-                {
+            case 90 -> {
+                if (!path89.equals(pos)) {
+                    appendCurrentState90();
+                } else {
                     appendCurrentState89();
                 }
             }
-            case 88 -> {
-                if (!path87.equals(pos))
-                {
+            case 89 -> {
+                if (!path88.equals(pos)) {
+                    appendCurrentState89();
+                } else {
                     appendCurrentState88();
                 }
             }
-            case 87 -> {
-                if (!path86.equals(pos))
-                {
+            case 88 -> {
+                if (!path87.equals(pos)) {
+                    appendCurrentState88();
+                } else {
                     appendCurrentState87();
                 }
             }
-            case 86 -> {
-                if (!path85.equals(pos))
-                {
+            case 87 -> {
+                if (!path86.equals(pos)) {
+                    appendCurrentState87();
+                } else {
                     appendCurrentState86();
                 }
             }
-            case 85 -> {
-                if (!path84.equals(pos))
-                {
+            case 86 -> {
+                if (!path85.equals(pos)) {
+                    appendCurrentState86();
+                } else {
                     appendCurrentState85();
                 }
             }
-            case 84 -> {
-                if (!path83.equals(pos))
-                {
+            case 85 -> {
+                if (!path84.equals(pos)) {
+                    appendCurrentState85();
+                } else {
                     appendCurrentState84();
                 }
             }
-            case 83 -> {
-                if (!path82.equals(pos))
-                {
+            case 84 -> {
+                if (!path83.equals(pos)) {
+                    appendCurrentState84();
+                } else {
                     appendCurrentState83();
                 }
             }
-            case 82 -> {
-                if (!path81.equals(pos))
-                {
+            case 83 -> {
+                if (!path82.equals(pos)) {
+                    appendCurrentState83();
+                } else {
                     appendCurrentState82();
                 }
             }
-            case 81 -> {
-                if (!path80.equals(pos))
-                {
+            case 82 -> {
+                if (!path81.equals(pos)) {
+                    appendCurrentState82();
+                } else {
                     appendCurrentState81();
                 }
             }
-            case 80 -> {
-                if (!path79.equals(pos))
-                {
+            case 81 -> {
+                if (!path80.equals(pos)) {
+                    appendCurrentState81();
+                } else {
                     appendCurrentState80();
                 }
             }
-            case 79 -> {
-                if (!path78.equals(pos))
-                {
+            case 80 -> {
+                if (!path79.equals(pos)) {
+                    appendCurrentState80();
+                } else {
                     appendCurrentState79();
                 }
             }
-            case 78 -> {
-                if (!path77.equals(pos))
-                {
+            case 79 -> {
+                if (!path78.equals(pos)) {
+                    appendCurrentState79();
+                } else {
                     appendCurrentState78();
                 }
             }
-            case 77 -> {
-                if (!path76.equals(pos))
-                {
+            case 78 -> {
+                if (!path77.equals(pos)) {
+                    appendCurrentState78();
+                } else {
                     appendCurrentState77();
                 }
             }
-            case 76 -> {
-                if (!path75.equals(pos))
-                {
+            case 77 -> {
+                if (!path76.equals(pos)) {
+                    appendCurrentState77();
+                } else {
                     appendCurrentState76();
                 }
             }
-            case 75 -> {
-                if (!path74.equals(pos))
-                {
+            case 76 -> {
+                if (!path75.equals(pos)) {
+                    appendCurrentState76();
+                } else {
                     appendCurrentState75();
                 }
             }
-            case 74 -> {
-                if (!path73.equals(pos))
-                {
+            case 75 -> {
+                if (!path74.equals(pos)) {
+                    appendCurrentState75();
+                } else {
                     appendCurrentState74();
                 }
             }
-            case 73 -> {
-                if (!path72.equals(pos))
-                {
+            case 74 -> {
+                if (!path73.equals(pos)) {
+                    appendCurrentState74();
+                } else {
                     appendCurrentState73();
                 }
             }
-            case 72 -> {
-                if (!path71.equals(pos))
-                {
+            case 73 -> {
+                if (!path72.equals(pos)) {
+                    appendCurrentState73();
+                } else {
                     appendCurrentState72();
                 }
             }
-            case 71 -> {
-                if (!path70.equals(pos))
-                {
+            case 72 -> {
+                if (!path71.equals(pos)) {
+                    appendCurrentState72();
+                } else {
                     appendCurrentState71();
                 }
             }
-            case 70 -> {
-                if (!path69.equals(pos))
-                {
+            case 71 -> {
+                if (!path70.equals(pos)) {
+                    appendCurrentState71();
+                } else {
                     appendCurrentState70();
                 }
             }
-            case 69 -> {
-                if (!path68.equals(pos))
-                {
+            case 70 -> {
+                if (!path69.equals(pos)) {
+                    appendCurrentState70();
+                } else {
                     appendCurrentState69();
                 }
             }
-            case 68 -> {
-                if (!path67.equals(pos))
-                {
+            case 69 -> {
+                if (!path68.equals(pos)) {
+                    appendCurrentState69();
+                } else {
                     appendCurrentState68();
                 }
             }
-            case 67 -> {
-                if (!path66.equals(pos))
-                {
+            case 68 -> {
+                if (!path67.equals(pos)) {
+                    appendCurrentState68();
+                } else {
                     appendCurrentState67();
                 }
             }
-            case 66 -> {
-                if (!path65.equals(pos))
-                {
+            case 67 -> {
+                if (!path66.equals(pos)) {
+                    appendCurrentState67();
+                } else {
                     appendCurrentState66();
                 }
             }
-            case 65 -> {
-                if (!path64.equals(pos))
-                {
+            case 66 -> {
+                if (!path65.equals(pos)) {
+                    appendCurrentState66();
+                } else {
                     appendCurrentState65();
                 }
             }
-            case 64 -> {
-                if (!path63.equals(pos))
-                {
+            case 65 -> {
+                if (!path64.equals(pos)) {
+                    appendCurrentState65();
+                } else {
                     appendCurrentState64();
                 }
             }
-            case 63 -> {
-                if (!path62.equals(pos))
-                {
+            case 64 -> {
+                if (!path63.equals(pos)) {
+                    appendCurrentState64();
+                } else {
                     appendCurrentState63();
                 }
             }
-            case 62 -> {
-                if (!path61.equals(pos))
-                {
+            case 63 -> {
+                if (!path62.equals(pos)) {
+                    appendCurrentState63();
+                } else {
                     appendCurrentState62();
                 }
             }
-            case 61 -> {
-                if (!path60.equals(pos))
-                {
+            case 62 -> {
+                if (!path61.equals(pos)) {
+                    appendCurrentState62();
+                } else {
                     appendCurrentState61();
                 }
             }
-            case 60 -> {
-                if (!path59.equals(pos))
-                {
+            case 61 -> {
+                if (!path60.equals(pos)) {
+                    appendCurrentState61();
+                } else {
                     appendCurrentState60();
                 }
             }
-            case 59 -> {
-                if (!path58.equals(pos))
-                {
+            case 60 -> {
+                if (!path59.equals(pos)) {
+                    appendCurrentState60();
+                } else {
                     appendCurrentState59();
                 }
             }
-            case 58 -> {
-                if (!path57.equals(pos))
-                {
+            case 59 -> {
+                if (!path58.equals(pos)) {
+                    appendCurrentState59();
+                } else {
                     appendCurrentState58();
                 }
             }
-            case 57 -> {
-                if (!path56.equals(pos))
-                {
+            case 58 -> {
+                if (!path57.equals(pos)) {
+                    appendCurrentState58();
+                } else {
                     appendCurrentState57();
                 }
             }
-            case 56 -> {
-                if (!path55.equals(pos))
-                {
+            case 57 -> {
+                if (!path56.equals(pos)) {
+                    appendCurrentState57();
+                } else {
                     appendCurrentState56();
                 }
             }
-            case 55 -> {
-                if (!path54.equals(pos))
-                {
+            case 56 -> {
+                if (!path55.equals(pos)) {
+                    appendCurrentState56();
+                } else {
                     appendCurrentState55();
                 }
             }
-            case 54 -> {
-                if (!path53.equals(pos))
-                {
+            case 55 -> {
+                if (!path54.equals(pos)) {
+                    appendCurrentState55();
+                } else {
                     appendCurrentState54();
                 }
             }
-            case 53 -> {
-                if (!path52.equals(pos))
-                {
+            case 54 -> {
+                if (!path53.equals(pos)) {
+                    appendCurrentState54();
+                } else {
                     appendCurrentState53();
                 }
             }
-            case 52 -> {
-                if (!path51.equals(pos))
-                {
+            case 53 -> {
+                if (!path52.equals(pos)) {
+                    appendCurrentState53();
+                } else {
                     appendCurrentState52();
                 }
             }
-            case 51 -> {
-                if (!path50.equals(pos))
-                {
+            case 52 -> {
+                if (!path51.equals(pos)) {
+                    appendCurrentState52();
+                } else {
                     appendCurrentState51();
                 }
             }
-            case 50 -> {
-                if (!path49.equals(pos))
-                {
+            case 51 -> {
+                if (!path50.equals(pos)) {
+                    appendCurrentState51();
+                } else {
                     appendCurrentState50();
                 }
             }
-            case 49 -> {
-                if (!path48.equals(pos))
-                {
+            case 50 -> {
+                if (!path49.equals(pos)) {
+                    appendCurrentState50();
+                } else {
                     appendCurrentState49();
                 }
             }
-            case 48 -> {
-                if (!path47.equals(pos))
-                {
+            case 49 -> {
+                if (!path48.equals(pos)) {
+                    appendCurrentState49();
+                } else {
                     appendCurrentState48();
                 }
             }
-            case 47 -> {
-                if (!path46.equals(pos))
-                {
+            case 48 -> {
+                if (!path47.equals(pos)) {
+                    appendCurrentState48();
+                } else {
                     appendCurrentState47();
                 }
             }
-            case 46 -> {
-                if (!path45.equals(pos))
-                {
+            case 47 -> {
+                if (!path46.equals(pos)) {
+                    appendCurrentState47();
+                } else {
                     appendCurrentState46();
                 }
             }
-            case 45 -> {
-                if (!path44.equals(pos))
-                {
+            case 46 -> {
+                if (!path45.equals(pos)) {
+                    appendCurrentState46();
+                } else {
                     appendCurrentState45();
                 }
             }
-            case 44 -> {
-                if (!path43.equals(pos))
-                {
+            case 45 -> {
+                if (!path44.equals(pos)) {
+                    appendCurrentState45();
+                } else {
                     appendCurrentState44();
                 }
             }
-            case 43 -> {
-                if (!path42.equals(pos))
-                {
+            case 44 -> {
+                if (!path43.equals(pos)) {
+                    appendCurrentState44();
+                } else {
                     appendCurrentState43();
                 }
             }
-            case 42 -> {
-                if (!path41.equals(pos))
-                {
+            case 43 -> {
+                if (!path42.equals(pos)) {
+                    appendCurrentState43();
+                } else {
                     appendCurrentState42();
                 }
             }
-            case 41 -> {
-                if (!path40.equals(pos))
-                {
+            case 42 -> {
+                if (!path41.equals(pos)) {
+                    appendCurrentState42();
+                } else {
                     appendCurrentState41();
                 }
             }
-            case 40 -> {
-                if (!path39.equals(pos))
-                {
+            case 41 -> {
+                if (!path40.equals(pos)) {
+                    appendCurrentState41();
+                } else {
                     appendCurrentState40();
                 }
             }
-            case 39 -> {
-                if (!path38.equals(pos))
-                {
+            case 40 -> {
+                if (!path39.equals(pos)) {
+                    appendCurrentState40();
+                } else {
                     appendCurrentState39();
                 }
             }
-            case 38 -> {
-                if (!path37.equals(pos))
-                {
+            case 39 -> {
+                if (!path38.equals(pos)) {
+                    appendCurrentState39();
+                } else {
                     appendCurrentState38();
                 }
             }
-            case 37 -> {
-                if (!path36.equals(pos))
-                {
+            case 38 -> {
+                if (!path37.equals(pos)) {
+                    appendCurrentState38();
+                } else {
                     appendCurrentState37();
                 }
             }
-            case 36 -> {
-                if (!path35.equals(pos))
-                {
+            case 37 -> {
+                if (!path36.equals(pos)) {
+                    appendCurrentState37();
+                } else {
                     appendCurrentState36();
                 }
             }
-            case 35 -> {
-                if (!path34.equals(pos))
-                {
+            case 36 -> {
+                if (!path35.equals(pos)) {
+                    appendCurrentState36();
+                } else {
                     appendCurrentState35();
                 }
             }
-            case 34 -> {
-                if (!path33.equals(pos))
-                {
+            case 35 -> {
+                if (!path34.equals(pos)) {
+                    appendCurrentState35();
+                } else {
                     appendCurrentState34();
                 }
             }
-            case 33 -> {
-                if (!path32.equals(pos))
-                {
+            case 34 -> {
+                if (!path33.equals(pos)) {
+                    appendCurrentState34();
+                } else {
                     appendCurrentState33();
                 }
             }
-            case 32 -> {
-                if (!path31.equals(pos))
-                {
+            case 33 -> {
+                if (!path32.equals(pos)) {
+                    appendCurrentState33();
+                } else {
                     appendCurrentState32();
                 }
             }
-            case 31 -> {
-                if (!path30.equals(pos))
-                {
+            case 32 -> {
+                if (!path31.equals(pos)) {
+                    appendCurrentState32();
+                } else {
                     appendCurrentState31();
                 }
             }
-            case 30 -> {
-                if (!path29.equals(pos))
-                {
+            case 31 -> {
+                if (!path30.equals(pos)) {
+                    appendCurrentState31();
+                } else {
                     appendCurrentState30();
                 }
             }
-            case 29 -> {
-                if (!path28.equals(pos))
-                {
+            case 30 -> {
+                if (!path29.equals(pos)) {
+                    appendCurrentState30();
+                } else {
                     appendCurrentState29();
                 }
             }
-            case 28 -> {
-                if (!path27.equals(pos))
-                {
+            case 29 -> {
+                if (!path28.equals(pos)) {
+                    appendCurrentState29();
+                } else {
                     appendCurrentState28();
                 }
             }
-            case 27 -> {
-                if (!path26.equals(pos))
-                {
+            case 28 -> {
+                if (!path27.equals(pos)) {
+                    appendCurrentState28();
+                } else {
                     appendCurrentState27();
                 }
             }
-            case 26 -> {
-                if (!path25.equals(pos))
-                {
+            case 27 -> {
+                if (!path26.equals(pos)) {
+                    appendCurrentState27();
+                } else {
                     appendCurrentState26();
                 }
             }
-            case 25 -> {
-                if (!path24.equals(pos))
-                {
+            case 26 -> {
+                if (!path25.equals(pos)) {
+                    appendCurrentState26();
+                } else {
                     appendCurrentState25();
                 }
             }
-            case 24 -> {
-                if (!path23.equals(pos))
-                {
+            case 25 -> {
+                if (!path24.equals(pos)) {
+                    appendCurrentState25();
+                } else {
                     appendCurrentState24();
                 }
             }
-            case 23 -> {
-                if (!path22.equals(pos))
-                {
+            case 24 -> {
+                if (!path23.equals(pos)) {
+                    appendCurrentState24();
+                } else {
                     appendCurrentState23();
                 }
             }
-            case 22 -> {
-                if (!path21.equals(pos))
-                {
+            case 23 -> {
+                if (!path22.equals(pos)) {
+                    appendCurrentState23();
+                } else {
                     appendCurrentState22();
                 }
             }
-            case 21 -> {
-                if (!path20.equals(pos))
-                {
+            case 22 -> {
+                if (!path21.equals(pos)) {
+                    appendCurrentState22();
+                } else {
                     appendCurrentState21();
                 }
             }
-            case 20 -> {
-                if (!path19.equals(pos))
-                {
+            case 21 -> {
+                if (!path20.equals(pos)) {
+                    appendCurrentState21();
+                } else {
                     appendCurrentState20();
                 }
             }
-            case 19 -> {
-                if (!path18.equals(pos))
-                {
+            case 20 -> {
+                if (!path19.equals(pos)) {
+                    appendCurrentState20();
+                } else {
                     appendCurrentState19();
                 }
             }
-            case 18 -> {
-                if (!path17.equals(pos))
-                {
+            case 19 -> {
+                if (!path18.equals(pos)) {
+                    appendCurrentState19();
+                } else {
                     appendCurrentState18();
                 }
             }
-            case 17 -> {
-                if (!path16.equals(pos))
-                {
+            case 18 -> {
+                if (!path17.equals(pos)) {
+                    appendCurrentState18();
+                } else {
                     appendCurrentState17();
                 }
             }
-            case 16 -> {
-                if (!path15.equals(pos))
-                {
+            case 17 -> {
+                if (!path16.equals(pos)) {
+                    appendCurrentState17();
+                } else {
                     appendCurrentState16();
                 }
             }
-            case 15 -> {
-                if (!path14.equals(pos))
-                {
+            case 16 -> {
+                if (!path15.equals(pos)) {
+                    appendCurrentState16();
+                } else {
                     appendCurrentState15();
                 }
             }
-            case 14 -> {
-                if (!path13.equals(pos))
-                {
+            case 15 -> {
+                if (!path14.equals(pos)) {
+                    appendCurrentState15();
+                } else {
                     appendCurrentState14();
                 }
             }
-            case 13 -> {
-                if (!path12.equals(pos))
-                {
+            case 14 -> {
+                if (!path13.equals(pos)) {
+                    appendCurrentState14();
+                } else {
                     appendCurrentState13();
                 }
             }
-            case 12 -> {
-                if (!path11.equals(pos))
-                {
+            case 13 -> {
+                if (!path12.equals(pos)) {
+                    appendCurrentState13();
+                } else {
                     appendCurrentState12();
                 }
             }
-            case 11 -> {
-                if (!path10.equals(pos))
-                {
+            case 12 -> {
+                if (!path11.equals(pos)) {
+                    appendCurrentState12();
+                } else {
                     appendCurrentState11();
                 }
             }
-            case 10 -> {
-                if (!path9.equals(pos))
-                {
+            case 11 -> {
+                if (!path10.equals(pos)) {
+                    appendCurrentState11();
+                } else {
                     appendCurrentState10();
                 }
             }
-            case 9 -> {
-                if (!path8.equals(pos))
-                {
+            case 10 -> {
+                if (!path9.equals(pos)) {
+                    appendCurrentState10();
+                } else {
                     appendCurrentState9();
                 }
             }
-            case 8 -> {
-                if (!path7.equals(pos))
-                {
+            case 9 -> {
+                if (!path8.equals(pos)) {
+                    appendCurrentState9();
+                } else {
                     appendCurrentState8();
                 }
             }
-            case 7 -> {
-                if (!path6.equals(pos))
-                {
+            case 8 -> {
+                if (!path7.equals(pos)) {
+                    appendCurrentState8();
+                } else {
                     appendCurrentState7();
                 }
             }
-            case 6 -> {
-                if (!path5.equals(pos))
-                {
+            case 7 -> {
+                if (!path6.equals(pos)) {
+                    appendCurrentState7();
+                } else {
                     appendCurrentState6();
                 }
             }
-            case 5 -> {
-                if (!path4.equals(pos))
-                {
+            case 6 -> {
+                if (!path5.equals(pos)) {
+                    appendCurrentState6();
+                } else {
                     appendCurrentState5();
                 }
             }
-            case 4 -> {
-                if (!path3.equals(pos))
-                {
+            case 5 -> {
+                if (!path4.equals(pos)) {
+                    appendCurrentState5();
+                } else {
                     appendCurrentState4();
                 }
             }
-            case 3 -> {
-                if (!path2.equals(pos))
-                {
+            case 4 -> {
+                if (!path3.equals(pos)) {
+                    appendCurrentState4();
+                } else {
                     appendCurrentState3();
                 }
             }
-            case 2 -> {
-                if (!path1.equals(pos))
-                {
+            case 3 -> {
+                if (!path2.equals(pos)) {
+                    appendCurrentState3();
+                } else {
                     appendCurrentState2();
                 }
             }
-            case 1 -> {
-                if (!path0.equals(pos))
-                {
+            case 2 -> {
+                if (!path1.equals(pos)) {
+                    appendCurrentState2();
+                } else {
                     appendCurrentState1();
                 }
             }
-            case 0 -> {
-                {
+            case 1 -> {
+                if (!path0.equals(pos)) {
+                    appendCurrentState1();
+                } else {
                     appendCurrentState0();
                 }
+            }
+            case 0 -> {
+                appendCurrentState0();
             }
             default -> { assert(pathLength < 500); }
         }
     }
 
-    // return the original location
-    MapLocation advance(boolean canGuess) throws GameActionException {
+    // false = halt bug
+    boolean advance(boolean canGuess) throws GameActionException {
         // System.out.println("old pos " + pos + " i am at " + rc.getLocation());
         if(!rc.getLocation().equals(lastLoc)) {
             lastLoc = rc.getLocation();
             setCurrentState();
         }
 
-        if(pos.isAdjacentTo(target)) return pos;
+        if(pos.isAdjacentTo(target)) return false;
 
         var dirToTarget = pos.directionTo(target);
         if(dirToTarget != bottomDir) {
-            if(dirToTarget == Direction.CENTER) return pos;
+            if(dirToTarget == Direction.CENTER) return false;
             if(leftTurn) {
                             if(dirToTarget == bottomDir.rotateRight()) {
                 bottomDir = dirToTarget;
@@ -20625,8 +21122,9 @@ class BugnavInstance {
                 stackSize = 0;
                 emptyStackTurns++;
                 appendCurrentState();
+                return true;
             }
-            return oldPos;
+            return false;
 
             }
             var leftLoc = pos.add(bottomDir.rotateLeft());
@@ -20643,8 +21141,9 @@ class BugnavInstance {
                 stackSize = 0;
                 emptyStackTurns++;
                 appendCurrentState();
+                return true;
             }
-            return oldPos;
+            return false;
 
             }
             if(!leftGood && rightGood) {
@@ -20655,8 +21154,9 @@ class BugnavInstance {
                 stackSize = 0;
                 emptyStackTurns++;
                 appendCurrentState();
+                return true;
             }
-            return oldPos;
+            return false;
 
             }
             if(leftGood && rightGood) {
@@ -20668,8 +21168,9 @@ class BugnavInstance {
                 stackSize = 0;
                 emptyStackTurns++;
                 appendCurrentState();
+                return true;
             }
-            return oldPos;
+            return false;
 
                 } else {
                                 if(rightPassable && chebyshevDistance(rc.getLocation(), rightLoc) <= 5) {
@@ -20679,8 +21180,9 @@ class BugnavInstance {
                 stackSize = 0;
                 emptyStackTurns++;
                 appendCurrentState();
+                return true;
             }
-            return oldPos;
+            return false;
 
                 }
             }
@@ -20691,68 +21193,47 @@ class BugnavInstance {
 
         // rc.setIndicatorString("" + bottomDir + " " + topDir + " " + stackSize + " " + leftTurn + " " + emptyStackTurns);
 
+        // indicate("GC " + justGuessed + " " + stackSize + " " + CellTracker.isSeen(greedyLoc) + " " + emptyStackTurns + " " + canGuess);
         // guess rotation direction (kinda inefficient but wtv)
         if(isMaster && !justGuessed && stackSize == 0 && CellTracker.isSeen(greedyLoc)) {
             assert !CellTracker.isPassable(greedyLoc);
             if(emptyStackTurns >= 3) {
                 if(canGuess) {
                     indicate("guessing " + pos);
-                    Profiler.begin();
+                    // Profiler.begin();
                     // System.out.println("guessing " + pos + " " + emptyStackTurns);
                     var leftBug = new BugnavInstance(pos, true, target, false);
                     var rightBug = new BugnavInstance(pos, false, target, false);
                     boolean leftBugBad = false, rightBugBad = false;
                                         {
-                        MapLocation bugPos;
                         int shade = 255;
                         bugLoop: {
-                            bugPos = leftBug.advance(false);
-                            // System.out.println(bugPos);
-                            rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                            if(bugPos.equals(leftBug.pos)) break bugLoop;
-                            bugPos = leftBug.advance(false);
-                            // System.out.println(bugPos);
-                            rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                            if(bugPos.equals(leftBug.pos)) break bugLoop;
-                            bugPos = leftBug.advance(false);
-                            // System.out.println(bugPos);
-                            rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                            if(bugPos.equals(leftBug.pos)) break bugLoop;
-                            bugPos = leftBug.advance(false);
-                            // System.out.println(bugPos);
-                            rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                            if(bugPos.equals(leftBug.pos)) break bugLoop;
-                            bugPos = leftBug.advance(false);
-                            // System.out.println(bugPos);
-                            rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                            if(bugPos.equals(leftBug.pos)) break bugLoop;
+                            rc.setIndicatorDot(leftBug.pos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
+                            if(!leftBug.advance(false)) break bugLoop;
+                            rc.setIndicatorDot(leftBug.pos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
+                            if(!leftBug.advance(false)) break bugLoop;
+                            rc.setIndicatorDot(leftBug.pos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
+                            if(!leftBug.advance(false)) break bugLoop;
+                            rc.setIndicatorDot(leftBug.pos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
+                            if(!leftBug.advance(false)) break bugLoop;
+                            rc.setIndicatorDot(leftBug.pos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
+                            if(!leftBug.advance(false)) break bugLoop;
                         }
                     }
 
                                         {
-                        MapLocation bugPos;
                         int shade = 255;
                         bugLoop: {
-                            bugPos = rightBug.advance(false);
-                            // System.out.println(bugPos);
-                            rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                            if(bugPos.equals(rightBug.pos)) break bugLoop;
-                            bugPos = rightBug.advance(false);
-                            // System.out.println(bugPos);
-                            rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                            if(bugPos.equals(rightBug.pos)) break bugLoop;
-                            bugPos = rightBug.advance(false);
-                            // System.out.println(bugPos);
-                            rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                            if(bugPos.equals(rightBug.pos)) break bugLoop;
-                            bugPos = rightBug.advance(false);
-                            // System.out.println(bugPos);
-                            rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                            if(bugPos.equals(rightBug.pos)) break bugLoop;
-                            bugPos = rightBug.advance(false);
-                            // System.out.println(bugPos);
-                            rc.setIndicatorDot(bugPos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
-                            if(bugPos.equals(rightBug.pos)) break bugLoop;
+                            rc.setIndicatorDot(rightBug.pos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
+                            if(!rightBug.advance(false)) break bugLoop;
+                            rc.setIndicatorDot(rightBug.pos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
+                            if(!rightBug.advance(false)) break bugLoop;
+                            rc.setIndicatorDot(rightBug.pos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
+                            if(!rightBug.advance(false)) break bugLoop;
+                            rc.setIndicatorDot(rightBug.pos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
+                            if(!rightBug.advance(false)) break bugLoop;
+                            rc.setIndicatorDot(rightBug.pos, Math.max(0, shade -= 30), 0, Math.max(0, shade));
+                            if(!rightBug.advance(false)) break bugLoop;
                         }
                     }
 
@@ -20768,11 +21249,11 @@ class BugnavInstance {
                     indicate(rightScore);
                     leftTurn = Rng.mcg() < rightScore * 0x7fffffff;
                     // indicate("leftTurn " + leftTurn);
-                    setCurrentState();
-                    Profiler.end("guess");
+                    appendCurrentState();
+                    // Profiler.end("guess");
                     justGuessed = true;
                 }
-                return pos;
+                return false;
             } else if(emptyStackTurns < 0) {
                 emptyStackTurns = 0;
             }
@@ -20801,7 +21282,7 @@ class BugnavInstance {
                         continue;
                     }
                     // Profiler.end("bugnav");
-                    return oldPos;
+                    return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
                     pos = nextPos;
@@ -20814,7 +21295,7 @@ class BugnavInstance {
                     }
                     appendCurrentState();
                     // Profiler.end("bugnav");
-                    return oldPos;
+                    return true;
                 }
             }
             tryDir = tryDir.rotateLeft();
@@ -20834,7 +21315,7 @@ class BugnavInstance {
                         continue;
                     }
                     // Profiler.end("bugnav");
-                    return oldPos;
+                    return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
                     pos = nextPos;
@@ -20847,7 +21328,7 @@ class BugnavInstance {
                     }
                     appendCurrentState();
                     // Profiler.end("bugnav");
-                    return oldPos;
+                    return true;
                 }
             }
             tryDir = tryDir.rotateLeft();
@@ -20866,7 +21347,7 @@ class BugnavInstance {
                         continue;
                     }
                     // Profiler.end("bugnav");
-                    return oldPos;
+                    return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
                     pos = nextPos;
@@ -20878,7 +21359,7 @@ class BugnavInstance {
                     }
                     appendCurrentState();
                     // Profiler.end("bugnav");
-                    return oldPos;
+                    return true;
                 }
             }
             tryDir = tryDir.rotateLeft();
@@ -20897,7 +21378,7 @@ class BugnavInstance {
                         continue;
                     }
                     // Profiler.end("bugnav");
-                    return oldPos;
+                    return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
                     pos = nextPos;
@@ -20910,7 +21391,7 @@ class BugnavInstance {
                     }
                     appendCurrentState();
                     // Profiler.end("bugnav");
-                    return oldPos;
+                    return true;
                 }
             }
             tryDir = tryDir.rotateLeft();
@@ -20929,7 +21410,7 @@ class BugnavInstance {
                         continue;
                     }
                     // Profiler.end("bugnav");
-                    return oldPos;
+                    return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
                     pos = nextPos;
@@ -20942,7 +21423,7 @@ class BugnavInstance {
                     }
                     appendCurrentState();
                     // Profiler.end("bugnav");
-                    return oldPos;
+                    return true;
                 }
             }
             tryDir = tryDir.rotateLeft();
@@ -20961,7 +21442,7 @@ class BugnavInstance {
                         continue;
                     }
                     // Profiler.end("bugnav");
-                    return oldPos;
+                    return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
                     pos = nextPos;
@@ -20974,7 +21455,7 @@ class BugnavInstance {
                     }
                     appendCurrentState();
                     // Profiler.end("bugnav");
-                    return oldPos;
+                    return true;
                 }
             }
             tryDir = tryDir.rotateLeft();
@@ -20993,7 +21474,7 @@ class BugnavInstance {
                         continue;
                     }
                     // Profiler.end("bugnav");
-                    return oldPos;
+                    return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
                     pos = nextPos;
@@ -21006,7 +21487,7 @@ class BugnavInstance {
                     }
                     appendCurrentState();
                     // Profiler.end("bugnav");
-                    return oldPos;
+                    return true;
                 }
             }
             tryDir = tryDir.rotateLeft();
@@ -21025,7 +21506,7 @@ class BugnavInstance {
                         continue;
                     }
                     // Profiler.end("bugnav");
-                    return oldPos;
+                    return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
                     pos = nextPos;
@@ -21038,7 +21519,7 @@ class BugnavInstance {
                     }
                     appendCurrentState();
                     // Profiler.end("bugnav");
-                    return oldPos;
+                    return true;
                 }
             }
             tryDir = tryDir.rotateLeft();
@@ -21065,7 +21546,7 @@ class BugnavInstance {
                         continue;
                     }
                     // Profiler.end("bugnav");
-                    return oldPos;
+                    return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
                     pos = nextPos;
@@ -21078,7 +21559,7 @@ class BugnavInstance {
                     }
                     appendCurrentState();
                     // Profiler.end("bugnav");
-                    return oldPos;
+                    return true;
                 }
             }
             tryDir = tryDir.rotateRight();
@@ -21098,7 +21579,7 @@ class BugnavInstance {
                         continue;
                     }
                     // Profiler.end("bugnav");
-                    return oldPos;
+                    return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
                     pos = nextPos;
@@ -21111,7 +21592,7 @@ class BugnavInstance {
                     }
                     appendCurrentState();
                     // Profiler.end("bugnav");
-                    return oldPos;
+                    return true;
                 }
             }
             tryDir = tryDir.rotateRight();
@@ -21130,7 +21611,7 @@ class BugnavInstance {
                         continue;
                     }
                     // Profiler.end("bugnav");
-                    return oldPos;
+                    return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
                     pos = nextPos;
@@ -21142,7 +21623,7 @@ class BugnavInstance {
                     }
                     appendCurrentState();
                     // Profiler.end("bugnav");
-                    return oldPos;
+                    return true;
                 }
             }
             tryDir = tryDir.rotateRight();
@@ -21161,7 +21642,7 @@ class BugnavInstance {
                         continue;
                     }
                     // Profiler.end("bugnav");
-                    return oldPos;
+                    return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
                     pos = nextPos;
@@ -21174,7 +21655,7 @@ class BugnavInstance {
                     }
                     appendCurrentState();
                     // Profiler.end("bugnav");
-                    return oldPos;
+                    return true;
                 }
             }
             tryDir = tryDir.rotateRight();
@@ -21193,7 +21674,7 @@ class BugnavInstance {
                         continue;
                     }
                     // Profiler.end("bugnav");
-                    return oldPos;
+                    return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
                     pos = nextPos;
@@ -21206,7 +21687,7 @@ class BugnavInstance {
                     }
                     appendCurrentState();
                     // Profiler.end("bugnav");
-                    return oldPos;
+                    return true;
                 }
             }
             tryDir = tryDir.rotateRight();
@@ -21225,7 +21706,7 @@ class BugnavInstance {
                         continue;
                     }
                     // Profiler.end("bugnav");
-                    return oldPos;
+                    return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
                     pos = nextPos;
@@ -21238,7 +21719,7 @@ class BugnavInstance {
                     }
                     appendCurrentState();
                     // Profiler.end("bugnav");
-                    return oldPos;
+                    return true;
                 }
             }
             tryDir = tryDir.rotateRight();
@@ -21257,7 +21738,7 @@ class BugnavInstance {
                         continue;
                     }
                     // Profiler.end("bugnav");
-                    return oldPos;
+                    return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
                     pos = nextPos;
@@ -21270,7 +21751,7 @@ class BugnavInstance {
                     }
                     appendCurrentState();
                     // Profiler.end("bugnav");
-                    return oldPos;
+                    return true;
                 }
             }
             tryDir = tryDir.rotateRight();
@@ -21289,7 +21770,7 @@ class BugnavInstance {
                         continue;
                     }
                     // Profiler.end("bugnav");
-                    return oldPos;
+                    return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
                     pos = nextPos;
@@ -21302,7 +21783,7 @@ class BugnavInstance {
                     }
                     appendCurrentState();
                     // Profiler.end("bugnav");
-                    return oldPos;
+                    return true;
                 }
             }
             tryDir = tryDir.rotateRight();
@@ -21318,76 +21799,55 @@ public class Pathfinder {
 
     public static void makeMove(Direction dir) throws GameActionException {
         rc.turn(dir);
+        CellTracker.storeVisibleCells();
         rc.moveForward();
-        // TODO: optimise
-        CellTracker.computeLocalPassable();
+        CellTracker.storeVisibleCellsPostMove();
     }
 
     public static void makeMove(MapLocation target) throws GameActionException {
         assert rc.isMovementReady();
-        // TODO: optimise
-        CellTracker.computeLocalPassable();
         // TODO: better handling when target changes
         if(bug == null || !target.equals(bug.target)) {
             indicate("RETARGET");
             bug = new BugnavInstance(true, target);
         }
-        MapLocation bugPos;
         int shade = 255;
+        Profiler.begin();
         bugLoop: {
-            bugPos = bug.advance( true );
-            indicate(bug.pos);
-            rc.setIndicatorDot(bugPos, 0, Math.max(0, shade -= 30), 0);
-            // if(rc.getRoundNum() >= 359) {
-            //     Clock.yield();
-            // }
-            if(bugPos.equals(bug.pos)) break bugLoop;
-            bugPos = bug.advance( false );
-            indicate(bug.pos);
-            rc.setIndicatorDot(bugPos, 0, Math.max(0, shade -= 30), 0);
-            // if(rc.getRoundNum() >= 359) {
-            //     Clock.yield();
-            // }
-            if(bugPos.equals(bug.pos)) break bugLoop;
-            bugPos = bug.advance( false );
-            indicate(bug.pos);
-            rc.setIndicatorDot(bugPos, 0, Math.max(0, shade -= 30), 0);
-            // if(rc.getRoundNum() >= 359) {
-            //     Clock.yield();
-            // }
-            if(bugPos.equals(bug.pos)) break bugLoop;
-            bugPos = bug.advance( false );
-            indicate(bug.pos);
-            rc.setIndicatorDot(bugPos, 0, Math.max(0, shade -= 30), 0);
-            // if(rc.getRoundNum() >= 359) {
-            //     Clock.yield();
-            // }
-            if(bugPos.equals(bug.pos)) break bugLoop;
-            bugPos = bug.advance( false );
-            indicate(bug.pos);
-            rc.setIndicatorDot(bugPos, 0, Math.max(0, shade -= 30), 0);
-            // if(rc.getRoundNum() >= 359) {
-            //     Clock.yield();
-            // }
-            if(bugPos.equals(bug.pos)) break bugLoop;
+            rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
+            if(!bug.advance( true )) break bugLoop;
+            rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
+            if(!bug.advance( false )) break bugLoop;
+            rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
+            if(!bug.advance( false )) break bugLoop;
+            rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
+            if(!bug.advance( false )) break bugLoop;
+            rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
+            if(!bug.advance( false )) break bugLoop;
         }
+        Profiler.end("bug");
         rc.setIndicatorDot(bug.pos, 255, 0, 0);
 
         // no bfs needed
-        var dir = rc.getLocation().directionTo(bugPos);
+        var dir = rc.getLocation().directionTo(bug.pos);
         // indicate(dir);
-        if(rc.getLocation().add(dir).equals(bugPos)) {
+        if(rc.getLocation().add(dir).equals(bug.pos)) {
             indicate("adjacent");
             makeMove(dir);
             return;
         }
         // TODO: what if location == bug.pos?
 
+        Profiler.begin();
+        CellTracker.computeLocalPassable();
+        Profiler.end("computeLocalPassable");
+
+        Profiler.begin();
         // bfs
         var loc = rc.getLocation();
         // d{i}0 + d{i}1 is the mask of reachable within i steps
         long d00 = 0, d01 = 0;
-        int idx = (bugPos.y - loc.y + 5) * 11 + (bugPos.x - loc.x + 5);
+        int idx = (bug.pos.y - loc.y + 5) * 11 + (bug.pos.x - loc.x + 5);
         if(idx < 61) {
             d00 |= 1l << idx;
         } else {
@@ -21425,10 +21885,7 @@ public class Pathfinder {
                (d10 & (1l << 49))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTH;
                     bestScore = score;
@@ -21438,10 +21895,7 @@ public class Pathfinder {
                (d11 & (1l << 0))
                != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.EAST;
                     bestScore = score;
@@ -21451,10 +21905,7 @@ public class Pathfinder {
                (d11 & (1l << 10))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTH;
                     bestScore = score;
@@ -21464,10 +21915,7 @@ public class Pathfinder {
                (d10 & (1l << 59))
                != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.WEST;
                     bestScore = score;
@@ -21477,10 +21925,7 @@ public class Pathfinder {
                (d10 & (1l << 48))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTHWEST;
                     bestScore = score;
@@ -21490,10 +21935,7 @@ public class Pathfinder {
                (d10 & (1l << 50))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTHEAST;
                     bestScore = score;
@@ -21503,10 +21945,7 @@ public class Pathfinder {
                (d11 & (1l << 9))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTHWEST;
                     bestScore = score;
@@ -21516,16 +21955,14 @@ public class Pathfinder {
                (d11 & (1l << 11))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTHEAST;
                     bestScore = score;
                 }
             }
             if(bestMove != null) {
+                Profiler.end("bfs");
                 makeMove(bestMove);
                 // System.out.println("iterations: " + 1);
                 return;
@@ -21561,10 +21998,7 @@ public class Pathfinder {
                (d20 & (1l << 49))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTH;
                     bestScore = score;
@@ -21574,10 +22008,7 @@ public class Pathfinder {
                (d21 & (1l << 0))
                != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.EAST;
                     bestScore = score;
@@ -21587,10 +22018,7 @@ public class Pathfinder {
                (d21 & (1l << 10))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTH;
                     bestScore = score;
@@ -21600,10 +22028,7 @@ public class Pathfinder {
                (d20 & (1l << 59))
                != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.WEST;
                     bestScore = score;
@@ -21613,10 +22038,7 @@ public class Pathfinder {
                (d20 & (1l << 48))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTHWEST;
                     bestScore = score;
@@ -21626,10 +22048,7 @@ public class Pathfinder {
                (d20 & (1l << 50))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTHEAST;
                     bestScore = score;
@@ -21639,10 +22058,7 @@ public class Pathfinder {
                (d21 & (1l << 9))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTHWEST;
                     bestScore = score;
@@ -21652,16 +22068,14 @@ public class Pathfinder {
                (d21 & (1l << 11))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTHEAST;
                     bestScore = score;
                 }
             }
             if(bestMove != null) {
+                Profiler.end("bfs");
                 makeMove(bestMove);
                 // System.out.println("iterations: " + 2);
                 return;
@@ -21697,10 +22111,7 @@ public class Pathfinder {
                (d30 & (1l << 49))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTH;
                     bestScore = score;
@@ -21710,10 +22121,7 @@ public class Pathfinder {
                (d31 & (1l << 0))
                != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.EAST;
                     bestScore = score;
@@ -21723,10 +22131,7 @@ public class Pathfinder {
                (d31 & (1l << 10))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTH;
                     bestScore = score;
@@ -21736,10 +22141,7 @@ public class Pathfinder {
                (d30 & (1l << 59))
                != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.WEST;
                     bestScore = score;
@@ -21749,10 +22151,7 @@ public class Pathfinder {
                (d30 & (1l << 48))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTHWEST;
                     bestScore = score;
@@ -21762,10 +22161,7 @@ public class Pathfinder {
                (d30 & (1l << 50))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTHEAST;
                     bestScore = score;
@@ -21775,10 +22171,7 @@ public class Pathfinder {
                (d31 & (1l << 9))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTHWEST;
                     bestScore = score;
@@ -21788,16 +22181,14 @@ public class Pathfinder {
                (d31 & (1l << 11))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTHEAST;
                     bestScore = score;
                 }
             }
             if(bestMove != null) {
+                Profiler.end("bfs");
                 makeMove(bestMove);
                 // System.out.println("iterations: " + 3);
                 return;
@@ -21833,10 +22224,7 @@ public class Pathfinder {
                (d40 & (1l << 49))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTH;
                     bestScore = score;
@@ -21846,10 +22234,7 @@ public class Pathfinder {
                (d41 & (1l << 0))
                != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.EAST;
                     bestScore = score;
@@ -21859,10 +22244,7 @@ public class Pathfinder {
                (d41 & (1l << 10))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTH;
                     bestScore = score;
@@ -21872,10 +22254,7 @@ public class Pathfinder {
                (d40 & (1l << 59))
                != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.WEST;
                     bestScore = score;
@@ -21885,10 +22264,7 @@ public class Pathfinder {
                (d40 & (1l << 48))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTHWEST;
                     bestScore = score;
@@ -21898,10 +22274,7 @@ public class Pathfinder {
                (d40 & (1l << 50))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTHEAST;
                     bestScore = score;
@@ -21911,10 +22284,7 @@ public class Pathfinder {
                (d41 & (1l << 9))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTHWEST;
                     bestScore = score;
@@ -21924,16 +22294,14 @@ public class Pathfinder {
                (d41 & (1l << 11))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTHEAST;
                     bestScore = score;
                 }
             }
             if(bestMove != null) {
+                Profiler.end("bfs");
                 makeMove(bestMove);
                 // System.out.println("iterations: " + 4);
                 return;
@@ -21969,10 +22337,7 @@ public class Pathfinder {
                (d50 & (1l << 49))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTH;
                     bestScore = score;
@@ -21982,10 +22347,7 @@ public class Pathfinder {
                (d51 & (1l << 0))
                != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.EAST;
                     bestScore = score;
@@ -21995,10 +22357,7 @@ public class Pathfinder {
                (d51 & (1l << 10))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTH;
                     bestScore = score;
@@ -22008,10 +22367,7 @@ public class Pathfinder {
                (d50 & (1l << 59))
                != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.WEST;
                     bestScore = score;
@@ -22021,10 +22377,7 @@ public class Pathfinder {
                (d50 & (1l << 48))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTHWEST;
                     bestScore = score;
@@ -22034,10 +22387,7 @@ public class Pathfinder {
                (d50 & (1l << 50))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTHEAST;
                     bestScore = score;
@@ -22047,10 +22397,7 @@ public class Pathfinder {
                (d51 & (1l << 9))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTHWEST;
                     bestScore = score;
@@ -22060,16 +22407,14 @@ public class Pathfinder {
                (d51 & (1l << 11))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTHEAST;
                     bestScore = score;
                 }
             }
             if(bestMove != null) {
+                Profiler.end("bfs");
                 makeMove(bestMove);
                 // System.out.println("iterations: " + 5);
                 return;
@@ -22105,10 +22450,7 @@ public class Pathfinder {
                (d60 & (1l << 49))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTH;
                     bestScore = score;
@@ -22118,10 +22460,7 @@ public class Pathfinder {
                (d61 & (1l << 0))
                != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.EAST;
                     bestScore = score;
@@ -22131,10 +22470,7 @@ public class Pathfinder {
                (d61 & (1l << 10))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTH;
                     bestScore = score;
@@ -22144,10 +22480,7 @@ public class Pathfinder {
                (d60 & (1l << 59))
                != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.WEST;
                     bestScore = score;
@@ -22157,10 +22490,7 @@ public class Pathfinder {
                (d60 & (1l << 48))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTHWEST;
                     bestScore = score;
@@ -22170,10 +22500,7 @@ public class Pathfinder {
                (d60 & (1l << 50))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTHEAST;
                     bestScore = score;
@@ -22183,10 +22510,7 @@ public class Pathfinder {
                (d61 & (1l << 9))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTHWEST;
                     bestScore = score;
@@ -22196,16 +22520,14 @@ public class Pathfinder {
                (d61 & (1l << 11))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTHEAST;
                     bestScore = score;
                 }
             }
             if(bestMove != null) {
+                Profiler.end("bfs");
                 makeMove(bestMove);
                 // System.out.println("iterations: " + 6);
                 return;
@@ -22241,10 +22563,7 @@ public class Pathfinder {
                (d70 & (1l << 49))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTH;
                     bestScore = score;
@@ -22254,10 +22573,7 @@ public class Pathfinder {
                (d71 & (1l << 0))
                != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.EAST;
                     bestScore = score;
@@ -22267,10 +22583,7 @@ public class Pathfinder {
                (d71 & (1l << 10))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTH;
                     bestScore = score;
@@ -22280,10 +22593,7 @@ public class Pathfinder {
                (d70 & (1l << 59))
                != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.WEST;
                     bestScore = score;
@@ -22293,10 +22603,7 @@ public class Pathfinder {
                (d70 & (1l << 48))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTHWEST;
                     bestScore = score;
@@ -22306,10 +22613,7 @@ public class Pathfinder {
                (d70 & (1l << 50))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTHEAST;
                     bestScore = score;
@@ -22319,10 +22623,7 @@ public class Pathfinder {
                (d71 & (1l << 9))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTHWEST;
                     bestScore = score;
@@ -22332,16 +22633,14 @@ public class Pathfinder {
                (d71 & (1l << 11))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTHEAST;
                     bestScore = score;
                 }
             }
             if(bestMove != null) {
+                Profiler.end("bfs");
                 makeMove(bestMove);
                 // System.out.println("iterations: " + 7);
                 return;
@@ -22377,10 +22676,7 @@ public class Pathfinder {
                (d80 & (1l << 49))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTH;
                     bestScore = score;
@@ -22390,10 +22686,7 @@ public class Pathfinder {
                (d81 & (1l << 0))
                != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.EAST;
                     bestScore = score;
@@ -22403,10 +22696,7 @@ public class Pathfinder {
                (d81 & (1l << 10))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTH;
                     bestScore = score;
@@ -22416,10 +22706,7 @@ public class Pathfinder {
                (d80 & (1l << 59))
                != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.WEST;
                     bestScore = score;
@@ -22429,10 +22716,7 @@ public class Pathfinder {
                (d80 & (1l << 48))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTHWEST;
                     bestScore = score;
@@ -22442,10 +22726,7 @@ public class Pathfinder {
                (d80 & (1l << 50))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTHEAST;
                     bestScore = score;
@@ -22455,10 +22736,7 @@ public class Pathfinder {
                (d81 & (1l << 9))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTHWEST;
                     bestScore = score;
@@ -22468,16 +22746,14 @@ public class Pathfinder {
                (d81 & (1l << 11))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTHEAST;
                     bestScore = score;
                 }
             }
             if(bestMove != null) {
+                Profiler.end("bfs");
                 makeMove(bestMove);
                 // System.out.println("iterations: " + 8);
                 return;
@@ -22513,10 +22789,7 @@ public class Pathfinder {
                (d90 & (1l << 49))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTH;
                     bestScore = score;
@@ -22526,10 +22799,7 @@ public class Pathfinder {
                (d91 & (1l << 0))
                != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.EAST;
                     bestScore = score;
@@ -22539,10 +22809,7 @@ public class Pathfinder {
                (d91 & (1l << 10))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTH;
                     bestScore = score;
@@ -22552,10 +22819,7 @@ public class Pathfinder {
                (d90 & (1l << 59))
                != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.WEST;
                     bestScore = score;
@@ -22565,10 +22829,7 @@ public class Pathfinder {
                (d90 & (1l << 48))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTHWEST;
                     bestScore = score;
@@ -22578,10 +22839,7 @@ public class Pathfinder {
                (d90 & (1l << 50))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTHEAST;
                     bestScore = score;
@@ -22591,10 +22849,7 @@ public class Pathfinder {
                (d91 & (1l << 9))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTHWEST;
                     bestScore = score;
@@ -22604,16 +22859,14 @@ public class Pathfinder {
                (d91 & (1l << 11))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTHEAST;
                     bestScore = score;
                 }
             }
             if(bestMove != null) {
+                Profiler.end("bfs");
                 makeMove(bestMove);
                 // System.out.println("iterations: " + 9);
                 return;
@@ -22649,10 +22902,7 @@ public class Pathfinder {
                (d100 & (1l << 49))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTH;
                     bestScore = score;
@@ -22662,10 +22912,7 @@ public class Pathfinder {
                (d101 & (1l << 0))
                != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.EAST;
                     bestScore = score;
@@ -22675,10 +22922,7 @@ public class Pathfinder {
                (d101 & (1l << 10))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTH;
                     bestScore = score;
@@ -22688,10 +22932,7 @@ public class Pathfinder {
                (d100 & (1l << 59))
                != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.WEST;
                     bestScore = score;
@@ -22701,10 +22942,7 @@ public class Pathfinder {
                (d100 & (1l << 48))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTHWEST;
                     bestScore = score;
@@ -22714,10 +22952,7 @@ public class Pathfinder {
                (d100 & (1l << 50))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTHEAST;
                     bestScore = score;
@@ -22727,10 +22962,7 @@ public class Pathfinder {
                (d101 & (1l << 9))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTHWEST;
                     bestScore = score;
@@ -22740,16 +22972,14 @@ public class Pathfinder {
                (d101 & (1l << 11))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTHEAST;
                     bestScore = score;
                 }
             }
             if(bestMove != null) {
+                Profiler.end("bfs");
                 makeMove(bestMove);
                 // System.out.println("iterations: " + 10);
                 return;
@@ -22785,10 +23015,7 @@ public class Pathfinder {
                (d110 & (1l << 49))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTH;
                     bestScore = score;
@@ -22798,10 +23025,7 @@ public class Pathfinder {
                (d111 & (1l << 0))
                != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.EAST;
                     bestScore = score;
@@ -22811,10 +23035,7 @@ public class Pathfinder {
                (d111 & (1l << 10))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTH;
                     bestScore = score;
@@ -22824,10 +23045,7 @@ public class Pathfinder {
                (d110 & (1l << 59))
                != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.WEST;
                     bestScore = score;
@@ -22837,10 +23055,7 @@ public class Pathfinder {
                (d110 & (1l << 48))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTHWEST;
                     bestScore = score;
@@ -22850,10 +23065,7 @@ public class Pathfinder {
                (d110 & (1l << 50))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTHEAST;
                     bestScore = score;
@@ -22863,10 +23075,7 @@ public class Pathfinder {
                (d111 & (1l << 9))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTHWEST;
                     bestScore = score;
@@ -22876,16 +23085,14 @@ public class Pathfinder {
                (d111 & (1l << 11))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTHEAST;
                     bestScore = score;
                 }
             }
             if(bestMove != null) {
+                Profiler.end("bfs");
                 makeMove(bestMove);
                 // System.out.println("iterations: " + 11);
                 return;
@@ -22921,10 +23128,7 @@ public class Pathfinder {
                (d120 & (1l << 49))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTH;
                     bestScore = score;
@@ -22934,10 +23138,7 @@ public class Pathfinder {
                (d121 & (1l << 0))
                != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.EAST;
                     bestScore = score;
@@ -22947,10 +23148,7 @@ public class Pathfinder {
                (d121 & (1l << 10))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTH;
                     bestScore = score;
@@ -22960,10 +23158,7 @@ public class Pathfinder {
                (d120 & (1l << 59))
                != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.WEST;
                     bestScore = score;
@@ -22973,10 +23168,7 @@ public class Pathfinder {
                (d120 & (1l << 48))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTHWEST;
                     bestScore = score;
@@ -22986,10 +23178,7 @@ public class Pathfinder {
                (d120 & (1l << 50))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTHEAST;
                     bestScore = score;
@@ -22999,10 +23188,7 @@ public class Pathfinder {
                (d121 & (1l << 9))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTHWEST;
                     bestScore = score;
@@ -23012,16 +23198,14 @@ public class Pathfinder {
                (d121 & (1l << 11))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTHEAST;
                     bestScore = score;
                 }
             }
             if(bestMove != null) {
+                Profiler.end("bfs");
                 makeMove(bestMove);
                 // System.out.println("iterations: " + 12);
                 return;
@@ -23057,10 +23241,7 @@ public class Pathfinder {
                (d130 & (1l << 49))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTH;
                     bestScore = score;
@@ -23070,10 +23251,7 @@ public class Pathfinder {
                (d131 & (1l << 0))
                != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.EAST;
                     bestScore = score;
@@ -23083,10 +23261,7 @@ public class Pathfinder {
                (d131 & (1l << 10))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTH;
                     bestScore = score;
@@ -23096,10 +23271,7 @@ public class Pathfinder {
                (d130 & (1l << 59))
                != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.WEST;
                     bestScore = score;
@@ -23109,10 +23281,7 @@ public class Pathfinder {
                (d130 & (1l << 48))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTHWEST;
                     bestScore = score;
@@ -23122,10 +23291,7 @@ public class Pathfinder {
                (d130 & (1l << 50))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTHEAST;
                     bestScore = score;
@@ -23135,10 +23301,7 @@ public class Pathfinder {
                (d131 & (1l << 9))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTHWEST;
                     bestScore = score;
@@ -23148,16 +23311,14 @@ public class Pathfinder {
                (d131 & (1l << 11))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTHEAST;
                     bestScore = score;
                 }
             }
             if(bestMove != null) {
+                Profiler.end("bfs");
                 makeMove(bestMove);
                 // System.out.println("iterations: " + 13);
                 return;
@@ -23193,10 +23354,7 @@ public class Pathfinder {
                (d140 & (1l << 49))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTH;
                     bestScore = score;
@@ -23206,10 +23364,7 @@ public class Pathfinder {
                (d141 & (1l << 0))
                != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.EAST;
                     bestScore = score;
@@ -23219,10 +23374,7 @@ public class Pathfinder {
                (d141 & (1l << 10))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTH;
                     bestScore = score;
@@ -23232,10 +23384,7 @@ public class Pathfinder {
                (d140 & (1l << 59))
                != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.WEST;
                     bestScore = score;
@@ -23245,10 +23394,7 @@ public class Pathfinder {
                (d140 & (1l << 48))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTHWEST;
                     bestScore = score;
@@ -23258,10 +23404,7 @@ public class Pathfinder {
                (d140 & (1l << 50))
                != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.SOUTHEAST;
                     bestScore = score;
@@ -23271,10 +23414,7 @@ public class Pathfinder {
                (d141 & (1l << 9))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTHWEST;
                     bestScore = score;
@@ -23284,16 +23424,14 @@ public class Pathfinder {
                (d141 & (1l << 11))
                != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bugPos);
-                if(dir == loc.directionTo(target)) {
-                    score = 0;
-                }
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                 if(score < bestScore) {
                     bestMove = Direction.NORTHEAST;
                     bestScore = score;
                 }
             }
             if(bestMove != null) {
+                Profiler.end("bfs");
                 makeMove(bestMove);
                 // System.out.println("iterations: " + 14);
                 return;

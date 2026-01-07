@@ -361,9 +361,288 @@ class BugnavInstance {
         }
     }
 
+    boolean doLookahead() throws GameActionException {
+        if(leftBug == null) {
+            // initialise
+            leftBug = new BugnavInstance(pos, true, target, false);
+            rightBug = new BugnavInstance(pos, false, target, false);
+            myLoc = new MapLocation(-1, -1);
+            return true;
+        }
+        // Profiler.begin();
+        if(!rc.getLocation().equals(myLoc)) {
+            // we moved, so we might be able to advance previously stuck stuff further
+            myLoc = rc.getLocation();
+            leftDone = leftBug.hitEdge || leftBug.nextPathIndex == 24;
+            rightDone = rightBug.hitEdge || leftBug.nextPathIndex == 24;
+        }
+
+        if(!(leftDone && rightDone)) {
+            if(rightDone) {
+                            leftBug.outOfSight = false;
+            leftDone = !leftBug.advance();
+            rc.setIndicatorDot(leftBug.pos, 255, 0, 255);
+
+            } else if(leftDone) {
+                            rightBug.outOfSight = false;
+            rightDone = !rightBug.advance();
+            rc.setIndicatorDot(rightBug.pos, 255, 0, 255);
+
+            } else if(leftBug.nextPathIndex > rightBug.nextPathIndex) {
+                            rightBug.outOfSight = false;
+            rightDone = !rightBug.advance();
+            rc.setIndicatorDot(rightBug.pos, 255, 0, 255);
+
+            } else {
+                            leftBug.outOfSight = false;
+            leftDone = !leftBug.advance();
+            rc.setIndicatorDot(leftBug.pos, 255, 0, 255);
+
+            }
+        }
+        // Profiler.end("lookahead");
+
+        boolean leftReady = leftBug.nextPathIndex >= 5 || leftBug.hitEdge || leftBug.outOfSight;
+        boolean rightReady = rightBug.nextPathIndex >= 5 || rightBug.hitEdge || rightBug.outOfSight;
+        indicate("ready " + leftReady + " " + rightReady);
+        if(!leftReady || !rightReady) return !(leftDone && rightDone);
+
+        var leftScore =  Math.sqrt(leftBug.pos.distanceSquaredTo(target)) + leftBug.nextPathIndex * 0.7 ;
+        var rightScore =  Math.sqrt(rightBug.pos.distanceSquaredTo(target)) + rightBug.nextPathIndex * 0.7 ;
+        indicate("lookahead" + pos);
+        // indicate(leftBug.pos);
+        indicate(leftScore);
+        // indicate(rightBug.pos);
+        indicate(rightScore);
+
+
+        if(leftBug.hitEdge != rightBug.hitEdge) {
+                    var bug = rightBug.hitEdge ? leftBug : rightBug;
+        if(bug.leftTurn) {
+            guessedLeft[pos.y] |= 1l << pos.x;
+        } else {
+            guessedRight[pos.y] |= 1l << pos.x;
+        }
+        pos = bug.pos;
+        stackSize = bug.stackSize;
+        emptyStackTurns = bug.emptyStackTurns;
+        leftTurn = bug.leftTurn;
+        bottomDir = bug.bottomDir;
+        topDir = bug.topDir;
+        copyPath: {
+            appendPosition(bug.path0);
+            if(bug.nextPathIndex == 1) break copyPath;
+            appendPosition(bug.path1);
+            if(bug.nextPathIndex == 2) break copyPath;
+            appendPosition(bug.path2);
+            if(bug.nextPathIndex == 3) break copyPath;
+            appendPosition(bug.path3);
+            if(bug.nextPathIndex == 4) break copyPath;
+            appendPosition(bug.path4);
+            if(bug.nextPathIndex == 5) break copyPath;
+            appendPosition(bug.path5);
+            if(bug.nextPathIndex == 6) break copyPath;
+            appendPosition(bug.path6);
+            if(bug.nextPathIndex == 7) break copyPath;
+            appendPosition(bug.path7);
+            if(bug.nextPathIndex == 8) break copyPath;
+            appendPosition(bug.path8);
+            if(bug.nextPathIndex == 9) break copyPath;
+            appendPosition(bug.path9);
+            if(bug.nextPathIndex == 10) break copyPath;
+            appendPosition(bug.path10);
+            if(bug.nextPathIndex == 11) break copyPath;
+            appendPosition(bug.path11);
+            if(bug.nextPathIndex == 12) break copyPath;
+            appendPosition(bug.path12);
+            if(bug.nextPathIndex == 13) break copyPath;
+            appendPosition(bug.path13);
+            if(bug.nextPathIndex == 14) break copyPath;
+            appendPosition(bug.path14);
+            if(bug.nextPathIndex == 15) break copyPath;
+            appendPosition(bug.path15);
+            if(bug.nextPathIndex == 16) break copyPath;
+            appendPosition(bug.path16);
+            if(bug.nextPathIndex == 17) break copyPath;
+            appendPosition(bug.path17);
+            if(bug.nextPathIndex == 18) break copyPath;
+            appendPosition(bug.path18);
+            if(bug.nextPathIndex == 19) break copyPath;
+            appendPosition(bug.path19);
+            if(bug.nextPathIndex == 20) break copyPath;
+            appendPosition(bug.path20);
+            if(bug.nextPathIndex == 21) break copyPath;
+            appendPosition(bug.path21);
+            if(bug.nextPathIndex == 22) break copyPath;
+            appendPosition(bug.path22);
+            if(bug.nextPathIndex == 23) break copyPath;
+            appendPosition(bug.path23);
+            if(bug.nextPathIndex == 24) break copyPath;
+            appendPosition(bug.path24);
+        }
+        leftBug = null;
+        rightBug = null;
+        indicate("just guessed " + leftTurn);
+        justGuessed = true;
+
+        } else {
+            var better = leftScore < rightScore ? leftBug : rightBug;
+            var worse = leftScore < rightScore ? rightBug : leftBug;
+            if(!better.outOfSight && worse.outOfSight) {
+                indicate("clear winner");
+                        var bug = better;
+        if(bug.leftTurn) {
+            guessedLeft[pos.y] |= 1l << pos.x;
+        } else {
+            guessedRight[pos.y] |= 1l << pos.x;
+        }
+        pos = bug.pos;
+        stackSize = bug.stackSize;
+        emptyStackTurns = bug.emptyStackTurns;
+        leftTurn = bug.leftTurn;
+        bottomDir = bug.bottomDir;
+        topDir = bug.topDir;
+        copyPath: {
+            appendPosition(bug.path0);
+            if(bug.nextPathIndex == 1) break copyPath;
+            appendPosition(bug.path1);
+            if(bug.nextPathIndex == 2) break copyPath;
+            appendPosition(bug.path2);
+            if(bug.nextPathIndex == 3) break copyPath;
+            appendPosition(bug.path3);
+            if(bug.nextPathIndex == 4) break copyPath;
+            appendPosition(bug.path4);
+            if(bug.nextPathIndex == 5) break copyPath;
+            appendPosition(bug.path5);
+            if(bug.nextPathIndex == 6) break copyPath;
+            appendPosition(bug.path6);
+            if(bug.nextPathIndex == 7) break copyPath;
+            appendPosition(bug.path7);
+            if(bug.nextPathIndex == 8) break copyPath;
+            appendPosition(bug.path8);
+            if(bug.nextPathIndex == 9) break copyPath;
+            appendPosition(bug.path9);
+            if(bug.nextPathIndex == 10) break copyPath;
+            appendPosition(bug.path10);
+            if(bug.nextPathIndex == 11) break copyPath;
+            appendPosition(bug.path11);
+            if(bug.nextPathIndex == 12) break copyPath;
+            appendPosition(bug.path12);
+            if(bug.nextPathIndex == 13) break copyPath;
+            appendPosition(bug.path13);
+            if(bug.nextPathIndex == 14) break copyPath;
+            appendPosition(bug.path14);
+            if(bug.nextPathIndex == 15) break copyPath;
+            appendPosition(bug.path15);
+            if(bug.nextPathIndex == 16) break copyPath;
+            appendPosition(bug.path16);
+            if(bug.nextPathIndex == 17) break copyPath;
+            appendPosition(bug.path17);
+            if(bug.nextPathIndex == 18) break copyPath;
+            appendPosition(bug.path18);
+            if(bug.nextPathIndex == 19) break copyPath;
+            appendPosition(bug.path19);
+            if(bug.nextPathIndex == 20) break copyPath;
+            appendPosition(bug.path20);
+            if(bug.nextPathIndex == 21) break copyPath;
+            appendPosition(bug.path21);
+            if(bug.nextPathIndex == 22) break copyPath;
+            appendPosition(bug.path22);
+            if(bug.nextPathIndex == 23) break copyPath;
+            appendPosition(bug.path23);
+            if(bug.nextPathIndex == 24) break copyPath;
+            appendPosition(bug.path24);
+        }
+        leftBug = null;
+        rightBug = null;
+        indicate("just guessed " + leftTurn);
+        justGuessed = true;
+
+            } else if(!better.outOfSight || rc.getLocation().isAdjacentTo(pos)) {
+                leftScore = Math.pow(leftScore, 15);
+                rightScore = Math.pow(rightScore, 15);
+                var total = leftScore + rightScore;
+                leftScore /= total;
+                rightScore /= total;
+                        var bug = Rng.mcg() < rightScore * 0x7fffffff ? leftBug : rightBug;
+        if(bug.leftTurn) {
+            guessedLeft[pos.y] |= 1l << pos.x;
+        } else {
+            guessedRight[pos.y] |= 1l << pos.x;
+        }
+        pos = bug.pos;
+        stackSize = bug.stackSize;
+        emptyStackTurns = bug.emptyStackTurns;
+        leftTurn = bug.leftTurn;
+        bottomDir = bug.bottomDir;
+        topDir = bug.topDir;
+        copyPath: {
+            appendPosition(bug.path0);
+            if(bug.nextPathIndex == 1) break copyPath;
+            appendPosition(bug.path1);
+            if(bug.nextPathIndex == 2) break copyPath;
+            appendPosition(bug.path2);
+            if(bug.nextPathIndex == 3) break copyPath;
+            appendPosition(bug.path3);
+            if(bug.nextPathIndex == 4) break copyPath;
+            appendPosition(bug.path4);
+            if(bug.nextPathIndex == 5) break copyPath;
+            appendPosition(bug.path5);
+            if(bug.nextPathIndex == 6) break copyPath;
+            appendPosition(bug.path6);
+            if(bug.nextPathIndex == 7) break copyPath;
+            appendPosition(bug.path7);
+            if(bug.nextPathIndex == 8) break copyPath;
+            appendPosition(bug.path8);
+            if(bug.nextPathIndex == 9) break copyPath;
+            appendPosition(bug.path9);
+            if(bug.nextPathIndex == 10) break copyPath;
+            appendPosition(bug.path10);
+            if(bug.nextPathIndex == 11) break copyPath;
+            appendPosition(bug.path11);
+            if(bug.nextPathIndex == 12) break copyPath;
+            appendPosition(bug.path12);
+            if(bug.nextPathIndex == 13) break copyPath;
+            appendPosition(bug.path13);
+            if(bug.nextPathIndex == 14) break copyPath;
+            appendPosition(bug.path14);
+            if(bug.nextPathIndex == 15) break copyPath;
+            appendPosition(bug.path15);
+            if(bug.nextPathIndex == 16) break copyPath;
+            appendPosition(bug.path16);
+            if(bug.nextPathIndex == 17) break copyPath;
+            appendPosition(bug.path17);
+            if(bug.nextPathIndex == 18) break copyPath;
+            appendPosition(bug.path18);
+            if(bug.nextPathIndex == 19) break copyPath;
+            appendPosition(bug.path19);
+            if(bug.nextPathIndex == 20) break copyPath;
+            appendPosition(bug.path20);
+            if(bug.nextPathIndex == 21) break copyPath;
+            appendPosition(bug.path21);
+            if(bug.nextPathIndex == 22) break copyPath;
+            appendPosition(bug.path22);
+            if(bug.nextPathIndex == 23) break copyPath;
+            appendPosition(bug.path23);
+            if(bug.nextPathIndex == 24) break copyPath;
+            appendPosition(bug.path24);
+        }
+        leftBug = null;
+        rightBug = null;
+        indicate("just guessed " + leftTurn);
+        justGuessed = true;
+
+            }
+        }
+        return false;
+    }
+
     // false = halt bug
     boolean advance() throws GameActionException {
-        // System.out.println("old pos " + pos + " i am at " + rc.getLocation());
+        if(leftBug != null) {
+            // we are currently in the middle of a lookahead
+            return doLookahead();
+        }
 
         if(pos.isAdjacentTo(target)) return false;
 
@@ -409,7 +688,6 @@ class BugnavInstance {
 
         MapLocation greedyLoc = pos.add(bottomDir);
         if(stackSize <= 1) {
-            // indicate("target " + target + " " + bottomDir + " " + pos + " " + pos.add(bottomDir.rotateRight()));
             var greedyPassable = CellTracker.isPassable(greedyLoc);
             var greedyGood = greedyPassable || !CellTracker.isSeen(greedyLoc);
             if(greedyGood) {
@@ -490,13 +768,7 @@ class BugnavInstance {
                 }
             }
         }
-        // System.out.println("bug" + pos + " " + bottomDir + " " + topDir + " " + stackSize);
 
-        // System.out.println(pos + " " + target + " " + topDir + " " + bottomDir + " " + stackSize);
-
-        // rc.setIndicatorString("" + bottomDir + " " + topDir + " " + stackSize + " " + leftTurn + " " + emptyStackTurns);
-
-        // indicate("GC " + justGuessed + " " + stackSize + " " + CellTracker.isSeen(greedyLoc) + " " + emptyStackTurns + " " + canLookahead);
         // guess rotation direction (kinda inefficient but wtv)
         if(isMaster && !justGuessed && stackSize == 0 && CellTracker.isSeen(greedyLoc)) {
             assert !CellTracker.isPassable(greedyLoc);
@@ -515,277 +787,7 @@ class BugnavInstance {
                     indicate("past right");
                     leftTurn = true;
                 } else {
-                    if(leftBug == null) {
-                        // initialise
-                        leftBug = new BugnavInstance(pos, true, target, false);
-                        rightBug = new BugnavInstance(pos, false, target, false);
-                        myLoc = new MapLocation(-1, -1);
-                        return true;
-                    }
-                    if(!rc.getLocation().equals(myLoc)) {
-                        // we moved, so we might be able to advance previously stuck stuff further
-                        myLoc = rc.getLocation();
-                        leftDone = leftBug.hitEdge || leftBug.nextPathIndex == 24;
-                        rightDone = rightBug.hitEdge || leftBug.nextPathIndex == 24;
-                    }
-
-                    if(!(leftDone && rightDone)) {
-                        if(rightDone) {
-                                                    leftBug.outOfSight = false;
-                        leftDone = !leftBug.advance();
-                        rc.setIndicatorDot(leftBug.pos, 255, 0, 255);
-
-                        } else if(leftDone) {
-                                                    rightBug.outOfSight = false;
-                        rightDone = !rightBug.advance();
-                        rc.setIndicatorDot(rightBug.pos, 255, 0, 255);
-
-                        } else if(leftBug.nextPathIndex > rightBug.nextPathIndex) {
-                                                    rightBug.outOfSight = false;
-                        rightDone = !rightBug.advance();
-                        rc.setIndicatorDot(rightBug.pos, 255, 0, 255);
-
-                        } else {
-                                                    leftBug.outOfSight = false;
-                        leftDone = !leftBug.advance();
-                        rc.setIndicatorDot(leftBug.pos, 255, 0, 255);
-
-                        }
-                    }
-
-                    boolean leftReady = leftBug.nextPathIndex >= 5 || leftBug.hitEdge || leftBug.outOfSight;
-                    boolean rightReady = rightBug.nextPathIndex >= 5 || rightBug.hitEdge || rightBug.outOfSight;
-                    indicate("ready " + leftReady + " " + rightReady);
-                    if(!leftReady || !rightReady) return !(leftDone && rightDone);
-
-                    var leftScore =  Math.sqrt(leftBug.pos.distanceSquaredTo(target)) + leftBug.nextPathIndex * 0.7 ;
-                    var rightScore =  Math.sqrt(rightBug.pos.distanceSquaredTo(target)) + rightBug.nextPathIndex * 0.7 ;
-                    indicate("lookahead" + pos);
-                    // indicate(leftBug.pos);
-                    indicate(leftScore);
-                    // indicate(rightBug.pos);
-                    indicate(rightScore);
-
-
-                    if(leftBug.hitEdge != rightBug.hitEdge) {
-                                            var bug = rightBug.hitEdge ? leftBug : rightBug;
-                    if(bug.leftTurn) {
-                        guessedLeft[pos.y] |= 1l << pos.x;
-                    } else {
-                        guessedRight[pos.y] |= 1l << pos.x;
-                    }
-                    pos = bug.pos;
-                    stackSize = bug.stackSize;
-                    emptyStackTurns = bug.emptyStackTurns;
-                    leftTurn = bug.leftTurn;
-                    bottomDir = bug.bottomDir;
-                    topDir = bug.topDir;
-                    copyPath: {
-                        appendPosition(bug.path0);
-                        if(bug.nextPathIndex == 1) break copyPath;
-                        appendPosition(bug.path1);
-                        if(bug.nextPathIndex == 2) break copyPath;
-                        appendPosition(bug.path2);
-                        if(bug.nextPathIndex == 3) break copyPath;
-                        appendPosition(bug.path3);
-                        if(bug.nextPathIndex == 4) break copyPath;
-                        appendPosition(bug.path4);
-                        if(bug.nextPathIndex == 5) break copyPath;
-                        appendPosition(bug.path5);
-                        if(bug.nextPathIndex == 6) break copyPath;
-                        appendPosition(bug.path6);
-                        if(bug.nextPathIndex == 7) break copyPath;
-                        appendPosition(bug.path7);
-                        if(bug.nextPathIndex == 8) break copyPath;
-                        appendPosition(bug.path8);
-                        if(bug.nextPathIndex == 9) break copyPath;
-                        appendPosition(bug.path9);
-                        if(bug.nextPathIndex == 10) break copyPath;
-                        appendPosition(bug.path10);
-                        if(bug.nextPathIndex == 11) break copyPath;
-                        appendPosition(bug.path11);
-                        if(bug.nextPathIndex == 12) break copyPath;
-                        appendPosition(bug.path12);
-                        if(bug.nextPathIndex == 13) break copyPath;
-                        appendPosition(bug.path13);
-                        if(bug.nextPathIndex == 14) break copyPath;
-                        appendPosition(bug.path14);
-                        if(bug.nextPathIndex == 15) break copyPath;
-                        appendPosition(bug.path15);
-                        if(bug.nextPathIndex == 16) break copyPath;
-                        appendPosition(bug.path16);
-                        if(bug.nextPathIndex == 17) break copyPath;
-                        appendPosition(bug.path17);
-                        if(bug.nextPathIndex == 18) break copyPath;
-                        appendPosition(bug.path18);
-                        if(bug.nextPathIndex == 19) break copyPath;
-                        appendPosition(bug.path19);
-                        if(bug.nextPathIndex == 20) break copyPath;
-                        appendPosition(bug.path20);
-                        if(bug.nextPathIndex == 21) break copyPath;
-                        appendPosition(bug.path21);
-                        if(bug.nextPathIndex == 22) break copyPath;
-                        appendPosition(bug.path22);
-                        if(bug.nextPathIndex == 23) break copyPath;
-                        appendPosition(bug.path23);
-                        if(bug.nextPathIndex == 24) break copyPath;
-                        appendPosition(bug.path24);
-                    }
-                    leftBug = null;
-                    rightBug = null;
-                    indicate("just guessed " + leftTurn);
-                    justGuessed = true;
-
-                    } else {
-                        var better = leftScore < rightScore ? leftBug : rightBug;
-                        var worse = leftScore < rightScore ? rightBug : leftBug;
-                        if(!better.outOfSight && worse.outOfSight) {
-                            indicate("clear winner");
-                                                var bug = better;
-                    if(bug.leftTurn) {
-                        guessedLeft[pos.y] |= 1l << pos.x;
-                    } else {
-                        guessedRight[pos.y] |= 1l << pos.x;
-                    }
-                    pos = bug.pos;
-                    stackSize = bug.stackSize;
-                    emptyStackTurns = bug.emptyStackTurns;
-                    leftTurn = bug.leftTurn;
-                    bottomDir = bug.bottomDir;
-                    topDir = bug.topDir;
-                    copyPath: {
-                        appendPosition(bug.path0);
-                        if(bug.nextPathIndex == 1) break copyPath;
-                        appendPosition(bug.path1);
-                        if(bug.nextPathIndex == 2) break copyPath;
-                        appendPosition(bug.path2);
-                        if(bug.nextPathIndex == 3) break copyPath;
-                        appendPosition(bug.path3);
-                        if(bug.nextPathIndex == 4) break copyPath;
-                        appendPosition(bug.path4);
-                        if(bug.nextPathIndex == 5) break copyPath;
-                        appendPosition(bug.path5);
-                        if(bug.nextPathIndex == 6) break copyPath;
-                        appendPosition(bug.path6);
-                        if(bug.nextPathIndex == 7) break copyPath;
-                        appendPosition(bug.path7);
-                        if(bug.nextPathIndex == 8) break copyPath;
-                        appendPosition(bug.path8);
-                        if(bug.nextPathIndex == 9) break copyPath;
-                        appendPosition(bug.path9);
-                        if(bug.nextPathIndex == 10) break copyPath;
-                        appendPosition(bug.path10);
-                        if(bug.nextPathIndex == 11) break copyPath;
-                        appendPosition(bug.path11);
-                        if(bug.nextPathIndex == 12) break copyPath;
-                        appendPosition(bug.path12);
-                        if(bug.nextPathIndex == 13) break copyPath;
-                        appendPosition(bug.path13);
-                        if(bug.nextPathIndex == 14) break copyPath;
-                        appendPosition(bug.path14);
-                        if(bug.nextPathIndex == 15) break copyPath;
-                        appendPosition(bug.path15);
-                        if(bug.nextPathIndex == 16) break copyPath;
-                        appendPosition(bug.path16);
-                        if(bug.nextPathIndex == 17) break copyPath;
-                        appendPosition(bug.path17);
-                        if(bug.nextPathIndex == 18) break copyPath;
-                        appendPosition(bug.path18);
-                        if(bug.nextPathIndex == 19) break copyPath;
-                        appendPosition(bug.path19);
-                        if(bug.nextPathIndex == 20) break copyPath;
-                        appendPosition(bug.path20);
-                        if(bug.nextPathIndex == 21) break copyPath;
-                        appendPosition(bug.path21);
-                        if(bug.nextPathIndex == 22) break copyPath;
-                        appendPosition(bug.path22);
-                        if(bug.nextPathIndex == 23) break copyPath;
-                        appendPosition(bug.path23);
-                        if(bug.nextPathIndex == 24) break copyPath;
-                        appendPosition(bug.path24);
-                    }
-                    leftBug = null;
-                    rightBug = null;
-                    indicate("just guessed " + leftTurn);
-                    justGuessed = true;
-
-                        } else if(!better.outOfSight || rc.getLocation().isAdjacentTo(pos)) {
-                            leftScore = Math.pow(leftScore, 15);
-                            rightScore = Math.pow(rightScore, 15);
-                            var total = leftScore + rightScore;
-                            leftScore /= total;
-                            rightScore /= total;
-                                                var bug = Rng.mcg() < rightScore * 0x7fffffff ? leftBug : rightBug;
-                    if(bug.leftTurn) {
-                        guessedLeft[pos.y] |= 1l << pos.x;
-                    } else {
-                        guessedRight[pos.y] |= 1l << pos.x;
-                    }
-                    pos = bug.pos;
-                    stackSize = bug.stackSize;
-                    emptyStackTurns = bug.emptyStackTurns;
-                    leftTurn = bug.leftTurn;
-                    bottomDir = bug.bottomDir;
-                    topDir = bug.topDir;
-                    copyPath: {
-                        appendPosition(bug.path0);
-                        if(bug.nextPathIndex == 1) break copyPath;
-                        appendPosition(bug.path1);
-                        if(bug.nextPathIndex == 2) break copyPath;
-                        appendPosition(bug.path2);
-                        if(bug.nextPathIndex == 3) break copyPath;
-                        appendPosition(bug.path3);
-                        if(bug.nextPathIndex == 4) break copyPath;
-                        appendPosition(bug.path4);
-                        if(bug.nextPathIndex == 5) break copyPath;
-                        appendPosition(bug.path5);
-                        if(bug.nextPathIndex == 6) break copyPath;
-                        appendPosition(bug.path6);
-                        if(bug.nextPathIndex == 7) break copyPath;
-                        appendPosition(bug.path7);
-                        if(bug.nextPathIndex == 8) break copyPath;
-                        appendPosition(bug.path8);
-                        if(bug.nextPathIndex == 9) break copyPath;
-                        appendPosition(bug.path9);
-                        if(bug.nextPathIndex == 10) break copyPath;
-                        appendPosition(bug.path10);
-                        if(bug.nextPathIndex == 11) break copyPath;
-                        appendPosition(bug.path11);
-                        if(bug.nextPathIndex == 12) break copyPath;
-                        appendPosition(bug.path12);
-                        if(bug.nextPathIndex == 13) break copyPath;
-                        appendPosition(bug.path13);
-                        if(bug.nextPathIndex == 14) break copyPath;
-                        appendPosition(bug.path14);
-                        if(bug.nextPathIndex == 15) break copyPath;
-                        appendPosition(bug.path15);
-                        if(bug.nextPathIndex == 16) break copyPath;
-                        appendPosition(bug.path16);
-                        if(bug.nextPathIndex == 17) break copyPath;
-                        appendPosition(bug.path17);
-                        if(bug.nextPathIndex == 18) break copyPath;
-                        appendPosition(bug.path18);
-                        if(bug.nextPathIndex == 19) break copyPath;
-                        appendPosition(bug.path19);
-                        if(bug.nextPathIndex == 20) break copyPath;
-                        appendPosition(bug.path20);
-                        if(bug.nextPathIndex == 21) break copyPath;
-                        appendPosition(bug.path21);
-                        if(bug.nextPathIndex == 22) break copyPath;
-                        appendPosition(bug.path22);
-                        if(bug.nextPathIndex == 23) break copyPath;
-                        appendPosition(bug.path23);
-                        if(bug.nextPathIndex == 24) break copyPath;
-                        appendPosition(bug.path24);
-                    }
-                    leftBug = null;
-                    rightBug = null;
-                    indicate("just guessed " + leftTurn);
-                    justGuessed = true;
-
-                        }
-                    }
-                    return false;
+                    return doLookahead();
                 }
             } else if(emptyStackTurns < 0) {
                 emptyStackTurns = 0;
@@ -798,7 +800,10 @@ class BugnavInstance {
                     // this loop only exists to allow continue
         while(true) {
             var tryDir = topDir.rotateRight().rotateRight();
-            if(stackSize + -2 >= 0)
+            if(stackSize + -2 >= 0
+               // only try -2 for diagonals
+               && Math.abs(topDir.dx + topDir.dy) != 1
+               )
             {
                 // indicate("trying " + tryDir);
                 var nextPos = pos.add(tryDir);
@@ -818,7 +823,8 @@ class BugnavInstance {
                     } else {
                         hitEdge = true;
                     }
-                    // Profiler.end("bugnav");
+                    // Profiler.end("bugnav " + -2 + " " + isMaster);
+                    indicate("bugnav " + -2 + " " + isMaster);
                     return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
@@ -832,12 +838,15 @@ class BugnavInstance {
                         emptyStackTurns = 0;
                     }
                     appendCurrentPosition();
-                    // Profiler.end("bugnav");
+                    // Profiler.end("bugnav " + -2 + " " + isMaster);
+                    indicate("bugnav " + -2 + " " + isMaster);
                     return true;
                 }
             }
             tryDir = tryDir.rotateLeft();
-            if(stackSize + -1 >= 0)
+            if(stackSize + -1 >= 0
+               // only try -2 for diagonals
+               )
             {
                 // indicate("trying " + tryDir);
                 var nextPos = pos.add(tryDir);
@@ -857,7 +866,8 @@ class BugnavInstance {
                     } else {
                         hitEdge = true;
                     }
-                    // Profiler.end("bugnav");
+                    // Profiler.end("bugnav " + -1 + " " + isMaster);
+                    indicate("bugnav " + -1 + " " + isMaster);
                     return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
@@ -871,7 +881,8 @@ class BugnavInstance {
                         emptyStackTurns = 0;
                     }
                     appendCurrentPosition();
-                    // Profiler.end("bugnav");
+                    // Profiler.end("bugnav " + -1 + " " + isMaster);
+                    indicate("bugnav " + -1 + " " + isMaster);
                     return true;
                 }
             }
@@ -895,7 +906,8 @@ class BugnavInstance {
                     } else {
                         hitEdge = true;
                     }
-                    // Profiler.end("bugnav");
+                    // Profiler.end("bugnav " + 0 + " " + isMaster);
+                    indicate("bugnav " + 0 + " " + isMaster);
                     return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
@@ -908,7 +920,8 @@ class BugnavInstance {
                         emptyStackTurns = 0;
                     }
                     appendCurrentPosition();
-                    // Profiler.end("bugnav");
+                    // Profiler.end("bugnav " + 0 + " " + isMaster);
+                    indicate("bugnav " + 0 + " " + isMaster);
                     return true;
                 }
             }
@@ -932,7 +945,8 @@ class BugnavInstance {
                     } else {
                         hitEdge = true;
                     }
-                    // Profiler.end("bugnav");
+                    // Profiler.end("bugnav " + 1 + " " + isMaster);
+                    indicate("bugnav " + 1 + " " + isMaster);
                     return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
@@ -946,7 +960,8 @@ class BugnavInstance {
                         emptyStackTurns = 0;
                     }
                     appendCurrentPosition();
-                    // Profiler.end("bugnav");
+                    // Profiler.end("bugnav " + 1 + " " + isMaster);
+                    indicate("bugnav " + 1 + " " + isMaster);
                     return true;
                 }
             }
@@ -970,7 +985,8 @@ class BugnavInstance {
                     } else {
                         hitEdge = true;
                     }
-                    // Profiler.end("bugnav");
+                    // Profiler.end("bugnav " + 2 + " " + isMaster);
+                    indicate("bugnav " + 2 + " " + isMaster);
                     return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
@@ -984,7 +1000,8 @@ class BugnavInstance {
                         emptyStackTurns = 0;
                     }
                     appendCurrentPosition();
-                    // Profiler.end("bugnav");
+                    // Profiler.end("bugnav " + 2 + " " + isMaster);
+                    indicate("bugnav " + 2 + " " + isMaster);
                     return true;
                 }
             }
@@ -1008,7 +1025,8 @@ class BugnavInstance {
                     } else {
                         hitEdge = true;
                     }
-                    // Profiler.end("bugnav");
+                    // Profiler.end("bugnav " + 3 + " " + isMaster);
+                    indicate("bugnav " + 3 + " " + isMaster);
                     return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
@@ -1022,7 +1040,8 @@ class BugnavInstance {
                         emptyStackTurns = 0;
                     }
                     appendCurrentPosition();
-                    // Profiler.end("bugnav");
+                    // Profiler.end("bugnav " + 3 + " " + isMaster);
+                    indicate("bugnav " + 3 + " " + isMaster);
                     return true;
                 }
             }
@@ -1046,7 +1065,8 @@ class BugnavInstance {
                     } else {
                         hitEdge = true;
                     }
-                    // Profiler.end("bugnav");
+                    // Profiler.end("bugnav " + 4 + " " + isMaster);
+                    indicate("bugnav " + 4 + " " + isMaster);
                     return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
@@ -1060,7 +1080,8 @@ class BugnavInstance {
                         emptyStackTurns = 0;
                     }
                     appendCurrentPosition();
-                    // Profiler.end("bugnav");
+                    // Profiler.end("bugnav " + 4 + " " + isMaster);
+                    indicate("bugnav " + 4 + " " + isMaster);
                     return true;
                 }
             }
@@ -1084,7 +1105,8 @@ class BugnavInstance {
                     } else {
                         hitEdge = true;
                     }
-                    // Profiler.end("bugnav");
+                    // Profiler.end("bugnav " + 5 + " " + isMaster);
+                    indicate("bugnav " + 5 + " " + isMaster);
                     return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
@@ -1098,7 +1120,8 @@ class BugnavInstance {
                         emptyStackTurns = 0;
                     }
                     appendCurrentPosition();
-                    // Profiler.end("bugnav");
+                    // Profiler.end("bugnav " + 5 + " " + isMaster);
+                    indicate("bugnav " + 5 + " " + isMaster);
                     return true;
                 }
             }
@@ -1110,7 +1133,10 @@ class BugnavInstance {
                     // this loop only exists to allow continue
         while(true) {
             var tryDir = topDir.rotateLeft().rotateLeft();
-            if(stackSize + -2 >= 0)
+            if(stackSize + -2 >= 0
+               // only try -2 for diagonals
+               && Math.abs(topDir.dx + topDir.dy) != 1
+               )
             {
                 // indicate("trying " + tryDir);
                 var nextPos = pos.add(tryDir);
@@ -1130,7 +1156,8 @@ class BugnavInstance {
                     } else {
                         hitEdge = true;
                     }
-                    // Profiler.end("bugnav");
+                    // Profiler.end("bugnav " + -2 + " " + isMaster);
+                    indicate("bugnav " + -2 + " " + isMaster);
                     return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
@@ -1144,12 +1171,15 @@ class BugnavInstance {
                         emptyStackTurns = 0;
                     }
                     appendCurrentPosition();
-                    // Profiler.end("bugnav");
+                    // Profiler.end("bugnav " + -2 + " " + isMaster);
+                    indicate("bugnav " + -2 + " " + isMaster);
                     return true;
                 }
             }
             tryDir = tryDir.rotateRight();
-            if(stackSize + -1 >= 0)
+            if(stackSize + -1 >= 0
+               // only try -2 for diagonals
+               )
             {
                 // indicate("trying " + tryDir);
                 var nextPos = pos.add(tryDir);
@@ -1169,7 +1199,8 @@ class BugnavInstance {
                     } else {
                         hitEdge = true;
                     }
-                    // Profiler.end("bugnav");
+                    // Profiler.end("bugnav " + -1 + " " + isMaster);
+                    indicate("bugnav " + -1 + " " + isMaster);
                     return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
@@ -1183,7 +1214,8 @@ class BugnavInstance {
                         emptyStackTurns = 0;
                     }
                     appendCurrentPosition();
-                    // Profiler.end("bugnav");
+                    // Profiler.end("bugnav " + -1 + " " + isMaster);
+                    indicate("bugnav " + -1 + " " + isMaster);
                     return true;
                 }
             }
@@ -1207,7 +1239,8 @@ class BugnavInstance {
                     } else {
                         hitEdge = true;
                     }
-                    // Profiler.end("bugnav");
+                    // Profiler.end("bugnav " + 0 + " " + isMaster);
+                    indicate("bugnav " + 0 + " " + isMaster);
                     return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
@@ -1220,7 +1253,8 @@ class BugnavInstance {
                         emptyStackTurns = 0;
                     }
                     appendCurrentPosition();
-                    // Profiler.end("bugnav");
+                    // Profiler.end("bugnav " + 0 + " " + isMaster);
+                    indicate("bugnav " + 0 + " " + isMaster);
                     return true;
                 }
             }
@@ -1244,7 +1278,8 @@ class BugnavInstance {
                     } else {
                         hitEdge = true;
                     }
-                    // Profiler.end("bugnav");
+                    // Profiler.end("bugnav " + 1 + " " + isMaster);
+                    indicate("bugnav " + 1 + " " + isMaster);
                     return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
@@ -1258,7 +1293,8 @@ class BugnavInstance {
                         emptyStackTurns = 0;
                     }
                     appendCurrentPosition();
-                    // Profiler.end("bugnav");
+                    // Profiler.end("bugnav " + 1 + " " + isMaster);
+                    indicate("bugnav " + 1 + " " + isMaster);
                     return true;
                 }
             }
@@ -1282,7 +1318,8 @@ class BugnavInstance {
                     } else {
                         hitEdge = true;
                     }
-                    // Profiler.end("bugnav");
+                    // Profiler.end("bugnav " + 2 + " " + isMaster);
+                    indicate("bugnav " + 2 + " " + isMaster);
                     return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
@@ -1296,7 +1333,8 @@ class BugnavInstance {
                         emptyStackTurns = 0;
                     }
                     appendCurrentPosition();
-                    // Profiler.end("bugnav");
+                    // Profiler.end("bugnav " + 2 + " " + isMaster);
+                    indicate("bugnav " + 2 + " " + isMaster);
                     return true;
                 }
             }
@@ -1320,7 +1358,8 @@ class BugnavInstance {
                     } else {
                         hitEdge = true;
                     }
-                    // Profiler.end("bugnav");
+                    // Profiler.end("bugnav " + 3 + " " + isMaster);
+                    indicate("bugnav " + 3 + " " + isMaster);
                     return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
@@ -1334,7 +1373,8 @@ class BugnavInstance {
                         emptyStackTurns = 0;
                     }
                     appendCurrentPosition();
-                    // Profiler.end("bugnav");
+                    // Profiler.end("bugnav " + 3 + " " + isMaster);
+                    indicate("bugnav " + 3 + " " + isMaster);
                     return true;
                 }
             }
@@ -1358,7 +1398,8 @@ class BugnavInstance {
                     } else {
                         hitEdge = true;
                     }
-                    // Profiler.end("bugnav");
+                    // Profiler.end("bugnav " + 4 + " " + isMaster);
+                    indicate("bugnav " + 4 + " " + isMaster);
                     return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
@@ -1372,7 +1413,8 @@ class BugnavInstance {
                         emptyStackTurns = 0;
                     }
                     appendCurrentPosition();
-                    // Profiler.end("bugnav");
+                    // Profiler.end("bugnav " + 4 + " " + isMaster);
+                    indicate("bugnav " + 4 + " " + isMaster);
                     return true;
                 }
             }
@@ -1396,7 +1438,8 @@ class BugnavInstance {
                     } else {
                         hitEdge = true;
                     }
-                    // Profiler.end("bugnav");
+                    // Profiler.end("bugnav " + 5 + " " + isMaster);
+                    indicate("bugnav " + 5 + " " + isMaster);
                     return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
@@ -1410,7 +1453,8 @@ class BugnavInstance {
                         emptyStackTurns = 0;
                     }
                     appendCurrentPosition();
-                    // Profiler.end("bugnav");
+                    // Profiler.end("bugnav " + 5 + " " + isMaster);
+                    indicate("bugnav " + 5 + " " + isMaster);
                     return true;
                 }
             }

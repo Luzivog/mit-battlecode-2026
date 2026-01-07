@@ -107,9 +107,104 @@ class BugnavInstance {
         }
     }
 
+    boolean doLookahead() throws GameActionException {
+        if(leftBug == null) {
+            // initialise
+            leftBug = new BugnavInstance(pos, true, target, false);
+            rightBug = new BugnavInstance(pos, false, target, false);
+            myLoc = new MapLocation(-1, -1);
+            return true;
+        }
+        // Profiler.begin();
+        if(!rc.getLocation().equals(myLoc)) {
+            // we moved, so we might be able to advance previously stuck stuff further
+            myLoc = rc.getLocation();
+            leftDone = leftBug.hitEdge || leftBug.nextPathIndex == {{MAX_PATH - 1}};
+            rightDone = rightBug.hitEdge || leftBug.nextPathIndex == {{MAX_PATH - 1}};
+        }
+
+        if(!(leftDone && rightDone)) {
+            {% macro advance(side) %}
+            {{side}}Bug.outOfSight = false;
+            {{side}}Done = !{{side}}Bug.advance();
+            rc.setIndicatorDot({{side}}Bug.pos, 255, 0, 255);
+            {% endmacro %}
+            if(rightDone) {
+                {{ advance("left") }}
+            } else if(leftDone) {
+                {{ advance("right") }}
+            } else if(leftBug.nextPathIndex > rightBug.nextPathIndex) {
+                {{ advance("right") }}
+            } else {
+                {{ advance("left") }}
+            }
+        }
+        // Profiler.end("lookahead");
+
+        boolean leftReady = leftBug.nextPathIndex >= 5 || leftBug.hitEdge || leftBug.outOfSight;
+        boolean rightReady = rightBug.nextPathIndex >= 5 || rightBug.hitEdge || rightBug.outOfSight;
+        indicate("ready " + leftReady + " " + rightReady);
+        if(!leftReady || !rightReady) return !(leftDone && rightDone);
+
+        {% macro score(bug) %} Math.sqrt({{bug}}.pos.distanceSquaredTo(target)) + {{bug}}.nextPathIndex * 0.7 {% endmacro %}
+        var leftScore = {{ score("leftBug") }};
+        var rightScore = {{ score("rightBug") }};
+        indicate("lookahead" + pos);
+        // indicate(leftBug.pos);
+        indicate(leftScore);
+        // indicate(rightBug.pos);
+        indicate(rightScore);
+
+        {% macro chooseBug(bug) %}
+        var bug = {{bug}};
+        if(bug.leftTurn) {
+            guessedLeft[pos.y] |= 1l << pos.x;
+        } else {
+            guessedRight[pos.y] |= 1l << pos.x;
+        }
+        {% for field in ["pos", "stackSize", "emptyStackTurns", "leftTurn", "bottomDir", "topDir"] %}
+        {{field}} = bug.{{field}};
+        {% endfor %}
+        copyPath: {
+            {% for i in range(MAX_PATH) %}
+            {% if i %}
+            if(bug.nextPathIndex == {{i}}) break copyPath;
+            {% endif %}
+            appendPosition(bug.path{{i}});
+            {% endfor %}
+        }
+        leftBug = null;
+        rightBug = null;
+        indicate("just guessed " + leftTurn);
+        justGuessed = true;
+        {% endmacro %}
+
+        if(leftBug.hitEdge != rightBug.hitEdge) {
+            {{ chooseBug("rightBug.hitEdge ? leftBug : rightBug") }}
+        } else {
+            var better = leftScore < rightScore ? leftBug : rightBug;
+            var worse = leftScore < rightScore ? rightBug : leftBug;
+            if(!better.outOfSight && worse.outOfSight) {
+                indicate("clear winner");
+                {{ chooseBug("better") }}
+            } else if(!better.outOfSight || rc.getLocation().isAdjacentTo(pos)) {
+                leftScore = Math.pow(leftScore, 15);
+                rightScore = Math.pow(rightScore, 15);
+                var total = leftScore + rightScore;
+                leftScore /= total;
+                rightScore /= total;
+                {{ chooseBug("Rng.mcg() < rightScore * 0x7fffffff ? leftBug : rightBug") }}
+            }
+        }
+        return false;
+    }
+
     // false = halt bug
     boolean advance() throws GameActionException {
-        // System.out.println("old pos " + pos + " i am at " + rc.getLocation());
+        if(leftBug != null) {
+            // we are currently in the middle of a lookahead
+            return doLookahead();
+        }
 
         if(pos.isAdjacentTo(target)) return false;
 
@@ -158,7 +253,6 @@ class BugnavInstance {
             }
             return false;
             {% endmacro %}
-            // indicate("target " + target + " " + bottomDir + " " + pos + " " + pos.add(bottomDir.rotateRight()));
             var greedyPassable = CellTracker.isPassable(greedyLoc);
             var greedyGood = greedyPassable || !CellTracker.isSeen(greedyLoc);
             if(greedyGood) {
@@ -184,13 +278,7 @@ class BugnavInstance {
                 }
             }
         }
-        // System.out.println("bug" + pos + " " + bottomDir + " " + topDir + " " + stackSize);
 
-        // System.out.println(pos + " " + target + " " + topDir + " " + bottomDir + " " + stackSize);
-
-        // rc.setIndicatorString("" + bottomDir + " " + topDir + " " + stackSize + " " + leftTurn + " " + emptyStackTurns);
-
-        // indicate("GC " + justGuessed + " " + stackSize + " " + CellTracker.isSeen(greedyLoc) + " " + emptyStackTurns + " " + canLookahead);
         // guess rotation direction (kinda inefficient but wtv)
         if(isMaster && !justGuessed && stackSize == 0 && CellTracker.isSeen(greedyLoc)) {
             assert !CellTracker.isPassable(greedyLoc);
@@ -209,93 +297,7 @@ class BugnavInstance {
                     indicate("past right");
                     leftTurn = true;
                 } else {
-                    if(leftBug == null) {
-                        // initialise
-                        leftBug = new BugnavInstance(pos, true, target, false);
-                        rightBug = new BugnavInstance(pos, false, target, false);
-                        myLoc = new MapLocation(-1, -1);
-                        return true;
-                    }
-                    if(!rc.getLocation().equals(myLoc)) {
-                        // we moved, so we might be able to advance previously stuck stuff further
-                        myLoc = rc.getLocation();
-                        leftDone = leftBug.hitEdge || leftBug.nextPathIndex == {{MAX_PATH - 1}};
-                        rightDone = rightBug.hitEdge || leftBug.nextPathIndex == {{MAX_PATH - 1}};
-                    }
-
-                    if(!(leftDone && rightDone)) {
-                        {% macro advance(side) %}
-                        {{side}}Bug.outOfSight = false;
-                        {{side}}Done = !{{side}}Bug.advance();
-                        rc.setIndicatorDot({{side}}Bug.pos, 255, 0, 255);
-                        {% endmacro %}
-                        if(rightDone) {
-                            {{ advance("left") }}
-                        } else if(leftDone) {
-                            {{ advance("right") }}
-                        } else if(leftBug.nextPathIndex > rightBug.nextPathIndex) {
-                            {{ advance("right") }}
-                        } else {
-                            {{ advance("left") }}
-                        }
-                    }
-
-                    boolean leftReady = leftBug.nextPathIndex >= 5 || leftBug.hitEdge || leftBug.outOfSight;
-                    boolean rightReady = rightBug.nextPathIndex >= 5 || rightBug.hitEdge || rightBug.outOfSight;
-                    indicate("ready " + leftReady + " " + rightReady);
-                    if(!leftReady || !rightReady) return !(leftDone && rightDone);
-
-                    {% macro score(bug) %} Math.sqrt({{bug}}.pos.distanceSquaredTo(target)) + {{bug}}.nextPathIndex * 0.7 {% endmacro %}
-                    var leftScore = {{ score("leftBug") }};
-                    var rightScore = {{ score("rightBug") }};
-                    indicate("lookahead" + pos);
-                    // indicate(leftBug.pos);
-                    indicate(leftScore);
-                    // indicate(rightBug.pos);
-                    indicate(rightScore);
-
-                    {% macro chooseBug(bug) %}
-                    var bug = {{bug}};
-                    if(bug.leftTurn) {
-                        guessedLeft[pos.y] |= 1l << pos.x;
-                    } else {
-                        guessedRight[pos.y] |= 1l << pos.x;
-                    }
-                    {% for field in ["pos", "stackSize", "emptyStackTurns", "leftTurn", "bottomDir", "topDir"] %}
-                    {{field}} = bug.{{field}};
-                    {% endfor %}
-                    copyPath: {
-                        {% for i in range(MAX_PATH) %}
-                        {% if i %}
-                        if(bug.nextPathIndex == {{i}}) break copyPath;
-                        {% endif %}
-                        appendPosition(bug.path{{i}});
-                        {% endfor %}
-                    }
-                    leftBug = null;
-                    rightBug = null;
-                    indicate("just guessed " + leftTurn);
-                    justGuessed = true;
-                    {% endmacro %}
-
-                    if(leftBug.hitEdge != rightBug.hitEdge) {
-                        {{ chooseBug("rightBug.hitEdge ? leftBug : rightBug") }}
-                    } else {
-                        var better = leftScore < rightScore ? leftBug : rightBug;
-                        var worse = leftScore < rightScore ? rightBug : leftBug;
-                        if(!better.outOfSight && worse.outOfSight) {
-                            indicate("clear winner");
-                            {{ chooseBug("better") }}
-                        } else if(!better.outOfSight || rc.getLocation().isAdjacentTo(pos)) {
-                            leftScore = Math.pow(leftScore, 15);
-                            rightScore = Math.pow(rightScore, 15);
-                            var total = leftScore + rightScore;
-                            leftScore /= total;
-                            rightScore /= total;
-                            {{ chooseBug("Rng.mcg() < rightScore * 0x7fffffff ? leftBug : rightBug") }}
-                        }
-                    }
-                    return false;
+                    return doLookahead();
                 }
             } else if(emptyStackTurns < 0) {
                 emptyStackTurns = 0;
@@ -309,7 +311,12 @@ class BugnavInstance {
             var tryDir = topDir.rotate{{reverseDir}}().rotate{{reverseDir}}();
             {% for turns in range(-2, 6) %}
             {% if turns < 0 %}
-            if(stackSize + {{turns}} >= 0)
+            if(stackSize + {{turns}} >= 0
+               // only try -2 for diagonals
+               {% if turns == -2 %}
+               && Math.abs(topDir.dx + topDir.dy) != 1
+               {% endif %}
+               )
             {% endif %}
             {
                 // indicate("trying " + tryDir);
@@ -330,7 +337,8 @@ class BugnavInstance {
                     } else {
                         hitEdge = true;
                     }
-                    // Profiler.end("bugnav");
+                    // Profiler.end("bugnav " + {{turns}} + " " + isMaster);
+                    indicate("bugnav " + {{turns}} + " " + isMaster);
                     return false;
                 }
                 if(CellTracker.isPassable(nextPos)) {
@@ -346,7 +354,8 @@ class BugnavInstance {
                         emptyStackTurns = 0;
                     }
                     appendCurrentPosition();
-                    // Profiler.end("bugnav");
+                    // Profiler.end("bugnav " + {{turns}} + " " + isMaster);
+                    indicate("bugnav " + {{turns}} + " " + isMaster);
                     return true;
                 }
             }

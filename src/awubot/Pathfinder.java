@@ -13,6 +13,8 @@ class BugnavInstance {
     boolean isMaster;
     // i guessed last turn, so i don't need to guess again
     boolean justGuessed = false;
+    // loop detection
+    long[] guessedLeft, guessedRight;
 
     Direction bottomDir, topDir;
 
@@ -2039,6 +2041,8 @@ class BugnavInstance {
         this.leftTurn = leftTurn;
         this.target = target;
         this.isMaster = true;
+        guessedLeft = new long[mapHeight];
+        guessedRight = new long[mapHeight];
         reset();
     }
 
@@ -21059,51 +21063,1570 @@ class BugnavInstance {
             case 0 -> {
                 appendCurrentState0();
             }
-            default -> { assert(pathLength < 500); }
+            default -> {
+                indicate("oh no");
+                reset();
+            }
+        }
+    }
+
+    MapLocation getRecentPos(int i) {
+        switch (pathLength - i - 1) {
+            case 499 -> {
+                return path499;
+            }
+            case 498 -> {
+                return path498;
+            }
+            case 497 -> {
+                return path497;
+            }
+            case 496 -> {
+                return path496;
+            }
+            case 495 -> {
+                return path495;
+            }
+            case 494 -> {
+                return path494;
+            }
+            case 493 -> {
+                return path493;
+            }
+            case 492 -> {
+                return path492;
+            }
+            case 491 -> {
+                return path491;
+            }
+            case 490 -> {
+                return path490;
+            }
+            case 489 -> {
+                return path489;
+            }
+            case 488 -> {
+                return path488;
+            }
+            case 487 -> {
+                return path487;
+            }
+            case 486 -> {
+                return path486;
+            }
+            case 485 -> {
+                return path485;
+            }
+            case 484 -> {
+                return path484;
+            }
+            case 483 -> {
+                return path483;
+            }
+            case 482 -> {
+                return path482;
+            }
+            case 481 -> {
+                return path481;
+            }
+            case 480 -> {
+                return path480;
+            }
+            case 479 -> {
+                return path479;
+            }
+            case 478 -> {
+                return path478;
+            }
+            case 477 -> {
+                return path477;
+            }
+            case 476 -> {
+                return path476;
+            }
+            case 475 -> {
+                return path475;
+            }
+            case 474 -> {
+                return path474;
+            }
+            case 473 -> {
+                return path473;
+            }
+            case 472 -> {
+                return path472;
+            }
+            case 471 -> {
+                return path471;
+            }
+            case 470 -> {
+                return path470;
+            }
+            case 469 -> {
+                return path469;
+            }
+            case 468 -> {
+                return path468;
+            }
+            case 467 -> {
+                return path467;
+            }
+            case 466 -> {
+                return path466;
+            }
+            case 465 -> {
+                return path465;
+            }
+            case 464 -> {
+                return path464;
+            }
+            case 463 -> {
+                return path463;
+            }
+            case 462 -> {
+                return path462;
+            }
+            case 461 -> {
+                return path461;
+            }
+            case 460 -> {
+                return path460;
+            }
+            case 459 -> {
+                return path459;
+            }
+            case 458 -> {
+                return path458;
+            }
+            case 457 -> {
+                return path457;
+            }
+            case 456 -> {
+                return path456;
+            }
+            case 455 -> {
+                return path455;
+            }
+            case 454 -> {
+                return path454;
+            }
+            case 453 -> {
+                return path453;
+            }
+            case 452 -> {
+                return path452;
+            }
+            case 451 -> {
+                return path451;
+            }
+            case 450 -> {
+                return path450;
+            }
+            case 449 -> {
+                return path449;
+            }
+            case 448 -> {
+                return path448;
+            }
+            case 447 -> {
+                return path447;
+            }
+            case 446 -> {
+                return path446;
+            }
+            case 445 -> {
+                return path445;
+            }
+            case 444 -> {
+                return path444;
+            }
+            case 443 -> {
+                return path443;
+            }
+            case 442 -> {
+                return path442;
+            }
+            case 441 -> {
+                return path441;
+            }
+            case 440 -> {
+                return path440;
+            }
+            case 439 -> {
+                return path439;
+            }
+            case 438 -> {
+                return path438;
+            }
+            case 437 -> {
+                return path437;
+            }
+            case 436 -> {
+                return path436;
+            }
+            case 435 -> {
+                return path435;
+            }
+            case 434 -> {
+                return path434;
+            }
+            case 433 -> {
+                return path433;
+            }
+            case 432 -> {
+                return path432;
+            }
+            case 431 -> {
+                return path431;
+            }
+            case 430 -> {
+                return path430;
+            }
+            case 429 -> {
+                return path429;
+            }
+            case 428 -> {
+                return path428;
+            }
+            case 427 -> {
+                return path427;
+            }
+            case 426 -> {
+                return path426;
+            }
+            case 425 -> {
+                return path425;
+            }
+            case 424 -> {
+                return path424;
+            }
+            case 423 -> {
+                return path423;
+            }
+            case 422 -> {
+                return path422;
+            }
+            case 421 -> {
+                return path421;
+            }
+            case 420 -> {
+                return path420;
+            }
+            case 419 -> {
+                return path419;
+            }
+            case 418 -> {
+                return path418;
+            }
+            case 417 -> {
+                return path417;
+            }
+            case 416 -> {
+                return path416;
+            }
+            case 415 -> {
+                return path415;
+            }
+            case 414 -> {
+                return path414;
+            }
+            case 413 -> {
+                return path413;
+            }
+            case 412 -> {
+                return path412;
+            }
+            case 411 -> {
+                return path411;
+            }
+            case 410 -> {
+                return path410;
+            }
+            case 409 -> {
+                return path409;
+            }
+            case 408 -> {
+                return path408;
+            }
+            case 407 -> {
+                return path407;
+            }
+            case 406 -> {
+                return path406;
+            }
+            case 405 -> {
+                return path405;
+            }
+            case 404 -> {
+                return path404;
+            }
+            case 403 -> {
+                return path403;
+            }
+            case 402 -> {
+                return path402;
+            }
+            case 401 -> {
+                return path401;
+            }
+            case 400 -> {
+                return path400;
+            }
+            case 399 -> {
+                return path399;
+            }
+            case 398 -> {
+                return path398;
+            }
+            case 397 -> {
+                return path397;
+            }
+            case 396 -> {
+                return path396;
+            }
+            case 395 -> {
+                return path395;
+            }
+            case 394 -> {
+                return path394;
+            }
+            case 393 -> {
+                return path393;
+            }
+            case 392 -> {
+                return path392;
+            }
+            case 391 -> {
+                return path391;
+            }
+            case 390 -> {
+                return path390;
+            }
+            case 389 -> {
+                return path389;
+            }
+            case 388 -> {
+                return path388;
+            }
+            case 387 -> {
+                return path387;
+            }
+            case 386 -> {
+                return path386;
+            }
+            case 385 -> {
+                return path385;
+            }
+            case 384 -> {
+                return path384;
+            }
+            case 383 -> {
+                return path383;
+            }
+            case 382 -> {
+                return path382;
+            }
+            case 381 -> {
+                return path381;
+            }
+            case 380 -> {
+                return path380;
+            }
+            case 379 -> {
+                return path379;
+            }
+            case 378 -> {
+                return path378;
+            }
+            case 377 -> {
+                return path377;
+            }
+            case 376 -> {
+                return path376;
+            }
+            case 375 -> {
+                return path375;
+            }
+            case 374 -> {
+                return path374;
+            }
+            case 373 -> {
+                return path373;
+            }
+            case 372 -> {
+                return path372;
+            }
+            case 371 -> {
+                return path371;
+            }
+            case 370 -> {
+                return path370;
+            }
+            case 369 -> {
+                return path369;
+            }
+            case 368 -> {
+                return path368;
+            }
+            case 367 -> {
+                return path367;
+            }
+            case 366 -> {
+                return path366;
+            }
+            case 365 -> {
+                return path365;
+            }
+            case 364 -> {
+                return path364;
+            }
+            case 363 -> {
+                return path363;
+            }
+            case 362 -> {
+                return path362;
+            }
+            case 361 -> {
+                return path361;
+            }
+            case 360 -> {
+                return path360;
+            }
+            case 359 -> {
+                return path359;
+            }
+            case 358 -> {
+                return path358;
+            }
+            case 357 -> {
+                return path357;
+            }
+            case 356 -> {
+                return path356;
+            }
+            case 355 -> {
+                return path355;
+            }
+            case 354 -> {
+                return path354;
+            }
+            case 353 -> {
+                return path353;
+            }
+            case 352 -> {
+                return path352;
+            }
+            case 351 -> {
+                return path351;
+            }
+            case 350 -> {
+                return path350;
+            }
+            case 349 -> {
+                return path349;
+            }
+            case 348 -> {
+                return path348;
+            }
+            case 347 -> {
+                return path347;
+            }
+            case 346 -> {
+                return path346;
+            }
+            case 345 -> {
+                return path345;
+            }
+            case 344 -> {
+                return path344;
+            }
+            case 343 -> {
+                return path343;
+            }
+            case 342 -> {
+                return path342;
+            }
+            case 341 -> {
+                return path341;
+            }
+            case 340 -> {
+                return path340;
+            }
+            case 339 -> {
+                return path339;
+            }
+            case 338 -> {
+                return path338;
+            }
+            case 337 -> {
+                return path337;
+            }
+            case 336 -> {
+                return path336;
+            }
+            case 335 -> {
+                return path335;
+            }
+            case 334 -> {
+                return path334;
+            }
+            case 333 -> {
+                return path333;
+            }
+            case 332 -> {
+                return path332;
+            }
+            case 331 -> {
+                return path331;
+            }
+            case 330 -> {
+                return path330;
+            }
+            case 329 -> {
+                return path329;
+            }
+            case 328 -> {
+                return path328;
+            }
+            case 327 -> {
+                return path327;
+            }
+            case 326 -> {
+                return path326;
+            }
+            case 325 -> {
+                return path325;
+            }
+            case 324 -> {
+                return path324;
+            }
+            case 323 -> {
+                return path323;
+            }
+            case 322 -> {
+                return path322;
+            }
+            case 321 -> {
+                return path321;
+            }
+            case 320 -> {
+                return path320;
+            }
+            case 319 -> {
+                return path319;
+            }
+            case 318 -> {
+                return path318;
+            }
+            case 317 -> {
+                return path317;
+            }
+            case 316 -> {
+                return path316;
+            }
+            case 315 -> {
+                return path315;
+            }
+            case 314 -> {
+                return path314;
+            }
+            case 313 -> {
+                return path313;
+            }
+            case 312 -> {
+                return path312;
+            }
+            case 311 -> {
+                return path311;
+            }
+            case 310 -> {
+                return path310;
+            }
+            case 309 -> {
+                return path309;
+            }
+            case 308 -> {
+                return path308;
+            }
+            case 307 -> {
+                return path307;
+            }
+            case 306 -> {
+                return path306;
+            }
+            case 305 -> {
+                return path305;
+            }
+            case 304 -> {
+                return path304;
+            }
+            case 303 -> {
+                return path303;
+            }
+            case 302 -> {
+                return path302;
+            }
+            case 301 -> {
+                return path301;
+            }
+            case 300 -> {
+                return path300;
+            }
+            case 299 -> {
+                return path299;
+            }
+            case 298 -> {
+                return path298;
+            }
+            case 297 -> {
+                return path297;
+            }
+            case 296 -> {
+                return path296;
+            }
+            case 295 -> {
+                return path295;
+            }
+            case 294 -> {
+                return path294;
+            }
+            case 293 -> {
+                return path293;
+            }
+            case 292 -> {
+                return path292;
+            }
+            case 291 -> {
+                return path291;
+            }
+            case 290 -> {
+                return path290;
+            }
+            case 289 -> {
+                return path289;
+            }
+            case 288 -> {
+                return path288;
+            }
+            case 287 -> {
+                return path287;
+            }
+            case 286 -> {
+                return path286;
+            }
+            case 285 -> {
+                return path285;
+            }
+            case 284 -> {
+                return path284;
+            }
+            case 283 -> {
+                return path283;
+            }
+            case 282 -> {
+                return path282;
+            }
+            case 281 -> {
+                return path281;
+            }
+            case 280 -> {
+                return path280;
+            }
+            case 279 -> {
+                return path279;
+            }
+            case 278 -> {
+                return path278;
+            }
+            case 277 -> {
+                return path277;
+            }
+            case 276 -> {
+                return path276;
+            }
+            case 275 -> {
+                return path275;
+            }
+            case 274 -> {
+                return path274;
+            }
+            case 273 -> {
+                return path273;
+            }
+            case 272 -> {
+                return path272;
+            }
+            case 271 -> {
+                return path271;
+            }
+            case 270 -> {
+                return path270;
+            }
+            case 269 -> {
+                return path269;
+            }
+            case 268 -> {
+                return path268;
+            }
+            case 267 -> {
+                return path267;
+            }
+            case 266 -> {
+                return path266;
+            }
+            case 265 -> {
+                return path265;
+            }
+            case 264 -> {
+                return path264;
+            }
+            case 263 -> {
+                return path263;
+            }
+            case 262 -> {
+                return path262;
+            }
+            case 261 -> {
+                return path261;
+            }
+            case 260 -> {
+                return path260;
+            }
+            case 259 -> {
+                return path259;
+            }
+            case 258 -> {
+                return path258;
+            }
+            case 257 -> {
+                return path257;
+            }
+            case 256 -> {
+                return path256;
+            }
+            case 255 -> {
+                return path255;
+            }
+            case 254 -> {
+                return path254;
+            }
+            case 253 -> {
+                return path253;
+            }
+            case 252 -> {
+                return path252;
+            }
+            case 251 -> {
+                return path251;
+            }
+            case 250 -> {
+                return path250;
+            }
+            case 249 -> {
+                return path249;
+            }
+            case 248 -> {
+                return path248;
+            }
+            case 247 -> {
+                return path247;
+            }
+            case 246 -> {
+                return path246;
+            }
+            case 245 -> {
+                return path245;
+            }
+            case 244 -> {
+                return path244;
+            }
+            case 243 -> {
+                return path243;
+            }
+            case 242 -> {
+                return path242;
+            }
+            case 241 -> {
+                return path241;
+            }
+            case 240 -> {
+                return path240;
+            }
+            case 239 -> {
+                return path239;
+            }
+            case 238 -> {
+                return path238;
+            }
+            case 237 -> {
+                return path237;
+            }
+            case 236 -> {
+                return path236;
+            }
+            case 235 -> {
+                return path235;
+            }
+            case 234 -> {
+                return path234;
+            }
+            case 233 -> {
+                return path233;
+            }
+            case 232 -> {
+                return path232;
+            }
+            case 231 -> {
+                return path231;
+            }
+            case 230 -> {
+                return path230;
+            }
+            case 229 -> {
+                return path229;
+            }
+            case 228 -> {
+                return path228;
+            }
+            case 227 -> {
+                return path227;
+            }
+            case 226 -> {
+                return path226;
+            }
+            case 225 -> {
+                return path225;
+            }
+            case 224 -> {
+                return path224;
+            }
+            case 223 -> {
+                return path223;
+            }
+            case 222 -> {
+                return path222;
+            }
+            case 221 -> {
+                return path221;
+            }
+            case 220 -> {
+                return path220;
+            }
+            case 219 -> {
+                return path219;
+            }
+            case 218 -> {
+                return path218;
+            }
+            case 217 -> {
+                return path217;
+            }
+            case 216 -> {
+                return path216;
+            }
+            case 215 -> {
+                return path215;
+            }
+            case 214 -> {
+                return path214;
+            }
+            case 213 -> {
+                return path213;
+            }
+            case 212 -> {
+                return path212;
+            }
+            case 211 -> {
+                return path211;
+            }
+            case 210 -> {
+                return path210;
+            }
+            case 209 -> {
+                return path209;
+            }
+            case 208 -> {
+                return path208;
+            }
+            case 207 -> {
+                return path207;
+            }
+            case 206 -> {
+                return path206;
+            }
+            case 205 -> {
+                return path205;
+            }
+            case 204 -> {
+                return path204;
+            }
+            case 203 -> {
+                return path203;
+            }
+            case 202 -> {
+                return path202;
+            }
+            case 201 -> {
+                return path201;
+            }
+            case 200 -> {
+                return path200;
+            }
+            case 199 -> {
+                return path199;
+            }
+            case 198 -> {
+                return path198;
+            }
+            case 197 -> {
+                return path197;
+            }
+            case 196 -> {
+                return path196;
+            }
+            case 195 -> {
+                return path195;
+            }
+            case 194 -> {
+                return path194;
+            }
+            case 193 -> {
+                return path193;
+            }
+            case 192 -> {
+                return path192;
+            }
+            case 191 -> {
+                return path191;
+            }
+            case 190 -> {
+                return path190;
+            }
+            case 189 -> {
+                return path189;
+            }
+            case 188 -> {
+                return path188;
+            }
+            case 187 -> {
+                return path187;
+            }
+            case 186 -> {
+                return path186;
+            }
+            case 185 -> {
+                return path185;
+            }
+            case 184 -> {
+                return path184;
+            }
+            case 183 -> {
+                return path183;
+            }
+            case 182 -> {
+                return path182;
+            }
+            case 181 -> {
+                return path181;
+            }
+            case 180 -> {
+                return path180;
+            }
+            case 179 -> {
+                return path179;
+            }
+            case 178 -> {
+                return path178;
+            }
+            case 177 -> {
+                return path177;
+            }
+            case 176 -> {
+                return path176;
+            }
+            case 175 -> {
+                return path175;
+            }
+            case 174 -> {
+                return path174;
+            }
+            case 173 -> {
+                return path173;
+            }
+            case 172 -> {
+                return path172;
+            }
+            case 171 -> {
+                return path171;
+            }
+            case 170 -> {
+                return path170;
+            }
+            case 169 -> {
+                return path169;
+            }
+            case 168 -> {
+                return path168;
+            }
+            case 167 -> {
+                return path167;
+            }
+            case 166 -> {
+                return path166;
+            }
+            case 165 -> {
+                return path165;
+            }
+            case 164 -> {
+                return path164;
+            }
+            case 163 -> {
+                return path163;
+            }
+            case 162 -> {
+                return path162;
+            }
+            case 161 -> {
+                return path161;
+            }
+            case 160 -> {
+                return path160;
+            }
+            case 159 -> {
+                return path159;
+            }
+            case 158 -> {
+                return path158;
+            }
+            case 157 -> {
+                return path157;
+            }
+            case 156 -> {
+                return path156;
+            }
+            case 155 -> {
+                return path155;
+            }
+            case 154 -> {
+                return path154;
+            }
+            case 153 -> {
+                return path153;
+            }
+            case 152 -> {
+                return path152;
+            }
+            case 151 -> {
+                return path151;
+            }
+            case 150 -> {
+                return path150;
+            }
+            case 149 -> {
+                return path149;
+            }
+            case 148 -> {
+                return path148;
+            }
+            case 147 -> {
+                return path147;
+            }
+            case 146 -> {
+                return path146;
+            }
+            case 145 -> {
+                return path145;
+            }
+            case 144 -> {
+                return path144;
+            }
+            case 143 -> {
+                return path143;
+            }
+            case 142 -> {
+                return path142;
+            }
+            case 141 -> {
+                return path141;
+            }
+            case 140 -> {
+                return path140;
+            }
+            case 139 -> {
+                return path139;
+            }
+            case 138 -> {
+                return path138;
+            }
+            case 137 -> {
+                return path137;
+            }
+            case 136 -> {
+                return path136;
+            }
+            case 135 -> {
+                return path135;
+            }
+            case 134 -> {
+                return path134;
+            }
+            case 133 -> {
+                return path133;
+            }
+            case 132 -> {
+                return path132;
+            }
+            case 131 -> {
+                return path131;
+            }
+            case 130 -> {
+                return path130;
+            }
+            case 129 -> {
+                return path129;
+            }
+            case 128 -> {
+                return path128;
+            }
+            case 127 -> {
+                return path127;
+            }
+            case 126 -> {
+                return path126;
+            }
+            case 125 -> {
+                return path125;
+            }
+            case 124 -> {
+                return path124;
+            }
+            case 123 -> {
+                return path123;
+            }
+            case 122 -> {
+                return path122;
+            }
+            case 121 -> {
+                return path121;
+            }
+            case 120 -> {
+                return path120;
+            }
+            case 119 -> {
+                return path119;
+            }
+            case 118 -> {
+                return path118;
+            }
+            case 117 -> {
+                return path117;
+            }
+            case 116 -> {
+                return path116;
+            }
+            case 115 -> {
+                return path115;
+            }
+            case 114 -> {
+                return path114;
+            }
+            case 113 -> {
+                return path113;
+            }
+            case 112 -> {
+                return path112;
+            }
+            case 111 -> {
+                return path111;
+            }
+            case 110 -> {
+                return path110;
+            }
+            case 109 -> {
+                return path109;
+            }
+            case 108 -> {
+                return path108;
+            }
+            case 107 -> {
+                return path107;
+            }
+            case 106 -> {
+                return path106;
+            }
+            case 105 -> {
+                return path105;
+            }
+            case 104 -> {
+                return path104;
+            }
+            case 103 -> {
+                return path103;
+            }
+            case 102 -> {
+                return path102;
+            }
+            case 101 -> {
+                return path101;
+            }
+            case 100 -> {
+                return path100;
+            }
+            case 99 -> {
+                return path99;
+            }
+            case 98 -> {
+                return path98;
+            }
+            case 97 -> {
+                return path97;
+            }
+            case 96 -> {
+                return path96;
+            }
+            case 95 -> {
+                return path95;
+            }
+            case 94 -> {
+                return path94;
+            }
+            case 93 -> {
+                return path93;
+            }
+            case 92 -> {
+                return path92;
+            }
+            case 91 -> {
+                return path91;
+            }
+            case 90 -> {
+                return path90;
+            }
+            case 89 -> {
+                return path89;
+            }
+            case 88 -> {
+                return path88;
+            }
+            case 87 -> {
+                return path87;
+            }
+            case 86 -> {
+                return path86;
+            }
+            case 85 -> {
+                return path85;
+            }
+            case 84 -> {
+                return path84;
+            }
+            case 83 -> {
+                return path83;
+            }
+            case 82 -> {
+                return path82;
+            }
+            case 81 -> {
+                return path81;
+            }
+            case 80 -> {
+                return path80;
+            }
+            case 79 -> {
+                return path79;
+            }
+            case 78 -> {
+                return path78;
+            }
+            case 77 -> {
+                return path77;
+            }
+            case 76 -> {
+                return path76;
+            }
+            case 75 -> {
+                return path75;
+            }
+            case 74 -> {
+                return path74;
+            }
+            case 73 -> {
+                return path73;
+            }
+            case 72 -> {
+                return path72;
+            }
+            case 71 -> {
+                return path71;
+            }
+            case 70 -> {
+                return path70;
+            }
+            case 69 -> {
+                return path69;
+            }
+            case 68 -> {
+                return path68;
+            }
+            case 67 -> {
+                return path67;
+            }
+            case 66 -> {
+                return path66;
+            }
+            case 65 -> {
+                return path65;
+            }
+            case 64 -> {
+                return path64;
+            }
+            case 63 -> {
+                return path63;
+            }
+            case 62 -> {
+                return path62;
+            }
+            case 61 -> {
+                return path61;
+            }
+            case 60 -> {
+                return path60;
+            }
+            case 59 -> {
+                return path59;
+            }
+            case 58 -> {
+                return path58;
+            }
+            case 57 -> {
+                return path57;
+            }
+            case 56 -> {
+                return path56;
+            }
+            case 55 -> {
+                return path55;
+            }
+            case 54 -> {
+                return path54;
+            }
+            case 53 -> {
+                return path53;
+            }
+            case 52 -> {
+                return path52;
+            }
+            case 51 -> {
+                return path51;
+            }
+            case 50 -> {
+                return path50;
+            }
+            case 49 -> {
+                return path49;
+            }
+            case 48 -> {
+                return path48;
+            }
+            case 47 -> {
+                return path47;
+            }
+            case 46 -> {
+                return path46;
+            }
+            case 45 -> {
+                return path45;
+            }
+            case 44 -> {
+                return path44;
+            }
+            case 43 -> {
+                return path43;
+            }
+            case 42 -> {
+                return path42;
+            }
+            case 41 -> {
+                return path41;
+            }
+            case 40 -> {
+                return path40;
+            }
+            case 39 -> {
+                return path39;
+            }
+            case 38 -> {
+                return path38;
+            }
+            case 37 -> {
+                return path37;
+            }
+            case 36 -> {
+                return path36;
+            }
+            case 35 -> {
+                return path35;
+            }
+            case 34 -> {
+                return path34;
+            }
+            case 33 -> {
+                return path33;
+            }
+            case 32 -> {
+                return path32;
+            }
+            case 31 -> {
+                return path31;
+            }
+            case 30 -> {
+                return path30;
+            }
+            case 29 -> {
+                return path29;
+            }
+            case 28 -> {
+                return path28;
+            }
+            case 27 -> {
+                return path27;
+            }
+            case 26 -> {
+                return path26;
+            }
+            case 25 -> {
+                return path25;
+            }
+            case 24 -> {
+                return path24;
+            }
+            case 23 -> {
+                return path23;
+            }
+            case 22 -> {
+                return path22;
+            }
+            case 21 -> {
+                return path21;
+            }
+            case 20 -> {
+                return path20;
+            }
+            case 19 -> {
+                return path19;
+            }
+            case 18 -> {
+                return path18;
+            }
+            case 17 -> {
+                return path17;
+            }
+            case 16 -> {
+                return path16;
+            }
+            case 15 -> {
+                return path15;
+            }
+            case 14 -> {
+                return path14;
+            }
+            case 13 -> {
+                return path13;
+            }
+            case 12 -> {
+                return path12;
+            }
+            case 11 -> {
+                return path11;
+            }
+            case 10 -> {
+                return path10;
+            }
+            case 9 -> {
+                return path9;
+            }
+            case 8 -> {
+                return path8;
+            }
+            case 7 -> {
+                return path7;
+            }
+            case 6 -> {
+                return path6;
+            }
+            case 5 -> {
+                return path5;
+            }
+            case 4 -> {
+                return path4;
+            }
+            case 3 -> {
+                return path3;
+            }
+            case 2 -> {
+                return path2;
+            }
+            case 1 -> {
+                return path1;
+            }
+            case 0 -> {
+                return path0;
+            }
+            default -> {
+                assert false : "index out of range";
+                return null;
+            }
         }
     }
 
     // false = halt bug
     boolean advance(boolean canGuess) throws GameActionException {
         // System.out.println("old pos " + pos + " i am at " + rc.getLocation());
-        if(!rc.getLocation().equals(lastLoc)) {
-            lastLoc = rc.getLocation();
-            setCurrentState();
-        }
+
+        // is this necessary?
+        // if(!rc.getLocation().equals(lastLoc)) {
+        //     lastLoc = rc.getLocation();
+        //     setCurrentState();
+        // }
 
         if(pos.isAdjacentTo(target)) return false;
 
         var dirToTarget = pos.directionTo(target);
         if(dirToTarget != bottomDir) {
+            // indicate("changing bottomDir from " + bottomDir + " to " + dirToTarget);
             if(dirToTarget == Direction.CENTER) return false;
-            if(leftTurn) {
-                            if(dirToTarget == bottomDir.rotateRight()) {
-                bottomDir = dirToTarget;
-                stackSize++;
+            if(stackSize == 0) {
+                bottomDir = topDir = dirToTarget;
             } else {
-                assert dirToTarget == bottomDir.rotateLeft() : "unexpected direction change from " + bottomDir + " to " + dirToTarget;
-                bottomDir = dirToTarget;
-                stackSize--;
-                if(stackSize < 0) {
-                    stackSize = 0;
-                    topDir = bottomDir;
+                if(leftTurn) {
+                                    if(dirToTarget == bottomDir.rotateRight()) {
+                    bottomDir = dirToTarget;
+                    stackSize++;
+                } else {
+                    assert dirToTarget == bottomDir.rotateLeft() : "unexpected direction change from " + bottomDir + " to " + dirToTarget;
+                    bottomDir = dirToTarget;
+                    stackSize--;
+                    if(stackSize < 0) {
+                        stackSize = 0;
+                        topDir = bottomDir;
+                    }
                 }
-            }
 
-            } else {
-                            if(dirToTarget == bottomDir.rotateLeft()) {
-                bottomDir = dirToTarget;
-                stackSize++;
-            } else {
-                assert dirToTarget == bottomDir.rotateRight() : "unexpected direction change from " + bottomDir + " to " + dirToTarget;
-                bottomDir = dirToTarget;
-                stackSize--;
-                if(stackSize < 0) {
-                    stackSize = 0;
-                    topDir = bottomDir;
+                } else {
+                                    if(dirToTarget == bottomDir.rotateLeft()) {
+                    bottomDir = dirToTarget;
+                    stackSize++;
+                } else {
+                    assert dirToTarget == bottomDir.rotateRight() : "unexpected direction change from " + bottomDir + " to " + dirToTarget;
+                    bottomDir = dirToTarget;
+                    stackSize--;
+                    if(stackSize < 0) {
+                        stackSize = 0;
+                        topDir = bottomDir;
+                    }
                 }
-            }
 
+                }
             }
         }
 
@@ -21198,7 +22721,17 @@ class BugnavInstance {
         if(isMaster && !justGuessed && stackSize == 0 && CellTracker.isSeen(greedyLoc)) {
             assert !CellTracker.isPassable(greedyLoc);
             if(emptyStackTurns >= 3) {
-                if(canGuess) {
+                boolean pastLeft = ((guessedLeft[pos.y] >> pos.x) & 1l) != 0;
+                boolean pastRight = ((guessedRight[pos.y] >> pos.x) & 1l) != 0;
+                if(pastLeft && pastRight) {
+                    // just pick randomly, we have no idea what's going on
+                    leftTurn = Rng.mcg() >> 30 == 0;
+                } else if(pastLeft) {
+                    // try the other way
+                    leftTurn = false;
+                } else if(pastRight) {
+                    leftTurn = true;
+                } else if(canGuess) {
                     indicate("guessing " + pos);
                     // Profiler.begin();
                     // System.out.println("guessing " + pos + " " + emptyStackTurns);
@@ -21237,8 +22770,8 @@ class BugnavInstance {
                         }
                     }
 
-                    var leftScore =  Math.pow(Math.sqrt(leftBug.pos.distanceSquaredTo(target)) + leftBug.pathLength * 0.7, 8) ;
-                    var rightScore =  Math.pow(Math.sqrt(rightBug.pos.distanceSquaredTo(target)) + rightBug.pathLength * 0.7, 8) ;
+                    var leftScore =  Math.pow(Math.sqrt(leftBug.pos.distanceSquaredTo(target)) + leftBug.pathLength * 0.7, 15) ;
+                    var rightScore =  Math.pow(Math.sqrt(rightBug.pos.distanceSquaredTo(target)) + rightBug.pathLength * 0.7, 15) ;
                     var total = leftScore + rightScore;
                     leftScore /= total;
                     rightScore /= total;
@@ -21248,12 +22781,18 @@ class BugnavInstance {
                     // indicate(rightBug.pos);
                     indicate(rightScore);
                     leftTurn = Rng.mcg() < rightScore * 0x7fffffff;
+                    if(leftTurn) {
+                        guessedLeft[pos.y] |= 1l << pos.x;
+                    } else {
+                        guessedRight[pos.y] |= 1l << pos.x;
+                    }
                     // indicate("leftTurn " + leftTurn);
                     appendCurrentState();
                     // Profiler.end("guess");
                     justGuessed = true;
+                } else {
+                    return false;
                 }
-                return false;
             } else if(emptyStackTurns < 0) {
                 emptyStackTurns = 0;
             }
@@ -21847,22 +23386,26 @@ public class Pathfinder {
         var loc = rc.getLocation();
         // d{i}0 + d{i}1 is the mask of reachable within i steps
         long d00 = 0, d01 = 0;
-        int idx = (bug.pos.y - loc.y + 5) * 11 + (bug.pos.x - loc.x + 5);
-        if(idx < 61) {
-            d00 |= 1l << idx;
-        } else {
-            d01 |= 1l << (idx - 61);
+                {
+            int xi = bug.pos.x - loc.x + 5;
+            int yi = bug.pos.y - loc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    d00 |= 1l << idx;
+                } else {
+                    d01 |= 1l << (idx - 61);
+                }
+            }
         }
+
         Direction bestMove = null;
         double bestScore = 1e18;
         long d10 = 0, d11 = 0;
         d10 = d00;
         d11 = d01;
 
-        // if(rc.getRoundNum() >= 303) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(CellTracker.localPassable0, CellTracker.localPassable1);
-        //     Clock.yield();
+        // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d10, d11);
         //     Clock.yield();
@@ -21878,6 +23421,19 @@ public class Pathfinder {
         d10 |= (d10 & 0x3ffffffffffffl) << 11;
         d10 |= (d10 >> 11) | ((d11 & 0x7ffl) << 50);
         d11 |= d11 >> 11;
+                {
+            int xi = bug.getRecentPos(1).x - loc.x + 5;
+            int yi = bug.getRecentPos(1).y - loc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    d10 |= 1l << idx;
+                } else {
+                    d11 |= 1l << (idx - 61);
+                }
+            }
+        }
+
         d10 &= CellTracker.localPassable0;
         d11 &= CellTracker.localPassable1;
         if((d10 & 0x807000000000000l) != 0 || (d11 & 0xe01) != 0) {
@@ -21972,10 +23528,7 @@ public class Pathfinder {
         d20 = d10;
         d21 = d11;
 
-        // if(rc.getRoundNum() >= 303) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(CellTracker.localPassable0, CellTracker.localPassable1);
-        //     Clock.yield();
+        // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d20, d21);
         //     Clock.yield();
@@ -21991,6 +23544,19 @@ public class Pathfinder {
         d20 |= (d20 & 0x3ffffffffffffl) << 11;
         d20 |= (d20 >> 11) | ((d21 & 0x7ffl) << 50);
         d21 |= d21 >> 11;
+                {
+            int xi = bug.getRecentPos(2).x - loc.x + 5;
+            int yi = bug.getRecentPos(2).y - loc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    d20 |= 1l << idx;
+                } else {
+                    d21 |= 1l << (idx - 61);
+                }
+            }
+        }
+
         d20 &= CellTracker.localPassable0;
         d21 &= CellTracker.localPassable1;
         if((d20 & 0x807000000000000l) != 0 || (d21 & 0xe01) != 0) {
@@ -22085,10 +23651,7 @@ public class Pathfinder {
         d30 = d20;
         d31 = d21;
 
-        // if(rc.getRoundNum() >= 303) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(CellTracker.localPassable0, CellTracker.localPassable1);
-        //     Clock.yield();
+        // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d30, d31);
         //     Clock.yield();
@@ -22104,6 +23667,19 @@ public class Pathfinder {
         d30 |= (d30 & 0x3ffffffffffffl) << 11;
         d30 |= (d30 >> 11) | ((d31 & 0x7ffl) << 50);
         d31 |= d31 >> 11;
+                {
+            int xi = bug.getRecentPos(3).x - loc.x + 5;
+            int yi = bug.getRecentPos(3).y - loc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    d30 |= 1l << idx;
+                } else {
+                    d31 |= 1l << (idx - 61);
+                }
+            }
+        }
+
         d30 &= CellTracker.localPassable0;
         d31 &= CellTracker.localPassable1;
         if((d30 & 0x807000000000000l) != 0 || (d31 & 0xe01) != 0) {
@@ -22198,10 +23774,7 @@ public class Pathfinder {
         d40 = d30;
         d41 = d31;
 
-        // if(rc.getRoundNum() >= 303) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(CellTracker.localPassable0, CellTracker.localPassable1);
-        //     Clock.yield();
+        // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d40, d41);
         //     Clock.yield();
@@ -22217,6 +23790,19 @@ public class Pathfinder {
         d40 |= (d40 & 0x3ffffffffffffl) << 11;
         d40 |= (d40 >> 11) | ((d41 & 0x7ffl) << 50);
         d41 |= d41 >> 11;
+                {
+            int xi = bug.getRecentPos(4).x - loc.x + 5;
+            int yi = bug.getRecentPos(4).y - loc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    d40 |= 1l << idx;
+                } else {
+                    d41 |= 1l << (idx - 61);
+                }
+            }
+        }
+
         d40 &= CellTracker.localPassable0;
         d41 &= CellTracker.localPassable1;
         if((d40 & 0x807000000000000l) != 0 || (d41 & 0xe01) != 0) {
@@ -22311,10 +23897,7 @@ public class Pathfinder {
         d50 = d40;
         d51 = d41;
 
-        // if(rc.getRoundNum() >= 303) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(CellTracker.localPassable0, CellTracker.localPassable1);
-        //     Clock.yield();
+        // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d50, d51);
         //     Clock.yield();
@@ -22330,6 +23913,19 @@ public class Pathfinder {
         d50 |= (d50 & 0x3ffffffffffffl) << 11;
         d50 |= (d50 >> 11) | ((d51 & 0x7ffl) << 50);
         d51 |= d51 >> 11;
+                {
+            int xi = bug.getRecentPos(5).x - loc.x + 5;
+            int yi = bug.getRecentPos(5).y - loc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    d50 |= 1l << idx;
+                } else {
+                    d51 |= 1l << (idx - 61);
+                }
+            }
+        }
+
         d50 &= CellTracker.localPassable0;
         d51 &= CellTracker.localPassable1;
         if((d50 & 0x807000000000000l) != 0 || (d51 & 0xe01) != 0) {
@@ -22424,10 +24020,7 @@ public class Pathfinder {
         d60 = d50;
         d61 = d51;
 
-        // if(rc.getRoundNum() >= 303) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(CellTracker.localPassable0, CellTracker.localPassable1);
-        //     Clock.yield();
+        // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d60, d61);
         //     Clock.yield();
@@ -22443,6 +24036,19 @@ public class Pathfinder {
         d60 |= (d60 & 0x3ffffffffffffl) << 11;
         d60 |= (d60 >> 11) | ((d61 & 0x7ffl) << 50);
         d61 |= d61 >> 11;
+                {
+            int xi = bug.getRecentPos(6).x - loc.x + 5;
+            int yi = bug.getRecentPos(6).y - loc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    d60 |= 1l << idx;
+                } else {
+                    d61 |= 1l << (idx - 61);
+                }
+            }
+        }
+
         d60 &= CellTracker.localPassable0;
         d61 &= CellTracker.localPassable1;
         if((d60 & 0x807000000000000l) != 0 || (d61 & 0xe01) != 0) {
@@ -22537,10 +24143,7 @@ public class Pathfinder {
         d70 = d60;
         d71 = d61;
 
-        // if(rc.getRoundNum() >= 303) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(CellTracker.localPassable0, CellTracker.localPassable1);
-        //     Clock.yield();
+        // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d70, d71);
         //     Clock.yield();
@@ -22556,6 +24159,19 @@ public class Pathfinder {
         d70 |= (d70 & 0x3ffffffffffffl) << 11;
         d70 |= (d70 >> 11) | ((d71 & 0x7ffl) << 50);
         d71 |= d71 >> 11;
+                {
+            int xi = bug.getRecentPos(7).x - loc.x + 5;
+            int yi = bug.getRecentPos(7).y - loc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    d70 |= 1l << idx;
+                } else {
+                    d71 |= 1l << (idx - 61);
+                }
+            }
+        }
+
         d70 &= CellTracker.localPassable0;
         d71 &= CellTracker.localPassable1;
         if((d70 & 0x807000000000000l) != 0 || (d71 & 0xe01) != 0) {
@@ -22650,10 +24266,7 @@ public class Pathfinder {
         d80 = d70;
         d81 = d71;
 
-        // if(rc.getRoundNum() >= 303) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(CellTracker.localPassable0, CellTracker.localPassable1);
-        //     Clock.yield();
+        // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d80, d81);
         //     Clock.yield();
@@ -22669,6 +24282,19 @@ public class Pathfinder {
         d80 |= (d80 & 0x3ffffffffffffl) << 11;
         d80 |= (d80 >> 11) | ((d81 & 0x7ffl) << 50);
         d81 |= d81 >> 11;
+                {
+            int xi = bug.getRecentPos(8).x - loc.x + 5;
+            int yi = bug.getRecentPos(8).y - loc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    d80 |= 1l << idx;
+                } else {
+                    d81 |= 1l << (idx - 61);
+                }
+            }
+        }
+
         d80 &= CellTracker.localPassable0;
         d81 &= CellTracker.localPassable1;
         if((d80 & 0x807000000000000l) != 0 || (d81 & 0xe01) != 0) {
@@ -22763,10 +24389,7 @@ public class Pathfinder {
         d90 = d80;
         d91 = d81;
 
-        // if(rc.getRoundNum() >= 303) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(CellTracker.localPassable0, CellTracker.localPassable1);
-        //     Clock.yield();
+        // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d90, d91);
         //     Clock.yield();
@@ -22782,6 +24405,19 @@ public class Pathfinder {
         d90 |= (d90 & 0x3ffffffffffffl) << 11;
         d90 |= (d90 >> 11) | ((d91 & 0x7ffl) << 50);
         d91 |= d91 >> 11;
+                {
+            int xi = bug.getRecentPos(9).x - loc.x + 5;
+            int yi = bug.getRecentPos(9).y - loc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    d90 |= 1l << idx;
+                } else {
+                    d91 |= 1l << (idx - 61);
+                }
+            }
+        }
+
         d90 &= CellTracker.localPassable0;
         d91 &= CellTracker.localPassable1;
         if((d90 & 0x807000000000000l) != 0 || (d91 & 0xe01) != 0) {
@@ -22876,10 +24512,7 @@ public class Pathfinder {
         d100 = d90;
         d101 = d91;
 
-        // if(rc.getRoundNum() >= 303) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(CellTracker.localPassable0, CellTracker.localPassable1);
-        //     Clock.yield();
+        // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d100, d101);
         //     Clock.yield();
@@ -22895,6 +24528,19 @@ public class Pathfinder {
         d100 |= (d100 & 0x3ffffffffffffl) << 11;
         d100 |= (d100 >> 11) | ((d101 & 0x7ffl) << 50);
         d101 |= d101 >> 11;
+                {
+            int xi = bug.getRecentPos(10).x - loc.x + 5;
+            int yi = bug.getRecentPos(10).y - loc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    d100 |= 1l << idx;
+                } else {
+                    d101 |= 1l << (idx - 61);
+                }
+            }
+        }
+
         d100 &= CellTracker.localPassable0;
         d101 &= CellTracker.localPassable1;
         if((d100 & 0x807000000000000l) != 0 || (d101 & 0xe01) != 0) {
@@ -22989,10 +24635,7 @@ public class Pathfinder {
         d110 = d100;
         d111 = d101;
 
-        // if(rc.getRoundNum() >= 303) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(CellTracker.localPassable0, CellTracker.localPassable1);
-        //     Clock.yield();
+        // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d110, d111);
         //     Clock.yield();
@@ -23008,6 +24651,19 @@ public class Pathfinder {
         d110 |= (d110 & 0x3ffffffffffffl) << 11;
         d110 |= (d110 >> 11) | ((d111 & 0x7ffl) << 50);
         d111 |= d111 >> 11;
+                {
+            int xi = bug.getRecentPos(11).x - loc.x + 5;
+            int yi = bug.getRecentPos(11).y - loc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    d110 |= 1l << idx;
+                } else {
+                    d111 |= 1l << (idx - 61);
+                }
+            }
+        }
+
         d110 &= CellTracker.localPassable0;
         d111 &= CellTracker.localPassable1;
         if((d110 & 0x807000000000000l) != 0 || (d111 & 0xe01) != 0) {
@@ -23102,10 +24758,7 @@ public class Pathfinder {
         d120 = d110;
         d121 = d111;
 
-        // if(rc.getRoundNum() >= 303) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(CellTracker.localPassable0, CellTracker.localPassable1);
-        //     Clock.yield();
+        // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d120, d121);
         //     Clock.yield();
@@ -23121,6 +24774,19 @@ public class Pathfinder {
         d120 |= (d120 & 0x3ffffffffffffl) << 11;
         d120 |= (d120 >> 11) | ((d121 & 0x7ffl) << 50);
         d121 |= d121 >> 11;
+                {
+            int xi = bug.getRecentPos(12).x - loc.x + 5;
+            int yi = bug.getRecentPos(12).y - loc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    d120 |= 1l << idx;
+                } else {
+                    d121 |= 1l << (idx - 61);
+                }
+            }
+        }
+
         d120 &= CellTracker.localPassable0;
         d121 &= CellTracker.localPassable1;
         if((d120 & 0x807000000000000l) != 0 || (d121 & 0xe01) != 0) {
@@ -23215,10 +24881,7 @@ public class Pathfinder {
         d130 = d120;
         d131 = d121;
 
-        // if(rc.getRoundNum() >= 303) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(CellTracker.localPassable0, CellTracker.localPassable1);
-        //     Clock.yield();
+        // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d130, d131);
         //     Clock.yield();
@@ -23234,6 +24897,19 @@ public class Pathfinder {
         d130 |= (d130 & 0x3ffffffffffffl) << 11;
         d130 |= (d130 >> 11) | ((d131 & 0x7ffl) << 50);
         d131 |= d131 >> 11;
+                {
+            int xi = bug.getRecentPos(13).x - loc.x + 5;
+            int yi = bug.getRecentPos(13).y - loc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    d130 |= 1l << idx;
+                } else {
+                    d131 |= 1l << (idx - 61);
+                }
+            }
+        }
+
         d130 &= CellTracker.localPassable0;
         d131 &= CellTracker.localPassable1;
         if((d130 & 0x807000000000000l) != 0 || (d131 & 0xe01) != 0) {
@@ -23328,10 +25004,7 @@ public class Pathfinder {
         d140 = d130;
         d141 = d131;
 
-        // if(rc.getRoundNum() >= 303) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(CellTracker.localPassable0, CellTracker.localPassable1);
-        //     Clock.yield();
+        // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d140, d141);
         //     Clock.yield();
@@ -23347,6 +25020,19 @@ public class Pathfinder {
         d140 |= (d140 & 0x3ffffffffffffl) << 11;
         d140 |= (d140 >> 11) | ((d141 & 0x7ffl) << 50);
         d141 |= d141 >> 11;
+                {
+            int xi = bug.getRecentPos(14).x - loc.x + 5;
+            int yi = bug.getRecentPos(14).y - loc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    d140 |= 1l << idx;
+                } else {
+                    d141 |= 1l << (idx - 61);
+                }
+            }
+        }
+
         d140 &= CellTracker.localPassable0;
         d141 &= CellTracker.localPassable1;
         if((d140 & 0x807000000000000l) != 0 || (d141 & 0xe01) != 0) {
@@ -23437,6 +25123,1238 @@ public class Pathfinder {
                 return;
             }
         }
+        long d150 = 0, d151 = 0;
+        d150 = d140;
+        d151 = d141;
+
+        // if(rc.getRoundNum() >= 507) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d150, d151);
+        //     Clock.yield();
+        // }
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d150 |= (d150 & 0xfbff7feffdffbffl) << 1;
+        d151 |= (d151 & 0x7feffdffbff7fefl) << 1;
+        d150 |= (d150 & 0x1f7feffdffbff7fel) >> 1;
+        d151 |= (d151 & 0xffdffbff7feffdel) >> 1;
+
+        d151 |= ((d151 & 0x1ffffffffffffl) << 11) | (d150 >> 50);
+        d150 |= (d150 & 0x3ffffffffffffl) << 11;
+        d150 |= (d150 >> 11) | ((d151 & 0x7ffl) << 50);
+        d151 |= d151 >> 11;
+                {
+            int xi = bug.getRecentPos(15).x - loc.x + 5;
+            int yi = bug.getRecentPos(15).y - loc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    d150 |= 1l << idx;
+                } else {
+                    d151 |= 1l << (idx - 61);
+                }
+            }
+        }
+
+        d150 &= CellTracker.localPassable0;
+        d151 &= CellTracker.localPassable1;
+        if((d150 & 0x807000000000000l) != 0 || (d151 & 0xe01) != 0) {
+            if(
+               (d150 & (1l << 49))
+               != 0) {
+                var nextLoc = loc.add(Direction.SOUTH);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.SOUTH;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d151 & (1l << 0))
+               != 0) {
+                var nextLoc = loc.add(Direction.EAST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.EAST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d151 & (1l << 10))
+               != 0) {
+                var nextLoc = loc.add(Direction.NORTH);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.NORTH;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d150 & (1l << 59))
+               != 0) {
+                var nextLoc = loc.add(Direction.WEST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.WEST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d150 & (1l << 48))
+               != 0) {
+                var nextLoc = loc.add(Direction.SOUTHWEST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.SOUTHWEST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d150 & (1l << 50))
+               != 0) {
+                var nextLoc = loc.add(Direction.SOUTHEAST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.SOUTHEAST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d151 & (1l << 9))
+               != 0) {
+                var nextLoc = loc.add(Direction.NORTHWEST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.NORTHWEST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d151 & (1l << 11))
+               != 0) {
+                var nextLoc = loc.add(Direction.NORTHEAST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.NORTHEAST;
+                    bestScore = score;
+                }
+            }
+            if(bestMove != null) {
+                Profiler.end("bfs");
+                makeMove(bestMove);
+                // System.out.println("iterations: " + 15);
+                return;
+            }
+        }
+        long d160 = 0, d161 = 0;
+        d160 = d150;
+        d161 = d151;
+
+        // if(rc.getRoundNum() >= 507) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d160, d161);
+        //     Clock.yield();
+        // }
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d160 |= (d160 & 0xfbff7feffdffbffl) << 1;
+        d161 |= (d161 & 0x7feffdffbff7fefl) << 1;
+        d160 |= (d160 & 0x1f7feffdffbff7fel) >> 1;
+        d161 |= (d161 & 0xffdffbff7feffdel) >> 1;
+
+        d161 |= ((d161 & 0x1ffffffffffffl) << 11) | (d160 >> 50);
+        d160 |= (d160 & 0x3ffffffffffffl) << 11;
+        d160 |= (d160 >> 11) | ((d161 & 0x7ffl) << 50);
+        d161 |= d161 >> 11;
+                {
+            int xi = bug.getRecentPos(16).x - loc.x + 5;
+            int yi = bug.getRecentPos(16).y - loc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    d160 |= 1l << idx;
+                } else {
+                    d161 |= 1l << (idx - 61);
+                }
+            }
+        }
+
+        d160 &= CellTracker.localPassable0;
+        d161 &= CellTracker.localPassable1;
+        if((d160 & 0x807000000000000l) != 0 || (d161 & 0xe01) != 0) {
+            if(
+               (d160 & (1l << 49))
+               != 0) {
+                var nextLoc = loc.add(Direction.SOUTH);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.SOUTH;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d161 & (1l << 0))
+               != 0) {
+                var nextLoc = loc.add(Direction.EAST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.EAST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d161 & (1l << 10))
+               != 0) {
+                var nextLoc = loc.add(Direction.NORTH);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.NORTH;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d160 & (1l << 59))
+               != 0) {
+                var nextLoc = loc.add(Direction.WEST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.WEST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d160 & (1l << 48))
+               != 0) {
+                var nextLoc = loc.add(Direction.SOUTHWEST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.SOUTHWEST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d160 & (1l << 50))
+               != 0) {
+                var nextLoc = loc.add(Direction.SOUTHEAST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.SOUTHEAST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d161 & (1l << 9))
+               != 0) {
+                var nextLoc = loc.add(Direction.NORTHWEST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.NORTHWEST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d161 & (1l << 11))
+               != 0) {
+                var nextLoc = loc.add(Direction.NORTHEAST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.NORTHEAST;
+                    bestScore = score;
+                }
+            }
+            if(bestMove != null) {
+                Profiler.end("bfs");
+                makeMove(bestMove);
+                // System.out.println("iterations: " + 16);
+                return;
+            }
+        }
+        long d170 = 0, d171 = 0;
+        d170 = d160;
+        d171 = d161;
+
+        // if(rc.getRoundNum() >= 507) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d170, d171);
+        //     Clock.yield();
+        // }
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d170 |= (d170 & 0xfbff7feffdffbffl) << 1;
+        d171 |= (d171 & 0x7feffdffbff7fefl) << 1;
+        d170 |= (d170 & 0x1f7feffdffbff7fel) >> 1;
+        d171 |= (d171 & 0xffdffbff7feffdel) >> 1;
+
+        d171 |= ((d171 & 0x1ffffffffffffl) << 11) | (d170 >> 50);
+        d170 |= (d170 & 0x3ffffffffffffl) << 11;
+        d170 |= (d170 >> 11) | ((d171 & 0x7ffl) << 50);
+        d171 |= d171 >> 11;
+                {
+            int xi = bug.getRecentPos(17).x - loc.x + 5;
+            int yi = bug.getRecentPos(17).y - loc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    d170 |= 1l << idx;
+                } else {
+                    d171 |= 1l << (idx - 61);
+                }
+            }
+        }
+
+        d170 &= CellTracker.localPassable0;
+        d171 &= CellTracker.localPassable1;
+        if((d170 & 0x807000000000000l) != 0 || (d171 & 0xe01) != 0) {
+            if(
+               (d170 & (1l << 49))
+               != 0) {
+                var nextLoc = loc.add(Direction.SOUTH);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.SOUTH;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d171 & (1l << 0))
+               != 0) {
+                var nextLoc = loc.add(Direction.EAST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.EAST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d171 & (1l << 10))
+               != 0) {
+                var nextLoc = loc.add(Direction.NORTH);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.NORTH;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d170 & (1l << 59))
+               != 0) {
+                var nextLoc = loc.add(Direction.WEST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.WEST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d170 & (1l << 48))
+               != 0) {
+                var nextLoc = loc.add(Direction.SOUTHWEST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.SOUTHWEST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d170 & (1l << 50))
+               != 0) {
+                var nextLoc = loc.add(Direction.SOUTHEAST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.SOUTHEAST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d171 & (1l << 9))
+               != 0) {
+                var nextLoc = loc.add(Direction.NORTHWEST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.NORTHWEST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d171 & (1l << 11))
+               != 0) {
+                var nextLoc = loc.add(Direction.NORTHEAST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.NORTHEAST;
+                    bestScore = score;
+                }
+            }
+            if(bestMove != null) {
+                Profiler.end("bfs");
+                makeMove(bestMove);
+                // System.out.println("iterations: " + 17);
+                return;
+            }
+        }
+        long d180 = 0, d181 = 0;
+        d180 = d170;
+        d181 = d171;
+
+        // if(rc.getRoundNum() >= 507) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d180, d181);
+        //     Clock.yield();
+        // }
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d180 |= (d180 & 0xfbff7feffdffbffl) << 1;
+        d181 |= (d181 & 0x7feffdffbff7fefl) << 1;
+        d180 |= (d180 & 0x1f7feffdffbff7fel) >> 1;
+        d181 |= (d181 & 0xffdffbff7feffdel) >> 1;
+
+        d181 |= ((d181 & 0x1ffffffffffffl) << 11) | (d180 >> 50);
+        d180 |= (d180 & 0x3ffffffffffffl) << 11;
+        d180 |= (d180 >> 11) | ((d181 & 0x7ffl) << 50);
+        d181 |= d181 >> 11;
+                {
+            int xi = bug.getRecentPos(18).x - loc.x + 5;
+            int yi = bug.getRecentPos(18).y - loc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    d180 |= 1l << idx;
+                } else {
+                    d181 |= 1l << (idx - 61);
+                }
+            }
+        }
+
+        d180 &= CellTracker.localPassable0;
+        d181 &= CellTracker.localPassable1;
+        if((d180 & 0x807000000000000l) != 0 || (d181 & 0xe01) != 0) {
+            if(
+               (d180 & (1l << 49))
+               != 0) {
+                var nextLoc = loc.add(Direction.SOUTH);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.SOUTH;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d181 & (1l << 0))
+               != 0) {
+                var nextLoc = loc.add(Direction.EAST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.EAST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d181 & (1l << 10))
+               != 0) {
+                var nextLoc = loc.add(Direction.NORTH);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.NORTH;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d180 & (1l << 59))
+               != 0) {
+                var nextLoc = loc.add(Direction.WEST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.WEST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d180 & (1l << 48))
+               != 0) {
+                var nextLoc = loc.add(Direction.SOUTHWEST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.SOUTHWEST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d180 & (1l << 50))
+               != 0) {
+                var nextLoc = loc.add(Direction.SOUTHEAST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.SOUTHEAST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d181 & (1l << 9))
+               != 0) {
+                var nextLoc = loc.add(Direction.NORTHWEST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.NORTHWEST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d181 & (1l << 11))
+               != 0) {
+                var nextLoc = loc.add(Direction.NORTHEAST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.NORTHEAST;
+                    bestScore = score;
+                }
+            }
+            if(bestMove != null) {
+                Profiler.end("bfs");
+                makeMove(bestMove);
+                // System.out.println("iterations: " + 18);
+                return;
+            }
+        }
+        long d190 = 0, d191 = 0;
+        d190 = d180;
+        d191 = d181;
+
+        // if(rc.getRoundNum() >= 507) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d190, d191);
+        //     Clock.yield();
+        // }
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d190 |= (d190 & 0xfbff7feffdffbffl) << 1;
+        d191 |= (d191 & 0x7feffdffbff7fefl) << 1;
+        d190 |= (d190 & 0x1f7feffdffbff7fel) >> 1;
+        d191 |= (d191 & 0xffdffbff7feffdel) >> 1;
+
+        d191 |= ((d191 & 0x1ffffffffffffl) << 11) | (d190 >> 50);
+        d190 |= (d190 & 0x3ffffffffffffl) << 11;
+        d190 |= (d190 >> 11) | ((d191 & 0x7ffl) << 50);
+        d191 |= d191 >> 11;
+                {
+            int xi = bug.getRecentPos(19).x - loc.x + 5;
+            int yi = bug.getRecentPos(19).y - loc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    d190 |= 1l << idx;
+                } else {
+                    d191 |= 1l << (idx - 61);
+                }
+            }
+        }
+
+        d190 &= CellTracker.localPassable0;
+        d191 &= CellTracker.localPassable1;
+        if((d190 & 0x807000000000000l) != 0 || (d191 & 0xe01) != 0) {
+            if(
+               (d190 & (1l << 49))
+               != 0) {
+                var nextLoc = loc.add(Direction.SOUTH);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.SOUTH;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d191 & (1l << 0))
+               != 0) {
+                var nextLoc = loc.add(Direction.EAST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.EAST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d191 & (1l << 10))
+               != 0) {
+                var nextLoc = loc.add(Direction.NORTH);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.NORTH;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d190 & (1l << 59))
+               != 0) {
+                var nextLoc = loc.add(Direction.WEST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.WEST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d190 & (1l << 48))
+               != 0) {
+                var nextLoc = loc.add(Direction.SOUTHWEST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.SOUTHWEST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d190 & (1l << 50))
+               != 0) {
+                var nextLoc = loc.add(Direction.SOUTHEAST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.SOUTHEAST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d191 & (1l << 9))
+               != 0) {
+                var nextLoc = loc.add(Direction.NORTHWEST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.NORTHWEST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d191 & (1l << 11))
+               != 0) {
+                var nextLoc = loc.add(Direction.NORTHEAST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.NORTHEAST;
+                    bestScore = score;
+                }
+            }
+            if(bestMove != null) {
+                Profiler.end("bfs");
+                makeMove(bestMove);
+                // System.out.println("iterations: " + 19);
+                return;
+            }
+        }
+        long d200 = 0, d201 = 0;
+        d200 = d190;
+        d201 = d191;
+
+        // if(rc.getRoundNum() >= 507) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d200, d201);
+        //     Clock.yield();
+        // }
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d200 |= (d200 & 0xfbff7feffdffbffl) << 1;
+        d201 |= (d201 & 0x7feffdffbff7fefl) << 1;
+        d200 |= (d200 & 0x1f7feffdffbff7fel) >> 1;
+        d201 |= (d201 & 0xffdffbff7feffdel) >> 1;
+
+        d201 |= ((d201 & 0x1ffffffffffffl) << 11) | (d200 >> 50);
+        d200 |= (d200 & 0x3ffffffffffffl) << 11;
+        d200 |= (d200 >> 11) | ((d201 & 0x7ffl) << 50);
+        d201 |= d201 >> 11;
+                {
+            int xi = bug.getRecentPos(20).x - loc.x + 5;
+            int yi = bug.getRecentPos(20).y - loc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    d200 |= 1l << idx;
+                } else {
+                    d201 |= 1l << (idx - 61);
+                }
+            }
+        }
+
+        d200 &= CellTracker.localPassable0;
+        d201 &= CellTracker.localPassable1;
+        if((d200 & 0x807000000000000l) != 0 || (d201 & 0xe01) != 0) {
+            if(
+               (d200 & (1l << 49))
+               != 0) {
+                var nextLoc = loc.add(Direction.SOUTH);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.SOUTH;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d201 & (1l << 0))
+               != 0) {
+                var nextLoc = loc.add(Direction.EAST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.EAST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d201 & (1l << 10))
+               != 0) {
+                var nextLoc = loc.add(Direction.NORTH);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.NORTH;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d200 & (1l << 59))
+               != 0) {
+                var nextLoc = loc.add(Direction.WEST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.WEST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d200 & (1l << 48))
+               != 0) {
+                var nextLoc = loc.add(Direction.SOUTHWEST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.SOUTHWEST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d200 & (1l << 50))
+               != 0) {
+                var nextLoc = loc.add(Direction.SOUTHEAST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.SOUTHEAST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d201 & (1l << 9))
+               != 0) {
+                var nextLoc = loc.add(Direction.NORTHWEST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.NORTHWEST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d201 & (1l << 11))
+               != 0) {
+                var nextLoc = loc.add(Direction.NORTHEAST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.NORTHEAST;
+                    bestScore = score;
+                }
+            }
+            if(bestMove != null) {
+                Profiler.end("bfs");
+                makeMove(bestMove);
+                // System.out.println("iterations: " + 20);
+                return;
+            }
+        }
+        long d210 = 0, d211 = 0;
+        d210 = d200;
+        d211 = d201;
+
+        // if(rc.getRoundNum() >= 507) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d210, d211);
+        //     Clock.yield();
+        // }
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d210 |= (d210 & 0xfbff7feffdffbffl) << 1;
+        d211 |= (d211 & 0x7feffdffbff7fefl) << 1;
+        d210 |= (d210 & 0x1f7feffdffbff7fel) >> 1;
+        d211 |= (d211 & 0xffdffbff7feffdel) >> 1;
+
+        d211 |= ((d211 & 0x1ffffffffffffl) << 11) | (d210 >> 50);
+        d210 |= (d210 & 0x3ffffffffffffl) << 11;
+        d210 |= (d210 >> 11) | ((d211 & 0x7ffl) << 50);
+        d211 |= d211 >> 11;
+                {
+            int xi = bug.getRecentPos(21).x - loc.x + 5;
+            int yi = bug.getRecentPos(21).y - loc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    d210 |= 1l << idx;
+                } else {
+                    d211 |= 1l << (idx - 61);
+                }
+            }
+        }
+
+        d210 &= CellTracker.localPassable0;
+        d211 &= CellTracker.localPassable1;
+        if((d210 & 0x807000000000000l) != 0 || (d211 & 0xe01) != 0) {
+            if(
+               (d210 & (1l << 49))
+               != 0) {
+                var nextLoc = loc.add(Direction.SOUTH);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.SOUTH;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d211 & (1l << 0))
+               != 0) {
+                var nextLoc = loc.add(Direction.EAST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.EAST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d211 & (1l << 10))
+               != 0) {
+                var nextLoc = loc.add(Direction.NORTH);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.NORTH;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d210 & (1l << 59))
+               != 0) {
+                var nextLoc = loc.add(Direction.WEST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.WEST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d210 & (1l << 48))
+               != 0) {
+                var nextLoc = loc.add(Direction.SOUTHWEST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.SOUTHWEST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d210 & (1l << 50))
+               != 0) {
+                var nextLoc = loc.add(Direction.SOUTHEAST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.SOUTHEAST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d211 & (1l << 9))
+               != 0) {
+                var nextLoc = loc.add(Direction.NORTHWEST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.NORTHWEST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d211 & (1l << 11))
+               != 0) {
+                var nextLoc = loc.add(Direction.NORTHEAST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.NORTHEAST;
+                    bestScore = score;
+                }
+            }
+            if(bestMove != null) {
+                Profiler.end("bfs");
+                makeMove(bestMove);
+                // System.out.println("iterations: " + 21);
+                return;
+            }
+        }
+        long d220 = 0, d221 = 0;
+        d220 = d210;
+        d221 = d211;
+
+        // if(rc.getRoundNum() >= 507) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d220, d221);
+        //     Clock.yield();
+        // }
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d220 |= (d220 & 0xfbff7feffdffbffl) << 1;
+        d221 |= (d221 & 0x7feffdffbff7fefl) << 1;
+        d220 |= (d220 & 0x1f7feffdffbff7fel) >> 1;
+        d221 |= (d221 & 0xffdffbff7feffdel) >> 1;
+
+        d221 |= ((d221 & 0x1ffffffffffffl) << 11) | (d220 >> 50);
+        d220 |= (d220 & 0x3ffffffffffffl) << 11;
+        d220 |= (d220 >> 11) | ((d221 & 0x7ffl) << 50);
+        d221 |= d221 >> 11;
+                {
+            int xi = bug.getRecentPos(22).x - loc.x + 5;
+            int yi = bug.getRecentPos(22).y - loc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    d220 |= 1l << idx;
+                } else {
+                    d221 |= 1l << (idx - 61);
+                }
+            }
+        }
+
+        d220 &= CellTracker.localPassable0;
+        d221 &= CellTracker.localPassable1;
+        if((d220 & 0x807000000000000l) != 0 || (d221 & 0xe01) != 0) {
+            if(
+               (d220 & (1l << 49))
+               != 0) {
+                var nextLoc = loc.add(Direction.SOUTH);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.SOUTH;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d221 & (1l << 0))
+               != 0) {
+                var nextLoc = loc.add(Direction.EAST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.EAST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d221 & (1l << 10))
+               != 0) {
+                var nextLoc = loc.add(Direction.NORTH);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.NORTH;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d220 & (1l << 59))
+               != 0) {
+                var nextLoc = loc.add(Direction.WEST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.WEST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d220 & (1l << 48))
+               != 0) {
+                var nextLoc = loc.add(Direction.SOUTHWEST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.SOUTHWEST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d220 & (1l << 50))
+               != 0) {
+                var nextLoc = loc.add(Direction.SOUTHEAST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.SOUTHEAST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d221 & (1l << 9))
+               != 0) {
+                var nextLoc = loc.add(Direction.NORTHWEST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.NORTHWEST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d221 & (1l << 11))
+               != 0) {
+                var nextLoc = loc.add(Direction.NORTHEAST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.NORTHEAST;
+                    bestScore = score;
+                }
+            }
+            if(bestMove != null) {
+                Profiler.end("bfs");
+                makeMove(bestMove);
+                // System.out.println("iterations: " + 22);
+                return;
+            }
+        }
+        long d230 = 0, d231 = 0;
+        d230 = d220;
+        d231 = d221;
+
+        // if(rc.getRoundNum() >= 507) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d230, d231);
+        //     Clock.yield();
+        // }
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d230 |= (d230 & 0xfbff7feffdffbffl) << 1;
+        d231 |= (d231 & 0x7feffdffbff7fefl) << 1;
+        d230 |= (d230 & 0x1f7feffdffbff7fel) >> 1;
+        d231 |= (d231 & 0xffdffbff7feffdel) >> 1;
+
+        d231 |= ((d231 & 0x1ffffffffffffl) << 11) | (d230 >> 50);
+        d230 |= (d230 & 0x3ffffffffffffl) << 11;
+        d230 |= (d230 >> 11) | ((d231 & 0x7ffl) << 50);
+        d231 |= d231 >> 11;
+                {
+            int xi = bug.getRecentPos(23).x - loc.x + 5;
+            int yi = bug.getRecentPos(23).y - loc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    d230 |= 1l << idx;
+                } else {
+                    d231 |= 1l << (idx - 61);
+                }
+            }
+        }
+
+        d230 &= CellTracker.localPassable0;
+        d231 &= CellTracker.localPassable1;
+        if((d230 & 0x807000000000000l) != 0 || (d231 & 0xe01) != 0) {
+            if(
+               (d230 & (1l << 49))
+               != 0) {
+                var nextLoc = loc.add(Direction.SOUTH);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.SOUTH;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d231 & (1l << 0))
+               != 0) {
+                var nextLoc = loc.add(Direction.EAST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.EAST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d231 & (1l << 10))
+               != 0) {
+                var nextLoc = loc.add(Direction.NORTH);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.NORTH;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d230 & (1l << 59))
+               != 0) {
+                var nextLoc = loc.add(Direction.WEST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.WEST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d230 & (1l << 48))
+               != 0) {
+                var nextLoc = loc.add(Direction.SOUTHWEST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.SOUTHWEST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d230 & (1l << 50))
+               != 0) {
+                var nextLoc = loc.add(Direction.SOUTHEAST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.SOUTHEAST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d231 & (1l << 9))
+               != 0) {
+                var nextLoc = loc.add(Direction.NORTHWEST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.NORTHWEST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d231 & (1l << 11))
+               != 0) {
+                var nextLoc = loc.add(Direction.NORTHEAST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.NORTHEAST;
+                    bestScore = score;
+                }
+            }
+            if(bestMove != null) {
+                Profiler.end("bfs");
+                makeMove(bestMove);
+                // System.out.println("iterations: " + 23);
+                return;
+            }
+        }
+        long d240 = 0, d241 = 0;
+        d240 = d230;
+        d241 = d231;
+
+        // if(rc.getRoundNum() >= 507) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d240, d241);
+        //     Clock.yield();
+        // }
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d240 |= (d240 & 0xfbff7feffdffbffl) << 1;
+        d241 |= (d241 & 0x7feffdffbff7fefl) << 1;
+        d240 |= (d240 & 0x1f7feffdffbff7fel) >> 1;
+        d241 |= (d241 & 0xffdffbff7feffdel) >> 1;
+
+        d241 |= ((d241 & 0x1ffffffffffffl) << 11) | (d240 >> 50);
+        d240 |= (d240 & 0x3ffffffffffffl) << 11;
+        d240 |= (d240 >> 11) | ((d241 & 0x7ffl) << 50);
+        d241 |= d241 >> 11;
+                {
+            int xi = bug.getRecentPos(24).x - loc.x + 5;
+            int yi = bug.getRecentPos(24).y - loc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    d240 |= 1l << idx;
+                } else {
+                    d241 |= 1l << (idx - 61);
+                }
+            }
+        }
+
+        d240 &= CellTracker.localPassable0;
+        d241 &= CellTracker.localPassable1;
+        if((d240 & 0x807000000000000l) != 0 || (d241 & 0xe01) != 0) {
+            if(
+               (d240 & (1l << 49))
+               != 0) {
+                var nextLoc = loc.add(Direction.SOUTH);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.SOUTH;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d241 & (1l << 0))
+               != 0) {
+                var nextLoc = loc.add(Direction.EAST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.EAST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d241 & (1l << 10))
+               != 0) {
+                var nextLoc = loc.add(Direction.NORTH);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.NORTH;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d240 & (1l << 59))
+               != 0) {
+                var nextLoc = loc.add(Direction.WEST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.WEST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d240 & (1l << 48))
+               != 0) {
+                var nextLoc = loc.add(Direction.SOUTHWEST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.SOUTHWEST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d240 & (1l << 50))
+               != 0) {
+                var nextLoc = loc.add(Direction.SOUTHEAST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.SOUTHEAST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d241 & (1l << 9))
+               != 0) {
+                var nextLoc = loc.add(Direction.NORTHWEST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.NORTHWEST;
+                    bestScore = score;
+                }
+            }
+            if(
+               (d241 & (1l << 11))
+               != 0) {
+                var nextLoc = loc.add(Direction.NORTHEAST);
+                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                if(score < bestScore) {
+                    bestMove = Direction.NORTHEAST;
+                    bestScore = score;
+                }
+            }
+            if(bestMove != null) {
+                Profiler.end("bfs");
+                makeMove(bestMove);
+                // System.out.println("iterations: " + 24);
+                return;
+            }
+        }
+        indicatorString = "";
+        CellTracker.printLocalMask(CellTracker.localPassable0, CellTracker.localPassable1);
         assert false : "TODO: fallback when bfs can't find path";
     }
 }

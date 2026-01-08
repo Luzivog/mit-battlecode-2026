@@ -5,6 +5,7 @@ import awubot.Pathfinder;
 import awubot.CellTracker;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
+import awubot.util.Profiler;
 import awubot.util.Rng;
 
 public class RobotPlayer {

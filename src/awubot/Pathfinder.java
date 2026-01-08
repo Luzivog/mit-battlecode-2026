@@ -6,6 +6,7 @@ import awubot.util.Rng;
 import awubot.util.Profiler;
 import static awubot.Game.*;
 
+// IF TLE: lower these constants (especially MAX_BUG_ITERS)
 
 class BugnavInstance {
     MapLocation target;
@@ -775,7 +776,7 @@ class BugnavInstance {
             // we are currently in the middle of a lookahead
             return doLookahead();
         }
-        indicate("leftTurn " + leftTurn);
+        // indicate("leftTurn " + leftTurn);
 
         if(pos.isAdjacentTo(target)) {
             pos = target;
@@ -830,7 +831,7 @@ class BugnavInstance {
             var greedyGood = greedyPassable || !CellTracker.isSeen(greedyLoc);
             if(greedyGood) {
                             if(greedyPassable && chebyshevDistance(rc.getLocation(), greedyLoc) <= 5) {
-                indicate("greedyLoc " + greedyLoc);
+                // indicate("greedyLoc " + greedyLoc);
                 pos = greedyLoc;
                 topDir = bottomDir;
                 stackSize = 0;
@@ -849,7 +850,7 @@ class BugnavInstance {
             var rightGood = (rightPassable || !CellTracker.isSeen(rightLoc)) && rc.onTheMap(rightLoc);
             if(leftGood && !rightGood) {
                             if(leftPassable && chebyshevDistance(rc.getLocation(), leftLoc) <= 5) {
-                indicate("leftLoc " + leftLoc);
+                // indicate("leftLoc " + leftLoc);
                 pos = leftLoc;
                 topDir = bottomDir;
                 stackSize = 0;
@@ -862,7 +863,7 @@ class BugnavInstance {
             }
             if(!leftGood && rightGood) {
                             if(rightPassable && chebyshevDistance(rc.getLocation(), rightLoc) <= 5) {
-                indicate("rightLoc " + rightLoc);
+                // indicate("rightLoc " + rightLoc);
                 pos = rightLoc;
                 topDir = bottomDir;
                 stackSize = 0;
@@ -876,7 +877,7 @@ class BugnavInstance {
             if(leftGood && rightGood) {
                 if(leftLoc.distanceSquaredTo(target) < rightLoc.distanceSquaredTo(target)) {
                                 if(leftPassable && chebyshevDistance(rc.getLocation(), leftLoc) <= 5) {
-                indicate("leftLoc " + leftLoc);
+                // indicate("leftLoc " + leftLoc);
                 pos = leftLoc;
                 topDir = bottomDir;
                 stackSize = 0;
@@ -888,7 +889,7 @@ class BugnavInstance {
 
                 } else {
                                 if(rightPassable && chebyshevDistance(rc.getLocation(), rightLoc) <= 5) {
-                indicate("rightLoc " + rightLoc);
+                // indicate("rightLoc " + rightLoc);
                 pos = rightLoc;
                 topDir = bottomDir;
                 stackSize = 0;
@@ -1671,9 +1672,8 @@ public class Pathfinder {
 
         Direction bestMove = null;
         double bestScore = 1e18;
-        long d10 = 0, d11 = 0;
-        d10 = d00;
-        d11 = d01;
+        // Profiler.begin();
+        long d10 = d00, d11 = d01;
 
         // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
@@ -1706,7 +1706,9 @@ public class Pathfinder {
 
         d10 &= CellTracker.localPassable0;
         d11 &= CellTracker.localPassable1;
+        // Profiler.end("bfs iteration");
         if((d10 & 0x807000000000000l) != 0 || (d11 & 0xe01) != 0) {
+            // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
             long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
             notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -1846,16 +1848,16 @@ public class Pathfinder {
                     bestScore = score;
                 }
             }
+            // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
                 makeMove(bestMove);
-                // System.out.println("iterations: " + 1);
+                indicate("bfs iterations: " + 1);
                 return;
             }
         }
-        long d20 = 0, d21 = 0;
-        d20 = d10;
-        d21 = d11;
+        // Profiler.begin();
+        long d20 = d10, d21 = d11;
 
         // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
@@ -1888,7 +1890,9 @@ public class Pathfinder {
 
         d20 &= CellTracker.localPassable0;
         d21 &= CellTracker.localPassable1;
+        // Profiler.end("bfs iteration");
         if((d20 & 0x807000000000000l) != 0 || (d21 & 0xe01) != 0) {
+            // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
             long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
             notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -2028,16 +2032,16 @@ public class Pathfinder {
                     bestScore = score;
                 }
             }
+            // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
                 makeMove(bestMove);
-                // System.out.println("iterations: " + 2);
+                indicate("bfs iterations: " + 2);
                 return;
             }
         }
-        long d30 = 0, d31 = 0;
-        d30 = d20;
-        d31 = d21;
+        // Profiler.begin();
+        long d30 = d20, d31 = d21;
 
         // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
@@ -2070,7 +2074,9 @@ public class Pathfinder {
 
         d30 &= CellTracker.localPassable0;
         d31 &= CellTracker.localPassable1;
+        // Profiler.end("bfs iteration");
         if((d30 & 0x807000000000000l) != 0 || (d31 & 0xe01) != 0) {
+            // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
             long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
             notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -2210,16 +2216,16 @@ public class Pathfinder {
                     bestScore = score;
                 }
             }
+            // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
                 makeMove(bestMove);
-                // System.out.println("iterations: " + 3);
+                indicate("bfs iterations: " + 3);
                 return;
             }
         }
-        long d40 = 0, d41 = 0;
-        d40 = d30;
-        d41 = d31;
+        // Profiler.begin();
+        long d40 = d30, d41 = d31;
 
         // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
@@ -2252,7 +2258,9 @@ public class Pathfinder {
 
         d40 &= CellTracker.localPassable0;
         d41 &= CellTracker.localPassable1;
+        // Profiler.end("bfs iteration");
         if((d40 & 0x807000000000000l) != 0 || (d41 & 0xe01) != 0) {
+            // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
             long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
             notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -2392,16 +2400,16 @@ public class Pathfinder {
                     bestScore = score;
                 }
             }
+            // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
                 makeMove(bestMove);
-                // System.out.println("iterations: " + 4);
+                indicate("bfs iterations: " + 4);
                 return;
             }
         }
-        long d50 = 0, d51 = 0;
-        d50 = d40;
-        d51 = d41;
+        // Profiler.begin();
+        long d50 = d40, d51 = d41;
 
         // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
@@ -2434,7 +2442,9 @@ public class Pathfinder {
 
         d50 &= CellTracker.localPassable0;
         d51 &= CellTracker.localPassable1;
+        // Profiler.end("bfs iteration");
         if((d50 & 0x807000000000000l) != 0 || (d51 & 0xe01) != 0) {
+            // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
             long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
             notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -2574,16 +2584,16 @@ public class Pathfinder {
                     bestScore = score;
                 }
             }
+            // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
                 makeMove(bestMove);
-                // System.out.println("iterations: " + 5);
+                indicate("bfs iterations: " + 5);
                 return;
             }
         }
-        long d60 = 0, d61 = 0;
-        d60 = d50;
-        d61 = d51;
+        // Profiler.begin();
+        long d60 = d50, d61 = d51;
 
         // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
@@ -2616,7 +2626,9 @@ public class Pathfinder {
 
         d60 &= CellTracker.localPassable0;
         d61 &= CellTracker.localPassable1;
+        // Profiler.end("bfs iteration");
         if((d60 & 0x807000000000000l) != 0 || (d61 & 0xe01) != 0) {
+            // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
             long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
             notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -2756,16 +2768,16 @@ public class Pathfinder {
                     bestScore = score;
                 }
             }
+            // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
                 makeMove(bestMove);
-                // System.out.println("iterations: " + 6);
+                indicate("bfs iterations: " + 6);
                 return;
             }
         }
-        long d70 = 0, d71 = 0;
-        d70 = d60;
-        d71 = d61;
+        // Profiler.begin();
+        long d70 = d60, d71 = d61;
 
         // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
@@ -2798,7 +2810,9 @@ public class Pathfinder {
 
         d70 &= CellTracker.localPassable0;
         d71 &= CellTracker.localPassable1;
+        // Profiler.end("bfs iteration");
         if((d70 & 0x807000000000000l) != 0 || (d71 & 0xe01) != 0) {
+            // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
             long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
             notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -2938,16 +2952,16 @@ public class Pathfinder {
                     bestScore = score;
                 }
             }
+            // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
                 makeMove(bestMove);
-                // System.out.println("iterations: " + 7);
+                indicate("bfs iterations: " + 7);
                 return;
             }
         }
-        long d80 = 0, d81 = 0;
-        d80 = d70;
-        d81 = d71;
+        // Profiler.begin();
+        long d80 = d70, d81 = d71;
 
         // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
@@ -2980,7 +2994,9 @@ public class Pathfinder {
 
         d80 &= CellTracker.localPassable0;
         d81 &= CellTracker.localPassable1;
+        // Profiler.end("bfs iteration");
         if((d80 & 0x807000000000000l) != 0 || (d81 & 0xe01) != 0) {
+            // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
             long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
             notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -3120,16 +3136,16 @@ public class Pathfinder {
                     bestScore = score;
                 }
             }
+            // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
                 makeMove(bestMove);
-                // System.out.println("iterations: " + 8);
+                indicate("bfs iterations: " + 8);
                 return;
             }
         }
-        long d90 = 0, d91 = 0;
-        d90 = d80;
-        d91 = d81;
+        // Profiler.begin();
+        long d90 = d80, d91 = d81;
 
         // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
@@ -3162,7 +3178,9 @@ public class Pathfinder {
 
         d90 &= CellTracker.localPassable0;
         d91 &= CellTracker.localPassable1;
+        // Profiler.end("bfs iteration");
         if((d90 & 0x807000000000000l) != 0 || (d91 & 0xe01) != 0) {
+            // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
             long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
             notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -3302,16 +3320,16 @@ public class Pathfinder {
                     bestScore = score;
                 }
             }
+            // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
                 makeMove(bestMove);
-                // System.out.println("iterations: " + 9);
+                indicate("bfs iterations: " + 9);
                 return;
             }
         }
-        long d100 = 0, d101 = 0;
-        d100 = d90;
-        d101 = d91;
+        // Profiler.begin();
+        long d100 = d90, d101 = d91;
 
         // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
@@ -3344,7 +3362,9 @@ public class Pathfinder {
 
         d100 &= CellTracker.localPassable0;
         d101 &= CellTracker.localPassable1;
+        // Profiler.end("bfs iteration");
         if((d100 & 0x807000000000000l) != 0 || (d101 & 0xe01) != 0) {
+            // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
             long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
             notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -3484,16 +3504,16 @@ public class Pathfinder {
                     bestScore = score;
                 }
             }
+            // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
                 makeMove(bestMove);
-                // System.out.println("iterations: " + 10);
+                indicate("bfs iterations: " + 10);
                 return;
             }
         }
-        long d110 = 0, d111 = 0;
-        d110 = d100;
-        d111 = d101;
+        // Profiler.begin();
+        long d110 = d100, d111 = d101;
 
         // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
@@ -3526,7 +3546,9 @@ public class Pathfinder {
 
         d110 &= CellTracker.localPassable0;
         d111 &= CellTracker.localPassable1;
+        // Profiler.end("bfs iteration");
         if((d110 & 0x807000000000000l) != 0 || (d111 & 0xe01) != 0) {
+            // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
             long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
             notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -3666,16 +3688,16 @@ public class Pathfinder {
                     bestScore = score;
                 }
             }
+            // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
                 makeMove(bestMove);
-                // System.out.println("iterations: " + 11);
+                indicate("bfs iterations: " + 11);
                 return;
             }
         }
-        long d120 = 0, d121 = 0;
-        d120 = d110;
-        d121 = d111;
+        // Profiler.begin();
+        long d120 = d110, d121 = d111;
 
         // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
@@ -3708,7 +3730,9 @@ public class Pathfinder {
 
         d120 &= CellTracker.localPassable0;
         d121 &= CellTracker.localPassable1;
+        // Profiler.end("bfs iteration");
         if((d120 & 0x807000000000000l) != 0 || (d121 & 0xe01) != 0) {
+            // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
             long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
             notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -3848,16 +3872,16 @@ public class Pathfinder {
                     bestScore = score;
                 }
             }
+            // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
                 makeMove(bestMove);
-                // System.out.println("iterations: " + 12);
+                indicate("bfs iterations: " + 12);
                 return;
             }
         }
-        long d130 = 0, d131 = 0;
-        d130 = d120;
-        d131 = d121;
+        // Profiler.begin();
+        long d130 = d120, d131 = d121;
 
         // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
@@ -3890,7 +3914,9 @@ public class Pathfinder {
 
         d130 &= CellTracker.localPassable0;
         d131 &= CellTracker.localPassable1;
+        // Profiler.end("bfs iteration");
         if((d130 & 0x807000000000000l) != 0 || (d131 & 0xe01) != 0) {
+            // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
             long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
             notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -4030,16 +4056,16 @@ public class Pathfinder {
                     bestScore = score;
                 }
             }
+            // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
                 makeMove(bestMove);
-                // System.out.println("iterations: " + 13);
+                indicate("bfs iterations: " + 13);
                 return;
             }
         }
-        long d140 = 0, d141 = 0;
-        d140 = d130;
-        d141 = d131;
+        // Profiler.begin();
+        long d140 = d130, d141 = d131;
 
         // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
@@ -4072,7 +4098,9 @@ public class Pathfinder {
 
         d140 &= CellTracker.localPassable0;
         d141 &= CellTracker.localPassable1;
+        // Profiler.end("bfs iteration");
         if((d140 & 0x807000000000000l) != 0 || (d141 & 0xe01) != 0) {
+            // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
             long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
             notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -4212,16 +4240,16 @@ public class Pathfinder {
                     bestScore = score;
                 }
             }
+            // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
                 makeMove(bestMove);
-                // System.out.println("iterations: " + 14);
+                indicate("bfs iterations: " + 14);
                 return;
             }
         }
-        long d150 = 0, d151 = 0;
-        d150 = d140;
-        d151 = d141;
+        // Profiler.begin();
+        long d150 = d140, d151 = d141;
 
         // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
@@ -4254,7 +4282,9 @@ public class Pathfinder {
 
         d150 &= CellTracker.localPassable0;
         d151 &= CellTracker.localPassable1;
+        // Profiler.end("bfs iteration");
         if((d150 & 0x807000000000000l) != 0 || (d151 & 0xe01) != 0) {
+            // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
             long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
             notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -4394,16 +4424,16 @@ public class Pathfinder {
                     bestScore = score;
                 }
             }
+            // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
                 makeMove(bestMove);
-                // System.out.println("iterations: " + 15);
+                indicate("bfs iterations: " + 15);
                 return;
             }
         }
-        long d160 = 0, d161 = 0;
-        d160 = d150;
-        d161 = d151;
+        // Profiler.begin();
+        long d160 = d150, d161 = d151;
 
         // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
@@ -4436,7 +4466,9 @@ public class Pathfinder {
 
         d160 &= CellTracker.localPassable0;
         d161 &= CellTracker.localPassable1;
+        // Profiler.end("bfs iteration");
         if((d160 & 0x807000000000000l) != 0 || (d161 & 0xe01) != 0) {
+            // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
             long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
             notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -4576,16 +4608,16 @@ public class Pathfinder {
                     bestScore = score;
                 }
             }
+            // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
                 makeMove(bestMove);
-                // System.out.println("iterations: " + 16);
+                indicate("bfs iterations: " + 16);
                 return;
             }
         }
-        long d170 = 0, d171 = 0;
-        d170 = d160;
-        d171 = d161;
+        // Profiler.begin();
+        long d170 = d160, d171 = d161;
 
         // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
@@ -4618,7 +4650,9 @@ public class Pathfinder {
 
         d170 &= CellTracker.localPassable0;
         d171 &= CellTracker.localPassable1;
+        // Profiler.end("bfs iteration");
         if((d170 & 0x807000000000000l) != 0 || (d171 & 0xe01) != 0) {
+            // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
             long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
             notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -4758,16 +4792,16 @@ public class Pathfinder {
                     bestScore = score;
                 }
             }
+            // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
                 makeMove(bestMove);
-                // System.out.println("iterations: " + 17);
+                indicate("bfs iterations: " + 17);
                 return;
             }
         }
-        long d180 = 0, d181 = 0;
-        d180 = d170;
-        d181 = d171;
+        // Profiler.begin();
+        long d180 = d170, d181 = d171;
 
         // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
@@ -4800,7 +4834,9 @@ public class Pathfinder {
 
         d180 &= CellTracker.localPassable0;
         d181 &= CellTracker.localPassable1;
+        // Profiler.end("bfs iteration");
         if((d180 & 0x807000000000000l) != 0 || (d181 & 0xe01) != 0) {
+            // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
             long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
             notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -4940,16 +4976,16 @@ public class Pathfinder {
                     bestScore = score;
                 }
             }
+            // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
                 makeMove(bestMove);
-                // System.out.println("iterations: " + 18);
+                indicate("bfs iterations: " + 18);
                 return;
             }
         }
-        long d190 = 0, d191 = 0;
-        d190 = d180;
-        d191 = d181;
+        // Profiler.begin();
+        long d190 = d180, d191 = d181;
 
         // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
@@ -4982,7 +5018,9 @@ public class Pathfinder {
 
         d190 &= CellTracker.localPassable0;
         d191 &= CellTracker.localPassable1;
+        // Profiler.end("bfs iteration");
         if((d190 & 0x807000000000000l) != 0 || (d191 & 0xe01) != 0) {
+            // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
             long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
             notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -5122,16 +5160,16 @@ public class Pathfinder {
                     bestScore = score;
                 }
             }
+            // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
                 makeMove(bestMove);
-                // System.out.println("iterations: " + 19);
+                indicate("bfs iterations: " + 19);
                 return;
             }
         }
-        long d200 = 0, d201 = 0;
-        d200 = d190;
-        d201 = d191;
+        // Profiler.begin();
+        long d200 = d190, d201 = d191;
 
         // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
@@ -5164,7 +5202,9 @@ public class Pathfinder {
 
         d200 &= CellTracker.localPassable0;
         d201 &= CellTracker.localPassable1;
+        // Profiler.end("bfs iteration");
         if((d200 & 0x807000000000000l) != 0 || (d201 & 0xe01) != 0) {
+            // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
             long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
             notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -5304,16 +5344,16 @@ public class Pathfinder {
                     bestScore = score;
                 }
             }
+            // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
                 makeMove(bestMove);
-                // System.out.println("iterations: " + 20);
+                indicate("bfs iterations: " + 20);
                 return;
             }
         }
-        long d210 = 0, d211 = 0;
-        d210 = d200;
-        d211 = d201;
+        // Profiler.begin();
+        long d210 = d200, d211 = d201;
 
         // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
@@ -5346,7 +5386,9 @@ public class Pathfinder {
 
         d210 &= CellTracker.localPassable0;
         d211 &= CellTracker.localPassable1;
+        // Profiler.end("bfs iteration");
         if((d210 & 0x807000000000000l) != 0 || (d211 & 0xe01) != 0) {
+            // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
             long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
             notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -5486,16 +5528,16 @@ public class Pathfinder {
                     bestScore = score;
                 }
             }
+            // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
                 makeMove(bestMove);
-                // System.out.println("iterations: " + 21);
+                indicate("bfs iterations: " + 21);
                 return;
             }
         }
-        long d220 = 0, d221 = 0;
-        d220 = d210;
-        d221 = d211;
+        // Profiler.begin();
+        long d220 = d210, d221 = d211;
 
         // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
@@ -5528,7 +5570,9 @@ public class Pathfinder {
 
         d220 &= CellTracker.localPassable0;
         d221 &= CellTracker.localPassable1;
+        // Profiler.end("bfs iteration");
         if((d220 & 0x807000000000000l) != 0 || (d221 & 0xe01) != 0) {
+            // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
             long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
             notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -5668,16 +5712,16 @@ public class Pathfinder {
                     bestScore = score;
                 }
             }
+            // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
                 makeMove(bestMove);
-                // System.out.println("iterations: " + 22);
+                indicate("bfs iterations: " + 22);
                 return;
             }
         }
-        long d230 = 0, d231 = 0;
-        d230 = d220;
-        d231 = d221;
+        // Profiler.begin();
+        long d230 = d220, d231 = d221;
 
         // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
@@ -5710,7 +5754,9 @@ public class Pathfinder {
 
         d230 &= CellTracker.localPassable0;
         d231 &= CellTracker.localPassable1;
+        // Profiler.end("bfs iteration");
         if((d230 & 0x807000000000000l) != 0 || (d231 & 0xe01) != 0) {
+            // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
             long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
             notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -5850,16 +5896,16 @@ public class Pathfinder {
                     bestScore = score;
                 }
             }
+            // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
                 makeMove(bestMove);
-                // System.out.println("iterations: " + 23);
+                indicate("bfs iterations: " + 23);
                 return;
             }
         }
-        long d240 = 0, d241 = 0;
-        d240 = d230;
-        d241 = d231;
+        // Profiler.begin();
+        long d240 = d230, d241 = d231;
 
         // if(rc.getRoundNum() >= 507) {
         //     indicatorString = "";
@@ -5892,7 +5938,9 @@ public class Pathfinder {
 
         d240 &= CellTracker.localPassable0;
         d241 &= CellTracker.localPassable1;
+        // Profiler.end("bfs iteration");
         if((d240 & 0x807000000000000l) != 0 || (d241 & 0xe01) != 0) {
+            // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
             long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
             notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -6032,10 +6080,11 @@ public class Pathfinder {
                     bestScore = score;
                 }
             }
+            // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
                 makeMove(bestMove);
-                // System.out.println("iterations: " + 24);
+                indicate("bfs iterations: " + 24);
                 return;
             }
         }

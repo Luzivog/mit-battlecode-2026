@@ -90,6 +90,8 @@ public class BabyRat {
     }
 
     public static void run() throws GameActionException {
+        CellTracker.checkSymmetry();
+        indicate("sym " + CellTracker.hsym + " " + CellTracker.vsym + " " + CellTracker.rsym);
         tryStrats();
         if(rc.canTurn()) {
             indicate("glancing");

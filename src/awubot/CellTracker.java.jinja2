@@ -9,7 +9,7 @@ import static awubot.Game.*;
 public class CellTracker {
     {% for mask in ["seen", "passable"] %}
     {% for i in range(MAX_MAP_SIZE) %}
-    static long {{mask}}{{i}};
+    static long {{mask}}{{i}}, {{mask}}{{i}}Reversed;
     {% endfor %}
     public static boolean is{{capitalise(mask)}}(MapLocation loc) {
         switch(loc.y) {
@@ -156,6 +156,157 @@ public class CellTracker {
                 s += ((row & (1 << j)) != 0 ? "X " : ". ");
             }
             indicate(s);
+        }
+    }
+
+    // symmetry checker
+    public enum Symmetry {
+        Unknown,
+        Rotational,
+        Horizontal,
+        Vertical
+    };
+    public static int hsym = 1, vsym = 1, rsym = 1;
+    public static boolean isSymmetryKnown() {
+        return vsym + hsym + rsym == 1;
+    }
+
+    public static Symmetry getSymmetry() {
+        return switch (vsym * 4 + hsym * 2 + rsym) {
+            case 1 -> Symmetry.Rotational;
+            case 2 -> Symmetry.Horizontal;
+            case 4 -> Symmetry.Vertical;
+            default -> Symmetry.Unknown;
+        };
+    }
+
+    static void checkHor() {
+        var shiftAmount = 64 - mapWidth;
+        switch(rc.getLocation().y) {
+            {% for posY in range(60) %}
+            case {{posY}} -> {
+                // IF TLE: change this range to [-4, 5) for all functions
+                {% for y in range(posY - 5, posY + 6) %}
+                {% if y >= 0 and y < 60 %}
+                {
+                    var seenFused = seen{{y}} & (Long.reverse(seen{{y}}) >>> shiftAmount);
+                    var passableFused = passable{{y}} ^ (Long.reverse(passable{{y}}) >>> shiftAmount);
+                    if((passableFused & seenFused) != 0) {
+                        hsym = 0;
+                        return;
+                    }
+                }
+                {% endif %}
+                {% endfor %}
+            }
+            {% endfor %}
+            default -> {}
+        }
+    }
+
+    static void applyHor() {
+        var shiftAmount = 64 - mapWidth;
+        switch(rc.getLocation().y) {
+            {% for posY in range(60) %}
+            case {{posY}} -> {
+                {% for y in range(posY - 5, posY + 6) %}
+                {% if y >= 0 and y < 60 %}
+                {
+                    seen{{y}} |= Long.reverse(seen{{y}}) >>> shiftAmount;
+                    passable{{y}} |= Long.reverse(passable{{y}}) >>> shiftAmount;
+                }
+                {% endif %}
+                {% endfor %}
+            }
+            {% endfor %}
+            default -> {}
+        }
+    }
+
+    {% for height in range(30, 61) %}
+    private static void checkVer{{height}}() {
+        switch(rc.getLocation().y) {
+            {% for posY in range(height) %}
+            case {{posY}} -> {
+                {% for y in range(posY - 5, posY + 6) %}
+                {% if y >= 0 and y < height and y * 2 + 1 != height and (y < height / 2) == (posY < height / 2) %}
+                {
+                    var seenFused = seen{{y}} & seen{{height - y - 1}};
+                    var passableFused = passable{{y}} ^ passable{{height - y - 1}};
+                    if((passableFused & seenFused) != 0) {
+                        vsym = 0;
+                        return;
+                    }
+                }
+                {% endif %}
+                {% endfor %}
+            }
+            {% endfor %}
+            default -> {}
+        }
+    }
+    {% endfor %}
+
+    static void checkVer() {
+        switch(mapHeight) {
+            {% for height in range(30, 61) %}
+            case {{height}} -> {
+                checkVer{{height}}();
+            }
+            {% endfor %}
+        }
+    }
+
+    {% for height in range(30, 61) %}
+    private static void checkRot{{height}}() {
+        var shiftAmount = 64 - mapWidth;
+        switch(rc.getLocation().y) {
+            {% for posY in range(height) %}
+            case {{posY}} -> {
+                {% for y in range(posY - 5, posY + 6) %}
+                {% if y >= 0 and y < height and y * 2 + 1 != height and (y < height / 2) == (posY < height / 2) %}
+                {
+                    var seenFused = seen{{y}} & (Long.reverse(seen{{height - y - 1}}) >>> shiftAmount);
+                    var passableFused = passable{{y}} ^ (Long.reverse(passable{{height - y - 1}}) >>> shiftAmount);
+                    if((passableFused & seenFused) != 0) {
+                        rsym = 0;
+                        return;
+                    }
+                }
+                {% endif %}
+                {% endfor %}
+            }
+            {% endfor %}
+            default -> {}
+        }
+    }
+    {% endfor %}
+
+    static void checkRot() {
+        switch(mapHeight) {
+            {% for height in range(30, 61) %}
+            case {{height}} -> {
+                checkRot{{height}}();
+            }
+            {% endfor %}
+        }
+    }
+
+    public static void checkSymmetry() {
+        switch(getSymmetry()) {
+            case Horizontal -> {
+                Profiler.begin();
+                applyHor();
+                Profiler.end("applyHorSymmetry");
+            }
+            case Unknown -> {
+                Profiler.begin();
+                // IF TLE: check one per turn instead of all 3
+                if(hsym != 0) checkHor();
+                if(vsym != 0) checkVer();
+                if(rsym != 0) checkRot();
+                Profiler.end("checkSymmetry");
+            }
         }
     }
 }

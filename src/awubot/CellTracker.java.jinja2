@@ -7,9 +7,9 @@ import static awubot.util.Util.*;
 import static awubot.Game.*;
 
 public class CellTracker {
-    {% for mask in ["seen", "passable"] %}
+    {% for mask in ["seen", "passable", "dirt"] %}
     {% for i in range(MAX_MAP_SIZE) %}
-    static long {{mask}}{{i}}, {{mask}}{{i}}Reversed;
+    static long {{mask}}{{i}};
     {% endfor %}
     public static boolean is{{capitalise(mask)}}(MapLocation loc) {
         switch(loc.y) {
@@ -32,7 +32,9 @@ public class CellTracker {
             {% for i in range(MAX_MAP_SIZE) %}
             case {{i}} -> {
                 seen{{i}} |= 1l << loc.x;
-                if(info.isPassable()) passable{{i}} |= 1l << loc.x;
+                if(!info.isWall()) passable{{i}} |= 1l << loc.x;
+                if(info.isDirt()) dirt{{i}} |= 1l << loc.x;
+                else dirt{{i}} &= ~(1l << loc.x);
             }
             {% endfor %}
         }
@@ -107,42 +109,50 @@ public class CellTracker {
     }
 
     public static long localPassable0, localPassable1;
-    static MapLocation localPassablePos = new MapLocation(-1, -1);
-    public static void computeLocalPassable() throws GameActionException {
-        if(rc.getLocation().equals(localPassablePos)) return;
+    public static long localDirt0, localDirt1;
+    {% for mask in ["dirt", "passable"] %}
+    private static void computeLocal{{capitalise(mask)}}() {
         var loc = rc.getLocation();
-
-        localPassablePos = loc;
-        localPassable0 = 0;
-        localPassable1 = 0;
+        local{{capitalise(mask)}}0 = 0;
+        local{{capitalise(mask)}}1 = 0;
         switch(loc.y) {
             {% for i in range(MAX_MAP_SIZE) %}
             case {{i}} -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
                 {% macro get11bits(dy, off) %}
                 ((loc.x - 5 >= 0
-                  ? passable{{i + dy}} >> (loc.x - 5)
-                  : passable{{i + dy}} << (5 - loc.x))
+                  ? {{mask}}{{i + dy}} >> (loc.x - 5)
+                  : {{mask}}{{i + dy}} << (5 - loc.x))
                  & 0x7ff) {% if off %} << {{off}} {% endif %}
                 {% endmacro %}
 
                 {% for dy in range(-5, 0) %}
                 {% if i + dy >= 0 and i + dy < MAX_MAP_SIZE %}
-                localPassable0 |= {{ get11bits(dy, (dy + 5) * 11) }};
+                local{{capitalise(mask)}}0 |= {{ get11bits(dy, (dy + 5) * 11) }};
                 {% endif %}
                 {% endfor %}
 
-                localPassable0 |= {{ get11bits(0, 55) }} & 0x1f80000000000000l;
-                localPassable1 |= {{ get11bits(0, 0) }} >> 6;
+                local{{capitalise(mask)}}0 |= {{ get11bits(0, 55) }} & 0x1f80000000000000l;
+                local{{capitalise(mask)}}1 |= {{ get11bits(0, 0) }} >> 6;
 
                 {% for dy in range(1, 6) %}
                 {% if i + dy < MAX_MAP_SIZE %}
-                localPassable1 |= {{ get11bits(dy, (dy - 1) * 11 + 5) }};
+                local{{capitalise(mask)}}1 |= {{ get11bits(dy, (dy - 1) * 11 + 5) }};
                 {% endif %}
                 {% endfor %}
             }
             {% endfor %}
         }
+    }
+    {% endfor %}
+    static MapLocation localBfsPos = new MapLocation(-1, -1);
+    public static void computeLocalBfsMasks() throws GameActionException {
+        var loc = rc.getLocation();
+        if(loc.equals(localBfsPos)) return;
+        localBfsPos = loc;
+        {% for mask in ["dirt", "passable"] %}
+        computeLocal{{capitalise(mask)}}();
+        {% endfor %}
     }
 
     public static void printLocalMask(long m1, long m2) {

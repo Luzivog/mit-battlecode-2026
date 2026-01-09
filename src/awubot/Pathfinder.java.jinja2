@@ -127,8 +127,10 @@ class BugnavInstance {
 
         if(!(leftDone && rightDone)) {
             {% macro advance(side) %}
+            // indicate("advance {{side}}");
             {{side}}Bug.outOfSight = false;
             {{side}}Done = !{{side}}Bug.advance();
+            // indicate({{side}}Bug.pos);
             rc.setIndicatorDot({{side}}Bug.pos, 255, 0, 255);
             {% endmacro %}
             if(rightDone) {
@@ -146,7 +148,8 @@ class BugnavInstance {
         boolean leftReady = leftBug.nextPathIndex >= 5 || leftBug.hitEdge || leftBug.outOfSight || leftBug.arrived;
         boolean rightReady = rightBug.nextPathIndex >= 5 || rightBug.hitEdge || rightBug.outOfSight || rightBug.arrived;
         indicate("ready " + leftReady + " " + rightReady);
-        if(!leftReady || !rightReady) return !(leftDone && rightDone);
+        if(!rc.getLocation().equals(pos) && (!leftReady || !rightReady)) return !(leftDone && rightDone);
+        indicate("going ahead");
 
         {% macro score(bug) %} Math.sqrt({{bug}}.pos.distanceSquaredTo(target)) + {{bug}}.nextPathIndex * 0.7 {% endmacro %}
         var leftScore = {{ score("leftBug") }};
@@ -404,7 +407,12 @@ public class Pathfinder {
     public static void makeMove(Direction dir) throws GameActionException {
         if(dir == Direction.CENTER) return;
         if(dir != rc.getDirection()) turn(dir);
-        moveForward();
+        var nextLoc = rc.getLocation().add(dir);
+        if(rc.senseMapInfo(nextLoc).isDirt()) {
+            if(rc.isActionReady()) rc.removeDirt(nextLoc);
+            else return;
+        }
+        if(rc.canMoveForward()) moveForward();
     }
 
     public static void makeMove(MapLocation target) throws GameActionException {
@@ -439,10 +447,11 @@ public class Pathfinder {
 
         // bfs
         Profiler.begin();
-        CellTracker.computeLocalPassable();
+        CellTracker.computeLocalBfsMasks();
         var loc = rc.getLocation();
         // d{i}0 + d{i}1 is the mask of reachable within i steps
         long d00 = 0, d01 = 0;
+        long d10 = 0, d11 = 0;
         {% macro writePos(pos, i) %}
         {
             int xi = {{pos}}.x - loc.x + 5;
@@ -457,33 +466,16 @@ public class Pathfinder {
             }
         }
         {% endmacro %}
-        {{ writePos("bug.pos", 0) }}
-        Direction bestMove = null;
-        double bestScore = 1e18;
-        {% for i in range(1, MAX_PATH) %}
-        // Profiler.begin();
-        long d{{i}}0 = d{{i - 1}}0, d{{i}}1 = d{{i - 1}}1;
-
-        // if(rc.getRoundNum() >= 507) {
+        {% for i in range(MAX_PATH) %}
+        {% if i % 2 == 0 %}
+        {{ writePos("bug.getRecentPos(%s / 2)" % i, i) }}
+        {% endif %}
+        // if(rc.getRoundNum() >= 377) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d{{i}}0, d{{i}}1);
         //     Clock.yield();
         // }
-
-        // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d{{i}}0 |= (d{{i}}0 & 0xfbff7feffdffbffl) << 1;
-        d{{i}}1 |= (d{{i}}1 & 0x7feffdffbff7fefl) << 1;
-        d{{i}}0 |= (d{{i}}0 & 0x1f7feffdffbff7fel) >> 1;
-        d{{i}}1 |= (d{{i}}1 & 0xffdffbff7feffdel) >> 1;
-
-        d{{i}}1 |= ((d{{i}}1 & 0x1ffffffffffffl) << 11) | (d{{i}}0 >> 50);
-        d{{i}}0 |= (d{{i}}0 & 0x3ffffffffffffl) << 11;
-        d{{i}}0 |= (d{{i}}0 >> 11) | ((d{{i}}1 & 0x7ffl) << 50);
-        d{{i}}1 |= d{{i}}1 >> 11;
-        {{ writePos("bug.getRecentPos(%s)" % i, i) }}
-        d{{i}}0 &= CellTracker.localPassable0;
-        d{{i}}1 &= CellTracker.localPassable1;
-        // Profiler.end("bfs iteration");
+        {% if i %}
         if((d{{i}}0 & 0x807000000000000l) != 0 || (d{{i}}1 & 0xe01) != 0) {
             // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
@@ -497,6 +489,8 @@ public class Pathfinder {
             notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
             notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
+            Direction bestMove = null;
+            double bestScore = 1e18;
             {% for dir, off in [
                                 ("Direction.SOUTH", 49),
                                 ("Direction.EAST", 61),
@@ -513,22 +507,30 @@ public class Pathfinder {
                {% else %}
                (d{{i}}1 & (1l << {{off - 61}}))
                {% endif %}
-               != 0 && rc.canMove({{dir}})) {
+               != 0) {
                 var nextLoc = loc.add({{dir}});
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   {% if off < 61 %}
-                   (notWallAdjacent0 & (1l << {{off}}))
-                   {% else %}
-                   (notWallAdjacent1 & (1l << {{off - 61}}))
-                   {% endif %}
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = {{dir}};
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove({{dir}}) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       {% if off < 61 %}
+                       (notWallAdjacent0 & (1l << {{off}}))
+                       {% else %}
+                       (notWallAdjacent1 & (1l << {{off - 61}}))
+                       {% endif %}
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = {{dir}};
+                        bestScore = score;
+                    }
                 }
             }
             {% endfor %}
@@ -540,6 +542,29 @@ public class Pathfinder {
                 return;
             }
         }
+        {% endif %}
+
+        // Profiler.begin();
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d{{i}}0 |= (d{{i}}0 & 0xfbff7feffdffbffl) << 1;
+        d{{i}}1 |= (d{{i}}1 & 0x7feffdffbff7fefl) << 1;
+        d{{i}}0 |= (d{{i}}0 & 0x1f7feffdffbff7fel) >> 1;
+        d{{i}}1 |= (d{{i}}1 & 0xffdffbff7feffdel) >> 1;
+
+        d{{i}}1 |= ((d{{i}}1 & 0x1ffffffffffffl) << 11) | (d{{i}}0 >> 50);
+        d{{i}}0 |= (d{{i}}0 & 0x3ffffffffffffl) << 11;
+        d{{i}}0 |= (d{{i}}0 >> 11) | ((d{{i}}1 & 0x7ffl) << 50);
+        d{{i}}1 |= d{{i}}1 >> 11;
+        d{{i}}0 &= CellTracker.localPassable0;
+        d{{i}}1 &= CellTracker.localPassable1;
+        long d{{i + 2}}0 = d{{i}}0;
+        long d{{i + 2}}1 = d{{i}}1;
+        d{{i}}0 &= ~CellTracker.localDirt0;
+        d{{i}}1 &= ~CellTracker.localDirt1;
+        d{{i + 1}}0 |= d{{i}}0;
+        d{{i + 1}}1 |= d{{i}}1;
+        // Profiler.end("bfs iteration");
         {% endfor %}
         indicatorString = "";
         CellTracker.printLocalMask(CellTracker.localPassable0, CellTracker.localPassable1);

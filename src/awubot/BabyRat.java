@@ -9,6 +9,7 @@ import awubot.util.Rng;
 
 public class BabyRat {
     static MapLocation home, exploreTarget, mineLocation, mineTarget, cheeseTarget;
+    static boolean goingHome = false;
     static int lastSeenCheese;
 
     static Direction lastGlance;
@@ -20,8 +21,23 @@ public class BabyRat {
 
     static void tryStrats() throws GameActionException {
         indicate("amount " + rc.getRawCheese());
-        if(rc.getRawCheese() >= 50) {
-            mineLocation = null;
+        indicate("mineLoc " + mineLocation);
+        if(rc.getRawCheese() == 0) {
+            goingHome = false;
+        }
+        if(cheeseTarget == null || rc.canSenseLocation(cheeseTarget) && rc.senseMapInfo(cheeseTarget).getCheeseAmount() == 0) {
+            cheeseTarget = null;
+            int bestAmount = 0;
+            for(var info : rc.senseNearbyMapInfos()) {
+                if(info.getCheeseAmount() > bestAmount) {
+                    cheeseTarget = info.getMapLocation();
+                    bestAmount = info.getCheeseAmount();
+                }
+            }
+        }
+        if(goingHome || rc.getRawCheese() >= 50 && lastSeenCheese < rc.getRoundNum() - 3 || rc.getRawCheese() >= 200) {
+            goingHome = true;
+            // mineLocation = null;
             exploreTarget = null;
             indicate("going home");
             // Return home
@@ -39,29 +55,6 @@ public class BabyRat {
             }
             return;
         }
-        if(cheeseTarget == null || rc.canSenseLocation(cheeseTarget) && rc.senseMapInfo(cheeseTarget).getCheeseAmount() == 0) {
-            cheeseTarget = null;
-            int bestAmount = 0;
-            for(var info : rc.senseNearbyMapInfos()) {
-                if(info.getCheeseAmount() > bestAmount) {
-                    cheeseTarget = info.getMapLocation();
-                    bestAmount = info.getCheeseAmount();
-                }
-            }
-        }
-        if(cheeseTarget != null) {
-            if(rc.getLocation().isAdjacentTo(cheeseTarget)) {
-                Pathfinder.turn(rc.getLocation().directionTo(cheeseTarget));
-                if(rc.isActionReady()) {
-                    rc.pickUpCheese(cheeseTarget);
-                }
-                return;
-            }
-            rc.setIndicatorLine(rc.getLocation(), cheeseTarget, 255, 0, 0);
-            Pathfinder.makeMove(cheeseTarget);
-            return;
-        }
-
         if(mineLocation == null || lastSeenCheese < rc.getRoundNum() - 20) {
             for(var info : rc.senseNearbyMapInfos()) {
                 if(info.hasCheeseMine()) {
@@ -70,6 +63,21 @@ public class BabyRat {
                 }
             }
         }
+        if(cheeseTarget != null) {
+            lastSeenCheese = rc.getRoundNum();
+            if(rc.getLocation().isAdjacentTo(cheeseTarget)) {
+                Pathfinder.turn(rc.getLocation().directionTo(cheeseTarget));
+                if(rc.isActionReady()) {
+                    rc.pickUpCheese(cheeseTarget);
+                    cheeseTarget = null;
+                }
+                return;
+            }
+            rc.setIndicatorLine(rc.getLocation(), cheeseTarget, 255, 0, 0);
+            Pathfinder.makeMove(cheeseTarget);
+            return;
+        }
+
         if(mineLocation != null) {
             if(mineTarget == null || rc.getLocation().distanceSquaredTo(mineTarget) <= 2) {
                 do {

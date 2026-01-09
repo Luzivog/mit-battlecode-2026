@@ -1604,7 +1604,12 @@ public class Pathfinder {
     public static void makeMove(Direction dir) throws GameActionException {
         if(dir == Direction.CENTER) return;
         if(dir != rc.getDirection()) turn(dir);
-        moveForward();
+        var nextLoc = rc.getLocation().add(dir);
+        if(rc.senseMapInfo(nextLoc).isDirt()) {
+            if(rc.isActionReady()) rc.removeDirt(nextLoc);
+            else return;
+        }
+        if(rc.canMoveForward()) moveForward();
     }
 
     public static void makeMove(MapLocation target) throws GameActionException {
@@ -1653,7 +1658,7 @@ public class Pathfinder {
 
         // bfs
         Profiler.begin();
-        CellTracker.computeLocalPassable();
+        CellTracker.computeLocalBfsMasks();
         var loc = rc.getLocation();
         // d{i}0 + d{i}1 is the mask of reachable within i steps
         long d00 = 0, d01 = 0;
@@ -1670,8 +1675,6 @@ public class Pathfinder {
             }
         }
 
-        Direction bestMove = null;
-        double bestScore = 1e18;
         // Profiler.begin();
         long d10 = d00, d11 = d01;
 
@@ -1720,132 +1723,198 @@ public class Pathfinder {
             notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
             notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
+            Direction bestMove = null;
+            double bestScore = 1e18;
             if(
                (d10 & (1l << 49))
-               != 0 && rc.canMove(Direction.SOUTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 49))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 49))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d11 & (1l << 0))
-               != 0 && rc.canMove(Direction.EAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 0))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.EAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 0))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.EAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d11 & (1l << 10))
-               != 0 && rc.canMove(Direction.NORTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 10))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 10))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d10 & (1l << 59))
-               != 0 && rc.canMove(Direction.WEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 59))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.WEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 59))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.WEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d10 & (1l << 48))
-               != 0 && rc.canMove(Direction.SOUTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 48))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 48))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d10 & (1l << 50))
-               != 0 && rc.canMove(Direction.SOUTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 50))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 50))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d11 & (1l << 9))
-               != 0 && rc.canMove(Direction.NORTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 9))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 9))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d11 & (1l << 11))
-               != 0 && rc.canMove(Direction.NORTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 11))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 11))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             // Profiler.end("bfs best move");
@@ -1904,132 +1973,198 @@ public class Pathfinder {
             notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
             notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
+            Direction bestMove = null;
+            double bestScore = 1e18;
             if(
                (d20 & (1l << 49))
-               != 0 && rc.canMove(Direction.SOUTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 49))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 49))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d21 & (1l << 0))
-               != 0 && rc.canMove(Direction.EAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 0))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.EAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 0))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.EAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d21 & (1l << 10))
-               != 0 && rc.canMove(Direction.NORTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 10))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 10))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d20 & (1l << 59))
-               != 0 && rc.canMove(Direction.WEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 59))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.WEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 59))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.WEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d20 & (1l << 48))
-               != 0 && rc.canMove(Direction.SOUTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 48))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 48))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d20 & (1l << 50))
-               != 0 && rc.canMove(Direction.SOUTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 50))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 50))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d21 & (1l << 9))
-               != 0 && rc.canMove(Direction.NORTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 9))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 9))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d21 & (1l << 11))
-               != 0 && rc.canMove(Direction.NORTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 11))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 11))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             // Profiler.end("bfs best move");
@@ -2088,132 +2223,198 @@ public class Pathfinder {
             notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
             notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
+            Direction bestMove = null;
+            double bestScore = 1e18;
             if(
                (d30 & (1l << 49))
-               != 0 && rc.canMove(Direction.SOUTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 49))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 49))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d31 & (1l << 0))
-               != 0 && rc.canMove(Direction.EAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 0))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.EAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 0))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.EAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d31 & (1l << 10))
-               != 0 && rc.canMove(Direction.NORTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 10))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 10))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d30 & (1l << 59))
-               != 0 && rc.canMove(Direction.WEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 59))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.WEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 59))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.WEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d30 & (1l << 48))
-               != 0 && rc.canMove(Direction.SOUTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 48))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 48))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d30 & (1l << 50))
-               != 0 && rc.canMove(Direction.SOUTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 50))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 50))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d31 & (1l << 9))
-               != 0 && rc.canMove(Direction.NORTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 9))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 9))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d31 & (1l << 11))
-               != 0 && rc.canMove(Direction.NORTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 11))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 11))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             // Profiler.end("bfs best move");
@@ -2272,132 +2473,198 @@ public class Pathfinder {
             notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
             notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
+            Direction bestMove = null;
+            double bestScore = 1e18;
             if(
                (d40 & (1l << 49))
-               != 0 && rc.canMove(Direction.SOUTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 49))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 49))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d41 & (1l << 0))
-               != 0 && rc.canMove(Direction.EAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 0))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.EAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 0))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.EAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d41 & (1l << 10))
-               != 0 && rc.canMove(Direction.NORTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 10))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 10))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d40 & (1l << 59))
-               != 0 && rc.canMove(Direction.WEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 59))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.WEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 59))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.WEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d40 & (1l << 48))
-               != 0 && rc.canMove(Direction.SOUTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 48))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 48))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d40 & (1l << 50))
-               != 0 && rc.canMove(Direction.SOUTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 50))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 50))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d41 & (1l << 9))
-               != 0 && rc.canMove(Direction.NORTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 9))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 9))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d41 & (1l << 11))
-               != 0 && rc.canMove(Direction.NORTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 11))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 11))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             // Profiler.end("bfs best move");
@@ -2456,132 +2723,198 @@ public class Pathfinder {
             notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
             notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
+            Direction bestMove = null;
+            double bestScore = 1e18;
             if(
                (d50 & (1l << 49))
-               != 0 && rc.canMove(Direction.SOUTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 49))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 49))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d51 & (1l << 0))
-               != 0 && rc.canMove(Direction.EAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 0))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.EAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 0))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.EAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d51 & (1l << 10))
-               != 0 && rc.canMove(Direction.NORTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 10))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 10))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d50 & (1l << 59))
-               != 0 && rc.canMove(Direction.WEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 59))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.WEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 59))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.WEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d50 & (1l << 48))
-               != 0 && rc.canMove(Direction.SOUTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 48))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 48))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d50 & (1l << 50))
-               != 0 && rc.canMove(Direction.SOUTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 50))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 50))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d51 & (1l << 9))
-               != 0 && rc.canMove(Direction.NORTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 9))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 9))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d51 & (1l << 11))
-               != 0 && rc.canMove(Direction.NORTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 11))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 11))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             // Profiler.end("bfs best move");
@@ -2640,132 +2973,198 @@ public class Pathfinder {
             notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
             notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
+            Direction bestMove = null;
+            double bestScore = 1e18;
             if(
                (d60 & (1l << 49))
-               != 0 && rc.canMove(Direction.SOUTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 49))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 49))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d61 & (1l << 0))
-               != 0 && rc.canMove(Direction.EAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 0))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.EAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 0))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.EAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d61 & (1l << 10))
-               != 0 && rc.canMove(Direction.NORTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 10))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 10))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d60 & (1l << 59))
-               != 0 && rc.canMove(Direction.WEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 59))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.WEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 59))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.WEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d60 & (1l << 48))
-               != 0 && rc.canMove(Direction.SOUTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 48))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 48))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d60 & (1l << 50))
-               != 0 && rc.canMove(Direction.SOUTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 50))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 50))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d61 & (1l << 9))
-               != 0 && rc.canMove(Direction.NORTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 9))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 9))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d61 & (1l << 11))
-               != 0 && rc.canMove(Direction.NORTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 11))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 11))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             // Profiler.end("bfs best move");
@@ -2824,132 +3223,198 @@ public class Pathfinder {
             notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
             notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
+            Direction bestMove = null;
+            double bestScore = 1e18;
             if(
                (d70 & (1l << 49))
-               != 0 && rc.canMove(Direction.SOUTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 49))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 49))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d71 & (1l << 0))
-               != 0 && rc.canMove(Direction.EAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 0))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.EAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 0))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.EAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d71 & (1l << 10))
-               != 0 && rc.canMove(Direction.NORTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 10))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 10))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d70 & (1l << 59))
-               != 0 && rc.canMove(Direction.WEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 59))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.WEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 59))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.WEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d70 & (1l << 48))
-               != 0 && rc.canMove(Direction.SOUTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 48))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 48))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d70 & (1l << 50))
-               != 0 && rc.canMove(Direction.SOUTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 50))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 50))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d71 & (1l << 9))
-               != 0 && rc.canMove(Direction.NORTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 9))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 9))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d71 & (1l << 11))
-               != 0 && rc.canMove(Direction.NORTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 11))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 11))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             // Profiler.end("bfs best move");
@@ -3008,132 +3473,198 @@ public class Pathfinder {
             notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
             notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
+            Direction bestMove = null;
+            double bestScore = 1e18;
             if(
                (d80 & (1l << 49))
-               != 0 && rc.canMove(Direction.SOUTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 49))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 49))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d81 & (1l << 0))
-               != 0 && rc.canMove(Direction.EAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 0))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.EAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 0))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.EAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d81 & (1l << 10))
-               != 0 && rc.canMove(Direction.NORTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 10))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 10))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d80 & (1l << 59))
-               != 0 && rc.canMove(Direction.WEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 59))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.WEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 59))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.WEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d80 & (1l << 48))
-               != 0 && rc.canMove(Direction.SOUTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 48))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 48))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d80 & (1l << 50))
-               != 0 && rc.canMove(Direction.SOUTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 50))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 50))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d81 & (1l << 9))
-               != 0 && rc.canMove(Direction.NORTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 9))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 9))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d81 & (1l << 11))
-               != 0 && rc.canMove(Direction.NORTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 11))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 11))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             // Profiler.end("bfs best move");
@@ -3192,132 +3723,198 @@ public class Pathfinder {
             notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
             notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
+            Direction bestMove = null;
+            double bestScore = 1e18;
             if(
                (d90 & (1l << 49))
-               != 0 && rc.canMove(Direction.SOUTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 49))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 49))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d91 & (1l << 0))
-               != 0 && rc.canMove(Direction.EAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 0))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.EAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 0))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.EAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d91 & (1l << 10))
-               != 0 && rc.canMove(Direction.NORTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 10))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 10))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d90 & (1l << 59))
-               != 0 && rc.canMove(Direction.WEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 59))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.WEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 59))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.WEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d90 & (1l << 48))
-               != 0 && rc.canMove(Direction.SOUTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 48))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 48))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d90 & (1l << 50))
-               != 0 && rc.canMove(Direction.SOUTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 50))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 50))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d91 & (1l << 9))
-               != 0 && rc.canMove(Direction.NORTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 9))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 9))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d91 & (1l << 11))
-               != 0 && rc.canMove(Direction.NORTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 11))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 11))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             // Profiler.end("bfs best move");
@@ -3376,132 +3973,198 @@ public class Pathfinder {
             notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
             notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
+            Direction bestMove = null;
+            double bestScore = 1e18;
             if(
                (d100 & (1l << 49))
-               != 0 && rc.canMove(Direction.SOUTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 49))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 49))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d101 & (1l << 0))
-               != 0 && rc.canMove(Direction.EAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 0))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.EAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 0))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.EAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d101 & (1l << 10))
-               != 0 && rc.canMove(Direction.NORTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 10))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 10))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d100 & (1l << 59))
-               != 0 && rc.canMove(Direction.WEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 59))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.WEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 59))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.WEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d100 & (1l << 48))
-               != 0 && rc.canMove(Direction.SOUTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 48))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 48))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d100 & (1l << 50))
-               != 0 && rc.canMove(Direction.SOUTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 50))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 50))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d101 & (1l << 9))
-               != 0 && rc.canMove(Direction.NORTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 9))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 9))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d101 & (1l << 11))
-               != 0 && rc.canMove(Direction.NORTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 11))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 11))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             // Profiler.end("bfs best move");
@@ -3560,132 +4223,198 @@ public class Pathfinder {
             notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
             notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
+            Direction bestMove = null;
+            double bestScore = 1e18;
             if(
                (d110 & (1l << 49))
-               != 0 && rc.canMove(Direction.SOUTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 49))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 49))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d111 & (1l << 0))
-               != 0 && rc.canMove(Direction.EAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 0))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.EAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 0))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.EAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d111 & (1l << 10))
-               != 0 && rc.canMove(Direction.NORTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 10))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 10))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d110 & (1l << 59))
-               != 0 && rc.canMove(Direction.WEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 59))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.WEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 59))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.WEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d110 & (1l << 48))
-               != 0 && rc.canMove(Direction.SOUTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 48))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 48))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d110 & (1l << 50))
-               != 0 && rc.canMove(Direction.SOUTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 50))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 50))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d111 & (1l << 9))
-               != 0 && rc.canMove(Direction.NORTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 9))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 9))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d111 & (1l << 11))
-               != 0 && rc.canMove(Direction.NORTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 11))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 11))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             // Profiler.end("bfs best move");
@@ -3744,132 +4473,198 @@ public class Pathfinder {
             notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
             notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
+            Direction bestMove = null;
+            double bestScore = 1e18;
             if(
                (d120 & (1l << 49))
-               != 0 && rc.canMove(Direction.SOUTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 49))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 49))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d121 & (1l << 0))
-               != 0 && rc.canMove(Direction.EAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 0))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.EAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 0))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.EAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d121 & (1l << 10))
-               != 0 && rc.canMove(Direction.NORTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 10))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 10))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d120 & (1l << 59))
-               != 0 && rc.canMove(Direction.WEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 59))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.WEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 59))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.WEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d120 & (1l << 48))
-               != 0 && rc.canMove(Direction.SOUTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 48))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 48))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d120 & (1l << 50))
-               != 0 && rc.canMove(Direction.SOUTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 50))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 50))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d121 & (1l << 9))
-               != 0 && rc.canMove(Direction.NORTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 9))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 9))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d121 & (1l << 11))
-               != 0 && rc.canMove(Direction.NORTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 11))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 11))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             // Profiler.end("bfs best move");
@@ -3928,132 +4723,198 @@ public class Pathfinder {
             notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
             notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
+            Direction bestMove = null;
+            double bestScore = 1e18;
             if(
                (d130 & (1l << 49))
-               != 0 && rc.canMove(Direction.SOUTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 49))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 49))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d131 & (1l << 0))
-               != 0 && rc.canMove(Direction.EAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 0))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.EAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 0))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.EAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d131 & (1l << 10))
-               != 0 && rc.canMove(Direction.NORTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 10))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 10))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d130 & (1l << 59))
-               != 0 && rc.canMove(Direction.WEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 59))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.WEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 59))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.WEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d130 & (1l << 48))
-               != 0 && rc.canMove(Direction.SOUTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 48))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 48))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d130 & (1l << 50))
-               != 0 && rc.canMove(Direction.SOUTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 50))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 50))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d131 & (1l << 9))
-               != 0 && rc.canMove(Direction.NORTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 9))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 9))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d131 & (1l << 11))
-               != 0 && rc.canMove(Direction.NORTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 11))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 11))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             // Profiler.end("bfs best move");
@@ -4112,132 +4973,198 @@ public class Pathfinder {
             notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
             notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
+            Direction bestMove = null;
+            double bestScore = 1e18;
             if(
                (d140 & (1l << 49))
-               != 0 && rc.canMove(Direction.SOUTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 49))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 49))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d141 & (1l << 0))
-               != 0 && rc.canMove(Direction.EAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 0))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.EAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 0))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.EAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d141 & (1l << 10))
-               != 0 && rc.canMove(Direction.NORTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 10))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 10))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d140 & (1l << 59))
-               != 0 && rc.canMove(Direction.WEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 59))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.WEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 59))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.WEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d140 & (1l << 48))
-               != 0 && rc.canMove(Direction.SOUTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 48))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 48))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d140 & (1l << 50))
-               != 0 && rc.canMove(Direction.SOUTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 50))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 50))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d141 & (1l << 9))
-               != 0 && rc.canMove(Direction.NORTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 9))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 9))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d141 & (1l << 11))
-               != 0 && rc.canMove(Direction.NORTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 11))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 11))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             // Profiler.end("bfs best move");
@@ -4296,132 +5223,198 @@ public class Pathfinder {
             notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
             notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
+            Direction bestMove = null;
+            double bestScore = 1e18;
             if(
                (d150 & (1l << 49))
-               != 0 && rc.canMove(Direction.SOUTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 49))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 49))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d151 & (1l << 0))
-               != 0 && rc.canMove(Direction.EAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 0))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.EAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 0))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.EAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d151 & (1l << 10))
-               != 0 && rc.canMove(Direction.NORTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 10))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 10))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d150 & (1l << 59))
-               != 0 && rc.canMove(Direction.WEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 59))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.WEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 59))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.WEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d150 & (1l << 48))
-               != 0 && rc.canMove(Direction.SOUTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 48))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 48))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d150 & (1l << 50))
-               != 0 && rc.canMove(Direction.SOUTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 50))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 50))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d151 & (1l << 9))
-               != 0 && rc.canMove(Direction.NORTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 9))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 9))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d151 & (1l << 11))
-               != 0 && rc.canMove(Direction.NORTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 11))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 11))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             // Profiler.end("bfs best move");
@@ -4480,132 +5473,198 @@ public class Pathfinder {
             notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
             notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
+            Direction bestMove = null;
+            double bestScore = 1e18;
             if(
                (d160 & (1l << 49))
-               != 0 && rc.canMove(Direction.SOUTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 49))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 49))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d161 & (1l << 0))
-               != 0 && rc.canMove(Direction.EAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 0))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.EAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 0))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.EAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d161 & (1l << 10))
-               != 0 && rc.canMove(Direction.NORTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 10))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 10))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d160 & (1l << 59))
-               != 0 && rc.canMove(Direction.WEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 59))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.WEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 59))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.WEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d160 & (1l << 48))
-               != 0 && rc.canMove(Direction.SOUTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 48))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 48))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d160 & (1l << 50))
-               != 0 && rc.canMove(Direction.SOUTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 50))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 50))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d161 & (1l << 9))
-               != 0 && rc.canMove(Direction.NORTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 9))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 9))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d161 & (1l << 11))
-               != 0 && rc.canMove(Direction.NORTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 11))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 11))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             // Profiler.end("bfs best move");
@@ -4664,132 +5723,198 @@ public class Pathfinder {
             notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
             notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
+            Direction bestMove = null;
+            double bestScore = 1e18;
             if(
                (d170 & (1l << 49))
-               != 0 && rc.canMove(Direction.SOUTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 49))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 49))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d171 & (1l << 0))
-               != 0 && rc.canMove(Direction.EAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 0))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.EAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 0))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.EAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d171 & (1l << 10))
-               != 0 && rc.canMove(Direction.NORTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 10))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 10))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d170 & (1l << 59))
-               != 0 && rc.canMove(Direction.WEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 59))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.WEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 59))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.WEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d170 & (1l << 48))
-               != 0 && rc.canMove(Direction.SOUTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 48))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 48))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d170 & (1l << 50))
-               != 0 && rc.canMove(Direction.SOUTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 50))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 50))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d171 & (1l << 9))
-               != 0 && rc.canMove(Direction.NORTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 9))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 9))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d171 & (1l << 11))
-               != 0 && rc.canMove(Direction.NORTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 11))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 11))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             // Profiler.end("bfs best move");
@@ -4848,132 +5973,198 @@ public class Pathfinder {
             notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
             notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
+            Direction bestMove = null;
+            double bestScore = 1e18;
             if(
                (d180 & (1l << 49))
-               != 0 && rc.canMove(Direction.SOUTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 49))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 49))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d181 & (1l << 0))
-               != 0 && rc.canMove(Direction.EAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 0))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.EAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 0))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.EAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d181 & (1l << 10))
-               != 0 && rc.canMove(Direction.NORTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 10))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 10))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d180 & (1l << 59))
-               != 0 && rc.canMove(Direction.WEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 59))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.WEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 59))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.WEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d180 & (1l << 48))
-               != 0 && rc.canMove(Direction.SOUTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 48))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 48))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d180 & (1l << 50))
-               != 0 && rc.canMove(Direction.SOUTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 50))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 50))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d181 & (1l << 9))
-               != 0 && rc.canMove(Direction.NORTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 9))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 9))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d181 & (1l << 11))
-               != 0 && rc.canMove(Direction.NORTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 11))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 11))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             // Profiler.end("bfs best move");
@@ -5032,132 +6223,198 @@ public class Pathfinder {
             notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
             notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
+            Direction bestMove = null;
+            double bestScore = 1e18;
             if(
                (d190 & (1l << 49))
-               != 0 && rc.canMove(Direction.SOUTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 49))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 49))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d191 & (1l << 0))
-               != 0 && rc.canMove(Direction.EAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 0))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.EAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 0))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.EAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d191 & (1l << 10))
-               != 0 && rc.canMove(Direction.NORTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 10))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 10))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d190 & (1l << 59))
-               != 0 && rc.canMove(Direction.WEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 59))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.WEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 59))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.WEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d190 & (1l << 48))
-               != 0 && rc.canMove(Direction.SOUTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 48))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 48))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d190 & (1l << 50))
-               != 0 && rc.canMove(Direction.SOUTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 50))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 50))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d191 & (1l << 9))
-               != 0 && rc.canMove(Direction.NORTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 9))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 9))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d191 & (1l << 11))
-               != 0 && rc.canMove(Direction.NORTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 11))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 11))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             // Profiler.end("bfs best move");
@@ -5216,132 +6473,198 @@ public class Pathfinder {
             notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
             notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
+            Direction bestMove = null;
+            double bestScore = 1e18;
             if(
                (d200 & (1l << 49))
-               != 0 && rc.canMove(Direction.SOUTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 49))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 49))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d201 & (1l << 0))
-               != 0 && rc.canMove(Direction.EAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 0))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.EAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 0))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.EAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d201 & (1l << 10))
-               != 0 && rc.canMove(Direction.NORTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 10))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 10))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d200 & (1l << 59))
-               != 0 && rc.canMove(Direction.WEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 59))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.WEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 59))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.WEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d200 & (1l << 48))
-               != 0 && rc.canMove(Direction.SOUTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 48))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 48))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d200 & (1l << 50))
-               != 0 && rc.canMove(Direction.SOUTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 50))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 50))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d201 & (1l << 9))
-               != 0 && rc.canMove(Direction.NORTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 9))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 9))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d201 & (1l << 11))
-               != 0 && rc.canMove(Direction.NORTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 11))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 11))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             // Profiler.end("bfs best move");
@@ -5400,132 +6723,198 @@ public class Pathfinder {
             notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
             notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
+            Direction bestMove = null;
+            double bestScore = 1e18;
             if(
                (d210 & (1l << 49))
-               != 0 && rc.canMove(Direction.SOUTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 49))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 49))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d211 & (1l << 0))
-               != 0 && rc.canMove(Direction.EAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 0))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.EAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 0))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.EAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d211 & (1l << 10))
-               != 0 && rc.canMove(Direction.NORTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 10))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 10))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d210 & (1l << 59))
-               != 0 && rc.canMove(Direction.WEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 59))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.WEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 59))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.WEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d210 & (1l << 48))
-               != 0 && rc.canMove(Direction.SOUTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 48))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 48))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d210 & (1l << 50))
-               != 0 && rc.canMove(Direction.SOUTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 50))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 50))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d211 & (1l << 9))
-               != 0 && rc.canMove(Direction.NORTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 9))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 9))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d211 & (1l << 11))
-               != 0 && rc.canMove(Direction.NORTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 11))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 11))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             // Profiler.end("bfs best move");
@@ -5584,132 +6973,198 @@ public class Pathfinder {
             notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
             notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
+            Direction bestMove = null;
+            double bestScore = 1e18;
             if(
                (d220 & (1l << 49))
-               != 0 && rc.canMove(Direction.SOUTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 49))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 49))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d221 & (1l << 0))
-               != 0 && rc.canMove(Direction.EAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 0))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.EAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 0))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.EAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d221 & (1l << 10))
-               != 0 && rc.canMove(Direction.NORTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 10))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 10))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d220 & (1l << 59))
-               != 0 && rc.canMove(Direction.WEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 59))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.WEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 59))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.WEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d220 & (1l << 48))
-               != 0 && rc.canMove(Direction.SOUTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 48))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 48))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d220 & (1l << 50))
-               != 0 && rc.canMove(Direction.SOUTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 50))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 50))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d221 & (1l << 9))
-               != 0 && rc.canMove(Direction.NORTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 9))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 9))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d221 & (1l << 11))
-               != 0 && rc.canMove(Direction.NORTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 11))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 11))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             // Profiler.end("bfs best move");
@@ -5768,132 +7223,198 @@ public class Pathfinder {
             notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
             notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
+            Direction bestMove = null;
+            double bestScore = 1e18;
             if(
                (d230 & (1l << 49))
-               != 0 && rc.canMove(Direction.SOUTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 49))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 49))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d231 & (1l << 0))
-               != 0 && rc.canMove(Direction.EAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 0))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.EAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 0))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.EAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d231 & (1l << 10))
-               != 0 && rc.canMove(Direction.NORTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 10))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 10))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d230 & (1l << 59))
-               != 0 && rc.canMove(Direction.WEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 59))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.WEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 59))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.WEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d230 & (1l << 48))
-               != 0 && rc.canMove(Direction.SOUTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 48))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 48))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d230 & (1l << 50))
-               != 0 && rc.canMove(Direction.SOUTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 50))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 50))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d231 & (1l << 9))
-               != 0 && rc.canMove(Direction.NORTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 9))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 9))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d231 & (1l << 11))
-               != 0 && rc.canMove(Direction.NORTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 11))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 11))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             // Profiler.end("bfs best move");
@@ -5952,132 +7473,198 @@ public class Pathfinder {
             notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
             notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
+            Direction bestMove = null;
+            double bestScore = 1e18;
             if(
                (d240 & (1l << 49))
-               != 0 && rc.canMove(Direction.SOUTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 49))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 49))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d241 & (1l << 0))
-               != 0 && rc.canMove(Direction.EAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.EAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 0))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.EAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 0))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.EAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d241 & (1l << 10))
-               != 0 && rc.canMove(Direction.NORTH)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTH);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 10))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTH;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 10))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTH;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d240 & (1l << 59))
-               != 0 && rc.canMove(Direction.WEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.WEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 59))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.WEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 59))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.WEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d240 & (1l << 48))
-               != 0 && rc.canMove(Direction.SOUTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 48))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 48))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d240 & (1l << 50))
-               != 0 && rc.canMove(Direction.SOUTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.SOUTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent0 & (1l << 50))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.SOUTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent0 & (1l << 50))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.SOUTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d241 & (1l << 9))
-               != 0 && rc.canMove(Direction.NORTHWEST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHWEST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 9))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHWEST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 9))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHWEST;
+                        bestScore = score;
+                    }
                 }
             }
             if(
                (d241 & (1l << 11))
-               != 0 && rc.canMove(Direction.NORTHEAST)) {
+               != 0) {
                 var nextLoc = loc.add(Direction.NORTHEAST);
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   (notWallAdjacent1 & (1l << 11))
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = Direction.NORTHEAST;
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       (notWallAdjacent1 & (1l << 11))
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = Direction.NORTHEAST;
+                        bestScore = score;
+                    }
                 }
             }
             // Profiler.end("bfs best move");

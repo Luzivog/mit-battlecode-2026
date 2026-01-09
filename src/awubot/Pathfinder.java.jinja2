@@ -404,7 +404,12 @@ public class Pathfinder {
     public static void makeMove(Direction dir) throws GameActionException {
         if(dir == Direction.CENTER) return;
         if(dir != rc.getDirection()) turn(dir);
-        moveForward();
+        var nextLoc = rc.getLocation().add(dir);
+        if(rc.senseMapInfo(nextLoc).isDirt()) {
+            if(rc.isActionReady()) rc.removeDirt(nextLoc);
+            else return;
+        }
+        if(rc.canMoveForward()) moveForward();
     }
 
     public static void makeMove(MapLocation target) throws GameActionException {
@@ -439,7 +444,7 @@ public class Pathfinder {
 
         // bfs
         Profiler.begin();
-        CellTracker.computeLocalPassable();
+        CellTracker.computeLocalBfsMasks();
         var loc = rc.getLocation();
         // d{i}0 + d{i}1 is the mask of reachable within i steps
         long d00 = 0, d01 = 0;
@@ -458,8 +463,6 @@ public class Pathfinder {
         }
         {% endmacro %}
         {{ writePos("bug.pos", 0) }}
-        Direction bestMove = null;
-        double bestScore = 1e18;
         {% for i in range(1, MAX_PATH) %}
         // Profiler.begin();
         long d{{i}}0 = d{{i - 1}}0, d{{i}}1 = d{{i - 1}}1;
@@ -497,6 +500,8 @@ public class Pathfinder {
             notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
             notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
+            Direction bestMove = null;
+            double bestScore = 1e18;
             {% for dir, off in [
                                 ("Direction.SOUTH", 49),
                                 ("Direction.EAST", 61),
@@ -513,22 +518,30 @@ public class Pathfinder {
                {% else %}
                (d{{i}}1 & (1l << {{off - 61}}))
                {% endif %}
-               != 0 && rc.canMove({{dir}})) {
+               != 0) {
                 var nextLoc = loc.add({{dir}});
-                double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                if(
-                   {% if off < 61 %}
-                   (notWallAdjacent0 & (1l << {{off}}))
-                   {% else %}
-                   (notWallAdjacent1 & (1l << {{off - 61}}))
-                   {% endif %}
-                   != 0
-                   ) {
-                    score /= 2;
-                }
-                if(score < bestScore) {
-                    bestMove = {{dir}};
-                    bestScore = score;
+                boolean isDirt = false;
+                if(rc.canMove({{dir}}) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       {% if off < 61 %}
+                       (notWallAdjacent0 & (1l << {{off}}))
+                       {% else %}
+                       (notWallAdjacent1 & (1l << {{off - 61}}))
+                       {% endif %}
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = {{dir}};
+                        bestScore = score;
+                    }
                 }
             }
             {% endfor %}

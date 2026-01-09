@@ -7,66 +7,66 @@ import static awubot.util.Util.*;
 import static awubot.Game.*;
 
 public class CellTracker {
-    static long seen0, seen0Reversed;
-    static long seen1, seen1Reversed;
-    static long seen2, seen2Reversed;
-    static long seen3, seen3Reversed;
-    static long seen4, seen4Reversed;
-    static long seen5, seen5Reversed;
-    static long seen6, seen6Reversed;
-    static long seen7, seen7Reversed;
-    static long seen8, seen8Reversed;
-    static long seen9, seen9Reversed;
-    static long seen10, seen10Reversed;
-    static long seen11, seen11Reversed;
-    static long seen12, seen12Reversed;
-    static long seen13, seen13Reversed;
-    static long seen14, seen14Reversed;
-    static long seen15, seen15Reversed;
-    static long seen16, seen16Reversed;
-    static long seen17, seen17Reversed;
-    static long seen18, seen18Reversed;
-    static long seen19, seen19Reversed;
-    static long seen20, seen20Reversed;
-    static long seen21, seen21Reversed;
-    static long seen22, seen22Reversed;
-    static long seen23, seen23Reversed;
-    static long seen24, seen24Reversed;
-    static long seen25, seen25Reversed;
-    static long seen26, seen26Reversed;
-    static long seen27, seen27Reversed;
-    static long seen28, seen28Reversed;
-    static long seen29, seen29Reversed;
-    static long seen30, seen30Reversed;
-    static long seen31, seen31Reversed;
-    static long seen32, seen32Reversed;
-    static long seen33, seen33Reversed;
-    static long seen34, seen34Reversed;
-    static long seen35, seen35Reversed;
-    static long seen36, seen36Reversed;
-    static long seen37, seen37Reversed;
-    static long seen38, seen38Reversed;
-    static long seen39, seen39Reversed;
-    static long seen40, seen40Reversed;
-    static long seen41, seen41Reversed;
-    static long seen42, seen42Reversed;
-    static long seen43, seen43Reversed;
-    static long seen44, seen44Reversed;
-    static long seen45, seen45Reversed;
-    static long seen46, seen46Reversed;
-    static long seen47, seen47Reversed;
-    static long seen48, seen48Reversed;
-    static long seen49, seen49Reversed;
-    static long seen50, seen50Reversed;
-    static long seen51, seen51Reversed;
-    static long seen52, seen52Reversed;
-    static long seen53, seen53Reversed;
-    static long seen54, seen54Reversed;
-    static long seen55, seen55Reversed;
-    static long seen56, seen56Reversed;
-    static long seen57, seen57Reversed;
-    static long seen58, seen58Reversed;
-    static long seen59, seen59Reversed;
+    static long seen0;
+    static long seen1;
+    static long seen2;
+    static long seen3;
+    static long seen4;
+    static long seen5;
+    static long seen6;
+    static long seen7;
+    static long seen8;
+    static long seen9;
+    static long seen10;
+    static long seen11;
+    static long seen12;
+    static long seen13;
+    static long seen14;
+    static long seen15;
+    static long seen16;
+    static long seen17;
+    static long seen18;
+    static long seen19;
+    static long seen20;
+    static long seen21;
+    static long seen22;
+    static long seen23;
+    static long seen24;
+    static long seen25;
+    static long seen26;
+    static long seen27;
+    static long seen28;
+    static long seen29;
+    static long seen30;
+    static long seen31;
+    static long seen32;
+    static long seen33;
+    static long seen34;
+    static long seen35;
+    static long seen36;
+    static long seen37;
+    static long seen38;
+    static long seen39;
+    static long seen40;
+    static long seen41;
+    static long seen42;
+    static long seen43;
+    static long seen44;
+    static long seen45;
+    static long seen46;
+    static long seen47;
+    static long seen48;
+    static long seen49;
+    static long seen50;
+    static long seen51;
+    static long seen52;
+    static long seen53;
+    static long seen54;
+    static long seen55;
+    static long seen56;
+    static long seen57;
+    static long seen58;
+    static long seen59;
     public static boolean isSeen(MapLocation loc) {
         switch(loc.y) {
             case 0 -> {
@@ -254,66 +254,66 @@ public class CellTracker {
             }
         }
     }
-    static long passable0, passable0Reversed;
-    static long passable1, passable1Reversed;
-    static long passable2, passable2Reversed;
-    static long passable3, passable3Reversed;
-    static long passable4, passable4Reversed;
-    static long passable5, passable5Reversed;
-    static long passable6, passable6Reversed;
-    static long passable7, passable7Reversed;
-    static long passable8, passable8Reversed;
-    static long passable9, passable9Reversed;
-    static long passable10, passable10Reversed;
-    static long passable11, passable11Reversed;
-    static long passable12, passable12Reversed;
-    static long passable13, passable13Reversed;
-    static long passable14, passable14Reversed;
-    static long passable15, passable15Reversed;
-    static long passable16, passable16Reversed;
-    static long passable17, passable17Reversed;
-    static long passable18, passable18Reversed;
-    static long passable19, passable19Reversed;
-    static long passable20, passable20Reversed;
-    static long passable21, passable21Reversed;
-    static long passable22, passable22Reversed;
-    static long passable23, passable23Reversed;
-    static long passable24, passable24Reversed;
-    static long passable25, passable25Reversed;
-    static long passable26, passable26Reversed;
-    static long passable27, passable27Reversed;
-    static long passable28, passable28Reversed;
-    static long passable29, passable29Reversed;
-    static long passable30, passable30Reversed;
-    static long passable31, passable31Reversed;
-    static long passable32, passable32Reversed;
-    static long passable33, passable33Reversed;
-    static long passable34, passable34Reversed;
-    static long passable35, passable35Reversed;
-    static long passable36, passable36Reversed;
-    static long passable37, passable37Reversed;
-    static long passable38, passable38Reversed;
-    static long passable39, passable39Reversed;
-    static long passable40, passable40Reversed;
-    static long passable41, passable41Reversed;
-    static long passable42, passable42Reversed;
-    static long passable43, passable43Reversed;
-    static long passable44, passable44Reversed;
-    static long passable45, passable45Reversed;
-    static long passable46, passable46Reversed;
-    static long passable47, passable47Reversed;
-    static long passable48, passable48Reversed;
-    static long passable49, passable49Reversed;
-    static long passable50, passable50Reversed;
-    static long passable51, passable51Reversed;
-    static long passable52, passable52Reversed;
-    static long passable53, passable53Reversed;
-    static long passable54, passable54Reversed;
-    static long passable55, passable55Reversed;
-    static long passable56, passable56Reversed;
-    static long passable57, passable57Reversed;
-    static long passable58, passable58Reversed;
-    static long passable59, passable59Reversed;
+    static long passable0;
+    static long passable1;
+    static long passable2;
+    static long passable3;
+    static long passable4;
+    static long passable5;
+    static long passable6;
+    static long passable7;
+    static long passable8;
+    static long passable9;
+    static long passable10;
+    static long passable11;
+    static long passable12;
+    static long passable13;
+    static long passable14;
+    static long passable15;
+    static long passable16;
+    static long passable17;
+    static long passable18;
+    static long passable19;
+    static long passable20;
+    static long passable21;
+    static long passable22;
+    static long passable23;
+    static long passable24;
+    static long passable25;
+    static long passable26;
+    static long passable27;
+    static long passable28;
+    static long passable29;
+    static long passable30;
+    static long passable31;
+    static long passable32;
+    static long passable33;
+    static long passable34;
+    static long passable35;
+    static long passable36;
+    static long passable37;
+    static long passable38;
+    static long passable39;
+    static long passable40;
+    static long passable41;
+    static long passable42;
+    static long passable43;
+    static long passable44;
+    static long passable45;
+    static long passable46;
+    static long passable47;
+    static long passable48;
+    static long passable49;
+    static long passable50;
+    static long passable51;
+    static long passable52;
+    static long passable53;
+    static long passable54;
+    static long passable55;
+    static long passable56;
+    static long passable57;
+    static long passable58;
+    static long passable59;
     public static boolean isPassable(MapLocation loc) {
         switch(loc.y) {
             case 0 -> {
@@ -501,6 +501,253 @@ public class CellTracker {
             }
         }
     }
+    static long dirt0;
+    static long dirt1;
+    static long dirt2;
+    static long dirt3;
+    static long dirt4;
+    static long dirt5;
+    static long dirt6;
+    static long dirt7;
+    static long dirt8;
+    static long dirt9;
+    static long dirt10;
+    static long dirt11;
+    static long dirt12;
+    static long dirt13;
+    static long dirt14;
+    static long dirt15;
+    static long dirt16;
+    static long dirt17;
+    static long dirt18;
+    static long dirt19;
+    static long dirt20;
+    static long dirt21;
+    static long dirt22;
+    static long dirt23;
+    static long dirt24;
+    static long dirt25;
+    static long dirt26;
+    static long dirt27;
+    static long dirt28;
+    static long dirt29;
+    static long dirt30;
+    static long dirt31;
+    static long dirt32;
+    static long dirt33;
+    static long dirt34;
+    static long dirt35;
+    static long dirt36;
+    static long dirt37;
+    static long dirt38;
+    static long dirt39;
+    static long dirt40;
+    static long dirt41;
+    static long dirt42;
+    static long dirt43;
+    static long dirt44;
+    static long dirt45;
+    static long dirt46;
+    static long dirt47;
+    static long dirt48;
+    static long dirt49;
+    static long dirt50;
+    static long dirt51;
+    static long dirt52;
+    static long dirt53;
+    static long dirt54;
+    static long dirt55;
+    static long dirt56;
+    static long dirt57;
+    static long dirt58;
+    static long dirt59;
+    public static boolean isDirt(MapLocation loc) {
+        switch(loc.y) {
+            case 0 -> {
+                return (dirt0 & (1l << loc.x)) != 0;
+            }
+            case 1 -> {
+                return (dirt1 & (1l << loc.x)) != 0;
+            }
+            case 2 -> {
+                return (dirt2 & (1l << loc.x)) != 0;
+            }
+            case 3 -> {
+                return (dirt3 & (1l << loc.x)) != 0;
+            }
+            case 4 -> {
+                return (dirt4 & (1l << loc.x)) != 0;
+            }
+            case 5 -> {
+                return (dirt5 & (1l << loc.x)) != 0;
+            }
+            case 6 -> {
+                return (dirt6 & (1l << loc.x)) != 0;
+            }
+            case 7 -> {
+                return (dirt7 & (1l << loc.x)) != 0;
+            }
+            case 8 -> {
+                return (dirt8 & (1l << loc.x)) != 0;
+            }
+            case 9 -> {
+                return (dirt9 & (1l << loc.x)) != 0;
+            }
+            case 10 -> {
+                return (dirt10 & (1l << loc.x)) != 0;
+            }
+            case 11 -> {
+                return (dirt11 & (1l << loc.x)) != 0;
+            }
+            case 12 -> {
+                return (dirt12 & (1l << loc.x)) != 0;
+            }
+            case 13 -> {
+                return (dirt13 & (1l << loc.x)) != 0;
+            }
+            case 14 -> {
+                return (dirt14 & (1l << loc.x)) != 0;
+            }
+            case 15 -> {
+                return (dirt15 & (1l << loc.x)) != 0;
+            }
+            case 16 -> {
+                return (dirt16 & (1l << loc.x)) != 0;
+            }
+            case 17 -> {
+                return (dirt17 & (1l << loc.x)) != 0;
+            }
+            case 18 -> {
+                return (dirt18 & (1l << loc.x)) != 0;
+            }
+            case 19 -> {
+                return (dirt19 & (1l << loc.x)) != 0;
+            }
+            case 20 -> {
+                return (dirt20 & (1l << loc.x)) != 0;
+            }
+            case 21 -> {
+                return (dirt21 & (1l << loc.x)) != 0;
+            }
+            case 22 -> {
+                return (dirt22 & (1l << loc.x)) != 0;
+            }
+            case 23 -> {
+                return (dirt23 & (1l << loc.x)) != 0;
+            }
+            case 24 -> {
+                return (dirt24 & (1l << loc.x)) != 0;
+            }
+            case 25 -> {
+                return (dirt25 & (1l << loc.x)) != 0;
+            }
+            case 26 -> {
+                return (dirt26 & (1l << loc.x)) != 0;
+            }
+            case 27 -> {
+                return (dirt27 & (1l << loc.x)) != 0;
+            }
+            case 28 -> {
+                return (dirt28 & (1l << loc.x)) != 0;
+            }
+            case 29 -> {
+                return (dirt29 & (1l << loc.x)) != 0;
+            }
+            case 30 -> {
+                return (dirt30 & (1l << loc.x)) != 0;
+            }
+            case 31 -> {
+                return (dirt31 & (1l << loc.x)) != 0;
+            }
+            case 32 -> {
+                return (dirt32 & (1l << loc.x)) != 0;
+            }
+            case 33 -> {
+                return (dirt33 & (1l << loc.x)) != 0;
+            }
+            case 34 -> {
+                return (dirt34 & (1l << loc.x)) != 0;
+            }
+            case 35 -> {
+                return (dirt35 & (1l << loc.x)) != 0;
+            }
+            case 36 -> {
+                return (dirt36 & (1l << loc.x)) != 0;
+            }
+            case 37 -> {
+                return (dirt37 & (1l << loc.x)) != 0;
+            }
+            case 38 -> {
+                return (dirt38 & (1l << loc.x)) != 0;
+            }
+            case 39 -> {
+                return (dirt39 & (1l << loc.x)) != 0;
+            }
+            case 40 -> {
+                return (dirt40 & (1l << loc.x)) != 0;
+            }
+            case 41 -> {
+                return (dirt41 & (1l << loc.x)) != 0;
+            }
+            case 42 -> {
+                return (dirt42 & (1l << loc.x)) != 0;
+            }
+            case 43 -> {
+                return (dirt43 & (1l << loc.x)) != 0;
+            }
+            case 44 -> {
+                return (dirt44 & (1l << loc.x)) != 0;
+            }
+            case 45 -> {
+                return (dirt45 & (1l << loc.x)) != 0;
+            }
+            case 46 -> {
+                return (dirt46 & (1l << loc.x)) != 0;
+            }
+            case 47 -> {
+                return (dirt47 & (1l << loc.x)) != 0;
+            }
+            case 48 -> {
+                return (dirt48 & (1l << loc.x)) != 0;
+            }
+            case 49 -> {
+                return (dirt49 & (1l << loc.x)) != 0;
+            }
+            case 50 -> {
+                return (dirt50 & (1l << loc.x)) != 0;
+            }
+            case 51 -> {
+                return (dirt51 & (1l << loc.x)) != 0;
+            }
+            case 52 -> {
+                return (dirt52 & (1l << loc.x)) != 0;
+            }
+            case 53 -> {
+                return (dirt53 & (1l << loc.x)) != 0;
+            }
+            case 54 -> {
+                return (dirt54 & (1l << loc.x)) != 0;
+            }
+            case 55 -> {
+                return (dirt55 & (1l << loc.x)) != 0;
+            }
+            case 56 -> {
+                return (dirt56 & (1l << loc.x)) != 0;
+            }
+            case 57 -> {
+                return (dirt57 & (1l << loc.x)) != 0;
+            }
+            case 58 -> {
+                return (dirt58 & (1l << loc.x)) != 0;
+            }
+            case 59 -> {
+                return (dirt59 & (1l << loc.x)) != 0;
+            }
+            default -> {
+                return false;
+            }
+        }
+    }
 
     public static void storeCell(MapInfo info) throws GameActionException {
         var loc = info.getMapLocation();
@@ -508,243 +755,303 @@ public class CellTracker {
         switch(loc.y) {
             case 0 -> {
                 seen0 |= 1l << loc.x;
-                if(info.isPassable()) passable0 |= 1l << loc.x;
+                if(!info.isWall()) passable0 |= 1l << loc.x;
+                if(info.isDirt()) dirt0 |= 1l << loc.x;
             }
             case 1 -> {
                 seen1 |= 1l << loc.x;
-                if(info.isPassable()) passable1 |= 1l << loc.x;
+                if(!info.isWall()) passable1 |= 1l << loc.x;
+                if(info.isDirt()) dirt1 |= 1l << loc.x;
             }
             case 2 -> {
                 seen2 |= 1l << loc.x;
-                if(info.isPassable()) passable2 |= 1l << loc.x;
+                if(!info.isWall()) passable2 |= 1l << loc.x;
+                if(info.isDirt()) dirt2 |= 1l << loc.x;
             }
             case 3 -> {
                 seen3 |= 1l << loc.x;
-                if(info.isPassable()) passable3 |= 1l << loc.x;
+                if(!info.isWall()) passable3 |= 1l << loc.x;
+                if(info.isDirt()) dirt3 |= 1l << loc.x;
             }
             case 4 -> {
                 seen4 |= 1l << loc.x;
-                if(info.isPassable()) passable4 |= 1l << loc.x;
+                if(!info.isWall()) passable4 |= 1l << loc.x;
+                if(info.isDirt()) dirt4 |= 1l << loc.x;
             }
             case 5 -> {
                 seen5 |= 1l << loc.x;
-                if(info.isPassable()) passable5 |= 1l << loc.x;
+                if(!info.isWall()) passable5 |= 1l << loc.x;
+                if(info.isDirt()) dirt5 |= 1l << loc.x;
             }
             case 6 -> {
                 seen6 |= 1l << loc.x;
-                if(info.isPassable()) passable6 |= 1l << loc.x;
+                if(!info.isWall()) passable6 |= 1l << loc.x;
+                if(info.isDirt()) dirt6 |= 1l << loc.x;
             }
             case 7 -> {
                 seen7 |= 1l << loc.x;
-                if(info.isPassable()) passable7 |= 1l << loc.x;
+                if(!info.isWall()) passable7 |= 1l << loc.x;
+                if(info.isDirt()) dirt7 |= 1l << loc.x;
             }
             case 8 -> {
                 seen8 |= 1l << loc.x;
-                if(info.isPassable()) passable8 |= 1l << loc.x;
+                if(!info.isWall()) passable8 |= 1l << loc.x;
+                if(info.isDirt()) dirt8 |= 1l << loc.x;
             }
             case 9 -> {
                 seen9 |= 1l << loc.x;
-                if(info.isPassable()) passable9 |= 1l << loc.x;
+                if(!info.isWall()) passable9 |= 1l << loc.x;
+                if(info.isDirt()) dirt9 |= 1l << loc.x;
             }
             case 10 -> {
                 seen10 |= 1l << loc.x;
-                if(info.isPassable()) passable10 |= 1l << loc.x;
+                if(!info.isWall()) passable10 |= 1l << loc.x;
+                if(info.isDirt()) dirt10 |= 1l << loc.x;
             }
             case 11 -> {
                 seen11 |= 1l << loc.x;
-                if(info.isPassable()) passable11 |= 1l << loc.x;
+                if(!info.isWall()) passable11 |= 1l << loc.x;
+                if(info.isDirt()) dirt11 |= 1l << loc.x;
             }
             case 12 -> {
                 seen12 |= 1l << loc.x;
-                if(info.isPassable()) passable12 |= 1l << loc.x;
+                if(!info.isWall()) passable12 |= 1l << loc.x;
+                if(info.isDirt()) dirt12 |= 1l << loc.x;
             }
             case 13 -> {
                 seen13 |= 1l << loc.x;
-                if(info.isPassable()) passable13 |= 1l << loc.x;
+                if(!info.isWall()) passable13 |= 1l << loc.x;
+                if(info.isDirt()) dirt13 |= 1l << loc.x;
             }
             case 14 -> {
                 seen14 |= 1l << loc.x;
-                if(info.isPassable()) passable14 |= 1l << loc.x;
+                if(!info.isWall()) passable14 |= 1l << loc.x;
+                if(info.isDirt()) dirt14 |= 1l << loc.x;
             }
             case 15 -> {
                 seen15 |= 1l << loc.x;
-                if(info.isPassable()) passable15 |= 1l << loc.x;
+                if(!info.isWall()) passable15 |= 1l << loc.x;
+                if(info.isDirt()) dirt15 |= 1l << loc.x;
             }
             case 16 -> {
                 seen16 |= 1l << loc.x;
-                if(info.isPassable()) passable16 |= 1l << loc.x;
+                if(!info.isWall()) passable16 |= 1l << loc.x;
+                if(info.isDirt()) dirt16 |= 1l << loc.x;
             }
             case 17 -> {
                 seen17 |= 1l << loc.x;
-                if(info.isPassable()) passable17 |= 1l << loc.x;
+                if(!info.isWall()) passable17 |= 1l << loc.x;
+                if(info.isDirt()) dirt17 |= 1l << loc.x;
             }
             case 18 -> {
                 seen18 |= 1l << loc.x;
-                if(info.isPassable()) passable18 |= 1l << loc.x;
+                if(!info.isWall()) passable18 |= 1l << loc.x;
+                if(info.isDirt()) dirt18 |= 1l << loc.x;
             }
             case 19 -> {
                 seen19 |= 1l << loc.x;
-                if(info.isPassable()) passable19 |= 1l << loc.x;
+                if(!info.isWall()) passable19 |= 1l << loc.x;
+                if(info.isDirt()) dirt19 |= 1l << loc.x;
             }
             case 20 -> {
                 seen20 |= 1l << loc.x;
-                if(info.isPassable()) passable20 |= 1l << loc.x;
+                if(!info.isWall()) passable20 |= 1l << loc.x;
+                if(info.isDirt()) dirt20 |= 1l << loc.x;
             }
             case 21 -> {
                 seen21 |= 1l << loc.x;
-                if(info.isPassable()) passable21 |= 1l << loc.x;
+                if(!info.isWall()) passable21 |= 1l << loc.x;
+                if(info.isDirt()) dirt21 |= 1l << loc.x;
             }
             case 22 -> {
                 seen22 |= 1l << loc.x;
-                if(info.isPassable()) passable22 |= 1l << loc.x;
+                if(!info.isWall()) passable22 |= 1l << loc.x;
+                if(info.isDirt()) dirt22 |= 1l << loc.x;
             }
             case 23 -> {
                 seen23 |= 1l << loc.x;
-                if(info.isPassable()) passable23 |= 1l << loc.x;
+                if(!info.isWall()) passable23 |= 1l << loc.x;
+                if(info.isDirt()) dirt23 |= 1l << loc.x;
             }
             case 24 -> {
                 seen24 |= 1l << loc.x;
-                if(info.isPassable()) passable24 |= 1l << loc.x;
+                if(!info.isWall()) passable24 |= 1l << loc.x;
+                if(info.isDirt()) dirt24 |= 1l << loc.x;
             }
             case 25 -> {
                 seen25 |= 1l << loc.x;
-                if(info.isPassable()) passable25 |= 1l << loc.x;
+                if(!info.isWall()) passable25 |= 1l << loc.x;
+                if(info.isDirt()) dirt25 |= 1l << loc.x;
             }
             case 26 -> {
                 seen26 |= 1l << loc.x;
-                if(info.isPassable()) passable26 |= 1l << loc.x;
+                if(!info.isWall()) passable26 |= 1l << loc.x;
+                if(info.isDirt()) dirt26 |= 1l << loc.x;
             }
             case 27 -> {
                 seen27 |= 1l << loc.x;
-                if(info.isPassable()) passable27 |= 1l << loc.x;
+                if(!info.isWall()) passable27 |= 1l << loc.x;
+                if(info.isDirt()) dirt27 |= 1l << loc.x;
             }
             case 28 -> {
                 seen28 |= 1l << loc.x;
-                if(info.isPassable()) passable28 |= 1l << loc.x;
+                if(!info.isWall()) passable28 |= 1l << loc.x;
+                if(info.isDirt()) dirt28 |= 1l << loc.x;
             }
             case 29 -> {
                 seen29 |= 1l << loc.x;
-                if(info.isPassable()) passable29 |= 1l << loc.x;
+                if(!info.isWall()) passable29 |= 1l << loc.x;
+                if(info.isDirt()) dirt29 |= 1l << loc.x;
             }
             case 30 -> {
                 seen30 |= 1l << loc.x;
-                if(info.isPassable()) passable30 |= 1l << loc.x;
+                if(!info.isWall()) passable30 |= 1l << loc.x;
+                if(info.isDirt()) dirt30 |= 1l << loc.x;
             }
             case 31 -> {
                 seen31 |= 1l << loc.x;
-                if(info.isPassable()) passable31 |= 1l << loc.x;
+                if(!info.isWall()) passable31 |= 1l << loc.x;
+                if(info.isDirt()) dirt31 |= 1l << loc.x;
             }
             case 32 -> {
                 seen32 |= 1l << loc.x;
-                if(info.isPassable()) passable32 |= 1l << loc.x;
+                if(!info.isWall()) passable32 |= 1l << loc.x;
+                if(info.isDirt()) dirt32 |= 1l << loc.x;
             }
             case 33 -> {
                 seen33 |= 1l << loc.x;
-                if(info.isPassable()) passable33 |= 1l << loc.x;
+                if(!info.isWall()) passable33 |= 1l << loc.x;
+                if(info.isDirt()) dirt33 |= 1l << loc.x;
             }
             case 34 -> {
                 seen34 |= 1l << loc.x;
-                if(info.isPassable()) passable34 |= 1l << loc.x;
+                if(!info.isWall()) passable34 |= 1l << loc.x;
+                if(info.isDirt()) dirt34 |= 1l << loc.x;
             }
             case 35 -> {
                 seen35 |= 1l << loc.x;
-                if(info.isPassable()) passable35 |= 1l << loc.x;
+                if(!info.isWall()) passable35 |= 1l << loc.x;
+                if(info.isDirt()) dirt35 |= 1l << loc.x;
             }
             case 36 -> {
                 seen36 |= 1l << loc.x;
-                if(info.isPassable()) passable36 |= 1l << loc.x;
+                if(!info.isWall()) passable36 |= 1l << loc.x;
+                if(info.isDirt()) dirt36 |= 1l << loc.x;
             }
             case 37 -> {
                 seen37 |= 1l << loc.x;
-                if(info.isPassable()) passable37 |= 1l << loc.x;
+                if(!info.isWall()) passable37 |= 1l << loc.x;
+                if(info.isDirt()) dirt37 |= 1l << loc.x;
             }
             case 38 -> {
                 seen38 |= 1l << loc.x;
-                if(info.isPassable()) passable38 |= 1l << loc.x;
+                if(!info.isWall()) passable38 |= 1l << loc.x;
+                if(info.isDirt()) dirt38 |= 1l << loc.x;
             }
             case 39 -> {
                 seen39 |= 1l << loc.x;
-                if(info.isPassable()) passable39 |= 1l << loc.x;
+                if(!info.isWall()) passable39 |= 1l << loc.x;
+                if(info.isDirt()) dirt39 |= 1l << loc.x;
             }
             case 40 -> {
                 seen40 |= 1l << loc.x;
-                if(info.isPassable()) passable40 |= 1l << loc.x;
+                if(!info.isWall()) passable40 |= 1l << loc.x;
+                if(info.isDirt()) dirt40 |= 1l << loc.x;
             }
             case 41 -> {
                 seen41 |= 1l << loc.x;
-                if(info.isPassable()) passable41 |= 1l << loc.x;
+                if(!info.isWall()) passable41 |= 1l << loc.x;
+                if(info.isDirt()) dirt41 |= 1l << loc.x;
             }
             case 42 -> {
                 seen42 |= 1l << loc.x;
-                if(info.isPassable()) passable42 |= 1l << loc.x;
+                if(!info.isWall()) passable42 |= 1l << loc.x;
+                if(info.isDirt()) dirt42 |= 1l << loc.x;
             }
             case 43 -> {
                 seen43 |= 1l << loc.x;
-                if(info.isPassable()) passable43 |= 1l << loc.x;
+                if(!info.isWall()) passable43 |= 1l << loc.x;
+                if(info.isDirt()) dirt43 |= 1l << loc.x;
             }
             case 44 -> {
                 seen44 |= 1l << loc.x;
-                if(info.isPassable()) passable44 |= 1l << loc.x;
+                if(!info.isWall()) passable44 |= 1l << loc.x;
+                if(info.isDirt()) dirt44 |= 1l << loc.x;
             }
             case 45 -> {
                 seen45 |= 1l << loc.x;
-                if(info.isPassable()) passable45 |= 1l << loc.x;
+                if(!info.isWall()) passable45 |= 1l << loc.x;
+                if(info.isDirt()) dirt45 |= 1l << loc.x;
             }
             case 46 -> {
                 seen46 |= 1l << loc.x;
-                if(info.isPassable()) passable46 |= 1l << loc.x;
+                if(!info.isWall()) passable46 |= 1l << loc.x;
+                if(info.isDirt()) dirt46 |= 1l << loc.x;
             }
             case 47 -> {
                 seen47 |= 1l << loc.x;
-                if(info.isPassable()) passable47 |= 1l << loc.x;
+                if(!info.isWall()) passable47 |= 1l << loc.x;
+                if(info.isDirt()) dirt47 |= 1l << loc.x;
             }
             case 48 -> {
                 seen48 |= 1l << loc.x;
-                if(info.isPassable()) passable48 |= 1l << loc.x;
+                if(!info.isWall()) passable48 |= 1l << loc.x;
+                if(info.isDirt()) dirt48 |= 1l << loc.x;
             }
             case 49 -> {
                 seen49 |= 1l << loc.x;
-                if(info.isPassable()) passable49 |= 1l << loc.x;
+                if(!info.isWall()) passable49 |= 1l << loc.x;
+                if(info.isDirt()) dirt49 |= 1l << loc.x;
             }
             case 50 -> {
                 seen50 |= 1l << loc.x;
-                if(info.isPassable()) passable50 |= 1l << loc.x;
+                if(!info.isWall()) passable50 |= 1l << loc.x;
+                if(info.isDirt()) dirt50 |= 1l << loc.x;
             }
             case 51 -> {
                 seen51 |= 1l << loc.x;
-                if(info.isPassable()) passable51 |= 1l << loc.x;
+                if(!info.isWall()) passable51 |= 1l << loc.x;
+                if(info.isDirt()) dirt51 |= 1l << loc.x;
             }
             case 52 -> {
                 seen52 |= 1l << loc.x;
-                if(info.isPassable()) passable52 |= 1l << loc.x;
+                if(!info.isWall()) passable52 |= 1l << loc.x;
+                if(info.isDirt()) dirt52 |= 1l << loc.x;
             }
             case 53 -> {
                 seen53 |= 1l << loc.x;
-                if(info.isPassable()) passable53 |= 1l << loc.x;
+                if(!info.isWall()) passable53 |= 1l << loc.x;
+                if(info.isDirt()) dirt53 |= 1l << loc.x;
             }
             case 54 -> {
                 seen54 |= 1l << loc.x;
-                if(info.isPassable()) passable54 |= 1l << loc.x;
+                if(!info.isWall()) passable54 |= 1l << loc.x;
+                if(info.isDirt()) dirt54 |= 1l << loc.x;
             }
             case 55 -> {
                 seen55 |= 1l << loc.x;
-                if(info.isPassable()) passable55 |= 1l << loc.x;
+                if(!info.isWall()) passable55 |= 1l << loc.x;
+                if(info.isDirt()) dirt55 |= 1l << loc.x;
             }
             case 56 -> {
                 seen56 |= 1l << loc.x;
-                if(info.isPassable()) passable56 |= 1l << loc.x;
+                if(!info.isWall()) passable56 |= 1l << loc.x;
+                if(info.isDirt()) dirt56 |= 1l << loc.x;
             }
             case 57 -> {
                 seen57 |= 1l << loc.x;
-                if(info.isPassable()) passable57 |= 1l << loc.x;
+                if(!info.isWall()) passable57 |= 1l << loc.x;
+                if(info.isDirt()) dirt57 |= 1l << loc.x;
             }
             case 58 -> {
                 seen58 |= 1l << loc.x;
-                if(info.isPassable()) passable58 |= 1l << loc.x;
+                if(!info.isWall()) passable58 |= 1l << loc.x;
+                if(info.isDirt()) dirt58 |= 1l << loc.x;
             }
             case 59 -> {
                 seen59 |= 1l << loc.x;
-                if(info.isPassable()) passable59 |= 1l << loc.x;
+                if(!info.isWall()) passable59 |= 1l << loc.x;
+                if(info.isDirt()) dirt59 |= 1l << loc.x;
             }
         }
     }
@@ -2220,12 +2527,3136 @@ public class CellTracker {
     }
 
     public static long localPassable0, localPassable1;
-    static MapLocation localPassablePos = new MapLocation(-1, -1);
-    public static void computeLocalPassable() throws GameActionException {
-        if(rc.getLocation().equals(localPassablePos)) return;
+    public static long localDirt0, localDirt1;
+    private static void computeLocalDirt() {
         var loc = rc.getLocation();
+        localDirt0 = 0;
+        localDirt1 = 0;
+        switch(loc.y) {
+            case 0 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
 
-        localPassablePos = loc;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt0 >> (loc.x - 5)
+                  : dirt0 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt0 >> (loc.x - 5)
+                  : dirt0 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt1 >> (loc.x - 5)
+                  : dirt1 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt2 >> (loc.x - 5)
+                  : dirt2 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt3 >> (loc.x - 5)
+                  : dirt3 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt4 >> (loc.x - 5)
+                  : dirt4 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt5 >> (loc.x - 5)
+                  : dirt5 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 1 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt0 >> (loc.x - 5)
+                  : dirt0 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt1 >> (loc.x - 5)
+                  : dirt1 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt1 >> (loc.x - 5)
+                  : dirt1 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt2 >> (loc.x - 5)
+                  : dirt2 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt3 >> (loc.x - 5)
+                  : dirt3 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt4 >> (loc.x - 5)
+                  : dirt4 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt5 >> (loc.x - 5)
+                  : dirt5 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt6 >> (loc.x - 5)
+                  : dirt6 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 2 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt0 >> (loc.x - 5)
+                  : dirt0 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt1 >> (loc.x - 5)
+                  : dirt1 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt2 >> (loc.x - 5)
+                  : dirt2 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt2 >> (loc.x - 5)
+                  : dirt2 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt3 >> (loc.x - 5)
+                  : dirt3 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt4 >> (loc.x - 5)
+                  : dirt4 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt5 >> (loc.x - 5)
+                  : dirt5 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt6 >> (loc.x - 5)
+                  : dirt6 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt7 >> (loc.x - 5)
+                  : dirt7 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 3 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt0 >> (loc.x - 5)
+                  : dirt0 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt1 >> (loc.x - 5)
+                  : dirt1 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt2 >> (loc.x - 5)
+                  : dirt2 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt3 >> (loc.x - 5)
+                  : dirt3 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt3 >> (loc.x - 5)
+                  : dirt3 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt4 >> (loc.x - 5)
+                  : dirt4 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt5 >> (loc.x - 5)
+                  : dirt5 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt6 >> (loc.x - 5)
+                  : dirt6 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt7 >> (loc.x - 5)
+                  : dirt7 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt8 >> (loc.x - 5)
+                  : dirt8 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 4 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt0 >> (loc.x - 5)
+                  : dirt0 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt1 >> (loc.x - 5)
+                  : dirt1 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt2 >> (loc.x - 5)
+                  : dirt2 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt3 >> (loc.x - 5)
+                  : dirt3 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt4 >> (loc.x - 5)
+                  : dirt4 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt4 >> (loc.x - 5)
+                  : dirt4 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt5 >> (loc.x - 5)
+                  : dirt5 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt6 >> (loc.x - 5)
+                  : dirt6 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt7 >> (loc.x - 5)
+                  : dirt7 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt8 >> (loc.x - 5)
+                  : dirt8 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt9 >> (loc.x - 5)
+                  : dirt9 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 5 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt0 >> (loc.x - 5)
+                  : dirt0 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt1 >> (loc.x - 5)
+                  : dirt1 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt2 >> (loc.x - 5)
+                  : dirt2 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt3 >> (loc.x - 5)
+                  : dirt3 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt4 >> (loc.x - 5)
+                  : dirt4 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt5 >> (loc.x - 5)
+                  : dirt5 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt5 >> (loc.x - 5)
+                  : dirt5 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt6 >> (loc.x - 5)
+                  : dirt6 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt7 >> (loc.x - 5)
+                  : dirt7 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt8 >> (loc.x - 5)
+                  : dirt8 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt9 >> (loc.x - 5)
+                  : dirt9 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt10 >> (loc.x - 5)
+                  : dirt10 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 6 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt1 >> (loc.x - 5)
+                  : dirt1 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt2 >> (loc.x - 5)
+                  : dirt2 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt3 >> (loc.x - 5)
+                  : dirt3 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt4 >> (loc.x - 5)
+                  : dirt4 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt5 >> (loc.x - 5)
+                  : dirt5 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt6 >> (loc.x - 5)
+                  : dirt6 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt6 >> (loc.x - 5)
+                  : dirt6 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt7 >> (loc.x - 5)
+                  : dirt7 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt8 >> (loc.x - 5)
+                  : dirt8 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt9 >> (loc.x - 5)
+                  : dirt9 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt10 >> (loc.x - 5)
+                  : dirt10 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt11 >> (loc.x - 5)
+                  : dirt11 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 7 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt2 >> (loc.x - 5)
+                  : dirt2 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt3 >> (loc.x - 5)
+                  : dirt3 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt4 >> (loc.x - 5)
+                  : dirt4 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt5 >> (loc.x - 5)
+                  : dirt5 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt6 >> (loc.x - 5)
+                  : dirt6 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt7 >> (loc.x - 5)
+                  : dirt7 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt7 >> (loc.x - 5)
+                  : dirt7 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt8 >> (loc.x - 5)
+                  : dirt8 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt9 >> (loc.x - 5)
+                  : dirt9 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt10 >> (loc.x - 5)
+                  : dirt10 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt11 >> (loc.x - 5)
+                  : dirt11 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt12 >> (loc.x - 5)
+                  : dirt12 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 8 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt3 >> (loc.x - 5)
+                  : dirt3 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt4 >> (loc.x - 5)
+                  : dirt4 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt5 >> (loc.x - 5)
+                  : dirt5 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt6 >> (loc.x - 5)
+                  : dirt6 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt7 >> (loc.x - 5)
+                  : dirt7 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt8 >> (loc.x - 5)
+                  : dirt8 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt8 >> (loc.x - 5)
+                  : dirt8 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt9 >> (loc.x - 5)
+                  : dirt9 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt10 >> (loc.x - 5)
+                  : dirt10 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt11 >> (loc.x - 5)
+                  : dirt11 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt12 >> (loc.x - 5)
+                  : dirt12 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt13 >> (loc.x - 5)
+                  : dirt13 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 9 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt4 >> (loc.x - 5)
+                  : dirt4 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt5 >> (loc.x - 5)
+                  : dirt5 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt6 >> (loc.x - 5)
+                  : dirt6 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt7 >> (loc.x - 5)
+                  : dirt7 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt8 >> (loc.x - 5)
+                  : dirt8 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt9 >> (loc.x - 5)
+                  : dirt9 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt9 >> (loc.x - 5)
+                  : dirt9 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt10 >> (loc.x - 5)
+                  : dirt10 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt11 >> (loc.x - 5)
+                  : dirt11 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt12 >> (loc.x - 5)
+                  : dirt12 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt13 >> (loc.x - 5)
+                  : dirt13 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt14 >> (loc.x - 5)
+                  : dirt14 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 10 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt5 >> (loc.x - 5)
+                  : dirt5 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt6 >> (loc.x - 5)
+                  : dirt6 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt7 >> (loc.x - 5)
+                  : dirt7 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt8 >> (loc.x - 5)
+                  : dirt8 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt9 >> (loc.x - 5)
+                  : dirt9 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt10 >> (loc.x - 5)
+                  : dirt10 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt10 >> (loc.x - 5)
+                  : dirt10 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt11 >> (loc.x - 5)
+                  : dirt11 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt12 >> (loc.x - 5)
+                  : dirt12 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt13 >> (loc.x - 5)
+                  : dirt13 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt14 >> (loc.x - 5)
+                  : dirt14 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt15 >> (loc.x - 5)
+                  : dirt15 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 11 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt6 >> (loc.x - 5)
+                  : dirt6 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt7 >> (loc.x - 5)
+                  : dirt7 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt8 >> (loc.x - 5)
+                  : dirt8 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt9 >> (loc.x - 5)
+                  : dirt9 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt10 >> (loc.x - 5)
+                  : dirt10 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt11 >> (loc.x - 5)
+                  : dirt11 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt11 >> (loc.x - 5)
+                  : dirt11 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt12 >> (loc.x - 5)
+                  : dirt12 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt13 >> (loc.x - 5)
+                  : dirt13 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt14 >> (loc.x - 5)
+                  : dirt14 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt15 >> (loc.x - 5)
+                  : dirt15 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt16 >> (loc.x - 5)
+                  : dirt16 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 12 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt7 >> (loc.x - 5)
+                  : dirt7 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt8 >> (loc.x - 5)
+                  : dirt8 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt9 >> (loc.x - 5)
+                  : dirt9 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt10 >> (loc.x - 5)
+                  : dirt10 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt11 >> (loc.x - 5)
+                  : dirt11 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt12 >> (loc.x - 5)
+                  : dirt12 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt12 >> (loc.x - 5)
+                  : dirt12 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt13 >> (loc.x - 5)
+                  : dirt13 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt14 >> (loc.x - 5)
+                  : dirt14 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt15 >> (loc.x - 5)
+                  : dirt15 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt16 >> (loc.x - 5)
+                  : dirt16 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt17 >> (loc.x - 5)
+                  : dirt17 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 13 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt8 >> (loc.x - 5)
+                  : dirt8 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt9 >> (loc.x - 5)
+                  : dirt9 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt10 >> (loc.x - 5)
+                  : dirt10 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt11 >> (loc.x - 5)
+                  : dirt11 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt12 >> (loc.x - 5)
+                  : dirt12 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt13 >> (loc.x - 5)
+                  : dirt13 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt13 >> (loc.x - 5)
+                  : dirt13 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt14 >> (loc.x - 5)
+                  : dirt14 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt15 >> (loc.x - 5)
+                  : dirt15 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt16 >> (loc.x - 5)
+                  : dirt16 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt17 >> (loc.x - 5)
+                  : dirt17 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt18 >> (loc.x - 5)
+                  : dirt18 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 14 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt9 >> (loc.x - 5)
+                  : dirt9 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt10 >> (loc.x - 5)
+                  : dirt10 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt11 >> (loc.x - 5)
+                  : dirt11 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt12 >> (loc.x - 5)
+                  : dirt12 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt13 >> (loc.x - 5)
+                  : dirt13 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt14 >> (loc.x - 5)
+                  : dirt14 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt14 >> (loc.x - 5)
+                  : dirt14 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt15 >> (loc.x - 5)
+                  : dirt15 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt16 >> (loc.x - 5)
+                  : dirt16 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt17 >> (loc.x - 5)
+                  : dirt17 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt18 >> (loc.x - 5)
+                  : dirt18 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt19 >> (loc.x - 5)
+                  : dirt19 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 15 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt10 >> (loc.x - 5)
+                  : dirt10 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt11 >> (loc.x - 5)
+                  : dirt11 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt12 >> (loc.x - 5)
+                  : dirt12 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt13 >> (loc.x - 5)
+                  : dirt13 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt14 >> (loc.x - 5)
+                  : dirt14 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt15 >> (loc.x - 5)
+                  : dirt15 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt15 >> (loc.x - 5)
+                  : dirt15 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt16 >> (loc.x - 5)
+                  : dirt16 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt17 >> (loc.x - 5)
+                  : dirt17 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt18 >> (loc.x - 5)
+                  : dirt18 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt19 >> (loc.x - 5)
+                  : dirt19 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt20 >> (loc.x - 5)
+                  : dirt20 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 16 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt11 >> (loc.x - 5)
+                  : dirt11 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt12 >> (loc.x - 5)
+                  : dirt12 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt13 >> (loc.x - 5)
+                  : dirt13 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt14 >> (loc.x - 5)
+                  : dirt14 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt15 >> (loc.x - 5)
+                  : dirt15 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt16 >> (loc.x - 5)
+                  : dirt16 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt16 >> (loc.x - 5)
+                  : dirt16 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt17 >> (loc.x - 5)
+                  : dirt17 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt18 >> (loc.x - 5)
+                  : dirt18 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt19 >> (loc.x - 5)
+                  : dirt19 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt20 >> (loc.x - 5)
+                  : dirt20 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt21 >> (loc.x - 5)
+                  : dirt21 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 17 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt12 >> (loc.x - 5)
+                  : dirt12 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt13 >> (loc.x - 5)
+                  : dirt13 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt14 >> (loc.x - 5)
+                  : dirt14 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt15 >> (loc.x - 5)
+                  : dirt15 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt16 >> (loc.x - 5)
+                  : dirt16 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt17 >> (loc.x - 5)
+                  : dirt17 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt17 >> (loc.x - 5)
+                  : dirt17 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt18 >> (loc.x - 5)
+                  : dirt18 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt19 >> (loc.x - 5)
+                  : dirt19 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt20 >> (loc.x - 5)
+                  : dirt20 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt21 >> (loc.x - 5)
+                  : dirt21 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt22 >> (loc.x - 5)
+                  : dirt22 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 18 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt13 >> (loc.x - 5)
+                  : dirt13 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt14 >> (loc.x - 5)
+                  : dirt14 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt15 >> (loc.x - 5)
+                  : dirt15 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt16 >> (loc.x - 5)
+                  : dirt16 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt17 >> (loc.x - 5)
+                  : dirt17 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt18 >> (loc.x - 5)
+                  : dirt18 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt18 >> (loc.x - 5)
+                  : dirt18 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt19 >> (loc.x - 5)
+                  : dirt19 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt20 >> (loc.x - 5)
+                  : dirt20 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt21 >> (loc.x - 5)
+                  : dirt21 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt22 >> (loc.x - 5)
+                  : dirt22 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt23 >> (loc.x - 5)
+                  : dirt23 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 19 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt14 >> (loc.x - 5)
+                  : dirt14 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt15 >> (loc.x - 5)
+                  : dirt15 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt16 >> (loc.x - 5)
+                  : dirt16 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt17 >> (loc.x - 5)
+                  : dirt17 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt18 >> (loc.x - 5)
+                  : dirt18 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt19 >> (loc.x - 5)
+                  : dirt19 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt19 >> (loc.x - 5)
+                  : dirt19 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt20 >> (loc.x - 5)
+                  : dirt20 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt21 >> (loc.x - 5)
+                  : dirt21 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt22 >> (loc.x - 5)
+                  : dirt22 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt23 >> (loc.x - 5)
+                  : dirt23 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt24 >> (loc.x - 5)
+                  : dirt24 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 20 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt15 >> (loc.x - 5)
+                  : dirt15 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt16 >> (loc.x - 5)
+                  : dirt16 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt17 >> (loc.x - 5)
+                  : dirt17 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt18 >> (loc.x - 5)
+                  : dirt18 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt19 >> (loc.x - 5)
+                  : dirt19 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt20 >> (loc.x - 5)
+                  : dirt20 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt20 >> (loc.x - 5)
+                  : dirt20 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt21 >> (loc.x - 5)
+                  : dirt21 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt22 >> (loc.x - 5)
+                  : dirt22 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt23 >> (loc.x - 5)
+                  : dirt23 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt24 >> (loc.x - 5)
+                  : dirt24 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt25 >> (loc.x - 5)
+                  : dirt25 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 21 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt16 >> (loc.x - 5)
+                  : dirt16 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt17 >> (loc.x - 5)
+                  : dirt17 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt18 >> (loc.x - 5)
+                  : dirt18 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt19 >> (loc.x - 5)
+                  : dirt19 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt20 >> (loc.x - 5)
+                  : dirt20 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt21 >> (loc.x - 5)
+                  : dirt21 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt21 >> (loc.x - 5)
+                  : dirt21 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt22 >> (loc.x - 5)
+                  : dirt22 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt23 >> (loc.x - 5)
+                  : dirt23 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt24 >> (loc.x - 5)
+                  : dirt24 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt25 >> (loc.x - 5)
+                  : dirt25 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt26 >> (loc.x - 5)
+                  : dirt26 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 22 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt17 >> (loc.x - 5)
+                  : dirt17 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt18 >> (loc.x - 5)
+                  : dirt18 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt19 >> (loc.x - 5)
+                  : dirt19 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt20 >> (loc.x - 5)
+                  : dirt20 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt21 >> (loc.x - 5)
+                  : dirt21 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt22 >> (loc.x - 5)
+                  : dirt22 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt22 >> (loc.x - 5)
+                  : dirt22 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt23 >> (loc.x - 5)
+                  : dirt23 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt24 >> (loc.x - 5)
+                  : dirt24 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt25 >> (loc.x - 5)
+                  : dirt25 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt26 >> (loc.x - 5)
+                  : dirt26 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt27 >> (loc.x - 5)
+                  : dirt27 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 23 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt18 >> (loc.x - 5)
+                  : dirt18 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt19 >> (loc.x - 5)
+                  : dirt19 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt20 >> (loc.x - 5)
+                  : dirt20 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt21 >> (loc.x - 5)
+                  : dirt21 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt22 >> (loc.x - 5)
+                  : dirt22 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt23 >> (loc.x - 5)
+                  : dirt23 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt23 >> (loc.x - 5)
+                  : dirt23 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt24 >> (loc.x - 5)
+                  : dirt24 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt25 >> (loc.x - 5)
+                  : dirt25 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt26 >> (loc.x - 5)
+                  : dirt26 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt27 >> (loc.x - 5)
+                  : dirt27 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt28 >> (loc.x - 5)
+                  : dirt28 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 24 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt19 >> (loc.x - 5)
+                  : dirt19 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt20 >> (loc.x - 5)
+                  : dirt20 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt21 >> (loc.x - 5)
+                  : dirt21 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt22 >> (loc.x - 5)
+                  : dirt22 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt23 >> (loc.x - 5)
+                  : dirt23 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt24 >> (loc.x - 5)
+                  : dirt24 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt24 >> (loc.x - 5)
+                  : dirt24 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt25 >> (loc.x - 5)
+                  : dirt25 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt26 >> (loc.x - 5)
+                  : dirt26 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt27 >> (loc.x - 5)
+                  : dirt27 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt28 >> (loc.x - 5)
+                  : dirt28 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt29 >> (loc.x - 5)
+                  : dirt29 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 25 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt20 >> (loc.x - 5)
+                  : dirt20 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt21 >> (loc.x - 5)
+                  : dirt21 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt22 >> (loc.x - 5)
+                  : dirt22 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt23 >> (loc.x - 5)
+                  : dirt23 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt24 >> (loc.x - 5)
+                  : dirt24 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt25 >> (loc.x - 5)
+                  : dirt25 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt25 >> (loc.x - 5)
+                  : dirt25 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt26 >> (loc.x - 5)
+                  : dirt26 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt27 >> (loc.x - 5)
+                  : dirt27 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt28 >> (loc.x - 5)
+                  : dirt28 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt29 >> (loc.x - 5)
+                  : dirt29 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt30 >> (loc.x - 5)
+                  : dirt30 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 26 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt21 >> (loc.x - 5)
+                  : dirt21 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt22 >> (loc.x - 5)
+                  : dirt22 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt23 >> (loc.x - 5)
+                  : dirt23 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt24 >> (loc.x - 5)
+                  : dirt24 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt25 >> (loc.x - 5)
+                  : dirt25 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt26 >> (loc.x - 5)
+                  : dirt26 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt26 >> (loc.x - 5)
+                  : dirt26 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt27 >> (loc.x - 5)
+                  : dirt27 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt28 >> (loc.x - 5)
+                  : dirt28 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt29 >> (loc.x - 5)
+                  : dirt29 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt30 >> (loc.x - 5)
+                  : dirt30 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt31 >> (loc.x - 5)
+                  : dirt31 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 27 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt22 >> (loc.x - 5)
+                  : dirt22 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt23 >> (loc.x - 5)
+                  : dirt23 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt24 >> (loc.x - 5)
+                  : dirt24 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt25 >> (loc.x - 5)
+                  : dirt25 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt26 >> (loc.x - 5)
+                  : dirt26 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt27 >> (loc.x - 5)
+                  : dirt27 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt27 >> (loc.x - 5)
+                  : dirt27 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt28 >> (loc.x - 5)
+                  : dirt28 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt29 >> (loc.x - 5)
+                  : dirt29 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt30 >> (loc.x - 5)
+                  : dirt30 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt31 >> (loc.x - 5)
+                  : dirt31 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt32 >> (loc.x - 5)
+                  : dirt32 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 28 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt23 >> (loc.x - 5)
+                  : dirt23 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt24 >> (loc.x - 5)
+                  : dirt24 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt25 >> (loc.x - 5)
+                  : dirt25 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt26 >> (loc.x - 5)
+                  : dirt26 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt27 >> (loc.x - 5)
+                  : dirt27 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt28 >> (loc.x - 5)
+                  : dirt28 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt28 >> (loc.x - 5)
+                  : dirt28 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt29 >> (loc.x - 5)
+                  : dirt29 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt30 >> (loc.x - 5)
+                  : dirt30 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt31 >> (loc.x - 5)
+                  : dirt31 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt32 >> (loc.x - 5)
+                  : dirt32 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt33 >> (loc.x - 5)
+                  : dirt33 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 29 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt24 >> (loc.x - 5)
+                  : dirt24 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt25 >> (loc.x - 5)
+                  : dirt25 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt26 >> (loc.x - 5)
+                  : dirt26 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt27 >> (loc.x - 5)
+                  : dirt27 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt28 >> (loc.x - 5)
+                  : dirt28 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt29 >> (loc.x - 5)
+                  : dirt29 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt29 >> (loc.x - 5)
+                  : dirt29 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt30 >> (loc.x - 5)
+                  : dirt30 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt31 >> (loc.x - 5)
+                  : dirt31 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt32 >> (loc.x - 5)
+                  : dirt32 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt33 >> (loc.x - 5)
+                  : dirt33 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt34 >> (loc.x - 5)
+                  : dirt34 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 30 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt25 >> (loc.x - 5)
+                  : dirt25 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt26 >> (loc.x - 5)
+                  : dirt26 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt27 >> (loc.x - 5)
+                  : dirt27 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt28 >> (loc.x - 5)
+                  : dirt28 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt29 >> (loc.x - 5)
+                  : dirt29 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt30 >> (loc.x - 5)
+                  : dirt30 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt30 >> (loc.x - 5)
+                  : dirt30 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt31 >> (loc.x - 5)
+                  : dirt31 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt32 >> (loc.x - 5)
+                  : dirt32 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt33 >> (loc.x - 5)
+                  : dirt33 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt34 >> (loc.x - 5)
+                  : dirt34 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt35 >> (loc.x - 5)
+                  : dirt35 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 31 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt26 >> (loc.x - 5)
+                  : dirt26 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt27 >> (loc.x - 5)
+                  : dirt27 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt28 >> (loc.x - 5)
+                  : dirt28 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt29 >> (loc.x - 5)
+                  : dirt29 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt30 >> (loc.x - 5)
+                  : dirt30 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt31 >> (loc.x - 5)
+                  : dirt31 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt31 >> (loc.x - 5)
+                  : dirt31 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt32 >> (loc.x - 5)
+                  : dirt32 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt33 >> (loc.x - 5)
+                  : dirt33 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt34 >> (loc.x - 5)
+                  : dirt34 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt35 >> (loc.x - 5)
+                  : dirt35 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt36 >> (loc.x - 5)
+                  : dirt36 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 32 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt27 >> (loc.x - 5)
+                  : dirt27 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt28 >> (loc.x - 5)
+                  : dirt28 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt29 >> (loc.x - 5)
+                  : dirt29 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt30 >> (loc.x - 5)
+                  : dirt30 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt31 >> (loc.x - 5)
+                  : dirt31 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt32 >> (loc.x - 5)
+                  : dirt32 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt32 >> (loc.x - 5)
+                  : dirt32 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt33 >> (loc.x - 5)
+                  : dirt33 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt34 >> (loc.x - 5)
+                  : dirt34 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt35 >> (loc.x - 5)
+                  : dirt35 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt36 >> (loc.x - 5)
+                  : dirt36 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt37 >> (loc.x - 5)
+                  : dirt37 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 33 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt28 >> (loc.x - 5)
+                  : dirt28 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt29 >> (loc.x - 5)
+                  : dirt29 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt30 >> (loc.x - 5)
+                  : dirt30 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt31 >> (loc.x - 5)
+                  : dirt31 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt32 >> (loc.x - 5)
+                  : dirt32 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt33 >> (loc.x - 5)
+                  : dirt33 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt33 >> (loc.x - 5)
+                  : dirt33 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt34 >> (loc.x - 5)
+                  : dirt34 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt35 >> (loc.x - 5)
+                  : dirt35 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt36 >> (loc.x - 5)
+                  : dirt36 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt37 >> (loc.x - 5)
+                  : dirt37 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt38 >> (loc.x - 5)
+                  : dirt38 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 34 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt29 >> (loc.x - 5)
+                  : dirt29 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt30 >> (loc.x - 5)
+                  : dirt30 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt31 >> (loc.x - 5)
+                  : dirt31 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt32 >> (loc.x - 5)
+                  : dirt32 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt33 >> (loc.x - 5)
+                  : dirt33 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt34 >> (loc.x - 5)
+                  : dirt34 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt34 >> (loc.x - 5)
+                  : dirt34 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt35 >> (loc.x - 5)
+                  : dirt35 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt36 >> (loc.x - 5)
+                  : dirt36 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt37 >> (loc.x - 5)
+                  : dirt37 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt38 >> (loc.x - 5)
+                  : dirt38 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt39 >> (loc.x - 5)
+                  : dirt39 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 35 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt30 >> (loc.x - 5)
+                  : dirt30 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt31 >> (loc.x - 5)
+                  : dirt31 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt32 >> (loc.x - 5)
+                  : dirt32 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt33 >> (loc.x - 5)
+                  : dirt33 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt34 >> (loc.x - 5)
+                  : dirt34 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt35 >> (loc.x - 5)
+                  : dirt35 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt35 >> (loc.x - 5)
+                  : dirt35 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt36 >> (loc.x - 5)
+                  : dirt36 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt37 >> (loc.x - 5)
+                  : dirt37 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt38 >> (loc.x - 5)
+                  : dirt38 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt39 >> (loc.x - 5)
+                  : dirt39 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt40 >> (loc.x - 5)
+                  : dirt40 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 36 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt31 >> (loc.x - 5)
+                  : dirt31 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt32 >> (loc.x - 5)
+                  : dirt32 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt33 >> (loc.x - 5)
+                  : dirt33 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt34 >> (loc.x - 5)
+                  : dirt34 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt35 >> (loc.x - 5)
+                  : dirt35 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt36 >> (loc.x - 5)
+                  : dirt36 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt36 >> (loc.x - 5)
+                  : dirt36 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt37 >> (loc.x - 5)
+                  : dirt37 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt38 >> (loc.x - 5)
+                  : dirt38 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt39 >> (loc.x - 5)
+                  : dirt39 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt40 >> (loc.x - 5)
+                  : dirt40 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt41 >> (loc.x - 5)
+                  : dirt41 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 37 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt32 >> (loc.x - 5)
+                  : dirt32 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt33 >> (loc.x - 5)
+                  : dirt33 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt34 >> (loc.x - 5)
+                  : dirt34 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt35 >> (loc.x - 5)
+                  : dirt35 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt36 >> (loc.x - 5)
+                  : dirt36 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt37 >> (loc.x - 5)
+                  : dirt37 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt37 >> (loc.x - 5)
+                  : dirt37 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt38 >> (loc.x - 5)
+                  : dirt38 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt39 >> (loc.x - 5)
+                  : dirt39 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt40 >> (loc.x - 5)
+                  : dirt40 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt41 >> (loc.x - 5)
+                  : dirt41 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt42 >> (loc.x - 5)
+                  : dirt42 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 38 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt33 >> (loc.x - 5)
+                  : dirt33 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt34 >> (loc.x - 5)
+                  : dirt34 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt35 >> (loc.x - 5)
+                  : dirt35 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt36 >> (loc.x - 5)
+                  : dirt36 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt37 >> (loc.x - 5)
+                  : dirt37 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt38 >> (loc.x - 5)
+                  : dirt38 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt38 >> (loc.x - 5)
+                  : dirt38 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt39 >> (loc.x - 5)
+                  : dirt39 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt40 >> (loc.x - 5)
+                  : dirt40 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt41 >> (loc.x - 5)
+                  : dirt41 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt42 >> (loc.x - 5)
+                  : dirt42 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt43 >> (loc.x - 5)
+                  : dirt43 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 39 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt34 >> (loc.x - 5)
+                  : dirt34 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt35 >> (loc.x - 5)
+                  : dirt35 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt36 >> (loc.x - 5)
+                  : dirt36 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt37 >> (loc.x - 5)
+                  : dirt37 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt38 >> (loc.x - 5)
+                  : dirt38 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt39 >> (loc.x - 5)
+                  : dirt39 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt39 >> (loc.x - 5)
+                  : dirt39 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt40 >> (loc.x - 5)
+                  : dirt40 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt41 >> (loc.x - 5)
+                  : dirt41 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt42 >> (loc.x - 5)
+                  : dirt42 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt43 >> (loc.x - 5)
+                  : dirt43 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt44 >> (loc.x - 5)
+                  : dirt44 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 40 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt35 >> (loc.x - 5)
+                  : dirt35 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt36 >> (loc.x - 5)
+                  : dirt36 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt37 >> (loc.x - 5)
+                  : dirt37 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt38 >> (loc.x - 5)
+                  : dirt38 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt39 >> (loc.x - 5)
+                  : dirt39 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt40 >> (loc.x - 5)
+                  : dirt40 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt40 >> (loc.x - 5)
+                  : dirt40 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt41 >> (loc.x - 5)
+                  : dirt41 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt42 >> (loc.x - 5)
+                  : dirt42 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt43 >> (loc.x - 5)
+                  : dirt43 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt44 >> (loc.x - 5)
+                  : dirt44 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt45 >> (loc.x - 5)
+                  : dirt45 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 41 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt36 >> (loc.x - 5)
+                  : dirt36 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt37 >> (loc.x - 5)
+                  : dirt37 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt38 >> (loc.x - 5)
+                  : dirt38 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt39 >> (loc.x - 5)
+                  : dirt39 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt40 >> (loc.x - 5)
+                  : dirt40 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt41 >> (loc.x - 5)
+                  : dirt41 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt41 >> (loc.x - 5)
+                  : dirt41 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt42 >> (loc.x - 5)
+                  : dirt42 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt43 >> (loc.x - 5)
+                  : dirt43 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt44 >> (loc.x - 5)
+                  : dirt44 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt45 >> (loc.x - 5)
+                  : dirt45 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt46 >> (loc.x - 5)
+                  : dirt46 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 42 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt37 >> (loc.x - 5)
+                  : dirt37 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt38 >> (loc.x - 5)
+                  : dirt38 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt39 >> (loc.x - 5)
+                  : dirt39 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt40 >> (loc.x - 5)
+                  : dirt40 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt41 >> (loc.x - 5)
+                  : dirt41 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt42 >> (loc.x - 5)
+                  : dirt42 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt42 >> (loc.x - 5)
+                  : dirt42 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt43 >> (loc.x - 5)
+                  : dirt43 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt44 >> (loc.x - 5)
+                  : dirt44 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt45 >> (loc.x - 5)
+                  : dirt45 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt46 >> (loc.x - 5)
+                  : dirt46 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt47 >> (loc.x - 5)
+                  : dirt47 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 43 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt38 >> (loc.x - 5)
+                  : dirt38 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt39 >> (loc.x - 5)
+                  : dirt39 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt40 >> (loc.x - 5)
+                  : dirt40 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt41 >> (loc.x - 5)
+                  : dirt41 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt42 >> (loc.x - 5)
+                  : dirt42 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt43 >> (loc.x - 5)
+                  : dirt43 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt43 >> (loc.x - 5)
+                  : dirt43 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt44 >> (loc.x - 5)
+                  : dirt44 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt45 >> (loc.x - 5)
+                  : dirt45 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt46 >> (loc.x - 5)
+                  : dirt46 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt47 >> (loc.x - 5)
+                  : dirt47 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt48 >> (loc.x - 5)
+                  : dirt48 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 44 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt39 >> (loc.x - 5)
+                  : dirt39 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt40 >> (loc.x - 5)
+                  : dirt40 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt41 >> (loc.x - 5)
+                  : dirt41 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt42 >> (loc.x - 5)
+                  : dirt42 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt43 >> (loc.x - 5)
+                  : dirt43 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt44 >> (loc.x - 5)
+                  : dirt44 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt44 >> (loc.x - 5)
+                  : dirt44 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt45 >> (loc.x - 5)
+                  : dirt45 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt46 >> (loc.x - 5)
+                  : dirt46 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt47 >> (loc.x - 5)
+                  : dirt47 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt48 >> (loc.x - 5)
+                  : dirt48 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt49 >> (loc.x - 5)
+                  : dirt49 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 45 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt40 >> (loc.x - 5)
+                  : dirt40 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt41 >> (loc.x - 5)
+                  : dirt41 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt42 >> (loc.x - 5)
+                  : dirt42 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt43 >> (loc.x - 5)
+                  : dirt43 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt44 >> (loc.x - 5)
+                  : dirt44 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt45 >> (loc.x - 5)
+                  : dirt45 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt45 >> (loc.x - 5)
+                  : dirt45 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt46 >> (loc.x - 5)
+                  : dirt46 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt47 >> (loc.x - 5)
+                  : dirt47 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt48 >> (loc.x - 5)
+                  : dirt48 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt49 >> (loc.x - 5)
+                  : dirt49 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt50 >> (loc.x - 5)
+                  : dirt50 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 46 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt41 >> (loc.x - 5)
+                  : dirt41 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt42 >> (loc.x - 5)
+                  : dirt42 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt43 >> (loc.x - 5)
+                  : dirt43 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt44 >> (loc.x - 5)
+                  : dirt44 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt45 >> (loc.x - 5)
+                  : dirt45 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt46 >> (loc.x - 5)
+                  : dirt46 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt46 >> (loc.x - 5)
+                  : dirt46 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt47 >> (loc.x - 5)
+                  : dirt47 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt48 >> (loc.x - 5)
+                  : dirt48 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt49 >> (loc.x - 5)
+                  : dirt49 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt50 >> (loc.x - 5)
+                  : dirt50 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt51 >> (loc.x - 5)
+                  : dirt51 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 47 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt42 >> (loc.x - 5)
+                  : dirt42 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt43 >> (loc.x - 5)
+                  : dirt43 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt44 >> (loc.x - 5)
+                  : dirt44 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt45 >> (loc.x - 5)
+                  : dirt45 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt46 >> (loc.x - 5)
+                  : dirt46 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt47 >> (loc.x - 5)
+                  : dirt47 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt47 >> (loc.x - 5)
+                  : dirt47 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt48 >> (loc.x - 5)
+                  : dirt48 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt49 >> (loc.x - 5)
+                  : dirt49 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt50 >> (loc.x - 5)
+                  : dirt50 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt51 >> (loc.x - 5)
+                  : dirt51 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt52 >> (loc.x - 5)
+                  : dirt52 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 48 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt43 >> (loc.x - 5)
+                  : dirt43 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt44 >> (loc.x - 5)
+                  : dirt44 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt45 >> (loc.x - 5)
+                  : dirt45 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt46 >> (loc.x - 5)
+                  : dirt46 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt47 >> (loc.x - 5)
+                  : dirt47 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt48 >> (loc.x - 5)
+                  : dirt48 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt48 >> (loc.x - 5)
+                  : dirt48 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt49 >> (loc.x - 5)
+                  : dirt49 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt50 >> (loc.x - 5)
+                  : dirt50 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt51 >> (loc.x - 5)
+                  : dirt51 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt52 >> (loc.x - 5)
+                  : dirt52 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt53 >> (loc.x - 5)
+                  : dirt53 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 49 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt44 >> (loc.x - 5)
+                  : dirt44 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt45 >> (loc.x - 5)
+                  : dirt45 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt46 >> (loc.x - 5)
+                  : dirt46 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt47 >> (loc.x - 5)
+                  : dirt47 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt48 >> (loc.x - 5)
+                  : dirt48 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt49 >> (loc.x - 5)
+                  : dirt49 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt49 >> (loc.x - 5)
+                  : dirt49 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt50 >> (loc.x - 5)
+                  : dirt50 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt51 >> (loc.x - 5)
+                  : dirt51 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt52 >> (loc.x - 5)
+                  : dirt52 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt53 >> (loc.x - 5)
+                  : dirt53 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt54 >> (loc.x - 5)
+                  : dirt54 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 50 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt45 >> (loc.x - 5)
+                  : dirt45 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt46 >> (loc.x - 5)
+                  : dirt46 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt47 >> (loc.x - 5)
+                  : dirt47 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt48 >> (loc.x - 5)
+                  : dirt48 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt49 >> (loc.x - 5)
+                  : dirt49 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt50 >> (loc.x - 5)
+                  : dirt50 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt50 >> (loc.x - 5)
+                  : dirt50 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt51 >> (loc.x - 5)
+                  : dirt51 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt52 >> (loc.x - 5)
+                  : dirt52 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt53 >> (loc.x - 5)
+                  : dirt53 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt54 >> (loc.x - 5)
+                  : dirt54 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt55 >> (loc.x - 5)
+                  : dirt55 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 51 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt46 >> (loc.x - 5)
+                  : dirt46 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt47 >> (loc.x - 5)
+                  : dirt47 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt48 >> (loc.x - 5)
+                  : dirt48 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt49 >> (loc.x - 5)
+                  : dirt49 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt50 >> (loc.x - 5)
+                  : dirt50 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt51 >> (loc.x - 5)
+                  : dirt51 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt51 >> (loc.x - 5)
+                  : dirt51 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt52 >> (loc.x - 5)
+                  : dirt52 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt53 >> (loc.x - 5)
+                  : dirt53 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt54 >> (loc.x - 5)
+                  : dirt54 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt55 >> (loc.x - 5)
+                  : dirt55 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt56 >> (loc.x - 5)
+                  : dirt56 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 52 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt47 >> (loc.x - 5)
+                  : dirt47 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt48 >> (loc.x - 5)
+                  : dirt48 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt49 >> (loc.x - 5)
+                  : dirt49 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt50 >> (loc.x - 5)
+                  : dirt50 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt51 >> (loc.x - 5)
+                  : dirt51 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt52 >> (loc.x - 5)
+                  : dirt52 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt52 >> (loc.x - 5)
+                  : dirt52 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt53 >> (loc.x - 5)
+                  : dirt53 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt54 >> (loc.x - 5)
+                  : dirt54 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt55 >> (loc.x - 5)
+                  : dirt55 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt56 >> (loc.x - 5)
+                  : dirt56 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt57 >> (loc.x - 5)
+                  : dirt57 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 53 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt48 >> (loc.x - 5)
+                  : dirt48 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt49 >> (loc.x - 5)
+                  : dirt49 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt50 >> (loc.x - 5)
+                  : dirt50 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt51 >> (loc.x - 5)
+                  : dirt51 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt52 >> (loc.x - 5)
+                  : dirt52 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt53 >> (loc.x - 5)
+                  : dirt53 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt53 >> (loc.x - 5)
+                  : dirt53 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt54 >> (loc.x - 5)
+                  : dirt54 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt55 >> (loc.x - 5)
+                  : dirt55 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt56 >> (loc.x - 5)
+                  : dirt56 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt57 >> (loc.x - 5)
+                  : dirt57 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt58 >> (loc.x - 5)
+                  : dirt58 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 54 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt49 >> (loc.x - 5)
+                  : dirt49 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt50 >> (loc.x - 5)
+                  : dirt50 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt51 >> (loc.x - 5)
+                  : dirt51 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt52 >> (loc.x - 5)
+                  : dirt52 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt53 >> (loc.x - 5)
+                  : dirt53 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt54 >> (loc.x - 5)
+                  : dirt54 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt54 >> (loc.x - 5)
+                  : dirt54 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt55 >> (loc.x - 5)
+                  : dirt55 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt56 >> (loc.x - 5)
+                  : dirt56 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt57 >> (loc.x - 5)
+                  : dirt57 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt58 >> (loc.x - 5)
+                  : dirt58 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt59 >> (loc.x - 5)
+                  : dirt59 << (5 - loc.x))
+                 & 0x7ff)  << 49 ;
+            }
+            case 55 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt50 >> (loc.x - 5)
+                  : dirt50 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt51 >> (loc.x - 5)
+                  : dirt51 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt52 >> (loc.x - 5)
+                  : dirt52 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt53 >> (loc.x - 5)
+                  : dirt53 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt54 >> (loc.x - 5)
+                  : dirt54 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt55 >> (loc.x - 5)
+                  : dirt55 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt55 >> (loc.x - 5)
+                  : dirt55 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt56 >> (loc.x - 5)
+                  : dirt56 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt57 >> (loc.x - 5)
+                  : dirt57 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt58 >> (loc.x - 5)
+                  : dirt58 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt59 >> (loc.x - 5)
+                  : dirt59 << (5 - loc.x))
+                 & 0x7ff)  << 38 ;
+            }
+            case 56 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt51 >> (loc.x - 5)
+                  : dirt51 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt52 >> (loc.x - 5)
+                  : dirt52 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt53 >> (loc.x - 5)
+                  : dirt53 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt54 >> (loc.x - 5)
+                  : dirt54 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt55 >> (loc.x - 5)
+                  : dirt55 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt56 >> (loc.x - 5)
+                  : dirt56 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt56 >> (loc.x - 5)
+                  : dirt56 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt57 >> (loc.x - 5)
+                  : dirt57 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt58 >> (loc.x - 5)
+                  : dirt58 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt59 >> (loc.x - 5)
+                  : dirt59 << (5 - loc.x))
+                 & 0x7ff)  << 27 ;
+            }
+            case 57 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt52 >> (loc.x - 5)
+                  : dirt52 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt53 >> (loc.x - 5)
+                  : dirt53 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt54 >> (loc.x - 5)
+                  : dirt54 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt55 >> (loc.x - 5)
+                  : dirt55 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt56 >> (loc.x - 5)
+                  : dirt56 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt57 >> (loc.x - 5)
+                  : dirt57 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt57 >> (loc.x - 5)
+                  : dirt57 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt58 >> (loc.x - 5)
+                  : dirt58 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt59 >> (loc.x - 5)
+                  : dirt59 << (5 - loc.x))
+                 & 0x7ff)  << 16 ;
+            }
+            case 58 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt53 >> (loc.x - 5)
+                  : dirt53 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt54 >> (loc.x - 5)
+                  : dirt54 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt55 >> (loc.x - 5)
+                  : dirt55 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt56 >> (loc.x - 5)
+                  : dirt56 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt57 >> (loc.x - 5)
+                  : dirt57 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt58 >> (loc.x - 5)
+                  : dirt58 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt58 >> (loc.x - 5)
+                  : dirt58 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt59 >> (loc.x - 5)
+                  : dirt59 << (5 - loc.x))
+                 & 0x7ff)  << 5 ;
+            }
+            case 59 -> {
+                // get the 11 relevant bits from row i + dy, shifted by off
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt54 >> (loc.x - 5)
+                  : dirt54 << (5 - loc.x))
+                 & 0x7ff) ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt55 >> (loc.x - 5)
+                  : dirt55 << (5 - loc.x))
+                 & 0x7ff)  << 11 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt56 >> (loc.x - 5)
+                  : dirt56 << (5 - loc.x))
+                 & 0x7ff)  << 22 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt57 >> (loc.x - 5)
+                  : dirt57 << (5 - loc.x))
+                 & 0x7ff)  << 33 ;
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt58 >> (loc.x - 5)
+                  : dirt58 << (5 - loc.x))
+                 & 0x7ff)  << 44 ;
+
+                localDirt0 |=                 ((loc.x - 5 >= 0
+                  ? dirt59 >> (loc.x - 5)
+                  : dirt59 << (5 - loc.x))
+                 & 0x7ff)  << 55  & 0x1f80000000000000l;
+                localDirt1 |=                 ((loc.x - 5 >= 0
+                  ? dirt59 >> (loc.x - 5)
+                  : dirt59 << (5 - loc.x))
+                 & 0x7ff)  >> 6;
+
+            }
+        }
+    }
+    private static void computeLocalPassable() {
+        var loc = rc.getLocation();
         localPassable0 = 0;
         localPassable1 = 0;
         switch(loc.y) {
@@ -5350,6 +8781,14 @@ public class CellTracker {
 
             }
         }
+    }
+    static MapLocation localBfsPos = new MapLocation(-1, -1);
+    public static void computeLocalBfsMasks() throws GameActionException {
+        var loc = rc.getLocation();
+        if(loc.equals(localBfsPos)) return;
+        localBfsPos = loc;
+        computeLocalDirt();
+        computeLocalPassable();
     }
 
     public static void printLocalMask(long m1, long m2) {

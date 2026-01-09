@@ -381,23 +381,31 @@ class BugnavInstance {
 
         if(!(leftDone && rightDone)) {
             if(rightDone) {
-                            leftBug.outOfSight = false;
+                            // indicate("advance left");
+            leftBug.outOfSight = false;
             leftDone = !leftBug.advance();
+            // indicate(leftBug.pos);
             rc.setIndicatorDot(leftBug.pos, 255, 0, 255);
 
             } else if(leftDone) {
-                            rightBug.outOfSight = false;
+                            // indicate("advance right");
+            rightBug.outOfSight = false;
             rightDone = !rightBug.advance();
+            // indicate(rightBug.pos);
             rc.setIndicatorDot(rightBug.pos, 255, 0, 255);
 
             } else if(leftBug.nextPathIndex > rightBug.nextPathIndex) {
-                            rightBug.outOfSight = false;
+                            // indicate("advance right");
+            rightBug.outOfSight = false;
             rightDone = !rightBug.advance();
+            // indicate(rightBug.pos);
             rc.setIndicatorDot(rightBug.pos, 255, 0, 255);
 
             } else {
-                            leftBug.outOfSight = false;
+                            // indicate("advance left");
+            leftBug.outOfSight = false;
             leftDone = !leftBug.advance();
+            // indicate(leftBug.pos);
             rc.setIndicatorDot(leftBug.pos, 255, 0, 255);
 
             }
@@ -407,7 +415,8 @@ class BugnavInstance {
         boolean leftReady = leftBug.nextPathIndex >= 5 || leftBug.hitEdge || leftBug.outOfSight || leftBug.arrived;
         boolean rightReady = rightBug.nextPathIndex >= 5 || rightBug.hitEdge || rightBug.outOfSight || rightBug.arrived;
         indicate("ready " + leftReady + " " + rightReady);
-        if(!leftReady || !rightReady) return !(leftDone && rightDone);
+        if(!rc.getLocation().equals(pos) && (!leftReady || !rightReady)) return !(leftDone && rightDone);
+        indicate("going ahead");
 
         var leftScore =  Math.sqrt(leftBug.pos.distanceSquaredTo(target)) + leftBug.nextPathIndex * 0.7 ;
         var rightScore =  Math.sqrt(rightBug.pos.distanceSquaredTo(target)) + rightBug.nextPathIndex * 0.7 ;
@@ -1662,9 +1671,10 @@ public class Pathfinder {
         var loc = rc.getLocation();
         // d{i}0 + d{i}1 is the mask of reachable within i steps
         long d00 = 0, d01 = 0;
+        long d10 = 0, d11 = 0;
                 {
-            int xi = bug.pos.x - loc.x + 5;
-            int yi = bug.pos.y - loc.y + 5;
+            int xi = bug.getRecentPos(0 / 2).x - loc.x + 5;
+            int yi = bug.getRecentPos(0 / 2).y - loc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
                 int idx = yi * 11 + xi;
                 if(idx < 61) {
@@ -1675,41 +1685,38 @@ public class Pathfinder {
             }
         }
 
-        // Profiler.begin();
-        long d10 = d00, d11 = d01;
+        // if(rc.getRoundNum() >= 377) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d00, d01);
+        //     Clock.yield();
+        // }
 
-        // if(rc.getRoundNum() >= 507) {
+        // Profiler.begin();
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d00 |= (d00 & 0xfbff7feffdffbffl) << 1;
+        d01 |= (d01 & 0x7feffdffbff7fefl) << 1;
+        d00 |= (d00 & 0x1f7feffdffbff7fel) >> 1;
+        d01 |= (d01 & 0xffdffbff7feffdel) >> 1;
+
+        d01 |= ((d01 & 0x1ffffffffffffl) << 11) | (d00 >> 50);
+        d00 |= (d00 & 0x3ffffffffffffl) << 11;
+        d00 |= (d00 >> 11) | ((d01 & 0x7ffl) << 50);
+        d01 |= d01 >> 11;
+        d00 &= CellTracker.localPassable0;
+        d01 &= CellTracker.localPassable1;
+        long d20 = d00;
+        long d21 = d01;
+        d00 &= ~CellTracker.localDirt0;
+        d01 &= ~CellTracker.localDirt1;
+        d10 |= d00;
+        d11 |= d01;
+        // Profiler.end("bfs iteration");
+        // if(rc.getRoundNum() >= 377) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d10, d11);
         //     Clock.yield();
         // }
-
-        // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d10 |= (d10 & 0xfbff7feffdffbffl) << 1;
-        d11 |= (d11 & 0x7feffdffbff7fefl) << 1;
-        d10 |= (d10 & 0x1f7feffdffbff7fel) >> 1;
-        d11 |= (d11 & 0xffdffbff7feffdel) >> 1;
-
-        d11 |= ((d11 & 0x1ffffffffffffl) << 11) | (d10 >> 50);
-        d10 |= (d10 & 0x3ffffffffffffl) << 11;
-        d10 |= (d10 >> 11) | ((d11 & 0x7ffl) << 50);
-        d11 |= d11 >> 11;
-                {
-            int xi = bug.getRecentPos(1).x - loc.x + 5;
-            int yi = bug.getRecentPos(1).y - loc.y + 5;
-            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
-                int idx = yi * 11 + xi;
-                if(idx < 61) {
-                    d10 |= 1l << idx;
-                } else {
-                    d11 |= 1l << (idx - 61);
-                }
-            }
-        }
-
-        d10 &= CellTracker.localPassable0;
-        d11 &= CellTracker.localPassable1;
-        // Profiler.end("bfs iteration");
         if((d10 & 0x807000000000000l) != 0 || (d11 & 0xe01) != 0) {
             // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
@@ -1925,28 +1932,31 @@ public class Pathfinder {
                 return;
             }
         }
-        // Profiler.begin();
-        long d20 = d10, d21 = d11;
 
-        // if(rc.getRoundNum() >= 507) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(d20, d21);
-        //     Clock.yield();
-        // }
+        // Profiler.begin();
 
         // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d20 |= (d20 & 0xfbff7feffdffbffl) << 1;
-        d21 |= (d21 & 0x7feffdffbff7fefl) << 1;
-        d20 |= (d20 & 0x1f7feffdffbff7fel) >> 1;
-        d21 |= (d21 & 0xffdffbff7feffdel) >> 1;
+        d10 |= (d10 & 0xfbff7feffdffbffl) << 1;
+        d11 |= (d11 & 0x7feffdffbff7fefl) << 1;
+        d10 |= (d10 & 0x1f7feffdffbff7fel) >> 1;
+        d11 |= (d11 & 0xffdffbff7feffdel) >> 1;
 
-        d21 |= ((d21 & 0x1ffffffffffffl) << 11) | (d20 >> 50);
-        d20 |= (d20 & 0x3ffffffffffffl) << 11;
-        d20 |= (d20 >> 11) | ((d21 & 0x7ffl) << 50);
-        d21 |= d21 >> 11;
+        d11 |= ((d11 & 0x1ffffffffffffl) << 11) | (d10 >> 50);
+        d10 |= (d10 & 0x3ffffffffffffl) << 11;
+        d10 |= (d10 >> 11) | ((d11 & 0x7ffl) << 50);
+        d11 |= d11 >> 11;
+        d10 &= CellTracker.localPassable0;
+        d11 &= CellTracker.localPassable1;
+        long d30 = d10;
+        long d31 = d11;
+        d10 &= ~CellTracker.localDirt0;
+        d11 &= ~CellTracker.localDirt1;
+        d20 |= d10;
+        d21 |= d11;
+        // Profiler.end("bfs iteration");
                 {
-            int xi = bug.getRecentPos(2).x - loc.x + 5;
-            int yi = bug.getRecentPos(2).y - loc.y + 5;
+            int xi = bug.getRecentPos(2 / 2).x - loc.x + 5;
+            int yi = bug.getRecentPos(2 / 2).y - loc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
                 int idx = yi * 11 + xi;
                 if(idx < 61) {
@@ -1957,9 +1967,11 @@ public class Pathfinder {
             }
         }
 
-        d20 &= CellTracker.localPassable0;
-        d21 &= CellTracker.localPassable1;
-        // Profiler.end("bfs iteration");
+        // if(rc.getRoundNum() >= 377) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d20, d21);
+        //     Clock.yield();
+        // }
         if((d20 & 0x807000000000000l) != 0 || (d21 & 0xe01) != 0) {
             // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
@@ -2175,41 +2187,33 @@ public class Pathfinder {
                 return;
             }
         }
-        // Profiler.begin();
-        long d30 = d20, d31 = d21;
 
-        // if(rc.getRoundNum() >= 507) {
+        // Profiler.begin();
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d20 |= (d20 & 0xfbff7feffdffbffl) << 1;
+        d21 |= (d21 & 0x7feffdffbff7fefl) << 1;
+        d20 |= (d20 & 0x1f7feffdffbff7fel) >> 1;
+        d21 |= (d21 & 0xffdffbff7feffdel) >> 1;
+
+        d21 |= ((d21 & 0x1ffffffffffffl) << 11) | (d20 >> 50);
+        d20 |= (d20 & 0x3ffffffffffffl) << 11;
+        d20 |= (d20 >> 11) | ((d21 & 0x7ffl) << 50);
+        d21 |= d21 >> 11;
+        d20 &= CellTracker.localPassable0;
+        d21 &= CellTracker.localPassable1;
+        long d40 = d20;
+        long d41 = d21;
+        d20 &= ~CellTracker.localDirt0;
+        d21 &= ~CellTracker.localDirt1;
+        d30 |= d20;
+        d31 |= d21;
+        // Profiler.end("bfs iteration");
+        // if(rc.getRoundNum() >= 377) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d30, d31);
         //     Clock.yield();
         // }
-
-        // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d30 |= (d30 & 0xfbff7feffdffbffl) << 1;
-        d31 |= (d31 & 0x7feffdffbff7fefl) << 1;
-        d30 |= (d30 & 0x1f7feffdffbff7fel) >> 1;
-        d31 |= (d31 & 0xffdffbff7feffdel) >> 1;
-
-        d31 |= ((d31 & 0x1ffffffffffffl) << 11) | (d30 >> 50);
-        d30 |= (d30 & 0x3ffffffffffffl) << 11;
-        d30 |= (d30 >> 11) | ((d31 & 0x7ffl) << 50);
-        d31 |= d31 >> 11;
-                {
-            int xi = bug.getRecentPos(3).x - loc.x + 5;
-            int yi = bug.getRecentPos(3).y - loc.y + 5;
-            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
-                int idx = yi * 11 + xi;
-                if(idx < 61) {
-                    d30 |= 1l << idx;
-                } else {
-                    d31 |= 1l << (idx - 61);
-                }
-            }
-        }
-
-        d30 &= CellTracker.localPassable0;
-        d31 &= CellTracker.localPassable1;
-        // Profiler.end("bfs iteration");
         if((d30 & 0x807000000000000l) != 0 || (d31 & 0xe01) != 0) {
             // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
@@ -2425,28 +2429,31 @@ public class Pathfinder {
                 return;
             }
         }
-        // Profiler.begin();
-        long d40 = d30, d41 = d31;
 
-        // if(rc.getRoundNum() >= 507) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(d40, d41);
-        //     Clock.yield();
-        // }
+        // Profiler.begin();
 
         // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d40 |= (d40 & 0xfbff7feffdffbffl) << 1;
-        d41 |= (d41 & 0x7feffdffbff7fefl) << 1;
-        d40 |= (d40 & 0x1f7feffdffbff7fel) >> 1;
-        d41 |= (d41 & 0xffdffbff7feffdel) >> 1;
+        d30 |= (d30 & 0xfbff7feffdffbffl) << 1;
+        d31 |= (d31 & 0x7feffdffbff7fefl) << 1;
+        d30 |= (d30 & 0x1f7feffdffbff7fel) >> 1;
+        d31 |= (d31 & 0xffdffbff7feffdel) >> 1;
 
-        d41 |= ((d41 & 0x1ffffffffffffl) << 11) | (d40 >> 50);
-        d40 |= (d40 & 0x3ffffffffffffl) << 11;
-        d40 |= (d40 >> 11) | ((d41 & 0x7ffl) << 50);
-        d41 |= d41 >> 11;
+        d31 |= ((d31 & 0x1ffffffffffffl) << 11) | (d30 >> 50);
+        d30 |= (d30 & 0x3ffffffffffffl) << 11;
+        d30 |= (d30 >> 11) | ((d31 & 0x7ffl) << 50);
+        d31 |= d31 >> 11;
+        d30 &= CellTracker.localPassable0;
+        d31 &= CellTracker.localPassable1;
+        long d50 = d30;
+        long d51 = d31;
+        d30 &= ~CellTracker.localDirt0;
+        d31 &= ~CellTracker.localDirt1;
+        d40 |= d30;
+        d41 |= d31;
+        // Profiler.end("bfs iteration");
                 {
-            int xi = bug.getRecentPos(4).x - loc.x + 5;
-            int yi = bug.getRecentPos(4).y - loc.y + 5;
+            int xi = bug.getRecentPos(4 / 2).x - loc.x + 5;
+            int yi = bug.getRecentPos(4 / 2).y - loc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
                 int idx = yi * 11 + xi;
                 if(idx < 61) {
@@ -2457,9 +2464,11 @@ public class Pathfinder {
             }
         }
 
-        d40 &= CellTracker.localPassable0;
-        d41 &= CellTracker.localPassable1;
-        // Profiler.end("bfs iteration");
+        // if(rc.getRoundNum() >= 377) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d40, d41);
+        //     Clock.yield();
+        // }
         if((d40 & 0x807000000000000l) != 0 || (d41 & 0xe01) != 0) {
             // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
@@ -2675,41 +2684,33 @@ public class Pathfinder {
                 return;
             }
         }
-        // Profiler.begin();
-        long d50 = d40, d51 = d41;
 
-        // if(rc.getRoundNum() >= 507) {
+        // Profiler.begin();
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d40 |= (d40 & 0xfbff7feffdffbffl) << 1;
+        d41 |= (d41 & 0x7feffdffbff7fefl) << 1;
+        d40 |= (d40 & 0x1f7feffdffbff7fel) >> 1;
+        d41 |= (d41 & 0xffdffbff7feffdel) >> 1;
+
+        d41 |= ((d41 & 0x1ffffffffffffl) << 11) | (d40 >> 50);
+        d40 |= (d40 & 0x3ffffffffffffl) << 11;
+        d40 |= (d40 >> 11) | ((d41 & 0x7ffl) << 50);
+        d41 |= d41 >> 11;
+        d40 &= CellTracker.localPassable0;
+        d41 &= CellTracker.localPassable1;
+        long d60 = d40;
+        long d61 = d41;
+        d40 &= ~CellTracker.localDirt0;
+        d41 &= ~CellTracker.localDirt1;
+        d50 |= d40;
+        d51 |= d41;
+        // Profiler.end("bfs iteration");
+        // if(rc.getRoundNum() >= 377) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d50, d51);
         //     Clock.yield();
         // }
-
-        // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d50 |= (d50 & 0xfbff7feffdffbffl) << 1;
-        d51 |= (d51 & 0x7feffdffbff7fefl) << 1;
-        d50 |= (d50 & 0x1f7feffdffbff7fel) >> 1;
-        d51 |= (d51 & 0xffdffbff7feffdel) >> 1;
-
-        d51 |= ((d51 & 0x1ffffffffffffl) << 11) | (d50 >> 50);
-        d50 |= (d50 & 0x3ffffffffffffl) << 11;
-        d50 |= (d50 >> 11) | ((d51 & 0x7ffl) << 50);
-        d51 |= d51 >> 11;
-                {
-            int xi = bug.getRecentPos(5).x - loc.x + 5;
-            int yi = bug.getRecentPos(5).y - loc.y + 5;
-            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
-                int idx = yi * 11 + xi;
-                if(idx < 61) {
-                    d50 |= 1l << idx;
-                } else {
-                    d51 |= 1l << (idx - 61);
-                }
-            }
-        }
-
-        d50 &= CellTracker.localPassable0;
-        d51 &= CellTracker.localPassable1;
-        // Profiler.end("bfs iteration");
         if((d50 & 0x807000000000000l) != 0 || (d51 & 0xe01) != 0) {
             // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
@@ -2925,28 +2926,31 @@ public class Pathfinder {
                 return;
             }
         }
-        // Profiler.begin();
-        long d60 = d50, d61 = d51;
 
-        // if(rc.getRoundNum() >= 507) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(d60, d61);
-        //     Clock.yield();
-        // }
+        // Profiler.begin();
 
         // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d60 |= (d60 & 0xfbff7feffdffbffl) << 1;
-        d61 |= (d61 & 0x7feffdffbff7fefl) << 1;
-        d60 |= (d60 & 0x1f7feffdffbff7fel) >> 1;
-        d61 |= (d61 & 0xffdffbff7feffdel) >> 1;
+        d50 |= (d50 & 0xfbff7feffdffbffl) << 1;
+        d51 |= (d51 & 0x7feffdffbff7fefl) << 1;
+        d50 |= (d50 & 0x1f7feffdffbff7fel) >> 1;
+        d51 |= (d51 & 0xffdffbff7feffdel) >> 1;
 
-        d61 |= ((d61 & 0x1ffffffffffffl) << 11) | (d60 >> 50);
-        d60 |= (d60 & 0x3ffffffffffffl) << 11;
-        d60 |= (d60 >> 11) | ((d61 & 0x7ffl) << 50);
-        d61 |= d61 >> 11;
+        d51 |= ((d51 & 0x1ffffffffffffl) << 11) | (d50 >> 50);
+        d50 |= (d50 & 0x3ffffffffffffl) << 11;
+        d50 |= (d50 >> 11) | ((d51 & 0x7ffl) << 50);
+        d51 |= d51 >> 11;
+        d50 &= CellTracker.localPassable0;
+        d51 &= CellTracker.localPassable1;
+        long d70 = d50;
+        long d71 = d51;
+        d50 &= ~CellTracker.localDirt0;
+        d51 &= ~CellTracker.localDirt1;
+        d60 |= d50;
+        d61 |= d51;
+        // Profiler.end("bfs iteration");
                 {
-            int xi = bug.getRecentPos(6).x - loc.x + 5;
-            int yi = bug.getRecentPos(6).y - loc.y + 5;
+            int xi = bug.getRecentPos(6 / 2).x - loc.x + 5;
+            int yi = bug.getRecentPos(6 / 2).y - loc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
                 int idx = yi * 11 + xi;
                 if(idx < 61) {
@@ -2957,9 +2961,11 @@ public class Pathfinder {
             }
         }
 
-        d60 &= CellTracker.localPassable0;
-        d61 &= CellTracker.localPassable1;
-        // Profiler.end("bfs iteration");
+        // if(rc.getRoundNum() >= 377) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d60, d61);
+        //     Clock.yield();
+        // }
         if((d60 & 0x807000000000000l) != 0 || (d61 & 0xe01) != 0) {
             // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
@@ -3175,41 +3181,33 @@ public class Pathfinder {
                 return;
             }
         }
-        // Profiler.begin();
-        long d70 = d60, d71 = d61;
 
-        // if(rc.getRoundNum() >= 507) {
+        // Profiler.begin();
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d60 |= (d60 & 0xfbff7feffdffbffl) << 1;
+        d61 |= (d61 & 0x7feffdffbff7fefl) << 1;
+        d60 |= (d60 & 0x1f7feffdffbff7fel) >> 1;
+        d61 |= (d61 & 0xffdffbff7feffdel) >> 1;
+
+        d61 |= ((d61 & 0x1ffffffffffffl) << 11) | (d60 >> 50);
+        d60 |= (d60 & 0x3ffffffffffffl) << 11;
+        d60 |= (d60 >> 11) | ((d61 & 0x7ffl) << 50);
+        d61 |= d61 >> 11;
+        d60 &= CellTracker.localPassable0;
+        d61 &= CellTracker.localPassable1;
+        long d80 = d60;
+        long d81 = d61;
+        d60 &= ~CellTracker.localDirt0;
+        d61 &= ~CellTracker.localDirt1;
+        d70 |= d60;
+        d71 |= d61;
+        // Profiler.end("bfs iteration");
+        // if(rc.getRoundNum() >= 377) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d70, d71);
         //     Clock.yield();
         // }
-
-        // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d70 |= (d70 & 0xfbff7feffdffbffl) << 1;
-        d71 |= (d71 & 0x7feffdffbff7fefl) << 1;
-        d70 |= (d70 & 0x1f7feffdffbff7fel) >> 1;
-        d71 |= (d71 & 0xffdffbff7feffdel) >> 1;
-
-        d71 |= ((d71 & 0x1ffffffffffffl) << 11) | (d70 >> 50);
-        d70 |= (d70 & 0x3ffffffffffffl) << 11;
-        d70 |= (d70 >> 11) | ((d71 & 0x7ffl) << 50);
-        d71 |= d71 >> 11;
-                {
-            int xi = bug.getRecentPos(7).x - loc.x + 5;
-            int yi = bug.getRecentPos(7).y - loc.y + 5;
-            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
-                int idx = yi * 11 + xi;
-                if(idx < 61) {
-                    d70 |= 1l << idx;
-                } else {
-                    d71 |= 1l << (idx - 61);
-                }
-            }
-        }
-
-        d70 &= CellTracker.localPassable0;
-        d71 &= CellTracker.localPassable1;
-        // Profiler.end("bfs iteration");
         if((d70 & 0x807000000000000l) != 0 || (d71 & 0xe01) != 0) {
             // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
@@ -3425,28 +3423,31 @@ public class Pathfinder {
                 return;
             }
         }
-        // Profiler.begin();
-        long d80 = d70, d81 = d71;
 
-        // if(rc.getRoundNum() >= 507) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(d80, d81);
-        //     Clock.yield();
-        // }
+        // Profiler.begin();
 
         // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d80 |= (d80 & 0xfbff7feffdffbffl) << 1;
-        d81 |= (d81 & 0x7feffdffbff7fefl) << 1;
-        d80 |= (d80 & 0x1f7feffdffbff7fel) >> 1;
-        d81 |= (d81 & 0xffdffbff7feffdel) >> 1;
+        d70 |= (d70 & 0xfbff7feffdffbffl) << 1;
+        d71 |= (d71 & 0x7feffdffbff7fefl) << 1;
+        d70 |= (d70 & 0x1f7feffdffbff7fel) >> 1;
+        d71 |= (d71 & 0xffdffbff7feffdel) >> 1;
 
-        d81 |= ((d81 & 0x1ffffffffffffl) << 11) | (d80 >> 50);
-        d80 |= (d80 & 0x3ffffffffffffl) << 11;
-        d80 |= (d80 >> 11) | ((d81 & 0x7ffl) << 50);
-        d81 |= d81 >> 11;
+        d71 |= ((d71 & 0x1ffffffffffffl) << 11) | (d70 >> 50);
+        d70 |= (d70 & 0x3ffffffffffffl) << 11;
+        d70 |= (d70 >> 11) | ((d71 & 0x7ffl) << 50);
+        d71 |= d71 >> 11;
+        d70 &= CellTracker.localPassable0;
+        d71 &= CellTracker.localPassable1;
+        long d90 = d70;
+        long d91 = d71;
+        d70 &= ~CellTracker.localDirt0;
+        d71 &= ~CellTracker.localDirt1;
+        d80 |= d70;
+        d81 |= d71;
+        // Profiler.end("bfs iteration");
                 {
-            int xi = bug.getRecentPos(8).x - loc.x + 5;
-            int yi = bug.getRecentPos(8).y - loc.y + 5;
+            int xi = bug.getRecentPos(8 / 2).x - loc.x + 5;
+            int yi = bug.getRecentPos(8 / 2).y - loc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
                 int idx = yi * 11 + xi;
                 if(idx < 61) {
@@ -3457,9 +3458,11 @@ public class Pathfinder {
             }
         }
 
-        d80 &= CellTracker.localPassable0;
-        d81 &= CellTracker.localPassable1;
-        // Profiler.end("bfs iteration");
+        // if(rc.getRoundNum() >= 377) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d80, d81);
+        //     Clock.yield();
+        // }
         if((d80 & 0x807000000000000l) != 0 || (d81 & 0xe01) != 0) {
             // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
@@ -3675,41 +3678,33 @@ public class Pathfinder {
                 return;
             }
         }
-        // Profiler.begin();
-        long d90 = d80, d91 = d81;
 
-        // if(rc.getRoundNum() >= 507) {
+        // Profiler.begin();
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d80 |= (d80 & 0xfbff7feffdffbffl) << 1;
+        d81 |= (d81 & 0x7feffdffbff7fefl) << 1;
+        d80 |= (d80 & 0x1f7feffdffbff7fel) >> 1;
+        d81 |= (d81 & 0xffdffbff7feffdel) >> 1;
+
+        d81 |= ((d81 & 0x1ffffffffffffl) << 11) | (d80 >> 50);
+        d80 |= (d80 & 0x3ffffffffffffl) << 11;
+        d80 |= (d80 >> 11) | ((d81 & 0x7ffl) << 50);
+        d81 |= d81 >> 11;
+        d80 &= CellTracker.localPassable0;
+        d81 &= CellTracker.localPassable1;
+        long d100 = d80;
+        long d101 = d81;
+        d80 &= ~CellTracker.localDirt0;
+        d81 &= ~CellTracker.localDirt1;
+        d90 |= d80;
+        d91 |= d81;
+        // Profiler.end("bfs iteration");
+        // if(rc.getRoundNum() >= 377) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d90, d91);
         //     Clock.yield();
         // }
-
-        // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d90 |= (d90 & 0xfbff7feffdffbffl) << 1;
-        d91 |= (d91 & 0x7feffdffbff7fefl) << 1;
-        d90 |= (d90 & 0x1f7feffdffbff7fel) >> 1;
-        d91 |= (d91 & 0xffdffbff7feffdel) >> 1;
-
-        d91 |= ((d91 & 0x1ffffffffffffl) << 11) | (d90 >> 50);
-        d90 |= (d90 & 0x3ffffffffffffl) << 11;
-        d90 |= (d90 >> 11) | ((d91 & 0x7ffl) << 50);
-        d91 |= d91 >> 11;
-                {
-            int xi = bug.getRecentPos(9).x - loc.x + 5;
-            int yi = bug.getRecentPos(9).y - loc.y + 5;
-            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
-                int idx = yi * 11 + xi;
-                if(idx < 61) {
-                    d90 |= 1l << idx;
-                } else {
-                    d91 |= 1l << (idx - 61);
-                }
-            }
-        }
-
-        d90 &= CellTracker.localPassable0;
-        d91 &= CellTracker.localPassable1;
-        // Profiler.end("bfs iteration");
         if((d90 & 0x807000000000000l) != 0 || (d91 & 0xe01) != 0) {
             // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
@@ -3925,28 +3920,31 @@ public class Pathfinder {
                 return;
             }
         }
-        // Profiler.begin();
-        long d100 = d90, d101 = d91;
 
-        // if(rc.getRoundNum() >= 507) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(d100, d101);
-        //     Clock.yield();
-        // }
+        // Profiler.begin();
 
         // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d100 |= (d100 & 0xfbff7feffdffbffl) << 1;
-        d101 |= (d101 & 0x7feffdffbff7fefl) << 1;
-        d100 |= (d100 & 0x1f7feffdffbff7fel) >> 1;
-        d101 |= (d101 & 0xffdffbff7feffdel) >> 1;
+        d90 |= (d90 & 0xfbff7feffdffbffl) << 1;
+        d91 |= (d91 & 0x7feffdffbff7fefl) << 1;
+        d90 |= (d90 & 0x1f7feffdffbff7fel) >> 1;
+        d91 |= (d91 & 0xffdffbff7feffdel) >> 1;
 
-        d101 |= ((d101 & 0x1ffffffffffffl) << 11) | (d100 >> 50);
-        d100 |= (d100 & 0x3ffffffffffffl) << 11;
-        d100 |= (d100 >> 11) | ((d101 & 0x7ffl) << 50);
-        d101 |= d101 >> 11;
+        d91 |= ((d91 & 0x1ffffffffffffl) << 11) | (d90 >> 50);
+        d90 |= (d90 & 0x3ffffffffffffl) << 11;
+        d90 |= (d90 >> 11) | ((d91 & 0x7ffl) << 50);
+        d91 |= d91 >> 11;
+        d90 &= CellTracker.localPassable0;
+        d91 &= CellTracker.localPassable1;
+        long d110 = d90;
+        long d111 = d91;
+        d90 &= ~CellTracker.localDirt0;
+        d91 &= ~CellTracker.localDirt1;
+        d100 |= d90;
+        d101 |= d91;
+        // Profiler.end("bfs iteration");
                 {
-            int xi = bug.getRecentPos(10).x - loc.x + 5;
-            int yi = bug.getRecentPos(10).y - loc.y + 5;
+            int xi = bug.getRecentPos(10 / 2).x - loc.x + 5;
+            int yi = bug.getRecentPos(10 / 2).y - loc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
                 int idx = yi * 11 + xi;
                 if(idx < 61) {
@@ -3957,9 +3955,11 @@ public class Pathfinder {
             }
         }
 
-        d100 &= CellTracker.localPassable0;
-        d101 &= CellTracker.localPassable1;
-        // Profiler.end("bfs iteration");
+        // if(rc.getRoundNum() >= 377) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d100, d101);
+        //     Clock.yield();
+        // }
         if((d100 & 0x807000000000000l) != 0 || (d101 & 0xe01) != 0) {
             // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
@@ -4175,41 +4175,33 @@ public class Pathfinder {
                 return;
             }
         }
-        // Profiler.begin();
-        long d110 = d100, d111 = d101;
 
-        // if(rc.getRoundNum() >= 507) {
+        // Profiler.begin();
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d100 |= (d100 & 0xfbff7feffdffbffl) << 1;
+        d101 |= (d101 & 0x7feffdffbff7fefl) << 1;
+        d100 |= (d100 & 0x1f7feffdffbff7fel) >> 1;
+        d101 |= (d101 & 0xffdffbff7feffdel) >> 1;
+
+        d101 |= ((d101 & 0x1ffffffffffffl) << 11) | (d100 >> 50);
+        d100 |= (d100 & 0x3ffffffffffffl) << 11;
+        d100 |= (d100 >> 11) | ((d101 & 0x7ffl) << 50);
+        d101 |= d101 >> 11;
+        d100 &= CellTracker.localPassable0;
+        d101 &= CellTracker.localPassable1;
+        long d120 = d100;
+        long d121 = d101;
+        d100 &= ~CellTracker.localDirt0;
+        d101 &= ~CellTracker.localDirt1;
+        d110 |= d100;
+        d111 |= d101;
+        // Profiler.end("bfs iteration");
+        // if(rc.getRoundNum() >= 377) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d110, d111);
         //     Clock.yield();
         // }
-
-        // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d110 |= (d110 & 0xfbff7feffdffbffl) << 1;
-        d111 |= (d111 & 0x7feffdffbff7fefl) << 1;
-        d110 |= (d110 & 0x1f7feffdffbff7fel) >> 1;
-        d111 |= (d111 & 0xffdffbff7feffdel) >> 1;
-
-        d111 |= ((d111 & 0x1ffffffffffffl) << 11) | (d110 >> 50);
-        d110 |= (d110 & 0x3ffffffffffffl) << 11;
-        d110 |= (d110 >> 11) | ((d111 & 0x7ffl) << 50);
-        d111 |= d111 >> 11;
-                {
-            int xi = bug.getRecentPos(11).x - loc.x + 5;
-            int yi = bug.getRecentPos(11).y - loc.y + 5;
-            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
-                int idx = yi * 11 + xi;
-                if(idx < 61) {
-                    d110 |= 1l << idx;
-                } else {
-                    d111 |= 1l << (idx - 61);
-                }
-            }
-        }
-
-        d110 &= CellTracker.localPassable0;
-        d111 &= CellTracker.localPassable1;
-        // Profiler.end("bfs iteration");
         if((d110 & 0x807000000000000l) != 0 || (d111 & 0xe01) != 0) {
             // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
@@ -4425,28 +4417,31 @@ public class Pathfinder {
                 return;
             }
         }
-        // Profiler.begin();
-        long d120 = d110, d121 = d111;
 
-        // if(rc.getRoundNum() >= 507) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(d120, d121);
-        //     Clock.yield();
-        // }
+        // Profiler.begin();
 
         // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d120 |= (d120 & 0xfbff7feffdffbffl) << 1;
-        d121 |= (d121 & 0x7feffdffbff7fefl) << 1;
-        d120 |= (d120 & 0x1f7feffdffbff7fel) >> 1;
-        d121 |= (d121 & 0xffdffbff7feffdel) >> 1;
+        d110 |= (d110 & 0xfbff7feffdffbffl) << 1;
+        d111 |= (d111 & 0x7feffdffbff7fefl) << 1;
+        d110 |= (d110 & 0x1f7feffdffbff7fel) >> 1;
+        d111 |= (d111 & 0xffdffbff7feffdel) >> 1;
 
-        d121 |= ((d121 & 0x1ffffffffffffl) << 11) | (d120 >> 50);
-        d120 |= (d120 & 0x3ffffffffffffl) << 11;
-        d120 |= (d120 >> 11) | ((d121 & 0x7ffl) << 50);
-        d121 |= d121 >> 11;
+        d111 |= ((d111 & 0x1ffffffffffffl) << 11) | (d110 >> 50);
+        d110 |= (d110 & 0x3ffffffffffffl) << 11;
+        d110 |= (d110 >> 11) | ((d111 & 0x7ffl) << 50);
+        d111 |= d111 >> 11;
+        d110 &= CellTracker.localPassable0;
+        d111 &= CellTracker.localPassable1;
+        long d130 = d110;
+        long d131 = d111;
+        d110 &= ~CellTracker.localDirt0;
+        d111 &= ~CellTracker.localDirt1;
+        d120 |= d110;
+        d121 |= d111;
+        // Profiler.end("bfs iteration");
                 {
-            int xi = bug.getRecentPos(12).x - loc.x + 5;
-            int yi = bug.getRecentPos(12).y - loc.y + 5;
+            int xi = bug.getRecentPos(12 / 2).x - loc.x + 5;
+            int yi = bug.getRecentPos(12 / 2).y - loc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
                 int idx = yi * 11 + xi;
                 if(idx < 61) {
@@ -4457,9 +4452,11 @@ public class Pathfinder {
             }
         }
 
-        d120 &= CellTracker.localPassable0;
-        d121 &= CellTracker.localPassable1;
-        // Profiler.end("bfs iteration");
+        // if(rc.getRoundNum() >= 377) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d120, d121);
+        //     Clock.yield();
+        // }
         if((d120 & 0x807000000000000l) != 0 || (d121 & 0xe01) != 0) {
             // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
@@ -4675,41 +4672,33 @@ public class Pathfinder {
                 return;
             }
         }
-        // Profiler.begin();
-        long d130 = d120, d131 = d121;
 
-        // if(rc.getRoundNum() >= 507) {
+        // Profiler.begin();
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d120 |= (d120 & 0xfbff7feffdffbffl) << 1;
+        d121 |= (d121 & 0x7feffdffbff7fefl) << 1;
+        d120 |= (d120 & 0x1f7feffdffbff7fel) >> 1;
+        d121 |= (d121 & 0xffdffbff7feffdel) >> 1;
+
+        d121 |= ((d121 & 0x1ffffffffffffl) << 11) | (d120 >> 50);
+        d120 |= (d120 & 0x3ffffffffffffl) << 11;
+        d120 |= (d120 >> 11) | ((d121 & 0x7ffl) << 50);
+        d121 |= d121 >> 11;
+        d120 &= CellTracker.localPassable0;
+        d121 &= CellTracker.localPassable1;
+        long d140 = d120;
+        long d141 = d121;
+        d120 &= ~CellTracker.localDirt0;
+        d121 &= ~CellTracker.localDirt1;
+        d130 |= d120;
+        d131 |= d121;
+        // Profiler.end("bfs iteration");
+        // if(rc.getRoundNum() >= 377) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d130, d131);
         //     Clock.yield();
         // }
-
-        // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d130 |= (d130 & 0xfbff7feffdffbffl) << 1;
-        d131 |= (d131 & 0x7feffdffbff7fefl) << 1;
-        d130 |= (d130 & 0x1f7feffdffbff7fel) >> 1;
-        d131 |= (d131 & 0xffdffbff7feffdel) >> 1;
-
-        d131 |= ((d131 & 0x1ffffffffffffl) << 11) | (d130 >> 50);
-        d130 |= (d130 & 0x3ffffffffffffl) << 11;
-        d130 |= (d130 >> 11) | ((d131 & 0x7ffl) << 50);
-        d131 |= d131 >> 11;
-                {
-            int xi = bug.getRecentPos(13).x - loc.x + 5;
-            int yi = bug.getRecentPos(13).y - loc.y + 5;
-            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
-                int idx = yi * 11 + xi;
-                if(idx < 61) {
-                    d130 |= 1l << idx;
-                } else {
-                    d131 |= 1l << (idx - 61);
-                }
-            }
-        }
-
-        d130 &= CellTracker.localPassable0;
-        d131 &= CellTracker.localPassable1;
-        // Profiler.end("bfs iteration");
         if((d130 & 0x807000000000000l) != 0 || (d131 & 0xe01) != 0) {
             // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
@@ -4925,28 +4914,31 @@ public class Pathfinder {
                 return;
             }
         }
-        // Profiler.begin();
-        long d140 = d130, d141 = d131;
 
-        // if(rc.getRoundNum() >= 507) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(d140, d141);
-        //     Clock.yield();
-        // }
+        // Profiler.begin();
 
         // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d140 |= (d140 & 0xfbff7feffdffbffl) << 1;
-        d141 |= (d141 & 0x7feffdffbff7fefl) << 1;
-        d140 |= (d140 & 0x1f7feffdffbff7fel) >> 1;
-        d141 |= (d141 & 0xffdffbff7feffdel) >> 1;
+        d130 |= (d130 & 0xfbff7feffdffbffl) << 1;
+        d131 |= (d131 & 0x7feffdffbff7fefl) << 1;
+        d130 |= (d130 & 0x1f7feffdffbff7fel) >> 1;
+        d131 |= (d131 & 0xffdffbff7feffdel) >> 1;
 
-        d141 |= ((d141 & 0x1ffffffffffffl) << 11) | (d140 >> 50);
-        d140 |= (d140 & 0x3ffffffffffffl) << 11;
-        d140 |= (d140 >> 11) | ((d141 & 0x7ffl) << 50);
-        d141 |= d141 >> 11;
+        d131 |= ((d131 & 0x1ffffffffffffl) << 11) | (d130 >> 50);
+        d130 |= (d130 & 0x3ffffffffffffl) << 11;
+        d130 |= (d130 >> 11) | ((d131 & 0x7ffl) << 50);
+        d131 |= d131 >> 11;
+        d130 &= CellTracker.localPassable0;
+        d131 &= CellTracker.localPassable1;
+        long d150 = d130;
+        long d151 = d131;
+        d130 &= ~CellTracker.localDirt0;
+        d131 &= ~CellTracker.localDirt1;
+        d140 |= d130;
+        d141 |= d131;
+        // Profiler.end("bfs iteration");
                 {
-            int xi = bug.getRecentPos(14).x - loc.x + 5;
-            int yi = bug.getRecentPos(14).y - loc.y + 5;
+            int xi = bug.getRecentPos(14 / 2).x - loc.x + 5;
+            int yi = bug.getRecentPos(14 / 2).y - loc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
                 int idx = yi * 11 + xi;
                 if(idx < 61) {
@@ -4957,9 +4949,11 @@ public class Pathfinder {
             }
         }
 
-        d140 &= CellTracker.localPassable0;
-        d141 &= CellTracker.localPassable1;
-        // Profiler.end("bfs iteration");
+        // if(rc.getRoundNum() >= 377) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d140, d141);
+        //     Clock.yield();
+        // }
         if((d140 & 0x807000000000000l) != 0 || (d141 & 0xe01) != 0) {
             // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
@@ -5175,41 +5169,33 @@ public class Pathfinder {
                 return;
             }
         }
-        // Profiler.begin();
-        long d150 = d140, d151 = d141;
 
-        // if(rc.getRoundNum() >= 507) {
+        // Profiler.begin();
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d140 |= (d140 & 0xfbff7feffdffbffl) << 1;
+        d141 |= (d141 & 0x7feffdffbff7fefl) << 1;
+        d140 |= (d140 & 0x1f7feffdffbff7fel) >> 1;
+        d141 |= (d141 & 0xffdffbff7feffdel) >> 1;
+
+        d141 |= ((d141 & 0x1ffffffffffffl) << 11) | (d140 >> 50);
+        d140 |= (d140 & 0x3ffffffffffffl) << 11;
+        d140 |= (d140 >> 11) | ((d141 & 0x7ffl) << 50);
+        d141 |= d141 >> 11;
+        d140 &= CellTracker.localPassable0;
+        d141 &= CellTracker.localPassable1;
+        long d160 = d140;
+        long d161 = d141;
+        d140 &= ~CellTracker.localDirt0;
+        d141 &= ~CellTracker.localDirt1;
+        d150 |= d140;
+        d151 |= d141;
+        // Profiler.end("bfs iteration");
+        // if(rc.getRoundNum() >= 377) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d150, d151);
         //     Clock.yield();
         // }
-
-        // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d150 |= (d150 & 0xfbff7feffdffbffl) << 1;
-        d151 |= (d151 & 0x7feffdffbff7fefl) << 1;
-        d150 |= (d150 & 0x1f7feffdffbff7fel) >> 1;
-        d151 |= (d151 & 0xffdffbff7feffdel) >> 1;
-
-        d151 |= ((d151 & 0x1ffffffffffffl) << 11) | (d150 >> 50);
-        d150 |= (d150 & 0x3ffffffffffffl) << 11;
-        d150 |= (d150 >> 11) | ((d151 & 0x7ffl) << 50);
-        d151 |= d151 >> 11;
-                {
-            int xi = bug.getRecentPos(15).x - loc.x + 5;
-            int yi = bug.getRecentPos(15).y - loc.y + 5;
-            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
-                int idx = yi * 11 + xi;
-                if(idx < 61) {
-                    d150 |= 1l << idx;
-                } else {
-                    d151 |= 1l << (idx - 61);
-                }
-            }
-        }
-
-        d150 &= CellTracker.localPassable0;
-        d151 &= CellTracker.localPassable1;
-        // Profiler.end("bfs iteration");
         if((d150 & 0x807000000000000l) != 0 || (d151 & 0xe01) != 0) {
             // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
@@ -5425,28 +5411,31 @@ public class Pathfinder {
                 return;
             }
         }
-        // Profiler.begin();
-        long d160 = d150, d161 = d151;
 
-        // if(rc.getRoundNum() >= 507) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(d160, d161);
-        //     Clock.yield();
-        // }
+        // Profiler.begin();
 
         // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d160 |= (d160 & 0xfbff7feffdffbffl) << 1;
-        d161 |= (d161 & 0x7feffdffbff7fefl) << 1;
-        d160 |= (d160 & 0x1f7feffdffbff7fel) >> 1;
-        d161 |= (d161 & 0xffdffbff7feffdel) >> 1;
+        d150 |= (d150 & 0xfbff7feffdffbffl) << 1;
+        d151 |= (d151 & 0x7feffdffbff7fefl) << 1;
+        d150 |= (d150 & 0x1f7feffdffbff7fel) >> 1;
+        d151 |= (d151 & 0xffdffbff7feffdel) >> 1;
 
-        d161 |= ((d161 & 0x1ffffffffffffl) << 11) | (d160 >> 50);
-        d160 |= (d160 & 0x3ffffffffffffl) << 11;
-        d160 |= (d160 >> 11) | ((d161 & 0x7ffl) << 50);
-        d161 |= d161 >> 11;
+        d151 |= ((d151 & 0x1ffffffffffffl) << 11) | (d150 >> 50);
+        d150 |= (d150 & 0x3ffffffffffffl) << 11;
+        d150 |= (d150 >> 11) | ((d151 & 0x7ffl) << 50);
+        d151 |= d151 >> 11;
+        d150 &= CellTracker.localPassable0;
+        d151 &= CellTracker.localPassable1;
+        long d170 = d150;
+        long d171 = d151;
+        d150 &= ~CellTracker.localDirt0;
+        d151 &= ~CellTracker.localDirt1;
+        d160 |= d150;
+        d161 |= d151;
+        // Profiler.end("bfs iteration");
                 {
-            int xi = bug.getRecentPos(16).x - loc.x + 5;
-            int yi = bug.getRecentPos(16).y - loc.y + 5;
+            int xi = bug.getRecentPos(16 / 2).x - loc.x + 5;
+            int yi = bug.getRecentPos(16 / 2).y - loc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
                 int idx = yi * 11 + xi;
                 if(idx < 61) {
@@ -5457,9 +5446,11 @@ public class Pathfinder {
             }
         }
 
-        d160 &= CellTracker.localPassable0;
-        d161 &= CellTracker.localPassable1;
-        // Profiler.end("bfs iteration");
+        // if(rc.getRoundNum() >= 377) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d160, d161);
+        //     Clock.yield();
+        // }
         if((d160 & 0x807000000000000l) != 0 || (d161 & 0xe01) != 0) {
             // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
@@ -5675,41 +5666,33 @@ public class Pathfinder {
                 return;
             }
         }
-        // Profiler.begin();
-        long d170 = d160, d171 = d161;
 
-        // if(rc.getRoundNum() >= 507) {
+        // Profiler.begin();
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d160 |= (d160 & 0xfbff7feffdffbffl) << 1;
+        d161 |= (d161 & 0x7feffdffbff7fefl) << 1;
+        d160 |= (d160 & 0x1f7feffdffbff7fel) >> 1;
+        d161 |= (d161 & 0xffdffbff7feffdel) >> 1;
+
+        d161 |= ((d161 & 0x1ffffffffffffl) << 11) | (d160 >> 50);
+        d160 |= (d160 & 0x3ffffffffffffl) << 11;
+        d160 |= (d160 >> 11) | ((d161 & 0x7ffl) << 50);
+        d161 |= d161 >> 11;
+        d160 &= CellTracker.localPassable0;
+        d161 &= CellTracker.localPassable1;
+        long d180 = d160;
+        long d181 = d161;
+        d160 &= ~CellTracker.localDirt0;
+        d161 &= ~CellTracker.localDirt1;
+        d170 |= d160;
+        d171 |= d161;
+        // Profiler.end("bfs iteration");
+        // if(rc.getRoundNum() >= 377) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d170, d171);
         //     Clock.yield();
         // }
-
-        // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d170 |= (d170 & 0xfbff7feffdffbffl) << 1;
-        d171 |= (d171 & 0x7feffdffbff7fefl) << 1;
-        d170 |= (d170 & 0x1f7feffdffbff7fel) >> 1;
-        d171 |= (d171 & 0xffdffbff7feffdel) >> 1;
-
-        d171 |= ((d171 & 0x1ffffffffffffl) << 11) | (d170 >> 50);
-        d170 |= (d170 & 0x3ffffffffffffl) << 11;
-        d170 |= (d170 >> 11) | ((d171 & 0x7ffl) << 50);
-        d171 |= d171 >> 11;
-                {
-            int xi = bug.getRecentPos(17).x - loc.x + 5;
-            int yi = bug.getRecentPos(17).y - loc.y + 5;
-            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
-                int idx = yi * 11 + xi;
-                if(idx < 61) {
-                    d170 |= 1l << idx;
-                } else {
-                    d171 |= 1l << (idx - 61);
-                }
-            }
-        }
-
-        d170 &= CellTracker.localPassable0;
-        d171 &= CellTracker.localPassable1;
-        // Profiler.end("bfs iteration");
         if((d170 & 0x807000000000000l) != 0 || (d171 & 0xe01) != 0) {
             // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
@@ -5925,28 +5908,31 @@ public class Pathfinder {
                 return;
             }
         }
-        // Profiler.begin();
-        long d180 = d170, d181 = d171;
 
-        // if(rc.getRoundNum() >= 507) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(d180, d181);
-        //     Clock.yield();
-        // }
+        // Profiler.begin();
 
         // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d180 |= (d180 & 0xfbff7feffdffbffl) << 1;
-        d181 |= (d181 & 0x7feffdffbff7fefl) << 1;
-        d180 |= (d180 & 0x1f7feffdffbff7fel) >> 1;
-        d181 |= (d181 & 0xffdffbff7feffdel) >> 1;
+        d170 |= (d170 & 0xfbff7feffdffbffl) << 1;
+        d171 |= (d171 & 0x7feffdffbff7fefl) << 1;
+        d170 |= (d170 & 0x1f7feffdffbff7fel) >> 1;
+        d171 |= (d171 & 0xffdffbff7feffdel) >> 1;
 
-        d181 |= ((d181 & 0x1ffffffffffffl) << 11) | (d180 >> 50);
-        d180 |= (d180 & 0x3ffffffffffffl) << 11;
-        d180 |= (d180 >> 11) | ((d181 & 0x7ffl) << 50);
-        d181 |= d181 >> 11;
+        d171 |= ((d171 & 0x1ffffffffffffl) << 11) | (d170 >> 50);
+        d170 |= (d170 & 0x3ffffffffffffl) << 11;
+        d170 |= (d170 >> 11) | ((d171 & 0x7ffl) << 50);
+        d171 |= d171 >> 11;
+        d170 &= CellTracker.localPassable0;
+        d171 &= CellTracker.localPassable1;
+        long d190 = d170;
+        long d191 = d171;
+        d170 &= ~CellTracker.localDirt0;
+        d171 &= ~CellTracker.localDirt1;
+        d180 |= d170;
+        d181 |= d171;
+        // Profiler.end("bfs iteration");
                 {
-            int xi = bug.getRecentPos(18).x - loc.x + 5;
-            int yi = bug.getRecentPos(18).y - loc.y + 5;
+            int xi = bug.getRecentPos(18 / 2).x - loc.x + 5;
+            int yi = bug.getRecentPos(18 / 2).y - loc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
                 int idx = yi * 11 + xi;
                 if(idx < 61) {
@@ -5957,9 +5943,11 @@ public class Pathfinder {
             }
         }
 
-        d180 &= CellTracker.localPassable0;
-        d181 &= CellTracker.localPassable1;
-        // Profiler.end("bfs iteration");
+        // if(rc.getRoundNum() >= 377) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d180, d181);
+        //     Clock.yield();
+        // }
         if((d180 & 0x807000000000000l) != 0 || (d181 & 0xe01) != 0) {
             // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
@@ -6175,41 +6163,33 @@ public class Pathfinder {
                 return;
             }
         }
-        // Profiler.begin();
-        long d190 = d180, d191 = d181;
 
-        // if(rc.getRoundNum() >= 507) {
+        // Profiler.begin();
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d180 |= (d180 & 0xfbff7feffdffbffl) << 1;
+        d181 |= (d181 & 0x7feffdffbff7fefl) << 1;
+        d180 |= (d180 & 0x1f7feffdffbff7fel) >> 1;
+        d181 |= (d181 & 0xffdffbff7feffdel) >> 1;
+
+        d181 |= ((d181 & 0x1ffffffffffffl) << 11) | (d180 >> 50);
+        d180 |= (d180 & 0x3ffffffffffffl) << 11;
+        d180 |= (d180 >> 11) | ((d181 & 0x7ffl) << 50);
+        d181 |= d181 >> 11;
+        d180 &= CellTracker.localPassable0;
+        d181 &= CellTracker.localPassable1;
+        long d200 = d180;
+        long d201 = d181;
+        d180 &= ~CellTracker.localDirt0;
+        d181 &= ~CellTracker.localDirt1;
+        d190 |= d180;
+        d191 |= d181;
+        // Profiler.end("bfs iteration");
+        // if(rc.getRoundNum() >= 377) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d190, d191);
         //     Clock.yield();
         // }
-
-        // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d190 |= (d190 & 0xfbff7feffdffbffl) << 1;
-        d191 |= (d191 & 0x7feffdffbff7fefl) << 1;
-        d190 |= (d190 & 0x1f7feffdffbff7fel) >> 1;
-        d191 |= (d191 & 0xffdffbff7feffdel) >> 1;
-
-        d191 |= ((d191 & 0x1ffffffffffffl) << 11) | (d190 >> 50);
-        d190 |= (d190 & 0x3ffffffffffffl) << 11;
-        d190 |= (d190 >> 11) | ((d191 & 0x7ffl) << 50);
-        d191 |= d191 >> 11;
-                {
-            int xi = bug.getRecentPos(19).x - loc.x + 5;
-            int yi = bug.getRecentPos(19).y - loc.y + 5;
-            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
-                int idx = yi * 11 + xi;
-                if(idx < 61) {
-                    d190 |= 1l << idx;
-                } else {
-                    d191 |= 1l << (idx - 61);
-                }
-            }
-        }
-
-        d190 &= CellTracker.localPassable0;
-        d191 &= CellTracker.localPassable1;
-        // Profiler.end("bfs iteration");
         if((d190 & 0x807000000000000l) != 0 || (d191 & 0xe01) != 0) {
             // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
@@ -6425,28 +6405,31 @@ public class Pathfinder {
                 return;
             }
         }
-        // Profiler.begin();
-        long d200 = d190, d201 = d191;
 
-        // if(rc.getRoundNum() >= 507) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(d200, d201);
-        //     Clock.yield();
-        // }
+        // Profiler.begin();
 
         // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d200 |= (d200 & 0xfbff7feffdffbffl) << 1;
-        d201 |= (d201 & 0x7feffdffbff7fefl) << 1;
-        d200 |= (d200 & 0x1f7feffdffbff7fel) >> 1;
-        d201 |= (d201 & 0xffdffbff7feffdel) >> 1;
+        d190 |= (d190 & 0xfbff7feffdffbffl) << 1;
+        d191 |= (d191 & 0x7feffdffbff7fefl) << 1;
+        d190 |= (d190 & 0x1f7feffdffbff7fel) >> 1;
+        d191 |= (d191 & 0xffdffbff7feffdel) >> 1;
 
-        d201 |= ((d201 & 0x1ffffffffffffl) << 11) | (d200 >> 50);
-        d200 |= (d200 & 0x3ffffffffffffl) << 11;
-        d200 |= (d200 >> 11) | ((d201 & 0x7ffl) << 50);
-        d201 |= d201 >> 11;
+        d191 |= ((d191 & 0x1ffffffffffffl) << 11) | (d190 >> 50);
+        d190 |= (d190 & 0x3ffffffffffffl) << 11;
+        d190 |= (d190 >> 11) | ((d191 & 0x7ffl) << 50);
+        d191 |= d191 >> 11;
+        d190 &= CellTracker.localPassable0;
+        d191 &= CellTracker.localPassable1;
+        long d210 = d190;
+        long d211 = d191;
+        d190 &= ~CellTracker.localDirt0;
+        d191 &= ~CellTracker.localDirt1;
+        d200 |= d190;
+        d201 |= d191;
+        // Profiler.end("bfs iteration");
                 {
-            int xi = bug.getRecentPos(20).x - loc.x + 5;
-            int yi = bug.getRecentPos(20).y - loc.y + 5;
+            int xi = bug.getRecentPos(20 / 2).x - loc.x + 5;
+            int yi = bug.getRecentPos(20 / 2).y - loc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
                 int idx = yi * 11 + xi;
                 if(idx < 61) {
@@ -6457,9 +6440,11 @@ public class Pathfinder {
             }
         }
 
-        d200 &= CellTracker.localPassable0;
-        d201 &= CellTracker.localPassable1;
-        // Profiler.end("bfs iteration");
+        // if(rc.getRoundNum() >= 377) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d200, d201);
+        //     Clock.yield();
+        // }
         if((d200 & 0x807000000000000l) != 0 || (d201 & 0xe01) != 0) {
             // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
@@ -6675,41 +6660,33 @@ public class Pathfinder {
                 return;
             }
         }
-        // Profiler.begin();
-        long d210 = d200, d211 = d201;
 
-        // if(rc.getRoundNum() >= 507) {
+        // Profiler.begin();
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d200 |= (d200 & 0xfbff7feffdffbffl) << 1;
+        d201 |= (d201 & 0x7feffdffbff7fefl) << 1;
+        d200 |= (d200 & 0x1f7feffdffbff7fel) >> 1;
+        d201 |= (d201 & 0xffdffbff7feffdel) >> 1;
+
+        d201 |= ((d201 & 0x1ffffffffffffl) << 11) | (d200 >> 50);
+        d200 |= (d200 & 0x3ffffffffffffl) << 11;
+        d200 |= (d200 >> 11) | ((d201 & 0x7ffl) << 50);
+        d201 |= d201 >> 11;
+        d200 &= CellTracker.localPassable0;
+        d201 &= CellTracker.localPassable1;
+        long d220 = d200;
+        long d221 = d201;
+        d200 &= ~CellTracker.localDirt0;
+        d201 &= ~CellTracker.localDirt1;
+        d210 |= d200;
+        d211 |= d201;
+        // Profiler.end("bfs iteration");
+        // if(rc.getRoundNum() >= 377) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d210, d211);
         //     Clock.yield();
         // }
-
-        // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d210 |= (d210 & 0xfbff7feffdffbffl) << 1;
-        d211 |= (d211 & 0x7feffdffbff7fefl) << 1;
-        d210 |= (d210 & 0x1f7feffdffbff7fel) >> 1;
-        d211 |= (d211 & 0xffdffbff7feffdel) >> 1;
-
-        d211 |= ((d211 & 0x1ffffffffffffl) << 11) | (d210 >> 50);
-        d210 |= (d210 & 0x3ffffffffffffl) << 11;
-        d210 |= (d210 >> 11) | ((d211 & 0x7ffl) << 50);
-        d211 |= d211 >> 11;
-                {
-            int xi = bug.getRecentPos(21).x - loc.x + 5;
-            int yi = bug.getRecentPos(21).y - loc.y + 5;
-            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
-                int idx = yi * 11 + xi;
-                if(idx < 61) {
-                    d210 |= 1l << idx;
-                } else {
-                    d211 |= 1l << (idx - 61);
-                }
-            }
-        }
-
-        d210 &= CellTracker.localPassable0;
-        d211 &= CellTracker.localPassable1;
-        // Profiler.end("bfs iteration");
         if((d210 & 0x807000000000000l) != 0 || (d211 & 0xe01) != 0) {
             // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
@@ -6925,28 +6902,31 @@ public class Pathfinder {
                 return;
             }
         }
-        // Profiler.begin();
-        long d220 = d210, d221 = d211;
 
-        // if(rc.getRoundNum() >= 507) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(d220, d221);
-        //     Clock.yield();
-        // }
+        // Profiler.begin();
 
         // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d220 |= (d220 & 0xfbff7feffdffbffl) << 1;
-        d221 |= (d221 & 0x7feffdffbff7fefl) << 1;
-        d220 |= (d220 & 0x1f7feffdffbff7fel) >> 1;
-        d221 |= (d221 & 0xffdffbff7feffdel) >> 1;
+        d210 |= (d210 & 0xfbff7feffdffbffl) << 1;
+        d211 |= (d211 & 0x7feffdffbff7fefl) << 1;
+        d210 |= (d210 & 0x1f7feffdffbff7fel) >> 1;
+        d211 |= (d211 & 0xffdffbff7feffdel) >> 1;
 
-        d221 |= ((d221 & 0x1ffffffffffffl) << 11) | (d220 >> 50);
-        d220 |= (d220 & 0x3ffffffffffffl) << 11;
-        d220 |= (d220 >> 11) | ((d221 & 0x7ffl) << 50);
-        d221 |= d221 >> 11;
+        d211 |= ((d211 & 0x1ffffffffffffl) << 11) | (d210 >> 50);
+        d210 |= (d210 & 0x3ffffffffffffl) << 11;
+        d210 |= (d210 >> 11) | ((d211 & 0x7ffl) << 50);
+        d211 |= d211 >> 11;
+        d210 &= CellTracker.localPassable0;
+        d211 &= CellTracker.localPassable1;
+        long d230 = d210;
+        long d231 = d211;
+        d210 &= ~CellTracker.localDirt0;
+        d211 &= ~CellTracker.localDirt1;
+        d220 |= d210;
+        d221 |= d211;
+        // Profiler.end("bfs iteration");
                 {
-            int xi = bug.getRecentPos(22).x - loc.x + 5;
-            int yi = bug.getRecentPos(22).y - loc.y + 5;
+            int xi = bug.getRecentPos(22 / 2).x - loc.x + 5;
+            int yi = bug.getRecentPos(22 / 2).y - loc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
                 int idx = yi * 11 + xi;
                 if(idx < 61) {
@@ -6957,9 +6937,11 @@ public class Pathfinder {
             }
         }
 
-        d220 &= CellTracker.localPassable0;
-        d221 &= CellTracker.localPassable1;
-        // Profiler.end("bfs iteration");
+        // if(rc.getRoundNum() >= 377) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d220, d221);
+        //     Clock.yield();
+        // }
         if((d220 & 0x807000000000000l) != 0 || (d221 & 0xe01) != 0) {
             // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
@@ -7175,41 +7157,33 @@ public class Pathfinder {
                 return;
             }
         }
-        // Profiler.begin();
-        long d230 = d220, d231 = d221;
 
-        // if(rc.getRoundNum() >= 507) {
+        // Profiler.begin();
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d220 |= (d220 & 0xfbff7feffdffbffl) << 1;
+        d221 |= (d221 & 0x7feffdffbff7fefl) << 1;
+        d220 |= (d220 & 0x1f7feffdffbff7fel) >> 1;
+        d221 |= (d221 & 0xffdffbff7feffdel) >> 1;
+
+        d221 |= ((d221 & 0x1ffffffffffffl) << 11) | (d220 >> 50);
+        d220 |= (d220 & 0x3ffffffffffffl) << 11;
+        d220 |= (d220 >> 11) | ((d221 & 0x7ffl) << 50);
+        d221 |= d221 >> 11;
+        d220 &= CellTracker.localPassable0;
+        d221 &= CellTracker.localPassable1;
+        long d240 = d220;
+        long d241 = d221;
+        d220 &= ~CellTracker.localDirt0;
+        d221 &= ~CellTracker.localDirt1;
+        d230 |= d220;
+        d231 |= d221;
+        // Profiler.end("bfs iteration");
+        // if(rc.getRoundNum() >= 377) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d230, d231);
         //     Clock.yield();
         // }
-
-        // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d230 |= (d230 & 0xfbff7feffdffbffl) << 1;
-        d231 |= (d231 & 0x7feffdffbff7fefl) << 1;
-        d230 |= (d230 & 0x1f7feffdffbff7fel) >> 1;
-        d231 |= (d231 & 0xffdffbff7feffdel) >> 1;
-
-        d231 |= ((d231 & 0x1ffffffffffffl) << 11) | (d230 >> 50);
-        d230 |= (d230 & 0x3ffffffffffffl) << 11;
-        d230 |= (d230 >> 11) | ((d231 & 0x7ffl) << 50);
-        d231 |= d231 >> 11;
-                {
-            int xi = bug.getRecentPos(23).x - loc.x + 5;
-            int yi = bug.getRecentPos(23).y - loc.y + 5;
-            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
-                int idx = yi * 11 + xi;
-                if(idx < 61) {
-                    d230 |= 1l << idx;
-                } else {
-                    d231 |= 1l << (idx - 61);
-                }
-            }
-        }
-
-        d230 &= CellTracker.localPassable0;
-        d231 &= CellTracker.localPassable1;
-        // Profiler.end("bfs iteration");
         if((d230 & 0x807000000000000l) != 0 || (d231 & 0xe01) != 0) {
             // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
@@ -7425,28 +7399,31 @@ public class Pathfinder {
                 return;
             }
         }
-        // Profiler.begin();
-        long d240 = d230, d241 = d231;
 
-        // if(rc.getRoundNum() >= 507) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(d240, d241);
-        //     Clock.yield();
-        // }
+        // Profiler.begin();
 
         // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d240 |= (d240 & 0xfbff7feffdffbffl) << 1;
-        d241 |= (d241 & 0x7feffdffbff7fefl) << 1;
-        d240 |= (d240 & 0x1f7feffdffbff7fel) >> 1;
-        d241 |= (d241 & 0xffdffbff7feffdel) >> 1;
+        d230 |= (d230 & 0xfbff7feffdffbffl) << 1;
+        d231 |= (d231 & 0x7feffdffbff7fefl) << 1;
+        d230 |= (d230 & 0x1f7feffdffbff7fel) >> 1;
+        d231 |= (d231 & 0xffdffbff7feffdel) >> 1;
 
-        d241 |= ((d241 & 0x1ffffffffffffl) << 11) | (d240 >> 50);
-        d240 |= (d240 & 0x3ffffffffffffl) << 11;
-        d240 |= (d240 >> 11) | ((d241 & 0x7ffl) << 50);
-        d241 |= d241 >> 11;
+        d231 |= ((d231 & 0x1ffffffffffffl) << 11) | (d230 >> 50);
+        d230 |= (d230 & 0x3ffffffffffffl) << 11;
+        d230 |= (d230 >> 11) | ((d231 & 0x7ffl) << 50);
+        d231 |= d231 >> 11;
+        d230 &= CellTracker.localPassable0;
+        d231 &= CellTracker.localPassable1;
+        long d250 = d230;
+        long d251 = d231;
+        d230 &= ~CellTracker.localDirt0;
+        d231 &= ~CellTracker.localDirt1;
+        d240 |= d230;
+        d241 |= d231;
+        // Profiler.end("bfs iteration");
                 {
-            int xi = bug.getRecentPos(24).x - loc.x + 5;
-            int yi = bug.getRecentPos(24).y - loc.y + 5;
+            int xi = bug.getRecentPos(24 / 2).x - loc.x + 5;
+            int yi = bug.getRecentPos(24 / 2).y - loc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
                 int idx = yi * 11 + xi;
                 if(idx < 61) {
@@ -7457,9 +7434,11 @@ public class Pathfinder {
             }
         }
 
-        d240 &= CellTracker.localPassable0;
-        d241 &= CellTracker.localPassable1;
-        // Profiler.end("bfs iteration");
+        // if(rc.getRoundNum() >= 377) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d240, d241);
+        //     Clock.yield();
+        // }
         if((d240 & 0x807000000000000l) != 0 || (d241 & 0xe01) != 0) {
             // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
@@ -7675,6 +7654,28 @@ public class Pathfinder {
                 return;
             }
         }
+
+        // Profiler.begin();
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d240 |= (d240 & 0xfbff7feffdffbffl) << 1;
+        d241 |= (d241 & 0x7feffdffbff7fefl) << 1;
+        d240 |= (d240 & 0x1f7feffdffbff7fel) >> 1;
+        d241 |= (d241 & 0xffdffbff7feffdel) >> 1;
+
+        d241 |= ((d241 & 0x1ffffffffffffl) << 11) | (d240 >> 50);
+        d240 |= (d240 & 0x3ffffffffffffl) << 11;
+        d240 |= (d240 >> 11) | ((d241 & 0x7ffl) << 50);
+        d241 |= d241 >> 11;
+        d240 &= CellTracker.localPassable0;
+        d241 &= CellTracker.localPassable1;
+        long d260 = d240;
+        long d261 = d241;
+        d240 &= ~CellTracker.localDirt0;
+        d241 &= ~CellTracker.localDirt1;
+        d250 |= d240;
+        d251 |= d241;
+        // Profiler.end("bfs iteration");
         indicatorString = "";
         CellTracker.printLocalMask(CellTracker.localPassable0, CellTracker.localPassable1);
         assert false : "TODO: fallback when bfs can't find path";

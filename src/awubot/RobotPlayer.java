@@ -38,7 +38,7 @@ public class RobotPlayer {
                     }
                     case RAT_KING -> {
                         indicate(rc.getGlobalCheese());
-                        if(built < 10) rc.buildRat(rc.getLocation().add(Direction.NORTHEAST).add(Direction.NORTHEAST));
+                        if(built < 5) rc.buildRat(rc.getLocation().add(Direction.NORTHEAST).add(Direction.NORTHEAST));
                         built++;
                     }
                     default -> {

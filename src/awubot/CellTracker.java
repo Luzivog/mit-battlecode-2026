@@ -757,301 +757,361 @@ public class CellTracker {
                 seen0 |= 1l << loc.x;
                 if(!info.isWall()) passable0 |= 1l << loc.x;
                 if(info.isDirt()) dirt0 |= 1l << loc.x;
+                else dirt0 &= ~(1l << loc.x);
             }
             case 1 -> {
                 seen1 |= 1l << loc.x;
                 if(!info.isWall()) passable1 |= 1l << loc.x;
                 if(info.isDirt()) dirt1 |= 1l << loc.x;
+                else dirt1 &= ~(1l << loc.x);
             }
             case 2 -> {
                 seen2 |= 1l << loc.x;
                 if(!info.isWall()) passable2 |= 1l << loc.x;
                 if(info.isDirt()) dirt2 |= 1l << loc.x;
+                else dirt2 &= ~(1l << loc.x);
             }
             case 3 -> {
                 seen3 |= 1l << loc.x;
                 if(!info.isWall()) passable3 |= 1l << loc.x;
                 if(info.isDirt()) dirt3 |= 1l << loc.x;
+                else dirt3 &= ~(1l << loc.x);
             }
             case 4 -> {
                 seen4 |= 1l << loc.x;
                 if(!info.isWall()) passable4 |= 1l << loc.x;
                 if(info.isDirt()) dirt4 |= 1l << loc.x;
+                else dirt4 &= ~(1l << loc.x);
             }
             case 5 -> {
                 seen5 |= 1l << loc.x;
                 if(!info.isWall()) passable5 |= 1l << loc.x;
                 if(info.isDirt()) dirt5 |= 1l << loc.x;
+                else dirt5 &= ~(1l << loc.x);
             }
             case 6 -> {
                 seen6 |= 1l << loc.x;
                 if(!info.isWall()) passable6 |= 1l << loc.x;
                 if(info.isDirt()) dirt6 |= 1l << loc.x;
+                else dirt6 &= ~(1l << loc.x);
             }
             case 7 -> {
                 seen7 |= 1l << loc.x;
                 if(!info.isWall()) passable7 |= 1l << loc.x;
                 if(info.isDirt()) dirt7 |= 1l << loc.x;
+                else dirt7 &= ~(1l << loc.x);
             }
             case 8 -> {
                 seen8 |= 1l << loc.x;
                 if(!info.isWall()) passable8 |= 1l << loc.x;
                 if(info.isDirt()) dirt8 |= 1l << loc.x;
+                else dirt8 &= ~(1l << loc.x);
             }
             case 9 -> {
                 seen9 |= 1l << loc.x;
                 if(!info.isWall()) passable9 |= 1l << loc.x;
                 if(info.isDirt()) dirt9 |= 1l << loc.x;
+                else dirt9 &= ~(1l << loc.x);
             }
             case 10 -> {
                 seen10 |= 1l << loc.x;
                 if(!info.isWall()) passable10 |= 1l << loc.x;
                 if(info.isDirt()) dirt10 |= 1l << loc.x;
+                else dirt10 &= ~(1l << loc.x);
             }
             case 11 -> {
                 seen11 |= 1l << loc.x;
                 if(!info.isWall()) passable11 |= 1l << loc.x;
                 if(info.isDirt()) dirt11 |= 1l << loc.x;
+                else dirt11 &= ~(1l << loc.x);
             }
             case 12 -> {
                 seen12 |= 1l << loc.x;
                 if(!info.isWall()) passable12 |= 1l << loc.x;
                 if(info.isDirt()) dirt12 |= 1l << loc.x;
+                else dirt12 &= ~(1l << loc.x);
             }
             case 13 -> {
                 seen13 |= 1l << loc.x;
                 if(!info.isWall()) passable13 |= 1l << loc.x;
                 if(info.isDirt()) dirt13 |= 1l << loc.x;
+                else dirt13 &= ~(1l << loc.x);
             }
             case 14 -> {
                 seen14 |= 1l << loc.x;
                 if(!info.isWall()) passable14 |= 1l << loc.x;
                 if(info.isDirt()) dirt14 |= 1l << loc.x;
+                else dirt14 &= ~(1l << loc.x);
             }
             case 15 -> {
                 seen15 |= 1l << loc.x;
                 if(!info.isWall()) passable15 |= 1l << loc.x;
                 if(info.isDirt()) dirt15 |= 1l << loc.x;
+                else dirt15 &= ~(1l << loc.x);
             }
             case 16 -> {
                 seen16 |= 1l << loc.x;
                 if(!info.isWall()) passable16 |= 1l << loc.x;
                 if(info.isDirt()) dirt16 |= 1l << loc.x;
+                else dirt16 &= ~(1l << loc.x);
             }
             case 17 -> {
                 seen17 |= 1l << loc.x;
                 if(!info.isWall()) passable17 |= 1l << loc.x;
                 if(info.isDirt()) dirt17 |= 1l << loc.x;
+                else dirt17 &= ~(1l << loc.x);
             }
             case 18 -> {
                 seen18 |= 1l << loc.x;
                 if(!info.isWall()) passable18 |= 1l << loc.x;
                 if(info.isDirt()) dirt18 |= 1l << loc.x;
+                else dirt18 &= ~(1l << loc.x);
             }
             case 19 -> {
                 seen19 |= 1l << loc.x;
                 if(!info.isWall()) passable19 |= 1l << loc.x;
                 if(info.isDirt()) dirt19 |= 1l << loc.x;
+                else dirt19 &= ~(1l << loc.x);
             }
             case 20 -> {
                 seen20 |= 1l << loc.x;
                 if(!info.isWall()) passable20 |= 1l << loc.x;
                 if(info.isDirt()) dirt20 |= 1l << loc.x;
+                else dirt20 &= ~(1l << loc.x);
             }
             case 21 -> {
                 seen21 |= 1l << loc.x;
                 if(!info.isWall()) passable21 |= 1l << loc.x;
                 if(info.isDirt()) dirt21 |= 1l << loc.x;
+                else dirt21 &= ~(1l << loc.x);
             }
             case 22 -> {
                 seen22 |= 1l << loc.x;
                 if(!info.isWall()) passable22 |= 1l << loc.x;
                 if(info.isDirt()) dirt22 |= 1l << loc.x;
+                else dirt22 &= ~(1l << loc.x);
             }
             case 23 -> {
                 seen23 |= 1l << loc.x;
                 if(!info.isWall()) passable23 |= 1l << loc.x;
                 if(info.isDirt()) dirt23 |= 1l << loc.x;
+                else dirt23 &= ~(1l << loc.x);
             }
             case 24 -> {
                 seen24 |= 1l << loc.x;
                 if(!info.isWall()) passable24 |= 1l << loc.x;
                 if(info.isDirt()) dirt24 |= 1l << loc.x;
+                else dirt24 &= ~(1l << loc.x);
             }
             case 25 -> {
                 seen25 |= 1l << loc.x;
                 if(!info.isWall()) passable25 |= 1l << loc.x;
                 if(info.isDirt()) dirt25 |= 1l << loc.x;
+                else dirt25 &= ~(1l << loc.x);
             }
             case 26 -> {
                 seen26 |= 1l << loc.x;
                 if(!info.isWall()) passable26 |= 1l << loc.x;
                 if(info.isDirt()) dirt26 |= 1l << loc.x;
+                else dirt26 &= ~(1l << loc.x);
             }
             case 27 -> {
                 seen27 |= 1l << loc.x;
                 if(!info.isWall()) passable27 |= 1l << loc.x;
                 if(info.isDirt()) dirt27 |= 1l << loc.x;
+                else dirt27 &= ~(1l << loc.x);
             }
             case 28 -> {
                 seen28 |= 1l << loc.x;
                 if(!info.isWall()) passable28 |= 1l << loc.x;
                 if(info.isDirt()) dirt28 |= 1l << loc.x;
+                else dirt28 &= ~(1l << loc.x);
             }
             case 29 -> {
                 seen29 |= 1l << loc.x;
                 if(!info.isWall()) passable29 |= 1l << loc.x;
                 if(info.isDirt()) dirt29 |= 1l << loc.x;
+                else dirt29 &= ~(1l << loc.x);
             }
             case 30 -> {
                 seen30 |= 1l << loc.x;
                 if(!info.isWall()) passable30 |= 1l << loc.x;
                 if(info.isDirt()) dirt30 |= 1l << loc.x;
+                else dirt30 &= ~(1l << loc.x);
             }
             case 31 -> {
                 seen31 |= 1l << loc.x;
                 if(!info.isWall()) passable31 |= 1l << loc.x;
                 if(info.isDirt()) dirt31 |= 1l << loc.x;
+                else dirt31 &= ~(1l << loc.x);
             }
             case 32 -> {
                 seen32 |= 1l << loc.x;
                 if(!info.isWall()) passable32 |= 1l << loc.x;
                 if(info.isDirt()) dirt32 |= 1l << loc.x;
+                else dirt32 &= ~(1l << loc.x);
             }
             case 33 -> {
                 seen33 |= 1l << loc.x;
                 if(!info.isWall()) passable33 |= 1l << loc.x;
                 if(info.isDirt()) dirt33 |= 1l << loc.x;
+                else dirt33 &= ~(1l << loc.x);
             }
             case 34 -> {
                 seen34 |= 1l << loc.x;
                 if(!info.isWall()) passable34 |= 1l << loc.x;
                 if(info.isDirt()) dirt34 |= 1l << loc.x;
+                else dirt34 &= ~(1l << loc.x);
             }
             case 35 -> {
                 seen35 |= 1l << loc.x;
                 if(!info.isWall()) passable35 |= 1l << loc.x;
                 if(info.isDirt()) dirt35 |= 1l << loc.x;
+                else dirt35 &= ~(1l << loc.x);
             }
             case 36 -> {
                 seen36 |= 1l << loc.x;
                 if(!info.isWall()) passable36 |= 1l << loc.x;
                 if(info.isDirt()) dirt36 |= 1l << loc.x;
+                else dirt36 &= ~(1l << loc.x);
             }
             case 37 -> {
                 seen37 |= 1l << loc.x;
                 if(!info.isWall()) passable37 |= 1l << loc.x;
                 if(info.isDirt()) dirt37 |= 1l << loc.x;
+                else dirt37 &= ~(1l << loc.x);
             }
             case 38 -> {
                 seen38 |= 1l << loc.x;
                 if(!info.isWall()) passable38 |= 1l << loc.x;
                 if(info.isDirt()) dirt38 |= 1l << loc.x;
+                else dirt38 &= ~(1l << loc.x);
             }
             case 39 -> {
                 seen39 |= 1l << loc.x;
                 if(!info.isWall()) passable39 |= 1l << loc.x;
                 if(info.isDirt()) dirt39 |= 1l << loc.x;
+                else dirt39 &= ~(1l << loc.x);
             }
             case 40 -> {
                 seen40 |= 1l << loc.x;
                 if(!info.isWall()) passable40 |= 1l << loc.x;
                 if(info.isDirt()) dirt40 |= 1l << loc.x;
+                else dirt40 &= ~(1l << loc.x);
             }
             case 41 -> {
                 seen41 |= 1l << loc.x;
                 if(!info.isWall()) passable41 |= 1l << loc.x;
                 if(info.isDirt()) dirt41 |= 1l << loc.x;
+                else dirt41 &= ~(1l << loc.x);
             }
             case 42 -> {
                 seen42 |= 1l << loc.x;
                 if(!info.isWall()) passable42 |= 1l << loc.x;
                 if(info.isDirt()) dirt42 |= 1l << loc.x;
+                else dirt42 &= ~(1l << loc.x);
             }
             case 43 -> {
                 seen43 |= 1l << loc.x;
                 if(!info.isWall()) passable43 |= 1l << loc.x;
                 if(info.isDirt()) dirt43 |= 1l << loc.x;
+                else dirt43 &= ~(1l << loc.x);
             }
             case 44 -> {
                 seen44 |= 1l << loc.x;
                 if(!info.isWall()) passable44 |= 1l << loc.x;
                 if(info.isDirt()) dirt44 |= 1l << loc.x;
+                else dirt44 &= ~(1l << loc.x);
             }
             case 45 -> {
                 seen45 |= 1l << loc.x;
                 if(!info.isWall()) passable45 |= 1l << loc.x;
                 if(info.isDirt()) dirt45 |= 1l << loc.x;
+                else dirt45 &= ~(1l << loc.x);
             }
             case 46 -> {
                 seen46 |= 1l << loc.x;
                 if(!info.isWall()) passable46 |= 1l << loc.x;
                 if(info.isDirt()) dirt46 |= 1l << loc.x;
+                else dirt46 &= ~(1l << loc.x);
             }
             case 47 -> {
                 seen47 |= 1l << loc.x;
                 if(!info.isWall()) passable47 |= 1l << loc.x;
                 if(info.isDirt()) dirt47 |= 1l << loc.x;
+                else dirt47 &= ~(1l << loc.x);
             }
             case 48 -> {
                 seen48 |= 1l << loc.x;
                 if(!info.isWall()) passable48 |= 1l << loc.x;
                 if(info.isDirt()) dirt48 |= 1l << loc.x;
+                else dirt48 &= ~(1l << loc.x);
             }
             case 49 -> {
                 seen49 |= 1l << loc.x;
                 if(!info.isWall()) passable49 |= 1l << loc.x;
                 if(info.isDirt()) dirt49 |= 1l << loc.x;
+                else dirt49 &= ~(1l << loc.x);
             }
             case 50 -> {
                 seen50 |= 1l << loc.x;
                 if(!info.isWall()) passable50 |= 1l << loc.x;
                 if(info.isDirt()) dirt50 |= 1l << loc.x;
+                else dirt50 &= ~(1l << loc.x);
             }
             case 51 -> {
                 seen51 |= 1l << loc.x;
                 if(!info.isWall()) passable51 |= 1l << loc.x;
                 if(info.isDirt()) dirt51 |= 1l << loc.x;
+                else dirt51 &= ~(1l << loc.x);
             }
             case 52 -> {
                 seen52 |= 1l << loc.x;
                 if(!info.isWall()) passable52 |= 1l << loc.x;
                 if(info.isDirt()) dirt52 |= 1l << loc.x;
+                else dirt52 &= ~(1l << loc.x);
             }
             case 53 -> {
                 seen53 |= 1l << loc.x;
                 if(!info.isWall()) passable53 |= 1l << loc.x;
                 if(info.isDirt()) dirt53 |= 1l << loc.x;
+                else dirt53 &= ~(1l << loc.x);
             }
             case 54 -> {
                 seen54 |= 1l << loc.x;
                 if(!info.isWall()) passable54 |= 1l << loc.x;
                 if(info.isDirt()) dirt54 |= 1l << loc.x;
+                else dirt54 &= ~(1l << loc.x);
             }
             case 55 -> {
                 seen55 |= 1l << loc.x;
                 if(!info.isWall()) passable55 |= 1l << loc.x;
                 if(info.isDirt()) dirt55 |= 1l << loc.x;
+                else dirt55 &= ~(1l << loc.x);
             }
             case 56 -> {
                 seen56 |= 1l << loc.x;
                 if(!info.isWall()) passable56 |= 1l << loc.x;
                 if(info.isDirt()) dirt56 |= 1l << loc.x;
+                else dirt56 &= ~(1l << loc.x);
             }
             case 57 -> {
                 seen57 |= 1l << loc.x;
                 if(!info.isWall()) passable57 |= 1l << loc.x;
                 if(info.isDirt()) dirt57 |= 1l << loc.x;
+                else dirt57 &= ~(1l << loc.x);
             }
             case 58 -> {
                 seen58 |= 1l << loc.x;
                 if(!info.isWall()) passable58 |= 1l << loc.x;
                 if(info.isDirt()) dirt58 |= 1l << loc.x;
+                else dirt58 &= ~(1l << loc.x);
             }
             case 59 -> {
                 seen59 |= 1l << loc.x;
                 if(!info.isWall()) passable59 |= 1l << loc.x;
                 if(info.isDirt()) dirt59 |= 1l << loc.x;
+                else dirt59 &= ~(1l << loc.x);
             }
         }
     }

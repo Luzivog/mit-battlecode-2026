@@ -127,8 +127,10 @@ class BugnavInstance {
 
         if(!(leftDone && rightDone)) {
             {% macro advance(side) %}
+            // indicate("advance {{side}}");
             {{side}}Bug.outOfSight = false;
             {{side}}Done = !{{side}}Bug.advance();
+            // indicate({{side}}Bug.pos);
             rc.setIndicatorDot({{side}}Bug.pos, 255, 0, 255);
             {% endmacro %}
             if(rightDone) {
@@ -146,7 +148,8 @@ class BugnavInstance {
         boolean leftReady = leftBug.nextPathIndex >= 5 || leftBug.hitEdge || leftBug.outOfSight || leftBug.arrived;
         boolean rightReady = rightBug.nextPathIndex >= 5 || rightBug.hitEdge || rightBug.outOfSight || rightBug.arrived;
         indicate("ready " + leftReady + " " + rightReady);
-        if(!leftReady || !rightReady) return !(leftDone && rightDone);
+        if(!rc.getLocation().equals(pos) && (!leftReady || !rightReady)) return !(leftDone && rightDone);
+        indicate("going ahead");
 
         {% macro score(bug) %} Math.sqrt({{bug}}.pos.distanceSquaredTo(target)) + {{bug}}.nextPathIndex * 0.7 {% endmacro %}
         var leftScore = {{ score("leftBug") }};
@@ -448,6 +451,7 @@ public class Pathfinder {
         var loc = rc.getLocation();
         // d{i}0 + d{i}1 is the mask of reachable within i steps
         long d00 = 0, d01 = 0;
+        long d10 = 0, d11 = 0;
         {% macro writePos(pos, i) %}
         {
             int xi = {{pos}}.x - loc.x + 5;
@@ -462,31 +466,16 @@ public class Pathfinder {
             }
         }
         {% endmacro %}
-        {{ writePos("bug.pos", 0) }}
-        {% for i in range(1, MAX_PATH) %}
-        // Profiler.begin();
-        long d{{i}}0 = d{{i - 1}}0, d{{i}}1 = d{{i - 1}}1;
-
-        // if(rc.getRoundNum() >= 507) {
+        {% for i in range(MAX_PATH) %}
+        {% if i % 2 == 0 %}
+        {{ writePos("bug.getRecentPos(%s / 2)" % i, i) }}
+        {% endif %}
+        // if(rc.getRoundNum() >= 377) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d{{i}}0, d{{i}}1);
         //     Clock.yield();
         // }
-
-        // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d{{i}}0 |= (d{{i}}0 & 0xfbff7feffdffbffl) << 1;
-        d{{i}}1 |= (d{{i}}1 & 0x7feffdffbff7fefl) << 1;
-        d{{i}}0 |= (d{{i}}0 & 0x1f7feffdffbff7fel) >> 1;
-        d{{i}}1 |= (d{{i}}1 & 0xffdffbff7feffdel) >> 1;
-
-        d{{i}}1 |= ((d{{i}}1 & 0x1ffffffffffffl) << 11) | (d{{i}}0 >> 50);
-        d{{i}}0 |= (d{{i}}0 & 0x3ffffffffffffl) << 11;
-        d{{i}}0 |= (d{{i}}0 >> 11) | ((d{{i}}1 & 0x7ffl) << 50);
-        d{{i}}1 |= d{{i}}1 >> 11;
-        {{ writePos("bug.getRecentPos(%s)" % i, i) }}
-        d{{i}}0 &= CellTracker.localPassable0;
-        d{{i}}1 &= CellTracker.localPassable1;
-        // Profiler.end("bfs iteration");
+        {% if i %}
         if((d{{i}}0 & 0x807000000000000l) != 0 || (d{{i}}1 & 0xe01) != 0) {
             // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
@@ -553,6 +542,29 @@ public class Pathfinder {
                 return;
             }
         }
+        {% endif %}
+
+        // Profiler.begin();
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d{{i}}0 |= (d{{i}}0 & 0xfbff7feffdffbffl) << 1;
+        d{{i}}1 |= (d{{i}}1 & 0x7feffdffbff7fefl) << 1;
+        d{{i}}0 |= (d{{i}}0 & 0x1f7feffdffbff7fel) >> 1;
+        d{{i}}1 |= (d{{i}}1 & 0xffdffbff7feffdel) >> 1;
+
+        d{{i}}1 |= ((d{{i}}1 & 0x1ffffffffffffl) << 11) | (d{{i}}0 >> 50);
+        d{{i}}0 |= (d{{i}}0 & 0x3ffffffffffffl) << 11;
+        d{{i}}0 |= (d{{i}}0 >> 11) | ((d{{i}}1 & 0x7ffl) << 50);
+        d{{i}}1 |= d{{i}}1 >> 11;
+        d{{i}}0 &= CellTracker.localPassable0;
+        d{{i}}1 &= CellTracker.localPassable1;
+        long d{{i + 2}}0 = d{{i}}0;
+        long d{{i + 2}}1 = d{{i}}1;
+        d{{i}}0 &= ~CellTracker.localDirt0;
+        d{{i}}1 &= ~CellTracker.localDirt1;
+        d{{i + 1}}0 |= d{{i}}0;
+        d{{i + 1}}1 |= d{{i}}1;
+        // Profiler.end("bfs iteration");
         {% endfor %}
         indicatorString = "";
         CellTracker.printLocalMask(CellTracker.localPassable0, CellTracker.localPassable1);

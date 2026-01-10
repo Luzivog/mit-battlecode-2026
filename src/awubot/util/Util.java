@@ -25,6 +25,15 @@ public class Util {
         Direction.WEST
     };
 
+    public static void println(Object... os) {
+        StringBuilder sb = new StringBuilder();
+        for (Object obj : os) {
+            sb.append(obj.toString());
+            sb.append(' ');
+        }
+        System.out.println(sb.toString());
+    }
+
     public static Direction[] relatedDirections(Direction dir) {
         if (dir == Direction.NORTH) {
             return new Direction[]{dir, Direction.NORTHEAST, Direction.NORTHWEST};
@@ -37,6 +46,22 @@ public class Util {
         } else {
             return new Direction[]{dir};
         }
+    }
+
+    public static MapLocation decode2x2(int pos) {
+        return new MapLocation((pos & 0b11111) << 1, (pos >>> 5) << 1);
+    }
+
+    public static int encode2x2(MapLocation loc) {
+        return (loc.x >>> 1) + ((loc.y >>> 1) << 5);
+    }
+
+    public static int encode2x2(int locX, int locY) {
+        return (locX >>> 1) + ((locY >>> 1) << 5);
+    }
+
+    public static int encode2x2() {
+        return (locX >>> 1) + ((locY >>> 1) << 5);
     }
 
     public static int writeBits(int bits, int start, int[] data, int[] lens) {

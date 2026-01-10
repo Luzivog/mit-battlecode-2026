@@ -413,6 +413,9 @@ public class Pathfinder {
             else return;
         }
         if(rc.canMoveForward()) moveForward();
+        loc = rc.getLocation();
+        locX = loc.x;
+        locY = loc.y;
     }
 
     public static void makeMove(MapLocation target) throws GameActionException {

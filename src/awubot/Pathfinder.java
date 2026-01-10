@@ -1601,6 +1601,7 @@ public class Pathfinder {
     static BugnavInstance bug;
 
     public static void turn(Direction dir) throws GameActionException {
+        if(dir == Direction.CENTER || dir == rc.getDirection()) return;
         rc.turn(dir);
         CellTracker.storeVisibleCells();
     }
@@ -1612,13 +1613,16 @@ public class Pathfinder {
 
     public static void makeMove(Direction dir) throws GameActionException {
         if(dir == Direction.CENTER) return;
-        if(dir != rc.getDirection()) turn(dir);
+        turn(dir);
         var nextLoc = rc.getLocation().add(dir);
         if(rc.senseMapInfo(nextLoc).isDirt()) {
             if(rc.isActionReady()) rc.removeDirt(nextLoc);
             else return;
         }
         if(rc.canMoveForward()) moveForward();
+        loc = rc.getLocation();
+        locX = loc.x;
+        locY = loc.y;
     }
 
     public static void makeMove(MapLocation target) throws GameActionException {

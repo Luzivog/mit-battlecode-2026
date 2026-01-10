@@ -87,15 +87,27 @@ def make_env():
 ENV = make_env()
 
 
+def _template_name(path: Path) -> str:
+    base = Path(".").resolve()
+    try:
+        rel = path.resolve().relative_to(base)
+    except ValueError:
+        return ""
+    return rel.as_posix()
+
+
 def compile_template(path: Path, debug: bool):
     if not path.name.endswith(".jinja2"):
         return
     if path.name.startswith("."):
         return
+    template_name = _template_name(path)
+    if not template_name:
+        return
 
     try:
         output_path = path.with_suffix("")
-        template = ENV.get_template(str(path))
+        template = ENV.get_template(template_name)
 
         rendered = template.render(
             directions=[

@@ -4,14 +4,18 @@ import battlecode.common.*;
 import awubot.Pathfinder;
 import awubot.CellTracker;
 import awubot.robot.Strategy;
+import awubot.robot.rat.strategies.CheeseStrategy;
+import awubot.robot.rat.strategies.ExploreStrategy;
+import awubot.robot.rat.strategies.GoHomeStrategy;
+import awubot.robot.rat.strategies.MineStrategy;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 import awubot.util.Rng;
 
 public class Rat {
-    static MapLocation home, exploreTarget, mineLocation, mineTarget, cheeseTarget;
-    static boolean goingHome = false;
-    static int lastSeenCheese;
+    public static MapLocation home, exploreTarget, mineLocation, mineTarget, cheeseTarget;
+    public static boolean goingHome = false;
+    public static int lastSeenCheese;
 
     static Direction lastGlance;
     static final Strategy goHomeStrategy = new GoHomeStrategy();
@@ -36,13 +40,13 @@ public class Rat {
         exploreStrategy.tryStrategy(exploreStrategy);
     }
 
-    static boolean shouldGoHome() {
+    public static boolean shouldGoHome() {
         return goingHome
             || rc.getRawCheese() >= 50 && lastSeenCheese < rc.getRoundNum() - 3
             || rc.getRawCheese() >= 200;
     }
 
-    static void refreshCheeseTarget() throws GameActionException {
+    public static void refreshCheeseTarget() throws GameActionException {
         if (cheeseTarget != null
             && rc.canSenseLocation(cheeseTarget)
             && rc.senseMapInfo(cheeseTarget).getCheeseAmount() == 0) {
@@ -58,7 +62,7 @@ public class Rat {
         }
     }
 
-    static void refreshMineLocation() throws GameActionException {
+    public static void refreshMineLocation() throws GameActionException {
         if (mineLocation != null && lastSeenCheese >= rc.getRoundNum() - 20) return;
         for (var info : rc.senseNearbyMapInfos()) {
             if (info.hasCheeseMine()) {
@@ -68,7 +72,7 @@ public class Rat {
         }
     }
 
-    static void updateMineTarget() throws GameActionException {
+    public static void updateMineTarget() throws GameActionException {
         if (mineTarget != null && rc.getLocation().distanceSquaredTo(mineTarget) > 2) return;
         do {
             mineTarget = new MapLocation(
@@ -78,90 +82,12 @@ public class Rat {
         } while (!rc.onTheMap(mineTarget));
     }
 
-    static void updateExploreTarget() {
+    public static void updateExploreTarget() {
         if (exploreTarget != null && rc.getLocation().distanceSquaredTo(exploreTarget) > 2) return;
         exploreTarget = new MapLocation(
             (int)(Math.random() * rc.getMapWidth()),
             (int)(Math.random() * rc.getMapHeight())
         );
-    }
-
-    static class GoHomeStrategy extends Strategy {
-        @Override
-        public boolean isComplete() {
-            return !shouldGoHome();
-        }
-
-        @Override
-        public void runTick() throws GameActionException {
-            goingHome = true;
-            exploreTarget = null;
-            indicate("going home");
-            for (var robot : rc.senseNearbyRobots()) {
-                if (robot.getType() == UnitType.RAT_KING && robot.getTeam() == rc.getTeam()) {
-                    home = robot.getLocation();
-                    break;
-                }
-            }
-            rc.setIndicatorLine(rc.getLocation(), home, 0, 255, 0);
-            Pathfinder.makeMove(home);
-            var transferTarget = rc.getLocation().add(rc.getLocation().directionTo(home));
-            if (rc.canTransferCheese(transferTarget, rc.getRawCheese())) {
-                rc.transferCheese(transferTarget, rc.getRawCheese());
-            }
-        }
-    }
-
-    static class CheeseStrategy extends Strategy {
-        @Override
-        public boolean isComplete() throws GameActionException {
-            refreshCheeseTarget();
-            return cheeseTarget == null;
-        }
-
-        @Override
-        public void runTick() throws GameActionException {
-            lastSeenCheese = rc.getRoundNum();
-            if (rc.getLocation().isAdjacentTo(cheeseTarget)) {
-                Pathfinder.turn(rc.getLocation().directionTo(cheeseTarget));
-                if (rc.isActionReady()) {
-                    rc.pickUpCheese(cheeseTarget);
-                    cheeseTarget = null;
-                }
-                return;
-            }
-            rc.setIndicatorLine(rc.getLocation(), cheeseTarget, 255, 0, 0);
-            Pathfinder.makeMove(cheeseTarget);
-        }
-    }
-
-    static class MineStrategy extends Strategy {
-        @Override
-        public boolean isComplete() throws GameActionException {
-            refreshMineLocation();
-            return mineLocation == null;
-        }
-
-        @Override
-        public void runTick() throws GameActionException {
-            updateMineTarget();
-            rc.setIndicatorLine(rc.getLocation(), mineTarget, 255, 0, 0);
-            Pathfinder.makeMove(mineTarget);
-        }
-    }
-
-    static class ExploreStrategy extends Strategy {
-        @Override
-        public boolean isComplete() {
-            return false;
-        }
-
-        @Override
-        public void runTick() throws GameActionException {
-            updateExploreTarget();
-            rc.setIndicatorLine(rc.getLocation(), exploreTarget, 255, 0, 0);
-            Pathfinder.makeMove(exploreTarget);
-        }
     }
 
     public static void run() throws GameActionException {

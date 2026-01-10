@@ -2,6 +2,7 @@ package awubot;
 
 import battlecode.common.*;
 import awubot.Pathfinder;
+import awubot.robot.rat.Rat;
 import awubot.CellTracker;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
@@ -21,7 +22,7 @@ public class RobotPlayer {
 
         switch (rc.getType()) {
             case BABY_RAT -> {
-                BabyRat.init();
+                Rat.init();
             }
             case RAT_KING -> {}
             default -> {
@@ -34,7 +35,7 @@ public class RobotPlayer {
                 Rng.init();
                 switch (rc.getType()) {
                     case BABY_RAT -> {
-                        BabyRat.run();
+                        Rat.run();
                     }
                     case RAT_KING -> {
                         indicate(rc.getGlobalCheese());

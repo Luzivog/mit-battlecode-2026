@@ -32,12 +32,12 @@ public class Profiler {
     }
     public static void report() {
         // System.out.println((acc - 11) + (acc >= 17500 ? " EXCEEDED" : ""));
-        indicate(acc + (acc >= 17500 ? " EXCEEDED" : ""));
+        indicate((acc - 11) + (acc >= 17500 ? " EXCEEDED" : ""));
         acc = 0;
     }
     public static void report(Object obj) {
         // System.out.println(obj.toString() + ": " + (acc - 12) + (acc >= 17500 ? " EXCEEDED" : ""));
-        indicate(obj.toString() + ": " + acc + (acc >= 17500 ? " EXCEEDED" : ""));
+        indicate(obj.toString() + ": " + (acc - 12) + (acc >= 17500 ? " EXCEEDED" : ""));
         acc = 0;
     }
 }

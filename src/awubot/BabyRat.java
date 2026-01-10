@@ -37,7 +37,7 @@ public class BabyRat {
         }
         if(goingHome || rc.getRawCheese() >= 50 && lastSeenCheese < rc.getRoundNum() - 3 || rc.getRawCheese() >= 200) {
             goingHome = true;
-            // mineLocation = null;
+            if(Rng.mcg() >> 30 == 0) mineLocation = null;
             exploreTarget = null;
             indicate("going home");
             // Return home
@@ -49,7 +49,9 @@ public class BabyRat {
             }
             rc.setIndicatorLine(rc.getLocation(), home, 0, 255, 0);
             Pathfinder.makeMove(home);
-            var transferTarget = rc.getLocation().add(rc.getLocation().directionTo(home));
+            var homeDir = rc.getLocation().directionTo(home);
+            if(rc.canTurn()) Pathfinder.turn(homeDir);
+            var transferTarget = rc.getLocation().add(homeDir);
             if(rc.canTransferCheese(transferTarget, rc.getRawCheese())) {
                 rc.transferCheese(transferTarget, rc.getRawCheese());
             }

@@ -11,6 +11,7 @@ import awubot.test.UtilTest;
 import awubot.util.BudgetMap;
 import awubot.util.FastRng;
 import awubot.util.Profiler;
+import awubot.util.string.FastLocSet;
 import battlecode.common.*;
 
 public class Game {
@@ -32,23 +33,28 @@ public class Game {
 
         // BudgetMap.test();
 
+        FastLocSet fls = new FastLocSet();
+        for (int i = 0; i < 20; i++) fls.add(new MapLocation(i, i));
+
         Profiler.begin();
-        FastRng.nextInt();
+        fls.add(1, 2);
+        Profiler.end();
+
+        Profiler.begin();
+        boolean x = fls.contains(new MapLocation(1, 2));
+        Profiler.end();
+
+        Profiler.begin();
+        MapLocation pos = new MapLocation(1, 2);
+        Profiler.end();
+
+        Profiler.begin();
+        String s = "^" + (char) pos.x + (char) pos.y;
         Profiler.end();
 
         // Profiler.begin();
         // Profiler.end();
 
-        // Profiler.begin();
-        // BudgetMap.get(0, 0);
-        // Profiler.end();
-
-        // Profiler.begin();
-        // Profiler.end();
-
-        // Profiler.begin();
-        // Profiler.end();
-
-        // rc.disintegrate();
+        rc.disintegrate();
     }
 }

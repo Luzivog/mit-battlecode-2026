@@ -1921,7 +1921,6 @@ public class Pathfinder {
         var localPassableExceptAllies1 = CellTracker.localPassable1;
         // IF TLE: unroll this
         for(int i = RobotTracker.allyCount - 1; i >= 0; i--) {
-            indicate("ally at " + RobotTracker.allies[i]);
                     {
             var pos = RobotTracker.allies[i];
             int xi = pos.x - loc.x + 5;

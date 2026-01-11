@@ -458,9 +458,14 @@ public class Pathfinder {
     public static void makeMove(MapLocation target) throws GameActionException {
         // TODO: better handling when target changes
         if(bug == null || !target.equals(bug.target)) {
-            indicate("RETARGET");
-            lastBugPos = lastLoc = secondLastBugPos = secondLastLoc = new MapLocation(-1, -1);
-            bug = new BugnavInstance(true, target);
+            if(bug != null && target.isAdjacentTo(bug.target)) {
+                indicate("target changed but adjacent, keep going");
+                bug.target = target;
+            } else {
+                indicate("RETARGET");
+                lastBugPos = lastLoc = secondLastBugPos = secondLastLoc = new MapLocation(-1, -1);
+                bug = new BugnavInstance(true, target);
+            }
         }
         int shade = 255;
         // Profiler.begin();

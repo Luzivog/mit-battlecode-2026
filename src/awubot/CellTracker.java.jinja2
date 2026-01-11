@@ -3,6 +3,7 @@ package awubot;
 import battlecode.common.*;
 
 import awubot.util.Profiler;
+import awubot.comms.Squeaker;
 import static awubot.util.Util.*;
 import static awubot.Game.*;
 
@@ -31,6 +32,7 @@ public class CellTracker {
         switch(loc.y) {
             {% for i in range(MAX_MAP_SIZE) %}
             case {{i}} -> {
+                if ((seen{{i}} & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen{{i}} |= 1l << loc.x;
                 if(!info.isWall()) passable{{i}} |= 1l << loc.x;
                 if(info.isDirt()) dirt{{i}} |= 1l << loc.x;

@@ -7,6 +7,7 @@ import org.apache.commons.collections.FastArrayList;
 
 import awubot.CellTracker;
 import awubot.util.BudgetMap;
+import awubot.util.Profiler;
 import awubot.util.string.FastIndexedIntSet;
 
 import static awubot.Game.*;
@@ -43,7 +44,7 @@ public class GlobalArray {
         }
 
         if (isRatKing && time == 1) {
-            println("YO IM THE FIRST RAT");
+            // println("YO IM THE FIRST RAT");
             rc.writeSharedArray(RAT_KING_TURN_COUNTER, 1023);
             rc.writeSharedArray(N - 1, 1023);
         }
@@ -72,7 +73,7 @@ public class GlobalArray {
             int x  = rc.readSharedArray(i);
             if (x == 1023) break;
             cheeseMines.add(x);
-            i -= 1;
+            i--;
         }
     }
 

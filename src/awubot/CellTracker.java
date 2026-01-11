@@ -3,6 +3,7 @@ package awubot;
 import battlecode.common.*;
 
 import awubot.util.Profiler;
+import awubot.comms.Squeaker;
 import static awubot.util.Util.*;
 import static awubot.Game.*;
 
@@ -754,360 +755,420 @@ public class CellTracker {
         // rc.setIndicatorDot(loc, 255, 255, 0);
         switch(loc.y) {
             case 0 -> {
+                if ((seen0 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen0 |= 1l << loc.x;
                 if(!info.isWall()) passable0 |= 1l << loc.x;
                 if(info.isDirt()) dirt0 |= 1l << loc.x;
                 else dirt0 &= ~(1l << loc.x);
             }
             case 1 -> {
+                if ((seen1 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen1 |= 1l << loc.x;
                 if(!info.isWall()) passable1 |= 1l << loc.x;
                 if(info.isDirt()) dirt1 |= 1l << loc.x;
                 else dirt1 &= ~(1l << loc.x);
             }
             case 2 -> {
+                if ((seen2 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen2 |= 1l << loc.x;
                 if(!info.isWall()) passable2 |= 1l << loc.x;
                 if(info.isDirt()) dirt2 |= 1l << loc.x;
                 else dirt2 &= ~(1l << loc.x);
             }
             case 3 -> {
+                if ((seen3 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen3 |= 1l << loc.x;
                 if(!info.isWall()) passable3 |= 1l << loc.x;
                 if(info.isDirt()) dirt3 |= 1l << loc.x;
                 else dirt3 &= ~(1l << loc.x);
             }
             case 4 -> {
+                if ((seen4 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen4 |= 1l << loc.x;
                 if(!info.isWall()) passable4 |= 1l << loc.x;
                 if(info.isDirt()) dirt4 |= 1l << loc.x;
                 else dirt4 &= ~(1l << loc.x);
             }
             case 5 -> {
+                if ((seen5 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen5 |= 1l << loc.x;
                 if(!info.isWall()) passable5 |= 1l << loc.x;
                 if(info.isDirt()) dirt5 |= 1l << loc.x;
                 else dirt5 &= ~(1l << loc.x);
             }
             case 6 -> {
+                if ((seen6 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen6 |= 1l << loc.x;
                 if(!info.isWall()) passable6 |= 1l << loc.x;
                 if(info.isDirt()) dirt6 |= 1l << loc.x;
                 else dirt6 &= ~(1l << loc.x);
             }
             case 7 -> {
+                if ((seen7 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen7 |= 1l << loc.x;
                 if(!info.isWall()) passable7 |= 1l << loc.x;
                 if(info.isDirt()) dirt7 |= 1l << loc.x;
                 else dirt7 &= ~(1l << loc.x);
             }
             case 8 -> {
+                if ((seen8 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen8 |= 1l << loc.x;
                 if(!info.isWall()) passable8 |= 1l << loc.x;
                 if(info.isDirt()) dirt8 |= 1l << loc.x;
                 else dirt8 &= ~(1l << loc.x);
             }
             case 9 -> {
+                if ((seen9 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen9 |= 1l << loc.x;
                 if(!info.isWall()) passable9 |= 1l << loc.x;
                 if(info.isDirt()) dirt9 |= 1l << loc.x;
                 else dirt9 &= ~(1l << loc.x);
             }
             case 10 -> {
+                if ((seen10 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen10 |= 1l << loc.x;
                 if(!info.isWall()) passable10 |= 1l << loc.x;
                 if(info.isDirt()) dirt10 |= 1l << loc.x;
                 else dirt10 &= ~(1l << loc.x);
             }
             case 11 -> {
+                if ((seen11 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen11 |= 1l << loc.x;
                 if(!info.isWall()) passable11 |= 1l << loc.x;
                 if(info.isDirt()) dirt11 |= 1l << loc.x;
                 else dirt11 &= ~(1l << loc.x);
             }
             case 12 -> {
+                if ((seen12 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen12 |= 1l << loc.x;
                 if(!info.isWall()) passable12 |= 1l << loc.x;
                 if(info.isDirt()) dirt12 |= 1l << loc.x;
                 else dirt12 &= ~(1l << loc.x);
             }
             case 13 -> {
+                if ((seen13 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen13 |= 1l << loc.x;
                 if(!info.isWall()) passable13 |= 1l << loc.x;
                 if(info.isDirt()) dirt13 |= 1l << loc.x;
                 else dirt13 &= ~(1l << loc.x);
             }
             case 14 -> {
+                if ((seen14 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen14 |= 1l << loc.x;
                 if(!info.isWall()) passable14 |= 1l << loc.x;
                 if(info.isDirt()) dirt14 |= 1l << loc.x;
                 else dirt14 &= ~(1l << loc.x);
             }
             case 15 -> {
+                if ((seen15 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen15 |= 1l << loc.x;
                 if(!info.isWall()) passable15 |= 1l << loc.x;
                 if(info.isDirt()) dirt15 |= 1l << loc.x;
                 else dirt15 &= ~(1l << loc.x);
             }
             case 16 -> {
+                if ((seen16 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen16 |= 1l << loc.x;
                 if(!info.isWall()) passable16 |= 1l << loc.x;
                 if(info.isDirt()) dirt16 |= 1l << loc.x;
                 else dirt16 &= ~(1l << loc.x);
             }
             case 17 -> {
+                if ((seen17 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen17 |= 1l << loc.x;
                 if(!info.isWall()) passable17 |= 1l << loc.x;
                 if(info.isDirt()) dirt17 |= 1l << loc.x;
                 else dirt17 &= ~(1l << loc.x);
             }
             case 18 -> {
+                if ((seen18 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen18 |= 1l << loc.x;
                 if(!info.isWall()) passable18 |= 1l << loc.x;
                 if(info.isDirt()) dirt18 |= 1l << loc.x;
                 else dirt18 &= ~(1l << loc.x);
             }
             case 19 -> {
+                if ((seen19 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen19 |= 1l << loc.x;
                 if(!info.isWall()) passable19 |= 1l << loc.x;
                 if(info.isDirt()) dirt19 |= 1l << loc.x;
                 else dirt19 &= ~(1l << loc.x);
             }
             case 20 -> {
+                if ((seen20 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen20 |= 1l << loc.x;
                 if(!info.isWall()) passable20 |= 1l << loc.x;
                 if(info.isDirt()) dirt20 |= 1l << loc.x;
                 else dirt20 &= ~(1l << loc.x);
             }
             case 21 -> {
+                if ((seen21 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen21 |= 1l << loc.x;
                 if(!info.isWall()) passable21 |= 1l << loc.x;
                 if(info.isDirt()) dirt21 |= 1l << loc.x;
                 else dirt21 &= ~(1l << loc.x);
             }
             case 22 -> {
+                if ((seen22 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen22 |= 1l << loc.x;
                 if(!info.isWall()) passable22 |= 1l << loc.x;
                 if(info.isDirt()) dirt22 |= 1l << loc.x;
                 else dirt22 &= ~(1l << loc.x);
             }
             case 23 -> {
+                if ((seen23 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen23 |= 1l << loc.x;
                 if(!info.isWall()) passable23 |= 1l << loc.x;
                 if(info.isDirt()) dirt23 |= 1l << loc.x;
                 else dirt23 &= ~(1l << loc.x);
             }
             case 24 -> {
+                if ((seen24 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen24 |= 1l << loc.x;
                 if(!info.isWall()) passable24 |= 1l << loc.x;
                 if(info.isDirt()) dirt24 |= 1l << loc.x;
                 else dirt24 &= ~(1l << loc.x);
             }
             case 25 -> {
+                if ((seen25 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen25 |= 1l << loc.x;
                 if(!info.isWall()) passable25 |= 1l << loc.x;
                 if(info.isDirt()) dirt25 |= 1l << loc.x;
                 else dirt25 &= ~(1l << loc.x);
             }
             case 26 -> {
+                if ((seen26 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen26 |= 1l << loc.x;
                 if(!info.isWall()) passable26 |= 1l << loc.x;
                 if(info.isDirt()) dirt26 |= 1l << loc.x;
                 else dirt26 &= ~(1l << loc.x);
             }
             case 27 -> {
+                if ((seen27 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen27 |= 1l << loc.x;
                 if(!info.isWall()) passable27 |= 1l << loc.x;
                 if(info.isDirt()) dirt27 |= 1l << loc.x;
                 else dirt27 &= ~(1l << loc.x);
             }
             case 28 -> {
+                if ((seen28 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen28 |= 1l << loc.x;
                 if(!info.isWall()) passable28 |= 1l << loc.x;
                 if(info.isDirt()) dirt28 |= 1l << loc.x;
                 else dirt28 &= ~(1l << loc.x);
             }
             case 29 -> {
+                if ((seen29 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen29 |= 1l << loc.x;
                 if(!info.isWall()) passable29 |= 1l << loc.x;
                 if(info.isDirt()) dirt29 |= 1l << loc.x;
                 else dirt29 &= ~(1l << loc.x);
             }
             case 30 -> {
+                if ((seen30 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen30 |= 1l << loc.x;
                 if(!info.isWall()) passable30 |= 1l << loc.x;
                 if(info.isDirt()) dirt30 |= 1l << loc.x;
                 else dirt30 &= ~(1l << loc.x);
             }
             case 31 -> {
+                if ((seen31 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen31 |= 1l << loc.x;
                 if(!info.isWall()) passable31 |= 1l << loc.x;
                 if(info.isDirt()) dirt31 |= 1l << loc.x;
                 else dirt31 &= ~(1l << loc.x);
             }
             case 32 -> {
+                if ((seen32 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen32 |= 1l << loc.x;
                 if(!info.isWall()) passable32 |= 1l << loc.x;
                 if(info.isDirt()) dirt32 |= 1l << loc.x;
                 else dirt32 &= ~(1l << loc.x);
             }
             case 33 -> {
+                if ((seen33 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen33 |= 1l << loc.x;
                 if(!info.isWall()) passable33 |= 1l << loc.x;
                 if(info.isDirt()) dirt33 |= 1l << loc.x;
                 else dirt33 &= ~(1l << loc.x);
             }
             case 34 -> {
+                if ((seen34 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen34 |= 1l << loc.x;
                 if(!info.isWall()) passable34 |= 1l << loc.x;
                 if(info.isDirt()) dirt34 |= 1l << loc.x;
                 else dirt34 &= ~(1l << loc.x);
             }
             case 35 -> {
+                if ((seen35 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen35 |= 1l << loc.x;
                 if(!info.isWall()) passable35 |= 1l << loc.x;
                 if(info.isDirt()) dirt35 |= 1l << loc.x;
                 else dirt35 &= ~(1l << loc.x);
             }
             case 36 -> {
+                if ((seen36 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen36 |= 1l << loc.x;
                 if(!info.isWall()) passable36 |= 1l << loc.x;
                 if(info.isDirt()) dirt36 |= 1l << loc.x;
                 else dirt36 &= ~(1l << loc.x);
             }
             case 37 -> {
+                if ((seen37 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen37 |= 1l << loc.x;
                 if(!info.isWall()) passable37 |= 1l << loc.x;
                 if(info.isDirt()) dirt37 |= 1l << loc.x;
                 else dirt37 &= ~(1l << loc.x);
             }
             case 38 -> {
+                if ((seen38 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen38 |= 1l << loc.x;
                 if(!info.isWall()) passable38 |= 1l << loc.x;
                 if(info.isDirt()) dirt38 |= 1l << loc.x;
                 else dirt38 &= ~(1l << loc.x);
             }
             case 39 -> {
+                if ((seen39 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen39 |= 1l << loc.x;
                 if(!info.isWall()) passable39 |= 1l << loc.x;
                 if(info.isDirt()) dirt39 |= 1l << loc.x;
                 else dirt39 &= ~(1l << loc.x);
             }
             case 40 -> {
+                if ((seen40 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen40 |= 1l << loc.x;
                 if(!info.isWall()) passable40 |= 1l << loc.x;
                 if(info.isDirt()) dirt40 |= 1l << loc.x;
                 else dirt40 &= ~(1l << loc.x);
             }
             case 41 -> {
+                if ((seen41 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen41 |= 1l << loc.x;
                 if(!info.isWall()) passable41 |= 1l << loc.x;
                 if(info.isDirt()) dirt41 |= 1l << loc.x;
                 else dirt41 &= ~(1l << loc.x);
             }
             case 42 -> {
+                if ((seen42 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen42 |= 1l << loc.x;
                 if(!info.isWall()) passable42 |= 1l << loc.x;
                 if(info.isDirt()) dirt42 |= 1l << loc.x;
                 else dirt42 &= ~(1l << loc.x);
             }
             case 43 -> {
+                if ((seen43 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen43 |= 1l << loc.x;
                 if(!info.isWall()) passable43 |= 1l << loc.x;
                 if(info.isDirt()) dirt43 |= 1l << loc.x;
                 else dirt43 &= ~(1l << loc.x);
             }
             case 44 -> {
+                if ((seen44 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen44 |= 1l << loc.x;
                 if(!info.isWall()) passable44 |= 1l << loc.x;
                 if(info.isDirt()) dirt44 |= 1l << loc.x;
                 else dirt44 &= ~(1l << loc.x);
             }
             case 45 -> {
+                if ((seen45 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen45 |= 1l << loc.x;
                 if(!info.isWall()) passable45 |= 1l << loc.x;
                 if(info.isDirt()) dirt45 |= 1l << loc.x;
                 else dirt45 &= ~(1l << loc.x);
             }
             case 46 -> {
+                if ((seen46 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen46 |= 1l << loc.x;
                 if(!info.isWall()) passable46 |= 1l << loc.x;
                 if(info.isDirt()) dirt46 |= 1l << loc.x;
                 else dirt46 &= ~(1l << loc.x);
             }
             case 47 -> {
+                if ((seen47 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen47 |= 1l << loc.x;
                 if(!info.isWall()) passable47 |= 1l << loc.x;
                 if(info.isDirt()) dirt47 |= 1l << loc.x;
                 else dirt47 &= ~(1l << loc.x);
             }
             case 48 -> {
+                if ((seen48 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen48 |= 1l << loc.x;
                 if(!info.isWall()) passable48 |= 1l << loc.x;
                 if(info.isDirt()) dirt48 |= 1l << loc.x;
                 else dirt48 &= ~(1l << loc.x);
             }
             case 49 -> {
+                if ((seen49 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen49 |= 1l << loc.x;
                 if(!info.isWall()) passable49 |= 1l << loc.x;
                 if(info.isDirt()) dirt49 |= 1l << loc.x;
                 else dirt49 &= ~(1l << loc.x);
             }
             case 50 -> {
+                if ((seen50 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen50 |= 1l << loc.x;
                 if(!info.isWall()) passable50 |= 1l << loc.x;
                 if(info.isDirt()) dirt50 |= 1l << loc.x;
                 else dirt50 &= ~(1l << loc.x);
             }
             case 51 -> {
+                if ((seen51 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen51 |= 1l << loc.x;
                 if(!info.isWall()) passable51 |= 1l << loc.x;
                 if(info.isDirt()) dirt51 |= 1l << loc.x;
                 else dirt51 &= ~(1l << loc.x);
             }
             case 52 -> {
+                if ((seen52 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen52 |= 1l << loc.x;
                 if(!info.isWall()) passable52 |= 1l << loc.x;
                 if(info.isDirt()) dirt52 |= 1l << loc.x;
                 else dirt52 &= ~(1l << loc.x);
             }
             case 53 -> {
+                if ((seen53 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen53 |= 1l << loc.x;
                 if(!info.isWall()) passable53 |= 1l << loc.x;
                 if(info.isDirt()) dirt53 |= 1l << loc.x;
                 else dirt53 &= ~(1l << loc.x);
             }
             case 54 -> {
+                if ((seen54 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen54 |= 1l << loc.x;
                 if(!info.isWall()) passable54 |= 1l << loc.x;
                 if(info.isDirt()) dirt54 |= 1l << loc.x;
                 else dirt54 &= ~(1l << loc.x);
             }
             case 55 -> {
+                if ((seen55 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen55 |= 1l << loc.x;
                 if(!info.isWall()) passable55 |= 1l << loc.x;
                 if(info.isDirt()) dirt55 |= 1l << loc.x;
                 else dirt55 &= ~(1l << loc.x);
             }
             case 56 -> {
+                if ((seen56 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen56 |= 1l << loc.x;
                 if(!info.isWall()) passable56 |= 1l << loc.x;
                 if(info.isDirt()) dirt56 |= 1l << loc.x;
                 else dirt56 &= ~(1l << loc.x);
             }
             case 57 -> {
+                if ((seen57 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen57 |= 1l << loc.x;
                 if(!info.isWall()) passable57 |= 1l << loc.x;
                 if(info.isDirt()) dirt57 |= 1l << loc.x;
                 else dirt57 &= ~(1l << loc.x);
             }
             case 58 -> {
+                if ((seen58 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen58 |= 1l << loc.x;
                 if(!info.isWall()) passable58 |= 1l << loc.x;
                 if(info.isDirt()) dirt58 |= 1l << loc.x;
                 else dirt58 &= ~(1l << loc.x);
             }
             case 59 -> {
+                if ((seen59 & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen59 |= 1l << loc.x;
                 if(!info.isWall()) passable59 |= 1l << loc.x;
                 if(info.isDirt()) dirt59 |= 1l << loc.x;

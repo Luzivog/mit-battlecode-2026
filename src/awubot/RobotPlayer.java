@@ -40,7 +40,7 @@ public class RobotPlayer {
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-                if(rc.getType() == UnitType.BABY_RAT) {
+                if (rc.getType() == UnitType.BABY_RAT) {
                     maxBytecode = Math.max(maxBytecode, Clock.getBytecodeNum());
                     // System.out.println(maxBytecode);
                 }

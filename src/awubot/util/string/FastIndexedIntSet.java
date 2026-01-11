@@ -10,8 +10,9 @@ public class FastIndexedIntSet {
 
     public void add(int i) {
         String key = String.valueOf((char) i);
-        set.append(key);
-        set.deleteCharAt(set.indexOf(key));
+        if (set.indexOf(key) < 0) {
+            set.append(key);
+        }
     }
 
     public void unsafe_add(int i) {

@@ -5,6 +5,7 @@ import static awubot.util.Util.*;
 
 import awubot.CellTracker;
 import awubot.util.BudgetMap;
+import awubot.util.Profiler;
 import awubot.util.string.FastIndexedIntSet;
 
 import static awubot.Game.*;
@@ -24,16 +25,20 @@ public class Squeaker {
 
     */
 
-    private static FastIndexedIntSet mines = new FastIndexedIntSet();
+    private static FastIndexedIntSet minesToSend = new FastIndexedIntSet();
+
+    public static void registerMine(MapLocation loc) {
+        minesToSend.add(encode2x2(loc));
+    }
 
     // im lazy so im only squeaking one for now
     private static boolean squeakMine() {
-        while (mines.set.length() > 0) {
-            int i = time % mines.set.length();
-            if (GlobalArray.seenCheeseMine(mines.at(i))) {
-                mines.remove(i);
+        while (minesToSend.set.length() > 0) {
+            int i = time % minesToSend.set.length();
+            if (GlobalArray.seenCheeseMine(minesToSend.at(i))) {
+                minesToSend.remove(minesToSend.at(i));
             } else {
-                rc.squeak(mines.at(i));
+                rc.squeak(minesToSend.at(i));
                 return true;
             }
         }
@@ -50,7 +55,12 @@ public class Squeaker {
             case 0: // mine location
                 // again, only processing one
                 int loc = bytes & 1023;
-                mines.add(loc);
+                if (isRatKing) {
+                    GlobalArray.cheeseMines.add(loc);
+                    println(GlobalArray.cheeseMines.set.length());
+                } else {
+                    minesToSend.add(loc);
+                }
                 break;
             case 1: // rat king location
                 break;
@@ -99,6 +109,8 @@ public class Squeaker {
                 return;
             }
         }
-        squeakMine(); // can add other squeaks later
+        if (!isRatKing) {
+            squeakMine(); // can add other squeaks later
+        }
     }
 }

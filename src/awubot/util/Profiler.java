@@ -19,14 +19,28 @@ public class Profiler {
         pause();
         report(obj);
     }
+
+    public static void end_print(Object obj) {
+        if(!running) return;
+        pause();
+        report_print(obj);
+    }
+
     public static void pause() {
         if(!running) return;
         int res = cnt - Clock.getBytecodesLeft() + (rc.getRoundNum() - turnNum) * 17500;
         acc += res;
         running = false;
     }
+
     public static void report(Object obj) {
         // System.out.println(obj.toString() + ": " + (acc - 12) + (acc >= 17500 ? " EXCEEDED" : ""));
+        indicate(obj.toString() + ": " + (acc - 12) + (acc >= 17500 ? " EXCEEDED" : ""));
+        acc = 0;
+    }
+
+    public static void report_print(Object obj) {
+        System.out.println(obj.toString() + ": " + (acc - 12) + (acc >= 17500 ? " EXCEEDED" : ""));
         indicate(obj.toString() + ": " + (acc - 12) + (acc >= 17500 ? " EXCEEDED" : ""));
         acc = 0;
     }

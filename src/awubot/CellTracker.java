@@ -8872,7 +8872,7 @@ public class CellTracker {
         Horizontal,
         Vertical
     };
-    public static int hsym = 1, vsym = 1, rsym = 1;
+    public static int rsym = 1, hsym = 1, vsym = 1;
     public static boolean isSymmetryKnown() {
         return vsym + hsym + rsym == 1;
     }
@@ -8884,6 +8884,19 @@ public class CellTracker {
             case 4 -> Symmetry.Vertical;
             default -> Symmetry.Unknown;
         };
+    }
+
+    public static void setSymmetry(int cur_sym) {
+        if (cur_sym != 0) {
+            CellTracker.rsym = CellTracker.hsym = CellTracker.vsym = 0;
+            if (cur_sym == 1) {
+                CellTracker.rsym = 1;
+            } else if (cur_sym == 2) {
+                CellTracker.hsym = 1;
+            } else if (cur_sym == 3) {
+                CellTracker.vsym = 1;
+            }
+        }
     }
 
     static void checkHor() {

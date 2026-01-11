@@ -59,16 +59,11 @@ public class GlobalArray {
 
     private static int cur_sym = 0;
     public static void checkSymmetry() throws GameActionException {
+        if (cur_sym != 0) return;
         cur_sym = rc.readSharedArray(SYMMETRY);
+        println("\n\n\n\nFOUND SYMMETRY " + cur_sym + "\n\n\n");
         if (cur_sym != 0) {
-            CellTracker.rsym = CellTracker.hsym = CellTracker.vsym = 0;
-            if (cur_sym == 1) {
-                CellTracker.rsym = 1;
-            } else if (cur_sym == 2) {
-                CellTracker.hsym = 1;
-            } else if (cur_sym == 3) {
-                CellTracker.vsym = 1;
-            }
+            CellTracker.setSymmetry(cur_sym);
         }
     }
 
@@ -80,6 +75,10 @@ public class GlobalArray {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static CellTracker.Symmetry peepSymmetry() {
+        return CellTracker.Symmetry.values()[cur_sym];
     }
 
     public static void writeRatLoc(int i) {

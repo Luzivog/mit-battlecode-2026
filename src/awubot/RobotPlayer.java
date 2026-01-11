@@ -8,6 +8,7 @@ import awubot.robot.rat.Rat;
 import awubot.robot.rat.RatKing;
 import static awubot.Game.*;
 import awubot.util.Rng;
+import awubot.util.Util;
 
 public class RobotPlayer {
     static Rat rat;
@@ -22,6 +23,8 @@ public class RobotPlayer {
 
         while (true) {
             try {
+                Game.preTick();
+                Util.preTick();
                 GlobalArray.preTick();
                 Squeaker.preTick();
                 rat.run();

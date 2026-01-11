@@ -34,6 +34,10 @@ public class Util {
         System.out.println(sb.toString());
     }
 
+    public static void preTick() {
+        indicatorString = "";
+    }
+
     public static Direction[] relatedDirections(Direction dir) {
         if (dir == Direction.NORTH) {
             return new Direction[]{dir, Direction.NORTHEAST, Direction.NORTHWEST};

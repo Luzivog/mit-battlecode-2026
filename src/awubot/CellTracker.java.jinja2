@@ -190,6 +190,19 @@ public class CellTracker {
         };
     }
 
+    public static void setSymmetry(int cur_sym) {
+        if (cur_sym != 0) {
+            CellTracker.rsym = CellTracker.hsym = CellTracker.vsym = 0;
+            if (cur_sym == 1) {
+                CellTracker.rsym = 1;
+            } else if (cur_sym == 2) {
+                CellTracker.hsym = 1;
+            } else if (cur_sym == 3) {
+                CellTracker.vsym = 1;
+            }
+        }
+    }
+
     static void checkHor() {
         var shiftAmount = 64 - mapWidth;
         switch(rc.getLocation().y) {

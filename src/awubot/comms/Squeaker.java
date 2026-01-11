@@ -3,20 +3,22 @@ package awubot.comms;
 import battlecode.common.*;
 import static awubot.util.Util.*;
 
+import awubot.CellTracker;
 import awubot.util.BudgetMap;
 
 import static awubot.Game.*;
 
 public class Squeaker {
     public static final int N = 32;
-    public static final int HEADER = 3;   
+    public static final int HEADER = 2;   
     public static final MapLocation NULL_LOC = new MapLocation(15, 15);
+    public static final int SQUEAK_RAD = 16; // radius squared
 
     /*
     
     00: cheese mine locations (up to 3) (rounded to 2x2)
     01: enemy rat king location (up to 3) (rounded to 2x2)
-    1: everything else ig
+    10: symmetry
     
     */
 
@@ -50,6 +52,8 @@ public class Squeaker {
     }
 
     private static void processMessage(Message msg) {
+        if (msg.getSenderID() == rc.getID()) return;
+        // println(rc.getID() + " received from " + msg.getSenderID() + " content " + msg.getBytes());
         int bytes = msg.getBytes();
         int header = bytes >>> (32 - HEADER);
         switch (header) {
@@ -60,13 +64,22 @@ public class Squeaker {
                     if (mines[i] == loc) return;
                 }
                 mines[mineSize++] = loc;
+                break;
+            case 1: // rat king location
+                break;
+            case 2: // symmetry
+                if (!isRatKing) return;
+                CellTracker.setSymmetry(bytes & 0b11);
+                break;
+            case 3:
+                break;
             default:
                 assert(false);
         }
     } 
 
-    // TODO: verify that messages actually come in order so this is correct
-    // also consider loading into a map
+    // messages come in chronological order
+    // there is currently a bug where fat units get sent the same message multiple times
     private static int lastMessageCount = 0;
     public static void preTick() {
         Message[] msgs = rc.readSqueaks(time - 1);
@@ -75,12 +88,31 @@ public class Squeaker {
         }
         msgs = rc.readSqueaks(time);
         lastMessageCount = msgs.length;
-        for (Message m : msgs) processMessage(m);
-
+        for (Message m : msgs) {
+            processMessage(m);
+        }
     }
 
-    public static void postTick() {
-        squeakMine(); // can add other squeaks later
+    public static boolean nearRatKing() throws GameActionException {
+        RobotInfo bots[] = rc.senseNearbyRobots(SQUEAK_RAD);
+        for (RobotInfo bot : bots) {
+            if (bot.getType() == UnitType.RAT_KING) {
+                return true;
+            }
+        }
+        return false;
     }
-
+    
+    public static void postTick() throws GameActionException {
+        if (nearRatKing()) {
+            indicate("NEAR RAT KING");
+            if (GlobalArray.peepSymmetry() == CellTracker.Symmetry.Unknown && CellTracker.isSymmetryKnown()) {
+                rc.squeak((0b10 << (32 - HEADER)) + CellTracker.getSymmetry().ordinal()); 
+                println("SQUEAKING SYMMETRY");
+                return;
+            }
+        }
+        // squeakMine(); // can add other squeaks later
+        rc.squeak((0b01 << 30) | time);
+    }
 }

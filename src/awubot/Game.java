@@ -31,6 +31,7 @@ public class Game {
         mapHeight = rc.getMapHeight();
         locX = rc.getLocation().x;
         locY = rc.getLocation().y;
+        loc = rc.getLocation();
         time = rc.getRoundNum();
         isRatKing = (rc.getType() == UnitType.RAT_KING);
 
@@ -59,5 +60,9 @@ public class Game {
         // Profiler.end();
 
         // rc.disintegrate();
+    }
+
+    public static void preTick() {
+        time = rc.getRoundNum();
     }
 }

@@ -4,6 +4,7 @@ import battlecode.common.*;
 import static awubot.util.Util.*;
 
 import awubot.CellTracker;
+import awubot.robot.rat.BabyRat;
 import awubot.util.Profiler;
 import awubot.util.string.FastIndexedIntSet;
 
@@ -65,7 +66,11 @@ public class Squeaker {
                 if (!isRatKing) return;
                 CellTracker.setSymmetry(bytes & 0b11);
                 break;
-            case 3:
+            case 3: // Lure signal - cat location + enemy king location from rat king
+                if (isRatKing) return;  // Only baby rats respond to lure signal
+                int catLocEncoded = (bytes >> 10) & 1023;
+                int enemyKingLocEncoded = bytes & 1023;
+                BabyRat.setLureTarget(decode2x2(catLocEncoded), decode2x2(enemyKingLocEncoded));
                 break;
             default:
                 assert(false);

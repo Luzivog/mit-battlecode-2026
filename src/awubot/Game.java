@@ -70,7 +70,7 @@ public class Game {
         // Profiler.begin();
         // Profiler.end();
 
-        rc.disintegrate();
+        //rc.disintegrate();
     }
 
     public static void preTick() {

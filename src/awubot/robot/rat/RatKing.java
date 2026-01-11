@@ -1,21 +1,20 @@
 package awubot.robot.rat;
 
-import battlecode.common.Direction;
 import battlecode.common.GameActionException;
+import awubot.robot.Strategy;
+import awubot.robot.rat.strategies.king.RatKingStrategy;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 
 public class RatKing {
-    private static int built = 0;
+    public static Strategy primaryStrategy;
 
-    public static void init() {}
+    public static void init() {
+        primaryStrategy = new RatKingStrategy();
+    }
 
     public static void run() throws GameActionException {
-        indicate(rc.getGlobalCheese());
-        if (built < 20) {
-            var buildLoc = rc.getLocation().add(Direction.NORTHEAST).add(Direction.NORTHEAST);
-            if(rc.canBuildRat(buildLoc)) rc.buildRat(buildLoc);
-        }
-        built++;
+        indicate(rc.getGlobalCheese() + " cheese, " + rc.getHealth() + " HP");
+        primaryStrategy.runTick();
     }
 }

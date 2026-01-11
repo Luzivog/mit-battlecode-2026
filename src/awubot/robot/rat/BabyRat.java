@@ -16,15 +16,37 @@ public class BabyRat {
     public static boolean shouldGlance;
     public static Strategy primaryStrategy;
 
+    // Cat luring protocol
+    private static MapLocation theLureCatLoc = null;
+    private static MapLocation theEnemyKingLoc = null;
+    private static int theLureTTL = 0;
+    private static boolean theIsLuring = false;
+
     public static void init() throws GameActionException {
         CellTracker.storeVisibleCells();
         // primaryStrategy = new MinerStrategy();
         primaryStrategy = new ExperimentStrategy();
     }
 
+    public static void setLureTarget(MapLocation aCatLoc, MapLocation aEnemyKingLoc) {
+        theLureCatLoc = aCatLoc;
+        theEnemyKingLoc = aEnemyKingLoc;
+        theLureTTL = 30;  // Lure for 30 turns
+        theIsLuring = true;
+    }
+
     public static void run() throws GameActionException {
         indicate("cheesemines: " + GlobalArray.cheeseMines.set.length());
         shouldGlance = true;
+
+        // Cat luring protocol - takes priority
+        if (theIsLuring && theLureTTL > 0) {
+            theLureTTL--;
+            if (tryLureManeuver()) {
+                return;  // Skip normal behavior while luring
+            }
+        }
+
         CellTracker.checkSymmetry();
 
         // IF TLE: remove or optimise this somehow
@@ -48,6 +70,65 @@ public class BabyRat {
                 lastGlance = rightDir;
             }
         }
+    }
+
+    private static boolean tryLureManeuver() throws GameActionException {
+        indicate("LURING CAT TO ENEMY!");
+
+        // 1. Move TOWARD ENEMY KING (leading the cat there!)
+        if (rc.isMovementReady() && theEnemyKingLoc != null) {
+            Direction toEnemy = loc.directionTo(theEnemyKingLoc);
+            Direction[] tryDirs = {toEnemy, toEnemy.rotateLeft(), toEnemy.rotateRight(),
+                                   toEnemy.rotateLeft().rotateLeft(),
+                                   toEnemy.rotateRight().rotateRight()};
+            for (Direction dir : tryDirs) {
+                if (rc.canMove(dir)) {
+                    Pathfinder.makeMove(dir);
+                    break;
+                }
+            }
+        }
+
+        // 2. SQUEAK to attract cat! Cat will chase us toward enemy!
+        rc.squeak(0);  // Empty squeak - cat only cares about sound location
+
+        // 3. Check if we should stop luring
+        boolean shouldStopLuring = false;
+
+        // Stop if we reached enemy territory (close to enemy king loc)
+        if (theEnemyKingLoc != null && loc.distanceSquaredTo(theEnemyKingLoc) <= 36) {
+            indicate("REACHED ENEMY TERRITORY - mission complete!");
+            shouldStopLuring = true;
+        }
+
+        // Stop if TTL expired
+        if (theLureTTL <= 0) {
+            shouldStopLuring = true;
+        }
+
+        // Check if cat is still following
+        RobotInfo[] robots = rc.senseNearbyRobots();
+        boolean catNearby = false;
+        for (RobotInfo r : robots) {
+            if (r.getType() == UnitType.CAT) {
+                catNearby = true;
+                break;
+            }
+        }
+
+        // If cat lost interest early, stop luring
+        if (!catNearby && theLureTTL < 20) {
+            shouldStopLuring = true;
+        }
+
+        if (shouldStopLuring) {
+            theIsLuring = false;
+            theLureCatLoc = null;
+            theEnemyKingLoc = null;
+            return false;  // Resume normal behavior
+        }
+
+        return true;  // Still luring
     }
 
 }

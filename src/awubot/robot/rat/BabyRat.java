@@ -2,6 +2,7 @@ package awubot.robot.rat;
 
 import battlecode.common.*;
 import awubot.Pathfinder;
+import awubot.comms.GlobalArray;
 import awubot.CellTracker;
 import awubot.robot.Strategy;
 import awubot.robot.rat.strategies.MinerStrategy;
@@ -20,6 +21,7 @@ public class BabyRat {
     }
 
     public static void run() throws GameActionException {
+        indicate("cheesemines: " + GlobalArray.cheeseMines.set.length());
         shouldGlance = true;
         CellTracker.checkSymmetry();
 

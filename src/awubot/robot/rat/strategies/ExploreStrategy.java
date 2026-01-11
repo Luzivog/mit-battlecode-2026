@@ -3,8 +3,12 @@ package awubot.robot.rat.strategies;
 import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
 import awubot.Pathfinder;
+import awubot.comms.GlobalArray;
 import awubot.robot.Strategy;
+import awubot.util.Util;
+
 import static awubot.Game.*;
+import static awubot.util.Util.indicate;
 
 public class ExploreStrategy extends Strategy {
     private MapLocation exploreTarget;
@@ -24,9 +28,17 @@ public class ExploreStrategy extends Strategy {
     private void updateExploreTarget() {
         if (exploreTarget != null
             && rc.getLocation().distanceSquaredTo(exploreTarget) > 2) return;
-        exploreTarget = new MapLocation(
-            (int)(Math.random() * rc.getMapWidth()),
-            (int)(Math.random() * rc.getMapHeight())
-        );
+
+        if (GlobalArray.cheeseMines.set.length() < 3 || (int)(Math.random() * 3) % 3 == 0) {
+            exploreTarget = new MapLocation(
+                (int)(Math.random() * rc.getMapWidth()),
+                (int)(Math.random() * rc.getMapHeight())
+            );
+        } else {
+            indicate("nextmine: " + MinerStrategy.nextMine);
+            exploreTarget = Util.decode2x2(GlobalArray.cheeseMines.at(MinerStrategy.nextMine));
+            MinerStrategy.nextMine++;
+            MinerStrategy.nextMine %= GlobalArray.cheeseMines.set.length();
+        }
     }
 }

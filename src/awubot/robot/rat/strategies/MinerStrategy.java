@@ -16,6 +16,8 @@ public class MinerStrategy extends Strategy {
     private final MineStrategy mineStrategy;
     private final Strategy exploreStrategy;
 
+    public static int nextMine = 0;
+
     public MinerStrategy() {
         cheeseStrategy = new CheeseStrategy();
         goHomeStrategy = new GoHomeStrategy(cheeseStrategy);

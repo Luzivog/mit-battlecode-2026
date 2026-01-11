@@ -22,6 +22,11 @@ public class BabyRat {
     public static void run() throws GameActionException {
         shouldGlance = true;
         CellTracker.checkSymmetry();
+
+        // IF TLE: remove or optimise this somehow
+        // it's only here to update dirt data since it might have changed since our last turn
+        CellTracker.storeVisibleCells();
+
         indicate("sym " + CellTracker.hsym + " " + CellTracker.vsym + " " + CellTracker.rsym);
         primaryStrategy.runTick();
         if (rc.canTurn() && shouldGlance) {

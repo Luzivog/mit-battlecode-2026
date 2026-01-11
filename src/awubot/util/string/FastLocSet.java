@@ -15,10 +15,6 @@ public class FastLocSet {
         return size;
     }
 
-    private String locToStr(MapLocation loc) {
-        return "^" + (char) (loc.x) + (char) (loc.y);
-    }
-
     public void add(MapLocation loc) {
         String key = "^" + (char) (loc.x) + (char) (loc.y);
         // String key = locToStr(loc);

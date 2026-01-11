@@ -1,51 +1,32 @@
 package awubot;
 
 import battlecode.common.*;
-import awubot.Pathfinder;
+import awubot.comms.GlobalArray;
+import awubot.comms.Squeaker;
+import awubot.robot.rat.MinerRat;
 import awubot.robot.rat.Rat;
-import awubot.CellTracker;
+import awubot.robot.rat.RatKing;
 import static awubot.Game.*;
-import static awubot.util.Util.*;
-import awubot.util.Profiler;
 import awubot.util.Rng;
 
 public class RobotPlayer {
-    static MapLocation target;
-    static int built = 0;
-
-
+    static Rat rat;
     static int maxBytecode = 0;
 
     public static void run(RobotController rc) throws GameActionException {
         Game.init(rc);
         Rng.seed();
-
-        switch (rc.getType()) {
-            case BABY_RAT -> {
-                Rat.init();
-            }
-            case RAT_KING -> {}
-            default -> {
-                assert false : "illegal unit type " + rc.getType().name();
-            }
-        }
+        GlobalArray.initGlobalArray();
+        rat = (rc.getType() == UnitType.BABY_RAT ? new MinerRat() : new RatKing());
+        rat.init();
 
         while (true) {
             try {
-                Rng.init();
-                switch (rc.getType()) {
-                    case BABY_RAT -> {
-                        Rat.run();
-                    }
-                    case RAT_KING -> {
-                        indicate(rc.getGlobalCheese());
-                        if(built < 5) rc.buildRat(rc.getLocation().add(Direction.NORTHEAST).add(Direction.NORTHEAST));
-                        built++;
-                    }
-                    default -> {
-                        assert false : "illegal unit type " + rc.getType().name();
-                    }
-                }
+                GlobalArray.preTick();
+                Squeaker.preTick();
+                rat.run();
+                Squeaker.postTick();
+                GlobalArray.postTick();
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
@@ -54,7 +35,6 @@ public class RobotPlayer {
                     System.out.println(maxBytecode);
                 }
                 Clock.yield();
-                indicatorString = "";
             }
         }
     }

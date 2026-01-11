@@ -8,9 +8,9 @@ import awubot.util.BudgetMap;
 import static awubot.Game.*;
 
 public class Squeaker {
-    public final int N = 32;
-    public final int HEADER = 3;   
-    public final MapLocation NULL_LOC = new MapLocation(15, 15);
+    public static final int N = 32;
+    public static final int HEADER = 3;   
+    public static final MapLocation NULL_LOC = new MapLocation(15, 15);
 
     /*
     
@@ -49,7 +49,7 @@ public class Squeaker {
         return false;
     }
 
-    private void processMessage(Message msg) {
+    private static void processMessage(Message msg) {
         int bytes = msg.getBytes();
         int header = bytes >>> (32 - HEADER);
         switch (header) {
@@ -68,7 +68,7 @@ public class Squeaker {
     // TODO: verify that messages actually come in order so this is correct
     // also consider loading into a map
     private static int lastMessageCount = 0;
-    public void tick() {
+    public static void preTick() {
         Message[] msgs = rc.readSqueaks(time - 1);
         for (int i = lastMessageCount; i < msgs.length; i++) {
             processMessage(msgs[i]);
@@ -77,6 +77,10 @@ public class Squeaker {
         lastMessageCount = msgs.length;
         for (Message m : msgs) processMessage(m);
 
+    }
+
+    public static void postTick() {
         squeakMine(); // can add other squeaks later
     }
+
 }

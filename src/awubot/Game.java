@@ -22,6 +22,8 @@ public class Game {
     public static MapLocation loc;
     public static int locX, locY;
     public static int time;
+    public static boolean isRatKing; 
+    public static int kingId;
 
     public static void init(RobotController rc) {
         Game.rc = rc;
@@ -30,31 +32,32 @@ public class Game {
         locX = rc.getLocation().x;
         locY = rc.getLocation().y;
         time = rc.getRoundNum();
+        isRatKing = (rc.getType() == UnitType.RAT_KING);
 
         // BudgetMap.test();
 
-        FastLocSet fls = new FastLocSet();
-        for (int i = 0; i < 20; i++) fls.add(new MapLocation(i, i));
+        // FastLocSet fls = new FastLocSet();
+        // for (int i = 0; i < 20; i++) fls.add(new MapLocation(i, i));
 
-        Profiler.begin();
-        fls.add(1, 2);
-        Profiler.end();
+        // Profiler.begin();
+        // fls.add(1, 2);
+        // Profiler.end();
 
-        Profiler.begin();
-        boolean x = fls.contains(new MapLocation(1, 2));
-        Profiler.end();
+        // Profiler.begin();
+        // boolean x = fls.contains(new MapLocation(1, 2));
+        // Profiler.end();
 
-        Profiler.begin();
-        MapLocation pos = new MapLocation(1, 2);
-        Profiler.end();
+        // Profiler.begin();
+        // MapLocation pos = new MapLocation(1, 2);
+        // Profiler.end();
 
-        Profiler.begin();
-        String s = "^" + (char) pos.x + (char) pos.y;
-        Profiler.end();
+        // Profiler.begin();
+        // String s = "^" + (char) pos.x + (char) pos.y;
+        // Profiler.end();
 
         // Profiler.begin();
         // Profiler.end();
 
-        rc.disintegrate();
+        // rc.disintegrate();
     }
 }

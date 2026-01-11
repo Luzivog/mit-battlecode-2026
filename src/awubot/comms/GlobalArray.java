@@ -3,6 +3,7 @@ package awubot.comms;
 import battlecode.common.*;
 import static awubot.util.Util.*;
 
+import awubot.CellTracker;
 import awubot.util.BudgetMap;
 
 import static awubot.Game.*;
@@ -24,11 +25,52 @@ public class GlobalArray {
 
     */
 
-    private static final int COUNTER = 0;
+    // private static final int COUNTER = 0;
     private static final int SYMMETRY = 1;
     private static final int RAT_KING_LOC = 2;
     private static final int RAT_KING_TURN_COUNTER = 7;
     private static final int MIN_CHEESE = 32;
+    
+    public static void initGlobalArray() throws GameActionException {
+        if (isRatKing) {
+            int i = findRatKingSlot();
+            kingId = i;
+        } else {
+            kingId = -1;
+        }
+
+        if (isRatKing && time == 1) {
+            println("YO IM THE FIRST RAT");
+            rc.writeSharedArray(RAT_KING_TURN_COUNTER, 1023);
+        }
+    }
+
+    public static void preTick() throws GameActionException {
+        checkSymmetry();
+    }
+
+    public static void postTick() throws GameActionException {
+        if (isRatKing) {
+            if (cur_sym == 0 && CellTracker.isSymmetryKnown()) {
+                rc.writeSharedArray(SYMMETRY, CellTracker.getSymmetry().ordinal());
+            }
+        }
+    }
+
+    private static int cur_sym = 0;
+    public static void checkSymmetry() throws GameActionException {
+        cur_sym = rc.readSharedArray(SYMMETRY);
+        if (cur_sym != 0) {
+            CellTracker.rsym = CellTracker.hsym = CellTracker.vsym = 0;
+            if (cur_sym == 1) {
+                CellTracker.rsym = 1;
+            } else if (cur_sym == 2) {
+                CellTracker.hsym = 1;
+            } else if (cur_sym == 3) {
+                CellTracker.vsym = 1;
+            }
+        }
+    }
 
     public static MapLocation getRat(int i) {
         try {

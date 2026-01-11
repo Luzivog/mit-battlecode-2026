@@ -1,41 +1,27 @@
 package awubot.util.string;
 
+// only insert and query
+// if you actually want performance, inline this class
 public class FastIntSet {
-    public StringBuilder keys;
-    public int size;
+    public StringBuilder set;
 
     public FastIntSet() {
-        keys = new StringBuilder();
-        size = 0;
-    }
-
-    public int size() {
-        return size;
+        set = new StringBuilder("|");
     }
 
     public void add(int i) {
-        String key = String.valueOf((char) i);
-        if (keys.indexOf(key) < 0) {
-            keys.append(key);
-            size++;
-        }
+        set.append(i + "|");
     }
 
-    public void remove(int i) {
-        String key = String.valueOf((char) i);
-        int index;
-        if ((index = keys.indexOf(key)) >= 0) {
-            keys.deleteCharAt(index);
-            size--;
+    public boolean add_and_ret(int i) {
+        if (set.indexOf("|" + i + "|") < 0) {
+            set.append(i + "|");
+            return true;
         }
+        return false;
     }
 
     public boolean contains(int i) {
-        return keys.indexOf(String.valueOf((char) i)) >= 0;
-    }
-
-    public void clear() {
-        size = 0;
-        keys = new StringBuilder();
+        return set.indexOf("|" + i + "|") >= 0;
     }
 }

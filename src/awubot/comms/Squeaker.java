@@ -5,6 +5,7 @@ import static awubot.util.Util.*;
 
 import awubot.CellTracker;
 import awubot.util.BudgetMap;
+import awubot.util.string.FastIndexedIntSet;
 
 import static awubot.Game.*;
 
@@ -22,8 +23,7 @@ public class Squeaker {
     
     */
 
-    private static int mineSize = 0;
-    private static int[] mines = new int[167];
+    private static FastIndexedIntSet mines = new FastIndexedIntSet();
 
     // mystery bytecode usage
     // private static void refreshMines() {
@@ -39,12 +39,12 @@ public class Squeaker {
 
     // im lazy so im only squeaking one for now
     private static boolean squeakMine() {
-        while (mineSize > 0) {
-            int i = time % mineSize;
-            if (GlobalArray.seenCheeseMine(mines[i])) {
-                mines[i] = mines[--mineSize];
+        while (mines.set.length() > 0) {
+            int i = time % mines.set.length();
+            if (GlobalArray.seenCheeseMine(mines.at(i))) {
+                mines.remove(i);
             } else {
-                rc.squeak(mines[i]);
+                rc.squeak(mines.at(i));
                 return true;
             }
         }
@@ -60,10 +60,7 @@ public class Squeaker {
             // again, only processing one
             case 0: // mine location
                 int loc = bytes & 1023;
-                for (int i = 0; i < mineSize; i++) {
-                    if (mines[i] == loc) return;
-                }
-                mines[mineSize++] = loc;
+                mines.add(loc);
                 break;
             case 1: // rat king location
                 break;
@@ -112,7 +109,6 @@ public class Squeaker {
                 return;
             }
         }
-        // squeakMine(); // can add other squeaks later
-        rc.squeak((0b01 << 30) | time);
+        squeakMine(); // can add other squeaks later
     }
 }

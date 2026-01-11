@@ -3,8 +3,11 @@ package awubot.comms;
 import battlecode.common.*;
 import static awubot.util.Util.*;
 
+import org.apache.commons.collections.FastArrayList;
+
 import awubot.CellTracker;
 import awubot.util.BudgetMap;
+import awubot.util.string.FastIndexedIntSet;
 
 import static awubot.Game.*;
 
@@ -15,7 +18,7 @@ public class GlobalArray {
     /*
 
     LAYOUT:
-    0: global rat counter
+    // 0: global rat counter
     1: symmetry
     2-6: rat king locations (rounded to 2x2) 
     7: rat king turn counter (00, 01, 10 for alive) and (11) for dead
@@ -30,6 +33,7 @@ public class GlobalArray {
     private static final int RAT_KING_LOC = 2;
     private static final int RAT_KING_TURN_COUNTER = 7;
     private static final int MIN_CHEESE = 32;
+    public static FastIndexedIntSet cheeseMines = new FastIndexedIntSet();
     
     public static void initGlobalArray() throws GameActionException {
         if (isRatKing) {
@@ -47,6 +51,9 @@ public class GlobalArray {
 
     public static void preTick() throws GameActionException {
         checkSymmetry();
+        if (!isRatKing) {
+            
+        }
     }
 
     public static void postTick() throws GameActionException {
@@ -54,6 +61,7 @@ public class GlobalArray {
             if (cur_sym == 0 && CellTracker.isSymmetryKnown()) {
                 rc.writeSharedArray(SYMMETRY, CellTracker.getSymmetry().ordinal());
             }
+            
         }
     }
 

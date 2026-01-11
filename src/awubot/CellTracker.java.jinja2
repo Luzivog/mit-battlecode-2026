@@ -3,6 +3,7 @@ package awubot;
 import battlecode.common.*;
 
 import awubot.util.Profiler;
+import awubot.comms.Squeaker;
 import static awubot.util.Util.*;
 import static awubot.Game.*;
 
@@ -31,6 +32,7 @@ public class CellTracker {
         switch(loc.y) {
             {% for i in range(MAX_MAP_SIZE) %}
             case {{i}} -> {
+                if ((seen{{i}} & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
                 seen{{i}} |= 1l << loc.x;
                 if(!info.isWall()) passable{{i}} |= 1l << loc.x;
                 if(info.isDirt()) dirt{{i}} |= 1l << loc.x;
@@ -191,13 +193,17 @@ public class CellTracker {
     }
 
     public static void setSymmetry(int cur_sym) {
-        if (cur_sym != 0) {
-            CellTracker.rsym = CellTracker.hsym = CellTracker.vsym = 0;
-            if (cur_sym == 1) {
+        switch (cur_sym) {
+            case 1 -> {
+                CellTracker.hsym = CellTracker.vsym = 0;
                 CellTracker.rsym = 1;
-            } else if (cur_sym == 2) {
+            }
+            case 2 -> {
+                CellTracker.rsym = CellTracker.vsym = 0;
                 CellTracker.hsym = 1;
-            } else if (cur_sym == 3) {
+            }
+            case 3 -> {
+                CellTracker.rsym = CellTracker.hsym = 0;
                 CellTracker.vsym = 1;
             }
         }

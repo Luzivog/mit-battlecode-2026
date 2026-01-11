@@ -77,14 +77,14 @@ public final class BudgetMap {
     public static void test() {
         Profiler.begin();
         set(0, 1, 2);
-        Profiler.end(); 
+        Profiler.end("set(0, 1, 2);");
 
         Profiler.begin();
         int x = get(0, 1);
-        Profiler.end();
+        Profiler.end("int x = get(0, 1);");
 
         Profiler.begin();
         set(0, 1, 3);
-        Profiler.end();
+        Profiler.end("set(0, 1, 3);");
     }
 }

@@ -4,18 +4,15 @@ import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
 import awubot.Pathfinder;
 import awubot.robot.Strategy;
-import awubot.robot.rat.Rat;
 import awubot.util.Rng;
 import static awubot.Game.*;
 
 public class MineStrategy extends Strategy {
-    private final Rat rat;
     private final CheeseStrategy cheeseStrategy;
     private MapLocation mineLocation;
     private MapLocation mineTarget;
 
-    public MineStrategy(Rat rat, CheeseStrategy cheeseStrategy) {
-        this.rat = rat;
+    public MineStrategy(CheeseStrategy cheeseStrategy) {
         this.cheeseStrategy = cheeseStrategy;
     }
 

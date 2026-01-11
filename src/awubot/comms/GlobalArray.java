@@ -3,8 +3,12 @@ package awubot.comms;
 import battlecode.common.*;
 import static awubot.util.Util.*;
 
+import org.apache.commons.collections.FastArrayList;
+
 import awubot.CellTracker;
 import awubot.util.BudgetMap;
+import awubot.util.Profiler;
+import awubot.util.string.FastIndexedIntSet;
 
 import static awubot.Game.*;
 
@@ -14,14 +18,13 @@ public class GlobalArray {
 
     /*
 
-    LAYOUT:
-    0: global rat counter
-    1: symmetry
-    2-6: rat king locations (rounded to 2x2) 
-    7: rat king turn counter (00, 01, 10 for alive) and (11) for dead
-    
+      LAYOUT:
+      // 0: global rat counter
+      1: symmetry
+      2-6: rat king locations (rounded to 2x2)
+      7: rat king turn counter (00, 01, 10 for alive) and (11) for dead
 
-    cheese mines count upwards
+      cheese mines count upwards
 
     */
 
@@ -30,7 +33,8 @@ public class GlobalArray {
     private static final int RAT_KING_LOC = 2;
     private static final int RAT_KING_TURN_COUNTER = 7;
     private static final int MIN_CHEESE = 32;
-    
+    public static FastIndexedIntSet cheeseMines = new FastIndexedIntSet();
+
     public static void initGlobalArray() throws GameActionException {
         if (isRatKing) {
             int i = findRatKingSlot();
@@ -40,13 +44,18 @@ public class GlobalArray {
         }
 
         if (isRatKing && time == 1) {
-            println("YO IM THE FIRST RAT");
+            // println("YO IM THE FIRST RAT");
             rc.writeSharedArray(RAT_KING_TURN_COUNTER, 1023);
+            rc.writeSharedArray(N - 1, 1023);
         }
     }
 
     public static void preTick() throws GameActionException {
         checkSymmetry();
+        readCheeseMines();
+        if (!isRatKing) {
+
+        }
     }
 
     public static void postTick() throws GameActionException {
@@ -54,14 +63,42 @@ public class GlobalArray {
             if (cur_sym == 0 && CellTracker.isSymmetryKnown()) {
                 rc.writeSharedArray(SYMMETRY, CellTracker.getSymmetry().ordinal());
             }
+            writeCheeseMines();
         }
+    }
+    
+    public static void readCheeseMines() throws GameActionException {
+        int i = N - 1;
+        while (i >= MIN_CHEESE) {
+            int x  = rc.readSharedArray(i);
+            if (x == 1023) break;
+            cheeseMines.add(x);
+            i--;
+        }
+    }
+
+    public static void writeCheeseMines() throws GameActionException {
+        int n = cheeseMines.set.length();
+        if (n > 0) {
+            int i = (time * (N - MIN_CHEESE)) % n;
+            for (int j = 0; j < Math.min(n, N - MIN_CHEESE); j++) {
+                int k = (i + j) % n;
+                rc.writeSharedArray(N - k - 1, cheeseMines.at(k));
+            }
+        }
+        if (n < N - MIN_CHEESE) {
+            rc.writeSharedArray(N - 1 - n, 1023);
+        }
+    }
+
+    public static boolean seenCheeseMine(int loc) {
+        return cheeseMines.contains(loc);
     }
 
     private static int cur_sym = 0;
     public static void checkSymmetry() throws GameActionException {
         if (cur_sym != 0) return;
         cur_sym = rc.readSharedArray(SYMMETRY);
-        println("\n\n\n\nFOUND SYMMETRY " + cur_sym + "\n\n\n");
         if (cur_sym != 0) {
             CellTracker.setSymmetry(cur_sym);
         }
@@ -118,23 +155,6 @@ public class GlobalArray {
         }
     }
 
-    // loc is 2x2 encoded position
-    public static boolean seenCheeseMine(int loc) {
-        int i = N - 1;
-        try {
-            while (i >= MIN_CHEESE) {
-                int x = rc.readSharedArray(i);
-                if (x == 1023) break;
-                if (x == loc) return true;
-                i--;
-            }
-            return false;
-        } catch (GameActionException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
     // public static void writeCheeseMines() {
     //     BudgetMap.clear();
     //     int i = N - 1;
@@ -150,5 +170,5 @@ public class GlobalArray {
     //         e.printStackTrace();
     //     }
     // }
-    
+
 }

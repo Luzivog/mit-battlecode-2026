@@ -1,37 +1,25 @@
 package awubot.util.string;
 
 public class FastIntIntMap {
+    public static final int OFF = 65536 / 2;
     public StringBuilder keyVals;
-    public int size;
 
     public FastIntIntMap() {
         keyVals = new StringBuilder();
     }
 
-    private String keyToStr(int key) {
-        return "^" + (char) (key + 0x100);
-    }
-
-    private String keyValToStr(int key, int val) {
-        return "^" + (char) (key + 0x100) + (char) (val + 0x100);
-    }
-
     public void add(int key, int val) {
-        // String keyTemp = keyToStr(key);
-        String keyTemp = "^" + (char) (key + 0x100);
-        if (keyVals.indexOf(keyTemp) == -1) {
-            keyVals.append(keyTemp + (char) (val + 0x100));
-            size++;
+        String keyString = String.valueOf((char) key);
+        if (keyVals.indexOf(keyString) == -1) {
+            keyVals.append(keyString + (char) (val + OFF));
         }
     }
 
     public void remove(int key) {
-        // String keyTemp = keyToStr(key);
         String keyTemp = "^" + (char) (key + 0x100);
         int index;
         if ((index = keyVals.indexOf(keyTemp)) >= 0) {
             keyVals.delete(index, index + 3);
-            size--;
         }
     }
 
@@ -42,7 +30,6 @@ public class FastIntIntMap {
         switch (index) {
             case -1:
                 keyVals.append(keyTemp + (char) (val + 0x100));
-                size++;
                 break;
             default:
                 keyVals.setCharAt(index + 2, (char) (val + 0x100));
@@ -56,8 +43,7 @@ public class FastIntIntMap {
     }
 
     public void clear() {
-        size = 0;
-        keyVals = new StringBuilder();
+        keyVals =    new StringBuilder();
     }
 
     public int getVal(int key) {
@@ -70,13 +56,5 @@ public class FastIntIntMap {
 
         // Could not find element
         return -1;
-    }
-
-    public int[] getKeys() {
-        int[] keys = new int[size];
-        for (int i = 1; i < keyVals.length(); i += 3) {
-            keys[i / 3] = (int) keyVals.charAt(i) - 0x100;
-        }
-        return keys;
     }
 }

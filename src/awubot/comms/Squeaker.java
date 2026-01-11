@@ -5,46 +5,40 @@ import static awubot.util.Util.*;
 
 import awubot.CellTracker;
 import awubot.util.BudgetMap;
+import awubot.util.Profiler;
+import awubot.util.string.FastIndexedIntSet;
 
 import static awubot.Game.*;
+import awubot.RobotTracker;
 
 public class Squeaker {
     public static final int N = 32;
-    public static final int HEADER = 2;   
+    public static final int HEADER = 2;
     public static final MapLocation NULL_LOC = new MapLocation(15, 15);
     public static final int SQUEAK_RAD = 16; // radius squared
 
     /*
-    
-    00: cheese mine locations (up to 3) (rounded to 2x2)
-    01: enemy rat king location (up to 3) (rounded to 2x2)
-    10: symmetry
-    
+
+      00: cheese mine locations (up to 3) (rounded to 2x2)
+      01: enemy rat king location (up to 3) (rounded to 2x2)
+      10: symmetry
+
     */
 
-    private static int mineSize = 0;
-    private static int[] mines = new int[167];
+    private static FastIndexedIntSet minesToSend = new FastIndexedIntSet();
 
-    // mystery bytecode usage
-    // private static void refreshMines() {
-    //     GlobalArray.writeCheeseMines();
-    //     for (int i = 0; i < mineSize;) {
-    //         if (BudgetMap.has(mines[i].x, mines[i].y)) {
-    //             mines[i] = mines[--mineSize];
-    //         } else {
-    //             i++;
-    //         }
-    //     }   
-    // }
+    public static void registerMine(MapLocation loc) {
+        minesToSend.add(encode2x2(loc));
+    }
 
     // im lazy so im only squeaking one for now
     private static boolean squeakMine() {
-        while (mineSize > 0) {
-            int i = time % mineSize;
-            if (GlobalArray.seenCheeseMine(mines[i])) {
-                mines[i] = mines[--mineSize];
+        while (minesToSend.set.length() > 0) {
+            int i = time % minesToSend.set.length();
+            if (GlobalArray.seenCheeseMine(minesToSend.at(i))) {
+                minesToSend.remove(minesToSend.at(i));
             } else {
-                rc.squeak(mines[i]);
+                rc.squeak(minesToSend.at(i));
                 return true;
             }
         }
@@ -53,17 +47,18 @@ public class Squeaker {
 
     private static void processMessage(Message msg) {
         if (msg.getSenderID() == rc.getID()) return;
+        RobotTracker.addAlly(msg.getSource());
         // println(rc.getID() + " received from " + msg.getSenderID() + " content " + msg.getBytes());
         int bytes = msg.getBytes();
         int header = bytes >>> (32 - HEADER);
         switch (header) {
-            // again, only processing one
             case 0: // mine location
+                // again, only processing one
                 int loc = bytes & 1023;
-                for (int i = 0; i < mineSize; i++) {
-                    if (mines[i] == loc) return;
+                GlobalArray.cheeseMines.add(loc);
+                if (!isRatKing) {
+                    minesToSend.add(loc);
                 }
-                mines[mineSize++] = loc;
                 break;
             case 1: // rat king location
                 break;
@@ -76,7 +71,7 @@ public class Squeaker {
             default:
                 assert(false);
         }
-    } 
+    }
 
     // messages come in chronological order
     // there is currently a bug where fat units get sent the same message multiple times
@@ -102,17 +97,18 @@ public class Squeaker {
         }
         return false;
     }
-    
+
     public static void postTick() throws GameActionException {
         if (nearRatKing()) {
             indicate("NEAR RAT KING");
             if (GlobalArray.peepSymmetry() == CellTracker.Symmetry.Unknown && CellTracker.isSymmetryKnown()) {
-                rc.squeak((0b10 << (32 - HEADER)) + CellTracker.getSymmetry().ordinal()); 
-                println("SQUEAKING SYMMETRY");
+                rc.squeak((0b10 << (32 - HEADER)) + CellTracker.getSymmetry().ordinal());
+                indicate("SQUEAKING SYMMETRY");
                 return;
             }
         }
-        // squeakMine(); // can add other squeaks later
-        rc.squeak((0b01 << 30) | time);
+        if (!isRatKing) {
+            squeakMine(); // can add other squeaks later
+        }
     }
 }

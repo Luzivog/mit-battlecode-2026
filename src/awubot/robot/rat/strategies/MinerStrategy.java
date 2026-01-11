@@ -1,35 +1,27 @@
-package awubot.robot.rat;
+package awubot.robot.rat.strategies;
 
 import battlecode.common.*;
 import awubot.Pathfinder;
 import awubot.CellTracker;
 import awubot.robot.Strategy;
-import awubot.robot.rat.strategies.CheeseStrategy;
-import awubot.robot.rat.strategies.ExploreStrategy;
-import awubot.robot.rat.strategies.GoHomeStrategy;
-import awubot.robot.rat.strategies.MineStrategy;
+
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 import awubot.util.Rng;
 
-public class MinerRat extends Rat {
+public class MinerStrategy extends Strategy {
     private Direction lastGlance;
     private final GoHomeStrategy goHomeStrategy;
     private final CheeseStrategy cheeseStrategy;
     private final MineStrategy mineStrategy;
     private final Strategy exploreStrategy;
 
-    public MinerRat() {
-        cheeseStrategy = new CheeseStrategy(this);
-        goHomeStrategy = new GoHomeStrategy(this, cheeseStrategy);
-        mineStrategy = new MineStrategy(this, cheeseStrategy);
-        exploreStrategy = new ExploreStrategy(this);
-    }
-
-    @Override
-    public void init() throws GameActionException {
-        CellTracker.storeVisibleCells();
-        goHomeStrategy.setHome(rc.getLocation());
+    public MinerStrategy() {
+        cheeseStrategy = new CheeseStrategy();
+        goHomeStrategy = new GoHomeStrategy(cheeseStrategy);
+        goHomeStrategy.setHome(loc);
+        mineStrategy = new MineStrategy(cheeseStrategy);
+        exploreStrategy = new ExploreStrategy();
     }
 
     private void tryStrats() throws GameActionException {
@@ -45,7 +37,7 @@ public class MinerRat extends Rat {
     }
 
     @Override
-    public void run() throws GameActionException {
+    public void runTick() throws GameActionException {
         CellTracker.checkSymmetry();
         indicate("sym " + CellTracker.hsym + " " + CellTracker.vsym + " " + CellTracker.rsym);
         tryStrats();
@@ -66,4 +58,9 @@ public class MinerRat extends Rat {
         }
     }
 
+    @Override
+    public boolean isComplete() {
+        return false;
+    }
 }
+

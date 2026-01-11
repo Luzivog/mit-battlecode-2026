@@ -8,7 +8,7 @@ import static awubot.Game.*;
 
 // IF TLE: lower these constants (especially MAX_BUG_ITERS)
 {% set MAX_BUG_ITERS = 5 %}
-{% set MAX_PATH = 20 %}
+{% set MAX_PATH = 25 %}
 
 class BugnavInstance {
     MapLocation target;
@@ -47,6 +47,7 @@ class BugnavInstance {
         stackSize = 0;
         emptyStackTurns = 1000;
         bottomDir = topDir = pos.directionTo(target);
+        leftBug = rightBug = null;
         {% for i in range(MAX_PATH) %}
         path{{i}} = new MapLocation(-1000, -1000);
         {% endfor %}
@@ -438,7 +439,8 @@ public class Pathfinder {
 
     public static void makeMove(Direction dir) throws GameActionException {
         if(dir == Direction.CENTER) return;
-        turn(dir);
+        if(dir == rc.getDirection() || rc.canTurn()) turn(dir);
+        else return;
         var nextLoc = rc.getLocation().add(dir);
         if(rc.senseMapInfo(nextLoc).isDirt()) {
             if(rc.isActionReady()) rc.removeDirt(nextLoc);
@@ -450,10 +452,14 @@ public class Pathfinder {
         locY = loc.y;
     }
 
+    static MapLocation lastBugPos, lastLoc, secondLastBugPos, secondLastLoc;
+    static int reps = 0;
+
     public static void makeMove(MapLocation target) throws GameActionException {
         // TODO: better handling when target changes
         if(bug == null || !target.equals(bug.target)) {
             indicate("RETARGET");
+            lastBugPos = lastLoc = secondLastBugPos = secondLastLoc = new MapLocation(-1, -1);
             bug = new BugnavInstance(true, target);
         }
         int shade = 255;
@@ -467,9 +473,29 @@ public class Pathfinder {
             {% endfor %}
         }
         // Profiler.end("bug");
-        rc.setIndicatorDot(bug.pos, 255, 0, 0);
 
         if(!rc.isMovementReady()) return;
+
+        if(bug.pos == secondLastBugPos && loc.equals(secondLastLoc)) {
+            reps++;
+            if(reps >= 5) {
+                indicate("stuck, resetting bug");
+                System.out.println("stuck, resetting bug");
+                bug.clearPath();
+                bug.advance();
+                lastBugPos = lastLoc = new MapLocation(-1, -1);
+                reps = 0;
+            }
+        } else {
+            reps = 0;
+        }
+        if(!lastLoc.equals(loc) || !lastBugPos.equals(bug.pos)) {
+            secondLastBugPos = lastBugPos;
+            secondLastLoc = lastLoc;
+            lastBugPos = bug.pos;
+            lastLoc = loc;
+        }
+        rc.setIndicatorDot(bug.pos, 255, 0, 0);
 
         // no bfs needed
         {
@@ -485,230 +511,150 @@ public class Pathfinder {
         // bfs
         Profiler.begin();
         CellTracker.computeLocalBfsMasks();
-        var loc = rc.getLocation();
-        // d{i}0 + d{i}1 is the mask of reachable within i steps
-        long d00 = 0, d01 = 0;
-        long d10 = 0, d11 = 0;
-        {% macro writePos(pos, i) %}
+        {% macro writePos(pos, mask, val, boundsCheck) %}
+        {% set op = "|=" if val else "&= ~" %}
         {
-            int xi = {{pos}}.x - loc.x + 5;
-            int yi = {{pos}}.y - loc.y + 5;
-            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11) {
+            var pos = {{pos}};
+            int xi = pos.x - loc.x + 5;
+            int yi = pos.y - loc.y + 5;
+            {% if boundsCheck %}
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {% endif %}
+            {
                 int idx = yi * 11 + xi;
                 if(idx < 61) {
-                    d{{i}}0 |= 1l << idx;
+                    {{mask}}0 {{op}} (1l << idx);
                 } else {
-                    d{{i}}1 |= 1l << (idx - 61);
+                    {{mask}}1 {{op}} (1l << (idx - 61));
                 }
             }
         }
         {% endmacro %}
-
-        Direction bestMove = null;
-        // reconstruction helper variables
-        long cur0 = 0, cur1 = 0;
-        int curDist = 0;
+        var localPassableExceptAllies0 = CellTracker.localPassable0 & ~(1l << 60);
+        var localPassableExceptAllies1 = CellTracker.localPassable1;
+        // IF TLE: unroll this
+        for(int i = RobotTracker.allyCount - 1; i >= 0; i--) {
+            indicate("ally at " + RobotTracker.allies[i]);
+            {{ writePos("RobotTracker.allies[i]", "localPassableExceptAllies", 0, False) }}
+        }
+        var loc = rc.getLocation();
+        // d{i}0 + d{i}1 is the mask of reachable within i steps
+        long d00 = 0, d01 = 0;
+        long d10 = 0, d11 = 0;
 
         {% for i in range(MAX_PATH) %}
-        long d{{i + 2}}0 = 0;
-        long d{{i + 2}}1 = 0;
-        {% endfor %}
+        {% if i % 2 == 0 %}
+        {{ writePos("bug.getRecentPos(%s / 2)" % i, "d%s" % i, 1, True) }}
+        {% endif %}
+        // if(rc.getRoundNum() >= 731 && rc.getID() == 10281) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(d{{i}}0, d{{i}}1);
+        //     Clock.yield();
+        // }
+        {% if i %}
+        if((d{{i}}0 & 0x807000000000000l) != 0 || (d{{i}}1 & 0xe01) != 0) {
+            // Profiler.begin();
+            // this is sloppy since we only care about tiles <= 2 chebyshev distance away
+            long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
+            notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
+            notWallAdjacent0 &= notWallAdjacent0 << 1;
+            notWallAdjacent0 &= (notWallAdjacent0 >> 1) | ((notWallAdjacent1 & 1l) << 60);
+            notWallAdjacent1 &= notWallAdjacent1 >> 1;
+            notWallAdjacent1 &= (notWallAdjacent1 << 11) | (notWallAdjacent0 >> 50);
+            notWallAdjacent0 &= notWallAdjacent0 << 11;
+            notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
+            notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
-        bfsLoop: {
-            {% for i in range(MAX_PATH) %}
-            {% if i % 2 == 0 %}
-            {{ writePos("bug.getRecentPos(%s / 2)" % i, i) }}
-            {% endif %}
-            // if(rc.getRoundNum() >= 377) {
-            //     indicatorString = "";
-            //     CellTracker.printLocalMask(d{{i}}0, d{{i}}1);
-            //     Clock.yield();
-            // }
-            {% if i %}
-            if((d{{i}}0 & 0x807000000000000l) != 0 || (d{{i}}1 & 0xe01) != 0) {
-                // Profiler.begin();
-                // this is sloppy since we only care about tiles <= 2 chebyshev distance away
-                long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
-                notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
-                notWallAdjacent0 &= notWallAdjacent0 << 1;
-                notWallAdjacent0 &= (notWallAdjacent0 >> 1) | ((notWallAdjacent1 & 1l) << 60);
-                notWallAdjacent1 &= notWallAdjacent1 >> 1;
-                notWallAdjacent1 &= (notWallAdjacent1 << 11) | (notWallAdjacent0 >> 50);
-                notWallAdjacent0 &= notWallAdjacent0 << 11;
-                notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
-                notWallAdjacent1 &= notWallAdjacent1 >> 11;
-
-                double bestScore = 1e18;
-                {% for dir, off in [
-                                    ("Direction.SOUTH", 49),
-                                    ("Direction.EAST", 61),
-                                    ("Direction.NORTH", 71),
-                                    ("Direction.WEST", 59),
-                                    ("Direction.SOUTHWEST", 48),
-                                    ("Direction.SOUTHEAST", 50),
-                                    ("Direction.NORTHWEST", 70),
-                                    ("Direction.NORTHEAST", 72),
-                                    ] %}
-                if(
-                   {% if off < 61 %}
-                   (d{{i}}0 & (1l << {{off}}))
-                   {% else %}
-                   (d{{i}}1 & (1l << {{off - 61}}))
-                   {% endif %}
-                   != 0) {
-                    var nextLoc = loc.add({{dir}});
-                    boolean isDirt = false;
-                    if(rc.canMove({{dir}}) || (isDirt = CellTracker.isDirt(nextLoc))) {
-                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                        // prefer staying away from walls, this helps when changing direction
-                        if(
-                           {% if off < 61 %}
-                           (notWallAdjacent0 & (1l << {{off}}))
-                           {% else %}
-                           (notWallAdjacent1 & (1l << {{off - 61}}))
-                           {% endif %}
-                           != 0
-                           ) {
-                            score /= 2;
-                        }
-                        // prefer definitely empty squares over possibly dirt
-                        if(isDirt) {
-                            score += 1000;
-                        }
-                        if(score < bestScore) {
-                            bestMove = {{dir}};
-                            bestScore = score;
-                        }
+            Direction bestMove = null;
+            double bestScore = 1e18;
+            {% for dir, off in [
+                                ("Direction.SOUTH", 49),
+                                ("Direction.EAST", 61),
+                                ("Direction.NORTH", 71),
+                                ("Direction.WEST", 59),
+                                ("Direction.SOUTHWEST", 48),
+                                ("Direction.SOUTHEAST", 50),
+                                ("Direction.NORTHWEST", 70),
+                                ("Direction.NORTHEAST", 72),
+                                ] %}
+            if(
+               {% if off < 61 %}
+               (d{{i}}0 & (1l << {{off}}))
+               {% else %}
+               (d{{i}}1 & (1l << {{off - 61}}))
+               {% endif %}
+               != 0) {
+                var nextLoc = loc.add({{dir}});
+                boolean isDirt = false;
+                if(rc.canMove({{dir}}) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    // prefer staying away from walls, this helps when changing direction
+                    if(
+                       {% if off < 61 %}
+                       (notWallAdjacent0 & (1l << {{off}}))
+                       {% else %}
+                       (notWallAdjacent1 & (1l << {{off - 61}}))
+                       {% endif %}
+                       != 0
+                       ) {
+                        score /= 2;
+                    }
+                    // prefer definitely empty squares over possibly dirt
+                    if(isDirt) {
+                        score += 1000;
+                    }
+                    if(score < bestScore) {
+                        bestMove = {{dir}};
+                        bestScore = score;
                     }
                 }
-                {% endfor %}
-                // Profiler.end("bfs best move");
-                if(bestMove != null) {
-                    cur0 = d{{i}}0;
-                    cur1 = d{{i}}1;
-                    curDist = {{i}};
-                    indicate("bfs iterations: " + {{i}});
-                    break bfsLoop;
-                }
             }
-            {% endif %}
-
-            // Profiler.begin();
-
-            long t{{i}}0 = d{{i}}0;
-            long t{{i}}1 = d{{i}}1;
-            // we don't need to worry about the "seam" here because it's at the cell we are standing on
-            t{{i}}0 |= (t{{i}}0 & 0xfbff7feffdffbffl) << 1;
-            t{{i}}1 |= (t{{i}}1 & 0x7feffdffbff7fefl) << 1;
-            t{{i}}0 |= (t{{i}}0 & 0x1f7feffdffbff7fel) >> 1;
-            t{{i}}1 |= (t{{i}}1 & 0xffdffbff7feffdel) >> 1;
-
-            t{{i}}1 |= ((t{{i}}1 & 0x1ffffffffffffl) << 11) | (t{{i}}0 >> 50);
-            t{{i}}0 |= (t{{i}}0 & 0x3ffffffffffffl) << 11;
-            t{{i}}0 |= (t{{i}}0 >> 11) | ((t{{i}}1 & 0x7ffl) << 50);
-            t{{i}}1 |= t{{i}}1 >> 11;
-            t{{i}}0 &= CellTracker.localPassable0;
-            t{{i}}1 &= CellTracker.localPassable1;
-            d{{i + 2}}0 = t{{i}}0;
-            d{{i + 2}}1 = t{{i}}1;
-            t{{i}}0 &= ~CellTracker.localDirt0;
-            t{{i}}1 &= ~CellTracker.localDirt1;
-            d{{i + 1}}0 |= t{{i}}0;
-            d{{i + 1}}1 |= t{{i}}1;
-            // Profiler.end("bfs iteration");
             {% endfor %}
+            // Profiler.end("bfs best move");
+            if(bestMove != null) {
+                Profiler.end("bfs");
+                indicate("bfs iterations: " + {{i}});
+                makeMove(bestMove);
+                return;
+            }
         }
+        {% endif %}
+
+        // Profiler.begin();
+
+        // we don't need to worry about the "seam" here because it's at the cell we are standing on
+        d{{i}}0 |= (d{{i}}0 & 0xfbff7feffdffbffl) << 1;
+        d{{i}}1 |= (d{{i}}1 & 0x7feffdffbff7fefl) << 1;
+        d{{i}}0 |= (d{{i}}0 & 0x1f7feffdffbff7fel) >> 1;
+        d{{i}}1 |= (d{{i}}1 & 0xffdffbff7feffdel) >> 1;
+
+        d{{i}}1 |= ((d{{i}}1 & 0x1ffffffffffffl) << 11) | (d{{i}}0 >> 50);
+        d{{i}}0 |= (d{{i}}0 & 0x3ffffffffffffl) << 11;
+        d{{i}}0 |= (d{{i}}0 >> 11) | ((d{{i}}1 & 0x7ffl) << 50);
+        d{{i}}1 |= d{{i}}1 >> 11;
+        d{{i}}0 &= localPassableExceptAllies0;
+        d{{i}}1 &= localPassableExceptAllies1;
+        long d{{i + 2}}0 = d{{i}}0;
+        long d{{i + 2}}1 = d{{i}}1;
+        d{{i}}0 &= ~CellTracker.localDirt0;
+        d{{i}}1 &= ~CellTracker.localDirt1;
+        d{{i + 1}}0 |= d{{i}}0;
+        d{{i + 1}}1 |= d{{i}}1;
+        // Profiler.end("bfs iteration");
+        {% endfor %}
         Profiler.end("bfs");
 
-        if(bestMove != null) {
-            Profiler.begin();
-            var curLoc = loc.add(bestMove);
-            var lastDir = bestMove;
-            var curX = curLoc.x - loc.x + 5;
-            var curY = curLoc.y - loc.y + 5;
-            bfsPath0 = curLoc;
-            bfsPathLength = 1;
-            // IF TLE: get rid of this and detect deadlocks another way
-            // the case: https://discord.com/channels/@me/1323561256082346025/1459202766655324210
-            bfsReconstruct:
-            while(true) {
-                long isDirt;
-                {
-                    int idx = curY * 11 + curX;
-                    if(idx < 61) {
-                        isDirt = (CellTracker.localDirt0 >> idx) & 1l;
-                    } else {
-                        isDirt = (CellTracker.localDirt1 >> (idx - 61)) & 1l;
-                    }
-                }
-                int weight = isDirt != 0 ? 2 : 1;
-                if(curDist - weight < 0) break bfsReconstruct;
-                switch(curDist) {
-                    {% for curDist in range(1, MAX_PATH) %}
-                    case {{curDist}} -> {
-                        long prev0 = 0, prev1 = 0;
-                        switch(weight) {
-                            {% for weight in range(1, [3, curDist + 1]|min) %}
-                            case {{weight}} -> {
-                                prev0 = d{{curDist - weight}}0;
-                                prev1 = d{{curDist - weight}}1;
-                            }
-                            {% endfor %}
-                        }
+        System.out.println("fallback when bfs can't find path");
+        indicate("fallback when bfs can't find path");
 
-                        dirLoop: {
-                            var leftDir = lastDir;
-                            var rightDir = lastDir.rotateRight();
-                            for(int i = 0; i < 7; i++) {
-                                Direction dir;
-                                if(i % 2 == 0) {
-                                    dir = leftDir;
-                                    leftDir = leftDir.rotateLeft();
-                                } else {
-                                    dir = rightDir;
-                                    rightDir = rightDir.rotateRight();
-                                }
-                                var dx = dir.dx;
-                                var dy = dir.dy;
-                                // Profiler.begin();
-                                curX += dx;
-                                curY += dy;
-                                long v = 0;
-                                {
-                                    if(curX >= 0 && curX < 11 && curY >= 0 && curY < 11) {
-                                        int idx = curY * 11 + curX;
-                                        if(idx < 61) {
-                                            v = (prev0 >> idx) & 1l;
-                                        } else {
-                                            v = (prev1 >> (idx - 61)) & 1l;
-                                        }
-                                        // Profiler.end("one dir");
-                                        if(v != 0) {
-                                            lastDir = dir;
-                                            curLoc = new MapLocation(loc.x + curX - 5, loc.y + curY - 5);
-                                            appendPosition(curLoc);
-                                            rc.setIndicatorDot(curLoc, 0, 0, 255);
-                                            curDist -= weight;
-                                            break dirLoop;
-                                        }
-                                    }
-                                }
-                                curX -= dx;
-                                curY -= dy;
-                            }
-                            break bfsReconstruct;
-                        }
-                    }
-                    {% endfor %}
-                }
-            }
-            Profiler.end("bfs reconstruct");
-            makeMove(bestMove);
-            return;
-        }
+        // move in a random direction (to make way for any allies blocking us)
+        var dirs = new Direction[8];
+        int dirCount = 0;
+        {% for dir in directions %}
+        if(rc.canMove({{dir}})) dirs[dirCount++] = {{dir}};
+        {% endfor %}
+        if(dirCount > 0) makeMove(dirs[Rng.mcg() % dirCount]);
 
-        indicatorString = "";
-        CellTracker.printLocalMask(CellTracker.localPassable0, CellTracker.localPassable1);
-        assert false : "TODO: fallback when bfs can't find path";
+        bug.clearPath();
     }
 }

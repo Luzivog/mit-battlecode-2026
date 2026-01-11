@@ -8,19 +8,20 @@ import awubot.util.BudgetMap;
 import awubot.util.string.FastIndexedIntSet;
 
 import static awubot.Game.*;
+import awubot.RobotTracker;
 
 public class Squeaker {
     public static final int N = 32;
-    public static final int HEADER = 2;   
+    public static final int HEADER = 2;
     public static final MapLocation NULL_LOC = new MapLocation(15, 15);
     public static final int SQUEAK_RAD = 16; // radius squared
 
     /*
-    
-    00: cheese mine locations (up to 3) (rounded to 2x2)
-    01: enemy rat king location (up to 3) (rounded to 2x2)
-    10: symmetry
-    
+
+      00: cheese mine locations (up to 3) (rounded to 2x2)
+      01: enemy rat king location (up to 3) (rounded to 2x2)
+      10: symmetry
+
     */
 
     private static FastIndexedIntSet mines = new FastIndexedIntSet();
@@ -34,7 +35,7 @@ public class Squeaker {
     //         } else {
     //             i++;
     //         }
-    //     }   
+    //     }
     // }
 
     // im lazy so im only squeaking one for now
@@ -53,6 +54,7 @@ public class Squeaker {
 
     private static void processMessage(Message msg) {
         if (msg.getSenderID() == rc.getID()) return;
+        RobotTracker.addAlly(msg.getSource());
         // println(rc.getID() + " received from " + msg.getSenderID() + " content " + msg.getBytes());
         int bytes = msg.getBytes();
         int header = bytes >>> (32 - HEADER);
@@ -73,7 +75,7 @@ public class Squeaker {
             default:
                 assert(false);
         }
-    } 
+    }
 
     // messages come in chronological order
     // there is currently a bug where fat units get sent the same message multiple times
@@ -99,13 +101,13 @@ public class Squeaker {
         }
         return false;
     }
-    
+
     public static void postTick() throws GameActionException {
         if (nearRatKing()) {
             indicate("NEAR RAT KING");
             if (GlobalArray.peepSymmetry() == CellTracker.Symmetry.Unknown && CellTracker.isSymmetryKnown()) {
-                rc.squeak((0b10 << (32 - HEADER)) + CellTracker.getSymmetry().ordinal()); 
-                println("SQUEAKING SYMMETRY");
+                rc.squeak((0b10 << (32 - HEADER)) + CellTracker.getSymmetry().ordinal());
+                indicate("SQUEAKING SYMMETRY");
                 return;
             }
         }

@@ -5,18 +5,16 @@ import battlecode.common.MapLocation;
 import battlecode.common.UnitType;
 import awubot.Pathfinder;
 import awubot.robot.Strategy;
-import awubot.robot.rat.Rat;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
+import static awubot.robot.rat.BabyRat.*;
 
 public class GoHomeStrategy extends Strategy {
-    private final Rat rat;
     private final CheeseStrategy cheeseStrategy;
     private MapLocation home;
     private boolean goingHome;
 
-    public GoHomeStrategy(Rat rat, CheeseStrategy cheeseStrategy) {
-        this.rat = rat;
+    public GoHomeStrategy(CheeseStrategy cheeseStrategy) {
         this.cheeseStrategy = cheeseStrategy;
     }
 
@@ -37,7 +35,12 @@ public class GoHomeStrategy extends Strategy {
         }
         rc.setIndicatorLine(rc.getLocation(), home, 0, 255, 0);
         Pathfinder.makeMove(home);
-        var transferTarget = rc.getLocation().add(rc.getLocation().directionTo(home));
+        var dir = loc.directionTo(home);
+        var transferTarget = loc.add(dir);
+        if(loc.distanceSquaredTo(home) <= 8) {
+            shouldGlance = false;
+            if(rc.canTurn()) Pathfinder.turn(dir);
+        }
         if (rc.canTransferCheese(transferTarget, rc.getRawCheese())) {
             rc.transferCheese(transferTarget, rc.getRawCheese());
         }

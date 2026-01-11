@@ -4,17 +4,11 @@ import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
 import awubot.Pathfinder;
 import awubot.robot.Strategy;
-import awubot.robot.rat.Rat;
 import static awubot.Game.*;
 
 public class CheeseStrategy extends Strategy {
-    private final Rat rat;
     private MapLocation cheeseTarget;
     private int lastSeenCheese;
-
-    public CheeseStrategy(Rat rat) {
-        this.rat = rat;
-    }
 
     @Override
     public boolean isComplete() throws GameActionException {
@@ -27,7 +21,7 @@ public class CheeseStrategy extends Strategy {
         lastSeenCheese = rc.getRoundNum();
         if (rc.getLocation().isAdjacentTo(cheeseTarget)) {
             Pathfinder.turn(rc.getLocation().directionTo(cheeseTarget));
-            if (rc.isActionReady()) {
+            if (rc.canPickUpCheese(cheeseTarget)) {
                 rc.pickUpCheese(cheeseTarget);
                 cheeseTarget = null;
             }

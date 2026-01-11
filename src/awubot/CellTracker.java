@@ -8887,13 +8887,17 @@ public class CellTracker {
     }
 
     public static void setSymmetry(int cur_sym) {
-        if (cur_sym != 0) {
-            CellTracker.rsym = CellTracker.hsym = CellTracker.vsym = 0;
-            if (cur_sym == 1) {
+        switch (cur_sym) {
+            case 1 -> {
+                CellTracker.hsym = CellTracker.vsym = 0;
                 CellTracker.rsym = 1;
-            } else if (cur_sym == 2) {
+            }
+            case 2 -> {
+                CellTracker.rsym = CellTracker.vsym = 0;
                 CellTracker.hsym = 1;
-            } else if (cur_sym == 3) {
+            }
+            case 3 -> {
+                CellTracker.rsym = CellTracker.hsym = 0;
                 CellTracker.vsym = 1;
             }
         }

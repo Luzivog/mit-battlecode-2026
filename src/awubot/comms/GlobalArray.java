@@ -17,14 +17,13 @@ public class GlobalArray {
 
     /*
 
-    LAYOUT:
-    // 0: global rat counter
-    1: symmetry
-    2-6: rat king locations (rounded to 2x2) 
-    7: rat king turn counter (00, 01, 10 for alive) and (11) for dead
-    
+      LAYOUT:
+      // 0: global rat counter
+      1: symmetry
+      2-6: rat king locations (rounded to 2x2)
+      7: rat king turn counter (00, 01, 10 for alive) and (11) for dead
 
-    cheese mines count upwards
+      cheese mines count upwards
 
     */
 
@@ -34,7 +33,7 @@ public class GlobalArray {
     private static final int RAT_KING_TURN_COUNTER = 7;
     private static final int MIN_CHEESE = 32;
     public static FastIndexedIntSet cheeseMines = new FastIndexedIntSet();
-    
+
     public static void initGlobalArray() throws GameActionException {
         if (isRatKing) {
             int i = findRatKingSlot();
@@ -52,7 +51,7 @@ public class GlobalArray {
     public static void preTick() throws GameActionException {
         checkSymmetry();
         if (!isRatKing) {
-            
+
         }
     }
 
@@ -61,7 +60,7 @@ public class GlobalArray {
             if (cur_sym == 0 && CellTracker.isSymmetryKnown()) {
                 rc.writeSharedArray(SYMMETRY, CellTracker.getSymmetry().ordinal());
             }
-            
+
         }
     }
 
@@ -69,7 +68,7 @@ public class GlobalArray {
     public static void checkSymmetry() throws GameActionException {
         if (cur_sym != 0) return;
         cur_sym = rc.readSharedArray(SYMMETRY);
-        println("\n\n\n\nFOUND SYMMETRY " + cur_sym + "\n\n\n");
+        indicate("FOUND SYMMETRY " + cur_sym);
         if (cur_sym != 0) {
             CellTracker.setSymmetry(cur_sym);
         }
@@ -158,5 +157,5 @@ public class GlobalArray {
     //         e.printStackTrace();
     //     }
     // }
-    
+
 }

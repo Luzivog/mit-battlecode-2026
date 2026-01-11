@@ -4,16 +4,10 @@ import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
 import awubot.Pathfinder;
 import awubot.robot.Strategy;
-import awubot.robot.rat.Rat;
 import static awubot.Game.*;
 
 public class ExploreStrategy extends Strategy {
-    private final Rat rat;
     private MapLocation exploreTarget;
-
-    public ExploreStrategy(Rat rat) {
-        this.rat = rat;
-    }
 
     @Override
     public boolean isComplete() {

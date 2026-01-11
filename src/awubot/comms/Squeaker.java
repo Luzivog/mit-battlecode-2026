@@ -55,10 +55,8 @@ public class Squeaker {
             case 0: // mine location
                 // again, only processing one
                 int loc = bytes & 1023;
-                if (isRatKing) {
-                    GlobalArray.cheeseMines.add(loc);
-                    println(GlobalArray.cheeseMines.set.length());
-                } else {
+                GlobalArray.cheeseMines.add(loc);
+                if (!isRatKing) {
                     minesToSend.add(loc);
                 }
                 break;

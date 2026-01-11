@@ -78,10 +78,12 @@ public class GlobalArray {
 
     public static void writeCheeseMines() throws GameActionException {
         int n = cheeseMines.set.length();
-        int i = (time * (N - MIN_CHEESE)) % n;
-        for (int j = 0; j < Math.min(n, N - MIN_CHEESE); j++) {
-            int k = (i + j) % n;
-            rc.writeSharedArray(N - k - 1, cheeseMines.at(k));
+        if (n > 0) {
+            int i = (time * (N - MIN_CHEESE)) % n;
+            for (int j = 0; j < Math.min(n, N - MIN_CHEESE); j++) {
+                int k = (i + j) % n;
+                rc.writeSharedArray(N - k - 1, cheeseMines.at(k));
+            }
         }
         if (n < N - MIN_CHEESE) {
             rc.writeSharedArray(N - 1 - n, 1023);

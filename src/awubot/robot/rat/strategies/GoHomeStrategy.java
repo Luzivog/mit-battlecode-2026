@@ -9,8 +9,6 @@ import awubot.robot.rat.Rat;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 
-import awubot.Game;
-
 public class GoHomeStrategy extends Strategy {
     private final Rat rat;
     private final CheeseStrategy cheeseStrategy;
@@ -54,10 +52,8 @@ public class GoHomeStrategy extends Strategy {
     }
 
     private boolean shouldGoHome() {
-        if (goingHome) return true;
-        var opt = Math.sqrt(2 * Math.sqrt(home.distanceSquaredTo(Game.loc)));
-        if (rc.getRawCheese() >= opt * 20) return true;
-        if (rc.getRawCheese() >= 60 && cheeseStrategy.getLastSeenCheese() < rc.getRoundNum() - 4) return true;
-        return false;
+        return goingHome
+            || rc.getRawCheese() >= 50 && cheeseStrategy.getLastSeenCheese() < rc.getRoundNum() - 3
+            || rc.getRawCheese() >= 200;
     }
 }

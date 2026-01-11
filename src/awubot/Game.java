@@ -43,11 +43,11 @@ public class Game {
 
         Profiler.begin();
         set.append(10 + "|");
-        Profiler.end();
+        Profiler.end("set.append(10 + \"|\")");
 
         Profiler.begin();
         boolean has = set.indexOf("|" + 10 + "|") >= 0;
-        Profiler.end();
+        Profiler.end("boolean has = set.indexOf(\"|\" + 10 + \"|\") >= 0;");
 
         // char a = 1, b = 2;
         // int a = 5;
@@ -69,8 +69,6 @@ public class Game {
 
         // Profiler.begin();
         // Profiler.end();
-
-        rc.disintegrate();
     }
 
     public static void preTick() {

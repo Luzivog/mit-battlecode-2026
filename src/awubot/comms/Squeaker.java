@@ -26,18 +26,6 @@ public class Squeaker {
 
     private static FastIndexedIntSet mines = new FastIndexedIntSet();
 
-    // mystery bytecode usage
-    // private static void refreshMines() {
-    //     GlobalArray.writeCheeseMines();
-    //     for (int i = 0; i < mineSize;) {
-    //         if (BudgetMap.has(mines[i].x, mines[i].y)) {
-    //             mines[i] = mines[--mineSize];
-    //         } else {
-    //             i++;
-    //         }
-    //     }
-    // }
-
     // im lazy so im only squeaking one for now
     private static boolean squeakMine() {
         while (mines.set.length() > 0) {
@@ -59,8 +47,8 @@ public class Squeaker {
         int bytes = msg.getBytes();
         int header = bytes >>> (32 - HEADER);
         switch (header) {
-            // again, only processing one
             case 0: // mine location
+                // again, only processing one
                 int loc = bytes & 1023;
                 mines.add(loc);
                 break;

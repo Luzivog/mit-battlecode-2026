@@ -45,11 +45,13 @@ public class GlobalArray {
         if (isRatKing && time == 1) {
             println("YO IM THE FIRST RAT");
             rc.writeSharedArray(RAT_KING_TURN_COUNTER, 1023);
+            rc.writeSharedArray(N - 1, 1023);
         }
     }
 
     public static void preTick() throws GameActionException {
         checkSymmetry();
+        readCheeseMines();
         if (!isRatKing) {
 
         }
@@ -60,15 +62,40 @@ public class GlobalArray {
             if (cur_sym == 0 && CellTracker.isSymmetryKnown()) {
                 rc.writeSharedArray(SYMMETRY, CellTracker.getSymmetry().ordinal());
             }
-
+            writeCheeseMines();
         }
+    }
+    
+    public static void readCheeseMines() throws GameActionException {
+        int i = N - 1;
+        while (i >= MIN_CHEESE) {
+            int x  = rc.readSharedArray(i);
+            if (x == 1023) break;
+            cheeseMines.add(x);
+            i -= 1;
+        }
+    }
+
+    public static void writeCheeseMines() throws GameActionException {
+        int n = cheeseMines.set.length();
+        int i = (time * (N - MIN_CHEESE)) % n;
+        for (int j = 0; j < Math.min(n, N - MIN_CHEESE); j++) {
+            int k = (i + j) % n;
+            rc.writeSharedArray(N - k - 1, cheeseMines.at(k));
+        }
+        if (n < N - MIN_CHEESE) {
+            rc.writeSharedArray(N - 1 - n, 1023);
+        }
+    }
+
+    public static boolean seenCheeseMine(int loc) {
+        return cheeseMines.contains(loc);
     }
 
     private static int cur_sym = 0;
     public static void checkSymmetry() throws GameActionException {
         if (cur_sym != 0) return;
         cur_sym = rc.readSharedArray(SYMMETRY);
-        indicate("FOUND SYMMETRY " + cur_sym);
         if (cur_sym != 0) {
             CellTracker.setSymmetry(cur_sym);
         }
@@ -122,23 +149,6 @@ public class GlobalArray {
         } catch (GameActionException e) {
             e.printStackTrace();
             return -1;
-        }
-    }
-
-    // loc is 2x2 encoded position
-    public static boolean seenCheeseMine(int loc) {
-        int i = N - 1;
-        try {
-            while (i >= MIN_CHEESE) {
-                int x = rc.readSharedArray(i);
-                if (x == 1023) break;
-                if (x == loc) return true;
-                i--;
-            }
-            return false;
-        } catch (GameActionException e) {
-            e.printStackTrace();
-            return false;
         }
     }
 

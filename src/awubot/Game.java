@@ -8,7 +8,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import awubot.test.UtilTest;
-import awubot.util.BudgetMap;
 import awubot.util.FastRng;
 import awubot.util.Profiler;
 import awubot.util.Util;
@@ -28,6 +27,7 @@ public class Game {
     public static int time;
     public static boolean isRatKing;
     public static int kingId;
+    public static MapLocation home;
 
     public static void init(RobotController rc) {
         Game.rc = rc;
@@ -38,6 +38,7 @@ public class Game {
         locY = loc.y;
         time = rc.getRoundNum();
         isRatKing = (rc.getType() == UnitType.RAT_KING);
+        home = loc;
 
         StringBuilder set = new StringBuilder('|');
 
@@ -49,11 +50,10 @@ public class Game {
         boolean has = set.indexOf("|" + 10 + "|") >= 0;
         Profiler.end("boolean has = set.indexOf(\"|\" + 10 + \"|\") >= 0;");
 
-        // char a = 1, b = 2;
-        // int a = 5;
-        // Profiler.begin();
-        // int b = a;
-        // Profiler.end();
+        double a = 0.1, b = 0.2;
+        Profiler.begin();
+        double c = a + b;
+        Profiler.end_print("bruh");
 
         // Profiler.begin();
         // char c = (char) a;
@@ -69,6 +69,8 @@ public class Game {
 
         // Profiler.begin();
         // Profiler.end();
+
+        rc.disintegrate();
     }
 
     public static void preTick() {

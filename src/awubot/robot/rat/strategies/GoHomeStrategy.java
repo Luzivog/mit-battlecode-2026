@@ -14,7 +14,6 @@ import static awubot.robot.rat.BabyRat.*;
 
 public class GoHomeStrategy extends Strategy {
     private final CheeseStrategy cheeseStrategy;
-    private MapLocation home;
     private boolean goingHome;
 
     public GoHomeStrategy(CheeseStrategy cheeseStrategy) {
@@ -30,12 +29,6 @@ public class GoHomeStrategy extends Strategy {
     public void runTick() throws GameActionException {
         goingHome = true;
         indicate("going home");
-        for (var robot : rc.senseNearbyRobots()) {
-            if (robot.getType() == UnitType.RAT_KING && robot.getTeam() == rc.getTeam()) {
-                home = robot.getLocation();
-                break;
-            }
-        }
         rc.setIndicatorLine(rc.getLocation(), home, 0, 255, 0);
         Pathfinder.makeMove(home);
         var dir = loc.directionTo(home);
@@ -47,10 +40,6 @@ public class GoHomeStrategy extends Strategy {
         if (rc.canTransferCheese(transferTarget, rc.getRawCheese())) {
             rc.transferCheese(transferTarget, rc.getRawCheese());
         }
-    }
-
-    public void setHome(MapLocation home) {
-        this.home = home;
     }
 
     public void setGoingHome(boolean goingHome) {

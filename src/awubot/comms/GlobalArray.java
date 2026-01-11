@@ -6,7 +6,6 @@ import static awubot.util.Util.*;
 import org.apache.commons.collections.FastArrayList;
 
 import awubot.CellTracker;
-import awubot.util.BudgetMap;
 import awubot.util.Profiler;
 import awubot.util.string.FastIndexedIntSet;
 

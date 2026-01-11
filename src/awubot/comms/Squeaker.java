@@ -4,7 +4,6 @@ import battlecode.common.*;
 import static awubot.util.Util.*;
 
 import awubot.CellTracker;
-import awubot.util.BudgetMap;
 import awubot.util.Profiler;
 import awubot.util.string.FastIndexedIntSet;
 

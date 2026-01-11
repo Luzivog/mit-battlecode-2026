@@ -5,6 +5,7 @@ import awubot.Pathfinder;
 import awubot.comms.GlobalArray;
 import awubot.CellTracker;
 import awubot.robot.Strategy;
+import awubot.robot.rat.strategies.ExperimentStrategy;
 import awubot.robot.rat.strategies.MinerStrategy;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
@@ -17,7 +18,8 @@ public class BabyRat {
 
     public static void init() throws GameActionException {
         CellTracker.storeVisibleCells();
-        primaryStrategy = new MinerStrategy();
+        // primaryStrategy = new MinerStrategy();
+        primaryStrategy = new ExperimentStrategy();
     }
 
     public static void run() throws GameActionException {

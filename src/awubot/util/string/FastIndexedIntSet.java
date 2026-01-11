@@ -47,4 +47,8 @@ public class FastIndexedIntSet {
     public void clear() {
         set = new StringBuilder();
     }
+
+    public int size() {
+        return set.length();
+    }
 }

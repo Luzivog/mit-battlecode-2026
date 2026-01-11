@@ -21,7 +21,6 @@ public class MinerStrategy extends Strategy {
     public MinerStrategy() {
         cheeseStrategy = new CheeseStrategy();
         goHomeStrategy = new GoHomeStrategy(cheeseStrategy);
-        goHomeStrategy.setHome(loc);
         mineStrategy = new MineStrategy(cheeseStrategy);
         exploreStrategy = new ExploreStrategy();
     }

@@ -61,13 +61,14 @@ public class CombatStrategy {
         if (tryRatNap()) return true;
         if (tryTrap()) return true;
         if (tryAttack()) return true;
+        // TODO: default to avoidance behaviour
         return false;
     }
 
     // return false if didnt throw -- some other process can figure out how to move
     // TODO: maybe weight targets based on how close they are to friendly rats? might be too effort
     public boolean tryThrow() throws GameActionException {
-        assert(rc.getCarrying() != null);
+        println("trying throw");
         Direction md = null, td = null;
         int mt = -1;
         double best = -1;
@@ -76,15 +77,18 @@ public class CombatStrategy {
             MapLocation newLoc = loc.add(moveDir);
             for (Direction throwDir : directions) {
                 int moveType = -1;
-                if (moveDir == throwDir && (moveDir == facing || rc.canTurn())) moveType = 0; // (turn or not turn) + straight forward
+                if (moveDir == Direction.CENTER && rc.canTurn()) moveType = 4;
+                else if (moveDir == throwDir && (moveDir == facing || rc.canTurn())) moveType = 0; // (turn or not turn) + straight forward
                 else if (moveDir == facing && rc.canTurn()) moveType = 1; // forward + turn throw
                 else if (throwDir == facing) moveType = 2; // strafe + forward
                 else if (rc.canTurn()) moveType = 3; // strafe + turn + throw 
                 if (moveType == -1) continue;
 
-                MapLocation throwTarget = newLoc.add(throwDir);
+                MapLocation throwTarget = newLoc.add(throwDir); 
                 if (!rc.canSenseLocation(throwTarget)) continue; // make sure u know whats happening there
-                if (!CellTracker.isPassable(throwTarget)) continue; // need empty
+                if (!rc.senseMapInfo(throwTarget).isPassable()) continue; // need empty
+                // TODO: why does this line below not work?
+                // if (!CellTracker.isPassable(throwTarget)) continue; // need empty
                 if (throwTarget != loc && rc.senseRobotAtLocation(throwTarget) != null) continue; // need empty
                 double damage = -1;
                 // for now, allow the throw path to go through friendly rats
@@ -94,14 +98,15 @@ public class CombatStrategy {
                         damage = rem;
                         break;
                     }
-                    if (CellTracker.isSeen(throwTarget)) {
-                        if (CellTracker.isPassable(throwTarget)) {
+                    if (rc.canSenseLocation(throwTarget)) {
+                        if (!rc.senseMapInfo(throwTarget).isPassable()) {
                             damage = rem;
                             break;
                         }
                     } else break;
                 }
                 if (damage < 0) continue;
+                println("yayyy");
                 switch (moveType) {
                     case 0:
                     case 1:
@@ -109,6 +114,9 @@ public class CombatStrategy {
                         break;
                     case 2:
                     case 3:
+                        break;
+                    case 4:
+                        damage *= 1.1;
                         break;
                 }
                 if (damage > best) {
@@ -137,6 +145,9 @@ public class CombatStrategy {
                 rc.move(md);
                 rc.turn(td);
             break;
+            case 4:
+                rc.turn(td);
+                break;
             default:
                 assert(false);
         }
@@ -155,18 +166,20 @@ public class CombatStrategy {
             if (info.getTeam() == team) continue;
             if (chebyshevDistance(loc, info.getLocation()) > 2) continue; 
             if (info.getHealth() >= rc.getHealth()) continue;
-            if (info.getType() == UnitType.RAT_KING) continue;
+            if (info.getType() != UnitType.BABY_RAT) continue;
             MapLocation t = info.getLocation();
             // double weight = scoreEnemy(info);
             double weight = 1;
             Direction md = null;
 
+            println("found nearby rat that is tasty\n");
             double best = -1;
             for (Direction moveDir : allDirections) {
                 if (moveDir != Direction.CENTER && !rc.canMove(moveDir)) continue;
                 MapLocation newLoc = loc.add(moveDir); 
                 if (newLoc.distanceSquaredTo(t) > 2) continue; 
                 if (!canSense(newLoc, t, facing) && !rc.canTurn()) continue;
+                println("passed checks");
                 double score = weight;
                 // TODO: account for cell danger levels
                 if (score > best) {
@@ -184,6 +197,7 @@ public class CombatStrategy {
         if (bestMove != Direction.CENTER) move(bestMove);
         if (!rc.canSenseLocation(target.getLocation())) turn(loc.directionTo(target.getLocation()));
         rc.carryRat(target.getLocation());
+        println("napped rat");
         return true;
     }
 
@@ -202,7 +216,7 @@ public class CombatStrategy {
 
         for (RobotInfo info : rc.senseNearbyRobots()) {
             if (info.getTeam() == rc.getTeam()) continue;
-            if (info.getType() == UnitType.RAT_KING) continue;
+            if (info.getType() != UnitType.BABY_RAT) continue;
             for (Direction dir : relatedDirections(info.getDirection())) {
                 MapLocation placeLoc = info.getLocation().add(dir);
                 if (!rc.canSenseLocation(placeLoc)) continue;
@@ -263,6 +277,7 @@ public class CombatStrategy {
         boolean canMoveForward = canMove && rc.canMoveForward();
         for (RobotInfo info : rc.senseNearbyRobots()) {
             if (info.getTeam() == rc.getTeam()) continue;
+            if (info.getType() == UnitType.CAT) continue;
             // account for buffed bites later
             if (Squeaker.squeaksSinceLastTurn == 0 
                 && info.getType() == UnitType.BABY_RAT 

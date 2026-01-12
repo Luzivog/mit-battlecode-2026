@@ -11,3 +11,5 @@ whatever you do, do it the most bytecode efficient way possible
 
 always remember to check that you have all your imports in each file so that no 
 compuile errors are caused
+
+never edit babyrat.java

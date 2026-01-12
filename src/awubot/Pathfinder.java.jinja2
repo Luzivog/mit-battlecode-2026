@@ -443,14 +443,25 @@ public class Pathfinder {
 
     public static void makeMove(Direction dir) throws GameActionException {
         if(dir == Direction.CENTER) return;
-        if(dir == rc.getDirection() || rc.canTurn()) turn(dir);
-        else return;
-        var nextLoc = rc.getLocation().add(dir);
-        if(rc.senseMapInfo(nextLoc).isDirt()) {
-            if(rc.isActionReady()) rc.removeDirt(nextLoc);
-            else return;
+        if(dir == rc.getDirection() || rc.canTurn()) {
+            turn(dir);
+            var nextLoc = loc.add(dir);
+            if(rc.senseMapInfo(nextLoc).isDirt()) {
+                if(rc.isActionReady()) rc.removeDirt(nextLoc);
+                else return;
+            }
+            if(rc.canMoveForward()) moveForward();
+        } else {
+            // if we can't turn, then strafe
+            var nextLoc = loc.add(dir);
+            if(canSense(loc, nextLoc, rc.getDirection()) && rc.senseMapInfo(nextLoc).isDirt()) {
+                if(rc.isActionReady()) rc.removeDirt(nextLoc);
+                else return;
+            }
+            if(rc.canMove(dir)) rc.move(dir);
+            else System.out.println("cannot move in direction " + dir);
+            // assuming that moving is the last thing we are doing this turn, so no need to update CellTracker here
         }
-        if(rc.canMoveForward()) moveForward();
         loc = rc.getLocation();
         locX = loc.x;
         locY = loc.y;
@@ -541,6 +552,11 @@ public class Pathfinder {
         {% endmacro %}
         var localPassableExceptAllies0 = CellTracker.localPassable0 & ~(1l << 60);
         var localPassableExceptAllies1 = CellTracker.localPassable1;
+        // can't dig dirt if we don't have enough cheese
+        if(rc.getAllCheese() < GameConstants.DIG_DIRT_CHEESE_COST) {
+            localPassableExceptAllies0 &= ~CellTracker.localDirt0;
+            localPassableExceptAllies1 &= ~CellTracker.localDirt1;
+        }
         // IF TLE: unroll this
         for(int i = RobotTracker.allyCount - 1; i >= 0; i--) {
             {{ writePos("RobotTracker.allies[i]", "localPassableExceptAllies", 0, False) }}
@@ -610,6 +626,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && {{dir}} == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = {{dir}};

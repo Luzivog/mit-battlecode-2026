@@ -221,6 +221,7 @@ public class CombatStrategy {
                 MapLocation placeLoc = info.getLocation().add(dir);
                 if (!rc.canSenseLocation(placeLoc)) continue;
                 if (!rc.senseMapInfo(placeLoc).isPassable()) continue;
+                if (rc.senseMapInfo(placeLoc).hasCheeseMine()) continue;
                 if (rc.senseRobotAtLocation(placeLoc) != null) continue;
                 if (dir == info.getDirection().opposite()) continue;
                 if (placeLoc.distanceSquaredTo(loc) > 4) continue; // impossible

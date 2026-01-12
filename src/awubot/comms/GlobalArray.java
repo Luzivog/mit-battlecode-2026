@@ -134,7 +134,7 @@ public class GlobalArray {
 
     public static void writeRatLoc(int i) {
         try {
-            rc.writeSharedArray(i + RAT_KING_LOC, encode2x2() + 1);
+            rc.writeSharedArray(i + RAT_KING_LOC, encode2x2());
             // cycle counter
             int x = rc.readSharedArray(RAT_KING_TURN_COUNTER);
             int t = time % 3;

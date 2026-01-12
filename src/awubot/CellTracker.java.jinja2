@@ -251,7 +251,7 @@ public class CellTracker {
         }
     }
 
-    {% for height in range(30, 61) %}
+    {% for height in range(20, 61) %}
     private static void checkVer{{height}}() {
         switch(myLoc.y) {
             {% for posY in range(height) %}
@@ -277,7 +277,7 @@ public class CellTracker {
 
     static void checkVer() {
         switch(mapHeight) {
-            {% for height in range(30, 61) %}
+            {% for height in range(20, 61) %}
             case {{height}} -> {
                 checkVer{{height}}();
             }
@@ -285,7 +285,7 @@ public class CellTracker {
         }
     }
 
-    {% for height in range(30, 61) %}
+    {% for height in range(20, 61) %}
     private static void checkRot{{height}}() {
         var shiftAmount = 64 - mapWidth;
         switch(myLoc.y) {
@@ -312,7 +312,7 @@ public class CellTracker {
 
     static void checkRot() {
         switch(mapHeight) {
-            {% for height in range(30, 61) %}
+            {% for height in range(20, 61) %}
             case {{height}} -> {
                 checkRot{{height}}();
             }

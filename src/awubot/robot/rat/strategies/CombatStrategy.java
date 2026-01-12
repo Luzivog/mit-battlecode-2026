@@ -132,18 +132,18 @@ public class CombatStrategy {
         switch (mt) {
             case 0: // forward
                 if (facing != md) turn(md);
-                move();
+                rawMove();
                 break;
             case 1:
-                move();
-                rc.turn(td);
+                rawMove();
+                turn(td);
                 break;
             case 2:
-                rc.move(md);
+                rawMove(md);
                 break;
             case 3:
-                rc.move(md);
-                rc.turn(td);
+                rawMove(md);
+                turn(td);
             break;
             case 4:
                 rc.turn(td);
@@ -194,7 +194,7 @@ public class CombatStrategy {
             }
         }
         if (bestScore < 0) return false; 
-        if (bestMove != Direction.CENTER) move(bestMove);
+        if (bestMove != Direction.CENTER) rawMove(bestMove);
         if (!rc.canSenseLocation(target.getLocation())) turn(loc.directionTo(target.getLocation()));
         rc.carryRat(target.getLocation());
         println("napped rat");
@@ -252,7 +252,7 @@ public class CombatStrategy {
 
         if (best < 0) return false;
         println("TRAPPING RAT");
-        if (bestMoveDir != Direction.CENTER) move(bestMoveDir);
+        if (bestMoveDir != Direction.CENTER) rawMove(bestMoveDir);
         if (!rc.canSenseLocation(bestPlaceLoc)) turn(loc.directionTo(bestPlaceLoc));
         rc.placeRatTrap(bestPlaceLoc);
         return true;
@@ -331,17 +331,17 @@ public class CombatStrategy {
                 rc.attack(bestTarget);
                 return true;
             case 1:
-                move();
+                rawMove();
                 rc.attack(bestTarget);
                 return true;
             case 2:
-                move();
-                if (!rc.canSenseLocation(bestTarget)) rc.turn(loc.directionTo(bestTarget));
+                rawMove();
+                if (!rc.canSenseLocation(bestTarget)) turn(loc.directionTo(bestTarget));
                 rc.attack(bestTarget);
                 return true;
             case 3:
-                rc.turn(bestMoveDir);
-                move();
+                turn(bestMoveDir);
+                rawMove();
                 rc.attack(bestTarget);
                 return true;
             default:

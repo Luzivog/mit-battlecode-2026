@@ -6,6 +6,7 @@ import battlecode.common.MapLocation;
 import battlecode.common.RobotController;
 import battlecode.common.Team;
 import battlecode.common.UnitType;
+import static awubot.util.Util.*;
 
 public class Game {
     public static RobotController rc;
@@ -19,21 +20,31 @@ public class Game {
     public static Team team;
     public static MapLocation home;
 
-    public static void move(Direction dir) throws GameActionException {
+    public static void rawMove(Direction dir) throws GameActionException {
+        if(dir == facing) {
+            rawMove();
+            return;
+        }
         rc.move(dir);
+        // IF TLE: optimise this
+        CellTracker.storeVisibleCells();
         loc = rc.getLocation();
         locX = loc.x;
         locY = loc.y;
     }
 
     public static void turn(Direction dir) throws GameActionException {
-        if (dir == Direction.CENTER) return;
         if (dir == facing) return;
         rc.turn(dir);
+        facing = dir;
     }
 
-    public static void move() throws GameActionException {
+    public static void rawMove() throws GameActionException {
         rc.moveForward();
+        CellTracker.storeVisibleCellsPostMoveForward();
+        loc = rc.getLocation();
+        locX = loc.x;
+        locY = loc.y;
     }
 
     public static boolean isRatKing;
@@ -46,6 +57,7 @@ public class Game {
         locX = rc.getLocation().x;
         locY = rc.getLocation().y;
         loc = rc.getLocation();
+        facing = rc.getDirection();
         time = rc.getRoundNum();
         isRatKing = (rc.getType() == UnitType.RAT_KING);
         team = rc.getTeam();
@@ -58,6 +70,6 @@ public class Game {
         locY = loc.y;
         facing = rc.getDirection();
         // Clear indicator string at the start of each turn
-        experiment.util.Util.indicatorString = "";
+        indicatorString = "";
     }
 }

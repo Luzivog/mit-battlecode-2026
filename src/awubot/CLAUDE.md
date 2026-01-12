@@ -1,7 +1,7 @@
 Pathfinder.makeMove(target) and it will move towards the target if move cooldown is ready
 don't check move cooldown, just call it
 also, don't use rc.move or rc.moveForwards or rc.turn
-use Pathfinder.makeMove(dir) and Pathfinder.turn(dir)
+use Pathfinder.makeMove(dir) and turn(dir)
 because it does auto cell tracking when you change the vision range
 
 

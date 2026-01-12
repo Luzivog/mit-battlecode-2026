@@ -45,7 +45,7 @@ public class GoHomeStrategy extends Strategy {
 
         if (loc.distanceSquaredTo(home) <= 8) {
             shouldGlance = false;
-            if (rc.canTurn()) Pathfinder.turn(dir);
+            if (rc.canTurn()) turn(dir);
         }
 
         if (rc.canTransferCheese(transferTarget, rc.getRawCheese())) {

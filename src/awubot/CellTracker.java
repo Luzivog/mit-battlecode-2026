@@ -2237,7 +2237,7 @@ public class CellTracker {
         Profiler.end("storeVisibleCells");
     }
 
-    public static void storeVisibleCellsPostMove() throws GameActionException {
+    public static void storeVisibleCellsPostMoveForward() throws GameActionException {
         Profiler.begin();
         var loc = rc.getLocation();
         int x = loc.x, y = loc.y;

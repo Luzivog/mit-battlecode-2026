@@ -92,13 +92,13 @@ public class BabyRat {
             var leftDir = rc.getDirection().rotateLeft().rotateLeft();
             var rightDir = rc.getDirection().rotateRight().rotateRight();
             if (lastGlance == leftDir) {
-                Pathfinder.turn(rightDir);
+                turn(rightDir);
                 lastGlance = rightDir;
             } else if (lastGlance == rightDir || Rng.mcg() >> 30 != 0) {
-                Pathfinder.turn(leftDir);
+                turn(leftDir);
                 lastGlance = leftDir;
             } else {
-                Pathfinder.turn(rightDir);
+                turn(rightDir);
                 lastGlance = rightDir;
             }
         }

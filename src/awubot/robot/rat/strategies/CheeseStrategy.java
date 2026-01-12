@@ -20,7 +20,7 @@ public class CheeseStrategy extends Strategy {
     public void runTick() throws GameActionException {
         lastSeenCheese = rc.getRoundNum();
         if (rc.getLocation().isAdjacentTo(cheeseTarget)) {
-            Pathfinder.turn(rc.getLocation().directionTo(cheeseTarget));
+            turn(rc.getLocation().directionTo(cheeseTarget));
             if (rc.canPickUpCheese(cheeseTarget)) {
                 rc.pickUpCheese(cheeseTarget);
                 cheeseTarget = null;

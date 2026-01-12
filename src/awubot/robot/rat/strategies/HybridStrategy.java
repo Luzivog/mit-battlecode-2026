@@ -181,8 +181,8 @@ public class HybridStrategy extends Strategy {
                     if (newLoc.distanceSquaredTo(target) <= 2) {
                         return () -> {
                             try {
-                                rc.move(dir);
-                                rc.turn(newLoc.directionTo(target));
+                                rawMove(dir);
+                                turn(newLoc.directionTo(target));
                                 rc.attack(target);
                                 loc = rc.getLocation();
                                 locX = loc.x;
@@ -211,8 +211,8 @@ public class HybridStrategy extends Strategy {
                     if (newLoc.distanceSquaredTo(target) <= 2) {
                         return () -> {
                             try {
-                                rc.move(dir);
-                                rc.turn(newLoc.directionTo(target));
+                                rawMove(dir);
+                                turn(newLoc.directionTo(target));
                                 rc.carryRat(target);
                                 loc = rc.getLocation();
                                 locX = loc.x;
@@ -255,7 +255,7 @@ public class HybridStrategy extends Strategy {
         final Direction myBest = best;
         return () -> {
             try {
-                rc.turn(myBest);
+                turn(myBest);
                 rc.throwRat();
             } catch (GameActionException e) {
                 e.printStackTrace();

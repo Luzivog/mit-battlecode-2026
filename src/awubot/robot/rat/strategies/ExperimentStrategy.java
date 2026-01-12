@@ -74,8 +74,8 @@ public class ExperimentStrategy extends Strategy {
                         return () -> {
                             try {
                                 println("ATTEMPTING ATTACK");
-                                rc.move(dir);
-                                rc.turn(newLoc.directionTo(target));
+                                rawMove(dir);
+                                turn(newLoc.directionTo(target));
                                 rc.attack(target);
                                 loc = rc.getLocation();
                                 locX = loc.x;
@@ -105,8 +105,8 @@ public class ExperimentStrategy extends Strategy {
                         return () -> {
                             try {
                                 println("ATTEMPTING RATNAP");
-                                rc.move(dir);
-                                rc.turn(newLoc.directionTo(target));
+                                rawMove(dir);
+                                turn(newLoc.directionTo(target));
                                 rc.carryRat(target);
                                 loc = rc.getLocation();
                                 locX = loc.x;
@@ -159,7 +159,7 @@ public class ExperimentStrategy extends Strategy {
                         if (rc.senseRobotAtLocation(pos) != null) break;
                     }
                 }
-                rc.turn(_best);
+                turn(_best);
                 id = rc.getCarrying().ID;
                 println("carrying " + id + " at " + rc.getCarrying().getLocation());
                 rc.throwRat();

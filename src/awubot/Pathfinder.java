@@ -1882,30 +1882,24 @@ public class Pathfinder {
         }
     }
 
-    public static void turn(Direction dir) throws GameActionException {
-        if(dir == Direction.CENTER || dir == rc.getDirection()) return;
-        rc.turn(dir);
-        CellTracker.storeVisibleCells();
-    }
-
     public static void moveForward() throws GameActionException {
-        rc.moveForward();
-        CellTracker.storeVisibleCellsPostMove();
+        rawMove();
     }
 
     public static void makeMove(Direction dir) throws GameActionException {
-        if(dir == Direction.CENTER) return;
-        if(dir == rc.getDirection() || rc.canTurn()) turn(dir);
-        else return;
-        var nextLoc = rc.getLocation().add(dir);
-        if(rc.senseMapInfo(nextLoc).isDirt()) {
+        if(rc.canTurn()) turn(dir);
+        var nextLoc = loc.add(dir);
+        if(canSense(loc, nextLoc, facing) && rc.senseMapInfo(nextLoc).isDirt()) {
             if(rc.isActionReady()) rc.removeDirt(nextLoc);
             else return;
         }
-        if(rc.canMoveForward()) moveForward();
-        loc = rc.getLocation();
-        locX = loc.x;
-        locY = loc.y;
+        if(dir == rc.getDirection()) {
+            if(rc.canMoveForward()) moveForward();
+        } else {
+            // if we can't turn, then strafe
+            if(rc.canMove(dir)) rawMove(dir);
+            // assuming that moving is the last thing we are doing this turn, so no need to update CellTracker here
+        }
     }
 
     static MapLocation lastBugPos, lastLoc, secondLastBugPos, secondLastLoc;
@@ -1976,8 +1970,10 @@ public class Pathfinder {
         {
             var dir = rc.getLocation().directionTo(bug.pos);
             if(rc.getLocation().add(dir).equals(bug.pos)) {
-                indicate("adjacent");
-                makeMove(dir);
+                if(dir != Direction.CENTER) {
+                    indicate("adjacent");
+                    makeMove(dir);
+                }
                 return;
             }
         }
@@ -1988,6 +1984,11 @@ public class Pathfinder {
         CellTracker.computeLocalBfsMasks();
         var localPassableExceptAllies0 = CellTracker.localPassable0 & ~(1l << 60);
         var localPassableExceptAllies1 = CellTracker.localPassable1;
+        // can't dig dirt if we don't have enough cheese
+        if(rc.getAllCheese() < GameConstants.DIG_DIRT_CHEESE_COST) {
+            localPassableExceptAllies0 &= ~CellTracker.localDirt0;
+            localPassableExceptAllies1 &= ~CellTracker.localDirt1;
+        }
         // IF TLE: unroll this
         for(int i = RobotTracker.allyCount - 1; i >= 0; i--) {
                     {
@@ -2090,6 +2091,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -2113,6 +2119,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
@@ -2138,6 +2149,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -2161,6 +2177,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
@@ -2186,6 +2207,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -2209,6 +2235,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
@@ -2234,6 +2265,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -2257,6 +2293,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
@@ -2347,6 +2388,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -2370,6 +2416,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
@@ -2395,6 +2446,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -2418,6 +2474,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
@@ -2443,6 +2504,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -2466,6 +2532,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
@@ -2491,6 +2562,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -2514,6 +2590,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
@@ -2589,6 +2670,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -2612,6 +2698,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
@@ -2637,6 +2728,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -2660,6 +2756,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
@@ -2685,6 +2786,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -2708,6 +2814,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
@@ -2733,6 +2844,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -2756,6 +2872,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
@@ -2846,6 +2967,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -2869,6 +2995,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
@@ -2894,6 +3025,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -2917,6 +3053,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
@@ -2942,6 +3083,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -2965,6 +3111,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
@@ -2990,6 +3141,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -3013,6 +3169,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
@@ -3088,6 +3249,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -3111,6 +3277,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
@@ -3136,6 +3307,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -3159,6 +3335,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
@@ -3184,6 +3365,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -3207,6 +3393,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
@@ -3232,6 +3423,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -3255,6 +3451,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
@@ -3345,6 +3546,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -3368,6 +3574,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
@@ -3393,6 +3604,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -3416,6 +3632,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
@@ -3441,6 +3662,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -3464,6 +3690,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
@@ -3489,6 +3720,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -3512,6 +3748,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
@@ -3587,6 +3828,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -3610,6 +3856,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
@@ -3635,6 +3886,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -3658,6 +3914,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
@@ -3683,6 +3944,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -3706,6 +3972,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
@@ -3731,6 +4002,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -3754,6 +4030,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
@@ -3844,6 +4125,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -3867,6 +4153,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
@@ -3892,6 +4183,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -3915,6 +4211,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
@@ -3940,6 +4241,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -3963,6 +4269,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
@@ -3988,6 +4299,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -4011,6 +4327,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
@@ -4086,6 +4407,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -4109,6 +4435,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
@@ -4134,6 +4465,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -4157,6 +4493,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
@@ -4182,6 +4523,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -4205,6 +4551,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
@@ -4230,6 +4581,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -4253,6 +4609,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
@@ -4343,6 +4704,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -4366,6 +4732,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
@@ -4391,6 +4762,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -4414,6 +4790,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
@@ -4439,6 +4820,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -4462,6 +4848,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
@@ -4487,6 +4878,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -4510,6 +4906,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
@@ -4585,6 +4986,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -4608,6 +5014,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
@@ -4633,6 +5044,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -4656,6 +5072,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
@@ -4681,6 +5102,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -4704,6 +5130,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
@@ -4729,6 +5160,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -4752,6 +5188,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
@@ -4842,6 +5283,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -4865,6 +5311,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
@@ -4890,6 +5341,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -4913,6 +5369,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
@@ -4938,6 +5399,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -4961,6 +5427,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
@@ -4986,6 +5457,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -5009,6 +5485,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
@@ -5084,6 +5565,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -5107,6 +5593,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
@@ -5132,6 +5623,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -5155,6 +5651,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
@@ -5180,6 +5681,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -5203,6 +5709,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
@@ -5228,6 +5739,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -5251,6 +5767,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
@@ -5341,6 +5862,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -5364,6 +5890,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
@@ -5389,6 +5920,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -5412,6 +5948,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
@@ -5437,6 +5978,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -5460,6 +6006,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
@@ -5485,6 +6036,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -5508,6 +6064,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
@@ -5583,6 +6144,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -5606,6 +6172,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
@@ -5631,6 +6202,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -5654,6 +6230,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
@@ -5679,6 +6260,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -5702,6 +6288,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
@@ -5727,6 +6318,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -5750,6 +6346,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
@@ -5840,6 +6441,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -5863,6 +6469,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
@@ -5888,6 +6499,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -5911,6 +6527,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
@@ -5936,6 +6557,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -5959,6 +6585,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
@@ -5984,6 +6615,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -6007,6 +6643,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
@@ -6082,6 +6723,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -6105,6 +6751,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
@@ -6130,6 +6781,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -6153,6 +6809,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
@@ -6178,6 +6839,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -6201,6 +6867,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
@@ -6226,6 +6897,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -6249,6 +6925,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
@@ -6339,6 +7020,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -6362,6 +7048,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
@@ -6387,6 +7078,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -6410,6 +7106,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
@@ -6435,6 +7136,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -6458,6 +7164,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
@@ -6483,6 +7194,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -6506,6 +7222,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
@@ -6581,6 +7302,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -6604,6 +7330,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
@@ -6629,6 +7360,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -6652,6 +7388,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
@@ -6677,6 +7418,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -6700,6 +7446,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
@@ -6725,6 +7476,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -6748,6 +7504,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
@@ -6838,6 +7599,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -6861,6 +7627,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
@@ -6886,6 +7657,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -6909,6 +7685,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
@@ -6934,6 +7715,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -6957,6 +7743,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
@@ -6982,6 +7773,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -7005,6 +7801,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
@@ -7080,6 +7881,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -7103,6 +7909,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
@@ -7128,6 +7939,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -7151,6 +7967,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
@@ -7176,6 +7997,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -7199,6 +8025,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
@@ -7224,6 +8055,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -7247,6 +8083,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
@@ -7337,6 +8178,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -7360,6 +8206,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
@@ -7385,6 +8236,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -7408,6 +8264,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
@@ -7433,6 +8294,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -7456,6 +8322,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
@@ -7481,6 +8352,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -7504,6 +8380,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
@@ -7579,6 +8460,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -7602,6 +8488,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
@@ -7627,6 +8518,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -7650,6 +8546,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
@@ -7675,6 +8576,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -7698,6 +8604,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
@@ -7723,6 +8634,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -7746,6 +8662,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
@@ -7836,6 +8757,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -7859,6 +8785,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
@@ -7884,6 +8815,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -7907,6 +8843,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
@@ -7932,6 +8873,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -7955,6 +8901,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
@@ -7980,6 +8931,11 @@ public class Pathfinder {
                     if(isDirt) {
                         score += 1000;
                     }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                        score -= 500;
+                    }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -8003,6 +8959,11 @@ public class Pathfinder {
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
+                    }
+                    // if we can't turn, then prefer moving straight
+                    // however, we still prefer strafing to moving forward into dirt
+                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                        score -= 500;
                     }
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
@@ -8056,7 +9017,6 @@ public class Pathfinder {
         if(rc.canMove(Direction.SOUTHWEST)) dirs[dirCount++] = Direction.SOUTHWEST;
         if(rc.canMove(Direction.WEST)) dirs[dirCount++] = Direction.WEST;
         if(rc.canMove(Direction.NORTHWEST)) dirs[dirCount++] = Direction.NORTHWEST;
-        if(rc.canMove(Direction.CENTER)) dirs[dirCount++] = Direction.CENTER;
         if(dirCount > 0) makeMove(dirs[Rng.mcg() % dirCount]);
 
         bug.clearPath();

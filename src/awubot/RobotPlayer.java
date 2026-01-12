@@ -17,10 +17,10 @@ public class RobotPlayer {
         Game.init(rc);
         Rng.seed();
         GlobalArray.initGlobalArray();
-        if(rc.getType() == UnitType.BABY_RAT) {
-            BabyRat.init();
-        } else {
+        if(isRatKing) {
             RatKing.init();
+        } else {
+            BabyRat.init();
         }
 
         while (true) {
@@ -31,20 +31,16 @@ public class RobotPlayer {
                 RobotTracker.reset();
                 GlobalArray.preTick();
                 Squeaker.preTick();
-                if(rc.getType() == UnitType.BABY_RAT) {
-                    BabyRat.run();
-                } else {
+                if(isRatKing) {
                     RatKing.run();
+                } else {
+                    BabyRat.run();
                 }
                 Squeaker.postTick();
                 GlobalArray.postTick();
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-                if (rc.getType() == UnitType.BABY_RAT) {
-                    maxBytecode = Math.max(maxBytecode, Clock.getBytecodeNum());
-                    // System.out.println(maxBytecode);
-                }
                 Clock.yield();
             }
         }

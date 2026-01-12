@@ -1984,10 +1984,22 @@ public class Pathfinder {
         CellTracker.computeLocalBfsMasks();
         var localPassableExceptAllies0 = CellTracker.localPassable0 & ~(1l << 60);
         var localPassableExceptAllies1 = CellTracker.localPassable1;
-        // can't dig dirt if we don't have enough cheese
-        if(rc.getAllCheese() < GameConstants.DIG_DIRT_CHEESE_COST) {
+        // can't dig dirt if we don't have enough cheese or are a rat king
+        if(rc.getAllCheese() < GameConstants.DIG_DIRT_CHEESE_COST || isRatKing) {
             localPassableExceptAllies0 &= ~CellTracker.localDirt0;
             localPassableExceptAllies1 &= ~CellTracker.localDirt1;
+            // minkowski sum the walls for the rat king
+            if(isRatKing) {
+                localPassableExceptAllies0 |= (localPassableExceptAllies0 & 0xfbff7feffdffbffl) << 1;
+                localPassableExceptAllies1 |= (localPassableExceptAllies1 & 0x7feffdffbff7fefl) << 1;
+                localPassableExceptAllies0 |= (localPassableExceptAllies0 & 0x1f7feffdffbff7fel) >> 1;
+                localPassableExceptAllies1 |= (localPassableExceptAllies1 & 0xffdffbff7feffdel) >> 1;
+
+                localPassableExceptAllies1 |= ((localPassableExceptAllies1 & 0x1ffffffffffffl) << 11) | (localPassableExceptAllies0 >> 50);
+                localPassableExceptAllies0 |= (localPassableExceptAllies0 & 0x3ffffffffffffl) << 11;
+                localPassableExceptAllies0 |= (localPassableExceptAllies0 >> 11) | ((localPassableExceptAllies1 & 0x7ffl) << 50);
+                localPassableExceptAllies1 |= localPassableExceptAllies1 >> 11;
+            }
         }
         // IF TLE: unroll this
         for(int i = RobotTracker.allyCount - 1; i >= 0; i--) {

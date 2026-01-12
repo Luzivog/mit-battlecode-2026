@@ -6,10 +6,8 @@ import awubot.robot.Strategy;
 
 import static awubot.Game.*;
 import static awubot.util.Util.*;
-import awubot.util.Rng;
 
 public class MinerStrategy extends Strategy {
-    private Direction lastGlance;
     private final GoHomeStrategy goHomeStrategy;
     private final CheeseStrategy cheeseStrategy;
     private final MineStrategy mineStrategy;
@@ -41,21 +39,6 @@ public class MinerStrategy extends Strategy {
         CellTracker.checkSymmetry();
         indicate("sym " + CellTracker.hsym + " " + CellTracker.vsym + " " + CellTracker.rsym);
         tryStrats();
-        if (rc.canTurn()) {
-            indicate("glancing");
-            var leftDir = rc.getDirection().rotateLeft().rotateLeft();
-            var rightDir = rc.getDirection().rotateRight().rotateRight();
-            if (lastGlance == leftDir) {
-                turn(rightDir);
-                lastGlance = rightDir;
-            } else if (lastGlance == rightDir || Rng.mcg() >> 30 != 0) {
-                turn(leftDir);
-                lastGlance = leftDir;
-            } else {
-                turn(rightDir);
-                lastGlance = rightDir;
-            }
-        }
     }
 
     @Override

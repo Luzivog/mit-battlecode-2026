@@ -855,9 +855,9 @@ class BugnavInstance {
             var leftLoc = pos.add(bottomDir.rotateLeft());
             var rightLoc = pos.add(bottomDir.rotateRight());
             var leftPassable = CellTracker.isPassable(leftLoc);
-            var leftGood = (leftPassable || !CellTracker.isSeen(leftLoc)) && rc.onTheMap(leftLoc);
+            var leftGood = leftPassable || !CellTracker.isSeen(leftLoc);
             var rightPassable = CellTracker.isPassable(rightLoc);
-            var rightGood = (rightPassable || !CellTracker.isSeen(rightLoc)) && rc.onTheMap(rightLoc);
+            var rightGood = rightPassable || !CellTracker.isSeen(rightLoc);
             if(leftGood && !rightGood) {
                             if(leftPassable && chebyshevDistance(rc.getLocation(), leftLoc) <= 5) {
                 // indicate("leftLoc " + leftLoc);
@@ -955,11 +955,8 @@ class BugnavInstance {
             {
                 // indicate("trying " + tryDir);
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
-                    if(rc.onTheMap(nextPos)) {
-                        rc.setIndicatorDot(nextPos, 0, 255, 255);
-                        outOfSight = true;
-                    } else if(isMaster) {
+                if(!rc.onTheMap(nextPos)) {
+                     if(isMaster) {
                         // avoid following the edge of the map (TODO: 1-thick borders)
                         indicate("bugnav hit edge of map");
                         leftTurn = !leftTurn;
@@ -971,6 +968,13 @@ class BugnavInstance {
                     } else {
                         hitEdge = true;
                     }
+                    // Profiler.end("bugnav " + -2 + " " + isMaster);
+                    // indicate("bugnav " + -2 + " " + isMaster);
+                    return false;
+                }
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                    rc.setIndicatorDot(nextPos, 0, 255, 255);
+                    outOfSight = true;
                     // Profiler.end("bugnav " + -2 + " " + isMaster);
                     // indicate("bugnav " + -2 + " " + isMaster);
                     return false;
@@ -997,11 +1001,8 @@ class BugnavInstance {
             {
                 // indicate("trying " + tryDir);
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
-                    if(rc.onTheMap(nextPos)) {
-                        rc.setIndicatorDot(nextPos, 0, 255, 255);
-                        outOfSight = true;
-                    } else if(isMaster) {
+                if(!rc.onTheMap(nextPos)) {
+                     if(isMaster) {
                         // avoid following the edge of the map (TODO: 1-thick borders)
                         indicate("bugnav hit edge of map");
                         leftTurn = !leftTurn;
@@ -1013,6 +1014,13 @@ class BugnavInstance {
                     } else {
                         hitEdge = true;
                     }
+                    // Profiler.end("bugnav " + -1 + " " + isMaster);
+                    // indicate("bugnav " + -1 + " " + isMaster);
+                    return false;
+                }
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                    rc.setIndicatorDot(nextPos, 0, 255, 255);
+                    outOfSight = true;
                     // Profiler.end("bugnav " + -1 + " " + isMaster);
                     // indicate("bugnav " + -1 + " " + isMaster);
                     return false;
@@ -1036,11 +1044,8 @@ class BugnavInstance {
             {
                 // indicate("trying " + tryDir);
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
-                    if(rc.onTheMap(nextPos)) {
-                        rc.setIndicatorDot(nextPos, 0, 255, 255);
-                        outOfSight = true;
-                    } else if(isMaster) {
+                if(!rc.onTheMap(nextPos)) {
+                     if(isMaster) {
                         // avoid following the edge of the map (TODO: 1-thick borders)
                         indicate("bugnav hit edge of map");
                         leftTurn = !leftTurn;
@@ -1052,6 +1057,13 @@ class BugnavInstance {
                     } else {
                         hitEdge = true;
                     }
+                    // Profiler.end("bugnav " + 0 + " " + isMaster);
+                    // indicate("bugnav " + 0 + " " + isMaster);
+                    return false;
+                }
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                    rc.setIndicatorDot(nextPos, 0, 255, 255);
+                    outOfSight = true;
                     // Profiler.end("bugnav " + 0 + " " + isMaster);
                     // indicate("bugnav " + 0 + " " + isMaster);
                     return false;
@@ -1074,11 +1086,8 @@ class BugnavInstance {
             {
                 // indicate("trying " + tryDir);
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
-                    if(rc.onTheMap(nextPos)) {
-                        rc.setIndicatorDot(nextPos, 0, 255, 255);
-                        outOfSight = true;
-                    } else if(isMaster) {
+                if(!rc.onTheMap(nextPos)) {
+                     if(isMaster) {
                         // avoid following the edge of the map (TODO: 1-thick borders)
                         indicate("bugnav hit edge of map");
                         leftTurn = !leftTurn;
@@ -1090,6 +1099,13 @@ class BugnavInstance {
                     } else {
                         hitEdge = true;
                     }
+                    // Profiler.end("bugnav " + 1 + " " + isMaster);
+                    // indicate("bugnav " + 1 + " " + isMaster);
+                    return false;
+                }
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                    rc.setIndicatorDot(nextPos, 0, 255, 255);
+                    outOfSight = true;
                     // Profiler.end("bugnav " + 1 + " " + isMaster);
                     // indicate("bugnav " + 1 + " " + isMaster);
                     return false;
@@ -1113,11 +1129,8 @@ class BugnavInstance {
             {
                 // indicate("trying " + tryDir);
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
-                    if(rc.onTheMap(nextPos)) {
-                        rc.setIndicatorDot(nextPos, 0, 255, 255);
-                        outOfSight = true;
-                    } else if(isMaster) {
+                if(!rc.onTheMap(nextPos)) {
+                     if(isMaster) {
                         // avoid following the edge of the map (TODO: 1-thick borders)
                         indicate("bugnav hit edge of map");
                         leftTurn = !leftTurn;
@@ -1129,6 +1142,13 @@ class BugnavInstance {
                     } else {
                         hitEdge = true;
                     }
+                    // Profiler.end("bugnav " + 2 + " " + isMaster);
+                    // indicate("bugnav " + 2 + " " + isMaster);
+                    return false;
+                }
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                    rc.setIndicatorDot(nextPos, 0, 255, 255);
+                    outOfSight = true;
                     // Profiler.end("bugnav " + 2 + " " + isMaster);
                     // indicate("bugnav " + 2 + " " + isMaster);
                     return false;
@@ -1152,11 +1172,8 @@ class BugnavInstance {
             {
                 // indicate("trying " + tryDir);
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
-                    if(rc.onTheMap(nextPos)) {
-                        rc.setIndicatorDot(nextPos, 0, 255, 255);
-                        outOfSight = true;
-                    } else if(isMaster) {
+                if(!rc.onTheMap(nextPos)) {
+                     if(isMaster) {
                         // avoid following the edge of the map (TODO: 1-thick borders)
                         indicate("bugnav hit edge of map");
                         leftTurn = !leftTurn;
@@ -1168,6 +1185,13 @@ class BugnavInstance {
                     } else {
                         hitEdge = true;
                     }
+                    // Profiler.end("bugnav " + 3 + " " + isMaster);
+                    // indicate("bugnav " + 3 + " " + isMaster);
+                    return false;
+                }
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                    rc.setIndicatorDot(nextPos, 0, 255, 255);
+                    outOfSight = true;
                     // Profiler.end("bugnav " + 3 + " " + isMaster);
                     // indicate("bugnav " + 3 + " " + isMaster);
                     return false;
@@ -1191,11 +1215,8 @@ class BugnavInstance {
             {
                 // indicate("trying " + tryDir);
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
-                    if(rc.onTheMap(nextPos)) {
-                        rc.setIndicatorDot(nextPos, 0, 255, 255);
-                        outOfSight = true;
-                    } else if(isMaster) {
+                if(!rc.onTheMap(nextPos)) {
+                     if(isMaster) {
                         // avoid following the edge of the map (TODO: 1-thick borders)
                         indicate("bugnav hit edge of map");
                         leftTurn = !leftTurn;
@@ -1207,6 +1228,13 @@ class BugnavInstance {
                     } else {
                         hitEdge = true;
                     }
+                    // Profiler.end("bugnav " + 4 + " " + isMaster);
+                    // indicate("bugnav " + 4 + " " + isMaster);
+                    return false;
+                }
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                    rc.setIndicatorDot(nextPos, 0, 255, 255);
+                    outOfSight = true;
                     // Profiler.end("bugnav " + 4 + " " + isMaster);
                     // indicate("bugnav " + 4 + " " + isMaster);
                     return false;
@@ -1230,11 +1258,8 @@ class BugnavInstance {
             {
                 // indicate("trying " + tryDir);
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
-                    if(rc.onTheMap(nextPos)) {
-                        rc.setIndicatorDot(nextPos, 0, 255, 255);
-                        outOfSight = true;
-                    } else if(isMaster) {
+                if(!rc.onTheMap(nextPos)) {
+                     if(isMaster) {
                         // avoid following the edge of the map (TODO: 1-thick borders)
                         indicate("bugnav hit edge of map");
                         leftTurn = !leftTurn;
@@ -1246,6 +1271,13 @@ class BugnavInstance {
                     } else {
                         hitEdge = true;
                     }
+                    // Profiler.end("bugnav " + 5 + " " + isMaster);
+                    // indicate("bugnav " + 5 + " " + isMaster);
+                    return false;
+                }
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                    rc.setIndicatorDot(nextPos, 0, 255, 255);
+                    outOfSight = true;
                     // Profiler.end("bugnav " + 5 + " " + isMaster);
                     // indicate("bugnav " + 5 + " " + isMaster);
                     return false;
@@ -1280,11 +1312,8 @@ class BugnavInstance {
             {
                 // indicate("trying " + tryDir);
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
-                    if(rc.onTheMap(nextPos)) {
-                        rc.setIndicatorDot(nextPos, 0, 255, 255);
-                        outOfSight = true;
-                    } else if(isMaster) {
+                if(!rc.onTheMap(nextPos)) {
+                     if(isMaster) {
                         // avoid following the edge of the map (TODO: 1-thick borders)
                         indicate("bugnav hit edge of map");
                         leftTurn = !leftTurn;
@@ -1296,6 +1325,13 @@ class BugnavInstance {
                     } else {
                         hitEdge = true;
                     }
+                    // Profiler.end("bugnav " + -2 + " " + isMaster);
+                    // indicate("bugnav " + -2 + " " + isMaster);
+                    return false;
+                }
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                    rc.setIndicatorDot(nextPos, 0, 255, 255);
+                    outOfSight = true;
                     // Profiler.end("bugnav " + -2 + " " + isMaster);
                     // indicate("bugnav " + -2 + " " + isMaster);
                     return false;
@@ -1322,11 +1358,8 @@ class BugnavInstance {
             {
                 // indicate("trying " + tryDir);
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
-                    if(rc.onTheMap(nextPos)) {
-                        rc.setIndicatorDot(nextPos, 0, 255, 255);
-                        outOfSight = true;
-                    } else if(isMaster) {
+                if(!rc.onTheMap(nextPos)) {
+                     if(isMaster) {
                         // avoid following the edge of the map (TODO: 1-thick borders)
                         indicate("bugnav hit edge of map");
                         leftTurn = !leftTurn;
@@ -1338,6 +1371,13 @@ class BugnavInstance {
                     } else {
                         hitEdge = true;
                     }
+                    // Profiler.end("bugnav " + -1 + " " + isMaster);
+                    // indicate("bugnav " + -1 + " " + isMaster);
+                    return false;
+                }
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                    rc.setIndicatorDot(nextPos, 0, 255, 255);
+                    outOfSight = true;
                     // Profiler.end("bugnav " + -1 + " " + isMaster);
                     // indicate("bugnav " + -1 + " " + isMaster);
                     return false;
@@ -1361,11 +1401,8 @@ class BugnavInstance {
             {
                 // indicate("trying " + tryDir);
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
-                    if(rc.onTheMap(nextPos)) {
-                        rc.setIndicatorDot(nextPos, 0, 255, 255);
-                        outOfSight = true;
-                    } else if(isMaster) {
+                if(!rc.onTheMap(nextPos)) {
+                     if(isMaster) {
                         // avoid following the edge of the map (TODO: 1-thick borders)
                         indicate("bugnav hit edge of map");
                         leftTurn = !leftTurn;
@@ -1377,6 +1414,13 @@ class BugnavInstance {
                     } else {
                         hitEdge = true;
                     }
+                    // Profiler.end("bugnav " + 0 + " " + isMaster);
+                    // indicate("bugnav " + 0 + " " + isMaster);
+                    return false;
+                }
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                    rc.setIndicatorDot(nextPos, 0, 255, 255);
+                    outOfSight = true;
                     // Profiler.end("bugnav " + 0 + " " + isMaster);
                     // indicate("bugnav " + 0 + " " + isMaster);
                     return false;
@@ -1399,11 +1443,8 @@ class BugnavInstance {
             {
                 // indicate("trying " + tryDir);
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
-                    if(rc.onTheMap(nextPos)) {
-                        rc.setIndicatorDot(nextPos, 0, 255, 255);
-                        outOfSight = true;
-                    } else if(isMaster) {
+                if(!rc.onTheMap(nextPos)) {
+                     if(isMaster) {
                         // avoid following the edge of the map (TODO: 1-thick borders)
                         indicate("bugnav hit edge of map");
                         leftTurn = !leftTurn;
@@ -1415,6 +1456,13 @@ class BugnavInstance {
                     } else {
                         hitEdge = true;
                     }
+                    // Profiler.end("bugnav " + 1 + " " + isMaster);
+                    // indicate("bugnav " + 1 + " " + isMaster);
+                    return false;
+                }
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                    rc.setIndicatorDot(nextPos, 0, 255, 255);
+                    outOfSight = true;
                     // Profiler.end("bugnav " + 1 + " " + isMaster);
                     // indicate("bugnav " + 1 + " " + isMaster);
                     return false;
@@ -1438,11 +1486,8 @@ class BugnavInstance {
             {
                 // indicate("trying " + tryDir);
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
-                    if(rc.onTheMap(nextPos)) {
-                        rc.setIndicatorDot(nextPos, 0, 255, 255);
-                        outOfSight = true;
-                    } else if(isMaster) {
+                if(!rc.onTheMap(nextPos)) {
+                     if(isMaster) {
                         // avoid following the edge of the map (TODO: 1-thick borders)
                         indicate("bugnav hit edge of map");
                         leftTurn = !leftTurn;
@@ -1454,6 +1499,13 @@ class BugnavInstance {
                     } else {
                         hitEdge = true;
                     }
+                    // Profiler.end("bugnav " + 2 + " " + isMaster);
+                    // indicate("bugnav " + 2 + " " + isMaster);
+                    return false;
+                }
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                    rc.setIndicatorDot(nextPos, 0, 255, 255);
+                    outOfSight = true;
                     // Profiler.end("bugnav " + 2 + " " + isMaster);
                     // indicate("bugnav " + 2 + " " + isMaster);
                     return false;
@@ -1477,11 +1529,8 @@ class BugnavInstance {
             {
                 // indicate("trying " + tryDir);
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
-                    if(rc.onTheMap(nextPos)) {
-                        rc.setIndicatorDot(nextPos, 0, 255, 255);
-                        outOfSight = true;
-                    } else if(isMaster) {
+                if(!rc.onTheMap(nextPos)) {
+                     if(isMaster) {
                         // avoid following the edge of the map (TODO: 1-thick borders)
                         indicate("bugnav hit edge of map");
                         leftTurn = !leftTurn;
@@ -1493,6 +1542,13 @@ class BugnavInstance {
                     } else {
                         hitEdge = true;
                     }
+                    // Profiler.end("bugnav " + 3 + " " + isMaster);
+                    // indicate("bugnav " + 3 + " " + isMaster);
+                    return false;
+                }
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                    rc.setIndicatorDot(nextPos, 0, 255, 255);
+                    outOfSight = true;
                     // Profiler.end("bugnav " + 3 + " " + isMaster);
                     // indicate("bugnav " + 3 + " " + isMaster);
                     return false;
@@ -1516,11 +1572,8 @@ class BugnavInstance {
             {
                 // indicate("trying " + tryDir);
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
-                    if(rc.onTheMap(nextPos)) {
-                        rc.setIndicatorDot(nextPos, 0, 255, 255);
-                        outOfSight = true;
-                    } else if(isMaster) {
+                if(!rc.onTheMap(nextPos)) {
+                     if(isMaster) {
                         // avoid following the edge of the map (TODO: 1-thick borders)
                         indicate("bugnav hit edge of map");
                         leftTurn = !leftTurn;
@@ -1532,6 +1585,13 @@ class BugnavInstance {
                     } else {
                         hitEdge = true;
                     }
+                    // Profiler.end("bugnav " + 4 + " " + isMaster);
+                    // indicate("bugnav " + 4 + " " + isMaster);
+                    return false;
+                }
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                    rc.setIndicatorDot(nextPos, 0, 255, 255);
+                    outOfSight = true;
                     // Profiler.end("bugnav " + 4 + " " + isMaster);
                     // indicate("bugnav " + 4 + " " + isMaster);
                     return false;
@@ -1555,11 +1615,8 @@ class BugnavInstance {
             {
                 // indicate("trying " + tryDir);
                 var nextPos = pos.add(tryDir);
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
-                    if(rc.onTheMap(nextPos)) {
-                        rc.setIndicatorDot(nextPos, 0, 255, 255);
-                        outOfSight = true;
-                    } else if(isMaster) {
+                if(!rc.onTheMap(nextPos)) {
+                     if(isMaster) {
                         // avoid following the edge of the map (TODO: 1-thick borders)
                         indicate("bugnav hit edge of map");
                         leftTurn = !leftTurn;
@@ -1571,6 +1628,13 @@ class BugnavInstance {
                     } else {
                         hitEdge = true;
                     }
+                    // Profiler.end("bugnav " + 5 + " " + isMaster);
+                    // indicate("bugnav " + 5 + " " + isMaster);
+                    return false;
+                }
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                    rc.setIndicatorDot(nextPos, 0, 255, 255);
+                    outOfSight = true;
                     // Profiler.end("bugnav " + 5 + " " + isMaster);
                     // indicate("bugnav " + 5 + " " + isMaster);
                     return false;

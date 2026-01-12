@@ -69,6 +69,7 @@ public class CellTracker {
     static long seen58;
     static long seen59;
     public static boolean isSeen(MapLocation loc) {
+        if(!rc.onTheMap(loc)) return true;
         switch(loc.y) {
             case 0 -> {
                 return (seen0 & (1l << loc.x)) != 0;

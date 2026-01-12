@@ -13,6 +13,9 @@ public class CellTracker {
     static long {{mask}}{{i}};
     {% endfor %}
     public static boolean is{{capitalise(mask)}}(MapLocation loc) {
+        {% if mask == "seen" %}
+        if(!rc.onTheMap(loc)) return true;
+        {% endif %}
         switch(loc.y) {
             {% for i in range(MAX_MAP_SIZE) %}
             case {{i}} -> {

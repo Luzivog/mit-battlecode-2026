@@ -26,8 +26,18 @@ public class ExperimentStrategy extends Strategy {
         return false;
     }
 
+
+    private static int id = -1;
     @Override
     public void runTick() throws GameActionException {
+        if (id != -1) {
+            println("threw guy with id " + id);
+        }
+        for (RobotInfo ri : rc.senseNearbyRobots()) {
+            if (ri.ID == id) {
+                println("found thrown guy at " + loc.distanceSquaredTo(ri.getLocation()));
+            }
+        }
         if (rc.getCarrying() != null) {
             Runnable chuck = tryThrow();
             if (chuck != null) {
@@ -150,7 +160,18 @@ public class ExperimentStrategy extends Strategy {
                     }
                 }
                 rc.turn(_best);
+                id = rc.getCarrying().ID;
+                println("carrying " + id + " at " + rc.getCarrying().getLocation());
                 rc.throwRat();
+                println("threw guy with id " + id);
+                println("now carrying " + rc.getCarrying());
+                for (RobotInfo ri : rc.senseNearbyRobots()) {
+                    println("neighbour at " + ri.getLocation());
+                    if (ri.ID == id) {
+                        println("found thrown guy at " + loc.distanceSquaredTo(ri.getLocation()));
+                    }
+                }
+
             } catch (GameActionException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

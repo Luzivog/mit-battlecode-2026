@@ -229,8 +229,8 @@ once their respective cooldowns are less than 10.
 
 Baby Rat
 Baby rats are spawned by rat kings and start with a health of 100 HP. Once a robot’s health reaches 0, it
-dies. Baby rats have a forward movement cooldown of 10, a strafe movement cooldown of 18, and a
-turning cooldown of 10. (Strafing is moving in 1 of the 7 non-facing directions.)
+dies. Baby rats have a movement cooldown of 10 and a turning cooldown of 10. 
+Moving forwards (in the facing direction) adds 10 to the movement cooldown, and strafing is moving in 1 of the 7 non-facing directions which adds 18 to the movement cooldown.
 
 Attack
 Any rat may bite any enemy rat, rat king, or cat that is at one of the 8 adjacent locations and is within its

@@ -1,76 +1,54 @@
 package awubot;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
-import awubot.test.UtilTest;
-import awubot.util.FastRng;
-import awubot.util.Profiler;
-import awubot.util.Util;
-import awubot.util.Util.*;
-import awubot.util.string.FastIntIntMap;
-import awubot.util.string.FastIntSet;
-import awubot.util.string.FastIndexedIntSet;
-import battlecode.common.*;
+import battlecode.common.Direction;
+import battlecode.common.GameActionException;
+import battlecode.common.MapLocation;
+import battlecode.common.RobotController;
+import battlecode.common.Team;
+import battlecode.common.UnitType;
 
 public class Game {
     public static RobotController rc;
     public static int mapWidth, mapHeight;
 
-    // cheaper to access this way
+    // Cached for cheaper access
     public static MapLocation loc;
     public static int locX, locY;
     public static int time;
+    public static Direction facing;
+    public static Team team;
+    public static MapLocation home;
+
+    public static void move(Direction dir) throws GameActionException {
+        rc.move(dir);
+        loc = rc.getLocation();
+        locX = loc.x;
+        locY = loc.y;
+    }
+
+    public static void turn(Direction dir) throws GameActionException {
+        if (dir == Direction.CENTER) return;
+        if (dir == facing) return;
+        rc.turn(dir);
+    }
+
+    public static void move() throws GameActionException {
+        rc.moveForward();
+    }
+
     public static boolean isRatKing;
     public static int kingId;
-    public static MapLocation home;
 
     public static void init(RobotController rc) {
         Game.rc = rc;
         mapWidth = rc.getMapWidth();
         mapHeight = rc.getMapHeight();
+        locX = rc.getLocation().x;
+        locY = rc.getLocation().y;
         loc = rc.getLocation();
-        locX = loc.x;
-        locY = loc.y;
         time = rc.getRoundNum();
         isRatKing = (rc.getType() == UnitType.RAT_KING);
-        home = loc;
-
-        StringBuilder set = new StringBuilder('|');
-
-        Profiler.begin();
-        set.append(10 + "|");
-        Profiler.end("set.append(10 + \"|\")");
-
-        Profiler.begin();
-        boolean has = set.indexOf("|" + 10 + "|") >= 0;
-        Profiler.end("boolean has = set.indexOf(\"|\" + 10 + \"|\") >= 0;");
-
-        double a = 0.1, b = 0.2;
-        Profiler.begin();
-        double c = a + b;
-        Profiler.end_print("bruh");
-
-        // Profiler.begin();
-        // char c = (char) a;
-        // Profiler.end();
-
-        // Profiler.begin();
-        // MapLocation pos = new MapLocation(1, 2);
-        // Profiler.end();
-
-        // Profiler.begin();
-        // String s = "^" + (char) pos.x + (char) pos.y;
-        // Profiler.end();
-
-        // Profiler.begin();
-        // Profiler.end();
-
-        //rc.disintegrate();
+        team = rc.getTeam();
     }
 
     public static void preTick() {
@@ -78,5 +56,8 @@ public class Game {
         loc = rc.getLocation();
         locX = loc.x;
         locY = loc.y;
+        facing = rc.getDirection();
+        // Clear indicator string at the start of each turn
+        experiment.util.Util.indicatorString = "";
     }
 }

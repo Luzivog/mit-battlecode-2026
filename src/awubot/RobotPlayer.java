@@ -3,8 +3,9 @@ package awubot;
 import battlecode.common.*;
 import awubot.comms.GlobalArray;
 import awubot.comms.Squeaker;
+import awubot.robot.king.RatKing;
 import awubot.robot.rat.BabyRat;
-import awubot.robot.rat.RatKing;
+
 import static awubot.Game.*;
 import awubot.util.Rng;
 import awubot.util.Util;

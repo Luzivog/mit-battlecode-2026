@@ -1,9 +1,10 @@
-package awubot.robot.rat;
+package awubot.robot.king;
 
 import battlecode.common.GameActionException;
 import awubot.comms.GlobalArray;
 import awubot.robot.Strategy;
-import awubot.robot.rat.strategies.king.RatKingStrategy;
+import awubot.robot.king.strategies.RatKingStrategy;
+
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 

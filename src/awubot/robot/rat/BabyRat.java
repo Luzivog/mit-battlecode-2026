@@ -5,7 +5,10 @@ import awubot.Pathfinder;
 import awubot.comms.GlobalArray;
 import awubot.CellTracker;
 import awubot.robot.Strategy;
+import awubot.robot.rat.strategies.ExperimentStrategy;
 import awubot.robot.rat.strategies.HybridStrategy;
+import awubot.robot.rat.strategies.MicroTestStrategy;
+import awubot.robot.rat.strategies.MinerStrategy;
 import awubot.util.Util;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
@@ -26,7 +29,9 @@ public class BabyRat {
     public static void init() throws GameActionException {
         CellTracker.storeVisibleCells();
         readRole();
-        primaryStrategy = new HybridStrategy();
+        // primaryStrategy = new HybridStrategy();
+        if (rc.getID() % 2 == 0) primaryStrategy = new MicroTestStrategy();
+        else primaryStrategy = new MinerStrategy();
     }
 
     private static void readRole() throws GameActionException {
@@ -81,6 +86,7 @@ public class BabyRat {
 
         indicate("sym " + CellTracker.hsym + " " + CellTracker.vsym + " " + CellTracker.rsym);
         primaryStrategy.runTick();
+
         if (rc.canTurn() && shouldGlance) {
             indicate("glancing");
             var leftDir = rc.getDirection().rotateLeft().rotateLeft();

@@ -1,5 +1,7 @@
 package experiment;
 
+import battlecode.common.Direction;
+import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
 import battlecode.common.RobotController;
 import battlecode.common.UnitType;
@@ -12,6 +14,21 @@ public class Game {
     public static MapLocation loc;
     public static int locX, locY;
     public static int time;
+    public static Direction facing;
+
+    public static void move(Direction dir) throws GameActionException {
+        rc.move(dir);
+        loc = rc.getLocation();
+        locX = loc.x;
+        locY = loc.y;
+    }
+
+    public static void turn(Direction dir) throws GameActionException {
+        if (dir == Direction.CENTER) return;
+        if (dir == facing) return;
+        rc.turn(dir);
+    }
+
     public static boolean isRatKing;
     public static int kingId;
 
@@ -31,6 +48,7 @@ public class Game {
         loc = rc.getLocation();
         locX = loc.x;
         locY = loc.y;
+        facing = rc.getDirection();
         // Clear indicator string at the start of each turn
         experiment.util.Util.indicatorString = "";
     }

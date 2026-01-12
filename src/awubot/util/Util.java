@@ -18,6 +18,18 @@ public class Util {
         Direction.NORTHWEST,
     };
 
+    public static final Direction[] allDirections = {
+        Direction.NORTH,
+        Direction.NORTHEAST,
+        Direction.EAST,
+        Direction.SOUTHEAST,
+        Direction.SOUTH,
+        Direction.SOUTHWEST,
+        Direction.WEST,
+        Direction.NORTHWEST,
+        Direction.CENTER
+    };
+
     public static final Direction[] orthDirections = {
         Direction.NORTH,
         Direction.EAST,
@@ -36,6 +48,98 @@ public class Util {
 
     public static void preTick() {
         indicatorString = "";
+    }
+
+    public static boolean canSense(MapLocation s, MapLocation t, Direction dir) {
+        int dx = t.x - s.x;
+        int dy = t.y - s.y;
+        if (dx * dx + dy * dy > 20) return false;
+        int key = dx + 20 * dy;
+        switch (dir) {
+            case NORTH -> {
+                switch (key) {
+                    case 0, 19, 20, 21, 38, 39, 40, 41, 42, 57, 58, 59, 60, 61, 62, 63, 78, 79, 80, 81, 82 -> {
+                        return true;
+                    }
+                    default -> {
+                        return false;
+                    }
+                }
+            }
+            case SOUTH -> {
+                switch (key) {
+                    case 0, -82, -81, -80, -79, -78, -63, -62, -61, -60, -59, -58, -57, -42, -41, -40, -39, -38, -21, -20, -19 -> {
+                        return true;
+                    }
+                    default -> {
+                        return false;
+                    }
+                }
+            }
+            case EAST -> {
+                switch (key) {
+                    case 0, -57, -38, -37, -36, -19, -18, -17, -16, 1, 2, 3, 4, 21, 22, 23, 24, 42, 43, 44, 63 -> {
+                        return true;
+                    }
+                    default -> {
+                        return false;
+                    }
+                }
+            }
+            case WEST -> {
+                switch (key) {
+                    case 0, -63, -44, -43, -42, -24, -23, -22, -21, -4, -3, -2, -1, 16, 17, 18, 19, 36, 37, 38, 57 -> {
+                        return true;
+                    }
+                    default -> {
+                        return false;
+                    }
+                }
+            }
+            case NORTHEAST -> {
+                switch (key) {
+                    case 0, 1, 2, 3, 4, 20, 21, 22, 23, 24, 40, 41, 42, 43, 44, 60, 61, 62, 63, 80, 81, 82 -> {
+                        return true;
+                    }
+                    default -> {
+                        return false;
+                    }
+                }
+            }
+            case NORTHWEST -> {
+                switch (key) {
+                    case 0, -4, -3, -2, -1, 16, 17, 18, 19, 20, 36, 37, 38, 39, 40, 57, 58, 59, 60, 78, 79, 80 -> {
+                        return true;
+                    }
+                    default -> {
+                        return false;
+                    }
+                }
+            }
+            case SOUTHEAST -> {
+                switch (key) {
+                    case 0, -80, -79, -78, -60, -59, -58, -57, -40, -39, -38, -37, -36, -20, -19, -18, -17, -16, 1, 2, 3, 4 -> {
+                        return true;
+                    }
+                    default -> {
+                        return false;
+                    }
+                }
+            }
+            case SOUTHWEST -> {
+                switch (key) {
+                    case 0, -82, -81, -80, -63, -62, -61, -60, -44, -43, -42, -41, -40, -24, -23, -22, -21, -20, -4, -3, -2, -1 -> {
+                        return true;
+                    }
+                    default -> {
+                        return false;
+                    }
+                }
+            }
+            default -> {
+                return false;
+            }
+        }
     }
 
     public static Direction[] relatedDirections(Direction dir) {

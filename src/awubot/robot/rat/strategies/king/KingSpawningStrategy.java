@@ -3,13 +3,15 @@ package awubot.robot.rat.strategies.king;
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
+import awubot.comms.GlobalArray;
 import awubot.robot.Strategy;
+import awubot.robot.rat.BabyRatRole;
+import awubot.util.Rng;
+import awubot.util.Util;
 import static awubot.Game.*;
-import static awubot.util.Util.*;
 
 public class KingSpawningStrategy extends Strategy {
     private final ThreatContext theContext;
-    private int theBuilt = 0;
 
     public KingSpawningStrategy(ThreatContext aContext) {
         theContext = aContext;
@@ -22,33 +24,86 @@ public class KingSpawningStrategy extends Strategy {
 
     @Override
     public void runTick() throws GameActionException {
-        spawnDefensiveRat();
-    }
+        int myCost = rc.getCurrentRatCost();
+        int myCheese = rc.getGlobalCheese();
+        int myMinCheese = myCost + 50;
 
-    private void spawnDefensiveRat() throws GameActionException {
-        if (theBuilt >= 20) {
-            theBuilt++;
-            return;
-        }
+        if (myCheese < myMinCheese) return;
 
-        Direction mySpawnDir = Direction.NORTHEAST;
-        if (theContext.theNearestCat != null) {
-            mySpawnDir = theContext.theNearestCat.getLocation().directionTo(loc);
-        } else if (theContext.theNearestEnemyRat != null) {
-            mySpawnDir = theContext.theNearestEnemyRat.getLocation().directionTo(loc);
-        }
+        int myMaxSpawns = myCheese >= 300 ? 3 : 1;
 
-        Direction[] myTryDirs = {mySpawnDir, mySpawnDir.rotateLeft(), mySpawnDir.rotateRight(),
-                                 mySpawnDir.rotateLeft().rotateLeft(), mySpawnDir.rotateRight().rotateRight()};
-
-        for (Direction myDir : myTryDirs) {
-            MapLocation myBuildLoc = loc.add(myDir).add(myDir);
-            if (rc.canBuildRat(myBuildLoc)) {
-                rc.buildRat(myBuildLoc);
-                theBuilt++;
-                return;
+        for (int i = 0; i < myMaxSpawns && myCheese >= myMinCheese; i++) {
+            if (trySpawnRat()) {
+                myCheese = rc.getGlobalCheese();
+                myCost = rc.getCurrentRatCost();
+                myMinCheese = myCost + 50;
+            } else {
+                break;
             }
         }
-        theBuilt++;
+    }
+
+    private boolean trySpawnRat() throws GameActionException {
+        Direction mySpawnDir = selectSpawnDirection();
+        Direction[] myTryDirs = {
+            mySpawnDir,
+            mySpawnDir.rotateLeft(),
+            mySpawnDir.rotateRight(),
+            mySpawnDir.rotateLeft().rotateLeft(),
+            mySpawnDir.rotateRight().rotateRight()
+        };
+
+        for (Direction myDir : myTryDirs) {
+            MapLocation mySpawnLoc = loc.add(myDir).add(myDir);
+            if (rc.canBuildRat(mySpawnLoc)) {
+                assignRole();
+                rc.buildRat(mySpawnLoc);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Direction selectSpawnDirection() {
+        if (theContext.theNearestCat != null) {
+            return theContext.theNearestCat.getLocation().directionTo(loc);
+        }
+
+        if (theContext.theNearestEnemyRat != null) {
+            return theContext.theNearestEnemyRat.getLocation().directionTo(loc);
+        }
+
+        if (theContext.theDefenseState == ThreatContext.DefenseState.NORMAL) {
+            MapLocation myMine = getNearestMine();
+            if (myMine != null) {
+                return loc.directionTo(myMine);
+            }
+        }
+
+        return Direction.NORTHEAST;
+    }
+
+    private void assignRole() throws GameActionException {
+        boolean myIsRusher = (Rng.mcg() & 0x7fffffff) < (int)(0.30 * 0x7fffffff);
+        int myRole = myIsRusher ? BabyRatRole.RUSHER.value : BabyRatRole.MINER.value;
+        GlobalArray.writeSpawnRole(kingId, myRole);
+    }
+
+    private MapLocation getNearestMine() {
+        if (GlobalArray.cheeseMines.set.length() == 0) return null;
+
+        MapLocation myBest = null;
+        int myBestDist = Integer.MAX_VALUE;
+
+        int myMineCount = GlobalArray.cheeseMines.set.length();
+        for (int i = 0; i < myMineCount; i++) {
+            MapLocation myMine = Util.decode2x2(GlobalArray.cheeseMines.at(i));
+            int myDist = loc.distanceSquaredTo(myMine);
+            if (myDist < myBestDist) {
+                myBestDist = myDist;
+                myBest = myMine;
+            }
+        }
+        return myBest;
     }
 }

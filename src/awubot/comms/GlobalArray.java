@@ -31,6 +31,7 @@ public class GlobalArray {
     private static final int SYMMETRY = 1;
     private static final int RAT_KING_LOC = 2;
     private static final int RAT_KING_TURN_COUNTER = 7;
+    private static final int RAT_SPAWN_ROLE = 8;  // 5 slots for 5 kings (indices 8-12)
     private static final int MIN_CHEESE = 32;
     public static FastIndexedIntSet cheeseMines = new FastIndexedIntSet();
 
@@ -106,7 +107,8 @@ public class GlobalArray {
     public static MapLocation getRat(int i) {
         try {
             int pos = rc.readSharedArray(i + RAT_KING_LOC);
-            return decode2x2(pos);
+            if (pos == 0) return null;
+            return decode2x2(pos - 1);
         } catch (GameActionException e) {
             e.printStackTrace();
             return null;
@@ -117,9 +119,22 @@ public class GlobalArray {
         return CellTracker.Symmetry.values()[cur_sym];
     }
 
+    public static void writeSpawnRole(int aKingId, int aRole) throws GameActionException {
+        if (aKingId >= 0 && aKingId < 5) {
+            rc.writeSharedArray(RAT_SPAWN_ROLE + aKingId, aRole);
+        }
+    }
+
+    public static int readSpawnRole(int aKingId) throws GameActionException {
+        if (aKingId >= 0 && aKingId < 5) {
+            return rc.readSharedArray(RAT_SPAWN_ROLE + aKingId);
+        }
+        return 0;
+    }
+
     public static void writeRatLoc(int i) {
         try {
-            rc.writeSharedArray(i + RAT_KING_LOC, encode2x2());
+            rc.writeSharedArray(i + RAT_KING_LOC, encode2x2() + 1);
             // cycle counter
             int x = rc.readSharedArray(RAT_KING_TURN_COUNTER);
             int t = time % 3;

@@ -2,13 +2,13 @@ package awubot.robot.rat.strategies;
 
 import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
+import battlecode.common.RobotInfo;
 import battlecode.common.UnitType;
 import awubot.Pathfinder;
+import awubot.comms.GlobalArray;
 import awubot.robot.Strategy;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
-
-import awubot.Game;
 
 import static awubot.robot.rat.BabyRat.*;
 
@@ -29,16 +29,48 @@ public class GoHomeStrategy extends Strategy {
     public void runTick() throws GameActionException {
         goingHome = true;
         indicate("going home");
+
+        updateHomeToKingLocation();
+
+        if (home == null) {
+            indicate("no king found!");
+            return;
+        }
+
         rc.setIndicatorLine(rc.getLocation(), home, 0, 255, 0);
         Pathfinder.makeMove(home);
+
         var dir = loc.directionTo(home);
         var transferTarget = loc.add(dir);
-        if(loc.distanceSquaredTo(home) <= 8) {
+
+        if (loc.distanceSquaredTo(home) <= 8) {
             shouldGlance = false;
-            if(rc.canTurn()) Pathfinder.turn(dir);
+            if (rc.canTurn()) Pathfinder.turn(dir);
         }
+
         if (rc.canTransferCheese(transferTarget, rc.getRawCheese())) {
             rc.transferCheese(transferTarget, rc.getRawCheese());
+        }
+    }
+
+    private void updateHomeToKingLocation() throws GameActionException {
+        for (RobotInfo robot : rc.senseNearbyRobots()) {
+            if (robot.getType() == UnitType.RAT_KING && robot.getTeam() == rc.getTeam()) {
+                home = robot.getLocation();
+                return;
+            }
+        }
+
+        int bestDist = Integer.MAX_VALUE;
+        for (int i = 0; i < 5; i++) {
+            MapLocation kingLoc = GlobalArray.getRat(i);
+            if (kingLoc != null && rc.onTheMap(kingLoc)) {
+                int dist = loc.distanceSquaredTo(kingLoc);
+                if (dist < bestDist) {
+                    bestDist = dist;
+                    home = kingLoc;
+                }
+            }
         }
     }
 
@@ -48,10 +80,15 @@ public class GoHomeStrategy extends Strategy {
 
     private boolean shouldGoHome() {
         if (goingHome) return true;
-        if (rc.getRawCheese() > 0 && cheeseStrategy.getLastSeenCheese() < rc.getRoundNum() - 5) return true;
-        var opt = 25 / Math.sqrt((rc.getRawCheese() / 20) * Math.sqrt(home.distanceSquaredTo(Game.loc)));
-        indicate(opt);
-        if (opt < 1) return true;
+
+        int cheese = rc.getRawCheese();
+        if (cheese >= 200) return true;
+        if (cheese >= 50 && cheeseStrategy.getLastSeenCheese() < rc.getRoundNum() - 3) return true;
+
+        int globalCheese = rc.getGlobalCheese();
+        if (globalCheese < 100 && cheese >= 20) return true;
+        if (globalCheese < 30 && cheese > 0) return true;
+
         return false;
     }
 }

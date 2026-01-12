@@ -75,5 +75,8 @@ public class Game {
 
     public static void preTick() {
         time = rc.getRoundNum();
+        loc = rc.getLocation();
+        locX = loc.x;
+        locY = loc.y;
     }
 }

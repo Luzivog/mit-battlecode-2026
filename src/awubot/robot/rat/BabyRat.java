@@ -5,8 +5,8 @@ import awubot.Pathfinder;
 import awubot.comms.GlobalArray;
 import awubot.CellTracker;
 import awubot.robot.Strategy;
-import awubot.robot.rat.strategies.ExperimentStrategy;
-import awubot.robot.rat.strategies.MinerStrategy;
+import awubot.robot.rat.strategies.HybridStrategy;
+import awubot.util.Util;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 import awubot.util.Rng;
@@ -15,6 +15,7 @@ public class BabyRat {
     private static Direction lastGlance;
     public static boolean shouldGlance;
     public static Strategy primaryStrategy;
+    public static BabyRatRole role = BabyRatRole.MINER;
 
     // Cat luring protocol
     private static MapLocation theLureCatLoc = null;
@@ -24,8 +25,30 @@ public class BabyRat {
 
     public static void init() throws GameActionException {
         CellTracker.storeVisibleCells();
-        // primaryStrategy = new MinerStrategy();
-        primaryStrategy = new ExperimentStrategy();
+        readRole();
+        primaryStrategy = new HybridStrategy();
+    }
+
+    private static void readRole() throws GameActionException {
+        for (RobotInfo robot : rc.senseNearbyRobots()) {
+            if (robot.getType() == UnitType.RAT_KING && robot.getTeam() == rc.getTeam()) {
+                int myKingSlot = findKingSlot(robot.getLocation());
+                if (myKingSlot >= 0) {
+                    role = BabyRatRole.fromValue(GlobalArray.readSpawnRole(myKingSlot));
+                }
+                return;
+            }
+        }
+    }
+
+    private static int findKingSlot(MapLocation aKingLoc) throws GameActionException {
+        for (int i = 0; i < 5; i++) {
+            MapLocation myStoredLoc = GlobalArray.getRat(i);
+            if (myStoredLoc != null && myStoredLoc.distanceSquaredTo(aKingLoc) <= 8) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     public static void setLureTarget(MapLocation aCatLoc, MapLocation aEnemyKingLoc) {
@@ -38,6 +61,9 @@ public class BabyRat {
     public static void run() throws GameActionException {
         indicate("cheesemines: " + GlobalArray.cheeseMines.set.length());
         shouldGlance = true;
+
+        updateHome();
+        tryTransferCheese();
 
         // Cat luring protocol - takes priority
         if (theIsLuring && theLureTTL > 0) {
@@ -129,6 +155,41 @@ public class BabyRat {
         }
 
         return true;  // Still luring
+    }
+
+    private static void updateHome() throws GameActionException {
+        for (RobotInfo robot : rc.senseNearbyRobots()) {
+            if (robot.getType() == UnitType.RAT_KING && robot.getTeam() == rc.getTeam()) {
+                home = robot.getLocation();
+                return;
+            }
+        }
+
+        int bestDist = Integer.MAX_VALUE;
+        for (int i = 0; i < 5; i++) {
+            MapLocation kingLoc = GlobalArray.getRat(i);
+            if (kingLoc != null && rc.onTheMap(kingLoc)) {
+                int dist = loc.distanceSquaredTo(kingLoc);
+                if (dist < bestDist) {
+                    bestDist = dist;
+                    home = kingLoc;
+                }
+            }
+        }
+    }
+
+    private static void tryTransferCheese() throws GameActionException {
+        int cheese = rc.getRawCheese();
+        if (cheese <= 0 || home == null) return;
+
+        if (Util.chebyshevDistance(loc, home) > 2) return;
+
+        Direction toHome = loc.directionTo(home);
+        MapLocation transferTarget = loc.add(toHome);
+
+        if (rc.canTransferCheese(transferTarget, cheese)) {
+            rc.transferCheese(transferTarget, cheese);
+        }
     }
 
 }

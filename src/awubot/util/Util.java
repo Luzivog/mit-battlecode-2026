@@ -53,19 +53,19 @@ public class Util {
     }
 
     public static MapLocation decode2x2(int pos) {
-        return new MapLocation((pos & 0b11111) << 1, (pos >>> 5) << 1);
+        return new MapLocation((pos & 0b111111) << 1, (pos >>> 6) << 1);
     }
 
     public static int encode2x2(MapLocation loc) {
-        return (loc.x >>> 1) + ((loc.y >>> 1) << 5);
+        return (loc.x >>> 1) + ((loc.y >>> 1) << 6);
     }
 
     public static int encode2x2(int locX, int locY) {
-        return (locX >>> 1) + ((locY >>> 1) << 5);
+        return (locX >>> 1) + ((locY >>> 1) << 6);
     }
 
     public static int encode2x2() {
-        return (locX >>> 1) + ((locY >>> 1) << 5);
+        return (locX >>> 1) + ((locY >>> 1) << 6);
     }
 
     public static int writeBits(int bits, int start, int[] data, int[] lens) {

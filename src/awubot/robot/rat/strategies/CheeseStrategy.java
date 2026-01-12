@@ -1,7 +1,6 @@
 package awubot.robot.rat.strategies;
 
-import battlecode.common.GameActionException;
-import battlecode.common.MapLocation;
+import battlecode.common.*;
 import awubot.Pathfinder;
 import awubot.robot.Strategy;
 import static awubot.Game.*;
@@ -20,7 +19,8 @@ public class CheeseStrategy extends Strategy {
     public void runTick() throws GameActionException {
         lastSeenCheese = rc.getRoundNum();
         if (rc.getLocation().isAdjacentTo(cheeseTarget)) {
-            turn(rc.getLocation().directionTo(cheeseTarget));
+            var dir = loc.directionTo(cheeseTarget);
+            if(dir != Direction.CENTER) turn(dir);
             if (rc.canPickUpCheese(cheeseTarget)) {
                 rc.pickUpCheese(cheeseTarget);
                 cheeseTarget = null;

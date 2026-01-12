@@ -1,9 +1,6 @@
 package awubot.robot.rat.strategies;
 
-import battlecode.common.GameActionException;
-import battlecode.common.MapLocation;
-import battlecode.common.RobotInfo;
-import battlecode.common.UnitType;
+import battlecode.common.*;
 import awubot.Pathfinder;
 import awubot.comms.GlobalArray;
 import awubot.robot.Strategy;
@@ -45,7 +42,7 @@ public class GoHomeStrategy extends Strategy {
 
         if (loc.distanceSquaredTo(home) <= 8) {
             shouldGlance = false;
-            if (rc.canTurn()) turn(dir);
+            if (dir != Direction.CENTER && rc.canTurn()) turn(dir);
         }
 
         if (rc.canTransferCheese(transferTarget, rc.getRawCheese())) {

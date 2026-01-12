@@ -34,6 +34,7 @@ public class Game {
     }
 
     public static void turn(Direction dir) throws GameActionException {
+        assert dir != Direction.CENTER;
         if (dir == facing) return;
         rc.turn(dir);
         facing = dir;

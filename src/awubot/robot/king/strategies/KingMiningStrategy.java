@@ -64,7 +64,7 @@ public class KingMiningStrategy extends Strategy {
     private void moveTowardCenter() throws GameActionException {
         if (!rc.isMovementReady()) return;
 
-        Direction myDir = loc.directionTo(theCenterTarget);
+        Direction myDir = myLoc.directionTo(theCenterTarget);
 
         for (Direction myTryDir : new Direction[]{myDir, myDir.rotateLeft(), myDir.rotateRight()}) {
             if (rc.canMove(myTryDir)) {
@@ -82,9 +82,9 @@ public class KingMiningStrategy extends Strategy {
 
     private void moveTowardMine() throws GameActionException {
         if (!rc.isMovementReady() || theMineTarget == null) return;
-        if (loc.distanceSquaredTo(theMineTarget) <= 9) return;
+        if (myLoc.distanceSquaredTo(theMineTarget) <= 9) return;
 
-        Direction myDir = loc.directionTo(theMineTarget);
+        Direction myDir = myLoc.directionTo(theMineTarget);
         for (Direction myTryDir : new Direction[]{myDir, myDir.rotateLeft(), myDir.rotateRight()}) {
             if (rc.canMove(myTryDir)) {
                 Pathfinder.makeMove(myTryDir);

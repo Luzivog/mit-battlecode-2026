@@ -34,13 +34,13 @@ public class GoHomeStrategy extends Strategy {
             return;
         }
 
-        rc.setIndicatorLine(rc.getLocation(), home, 0, 255, 0);
+        rc.setIndicatorLine(myLoc, home, 0, 255, 0);
         Pathfinder.makeMove(home);
 
-        var dir = loc.directionTo(home);
-        var transferTarget = loc.add(dir);
+        var dir = myLoc.directionTo(home);
+        var transferTarget = myLoc.add(dir);
 
-        if (loc.distanceSquaredTo(home) <= 8) {
+        if (myLoc.distanceSquaredTo(home) <= 8) {
             shouldGlance = false;
             if (dir != Direction.CENTER && rc.canTurn()) turn(dir);
         }
@@ -62,7 +62,7 @@ public class GoHomeStrategy extends Strategy {
         for (int i = 0; i < 5; i++) {
             MapLocation kingLoc = GlobalArray.getRat(i);
             if (kingLoc != null && rc.onTheMap(kingLoc)) {
-                int dist = loc.distanceSquaredTo(kingLoc);
+                int dist = myLoc.distanceSquaredTo(kingLoc);
                 if (dist < bestDist) {
                     bestDist = dist;
                     home = kingLoc;

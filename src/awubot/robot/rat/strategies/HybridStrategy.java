@@ -56,7 +56,7 @@ public class HybridStrategy extends Strategy {
                 int dangerDist = (BabyRat.role == BabyRatRole.RUSHER)
                     ? CAT_RUSHER_DANGER_DIST_SQ
                     : CAT_MINER_DANGER_DIST_SQ;
-                if (loc.distanceSquaredTo(catLoc) <= dangerDist) {
+                if (myLoc.distanceSquaredTo(catLoc) <= dangerDist) {
                     indicate("FLEEING from cat!");
                     fleeFromCat(catLoc);
                     return;
@@ -134,10 +134,10 @@ public class HybridStrategy extends Strategy {
         MapLocation kingLoc = findNearestKing();
         if (kingLoc == null) return false;
 
-        if (Util.chebyshevDistance(loc, kingLoc) > 2) return false;
+        if (Util.chebyshevDistance(myLoc, kingLoc) > 2) return false;
 
-        Direction toKing = loc.directionTo(kingLoc);
-        MapLocation transferTarget = loc.add(toKing);
+        Direction toKing = myLoc.directionTo(kingLoc);
+        MapLocation transferTarget = myLoc.add(toKing);
 
         if (rc.canTransferCheese(transferTarget, cheese)) {
             rc.transferCheese(transferTarget, cheese);
@@ -158,7 +158,7 @@ public class HybridStrategy extends Strategy {
         for (int i = 0; i < 5; i++) {
             MapLocation kingLoc = GlobalArray.getRat(i);
             if (kingLoc != null && rc.onTheMap(kingLoc)) {
-                int dist = loc.distanceSquaredTo(kingLoc);
+                int dist = myLoc.distanceSquaredTo(kingLoc);
                 if (dist < bestDist) {
                     bestDist = dist;
                     bestKing = kingLoc;
@@ -177,16 +177,13 @@ public class HybridStrategy extends Strategy {
             MapLocation target = info.getLocation();
             for (Direction dir : Direction.values()) {
                 if (dir == Direction.CENTER || rc.canMove(dir)) {
-                    MapLocation newLoc = loc.add(dir);
+                    MapLocation newLoc = myLoc.add(dir);
                     if (newLoc.distanceSquaredTo(target) <= 2) {
                         return () -> {
                             try {
                                 rawMove(dir);
                                 turn(newLoc.directionTo(target));
                                 rc.attack(target);
-                                loc = rc.getLocation();
-                                locX = loc.x;
-                                locY = loc.y;
                             } catch (GameActionException e) {
                                 e.printStackTrace();
                             }
@@ -207,16 +204,13 @@ public class HybridStrategy extends Strategy {
             MapLocation target = info.getLocation();
             for (Direction dir : Direction.values()) {
                 if (dir == Direction.CENTER || rc.canMove(dir)) {
-                    MapLocation newLoc = loc.add(dir);
+                    MapLocation newLoc = myLoc.add(dir);
                     if (newLoc.distanceSquaredTo(target) <= 2) {
                         return () -> {
                             try {
                                 rawMove(dir);
                                 turn(newLoc.directionTo(target));
                                 rc.carryRat(target);
-                                loc = rc.getLocation();
-                                locX = loc.x;
-                                locY = loc.y;
                             } catch (GameActionException e) {
                                 e.printStackTrace();
                             }
@@ -233,7 +227,7 @@ public class HybridStrategy extends Strategy {
         Direction best = null;
         int dist = 67;
         for (Direction dir : Direction.values()) {
-            MapLocation pos = loc;
+            MapLocation pos = myLoc;
             for (int i = 0; i < 8; i++) {
                 pos = pos.add(dir);
                 if (!rc.canSenseLocation(pos)) {
@@ -244,7 +238,7 @@ public class HybridStrategy extends Strategy {
                 if (!rc.senseMapInfo(pos).isPassable()) break;
             }
             if (pos == null) continue;
-            int d = Util.chebyshevDistance(loc, pos);
+            int d = Util.chebyshevDistance(myLoc, pos);
             if (d <= 1 || d == 8) continue;
             if (d < dist) {
                 best = dir;
@@ -273,7 +267,7 @@ public class HybridStrategy extends Strategy {
     }
 
     private void fleeFromCat(MapLocation catLoc) throws GameActionException {
-        Direction awayFromCat = catLoc.directionTo(loc);
-        Pathfinder.makeMove(loc.add(awayFromCat));
+        Direction awayFromCat = catLoc.directionTo(myLoc);
+        Pathfinder.makeMove(myLoc.add(awayFromCat));
     }
 }

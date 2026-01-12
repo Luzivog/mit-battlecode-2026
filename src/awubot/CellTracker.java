@@ -1180,9 +1180,8 @@ public class CellTracker {
 
     public static void storeVisibleCells() throws GameActionException {
         Profiler.begin();
-        var loc = rc.getLocation();
-        int x = loc.x, y = loc.y;
-        switch(rc.getDirection()) {
+        int x = myLoc.x, y = myLoc.y;
+        switch(myDir) {
             case Direction.NORTH -> {
                                                                                                                                                                                                                                          {
                     var l = new MapLocation(x  + -3 , y  + 3 );
@@ -2231,17 +2230,14 @@ public class CellTracker {
                     }
                 }
                                                                     }
-            case Direction.CENTER -> {
-            }
         }
         Profiler.end("storeVisibleCells");
     }
 
     public static void storeVisibleCellsPostMoveForward() throws GameActionException {
         Profiler.begin();
-        var loc = rc.getLocation();
-        int x = loc.x, y = loc.y;
-        switch(rc.getDirection()) {
+        int x = myLoc.x, y = myLoc.y;
+        switch(myDir) {
             case Direction.NORTH -> {
                                                                                                                                                                                                                                          {
                     var l = new MapLocation(x  + -3 , y  + 3 );
@@ -2642,8 +2638,6 @@ public class CellTracker {
                     }
                 }
                                                                     }
-            case Direction.CENTER -> {
-            }
         }
         Profiler.end("storeVisibleCellsPostMove");
     }
@@ -2651,6254 +2645,6252 @@ public class CellTracker {
     public static long localPassable0, localPassable1;
     public static long localDirt0, localDirt1;
     private static void computeLocalDirt() {
-        var loc = rc.getLocation();
         localDirt0 = 0;
         localDirt1 = 0;
-        switch(loc.y) {
+        switch(myLoc.y) {
             case 0 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt0 >> (loc.x - 5)
-                  : dirt0 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt0 >> (myLoc.x - 5)
+                  : dirt0 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt0 >> (loc.x - 5)
-                  : dirt0 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt0 >> (myLoc.x - 5)
+                  : dirt0 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt1 >> (loc.x - 5)
-                  : dirt1 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt1 >> (myLoc.x - 5)
+                  : dirt1 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt2 >> (loc.x - 5)
-                  : dirt2 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt2 >> (myLoc.x - 5)
+                  : dirt2 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt3 >> (loc.x - 5)
-                  : dirt3 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt3 >> (myLoc.x - 5)
+                  : dirt3 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt4 >> (loc.x - 5)
-                  : dirt4 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt4 >> (myLoc.x - 5)
+                  : dirt4 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt5 >> (loc.x - 5)
-                  : dirt5 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt5 >> (myLoc.x - 5)
+                  : dirt5 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 1 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt0 >> (loc.x - 5)
-                  : dirt0 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt0 >> (myLoc.x - 5)
+                  : dirt0 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt1 >> (loc.x - 5)
-                  : dirt1 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt1 >> (myLoc.x - 5)
+                  : dirt1 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt1 >> (loc.x - 5)
-                  : dirt1 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt1 >> (myLoc.x - 5)
+                  : dirt1 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt2 >> (loc.x - 5)
-                  : dirt2 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt2 >> (myLoc.x - 5)
+                  : dirt2 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt3 >> (loc.x - 5)
-                  : dirt3 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt3 >> (myLoc.x - 5)
+                  : dirt3 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt4 >> (loc.x - 5)
-                  : dirt4 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt4 >> (myLoc.x - 5)
+                  : dirt4 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt5 >> (loc.x - 5)
-                  : dirt5 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt5 >> (myLoc.x - 5)
+                  : dirt5 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt6 >> (loc.x - 5)
-                  : dirt6 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt6 >> (myLoc.x - 5)
+                  : dirt6 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 2 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt0 >> (loc.x - 5)
-                  : dirt0 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt0 >> (myLoc.x - 5)
+                  : dirt0 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt1 >> (loc.x - 5)
-                  : dirt1 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt1 >> (myLoc.x - 5)
+                  : dirt1 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt2 >> (loc.x - 5)
-                  : dirt2 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt2 >> (myLoc.x - 5)
+                  : dirt2 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt2 >> (loc.x - 5)
-                  : dirt2 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt2 >> (myLoc.x - 5)
+                  : dirt2 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt3 >> (loc.x - 5)
-                  : dirt3 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt3 >> (myLoc.x - 5)
+                  : dirt3 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt4 >> (loc.x - 5)
-                  : dirt4 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt4 >> (myLoc.x - 5)
+                  : dirt4 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt5 >> (loc.x - 5)
-                  : dirt5 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt5 >> (myLoc.x - 5)
+                  : dirt5 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt6 >> (loc.x - 5)
-                  : dirt6 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt6 >> (myLoc.x - 5)
+                  : dirt6 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt7 >> (loc.x - 5)
-                  : dirt7 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt7 >> (myLoc.x - 5)
+                  : dirt7 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 3 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt0 >> (loc.x - 5)
-                  : dirt0 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt0 >> (myLoc.x - 5)
+                  : dirt0 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt1 >> (loc.x - 5)
-                  : dirt1 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt1 >> (myLoc.x - 5)
+                  : dirt1 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt2 >> (loc.x - 5)
-                  : dirt2 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt2 >> (myLoc.x - 5)
+                  : dirt2 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt3 >> (loc.x - 5)
-                  : dirt3 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt3 >> (myLoc.x - 5)
+                  : dirt3 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt3 >> (loc.x - 5)
-                  : dirt3 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt3 >> (myLoc.x - 5)
+                  : dirt3 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt4 >> (loc.x - 5)
-                  : dirt4 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt4 >> (myLoc.x - 5)
+                  : dirt4 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt5 >> (loc.x - 5)
-                  : dirt5 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt5 >> (myLoc.x - 5)
+                  : dirt5 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt6 >> (loc.x - 5)
-                  : dirt6 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt6 >> (myLoc.x - 5)
+                  : dirt6 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt7 >> (loc.x - 5)
-                  : dirt7 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt7 >> (myLoc.x - 5)
+                  : dirt7 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt8 >> (loc.x - 5)
-                  : dirt8 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt8 >> (myLoc.x - 5)
+                  : dirt8 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 4 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt0 >> (loc.x - 5)
-                  : dirt0 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt0 >> (myLoc.x - 5)
+                  : dirt0 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt1 >> (loc.x - 5)
-                  : dirt1 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt1 >> (myLoc.x - 5)
+                  : dirt1 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt2 >> (loc.x - 5)
-                  : dirt2 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt2 >> (myLoc.x - 5)
+                  : dirt2 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt3 >> (loc.x - 5)
-                  : dirt3 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt3 >> (myLoc.x - 5)
+                  : dirt3 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt4 >> (loc.x - 5)
-                  : dirt4 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt4 >> (myLoc.x - 5)
+                  : dirt4 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt4 >> (loc.x - 5)
-                  : dirt4 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt4 >> (myLoc.x - 5)
+                  : dirt4 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt5 >> (loc.x - 5)
-                  : dirt5 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt5 >> (myLoc.x - 5)
+                  : dirt5 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt6 >> (loc.x - 5)
-                  : dirt6 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt6 >> (myLoc.x - 5)
+                  : dirt6 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt7 >> (loc.x - 5)
-                  : dirt7 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt7 >> (myLoc.x - 5)
+                  : dirt7 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt8 >> (loc.x - 5)
-                  : dirt8 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt8 >> (myLoc.x - 5)
+                  : dirt8 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt9 >> (loc.x - 5)
-                  : dirt9 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt9 >> (myLoc.x - 5)
+                  : dirt9 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 5 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt0 >> (loc.x - 5)
-                  : dirt0 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt0 >> (myLoc.x - 5)
+                  : dirt0 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt1 >> (loc.x - 5)
-                  : dirt1 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt1 >> (myLoc.x - 5)
+                  : dirt1 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt2 >> (loc.x - 5)
-                  : dirt2 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt2 >> (myLoc.x - 5)
+                  : dirt2 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt3 >> (loc.x - 5)
-                  : dirt3 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt3 >> (myLoc.x - 5)
+                  : dirt3 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt4 >> (loc.x - 5)
-                  : dirt4 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt4 >> (myLoc.x - 5)
+                  : dirt4 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt5 >> (loc.x - 5)
-                  : dirt5 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt5 >> (myLoc.x - 5)
+                  : dirt5 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt5 >> (loc.x - 5)
-                  : dirt5 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt5 >> (myLoc.x - 5)
+                  : dirt5 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt6 >> (loc.x - 5)
-                  : dirt6 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt6 >> (myLoc.x - 5)
+                  : dirt6 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt7 >> (loc.x - 5)
-                  : dirt7 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt7 >> (myLoc.x - 5)
+                  : dirt7 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt8 >> (loc.x - 5)
-                  : dirt8 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt8 >> (myLoc.x - 5)
+                  : dirt8 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt9 >> (loc.x - 5)
-                  : dirt9 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt9 >> (myLoc.x - 5)
+                  : dirt9 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt10 >> (loc.x - 5)
-                  : dirt10 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt10 >> (myLoc.x - 5)
+                  : dirt10 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 6 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt1 >> (loc.x - 5)
-                  : dirt1 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt1 >> (myLoc.x - 5)
+                  : dirt1 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt2 >> (loc.x - 5)
-                  : dirt2 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt2 >> (myLoc.x - 5)
+                  : dirt2 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt3 >> (loc.x - 5)
-                  : dirt3 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt3 >> (myLoc.x - 5)
+                  : dirt3 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt4 >> (loc.x - 5)
-                  : dirt4 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt4 >> (myLoc.x - 5)
+                  : dirt4 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt5 >> (loc.x - 5)
-                  : dirt5 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt5 >> (myLoc.x - 5)
+                  : dirt5 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt6 >> (loc.x - 5)
-                  : dirt6 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt6 >> (myLoc.x - 5)
+                  : dirt6 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt6 >> (loc.x - 5)
-                  : dirt6 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt6 >> (myLoc.x - 5)
+                  : dirt6 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt7 >> (loc.x - 5)
-                  : dirt7 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt7 >> (myLoc.x - 5)
+                  : dirt7 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt8 >> (loc.x - 5)
-                  : dirt8 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt8 >> (myLoc.x - 5)
+                  : dirt8 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt9 >> (loc.x - 5)
-                  : dirt9 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt9 >> (myLoc.x - 5)
+                  : dirt9 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt10 >> (loc.x - 5)
-                  : dirt10 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt10 >> (myLoc.x - 5)
+                  : dirt10 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt11 >> (loc.x - 5)
-                  : dirt11 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt11 >> (myLoc.x - 5)
+                  : dirt11 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 7 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt2 >> (loc.x - 5)
-                  : dirt2 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt2 >> (myLoc.x - 5)
+                  : dirt2 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt3 >> (loc.x - 5)
-                  : dirt3 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt3 >> (myLoc.x - 5)
+                  : dirt3 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt4 >> (loc.x - 5)
-                  : dirt4 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt4 >> (myLoc.x - 5)
+                  : dirt4 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt5 >> (loc.x - 5)
-                  : dirt5 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt5 >> (myLoc.x - 5)
+                  : dirt5 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt6 >> (loc.x - 5)
-                  : dirt6 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt6 >> (myLoc.x - 5)
+                  : dirt6 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt7 >> (loc.x - 5)
-                  : dirt7 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt7 >> (myLoc.x - 5)
+                  : dirt7 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt7 >> (loc.x - 5)
-                  : dirt7 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt7 >> (myLoc.x - 5)
+                  : dirt7 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt8 >> (loc.x - 5)
-                  : dirt8 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt8 >> (myLoc.x - 5)
+                  : dirt8 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt9 >> (loc.x - 5)
-                  : dirt9 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt9 >> (myLoc.x - 5)
+                  : dirt9 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt10 >> (loc.x - 5)
-                  : dirt10 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt10 >> (myLoc.x - 5)
+                  : dirt10 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt11 >> (loc.x - 5)
-                  : dirt11 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt11 >> (myLoc.x - 5)
+                  : dirt11 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt12 >> (loc.x - 5)
-                  : dirt12 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt12 >> (myLoc.x - 5)
+                  : dirt12 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 8 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt3 >> (loc.x - 5)
-                  : dirt3 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt3 >> (myLoc.x - 5)
+                  : dirt3 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt4 >> (loc.x - 5)
-                  : dirt4 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt4 >> (myLoc.x - 5)
+                  : dirt4 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt5 >> (loc.x - 5)
-                  : dirt5 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt5 >> (myLoc.x - 5)
+                  : dirt5 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt6 >> (loc.x - 5)
-                  : dirt6 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt6 >> (myLoc.x - 5)
+                  : dirt6 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt7 >> (loc.x - 5)
-                  : dirt7 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt7 >> (myLoc.x - 5)
+                  : dirt7 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt8 >> (loc.x - 5)
-                  : dirt8 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt8 >> (myLoc.x - 5)
+                  : dirt8 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt8 >> (loc.x - 5)
-                  : dirt8 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt8 >> (myLoc.x - 5)
+                  : dirt8 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt9 >> (loc.x - 5)
-                  : dirt9 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt9 >> (myLoc.x - 5)
+                  : dirt9 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt10 >> (loc.x - 5)
-                  : dirt10 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt10 >> (myLoc.x - 5)
+                  : dirt10 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt11 >> (loc.x - 5)
-                  : dirt11 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt11 >> (myLoc.x - 5)
+                  : dirt11 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt12 >> (loc.x - 5)
-                  : dirt12 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt12 >> (myLoc.x - 5)
+                  : dirt12 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt13 >> (loc.x - 5)
-                  : dirt13 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt13 >> (myLoc.x - 5)
+                  : dirt13 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 9 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt4 >> (loc.x - 5)
-                  : dirt4 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt4 >> (myLoc.x - 5)
+                  : dirt4 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt5 >> (loc.x - 5)
-                  : dirt5 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt5 >> (myLoc.x - 5)
+                  : dirt5 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt6 >> (loc.x - 5)
-                  : dirt6 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt6 >> (myLoc.x - 5)
+                  : dirt6 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt7 >> (loc.x - 5)
-                  : dirt7 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt7 >> (myLoc.x - 5)
+                  : dirt7 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt8 >> (loc.x - 5)
-                  : dirt8 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt8 >> (myLoc.x - 5)
+                  : dirt8 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt9 >> (loc.x - 5)
-                  : dirt9 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt9 >> (myLoc.x - 5)
+                  : dirt9 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt9 >> (loc.x - 5)
-                  : dirt9 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt9 >> (myLoc.x - 5)
+                  : dirt9 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt10 >> (loc.x - 5)
-                  : dirt10 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt10 >> (myLoc.x - 5)
+                  : dirt10 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt11 >> (loc.x - 5)
-                  : dirt11 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt11 >> (myLoc.x - 5)
+                  : dirt11 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt12 >> (loc.x - 5)
-                  : dirt12 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt12 >> (myLoc.x - 5)
+                  : dirt12 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt13 >> (loc.x - 5)
-                  : dirt13 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt13 >> (myLoc.x - 5)
+                  : dirt13 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt14 >> (loc.x - 5)
-                  : dirt14 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt14 >> (myLoc.x - 5)
+                  : dirt14 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 10 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt5 >> (loc.x - 5)
-                  : dirt5 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt5 >> (myLoc.x - 5)
+                  : dirt5 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt6 >> (loc.x - 5)
-                  : dirt6 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt6 >> (myLoc.x - 5)
+                  : dirt6 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt7 >> (loc.x - 5)
-                  : dirt7 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt7 >> (myLoc.x - 5)
+                  : dirt7 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt8 >> (loc.x - 5)
-                  : dirt8 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt8 >> (myLoc.x - 5)
+                  : dirt8 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt9 >> (loc.x - 5)
-                  : dirt9 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt9 >> (myLoc.x - 5)
+                  : dirt9 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt10 >> (loc.x - 5)
-                  : dirt10 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt10 >> (myLoc.x - 5)
+                  : dirt10 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt10 >> (loc.x - 5)
-                  : dirt10 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt10 >> (myLoc.x - 5)
+                  : dirt10 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt11 >> (loc.x - 5)
-                  : dirt11 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt11 >> (myLoc.x - 5)
+                  : dirt11 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt12 >> (loc.x - 5)
-                  : dirt12 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt12 >> (myLoc.x - 5)
+                  : dirt12 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt13 >> (loc.x - 5)
-                  : dirt13 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt13 >> (myLoc.x - 5)
+                  : dirt13 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt14 >> (loc.x - 5)
-                  : dirt14 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt14 >> (myLoc.x - 5)
+                  : dirt14 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt15 >> (loc.x - 5)
-                  : dirt15 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt15 >> (myLoc.x - 5)
+                  : dirt15 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 11 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt6 >> (loc.x - 5)
-                  : dirt6 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt6 >> (myLoc.x - 5)
+                  : dirt6 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt7 >> (loc.x - 5)
-                  : dirt7 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt7 >> (myLoc.x - 5)
+                  : dirt7 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt8 >> (loc.x - 5)
-                  : dirt8 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt8 >> (myLoc.x - 5)
+                  : dirt8 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt9 >> (loc.x - 5)
-                  : dirt9 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt9 >> (myLoc.x - 5)
+                  : dirt9 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt10 >> (loc.x - 5)
-                  : dirt10 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt10 >> (myLoc.x - 5)
+                  : dirt10 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt11 >> (loc.x - 5)
-                  : dirt11 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt11 >> (myLoc.x - 5)
+                  : dirt11 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt11 >> (loc.x - 5)
-                  : dirt11 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt11 >> (myLoc.x - 5)
+                  : dirt11 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt12 >> (loc.x - 5)
-                  : dirt12 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt12 >> (myLoc.x - 5)
+                  : dirt12 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt13 >> (loc.x - 5)
-                  : dirt13 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt13 >> (myLoc.x - 5)
+                  : dirt13 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt14 >> (loc.x - 5)
-                  : dirt14 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt14 >> (myLoc.x - 5)
+                  : dirt14 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt15 >> (loc.x - 5)
-                  : dirt15 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt15 >> (myLoc.x - 5)
+                  : dirt15 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt16 >> (loc.x - 5)
-                  : dirt16 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt16 >> (myLoc.x - 5)
+                  : dirt16 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 12 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt7 >> (loc.x - 5)
-                  : dirt7 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt7 >> (myLoc.x - 5)
+                  : dirt7 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt8 >> (loc.x - 5)
-                  : dirt8 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt8 >> (myLoc.x - 5)
+                  : dirt8 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt9 >> (loc.x - 5)
-                  : dirt9 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt9 >> (myLoc.x - 5)
+                  : dirt9 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt10 >> (loc.x - 5)
-                  : dirt10 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt10 >> (myLoc.x - 5)
+                  : dirt10 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt11 >> (loc.x - 5)
-                  : dirt11 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt11 >> (myLoc.x - 5)
+                  : dirt11 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt12 >> (loc.x - 5)
-                  : dirt12 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt12 >> (myLoc.x - 5)
+                  : dirt12 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt12 >> (loc.x - 5)
-                  : dirt12 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt12 >> (myLoc.x - 5)
+                  : dirt12 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt13 >> (loc.x - 5)
-                  : dirt13 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt13 >> (myLoc.x - 5)
+                  : dirt13 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt14 >> (loc.x - 5)
-                  : dirt14 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt14 >> (myLoc.x - 5)
+                  : dirt14 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt15 >> (loc.x - 5)
-                  : dirt15 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt15 >> (myLoc.x - 5)
+                  : dirt15 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt16 >> (loc.x - 5)
-                  : dirt16 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt16 >> (myLoc.x - 5)
+                  : dirt16 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt17 >> (loc.x - 5)
-                  : dirt17 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt17 >> (myLoc.x - 5)
+                  : dirt17 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 13 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt8 >> (loc.x - 5)
-                  : dirt8 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt8 >> (myLoc.x - 5)
+                  : dirt8 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt9 >> (loc.x - 5)
-                  : dirt9 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt9 >> (myLoc.x - 5)
+                  : dirt9 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt10 >> (loc.x - 5)
-                  : dirt10 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt10 >> (myLoc.x - 5)
+                  : dirt10 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt11 >> (loc.x - 5)
-                  : dirt11 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt11 >> (myLoc.x - 5)
+                  : dirt11 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt12 >> (loc.x - 5)
-                  : dirt12 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt12 >> (myLoc.x - 5)
+                  : dirt12 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt13 >> (loc.x - 5)
-                  : dirt13 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt13 >> (myLoc.x - 5)
+                  : dirt13 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt13 >> (loc.x - 5)
-                  : dirt13 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt13 >> (myLoc.x - 5)
+                  : dirt13 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt14 >> (loc.x - 5)
-                  : dirt14 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt14 >> (myLoc.x - 5)
+                  : dirt14 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt15 >> (loc.x - 5)
-                  : dirt15 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt15 >> (myLoc.x - 5)
+                  : dirt15 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt16 >> (loc.x - 5)
-                  : dirt16 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt16 >> (myLoc.x - 5)
+                  : dirt16 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt17 >> (loc.x - 5)
-                  : dirt17 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt17 >> (myLoc.x - 5)
+                  : dirt17 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt18 >> (loc.x - 5)
-                  : dirt18 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt18 >> (myLoc.x - 5)
+                  : dirt18 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 14 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt9 >> (loc.x - 5)
-                  : dirt9 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt9 >> (myLoc.x - 5)
+                  : dirt9 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt10 >> (loc.x - 5)
-                  : dirt10 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt10 >> (myLoc.x - 5)
+                  : dirt10 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt11 >> (loc.x - 5)
-                  : dirt11 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt11 >> (myLoc.x - 5)
+                  : dirt11 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt12 >> (loc.x - 5)
-                  : dirt12 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt12 >> (myLoc.x - 5)
+                  : dirt12 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt13 >> (loc.x - 5)
-                  : dirt13 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt13 >> (myLoc.x - 5)
+                  : dirt13 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt14 >> (loc.x - 5)
-                  : dirt14 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt14 >> (myLoc.x - 5)
+                  : dirt14 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt14 >> (loc.x - 5)
-                  : dirt14 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt14 >> (myLoc.x - 5)
+                  : dirt14 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt15 >> (loc.x - 5)
-                  : dirt15 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt15 >> (myLoc.x - 5)
+                  : dirt15 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt16 >> (loc.x - 5)
-                  : dirt16 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt16 >> (myLoc.x - 5)
+                  : dirt16 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt17 >> (loc.x - 5)
-                  : dirt17 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt17 >> (myLoc.x - 5)
+                  : dirt17 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt18 >> (loc.x - 5)
-                  : dirt18 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt18 >> (myLoc.x - 5)
+                  : dirt18 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt19 >> (loc.x - 5)
-                  : dirt19 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt19 >> (myLoc.x - 5)
+                  : dirt19 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 15 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt10 >> (loc.x - 5)
-                  : dirt10 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt10 >> (myLoc.x - 5)
+                  : dirt10 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt11 >> (loc.x - 5)
-                  : dirt11 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt11 >> (myLoc.x - 5)
+                  : dirt11 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt12 >> (loc.x - 5)
-                  : dirt12 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt12 >> (myLoc.x - 5)
+                  : dirt12 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt13 >> (loc.x - 5)
-                  : dirt13 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt13 >> (myLoc.x - 5)
+                  : dirt13 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt14 >> (loc.x - 5)
-                  : dirt14 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt14 >> (myLoc.x - 5)
+                  : dirt14 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt15 >> (loc.x - 5)
-                  : dirt15 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt15 >> (myLoc.x - 5)
+                  : dirt15 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt15 >> (loc.x - 5)
-                  : dirt15 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt15 >> (myLoc.x - 5)
+                  : dirt15 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt16 >> (loc.x - 5)
-                  : dirt16 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt16 >> (myLoc.x - 5)
+                  : dirt16 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt17 >> (loc.x - 5)
-                  : dirt17 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt17 >> (myLoc.x - 5)
+                  : dirt17 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt18 >> (loc.x - 5)
-                  : dirt18 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt18 >> (myLoc.x - 5)
+                  : dirt18 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt19 >> (loc.x - 5)
-                  : dirt19 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt19 >> (myLoc.x - 5)
+                  : dirt19 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt20 >> (loc.x - 5)
-                  : dirt20 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt20 >> (myLoc.x - 5)
+                  : dirt20 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 16 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt11 >> (loc.x - 5)
-                  : dirt11 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt11 >> (myLoc.x - 5)
+                  : dirt11 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt12 >> (loc.x - 5)
-                  : dirt12 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt12 >> (myLoc.x - 5)
+                  : dirt12 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt13 >> (loc.x - 5)
-                  : dirt13 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt13 >> (myLoc.x - 5)
+                  : dirt13 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt14 >> (loc.x - 5)
-                  : dirt14 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt14 >> (myLoc.x - 5)
+                  : dirt14 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt15 >> (loc.x - 5)
-                  : dirt15 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt15 >> (myLoc.x - 5)
+                  : dirt15 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt16 >> (loc.x - 5)
-                  : dirt16 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt16 >> (myLoc.x - 5)
+                  : dirt16 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt16 >> (loc.x - 5)
-                  : dirt16 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt16 >> (myLoc.x - 5)
+                  : dirt16 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt17 >> (loc.x - 5)
-                  : dirt17 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt17 >> (myLoc.x - 5)
+                  : dirt17 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt18 >> (loc.x - 5)
-                  : dirt18 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt18 >> (myLoc.x - 5)
+                  : dirt18 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt19 >> (loc.x - 5)
-                  : dirt19 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt19 >> (myLoc.x - 5)
+                  : dirt19 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt20 >> (loc.x - 5)
-                  : dirt20 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt20 >> (myLoc.x - 5)
+                  : dirt20 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt21 >> (loc.x - 5)
-                  : dirt21 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt21 >> (myLoc.x - 5)
+                  : dirt21 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 17 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt12 >> (loc.x - 5)
-                  : dirt12 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt12 >> (myLoc.x - 5)
+                  : dirt12 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt13 >> (loc.x - 5)
-                  : dirt13 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt13 >> (myLoc.x - 5)
+                  : dirt13 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt14 >> (loc.x - 5)
-                  : dirt14 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt14 >> (myLoc.x - 5)
+                  : dirt14 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt15 >> (loc.x - 5)
-                  : dirt15 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt15 >> (myLoc.x - 5)
+                  : dirt15 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt16 >> (loc.x - 5)
-                  : dirt16 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt16 >> (myLoc.x - 5)
+                  : dirt16 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt17 >> (loc.x - 5)
-                  : dirt17 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt17 >> (myLoc.x - 5)
+                  : dirt17 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt17 >> (loc.x - 5)
-                  : dirt17 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt17 >> (myLoc.x - 5)
+                  : dirt17 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt18 >> (loc.x - 5)
-                  : dirt18 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt18 >> (myLoc.x - 5)
+                  : dirt18 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt19 >> (loc.x - 5)
-                  : dirt19 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt19 >> (myLoc.x - 5)
+                  : dirt19 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt20 >> (loc.x - 5)
-                  : dirt20 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt20 >> (myLoc.x - 5)
+                  : dirt20 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt21 >> (loc.x - 5)
-                  : dirt21 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt21 >> (myLoc.x - 5)
+                  : dirt21 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt22 >> (loc.x - 5)
-                  : dirt22 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt22 >> (myLoc.x - 5)
+                  : dirt22 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 18 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt13 >> (loc.x - 5)
-                  : dirt13 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt13 >> (myLoc.x - 5)
+                  : dirt13 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt14 >> (loc.x - 5)
-                  : dirt14 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt14 >> (myLoc.x - 5)
+                  : dirt14 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt15 >> (loc.x - 5)
-                  : dirt15 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt15 >> (myLoc.x - 5)
+                  : dirt15 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt16 >> (loc.x - 5)
-                  : dirt16 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt16 >> (myLoc.x - 5)
+                  : dirt16 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt17 >> (loc.x - 5)
-                  : dirt17 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt17 >> (myLoc.x - 5)
+                  : dirt17 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt18 >> (loc.x - 5)
-                  : dirt18 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt18 >> (myLoc.x - 5)
+                  : dirt18 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt18 >> (loc.x - 5)
-                  : dirt18 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt18 >> (myLoc.x - 5)
+                  : dirt18 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt19 >> (loc.x - 5)
-                  : dirt19 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt19 >> (myLoc.x - 5)
+                  : dirt19 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt20 >> (loc.x - 5)
-                  : dirt20 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt20 >> (myLoc.x - 5)
+                  : dirt20 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt21 >> (loc.x - 5)
-                  : dirt21 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt21 >> (myLoc.x - 5)
+                  : dirt21 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt22 >> (loc.x - 5)
-                  : dirt22 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt22 >> (myLoc.x - 5)
+                  : dirt22 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt23 >> (loc.x - 5)
-                  : dirt23 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt23 >> (myLoc.x - 5)
+                  : dirt23 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 19 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt14 >> (loc.x - 5)
-                  : dirt14 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt14 >> (myLoc.x - 5)
+                  : dirt14 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt15 >> (loc.x - 5)
-                  : dirt15 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt15 >> (myLoc.x - 5)
+                  : dirt15 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt16 >> (loc.x - 5)
-                  : dirt16 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt16 >> (myLoc.x - 5)
+                  : dirt16 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt17 >> (loc.x - 5)
-                  : dirt17 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt17 >> (myLoc.x - 5)
+                  : dirt17 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt18 >> (loc.x - 5)
-                  : dirt18 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt18 >> (myLoc.x - 5)
+                  : dirt18 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt19 >> (loc.x - 5)
-                  : dirt19 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt19 >> (myLoc.x - 5)
+                  : dirt19 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt19 >> (loc.x - 5)
-                  : dirt19 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt19 >> (myLoc.x - 5)
+                  : dirt19 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt20 >> (loc.x - 5)
-                  : dirt20 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt20 >> (myLoc.x - 5)
+                  : dirt20 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt21 >> (loc.x - 5)
-                  : dirt21 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt21 >> (myLoc.x - 5)
+                  : dirt21 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt22 >> (loc.x - 5)
-                  : dirt22 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt22 >> (myLoc.x - 5)
+                  : dirt22 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt23 >> (loc.x - 5)
-                  : dirt23 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt23 >> (myLoc.x - 5)
+                  : dirt23 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt24 >> (loc.x - 5)
-                  : dirt24 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt24 >> (myLoc.x - 5)
+                  : dirt24 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 20 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt15 >> (loc.x - 5)
-                  : dirt15 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt15 >> (myLoc.x - 5)
+                  : dirt15 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt16 >> (loc.x - 5)
-                  : dirt16 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt16 >> (myLoc.x - 5)
+                  : dirt16 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt17 >> (loc.x - 5)
-                  : dirt17 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt17 >> (myLoc.x - 5)
+                  : dirt17 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt18 >> (loc.x - 5)
-                  : dirt18 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt18 >> (myLoc.x - 5)
+                  : dirt18 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt19 >> (loc.x - 5)
-                  : dirt19 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt19 >> (myLoc.x - 5)
+                  : dirt19 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt20 >> (loc.x - 5)
-                  : dirt20 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt20 >> (myLoc.x - 5)
+                  : dirt20 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt20 >> (loc.x - 5)
-                  : dirt20 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt20 >> (myLoc.x - 5)
+                  : dirt20 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt21 >> (loc.x - 5)
-                  : dirt21 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt21 >> (myLoc.x - 5)
+                  : dirt21 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt22 >> (loc.x - 5)
-                  : dirt22 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt22 >> (myLoc.x - 5)
+                  : dirt22 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt23 >> (loc.x - 5)
-                  : dirt23 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt23 >> (myLoc.x - 5)
+                  : dirt23 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt24 >> (loc.x - 5)
-                  : dirt24 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt24 >> (myLoc.x - 5)
+                  : dirt24 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt25 >> (loc.x - 5)
-                  : dirt25 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt25 >> (myLoc.x - 5)
+                  : dirt25 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 21 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt16 >> (loc.x - 5)
-                  : dirt16 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt16 >> (myLoc.x - 5)
+                  : dirt16 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt17 >> (loc.x - 5)
-                  : dirt17 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt17 >> (myLoc.x - 5)
+                  : dirt17 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt18 >> (loc.x - 5)
-                  : dirt18 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt18 >> (myLoc.x - 5)
+                  : dirt18 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt19 >> (loc.x - 5)
-                  : dirt19 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt19 >> (myLoc.x - 5)
+                  : dirt19 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt20 >> (loc.x - 5)
-                  : dirt20 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt20 >> (myLoc.x - 5)
+                  : dirt20 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt21 >> (loc.x - 5)
-                  : dirt21 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt21 >> (myLoc.x - 5)
+                  : dirt21 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt21 >> (loc.x - 5)
-                  : dirt21 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt21 >> (myLoc.x - 5)
+                  : dirt21 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt22 >> (loc.x - 5)
-                  : dirt22 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt22 >> (myLoc.x - 5)
+                  : dirt22 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt23 >> (loc.x - 5)
-                  : dirt23 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt23 >> (myLoc.x - 5)
+                  : dirt23 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt24 >> (loc.x - 5)
-                  : dirt24 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt24 >> (myLoc.x - 5)
+                  : dirt24 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt25 >> (loc.x - 5)
-                  : dirt25 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt25 >> (myLoc.x - 5)
+                  : dirt25 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt26 >> (loc.x - 5)
-                  : dirt26 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt26 >> (myLoc.x - 5)
+                  : dirt26 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 22 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt17 >> (loc.x - 5)
-                  : dirt17 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt17 >> (myLoc.x - 5)
+                  : dirt17 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt18 >> (loc.x - 5)
-                  : dirt18 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt18 >> (myLoc.x - 5)
+                  : dirt18 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt19 >> (loc.x - 5)
-                  : dirt19 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt19 >> (myLoc.x - 5)
+                  : dirt19 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt20 >> (loc.x - 5)
-                  : dirt20 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt20 >> (myLoc.x - 5)
+                  : dirt20 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt21 >> (loc.x - 5)
-                  : dirt21 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt21 >> (myLoc.x - 5)
+                  : dirt21 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt22 >> (loc.x - 5)
-                  : dirt22 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt22 >> (myLoc.x - 5)
+                  : dirt22 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt22 >> (loc.x - 5)
-                  : dirt22 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt22 >> (myLoc.x - 5)
+                  : dirt22 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt23 >> (loc.x - 5)
-                  : dirt23 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt23 >> (myLoc.x - 5)
+                  : dirt23 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt24 >> (loc.x - 5)
-                  : dirt24 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt24 >> (myLoc.x - 5)
+                  : dirt24 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt25 >> (loc.x - 5)
-                  : dirt25 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt25 >> (myLoc.x - 5)
+                  : dirt25 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt26 >> (loc.x - 5)
-                  : dirt26 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt26 >> (myLoc.x - 5)
+                  : dirt26 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt27 >> (loc.x - 5)
-                  : dirt27 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt27 >> (myLoc.x - 5)
+                  : dirt27 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 23 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt18 >> (loc.x - 5)
-                  : dirt18 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt18 >> (myLoc.x - 5)
+                  : dirt18 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt19 >> (loc.x - 5)
-                  : dirt19 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt19 >> (myLoc.x - 5)
+                  : dirt19 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt20 >> (loc.x - 5)
-                  : dirt20 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt20 >> (myLoc.x - 5)
+                  : dirt20 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt21 >> (loc.x - 5)
-                  : dirt21 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt21 >> (myLoc.x - 5)
+                  : dirt21 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt22 >> (loc.x - 5)
-                  : dirt22 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt22 >> (myLoc.x - 5)
+                  : dirt22 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt23 >> (loc.x - 5)
-                  : dirt23 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt23 >> (myLoc.x - 5)
+                  : dirt23 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt23 >> (loc.x - 5)
-                  : dirt23 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt23 >> (myLoc.x - 5)
+                  : dirt23 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt24 >> (loc.x - 5)
-                  : dirt24 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt24 >> (myLoc.x - 5)
+                  : dirt24 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt25 >> (loc.x - 5)
-                  : dirt25 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt25 >> (myLoc.x - 5)
+                  : dirt25 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt26 >> (loc.x - 5)
-                  : dirt26 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt26 >> (myLoc.x - 5)
+                  : dirt26 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt27 >> (loc.x - 5)
-                  : dirt27 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt27 >> (myLoc.x - 5)
+                  : dirt27 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt28 >> (loc.x - 5)
-                  : dirt28 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt28 >> (myLoc.x - 5)
+                  : dirt28 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 24 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt19 >> (loc.x - 5)
-                  : dirt19 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt19 >> (myLoc.x - 5)
+                  : dirt19 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt20 >> (loc.x - 5)
-                  : dirt20 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt20 >> (myLoc.x - 5)
+                  : dirt20 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt21 >> (loc.x - 5)
-                  : dirt21 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt21 >> (myLoc.x - 5)
+                  : dirt21 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt22 >> (loc.x - 5)
-                  : dirt22 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt22 >> (myLoc.x - 5)
+                  : dirt22 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt23 >> (loc.x - 5)
-                  : dirt23 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt23 >> (myLoc.x - 5)
+                  : dirt23 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt24 >> (loc.x - 5)
-                  : dirt24 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt24 >> (myLoc.x - 5)
+                  : dirt24 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt24 >> (loc.x - 5)
-                  : dirt24 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt24 >> (myLoc.x - 5)
+                  : dirt24 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt25 >> (loc.x - 5)
-                  : dirt25 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt25 >> (myLoc.x - 5)
+                  : dirt25 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt26 >> (loc.x - 5)
-                  : dirt26 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt26 >> (myLoc.x - 5)
+                  : dirt26 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt27 >> (loc.x - 5)
-                  : dirt27 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt27 >> (myLoc.x - 5)
+                  : dirt27 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt28 >> (loc.x - 5)
-                  : dirt28 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt28 >> (myLoc.x - 5)
+                  : dirt28 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt29 >> (loc.x - 5)
-                  : dirt29 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt29 >> (myLoc.x - 5)
+                  : dirt29 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 25 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt20 >> (loc.x - 5)
-                  : dirt20 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt20 >> (myLoc.x - 5)
+                  : dirt20 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt21 >> (loc.x - 5)
-                  : dirt21 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt21 >> (myLoc.x - 5)
+                  : dirt21 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt22 >> (loc.x - 5)
-                  : dirt22 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt22 >> (myLoc.x - 5)
+                  : dirt22 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt23 >> (loc.x - 5)
-                  : dirt23 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt23 >> (myLoc.x - 5)
+                  : dirt23 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt24 >> (loc.x - 5)
-                  : dirt24 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt24 >> (myLoc.x - 5)
+                  : dirt24 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt25 >> (loc.x - 5)
-                  : dirt25 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt25 >> (myLoc.x - 5)
+                  : dirt25 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt25 >> (loc.x - 5)
-                  : dirt25 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt25 >> (myLoc.x - 5)
+                  : dirt25 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt26 >> (loc.x - 5)
-                  : dirt26 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt26 >> (myLoc.x - 5)
+                  : dirt26 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt27 >> (loc.x - 5)
-                  : dirt27 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt27 >> (myLoc.x - 5)
+                  : dirt27 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt28 >> (loc.x - 5)
-                  : dirt28 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt28 >> (myLoc.x - 5)
+                  : dirt28 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt29 >> (loc.x - 5)
-                  : dirt29 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt29 >> (myLoc.x - 5)
+                  : dirt29 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt30 >> (loc.x - 5)
-                  : dirt30 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt30 >> (myLoc.x - 5)
+                  : dirt30 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 26 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt21 >> (loc.x - 5)
-                  : dirt21 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt21 >> (myLoc.x - 5)
+                  : dirt21 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt22 >> (loc.x - 5)
-                  : dirt22 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt22 >> (myLoc.x - 5)
+                  : dirt22 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt23 >> (loc.x - 5)
-                  : dirt23 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt23 >> (myLoc.x - 5)
+                  : dirt23 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt24 >> (loc.x - 5)
-                  : dirt24 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt24 >> (myLoc.x - 5)
+                  : dirt24 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt25 >> (loc.x - 5)
-                  : dirt25 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt25 >> (myLoc.x - 5)
+                  : dirt25 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt26 >> (loc.x - 5)
-                  : dirt26 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt26 >> (myLoc.x - 5)
+                  : dirt26 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt26 >> (loc.x - 5)
-                  : dirt26 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt26 >> (myLoc.x - 5)
+                  : dirt26 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt27 >> (loc.x - 5)
-                  : dirt27 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt27 >> (myLoc.x - 5)
+                  : dirt27 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt28 >> (loc.x - 5)
-                  : dirt28 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt28 >> (myLoc.x - 5)
+                  : dirt28 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt29 >> (loc.x - 5)
-                  : dirt29 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt29 >> (myLoc.x - 5)
+                  : dirt29 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt30 >> (loc.x - 5)
-                  : dirt30 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt30 >> (myLoc.x - 5)
+                  : dirt30 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt31 >> (loc.x - 5)
-                  : dirt31 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt31 >> (myLoc.x - 5)
+                  : dirt31 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 27 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt22 >> (loc.x - 5)
-                  : dirt22 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt22 >> (myLoc.x - 5)
+                  : dirt22 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt23 >> (loc.x - 5)
-                  : dirt23 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt23 >> (myLoc.x - 5)
+                  : dirt23 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt24 >> (loc.x - 5)
-                  : dirt24 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt24 >> (myLoc.x - 5)
+                  : dirt24 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt25 >> (loc.x - 5)
-                  : dirt25 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt25 >> (myLoc.x - 5)
+                  : dirt25 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt26 >> (loc.x - 5)
-                  : dirt26 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt26 >> (myLoc.x - 5)
+                  : dirt26 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt27 >> (loc.x - 5)
-                  : dirt27 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt27 >> (myLoc.x - 5)
+                  : dirt27 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt27 >> (loc.x - 5)
-                  : dirt27 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt27 >> (myLoc.x - 5)
+                  : dirt27 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt28 >> (loc.x - 5)
-                  : dirt28 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt28 >> (myLoc.x - 5)
+                  : dirt28 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt29 >> (loc.x - 5)
-                  : dirt29 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt29 >> (myLoc.x - 5)
+                  : dirt29 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt30 >> (loc.x - 5)
-                  : dirt30 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt30 >> (myLoc.x - 5)
+                  : dirt30 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt31 >> (loc.x - 5)
-                  : dirt31 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt31 >> (myLoc.x - 5)
+                  : dirt31 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt32 >> (loc.x - 5)
-                  : dirt32 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt32 >> (myLoc.x - 5)
+                  : dirt32 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 28 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt23 >> (loc.x - 5)
-                  : dirt23 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt23 >> (myLoc.x - 5)
+                  : dirt23 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt24 >> (loc.x - 5)
-                  : dirt24 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt24 >> (myLoc.x - 5)
+                  : dirt24 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt25 >> (loc.x - 5)
-                  : dirt25 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt25 >> (myLoc.x - 5)
+                  : dirt25 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt26 >> (loc.x - 5)
-                  : dirt26 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt26 >> (myLoc.x - 5)
+                  : dirt26 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt27 >> (loc.x - 5)
-                  : dirt27 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt27 >> (myLoc.x - 5)
+                  : dirt27 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt28 >> (loc.x - 5)
-                  : dirt28 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt28 >> (myLoc.x - 5)
+                  : dirt28 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt28 >> (loc.x - 5)
-                  : dirt28 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt28 >> (myLoc.x - 5)
+                  : dirt28 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt29 >> (loc.x - 5)
-                  : dirt29 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt29 >> (myLoc.x - 5)
+                  : dirt29 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt30 >> (loc.x - 5)
-                  : dirt30 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt30 >> (myLoc.x - 5)
+                  : dirt30 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt31 >> (loc.x - 5)
-                  : dirt31 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt31 >> (myLoc.x - 5)
+                  : dirt31 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt32 >> (loc.x - 5)
-                  : dirt32 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt32 >> (myLoc.x - 5)
+                  : dirt32 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt33 >> (loc.x - 5)
-                  : dirt33 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt33 >> (myLoc.x - 5)
+                  : dirt33 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 29 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt24 >> (loc.x - 5)
-                  : dirt24 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt24 >> (myLoc.x - 5)
+                  : dirt24 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt25 >> (loc.x - 5)
-                  : dirt25 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt25 >> (myLoc.x - 5)
+                  : dirt25 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt26 >> (loc.x - 5)
-                  : dirt26 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt26 >> (myLoc.x - 5)
+                  : dirt26 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt27 >> (loc.x - 5)
-                  : dirt27 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt27 >> (myLoc.x - 5)
+                  : dirt27 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt28 >> (loc.x - 5)
-                  : dirt28 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt28 >> (myLoc.x - 5)
+                  : dirt28 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt29 >> (loc.x - 5)
-                  : dirt29 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt29 >> (myLoc.x - 5)
+                  : dirt29 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt29 >> (loc.x - 5)
-                  : dirt29 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt29 >> (myLoc.x - 5)
+                  : dirt29 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt30 >> (loc.x - 5)
-                  : dirt30 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt30 >> (myLoc.x - 5)
+                  : dirt30 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt31 >> (loc.x - 5)
-                  : dirt31 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt31 >> (myLoc.x - 5)
+                  : dirt31 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt32 >> (loc.x - 5)
-                  : dirt32 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt32 >> (myLoc.x - 5)
+                  : dirt32 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt33 >> (loc.x - 5)
-                  : dirt33 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt33 >> (myLoc.x - 5)
+                  : dirt33 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt34 >> (loc.x - 5)
-                  : dirt34 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt34 >> (myLoc.x - 5)
+                  : dirt34 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 30 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt25 >> (loc.x - 5)
-                  : dirt25 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt25 >> (myLoc.x - 5)
+                  : dirt25 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt26 >> (loc.x - 5)
-                  : dirt26 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt26 >> (myLoc.x - 5)
+                  : dirt26 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt27 >> (loc.x - 5)
-                  : dirt27 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt27 >> (myLoc.x - 5)
+                  : dirt27 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt28 >> (loc.x - 5)
-                  : dirt28 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt28 >> (myLoc.x - 5)
+                  : dirt28 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt29 >> (loc.x - 5)
-                  : dirt29 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt29 >> (myLoc.x - 5)
+                  : dirt29 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt30 >> (loc.x - 5)
-                  : dirt30 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt30 >> (myLoc.x - 5)
+                  : dirt30 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt30 >> (loc.x - 5)
-                  : dirt30 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt30 >> (myLoc.x - 5)
+                  : dirt30 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt31 >> (loc.x - 5)
-                  : dirt31 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt31 >> (myLoc.x - 5)
+                  : dirt31 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt32 >> (loc.x - 5)
-                  : dirt32 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt32 >> (myLoc.x - 5)
+                  : dirt32 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt33 >> (loc.x - 5)
-                  : dirt33 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt33 >> (myLoc.x - 5)
+                  : dirt33 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt34 >> (loc.x - 5)
-                  : dirt34 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt34 >> (myLoc.x - 5)
+                  : dirt34 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt35 >> (loc.x - 5)
-                  : dirt35 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt35 >> (myLoc.x - 5)
+                  : dirt35 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 31 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt26 >> (loc.x - 5)
-                  : dirt26 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt26 >> (myLoc.x - 5)
+                  : dirt26 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt27 >> (loc.x - 5)
-                  : dirt27 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt27 >> (myLoc.x - 5)
+                  : dirt27 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt28 >> (loc.x - 5)
-                  : dirt28 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt28 >> (myLoc.x - 5)
+                  : dirt28 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt29 >> (loc.x - 5)
-                  : dirt29 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt29 >> (myLoc.x - 5)
+                  : dirt29 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt30 >> (loc.x - 5)
-                  : dirt30 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt30 >> (myLoc.x - 5)
+                  : dirt30 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt31 >> (loc.x - 5)
-                  : dirt31 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt31 >> (myLoc.x - 5)
+                  : dirt31 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt31 >> (loc.x - 5)
-                  : dirt31 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt31 >> (myLoc.x - 5)
+                  : dirt31 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt32 >> (loc.x - 5)
-                  : dirt32 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt32 >> (myLoc.x - 5)
+                  : dirt32 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt33 >> (loc.x - 5)
-                  : dirt33 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt33 >> (myLoc.x - 5)
+                  : dirt33 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt34 >> (loc.x - 5)
-                  : dirt34 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt34 >> (myLoc.x - 5)
+                  : dirt34 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt35 >> (loc.x - 5)
-                  : dirt35 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt35 >> (myLoc.x - 5)
+                  : dirt35 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt36 >> (loc.x - 5)
-                  : dirt36 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt36 >> (myLoc.x - 5)
+                  : dirt36 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 32 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt27 >> (loc.x - 5)
-                  : dirt27 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt27 >> (myLoc.x - 5)
+                  : dirt27 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt28 >> (loc.x - 5)
-                  : dirt28 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt28 >> (myLoc.x - 5)
+                  : dirt28 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt29 >> (loc.x - 5)
-                  : dirt29 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt29 >> (myLoc.x - 5)
+                  : dirt29 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt30 >> (loc.x - 5)
-                  : dirt30 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt30 >> (myLoc.x - 5)
+                  : dirt30 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt31 >> (loc.x - 5)
-                  : dirt31 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt31 >> (myLoc.x - 5)
+                  : dirt31 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt32 >> (loc.x - 5)
-                  : dirt32 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt32 >> (myLoc.x - 5)
+                  : dirt32 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt32 >> (loc.x - 5)
-                  : dirt32 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt32 >> (myLoc.x - 5)
+                  : dirt32 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt33 >> (loc.x - 5)
-                  : dirt33 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt33 >> (myLoc.x - 5)
+                  : dirt33 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt34 >> (loc.x - 5)
-                  : dirt34 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt34 >> (myLoc.x - 5)
+                  : dirt34 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt35 >> (loc.x - 5)
-                  : dirt35 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt35 >> (myLoc.x - 5)
+                  : dirt35 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt36 >> (loc.x - 5)
-                  : dirt36 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt36 >> (myLoc.x - 5)
+                  : dirt36 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt37 >> (loc.x - 5)
-                  : dirt37 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt37 >> (myLoc.x - 5)
+                  : dirt37 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 33 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt28 >> (loc.x - 5)
-                  : dirt28 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt28 >> (myLoc.x - 5)
+                  : dirt28 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt29 >> (loc.x - 5)
-                  : dirt29 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt29 >> (myLoc.x - 5)
+                  : dirt29 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt30 >> (loc.x - 5)
-                  : dirt30 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt30 >> (myLoc.x - 5)
+                  : dirt30 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt31 >> (loc.x - 5)
-                  : dirt31 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt31 >> (myLoc.x - 5)
+                  : dirt31 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt32 >> (loc.x - 5)
-                  : dirt32 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt32 >> (myLoc.x - 5)
+                  : dirt32 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt33 >> (loc.x - 5)
-                  : dirt33 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt33 >> (myLoc.x - 5)
+                  : dirt33 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt33 >> (loc.x - 5)
-                  : dirt33 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt33 >> (myLoc.x - 5)
+                  : dirt33 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt34 >> (loc.x - 5)
-                  : dirt34 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt34 >> (myLoc.x - 5)
+                  : dirt34 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt35 >> (loc.x - 5)
-                  : dirt35 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt35 >> (myLoc.x - 5)
+                  : dirt35 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt36 >> (loc.x - 5)
-                  : dirt36 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt36 >> (myLoc.x - 5)
+                  : dirt36 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt37 >> (loc.x - 5)
-                  : dirt37 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt37 >> (myLoc.x - 5)
+                  : dirt37 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt38 >> (loc.x - 5)
-                  : dirt38 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt38 >> (myLoc.x - 5)
+                  : dirt38 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 34 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt29 >> (loc.x - 5)
-                  : dirt29 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt29 >> (myLoc.x - 5)
+                  : dirt29 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt30 >> (loc.x - 5)
-                  : dirt30 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt30 >> (myLoc.x - 5)
+                  : dirt30 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt31 >> (loc.x - 5)
-                  : dirt31 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt31 >> (myLoc.x - 5)
+                  : dirt31 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt32 >> (loc.x - 5)
-                  : dirt32 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt32 >> (myLoc.x - 5)
+                  : dirt32 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt33 >> (loc.x - 5)
-                  : dirt33 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt33 >> (myLoc.x - 5)
+                  : dirt33 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt34 >> (loc.x - 5)
-                  : dirt34 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt34 >> (myLoc.x - 5)
+                  : dirt34 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt34 >> (loc.x - 5)
-                  : dirt34 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt34 >> (myLoc.x - 5)
+                  : dirt34 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt35 >> (loc.x - 5)
-                  : dirt35 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt35 >> (myLoc.x - 5)
+                  : dirt35 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt36 >> (loc.x - 5)
-                  : dirt36 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt36 >> (myLoc.x - 5)
+                  : dirt36 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt37 >> (loc.x - 5)
-                  : dirt37 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt37 >> (myLoc.x - 5)
+                  : dirt37 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt38 >> (loc.x - 5)
-                  : dirt38 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt38 >> (myLoc.x - 5)
+                  : dirt38 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt39 >> (loc.x - 5)
-                  : dirt39 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt39 >> (myLoc.x - 5)
+                  : dirt39 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 35 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt30 >> (loc.x - 5)
-                  : dirt30 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt30 >> (myLoc.x - 5)
+                  : dirt30 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt31 >> (loc.x - 5)
-                  : dirt31 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt31 >> (myLoc.x - 5)
+                  : dirt31 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt32 >> (loc.x - 5)
-                  : dirt32 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt32 >> (myLoc.x - 5)
+                  : dirt32 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt33 >> (loc.x - 5)
-                  : dirt33 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt33 >> (myLoc.x - 5)
+                  : dirt33 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt34 >> (loc.x - 5)
-                  : dirt34 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt34 >> (myLoc.x - 5)
+                  : dirt34 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt35 >> (loc.x - 5)
-                  : dirt35 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt35 >> (myLoc.x - 5)
+                  : dirt35 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt35 >> (loc.x - 5)
-                  : dirt35 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt35 >> (myLoc.x - 5)
+                  : dirt35 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt36 >> (loc.x - 5)
-                  : dirt36 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt36 >> (myLoc.x - 5)
+                  : dirt36 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt37 >> (loc.x - 5)
-                  : dirt37 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt37 >> (myLoc.x - 5)
+                  : dirt37 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt38 >> (loc.x - 5)
-                  : dirt38 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt38 >> (myLoc.x - 5)
+                  : dirt38 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt39 >> (loc.x - 5)
-                  : dirt39 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt39 >> (myLoc.x - 5)
+                  : dirt39 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt40 >> (loc.x - 5)
-                  : dirt40 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt40 >> (myLoc.x - 5)
+                  : dirt40 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 36 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt31 >> (loc.x - 5)
-                  : dirt31 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt31 >> (myLoc.x - 5)
+                  : dirt31 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt32 >> (loc.x - 5)
-                  : dirt32 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt32 >> (myLoc.x - 5)
+                  : dirt32 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt33 >> (loc.x - 5)
-                  : dirt33 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt33 >> (myLoc.x - 5)
+                  : dirt33 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt34 >> (loc.x - 5)
-                  : dirt34 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt34 >> (myLoc.x - 5)
+                  : dirt34 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt35 >> (loc.x - 5)
-                  : dirt35 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt35 >> (myLoc.x - 5)
+                  : dirt35 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt36 >> (loc.x - 5)
-                  : dirt36 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt36 >> (myLoc.x - 5)
+                  : dirt36 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt36 >> (loc.x - 5)
-                  : dirt36 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt36 >> (myLoc.x - 5)
+                  : dirt36 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt37 >> (loc.x - 5)
-                  : dirt37 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt37 >> (myLoc.x - 5)
+                  : dirt37 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt38 >> (loc.x - 5)
-                  : dirt38 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt38 >> (myLoc.x - 5)
+                  : dirt38 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt39 >> (loc.x - 5)
-                  : dirt39 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt39 >> (myLoc.x - 5)
+                  : dirt39 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt40 >> (loc.x - 5)
-                  : dirt40 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt40 >> (myLoc.x - 5)
+                  : dirt40 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt41 >> (loc.x - 5)
-                  : dirt41 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt41 >> (myLoc.x - 5)
+                  : dirt41 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 37 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt32 >> (loc.x - 5)
-                  : dirt32 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt32 >> (myLoc.x - 5)
+                  : dirt32 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt33 >> (loc.x - 5)
-                  : dirt33 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt33 >> (myLoc.x - 5)
+                  : dirt33 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt34 >> (loc.x - 5)
-                  : dirt34 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt34 >> (myLoc.x - 5)
+                  : dirt34 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt35 >> (loc.x - 5)
-                  : dirt35 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt35 >> (myLoc.x - 5)
+                  : dirt35 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt36 >> (loc.x - 5)
-                  : dirt36 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt36 >> (myLoc.x - 5)
+                  : dirt36 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt37 >> (loc.x - 5)
-                  : dirt37 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt37 >> (myLoc.x - 5)
+                  : dirt37 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt37 >> (loc.x - 5)
-                  : dirt37 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt37 >> (myLoc.x - 5)
+                  : dirt37 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt38 >> (loc.x - 5)
-                  : dirt38 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt38 >> (myLoc.x - 5)
+                  : dirt38 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt39 >> (loc.x - 5)
-                  : dirt39 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt39 >> (myLoc.x - 5)
+                  : dirt39 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt40 >> (loc.x - 5)
-                  : dirt40 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt40 >> (myLoc.x - 5)
+                  : dirt40 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt41 >> (loc.x - 5)
-                  : dirt41 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt41 >> (myLoc.x - 5)
+                  : dirt41 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt42 >> (loc.x - 5)
-                  : dirt42 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt42 >> (myLoc.x - 5)
+                  : dirt42 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 38 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt33 >> (loc.x - 5)
-                  : dirt33 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt33 >> (myLoc.x - 5)
+                  : dirt33 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt34 >> (loc.x - 5)
-                  : dirt34 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt34 >> (myLoc.x - 5)
+                  : dirt34 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt35 >> (loc.x - 5)
-                  : dirt35 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt35 >> (myLoc.x - 5)
+                  : dirt35 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt36 >> (loc.x - 5)
-                  : dirt36 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt36 >> (myLoc.x - 5)
+                  : dirt36 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt37 >> (loc.x - 5)
-                  : dirt37 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt37 >> (myLoc.x - 5)
+                  : dirt37 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt38 >> (loc.x - 5)
-                  : dirt38 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt38 >> (myLoc.x - 5)
+                  : dirt38 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt38 >> (loc.x - 5)
-                  : dirt38 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt38 >> (myLoc.x - 5)
+                  : dirt38 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt39 >> (loc.x - 5)
-                  : dirt39 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt39 >> (myLoc.x - 5)
+                  : dirt39 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt40 >> (loc.x - 5)
-                  : dirt40 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt40 >> (myLoc.x - 5)
+                  : dirt40 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt41 >> (loc.x - 5)
-                  : dirt41 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt41 >> (myLoc.x - 5)
+                  : dirt41 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt42 >> (loc.x - 5)
-                  : dirt42 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt42 >> (myLoc.x - 5)
+                  : dirt42 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt43 >> (loc.x - 5)
-                  : dirt43 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt43 >> (myLoc.x - 5)
+                  : dirt43 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 39 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt34 >> (loc.x - 5)
-                  : dirt34 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt34 >> (myLoc.x - 5)
+                  : dirt34 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt35 >> (loc.x - 5)
-                  : dirt35 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt35 >> (myLoc.x - 5)
+                  : dirt35 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt36 >> (loc.x - 5)
-                  : dirt36 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt36 >> (myLoc.x - 5)
+                  : dirt36 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt37 >> (loc.x - 5)
-                  : dirt37 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt37 >> (myLoc.x - 5)
+                  : dirt37 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt38 >> (loc.x - 5)
-                  : dirt38 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt38 >> (myLoc.x - 5)
+                  : dirt38 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt39 >> (loc.x - 5)
-                  : dirt39 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt39 >> (myLoc.x - 5)
+                  : dirt39 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt39 >> (loc.x - 5)
-                  : dirt39 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt39 >> (myLoc.x - 5)
+                  : dirt39 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt40 >> (loc.x - 5)
-                  : dirt40 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt40 >> (myLoc.x - 5)
+                  : dirt40 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt41 >> (loc.x - 5)
-                  : dirt41 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt41 >> (myLoc.x - 5)
+                  : dirt41 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt42 >> (loc.x - 5)
-                  : dirt42 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt42 >> (myLoc.x - 5)
+                  : dirt42 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt43 >> (loc.x - 5)
-                  : dirt43 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt43 >> (myLoc.x - 5)
+                  : dirt43 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt44 >> (loc.x - 5)
-                  : dirt44 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt44 >> (myLoc.x - 5)
+                  : dirt44 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 40 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt35 >> (loc.x - 5)
-                  : dirt35 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt35 >> (myLoc.x - 5)
+                  : dirt35 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt36 >> (loc.x - 5)
-                  : dirt36 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt36 >> (myLoc.x - 5)
+                  : dirt36 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt37 >> (loc.x - 5)
-                  : dirt37 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt37 >> (myLoc.x - 5)
+                  : dirt37 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt38 >> (loc.x - 5)
-                  : dirt38 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt38 >> (myLoc.x - 5)
+                  : dirt38 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt39 >> (loc.x - 5)
-                  : dirt39 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt39 >> (myLoc.x - 5)
+                  : dirt39 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt40 >> (loc.x - 5)
-                  : dirt40 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt40 >> (myLoc.x - 5)
+                  : dirt40 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt40 >> (loc.x - 5)
-                  : dirt40 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt40 >> (myLoc.x - 5)
+                  : dirt40 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt41 >> (loc.x - 5)
-                  : dirt41 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt41 >> (myLoc.x - 5)
+                  : dirt41 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt42 >> (loc.x - 5)
-                  : dirt42 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt42 >> (myLoc.x - 5)
+                  : dirt42 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt43 >> (loc.x - 5)
-                  : dirt43 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt43 >> (myLoc.x - 5)
+                  : dirt43 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt44 >> (loc.x - 5)
-                  : dirt44 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt44 >> (myLoc.x - 5)
+                  : dirt44 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt45 >> (loc.x - 5)
-                  : dirt45 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt45 >> (myLoc.x - 5)
+                  : dirt45 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 41 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt36 >> (loc.x - 5)
-                  : dirt36 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt36 >> (myLoc.x - 5)
+                  : dirt36 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt37 >> (loc.x - 5)
-                  : dirt37 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt37 >> (myLoc.x - 5)
+                  : dirt37 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt38 >> (loc.x - 5)
-                  : dirt38 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt38 >> (myLoc.x - 5)
+                  : dirt38 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt39 >> (loc.x - 5)
-                  : dirt39 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt39 >> (myLoc.x - 5)
+                  : dirt39 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt40 >> (loc.x - 5)
-                  : dirt40 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt40 >> (myLoc.x - 5)
+                  : dirt40 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt41 >> (loc.x - 5)
-                  : dirt41 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt41 >> (myLoc.x - 5)
+                  : dirt41 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt41 >> (loc.x - 5)
-                  : dirt41 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt41 >> (myLoc.x - 5)
+                  : dirt41 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt42 >> (loc.x - 5)
-                  : dirt42 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt42 >> (myLoc.x - 5)
+                  : dirt42 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt43 >> (loc.x - 5)
-                  : dirt43 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt43 >> (myLoc.x - 5)
+                  : dirt43 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt44 >> (loc.x - 5)
-                  : dirt44 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt44 >> (myLoc.x - 5)
+                  : dirt44 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt45 >> (loc.x - 5)
-                  : dirt45 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt45 >> (myLoc.x - 5)
+                  : dirt45 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt46 >> (loc.x - 5)
-                  : dirt46 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt46 >> (myLoc.x - 5)
+                  : dirt46 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 42 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt37 >> (loc.x - 5)
-                  : dirt37 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt37 >> (myLoc.x - 5)
+                  : dirt37 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt38 >> (loc.x - 5)
-                  : dirt38 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt38 >> (myLoc.x - 5)
+                  : dirt38 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt39 >> (loc.x - 5)
-                  : dirt39 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt39 >> (myLoc.x - 5)
+                  : dirt39 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt40 >> (loc.x - 5)
-                  : dirt40 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt40 >> (myLoc.x - 5)
+                  : dirt40 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt41 >> (loc.x - 5)
-                  : dirt41 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt41 >> (myLoc.x - 5)
+                  : dirt41 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt42 >> (loc.x - 5)
-                  : dirt42 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt42 >> (myLoc.x - 5)
+                  : dirt42 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt42 >> (loc.x - 5)
-                  : dirt42 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt42 >> (myLoc.x - 5)
+                  : dirt42 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt43 >> (loc.x - 5)
-                  : dirt43 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt43 >> (myLoc.x - 5)
+                  : dirt43 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt44 >> (loc.x - 5)
-                  : dirt44 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt44 >> (myLoc.x - 5)
+                  : dirt44 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt45 >> (loc.x - 5)
-                  : dirt45 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt45 >> (myLoc.x - 5)
+                  : dirt45 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt46 >> (loc.x - 5)
-                  : dirt46 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt46 >> (myLoc.x - 5)
+                  : dirt46 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt47 >> (loc.x - 5)
-                  : dirt47 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt47 >> (myLoc.x - 5)
+                  : dirt47 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 43 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt38 >> (loc.x - 5)
-                  : dirt38 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt38 >> (myLoc.x - 5)
+                  : dirt38 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt39 >> (loc.x - 5)
-                  : dirt39 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt39 >> (myLoc.x - 5)
+                  : dirt39 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt40 >> (loc.x - 5)
-                  : dirt40 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt40 >> (myLoc.x - 5)
+                  : dirt40 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt41 >> (loc.x - 5)
-                  : dirt41 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt41 >> (myLoc.x - 5)
+                  : dirt41 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt42 >> (loc.x - 5)
-                  : dirt42 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt42 >> (myLoc.x - 5)
+                  : dirt42 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt43 >> (loc.x - 5)
-                  : dirt43 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt43 >> (myLoc.x - 5)
+                  : dirt43 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt43 >> (loc.x - 5)
-                  : dirt43 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt43 >> (myLoc.x - 5)
+                  : dirt43 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt44 >> (loc.x - 5)
-                  : dirt44 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt44 >> (myLoc.x - 5)
+                  : dirt44 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt45 >> (loc.x - 5)
-                  : dirt45 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt45 >> (myLoc.x - 5)
+                  : dirt45 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt46 >> (loc.x - 5)
-                  : dirt46 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt46 >> (myLoc.x - 5)
+                  : dirt46 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt47 >> (loc.x - 5)
-                  : dirt47 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt47 >> (myLoc.x - 5)
+                  : dirt47 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt48 >> (loc.x - 5)
-                  : dirt48 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt48 >> (myLoc.x - 5)
+                  : dirt48 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 44 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt39 >> (loc.x - 5)
-                  : dirt39 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt39 >> (myLoc.x - 5)
+                  : dirt39 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt40 >> (loc.x - 5)
-                  : dirt40 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt40 >> (myLoc.x - 5)
+                  : dirt40 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt41 >> (loc.x - 5)
-                  : dirt41 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt41 >> (myLoc.x - 5)
+                  : dirt41 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt42 >> (loc.x - 5)
-                  : dirt42 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt42 >> (myLoc.x - 5)
+                  : dirt42 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt43 >> (loc.x - 5)
-                  : dirt43 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt43 >> (myLoc.x - 5)
+                  : dirt43 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt44 >> (loc.x - 5)
-                  : dirt44 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt44 >> (myLoc.x - 5)
+                  : dirt44 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt44 >> (loc.x - 5)
-                  : dirt44 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt44 >> (myLoc.x - 5)
+                  : dirt44 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt45 >> (loc.x - 5)
-                  : dirt45 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt45 >> (myLoc.x - 5)
+                  : dirt45 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt46 >> (loc.x - 5)
-                  : dirt46 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt46 >> (myLoc.x - 5)
+                  : dirt46 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt47 >> (loc.x - 5)
-                  : dirt47 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt47 >> (myLoc.x - 5)
+                  : dirt47 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt48 >> (loc.x - 5)
-                  : dirt48 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt48 >> (myLoc.x - 5)
+                  : dirt48 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt49 >> (loc.x - 5)
-                  : dirt49 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt49 >> (myLoc.x - 5)
+                  : dirt49 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 45 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt40 >> (loc.x - 5)
-                  : dirt40 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt40 >> (myLoc.x - 5)
+                  : dirt40 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt41 >> (loc.x - 5)
-                  : dirt41 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt41 >> (myLoc.x - 5)
+                  : dirt41 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt42 >> (loc.x - 5)
-                  : dirt42 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt42 >> (myLoc.x - 5)
+                  : dirt42 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt43 >> (loc.x - 5)
-                  : dirt43 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt43 >> (myLoc.x - 5)
+                  : dirt43 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt44 >> (loc.x - 5)
-                  : dirt44 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt44 >> (myLoc.x - 5)
+                  : dirt44 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt45 >> (loc.x - 5)
-                  : dirt45 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt45 >> (myLoc.x - 5)
+                  : dirt45 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt45 >> (loc.x - 5)
-                  : dirt45 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt45 >> (myLoc.x - 5)
+                  : dirt45 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt46 >> (loc.x - 5)
-                  : dirt46 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt46 >> (myLoc.x - 5)
+                  : dirt46 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt47 >> (loc.x - 5)
-                  : dirt47 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt47 >> (myLoc.x - 5)
+                  : dirt47 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt48 >> (loc.x - 5)
-                  : dirt48 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt48 >> (myLoc.x - 5)
+                  : dirt48 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt49 >> (loc.x - 5)
-                  : dirt49 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt49 >> (myLoc.x - 5)
+                  : dirt49 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt50 >> (loc.x - 5)
-                  : dirt50 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt50 >> (myLoc.x - 5)
+                  : dirt50 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 46 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt41 >> (loc.x - 5)
-                  : dirt41 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt41 >> (myLoc.x - 5)
+                  : dirt41 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt42 >> (loc.x - 5)
-                  : dirt42 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt42 >> (myLoc.x - 5)
+                  : dirt42 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt43 >> (loc.x - 5)
-                  : dirt43 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt43 >> (myLoc.x - 5)
+                  : dirt43 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt44 >> (loc.x - 5)
-                  : dirt44 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt44 >> (myLoc.x - 5)
+                  : dirt44 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt45 >> (loc.x - 5)
-                  : dirt45 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt45 >> (myLoc.x - 5)
+                  : dirt45 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt46 >> (loc.x - 5)
-                  : dirt46 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt46 >> (myLoc.x - 5)
+                  : dirt46 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt46 >> (loc.x - 5)
-                  : dirt46 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt46 >> (myLoc.x - 5)
+                  : dirt46 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt47 >> (loc.x - 5)
-                  : dirt47 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt47 >> (myLoc.x - 5)
+                  : dirt47 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt48 >> (loc.x - 5)
-                  : dirt48 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt48 >> (myLoc.x - 5)
+                  : dirt48 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt49 >> (loc.x - 5)
-                  : dirt49 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt49 >> (myLoc.x - 5)
+                  : dirt49 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt50 >> (loc.x - 5)
-                  : dirt50 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt50 >> (myLoc.x - 5)
+                  : dirt50 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt51 >> (loc.x - 5)
-                  : dirt51 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt51 >> (myLoc.x - 5)
+                  : dirt51 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 47 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt42 >> (loc.x - 5)
-                  : dirt42 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt42 >> (myLoc.x - 5)
+                  : dirt42 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt43 >> (loc.x - 5)
-                  : dirt43 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt43 >> (myLoc.x - 5)
+                  : dirt43 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt44 >> (loc.x - 5)
-                  : dirt44 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt44 >> (myLoc.x - 5)
+                  : dirt44 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt45 >> (loc.x - 5)
-                  : dirt45 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt45 >> (myLoc.x - 5)
+                  : dirt45 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt46 >> (loc.x - 5)
-                  : dirt46 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt46 >> (myLoc.x - 5)
+                  : dirt46 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt47 >> (loc.x - 5)
-                  : dirt47 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt47 >> (myLoc.x - 5)
+                  : dirt47 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt47 >> (loc.x - 5)
-                  : dirt47 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt47 >> (myLoc.x - 5)
+                  : dirt47 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt48 >> (loc.x - 5)
-                  : dirt48 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt48 >> (myLoc.x - 5)
+                  : dirt48 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt49 >> (loc.x - 5)
-                  : dirt49 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt49 >> (myLoc.x - 5)
+                  : dirt49 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt50 >> (loc.x - 5)
-                  : dirt50 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt50 >> (myLoc.x - 5)
+                  : dirt50 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt51 >> (loc.x - 5)
-                  : dirt51 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt51 >> (myLoc.x - 5)
+                  : dirt51 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt52 >> (loc.x - 5)
-                  : dirt52 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt52 >> (myLoc.x - 5)
+                  : dirt52 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 48 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt43 >> (loc.x - 5)
-                  : dirt43 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt43 >> (myLoc.x - 5)
+                  : dirt43 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt44 >> (loc.x - 5)
-                  : dirt44 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt44 >> (myLoc.x - 5)
+                  : dirt44 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt45 >> (loc.x - 5)
-                  : dirt45 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt45 >> (myLoc.x - 5)
+                  : dirt45 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt46 >> (loc.x - 5)
-                  : dirt46 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt46 >> (myLoc.x - 5)
+                  : dirt46 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt47 >> (loc.x - 5)
-                  : dirt47 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt47 >> (myLoc.x - 5)
+                  : dirt47 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt48 >> (loc.x - 5)
-                  : dirt48 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt48 >> (myLoc.x - 5)
+                  : dirt48 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt48 >> (loc.x - 5)
-                  : dirt48 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt48 >> (myLoc.x - 5)
+                  : dirt48 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt49 >> (loc.x - 5)
-                  : dirt49 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt49 >> (myLoc.x - 5)
+                  : dirt49 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt50 >> (loc.x - 5)
-                  : dirt50 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt50 >> (myLoc.x - 5)
+                  : dirt50 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt51 >> (loc.x - 5)
-                  : dirt51 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt51 >> (myLoc.x - 5)
+                  : dirt51 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt52 >> (loc.x - 5)
-                  : dirt52 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt52 >> (myLoc.x - 5)
+                  : dirt52 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt53 >> (loc.x - 5)
-                  : dirt53 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt53 >> (myLoc.x - 5)
+                  : dirt53 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 49 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt44 >> (loc.x - 5)
-                  : dirt44 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt44 >> (myLoc.x - 5)
+                  : dirt44 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt45 >> (loc.x - 5)
-                  : dirt45 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt45 >> (myLoc.x - 5)
+                  : dirt45 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt46 >> (loc.x - 5)
-                  : dirt46 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt46 >> (myLoc.x - 5)
+                  : dirt46 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt47 >> (loc.x - 5)
-                  : dirt47 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt47 >> (myLoc.x - 5)
+                  : dirt47 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt48 >> (loc.x - 5)
-                  : dirt48 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt48 >> (myLoc.x - 5)
+                  : dirt48 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt49 >> (loc.x - 5)
-                  : dirt49 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt49 >> (myLoc.x - 5)
+                  : dirt49 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt49 >> (loc.x - 5)
-                  : dirt49 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt49 >> (myLoc.x - 5)
+                  : dirt49 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt50 >> (loc.x - 5)
-                  : dirt50 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt50 >> (myLoc.x - 5)
+                  : dirt50 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt51 >> (loc.x - 5)
-                  : dirt51 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt51 >> (myLoc.x - 5)
+                  : dirt51 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt52 >> (loc.x - 5)
-                  : dirt52 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt52 >> (myLoc.x - 5)
+                  : dirt52 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt53 >> (loc.x - 5)
-                  : dirt53 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt53 >> (myLoc.x - 5)
+                  : dirt53 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt54 >> (loc.x - 5)
-                  : dirt54 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt54 >> (myLoc.x - 5)
+                  : dirt54 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 50 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt45 >> (loc.x - 5)
-                  : dirt45 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt45 >> (myLoc.x - 5)
+                  : dirt45 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt46 >> (loc.x - 5)
-                  : dirt46 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt46 >> (myLoc.x - 5)
+                  : dirt46 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt47 >> (loc.x - 5)
-                  : dirt47 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt47 >> (myLoc.x - 5)
+                  : dirt47 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt48 >> (loc.x - 5)
-                  : dirt48 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt48 >> (myLoc.x - 5)
+                  : dirt48 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt49 >> (loc.x - 5)
-                  : dirt49 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt49 >> (myLoc.x - 5)
+                  : dirt49 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt50 >> (loc.x - 5)
-                  : dirt50 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt50 >> (myLoc.x - 5)
+                  : dirt50 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt50 >> (loc.x - 5)
-                  : dirt50 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt50 >> (myLoc.x - 5)
+                  : dirt50 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt51 >> (loc.x - 5)
-                  : dirt51 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt51 >> (myLoc.x - 5)
+                  : dirt51 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt52 >> (loc.x - 5)
-                  : dirt52 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt52 >> (myLoc.x - 5)
+                  : dirt52 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt53 >> (loc.x - 5)
-                  : dirt53 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt53 >> (myLoc.x - 5)
+                  : dirt53 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt54 >> (loc.x - 5)
-                  : dirt54 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt54 >> (myLoc.x - 5)
+                  : dirt54 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt55 >> (loc.x - 5)
-                  : dirt55 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt55 >> (myLoc.x - 5)
+                  : dirt55 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 51 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt46 >> (loc.x - 5)
-                  : dirt46 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt46 >> (myLoc.x - 5)
+                  : dirt46 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt47 >> (loc.x - 5)
-                  : dirt47 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt47 >> (myLoc.x - 5)
+                  : dirt47 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt48 >> (loc.x - 5)
-                  : dirt48 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt48 >> (myLoc.x - 5)
+                  : dirt48 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt49 >> (loc.x - 5)
-                  : dirt49 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt49 >> (myLoc.x - 5)
+                  : dirt49 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt50 >> (loc.x - 5)
-                  : dirt50 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt50 >> (myLoc.x - 5)
+                  : dirt50 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt51 >> (loc.x - 5)
-                  : dirt51 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt51 >> (myLoc.x - 5)
+                  : dirt51 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt51 >> (loc.x - 5)
-                  : dirt51 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt51 >> (myLoc.x - 5)
+                  : dirt51 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt52 >> (loc.x - 5)
-                  : dirt52 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt52 >> (myLoc.x - 5)
+                  : dirt52 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt53 >> (loc.x - 5)
-                  : dirt53 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt53 >> (myLoc.x - 5)
+                  : dirt53 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt54 >> (loc.x - 5)
-                  : dirt54 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt54 >> (myLoc.x - 5)
+                  : dirt54 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt55 >> (loc.x - 5)
-                  : dirt55 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt55 >> (myLoc.x - 5)
+                  : dirt55 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt56 >> (loc.x - 5)
-                  : dirt56 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt56 >> (myLoc.x - 5)
+                  : dirt56 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 52 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt47 >> (loc.x - 5)
-                  : dirt47 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt47 >> (myLoc.x - 5)
+                  : dirt47 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt48 >> (loc.x - 5)
-                  : dirt48 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt48 >> (myLoc.x - 5)
+                  : dirt48 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt49 >> (loc.x - 5)
-                  : dirt49 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt49 >> (myLoc.x - 5)
+                  : dirt49 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt50 >> (loc.x - 5)
-                  : dirt50 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt50 >> (myLoc.x - 5)
+                  : dirt50 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt51 >> (loc.x - 5)
-                  : dirt51 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt51 >> (myLoc.x - 5)
+                  : dirt51 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt52 >> (loc.x - 5)
-                  : dirt52 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt52 >> (myLoc.x - 5)
+                  : dirt52 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt52 >> (loc.x - 5)
-                  : dirt52 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt52 >> (myLoc.x - 5)
+                  : dirt52 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt53 >> (loc.x - 5)
-                  : dirt53 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt53 >> (myLoc.x - 5)
+                  : dirt53 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt54 >> (loc.x - 5)
-                  : dirt54 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt54 >> (myLoc.x - 5)
+                  : dirt54 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt55 >> (loc.x - 5)
-                  : dirt55 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt55 >> (myLoc.x - 5)
+                  : dirt55 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt56 >> (loc.x - 5)
-                  : dirt56 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt56 >> (myLoc.x - 5)
+                  : dirt56 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt57 >> (loc.x - 5)
-                  : dirt57 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt57 >> (myLoc.x - 5)
+                  : dirt57 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 53 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt48 >> (loc.x - 5)
-                  : dirt48 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt48 >> (myLoc.x - 5)
+                  : dirt48 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt49 >> (loc.x - 5)
-                  : dirt49 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt49 >> (myLoc.x - 5)
+                  : dirt49 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt50 >> (loc.x - 5)
-                  : dirt50 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt50 >> (myLoc.x - 5)
+                  : dirt50 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt51 >> (loc.x - 5)
-                  : dirt51 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt51 >> (myLoc.x - 5)
+                  : dirt51 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt52 >> (loc.x - 5)
-                  : dirt52 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt52 >> (myLoc.x - 5)
+                  : dirt52 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt53 >> (loc.x - 5)
-                  : dirt53 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt53 >> (myLoc.x - 5)
+                  : dirt53 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt53 >> (loc.x - 5)
-                  : dirt53 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt53 >> (myLoc.x - 5)
+                  : dirt53 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt54 >> (loc.x - 5)
-                  : dirt54 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt54 >> (myLoc.x - 5)
+                  : dirt54 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt55 >> (loc.x - 5)
-                  : dirt55 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt55 >> (myLoc.x - 5)
+                  : dirt55 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt56 >> (loc.x - 5)
-                  : dirt56 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt56 >> (myLoc.x - 5)
+                  : dirt56 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt57 >> (loc.x - 5)
-                  : dirt57 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt57 >> (myLoc.x - 5)
+                  : dirt57 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt58 >> (loc.x - 5)
-                  : dirt58 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt58 >> (myLoc.x - 5)
+                  : dirt58 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 54 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt49 >> (loc.x - 5)
-                  : dirt49 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt49 >> (myLoc.x - 5)
+                  : dirt49 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt50 >> (loc.x - 5)
-                  : dirt50 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt50 >> (myLoc.x - 5)
+                  : dirt50 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt51 >> (loc.x - 5)
-                  : dirt51 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt51 >> (myLoc.x - 5)
+                  : dirt51 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt52 >> (loc.x - 5)
-                  : dirt52 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt52 >> (myLoc.x - 5)
+                  : dirt52 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt53 >> (loc.x - 5)
-                  : dirt53 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt53 >> (myLoc.x - 5)
+                  : dirt53 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt54 >> (loc.x - 5)
-                  : dirt54 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt54 >> (myLoc.x - 5)
+                  : dirt54 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt54 >> (loc.x - 5)
-                  : dirt54 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt54 >> (myLoc.x - 5)
+                  : dirt54 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt55 >> (loc.x - 5)
-                  : dirt55 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt55 >> (myLoc.x - 5)
+                  : dirt55 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt56 >> (loc.x - 5)
-                  : dirt56 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt56 >> (myLoc.x - 5)
+                  : dirt56 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt57 >> (loc.x - 5)
-                  : dirt57 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt57 >> (myLoc.x - 5)
+                  : dirt57 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt58 >> (loc.x - 5)
-                  : dirt58 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt58 >> (myLoc.x - 5)
+                  : dirt58 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt59 >> (loc.x - 5)
-                  : dirt59 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt59 >> (myLoc.x - 5)
+                  : dirt59 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 55 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt50 >> (loc.x - 5)
-                  : dirt50 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt50 >> (myLoc.x - 5)
+                  : dirt50 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt51 >> (loc.x - 5)
-                  : dirt51 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt51 >> (myLoc.x - 5)
+                  : dirt51 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt52 >> (loc.x - 5)
-                  : dirt52 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt52 >> (myLoc.x - 5)
+                  : dirt52 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt53 >> (loc.x - 5)
-                  : dirt53 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt53 >> (myLoc.x - 5)
+                  : dirt53 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt54 >> (loc.x - 5)
-                  : dirt54 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt54 >> (myLoc.x - 5)
+                  : dirt54 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt55 >> (loc.x - 5)
-                  : dirt55 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt55 >> (myLoc.x - 5)
+                  : dirt55 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt55 >> (loc.x - 5)
-                  : dirt55 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt55 >> (myLoc.x - 5)
+                  : dirt55 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt56 >> (loc.x - 5)
-                  : dirt56 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt56 >> (myLoc.x - 5)
+                  : dirt56 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt57 >> (loc.x - 5)
-                  : dirt57 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt57 >> (myLoc.x - 5)
+                  : dirt57 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt58 >> (loc.x - 5)
-                  : dirt58 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt58 >> (myLoc.x - 5)
+                  : dirt58 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt59 >> (loc.x - 5)
-                  : dirt59 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt59 >> (myLoc.x - 5)
+                  : dirt59 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
             }
             case 56 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt51 >> (loc.x - 5)
-                  : dirt51 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt51 >> (myLoc.x - 5)
+                  : dirt51 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt52 >> (loc.x - 5)
-                  : dirt52 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt52 >> (myLoc.x - 5)
+                  : dirt52 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt53 >> (loc.x - 5)
-                  : dirt53 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt53 >> (myLoc.x - 5)
+                  : dirt53 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt54 >> (loc.x - 5)
-                  : dirt54 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt54 >> (myLoc.x - 5)
+                  : dirt54 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt55 >> (loc.x - 5)
-                  : dirt55 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt55 >> (myLoc.x - 5)
+                  : dirt55 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt56 >> (loc.x - 5)
-                  : dirt56 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt56 >> (myLoc.x - 5)
+                  : dirt56 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt56 >> (loc.x - 5)
-                  : dirt56 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt56 >> (myLoc.x - 5)
+                  : dirt56 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt57 >> (loc.x - 5)
-                  : dirt57 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt57 >> (myLoc.x - 5)
+                  : dirt57 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt58 >> (loc.x - 5)
-                  : dirt58 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt58 >> (myLoc.x - 5)
+                  : dirt58 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt59 >> (loc.x - 5)
-                  : dirt59 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt59 >> (myLoc.x - 5)
+                  : dirt59 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
             }
             case 57 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt52 >> (loc.x - 5)
-                  : dirt52 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt52 >> (myLoc.x - 5)
+                  : dirt52 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt53 >> (loc.x - 5)
-                  : dirt53 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt53 >> (myLoc.x - 5)
+                  : dirt53 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt54 >> (loc.x - 5)
-                  : dirt54 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt54 >> (myLoc.x - 5)
+                  : dirt54 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt55 >> (loc.x - 5)
-                  : dirt55 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt55 >> (myLoc.x - 5)
+                  : dirt55 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt56 >> (loc.x - 5)
-                  : dirt56 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt56 >> (myLoc.x - 5)
+                  : dirt56 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt57 >> (loc.x - 5)
-                  : dirt57 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt57 >> (myLoc.x - 5)
+                  : dirt57 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt57 >> (loc.x - 5)
-                  : dirt57 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt57 >> (myLoc.x - 5)
+                  : dirt57 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt58 >> (loc.x - 5)
-                  : dirt58 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt58 >> (myLoc.x - 5)
+                  : dirt58 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt59 >> (loc.x - 5)
-                  : dirt59 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt59 >> (myLoc.x - 5)
+                  : dirt59 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
             }
             case 58 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt53 >> (loc.x - 5)
-                  : dirt53 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt53 >> (myLoc.x - 5)
+                  : dirt53 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt54 >> (loc.x - 5)
-                  : dirt54 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt54 >> (myLoc.x - 5)
+                  : dirt54 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt55 >> (loc.x - 5)
-                  : dirt55 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt55 >> (myLoc.x - 5)
+                  : dirt55 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt56 >> (loc.x - 5)
-                  : dirt56 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt56 >> (myLoc.x - 5)
+                  : dirt56 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt57 >> (loc.x - 5)
-                  : dirt57 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt57 >> (myLoc.x - 5)
+                  : dirt57 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt58 >> (loc.x - 5)
-                  : dirt58 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt58 >> (myLoc.x - 5)
+                  : dirt58 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt58 >> (loc.x - 5)
-                  : dirt58 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt58 >> (myLoc.x - 5)
+                  : dirt58 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt59 >> (loc.x - 5)
-                  : dirt59 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt59 >> (myLoc.x - 5)
+                  : dirt59 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
             }
             case 59 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt54 >> (loc.x - 5)
-                  : dirt54 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt54 >> (myLoc.x - 5)
+                  : dirt54 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt55 >> (loc.x - 5)
-                  : dirt55 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt55 >> (myLoc.x - 5)
+                  : dirt55 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt56 >> (loc.x - 5)
-                  : dirt56 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt56 >> (myLoc.x - 5)
+                  : dirt56 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt57 >> (loc.x - 5)
-                  : dirt57 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt57 >> (myLoc.x - 5)
+                  : dirt57 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt58 >> (loc.x - 5)
-                  : dirt58 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt58 >> (myLoc.x - 5)
+                  : dirt58 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localDirt0 |=                 ((loc.x - 5 >= 0
-                  ? dirt59 >> (loc.x - 5)
-                  : dirt59 << (5 - loc.x))
+                localDirt0 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt59 >> (myLoc.x - 5)
+                  : dirt59 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localDirt1 |=                 ((loc.x - 5 >= 0
-                  ? dirt59 >> (loc.x - 5)
-                  : dirt59 << (5 - loc.x))
+                localDirt1 |=                 ((myLoc.x - 5 >= 0
+                  ? dirt59 >> (myLoc.x - 5)
+                  : dirt59 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
             }
         }
     }
     private static void computeLocalPassable() {
-        var loc = rc.getLocation();
         localPassable0 = 0;
         localPassable1 = 0;
-        switch(loc.y) {
+        switch(myLoc.y) {
             case 0 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable0 >> (loc.x - 5)
-                  : passable0 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable0 >> (myLoc.x - 5)
+                  : passable0 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable0 >> (loc.x - 5)
-                  : passable0 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable0 >> (myLoc.x - 5)
+                  : passable0 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable1 >> (loc.x - 5)
-                  : passable1 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable1 >> (myLoc.x - 5)
+                  : passable1 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable2 >> (loc.x - 5)
-                  : passable2 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable2 >> (myLoc.x - 5)
+                  : passable2 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable3 >> (loc.x - 5)
-                  : passable3 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable3 >> (myLoc.x - 5)
+                  : passable3 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable4 >> (loc.x - 5)
-                  : passable4 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable4 >> (myLoc.x - 5)
+                  : passable4 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable5 >> (loc.x - 5)
-                  : passable5 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable5 >> (myLoc.x - 5)
+                  : passable5 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 1 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable0 >> (loc.x - 5)
-                  : passable0 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable0 >> (myLoc.x - 5)
+                  : passable0 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable1 >> (loc.x - 5)
-                  : passable1 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable1 >> (myLoc.x - 5)
+                  : passable1 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable1 >> (loc.x - 5)
-                  : passable1 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable1 >> (myLoc.x - 5)
+                  : passable1 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable2 >> (loc.x - 5)
-                  : passable2 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable2 >> (myLoc.x - 5)
+                  : passable2 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable3 >> (loc.x - 5)
-                  : passable3 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable3 >> (myLoc.x - 5)
+                  : passable3 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable4 >> (loc.x - 5)
-                  : passable4 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable4 >> (myLoc.x - 5)
+                  : passable4 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable5 >> (loc.x - 5)
-                  : passable5 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable5 >> (myLoc.x - 5)
+                  : passable5 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable6 >> (loc.x - 5)
-                  : passable6 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable6 >> (myLoc.x - 5)
+                  : passable6 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 2 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable0 >> (loc.x - 5)
-                  : passable0 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable0 >> (myLoc.x - 5)
+                  : passable0 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable1 >> (loc.x - 5)
-                  : passable1 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable1 >> (myLoc.x - 5)
+                  : passable1 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable2 >> (loc.x - 5)
-                  : passable2 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable2 >> (myLoc.x - 5)
+                  : passable2 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable2 >> (loc.x - 5)
-                  : passable2 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable2 >> (myLoc.x - 5)
+                  : passable2 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable3 >> (loc.x - 5)
-                  : passable3 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable3 >> (myLoc.x - 5)
+                  : passable3 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable4 >> (loc.x - 5)
-                  : passable4 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable4 >> (myLoc.x - 5)
+                  : passable4 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable5 >> (loc.x - 5)
-                  : passable5 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable5 >> (myLoc.x - 5)
+                  : passable5 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable6 >> (loc.x - 5)
-                  : passable6 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable6 >> (myLoc.x - 5)
+                  : passable6 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable7 >> (loc.x - 5)
-                  : passable7 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable7 >> (myLoc.x - 5)
+                  : passable7 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 3 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable0 >> (loc.x - 5)
-                  : passable0 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable0 >> (myLoc.x - 5)
+                  : passable0 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable1 >> (loc.x - 5)
-                  : passable1 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable1 >> (myLoc.x - 5)
+                  : passable1 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable2 >> (loc.x - 5)
-                  : passable2 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable2 >> (myLoc.x - 5)
+                  : passable2 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable3 >> (loc.x - 5)
-                  : passable3 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable3 >> (myLoc.x - 5)
+                  : passable3 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable3 >> (loc.x - 5)
-                  : passable3 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable3 >> (myLoc.x - 5)
+                  : passable3 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable4 >> (loc.x - 5)
-                  : passable4 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable4 >> (myLoc.x - 5)
+                  : passable4 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable5 >> (loc.x - 5)
-                  : passable5 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable5 >> (myLoc.x - 5)
+                  : passable5 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable6 >> (loc.x - 5)
-                  : passable6 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable6 >> (myLoc.x - 5)
+                  : passable6 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable7 >> (loc.x - 5)
-                  : passable7 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable7 >> (myLoc.x - 5)
+                  : passable7 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable8 >> (loc.x - 5)
-                  : passable8 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable8 >> (myLoc.x - 5)
+                  : passable8 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 4 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable0 >> (loc.x - 5)
-                  : passable0 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable0 >> (myLoc.x - 5)
+                  : passable0 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable1 >> (loc.x - 5)
-                  : passable1 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable1 >> (myLoc.x - 5)
+                  : passable1 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable2 >> (loc.x - 5)
-                  : passable2 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable2 >> (myLoc.x - 5)
+                  : passable2 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable3 >> (loc.x - 5)
-                  : passable3 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable3 >> (myLoc.x - 5)
+                  : passable3 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable4 >> (loc.x - 5)
-                  : passable4 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable4 >> (myLoc.x - 5)
+                  : passable4 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable4 >> (loc.x - 5)
-                  : passable4 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable4 >> (myLoc.x - 5)
+                  : passable4 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable5 >> (loc.x - 5)
-                  : passable5 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable5 >> (myLoc.x - 5)
+                  : passable5 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable6 >> (loc.x - 5)
-                  : passable6 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable6 >> (myLoc.x - 5)
+                  : passable6 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable7 >> (loc.x - 5)
-                  : passable7 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable7 >> (myLoc.x - 5)
+                  : passable7 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable8 >> (loc.x - 5)
-                  : passable8 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable8 >> (myLoc.x - 5)
+                  : passable8 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable9 >> (loc.x - 5)
-                  : passable9 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable9 >> (myLoc.x - 5)
+                  : passable9 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 5 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable0 >> (loc.x - 5)
-                  : passable0 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable0 >> (myLoc.x - 5)
+                  : passable0 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable1 >> (loc.x - 5)
-                  : passable1 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable1 >> (myLoc.x - 5)
+                  : passable1 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable2 >> (loc.x - 5)
-                  : passable2 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable2 >> (myLoc.x - 5)
+                  : passable2 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable3 >> (loc.x - 5)
-                  : passable3 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable3 >> (myLoc.x - 5)
+                  : passable3 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable4 >> (loc.x - 5)
-                  : passable4 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable4 >> (myLoc.x - 5)
+                  : passable4 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable5 >> (loc.x - 5)
-                  : passable5 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable5 >> (myLoc.x - 5)
+                  : passable5 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable5 >> (loc.x - 5)
-                  : passable5 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable5 >> (myLoc.x - 5)
+                  : passable5 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable6 >> (loc.x - 5)
-                  : passable6 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable6 >> (myLoc.x - 5)
+                  : passable6 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable7 >> (loc.x - 5)
-                  : passable7 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable7 >> (myLoc.x - 5)
+                  : passable7 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable8 >> (loc.x - 5)
-                  : passable8 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable8 >> (myLoc.x - 5)
+                  : passable8 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable9 >> (loc.x - 5)
-                  : passable9 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable9 >> (myLoc.x - 5)
+                  : passable9 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable10 >> (loc.x - 5)
-                  : passable10 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable10 >> (myLoc.x - 5)
+                  : passable10 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 6 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable1 >> (loc.x - 5)
-                  : passable1 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable1 >> (myLoc.x - 5)
+                  : passable1 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable2 >> (loc.x - 5)
-                  : passable2 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable2 >> (myLoc.x - 5)
+                  : passable2 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable3 >> (loc.x - 5)
-                  : passable3 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable3 >> (myLoc.x - 5)
+                  : passable3 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable4 >> (loc.x - 5)
-                  : passable4 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable4 >> (myLoc.x - 5)
+                  : passable4 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable5 >> (loc.x - 5)
-                  : passable5 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable5 >> (myLoc.x - 5)
+                  : passable5 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable6 >> (loc.x - 5)
-                  : passable6 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable6 >> (myLoc.x - 5)
+                  : passable6 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable6 >> (loc.x - 5)
-                  : passable6 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable6 >> (myLoc.x - 5)
+                  : passable6 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable7 >> (loc.x - 5)
-                  : passable7 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable7 >> (myLoc.x - 5)
+                  : passable7 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable8 >> (loc.x - 5)
-                  : passable8 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable8 >> (myLoc.x - 5)
+                  : passable8 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable9 >> (loc.x - 5)
-                  : passable9 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable9 >> (myLoc.x - 5)
+                  : passable9 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable10 >> (loc.x - 5)
-                  : passable10 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable10 >> (myLoc.x - 5)
+                  : passable10 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable11 >> (loc.x - 5)
-                  : passable11 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable11 >> (myLoc.x - 5)
+                  : passable11 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 7 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable2 >> (loc.x - 5)
-                  : passable2 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable2 >> (myLoc.x - 5)
+                  : passable2 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable3 >> (loc.x - 5)
-                  : passable3 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable3 >> (myLoc.x - 5)
+                  : passable3 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable4 >> (loc.x - 5)
-                  : passable4 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable4 >> (myLoc.x - 5)
+                  : passable4 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable5 >> (loc.x - 5)
-                  : passable5 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable5 >> (myLoc.x - 5)
+                  : passable5 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable6 >> (loc.x - 5)
-                  : passable6 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable6 >> (myLoc.x - 5)
+                  : passable6 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable7 >> (loc.x - 5)
-                  : passable7 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable7 >> (myLoc.x - 5)
+                  : passable7 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable7 >> (loc.x - 5)
-                  : passable7 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable7 >> (myLoc.x - 5)
+                  : passable7 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable8 >> (loc.x - 5)
-                  : passable8 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable8 >> (myLoc.x - 5)
+                  : passable8 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable9 >> (loc.x - 5)
-                  : passable9 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable9 >> (myLoc.x - 5)
+                  : passable9 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable10 >> (loc.x - 5)
-                  : passable10 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable10 >> (myLoc.x - 5)
+                  : passable10 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable11 >> (loc.x - 5)
-                  : passable11 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable11 >> (myLoc.x - 5)
+                  : passable11 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable12 >> (loc.x - 5)
-                  : passable12 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable12 >> (myLoc.x - 5)
+                  : passable12 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 8 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable3 >> (loc.x - 5)
-                  : passable3 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable3 >> (myLoc.x - 5)
+                  : passable3 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable4 >> (loc.x - 5)
-                  : passable4 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable4 >> (myLoc.x - 5)
+                  : passable4 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable5 >> (loc.x - 5)
-                  : passable5 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable5 >> (myLoc.x - 5)
+                  : passable5 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable6 >> (loc.x - 5)
-                  : passable6 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable6 >> (myLoc.x - 5)
+                  : passable6 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable7 >> (loc.x - 5)
-                  : passable7 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable7 >> (myLoc.x - 5)
+                  : passable7 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable8 >> (loc.x - 5)
-                  : passable8 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable8 >> (myLoc.x - 5)
+                  : passable8 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable8 >> (loc.x - 5)
-                  : passable8 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable8 >> (myLoc.x - 5)
+                  : passable8 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable9 >> (loc.x - 5)
-                  : passable9 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable9 >> (myLoc.x - 5)
+                  : passable9 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable10 >> (loc.x - 5)
-                  : passable10 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable10 >> (myLoc.x - 5)
+                  : passable10 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable11 >> (loc.x - 5)
-                  : passable11 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable11 >> (myLoc.x - 5)
+                  : passable11 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable12 >> (loc.x - 5)
-                  : passable12 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable12 >> (myLoc.x - 5)
+                  : passable12 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable13 >> (loc.x - 5)
-                  : passable13 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable13 >> (myLoc.x - 5)
+                  : passable13 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 9 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable4 >> (loc.x - 5)
-                  : passable4 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable4 >> (myLoc.x - 5)
+                  : passable4 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable5 >> (loc.x - 5)
-                  : passable5 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable5 >> (myLoc.x - 5)
+                  : passable5 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable6 >> (loc.x - 5)
-                  : passable6 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable6 >> (myLoc.x - 5)
+                  : passable6 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable7 >> (loc.x - 5)
-                  : passable7 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable7 >> (myLoc.x - 5)
+                  : passable7 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable8 >> (loc.x - 5)
-                  : passable8 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable8 >> (myLoc.x - 5)
+                  : passable8 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable9 >> (loc.x - 5)
-                  : passable9 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable9 >> (myLoc.x - 5)
+                  : passable9 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable9 >> (loc.x - 5)
-                  : passable9 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable9 >> (myLoc.x - 5)
+                  : passable9 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable10 >> (loc.x - 5)
-                  : passable10 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable10 >> (myLoc.x - 5)
+                  : passable10 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable11 >> (loc.x - 5)
-                  : passable11 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable11 >> (myLoc.x - 5)
+                  : passable11 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable12 >> (loc.x - 5)
-                  : passable12 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable12 >> (myLoc.x - 5)
+                  : passable12 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable13 >> (loc.x - 5)
-                  : passable13 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable13 >> (myLoc.x - 5)
+                  : passable13 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable14 >> (loc.x - 5)
-                  : passable14 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable14 >> (myLoc.x - 5)
+                  : passable14 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 10 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable5 >> (loc.x - 5)
-                  : passable5 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable5 >> (myLoc.x - 5)
+                  : passable5 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable6 >> (loc.x - 5)
-                  : passable6 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable6 >> (myLoc.x - 5)
+                  : passable6 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable7 >> (loc.x - 5)
-                  : passable7 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable7 >> (myLoc.x - 5)
+                  : passable7 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable8 >> (loc.x - 5)
-                  : passable8 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable8 >> (myLoc.x - 5)
+                  : passable8 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable9 >> (loc.x - 5)
-                  : passable9 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable9 >> (myLoc.x - 5)
+                  : passable9 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable10 >> (loc.x - 5)
-                  : passable10 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable10 >> (myLoc.x - 5)
+                  : passable10 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable10 >> (loc.x - 5)
-                  : passable10 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable10 >> (myLoc.x - 5)
+                  : passable10 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable11 >> (loc.x - 5)
-                  : passable11 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable11 >> (myLoc.x - 5)
+                  : passable11 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable12 >> (loc.x - 5)
-                  : passable12 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable12 >> (myLoc.x - 5)
+                  : passable12 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable13 >> (loc.x - 5)
-                  : passable13 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable13 >> (myLoc.x - 5)
+                  : passable13 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable14 >> (loc.x - 5)
-                  : passable14 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable14 >> (myLoc.x - 5)
+                  : passable14 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable15 >> (loc.x - 5)
-                  : passable15 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable15 >> (myLoc.x - 5)
+                  : passable15 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 11 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable6 >> (loc.x - 5)
-                  : passable6 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable6 >> (myLoc.x - 5)
+                  : passable6 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable7 >> (loc.x - 5)
-                  : passable7 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable7 >> (myLoc.x - 5)
+                  : passable7 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable8 >> (loc.x - 5)
-                  : passable8 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable8 >> (myLoc.x - 5)
+                  : passable8 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable9 >> (loc.x - 5)
-                  : passable9 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable9 >> (myLoc.x - 5)
+                  : passable9 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable10 >> (loc.x - 5)
-                  : passable10 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable10 >> (myLoc.x - 5)
+                  : passable10 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable11 >> (loc.x - 5)
-                  : passable11 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable11 >> (myLoc.x - 5)
+                  : passable11 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable11 >> (loc.x - 5)
-                  : passable11 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable11 >> (myLoc.x - 5)
+                  : passable11 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable12 >> (loc.x - 5)
-                  : passable12 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable12 >> (myLoc.x - 5)
+                  : passable12 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable13 >> (loc.x - 5)
-                  : passable13 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable13 >> (myLoc.x - 5)
+                  : passable13 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable14 >> (loc.x - 5)
-                  : passable14 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable14 >> (myLoc.x - 5)
+                  : passable14 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable15 >> (loc.x - 5)
-                  : passable15 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable15 >> (myLoc.x - 5)
+                  : passable15 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable16 >> (loc.x - 5)
-                  : passable16 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable16 >> (myLoc.x - 5)
+                  : passable16 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 12 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable7 >> (loc.x - 5)
-                  : passable7 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable7 >> (myLoc.x - 5)
+                  : passable7 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable8 >> (loc.x - 5)
-                  : passable8 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable8 >> (myLoc.x - 5)
+                  : passable8 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable9 >> (loc.x - 5)
-                  : passable9 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable9 >> (myLoc.x - 5)
+                  : passable9 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable10 >> (loc.x - 5)
-                  : passable10 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable10 >> (myLoc.x - 5)
+                  : passable10 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable11 >> (loc.x - 5)
-                  : passable11 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable11 >> (myLoc.x - 5)
+                  : passable11 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable12 >> (loc.x - 5)
-                  : passable12 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable12 >> (myLoc.x - 5)
+                  : passable12 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable12 >> (loc.x - 5)
-                  : passable12 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable12 >> (myLoc.x - 5)
+                  : passable12 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable13 >> (loc.x - 5)
-                  : passable13 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable13 >> (myLoc.x - 5)
+                  : passable13 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable14 >> (loc.x - 5)
-                  : passable14 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable14 >> (myLoc.x - 5)
+                  : passable14 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable15 >> (loc.x - 5)
-                  : passable15 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable15 >> (myLoc.x - 5)
+                  : passable15 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable16 >> (loc.x - 5)
-                  : passable16 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable16 >> (myLoc.x - 5)
+                  : passable16 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable17 >> (loc.x - 5)
-                  : passable17 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable17 >> (myLoc.x - 5)
+                  : passable17 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 13 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable8 >> (loc.x - 5)
-                  : passable8 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable8 >> (myLoc.x - 5)
+                  : passable8 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable9 >> (loc.x - 5)
-                  : passable9 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable9 >> (myLoc.x - 5)
+                  : passable9 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable10 >> (loc.x - 5)
-                  : passable10 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable10 >> (myLoc.x - 5)
+                  : passable10 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable11 >> (loc.x - 5)
-                  : passable11 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable11 >> (myLoc.x - 5)
+                  : passable11 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable12 >> (loc.x - 5)
-                  : passable12 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable12 >> (myLoc.x - 5)
+                  : passable12 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable13 >> (loc.x - 5)
-                  : passable13 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable13 >> (myLoc.x - 5)
+                  : passable13 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable13 >> (loc.x - 5)
-                  : passable13 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable13 >> (myLoc.x - 5)
+                  : passable13 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable14 >> (loc.x - 5)
-                  : passable14 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable14 >> (myLoc.x - 5)
+                  : passable14 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable15 >> (loc.x - 5)
-                  : passable15 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable15 >> (myLoc.x - 5)
+                  : passable15 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable16 >> (loc.x - 5)
-                  : passable16 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable16 >> (myLoc.x - 5)
+                  : passable16 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable17 >> (loc.x - 5)
-                  : passable17 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable17 >> (myLoc.x - 5)
+                  : passable17 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable18 >> (loc.x - 5)
-                  : passable18 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable18 >> (myLoc.x - 5)
+                  : passable18 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 14 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable9 >> (loc.x - 5)
-                  : passable9 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable9 >> (myLoc.x - 5)
+                  : passable9 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable10 >> (loc.x - 5)
-                  : passable10 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable10 >> (myLoc.x - 5)
+                  : passable10 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable11 >> (loc.x - 5)
-                  : passable11 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable11 >> (myLoc.x - 5)
+                  : passable11 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable12 >> (loc.x - 5)
-                  : passable12 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable12 >> (myLoc.x - 5)
+                  : passable12 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable13 >> (loc.x - 5)
-                  : passable13 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable13 >> (myLoc.x - 5)
+                  : passable13 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable14 >> (loc.x - 5)
-                  : passable14 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable14 >> (myLoc.x - 5)
+                  : passable14 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable14 >> (loc.x - 5)
-                  : passable14 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable14 >> (myLoc.x - 5)
+                  : passable14 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable15 >> (loc.x - 5)
-                  : passable15 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable15 >> (myLoc.x - 5)
+                  : passable15 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable16 >> (loc.x - 5)
-                  : passable16 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable16 >> (myLoc.x - 5)
+                  : passable16 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable17 >> (loc.x - 5)
-                  : passable17 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable17 >> (myLoc.x - 5)
+                  : passable17 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable18 >> (loc.x - 5)
-                  : passable18 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable18 >> (myLoc.x - 5)
+                  : passable18 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable19 >> (loc.x - 5)
-                  : passable19 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable19 >> (myLoc.x - 5)
+                  : passable19 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 15 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable10 >> (loc.x - 5)
-                  : passable10 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable10 >> (myLoc.x - 5)
+                  : passable10 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable11 >> (loc.x - 5)
-                  : passable11 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable11 >> (myLoc.x - 5)
+                  : passable11 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable12 >> (loc.x - 5)
-                  : passable12 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable12 >> (myLoc.x - 5)
+                  : passable12 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable13 >> (loc.x - 5)
-                  : passable13 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable13 >> (myLoc.x - 5)
+                  : passable13 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable14 >> (loc.x - 5)
-                  : passable14 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable14 >> (myLoc.x - 5)
+                  : passable14 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable15 >> (loc.x - 5)
-                  : passable15 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable15 >> (myLoc.x - 5)
+                  : passable15 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable15 >> (loc.x - 5)
-                  : passable15 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable15 >> (myLoc.x - 5)
+                  : passable15 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable16 >> (loc.x - 5)
-                  : passable16 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable16 >> (myLoc.x - 5)
+                  : passable16 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable17 >> (loc.x - 5)
-                  : passable17 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable17 >> (myLoc.x - 5)
+                  : passable17 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable18 >> (loc.x - 5)
-                  : passable18 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable18 >> (myLoc.x - 5)
+                  : passable18 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable19 >> (loc.x - 5)
-                  : passable19 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable19 >> (myLoc.x - 5)
+                  : passable19 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable20 >> (loc.x - 5)
-                  : passable20 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable20 >> (myLoc.x - 5)
+                  : passable20 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 16 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable11 >> (loc.x - 5)
-                  : passable11 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable11 >> (myLoc.x - 5)
+                  : passable11 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable12 >> (loc.x - 5)
-                  : passable12 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable12 >> (myLoc.x - 5)
+                  : passable12 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable13 >> (loc.x - 5)
-                  : passable13 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable13 >> (myLoc.x - 5)
+                  : passable13 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable14 >> (loc.x - 5)
-                  : passable14 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable14 >> (myLoc.x - 5)
+                  : passable14 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable15 >> (loc.x - 5)
-                  : passable15 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable15 >> (myLoc.x - 5)
+                  : passable15 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable16 >> (loc.x - 5)
-                  : passable16 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable16 >> (myLoc.x - 5)
+                  : passable16 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable16 >> (loc.x - 5)
-                  : passable16 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable16 >> (myLoc.x - 5)
+                  : passable16 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable17 >> (loc.x - 5)
-                  : passable17 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable17 >> (myLoc.x - 5)
+                  : passable17 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable18 >> (loc.x - 5)
-                  : passable18 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable18 >> (myLoc.x - 5)
+                  : passable18 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable19 >> (loc.x - 5)
-                  : passable19 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable19 >> (myLoc.x - 5)
+                  : passable19 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable20 >> (loc.x - 5)
-                  : passable20 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable20 >> (myLoc.x - 5)
+                  : passable20 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable21 >> (loc.x - 5)
-                  : passable21 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable21 >> (myLoc.x - 5)
+                  : passable21 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 17 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable12 >> (loc.x - 5)
-                  : passable12 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable12 >> (myLoc.x - 5)
+                  : passable12 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable13 >> (loc.x - 5)
-                  : passable13 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable13 >> (myLoc.x - 5)
+                  : passable13 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable14 >> (loc.x - 5)
-                  : passable14 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable14 >> (myLoc.x - 5)
+                  : passable14 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable15 >> (loc.x - 5)
-                  : passable15 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable15 >> (myLoc.x - 5)
+                  : passable15 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable16 >> (loc.x - 5)
-                  : passable16 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable16 >> (myLoc.x - 5)
+                  : passable16 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable17 >> (loc.x - 5)
-                  : passable17 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable17 >> (myLoc.x - 5)
+                  : passable17 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable17 >> (loc.x - 5)
-                  : passable17 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable17 >> (myLoc.x - 5)
+                  : passable17 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable18 >> (loc.x - 5)
-                  : passable18 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable18 >> (myLoc.x - 5)
+                  : passable18 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable19 >> (loc.x - 5)
-                  : passable19 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable19 >> (myLoc.x - 5)
+                  : passable19 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable20 >> (loc.x - 5)
-                  : passable20 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable20 >> (myLoc.x - 5)
+                  : passable20 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable21 >> (loc.x - 5)
-                  : passable21 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable21 >> (myLoc.x - 5)
+                  : passable21 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable22 >> (loc.x - 5)
-                  : passable22 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable22 >> (myLoc.x - 5)
+                  : passable22 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 18 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable13 >> (loc.x - 5)
-                  : passable13 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable13 >> (myLoc.x - 5)
+                  : passable13 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable14 >> (loc.x - 5)
-                  : passable14 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable14 >> (myLoc.x - 5)
+                  : passable14 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable15 >> (loc.x - 5)
-                  : passable15 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable15 >> (myLoc.x - 5)
+                  : passable15 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable16 >> (loc.x - 5)
-                  : passable16 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable16 >> (myLoc.x - 5)
+                  : passable16 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable17 >> (loc.x - 5)
-                  : passable17 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable17 >> (myLoc.x - 5)
+                  : passable17 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable18 >> (loc.x - 5)
-                  : passable18 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable18 >> (myLoc.x - 5)
+                  : passable18 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable18 >> (loc.x - 5)
-                  : passable18 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable18 >> (myLoc.x - 5)
+                  : passable18 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable19 >> (loc.x - 5)
-                  : passable19 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable19 >> (myLoc.x - 5)
+                  : passable19 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable20 >> (loc.x - 5)
-                  : passable20 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable20 >> (myLoc.x - 5)
+                  : passable20 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable21 >> (loc.x - 5)
-                  : passable21 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable21 >> (myLoc.x - 5)
+                  : passable21 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable22 >> (loc.x - 5)
-                  : passable22 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable22 >> (myLoc.x - 5)
+                  : passable22 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable23 >> (loc.x - 5)
-                  : passable23 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable23 >> (myLoc.x - 5)
+                  : passable23 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 19 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable14 >> (loc.x - 5)
-                  : passable14 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable14 >> (myLoc.x - 5)
+                  : passable14 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable15 >> (loc.x - 5)
-                  : passable15 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable15 >> (myLoc.x - 5)
+                  : passable15 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable16 >> (loc.x - 5)
-                  : passable16 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable16 >> (myLoc.x - 5)
+                  : passable16 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable17 >> (loc.x - 5)
-                  : passable17 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable17 >> (myLoc.x - 5)
+                  : passable17 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable18 >> (loc.x - 5)
-                  : passable18 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable18 >> (myLoc.x - 5)
+                  : passable18 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable19 >> (loc.x - 5)
-                  : passable19 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable19 >> (myLoc.x - 5)
+                  : passable19 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable19 >> (loc.x - 5)
-                  : passable19 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable19 >> (myLoc.x - 5)
+                  : passable19 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable20 >> (loc.x - 5)
-                  : passable20 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable20 >> (myLoc.x - 5)
+                  : passable20 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable21 >> (loc.x - 5)
-                  : passable21 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable21 >> (myLoc.x - 5)
+                  : passable21 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable22 >> (loc.x - 5)
-                  : passable22 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable22 >> (myLoc.x - 5)
+                  : passable22 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable23 >> (loc.x - 5)
-                  : passable23 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable23 >> (myLoc.x - 5)
+                  : passable23 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable24 >> (loc.x - 5)
-                  : passable24 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable24 >> (myLoc.x - 5)
+                  : passable24 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 20 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable15 >> (loc.x - 5)
-                  : passable15 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable15 >> (myLoc.x - 5)
+                  : passable15 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable16 >> (loc.x - 5)
-                  : passable16 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable16 >> (myLoc.x - 5)
+                  : passable16 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable17 >> (loc.x - 5)
-                  : passable17 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable17 >> (myLoc.x - 5)
+                  : passable17 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable18 >> (loc.x - 5)
-                  : passable18 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable18 >> (myLoc.x - 5)
+                  : passable18 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable19 >> (loc.x - 5)
-                  : passable19 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable19 >> (myLoc.x - 5)
+                  : passable19 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable20 >> (loc.x - 5)
-                  : passable20 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable20 >> (myLoc.x - 5)
+                  : passable20 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable20 >> (loc.x - 5)
-                  : passable20 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable20 >> (myLoc.x - 5)
+                  : passable20 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable21 >> (loc.x - 5)
-                  : passable21 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable21 >> (myLoc.x - 5)
+                  : passable21 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable22 >> (loc.x - 5)
-                  : passable22 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable22 >> (myLoc.x - 5)
+                  : passable22 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable23 >> (loc.x - 5)
-                  : passable23 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable23 >> (myLoc.x - 5)
+                  : passable23 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable24 >> (loc.x - 5)
-                  : passable24 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable24 >> (myLoc.x - 5)
+                  : passable24 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable25 >> (loc.x - 5)
-                  : passable25 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable25 >> (myLoc.x - 5)
+                  : passable25 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 21 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable16 >> (loc.x - 5)
-                  : passable16 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable16 >> (myLoc.x - 5)
+                  : passable16 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable17 >> (loc.x - 5)
-                  : passable17 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable17 >> (myLoc.x - 5)
+                  : passable17 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable18 >> (loc.x - 5)
-                  : passable18 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable18 >> (myLoc.x - 5)
+                  : passable18 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable19 >> (loc.x - 5)
-                  : passable19 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable19 >> (myLoc.x - 5)
+                  : passable19 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable20 >> (loc.x - 5)
-                  : passable20 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable20 >> (myLoc.x - 5)
+                  : passable20 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable21 >> (loc.x - 5)
-                  : passable21 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable21 >> (myLoc.x - 5)
+                  : passable21 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable21 >> (loc.x - 5)
-                  : passable21 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable21 >> (myLoc.x - 5)
+                  : passable21 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable22 >> (loc.x - 5)
-                  : passable22 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable22 >> (myLoc.x - 5)
+                  : passable22 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable23 >> (loc.x - 5)
-                  : passable23 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable23 >> (myLoc.x - 5)
+                  : passable23 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable24 >> (loc.x - 5)
-                  : passable24 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable24 >> (myLoc.x - 5)
+                  : passable24 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable25 >> (loc.x - 5)
-                  : passable25 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable25 >> (myLoc.x - 5)
+                  : passable25 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable26 >> (loc.x - 5)
-                  : passable26 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable26 >> (myLoc.x - 5)
+                  : passable26 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 22 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable17 >> (loc.x - 5)
-                  : passable17 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable17 >> (myLoc.x - 5)
+                  : passable17 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable18 >> (loc.x - 5)
-                  : passable18 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable18 >> (myLoc.x - 5)
+                  : passable18 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable19 >> (loc.x - 5)
-                  : passable19 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable19 >> (myLoc.x - 5)
+                  : passable19 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable20 >> (loc.x - 5)
-                  : passable20 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable20 >> (myLoc.x - 5)
+                  : passable20 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable21 >> (loc.x - 5)
-                  : passable21 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable21 >> (myLoc.x - 5)
+                  : passable21 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable22 >> (loc.x - 5)
-                  : passable22 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable22 >> (myLoc.x - 5)
+                  : passable22 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable22 >> (loc.x - 5)
-                  : passable22 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable22 >> (myLoc.x - 5)
+                  : passable22 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable23 >> (loc.x - 5)
-                  : passable23 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable23 >> (myLoc.x - 5)
+                  : passable23 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable24 >> (loc.x - 5)
-                  : passable24 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable24 >> (myLoc.x - 5)
+                  : passable24 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable25 >> (loc.x - 5)
-                  : passable25 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable25 >> (myLoc.x - 5)
+                  : passable25 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable26 >> (loc.x - 5)
-                  : passable26 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable26 >> (myLoc.x - 5)
+                  : passable26 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable27 >> (loc.x - 5)
-                  : passable27 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable27 >> (myLoc.x - 5)
+                  : passable27 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 23 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable18 >> (loc.x - 5)
-                  : passable18 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable18 >> (myLoc.x - 5)
+                  : passable18 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable19 >> (loc.x - 5)
-                  : passable19 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable19 >> (myLoc.x - 5)
+                  : passable19 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable20 >> (loc.x - 5)
-                  : passable20 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable20 >> (myLoc.x - 5)
+                  : passable20 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable21 >> (loc.x - 5)
-                  : passable21 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable21 >> (myLoc.x - 5)
+                  : passable21 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable22 >> (loc.x - 5)
-                  : passable22 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable22 >> (myLoc.x - 5)
+                  : passable22 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable23 >> (loc.x - 5)
-                  : passable23 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable23 >> (myLoc.x - 5)
+                  : passable23 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable23 >> (loc.x - 5)
-                  : passable23 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable23 >> (myLoc.x - 5)
+                  : passable23 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable24 >> (loc.x - 5)
-                  : passable24 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable24 >> (myLoc.x - 5)
+                  : passable24 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable25 >> (loc.x - 5)
-                  : passable25 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable25 >> (myLoc.x - 5)
+                  : passable25 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable26 >> (loc.x - 5)
-                  : passable26 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable26 >> (myLoc.x - 5)
+                  : passable26 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable27 >> (loc.x - 5)
-                  : passable27 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable27 >> (myLoc.x - 5)
+                  : passable27 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable28 >> (loc.x - 5)
-                  : passable28 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable28 >> (myLoc.x - 5)
+                  : passable28 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 24 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable19 >> (loc.x - 5)
-                  : passable19 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable19 >> (myLoc.x - 5)
+                  : passable19 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable20 >> (loc.x - 5)
-                  : passable20 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable20 >> (myLoc.x - 5)
+                  : passable20 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable21 >> (loc.x - 5)
-                  : passable21 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable21 >> (myLoc.x - 5)
+                  : passable21 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable22 >> (loc.x - 5)
-                  : passable22 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable22 >> (myLoc.x - 5)
+                  : passable22 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable23 >> (loc.x - 5)
-                  : passable23 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable23 >> (myLoc.x - 5)
+                  : passable23 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable24 >> (loc.x - 5)
-                  : passable24 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable24 >> (myLoc.x - 5)
+                  : passable24 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable24 >> (loc.x - 5)
-                  : passable24 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable24 >> (myLoc.x - 5)
+                  : passable24 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable25 >> (loc.x - 5)
-                  : passable25 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable25 >> (myLoc.x - 5)
+                  : passable25 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable26 >> (loc.x - 5)
-                  : passable26 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable26 >> (myLoc.x - 5)
+                  : passable26 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable27 >> (loc.x - 5)
-                  : passable27 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable27 >> (myLoc.x - 5)
+                  : passable27 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable28 >> (loc.x - 5)
-                  : passable28 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable28 >> (myLoc.x - 5)
+                  : passable28 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable29 >> (loc.x - 5)
-                  : passable29 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable29 >> (myLoc.x - 5)
+                  : passable29 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 25 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable20 >> (loc.x - 5)
-                  : passable20 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable20 >> (myLoc.x - 5)
+                  : passable20 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable21 >> (loc.x - 5)
-                  : passable21 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable21 >> (myLoc.x - 5)
+                  : passable21 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable22 >> (loc.x - 5)
-                  : passable22 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable22 >> (myLoc.x - 5)
+                  : passable22 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable23 >> (loc.x - 5)
-                  : passable23 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable23 >> (myLoc.x - 5)
+                  : passable23 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable24 >> (loc.x - 5)
-                  : passable24 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable24 >> (myLoc.x - 5)
+                  : passable24 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable25 >> (loc.x - 5)
-                  : passable25 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable25 >> (myLoc.x - 5)
+                  : passable25 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable25 >> (loc.x - 5)
-                  : passable25 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable25 >> (myLoc.x - 5)
+                  : passable25 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable26 >> (loc.x - 5)
-                  : passable26 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable26 >> (myLoc.x - 5)
+                  : passable26 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable27 >> (loc.x - 5)
-                  : passable27 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable27 >> (myLoc.x - 5)
+                  : passable27 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable28 >> (loc.x - 5)
-                  : passable28 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable28 >> (myLoc.x - 5)
+                  : passable28 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable29 >> (loc.x - 5)
-                  : passable29 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable29 >> (myLoc.x - 5)
+                  : passable29 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable30 >> (loc.x - 5)
-                  : passable30 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable30 >> (myLoc.x - 5)
+                  : passable30 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 26 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable21 >> (loc.x - 5)
-                  : passable21 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable21 >> (myLoc.x - 5)
+                  : passable21 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable22 >> (loc.x - 5)
-                  : passable22 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable22 >> (myLoc.x - 5)
+                  : passable22 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable23 >> (loc.x - 5)
-                  : passable23 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable23 >> (myLoc.x - 5)
+                  : passable23 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable24 >> (loc.x - 5)
-                  : passable24 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable24 >> (myLoc.x - 5)
+                  : passable24 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable25 >> (loc.x - 5)
-                  : passable25 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable25 >> (myLoc.x - 5)
+                  : passable25 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable26 >> (loc.x - 5)
-                  : passable26 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable26 >> (myLoc.x - 5)
+                  : passable26 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable26 >> (loc.x - 5)
-                  : passable26 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable26 >> (myLoc.x - 5)
+                  : passable26 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable27 >> (loc.x - 5)
-                  : passable27 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable27 >> (myLoc.x - 5)
+                  : passable27 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable28 >> (loc.x - 5)
-                  : passable28 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable28 >> (myLoc.x - 5)
+                  : passable28 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable29 >> (loc.x - 5)
-                  : passable29 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable29 >> (myLoc.x - 5)
+                  : passable29 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable30 >> (loc.x - 5)
-                  : passable30 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable30 >> (myLoc.x - 5)
+                  : passable30 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable31 >> (loc.x - 5)
-                  : passable31 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable31 >> (myLoc.x - 5)
+                  : passable31 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 27 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable22 >> (loc.x - 5)
-                  : passable22 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable22 >> (myLoc.x - 5)
+                  : passable22 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable23 >> (loc.x - 5)
-                  : passable23 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable23 >> (myLoc.x - 5)
+                  : passable23 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable24 >> (loc.x - 5)
-                  : passable24 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable24 >> (myLoc.x - 5)
+                  : passable24 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable25 >> (loc.x - 5)
-                  : passable25 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable25 >> (myLoc.x - 5)
+                  : passable25 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable26 >> (loc.x - 5)
-                  : passable26 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable26 >> (myLoc.x - 5)
+                  : passable26 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable27 >> (loc.x - 5)
-                  : passable27 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable27 >> (myLoc.x - 5)
+                  : passable27 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable27 >> (loc.x - 5)
-                  : passable27 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable27 >> (myLoc.x - 5)
+                  : passable27 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable28 >> (loc.x - 5)
-                  : passable28 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable28 >> (myLoc.x - 5)
+                  : passable28 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable29 >> (loc.x - 5)
-                  : passable29 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable29 >> (myLoc.x - 5)
+                  : passable29 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable30 >> (loc.x - 5)
-                  : passable30 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable30 >> (myLoc.x - 5)
+                  : passable30 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable31 >> (loc.x - 5)
-                  : passable31 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable31 >> (myLoc.x - 5)
+                  : passable31 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable32 >> (loc.x - 5)
-                  : passable32 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable32 >> (myLoc.x - 5)
+                  : passable32 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 28 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable23 >> (loc.x - 5)
-                  : passable23 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable23 >> (myLoc.x - 5)
+                  : passable23 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable24 >> (loc.x - 5)
-                  : passable24 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable24 >> (myLoc.x - 5)
+                  : passable24 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable25 >> (loc.x - 5)
-                  : passable25 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable25 >> (myLoc.x - 5)
+                  : passable25 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable26 >> (loc.x - 5)
-                  : passable26 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable26 >> (myLoc.x - 5)
+                  : passable26 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable27 >> (loc.x - 5)
-                  : passable27 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable27 >> (myLoc.x - 5)
+                  : passable27 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable28 >> (loc.x - 5)
-                  : passable28 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable28 >> (myLoc.x - 5)
+                  : passable28 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable28 >> (loc.x - 5)
-                  : passable28 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable28 >> (myLoc.x - 5)
+                  : passable28 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable29 >> (loc.x - 5)
-                  : passable29 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable29 >> (myLoc.x - 5)
+                  : passable29 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable30 >> (loc.x - 5)
-                  : passable30 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable30 >> (myLoc.x - 5)
+                  : passable30 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable31 >> (loc.x - 5)
-                  : passable31 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable31 >> (myLoc.x - 5)
+                  : passable31 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable32 >> (loc.x - 5)
-                  : passable32 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable32 >> (myLoc.x - 5)
+                  : passable32 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable33 >> (loc.x - 5)
-                  : passable33 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable33 >> (myLoc.x - 5)
+                  : passable33 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 29 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable24 >> (loc.x - 5)
-                  : passable24 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable24 >> (myLoc.x - 5)
+                  : passable24 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable25 >> (loc.x - 5)
-                  : passable25 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable25 >> (myLoc.x - 5)
+                  : passable25 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable26 >> (loc.x - 5)
-                  : passable26 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable26 >> (myLoc.x - 5)
+                  : passable26 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable27 >> (loc.x - 5)
-                  : passable27 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable27 >> (myLoc.x - 5)
+                  : passable27 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable28 >> (loc.x - 5)
-                  : passable28 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable28 >> (myLoc.x - 5)
+                  : passable28 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable29 >> (loc.x - 5)
-                  : passable29 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable29 >> (myLoc.x - 5)
+                  : passable29 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable29 >> (loc.x - 5)
-                  : passable29 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable29 >> (myLoc.x - 5)
+                  : passable29 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable30 >> (loc.x - 5)
-                  : passable30 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable30 >> (myLoc.x - 5)
+                  : passable30 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable31 >> (loc.x - 5)
-                  : passable31 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable31 >> (myLoc.x - 5)
+                  : passable31 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable32 >> (loc.x - 5)
-                  : passable32 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable32 >> (myLoc.x - 5)
+                  : passable32 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable33 >> (loc.x - 5)
-                  : passable33 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable33 >> (myLoc.x - 5)
+                  : passable33 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable34 >> (loc.x - 5)
-                  : passable34 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable34 >> (myLoc.x - 5)
+                  : passable34 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 30 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable25 >> (loc.x - 5)
-                  : passable25 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable25 >> (myLoc.x - 5)
+                  : passable25 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable26 >> (loc.x - 5)
-                  : passable26 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable26 >> (myLoc.x - 5)
+                  : passable26 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable27 >> (loc.x - 5)
-                  : passable27 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable27 >> (myLoc.x - 5)
+                  : passable27 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable28 >> (loc.x - 5)
-                  : passable28 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable28 >> (myLoc.x - 5)
+                  : passable28 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable29 >> (loc.x - 5)
-                  : passable29 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable29 >> (myLoc.x - 5)
+                  : passable29 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable30 >> (loc.x - 5)
-                  : passable30 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable30 >> (myLoc.x - 5)
+                  : passable30 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable30 >> (loc.x - 5)
-                  : passable30 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable30 >> (myLoc.x - 5)
+                  : passable30 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable31 >> (loc.x - 5)
-                  : passable31 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable31 >> (myLoc.x - 5)
+                  : passable31 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable32 >> (loc.x - 5)
-                  : passable32 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable32 >> (myLoc.x - 5)
+                  : passable32 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable33 >> (loc.x - 5)
-                  : passable33 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable33 >> (myLoc.x - 5)
+                  : passable33 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable34 >> (loc.x - 5)
-                  : passable34 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable34 >> (myLoc.x - 5)
+                  : passable34 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable35 >> (loc.x - 5)
-                  : passable35 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable35 >> (myLoc.x - 5)
+                  : passable35 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 31 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable26 >> (loc.x - 5)
-                  : passable26 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable26 >> (myLoc.x - 5)
+                  : passable26 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable27 >> (loc.x - 5)
-                  : passable27 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable27 >> (myLoc.x - 5)
+                  : passable27 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable28 >> (loc.x - 5)
-                  : passable28 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable28 >> (myLoc.x - 5)
+                  : passable28 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable29 >> (loc.x - 5)
-                  : passable29 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable29 >> (myLoc.x - 5)
+                  : passable29 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable30 >> (loc.x - 5)
-                  : passable30 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable30 >> (myLoc.x - 5)
+                  : passable30 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable31 >> (loc.x - 5)
-                  : passable31 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable31 >> (myLoc.x - 5)
+                  : passable31 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable31 >> (loc.x - 5)
-                  : passable31 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable31 >> (myLoc.x - 5)
+                  : passable31 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable32 >> (loc.x - 5)
-                  : passable32 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable32 >> (myLoc.x - 5)
+                  : passable32 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable33 >> (loc.x - 5)
-                  : passable33 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable33 >> (myLoc.x - 5)
+                  : passable33 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable34 >> (loc.x - 5)
-                  : passable34 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable34 >> (myLoc.x - 5)
+                  : passable34 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable35 >> (loc.x - 5)
-                  : passable35 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable35 >> (myLoc.x - 5)
+                  : passable35 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable36 >> (loc.x - 5)
-                  : passable36 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable36 >> (myLoc.x - 5)
+                  : passable36 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 32 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable27 >> (loc.x - 5)
-                  : passable27 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable27 >> (myLoc.x - 5)
+                  : passable27 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable28 >> (loc.x - 5)
-                  : passable28 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable28 >> (myLoc.x - 5)
+                  : passable28 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable29 >> (loc.x - 5)
-                  : passable29 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable29 >> (myLoc.x - 5)
+                  : passable29 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable30 >> (loc.x - 5)
-                  : passable30 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable30 >> (myLoc.x - 5)
+                  : passable30 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable31 >> (loc.x - 5)
-                  : passable31 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable31 >> (myLoc.x - 5)
+                  : passable31 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable32 >> (loc.x - 5)
-                  : passable32 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable32 >> (myLoc.x - 5)
+                  : passable32 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable32 >> (loc.x - 5)
-                  : passable32 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable32 >> (myLoc.x - 5)
+                  : passable32 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable33 >> (loc.x - 5)
-                  : passable33 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable33 >> (myLoc.x - 5)
+                  : passable33 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable34 >> (loc.x - 5)
-                  : passable34 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable34 >> (myLoc.x - 5)
+                  : passable34 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable35 >> (loc.x - 5)
-                  : passable35 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable35 >> (myLoc.x - 5)
+                  : passable35 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable36 >> (loc.x - 5)
-                  : passable36 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable36 >> (myLoc.x - 5)
+                  : passable36 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable37 >> (loc.x - 5)
-                  : passable37 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable37 >> (myLoc.x - 5)
+                  : passable37 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 33 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable28 >> (loc.x - 5)
-                  : passable28 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable28 >> (myLoc.x - 5)
+                  : passable28 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable29 >> (loc.x - 5)
-                  : passable29 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable29 >> (myLoc.x - 5)
+                  : passable29 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable30 >> (loc.x - 5)
-                  : passable30 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable30 >> (myLoc.x - 5)
+                  : passable30 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable31 >> (loc.x - 5)
-                  : passable31 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable31 >> (myLoc.x - 5)
+                  : passable31 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable32 >> (loc.x - 5)
-                  : passable32 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable32 >> (myLoc.x - 5)
+                  : passable32 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable33 >> (loc.x - 5)
-                  : passable33 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable33 >> (myLoc.x - 5)
+                  : passable33 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable33 >> (loc.x - 5)
-                  : passable33 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable33 >> (myLoc.x - 5)
+                  : passable33 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable34 >> (loc.x - 5)
-                  : passable34 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable34 >> (myLoc.x - 5)
+                  : passable34 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable35 >> (loc.x - 5)
-                  : passable35 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable35 >> (myLoc.x - 5)
+                  : passable35 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable36 >> (loc.x - 5)
-                  : passable36 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable36 >> (myLoc.x - 5)
+                  : passable36 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable37 >> (loc.x - 5)
-                  : passable37 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable37 >> (myLoc.x - 5)
+                  : passable37 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable38 >> (loc.x - 5)
-                  : passable38 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable38 >> (myLoc.x - 5)
+                  : passable38 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 34 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable29 >> (loc.x - 5)
-                  : passable29 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable29 >> (myLoc.x - 5)
+                  : passable29 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable30 >> (loc.x - 5)
-                  : passable30 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable30 >> (myLoc.x - 5)
+                  : passable30 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable31 >> (loc.x - 5)
-                  : passable31 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable31 >> (myLoc.x - 5)
+                  : passable31 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable32 >> (loc.x - 5)
-                  : passable32 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable32 >> (myLoc.x - 5)
+                  : passable32 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable33 >> (loc.x - 5)
-                  : passable33 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable33 >> (myLoc.x - 5)
+                  : passable33 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable34 >> (loc.x - 5)
-                  : passable34 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable34 >> (myLoc.x - 5)
+                  : passable34 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable34 >> (loc.x - 5)
-                  : passable34 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable34 >> (myLoc.x - 5)
+                  : passable34 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable35 >> (loc.x - 5)
-                  : passable35 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable35 >> (myLoc.x - 5)
+                  : passable35 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable36 >> (loc.x - 5)
-                  : passable36 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable36 >> (myLoc.x - 5)
+                  : passable36 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable37 >> (loc.x - 5)
-                  : passable37 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable37 >> (myLoc.x - 5)
+                  : passable37 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable38 >> (loc.x - 5)
-                  : passable38 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable38 >> (myLoc.x - 5)
+                  : passable38 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable39 >> (loc.x - 5)
-                  : passable39 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable39 >> (myLoc.x - 5)
+                  : passable39 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 35 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable30 >> (loc.x - 5)
-                  : passable30 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable30 >> (myLoc.x - 5)
+                  : passable30 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable31 >> (loc.x - 5)
-                  : passable31 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable31 >> (myLoc.x - 5)
+                  : passable31 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable32 >> (loc.x - 5)
-                  : passable32 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable32 >> (myLoc.x - 5)
+                  : passable32 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable33 >> (loc.x - 5)
-                  : passable33 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable33 >> (myLoc.x - 5)
+                  : passable33 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable34 >> (loc.x - 5)
-                  : passable34 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable34 >> (myLoc.x - 5)
+                  : passable34 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable35 >> (loc.x - 5)
-                  : passable35 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable35 >> (myLoc.x - 5)
+                  : passable35 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable35 >> (loc.x - 5)
-                  : passable35 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable35 >> (myLoc.x - 5)
+                  : passable35 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable36 >> (loc.x - 5)
-                  : passable36 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable36 >> (myLoc.x - 5)
+                  : passable36 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable37 >> (loc.x - 5)
-                  : passable37 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable37 >> (myLoc.x - 5)
+                  : passable37 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable38 >> (loc.x - 5)
-                  : passable38 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable38 >> (myLoc.x - 5)
+                  : passable38 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable39 >> (loc.x - 5)
-                  : passable39 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable39 >> (myLoc.x - 5)
+                  : passable39 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable40 >> (loc.x - 5)
-                  : passable40 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable40 >> (myLoc.x - 5)
+                  : passable40 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 36 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable31 >> (loc.x - 5)
-                  : passable31 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable31 >> (myLoc.x - 5)
+                  : passable31 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable32 >> (loc.x - 5)
-                  : passable32 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable32 >> (myLoc.x - 5)
+                  : passable32 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable33 >> (loc.x - 5)
-                  : passable33 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable33 >> (myLoc.x - 5)
+                  : passable33 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable34 >> (loc.x - 5)
-                  : passable34 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable34 >> (myLoc.x - 5)
+                  : passable34 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable35 >> (loc.x - 5)
-                  : passable35 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable35 >> (myLoc.x - 5)
+                  : passable35 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable36 >> (loc.x - 5)
-                  : passable36 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable36 >> (myLoc.x - 5)
+                  : passable36 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable36 >> (loc.x - 5)
-                  : passable36 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable36 >> (myLoc.x - 5)
+                  : passable36 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable37 >> (loc.x - 5)
-                  : passable37 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable37 >> (myLoc.x - 5)
+                  : passable37 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable38 >> (loc.x - 5)
-                  : passable38 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable38 >> (myLoc.x - 5)
+                  : passable38 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable39 >> (loc.x - 5)
-                  : passable39 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable39 >> (myLoc.x - 5)
+                  : passable39 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable40 >> (loc.x - 5)
-                  : passable40 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable40 >> (myLoc.x - 5)
+                  : passable40 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable41 >> (loc.x - 5)
-                  : passable41 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable41 >> (myLoc.x - 5)
+                  : passable41 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 37 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable32 >> (loc.x - 5)
-                  : passable32 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable32 >> (myLoc.x - 5)
+                  : passable32 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable33 >> (loc.x - 5)
-                  : passable33 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable33 >> (myLoc.x - 5)
+                  : passable33 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable34 >> (loc.x - 5)
-                  : passable34 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable34 >> (myLoc.x - 5)
+                  : passable34 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable35 >> (loc.x - 5)
-                  : passable35 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable35 >> (myLoc.x - 5)
+                  : passable35 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable36 >> (loc.x - 5)
-                  : passable36 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable36 >> (myLoc.x - 5)
+                  : passable36 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable37 >> (loc.x - 5)
-                  : passable37 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable37 >> (myLoc.x - 5)
+                  : passable37 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable37 >> (loc.x - 5)
-                  : passable37 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable37 >> (myLoc.x - 5)
+                  : passable37 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable38 >> (loc.x - 5)
-                  : passable38 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable38 >> (myLoc.x - 5)
+                  : passable38 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable39 >> (loc.x - 5)
-                  : passable39 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable39 >> (myLoc.x - 5)
+                  : passable39 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable40 >> (loc.x - 5)
-                  : passable40 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable40 >> (myLoc.x - 5)
+                  : passable40 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable41 >> (loc.x - 5)
-                  : passable41 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable41 >> (myLoc.x - 5)
+                  : passable41 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable42 >> (loc.x - 5)
-                  : passable42 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable42 >> (myLoc.x - 5)
+                  : passable42 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 38 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable33 >> (loc.x - 5)
-                  : passable33 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable33 >> (myLoc.x - 5)
+                  : passable33 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable34 >> (loc.x - 5)
-                  : passable34 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable34 >> (myLoc.x - 5)
+                  : passable34 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable35 >> (loc.x - 5)
-                  : passable35 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable35 >> (myLoc.x - 5)
+                  : passable35 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable36 >> (loc.x - 5)
-                  : passable36 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable36 >> (myLoc.x - 5)
+                  : passable36 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable37 >> (loc.x - 5)
-                  : passable37 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable37 >> (myLoc.x - 5)
+                  : passable37 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable38 >> (loc.x - 5)
-                  : passable38 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable38 >> (myLoc.x - 5)
+                  : passable38 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable38 >> (loc.x - 5)
-                  : passable38 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable38 >> (myLoc.x - 5)
+                  : passable38 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable39 >> (loc.x - 5)
-                  : passable39 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable39 >> (myLoc.x - 5)
+                  : passable39 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable40 >> (loc.x - 5)
-                  : passable40 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable40 >> (myLoc.x - 5)
+                  : passable40 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable41 >> (loc.x - 5)
-                  : passable41 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable41 >> (myLoc.x - 5)
+                  : passable41 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable42 >> (loc.x - 5)
-                  : passable42 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable42 >> (myLoc.x - 5)
+                  : passable42 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable43 >> (loc.x - 5)
-                  : passable43 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable43 >> (myLoc.x - 5)
+                  : passable43 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 39 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable34 >> (loc.x - 5)
-                  : passable34 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable34 >> (myLoc.x - 5)
+                  : passable34 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable35 >> (loc.x - 5)
-                  : passable35 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable35 >> (myLoc.x - 5)
+                  : passable35 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable36 >> (loc.x - 5)
-                  : passable36 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable36 >> (myLoc.x - 5)
+                  : passable36 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable37 >> (loc.x - 5)
-                  : passable37 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable37 >> (myLoc.x - 5)
+                  : passable37 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable38 >> (loc.x - 5)
-                  : passable38 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable38 >> (myLoc.x - 5)
+                  : passable38 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable39 >> (loc.x - 5)
-                  : passable39 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable39 >> (myLoc.x - 5)
+                  : passable39 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable39 >> (loc.x - 5)
-                  : passable39 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable39 >> (myLoc.x - 5)
+                  : passable39 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable40 >> (loc.x - 5)
-                  : passable40 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable40 >> (myLoc.x - 5)
+                  : passable40 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable41 >> (loc.x - 5)
-                  : passable41 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable41 >> (myLoc.x - 5)
+                  : passable41 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable42 >> (loc.x - 5)
-                  : passable42 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable42 >> (myLoc.x - 5)
+                  : passable42 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable43 >> (loc.x - 5)
-                  : passable43 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable43 >> (myLoc.x - 5)
+                  : passable43 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable44 >> (loc.x - 5)
-                  : passable44 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable44 >> (myLoc.x - 5)
+                  : passable44 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 40 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable35 >> (loc.x - 5)
-                  : passable35 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable35 >> (myLoc.x - 5)
+                  : passable35 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable36 >> (loc.x - 5)
-                  : passable36 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable36 >> (myLoc.x - 5)
+                  : passable36 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable37 >> (loc.x - 5)
-                  : passable37 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable37 >> (myLoc.x - 5)
+                  : passable37 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable38 >> (loc.x - 5)
-                  : passable38 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable38 >> (myLoc.x - 5)
+                  : passable38 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable39 >> (loc.x - 5)
-                  : passable39 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable39 >> (myLoc.x - 5)
+                  : passable39 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable40 >> (loc.x - 5)
-                  : passable40 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable40 >> (myLoc.x - 5)
+                  : passable40 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable40 >> (loc.x - 5)
-                  : passable40 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable40 >> (myLoc.x - 5)
+                  : passable40 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable41 >> (loc.x - 5)
-                  : passable41 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable41 >> (myLoc.x - 5)
+                  : passable41 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable42 >> (loc.x - 5)
-                  : passable42 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable42 >> (myLoc.x - 5)
+                  : passable42 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable43 >> (loc.x - 5)
-                  : passable43 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable43 >> (myLoc.x - 5)
+                  : passable43 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable44 >> (loc.x - 5)
-                  : passable44 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable44 >> (myLoc.x - 5)
+                  : passable44 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable45 >> (loc.x - 5)
-                  : passable45 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable45 >> (myLoc.x - 5)
+                  : passable45 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 41 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable36 >> (loc.x - 5)
-                  : passable36 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable36 >> (myLoc.x - 5)
+                  : passable36 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable37 >> (loc.x - 5)
-                  : passable37 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable37 >> (myLoc.x - 5)
+                  : passable37 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable38 >> (loc.x - 5)
-                  : passable38 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable38 >> (myLoc.x - 5)
+                  : passable38 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable39 >> (loc.x - 5)
-                  : passable39 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable39 >> (myLoc.x - 5)
+                  : passable39 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable40 >> (loc.x - 5)
-                  : passable40 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable40 >> (myLoc.x - 5)
+                  : passable40 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable41 >> (loc.x - 5)
-                  : passable41 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable41 >> (myLoc.x - 5)
+                  : passable41 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable41 >> (loc.x - 5)
-                  : passable41 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable41 >> (myLoc.x - 5)
+                  : passable41 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable42 >> (loc.x - 5)
-                  : passable42 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable42 >> (myLoc.x - 5)
+                  : passable42 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable43 >> (loc.x - 5)
-                  : passable43 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable43 >> (myLoc.x - 5)
+                  : passable43 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable44 >> (loc.x - 5)
-                  : passable44 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable44 >> (myLoc.x - 5)
+                  : passable44 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable45 >> (loc.x - 5)
-                  : passable45 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable45 >> (myLoc.x - 5)
+                  : passable45 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable46 >> (loc.x - 5)
-                  : passable46 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable46 >> (myLoc.x - 5)
+                  : passable46 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 42 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable37 >> (loc.x - 5)
-                  : passable37 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable37 >> (myLoc.x - 5)
+                  : passable37 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable38 >> (loc.x - 5)
-                  : passable38 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable38 >> (myLoc.x - 5)
+                  : passable38 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable39 >> (loc.x - 5)
-                  : passable39 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable39 >> (myLoc.x - 5)
+                  : passable39 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable40 >> (loc.x - 5)
-                  : passable40 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable40 >> (myLoc.x - 5)
+                  : passable40 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable41 >> (loc.x - 5)
-                  : passable41 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable41 >> (myLoc.x - 5)
+                  : passable41 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable42 >> (loc.x - 5)
-                  : passable42 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable42 >> (myLoc.x - 5)
+                  : passable42 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable42 >> (loc.x - 5)
-                  : passable42 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable42 >> (myLoc.x - 5)
+                  : passable42 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable43 >> (loc.x - 5)
-                  : passable43 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable43 >> (myLoc.x - 5)
+                  : passable43 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable44 >> (loc.x - 5)
-                  : passable44 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable44 >> (myLoc.x - 5)
+                  : passable44 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable45 >> (loc.x - 5)
-                  : passable45 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable45 >> (myLoc.x - 5)
+                  : passable45 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable46 >> (loc.x - 5)
-                  : passable46 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable46 >> (myLoc.x - 5)
+                  : passable46 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable47 >> (loc.x - 5)
-                  : passable47 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable47 >> (myLoc.x - 5)
+                  : passable47 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 43 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable38 >> (loc.x - 5)
-                  : passable38 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable38 >> (myLoc.x - 5)
+                  : passable38 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable39 >> (loc.x - 5)
-                  : passable39 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable39 >> (myLoc.x - 5)
+                  : passable39 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable40 >> (loc.x - 5)
-                  : passable40 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable40 >> (myLoc.x - 5)
+                  : passable40 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable41 >> (loc.x - 5)
-                  : passable41 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable41 >> (myLoc.x - 5)
+                  : passable41 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable42 >> (loc.x - 5)
-                  : passable42 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable42 >> (myLoc.x - 5)
+                  : passable42 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable43 >> (loc.x - 5)
-                  : passable43 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable43 >> (myLoc.x - 5)
+                  : passable43 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable43 >> (loc.x - 5)
-                  : passable43 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable43 >> (myLoc.x - 5)
+                  : passable43 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable44 >> (loc.x - 5)
-                  : passable44 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable44 >> (myLoc.x - 5)
+                  : passable44 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable45 >> (loc.x - 5)
-                  : passable45 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable45 >> (myLoc.x - 5)
+                  : passable45 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable46 >> (loc.x - 5)
-                  : passable46 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable46 >> (myLoc.x - 5)
+                  : passable46 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable47 >> (loc.x - 5)
-                  : passable47 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable47 >> (myLoc.x - 5)
+                  : passable47 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable48 >> (loc.x - 5)
-                  : passable48 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable48 >> (myLoc.x - 5)
+                  : passable48 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 44 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable39 >> (loc.x - 5)
-                  : passable39 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable39 >> (myLoc.x - 5)
+                  : passable39 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable40 >> (loc.x - 5)
-                  : passable40 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable40 >> (myLoc.x - 5)
+                  : passable40 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable41 >> (loc.x - 5)
-                  : passable41 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable41 >> (myLoc.x - 5)
+                  : passable41 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable42 >> (loc.x - 5)
-                  : passable42 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable42 >> (myLoc.x - 5)
+                  : passable42 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable43 >> (loc.x - 5)
-                  : passable43 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable43 >> (myLoc.x - 5)
+                  : passable43 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable44 >> (loc.x - 5)
-                  : passable44 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable44 >> (myLoc.x - 5)
+                  : passable44 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable44 >> (loc.x - 5)
-                  : passable44 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable44 >> (myLoc.x - 5)
+                  : passable44 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable45 >> (loc.x - 5)
-                  : passable45 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable45 >> (myLoc.x - 5)
+                  : passable45 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable46 >> (loc.x - 5)
-                  : passable46 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable46 >> (myLoc.x - 5)
+                  : passable46 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable47 >> (loc.x - 5)
-                  : passable47 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable47 >> (myLoc.x - 5)
+                  : passable47 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable48 >> (loc.x - 5)
-                  : passable48 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable48 >> (myLoc.x - 5)
+                  : passable48 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable49 >> (loc.x - 5)
-                  : passable49 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable49 >> (myLoc.x - 5)
+                  : passable49 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 45 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable40 >> (loc.x - 5)
-                  : passable40 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable40 >> (myLoc.x - 5)
+                  : passable40 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable41 >> (loc.x - 5)
-                  : passable41 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable41 >> (myLoc.x - 5)
+                  : passable41 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable42 >> (loc.x - 5)
-                  : passable42 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable42 >> (myLoc.x - 5)
+                  : passable42 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable43 >> (loc.x - 5)
-                  : passable43 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable43 >> (myLoc.x - 5)
+                  : passable43 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable44 >> (loc.x - 5)
-                  : passable44 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable44 >> (myLoc.x - 5)
+                  : passable44 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable45 >> (loc.x - 5)
-                  : passable45 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable45 >> (myLoc.x - 5)
+                  : passable45 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable45 >> (loc.x - 5)
-                  : passable45 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable45 >> (myLoc.x - 5)
+                  : passable45 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable46 >> (loc.x - 5)
-                  : passable46 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable46 >> (myLoc.x - 5)
+                  : passable46 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable47 >> (loc.x - 5)
-                  : passable47 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable47 >> (myLoc.x - 5)
+                  : passable47 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable48 >> (loc.x - 5)
-                  : passable48 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable48 >> (myLoc.x - 5)
+                  : passable48 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable49 >> (loc.x - 5)
-                  : passable49 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable49 >> (myLoc.x - 5)
+                  : passable49 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable50 >> (loc.x - 5)
-                  : passable50 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable50 >> (myLoc.x - 5)
+                  : passable50 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 46 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable41 >> (loc.x - 5)
-                  : passable41 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable41 >> (myLoc.x - 5)
+                  : passable41 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable42 >> (loc.x - 5)
-                  : passable42 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable42 >> (myLoc.x - 5)
+                  : passable42 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable43 >> (loc.x - 5)
-                  : passable43 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable43 >> (myLoc.x - 5)
+                  : passable43 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable44 >> (loc.x - 5)
-                  : passable44 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable44 >> (myLoc.x - 5)
+                  : passable44 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable45 >> (loc.x - 5)
-                  : passable45 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable45 >> (myLoc.x - 5)
+                  : passable45 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable46 >> (loc.x - 5)
-                  : passable46 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable46 >> (myLoc.x - 5)
+                  : passable46 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable46 >> (loc.x - 5)
-                  : passable46 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable46 >> (myLoc.x - 5)
+                  : passable46 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable47 >> (loc.x - 5)
-                  : passable47 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable47 >> (myLoc.x - 5)
+                  : passable47 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable48 >> (loc.x - 5)
-                  : passable48 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable48 >> (myLoc.x - 5)
+                  : passable48 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable49 >> (loc.x - 5)
-                  : passable49 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable49 >> (myLoc.x - 5)
+                  : passable49 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable50 >> (loc.x - 5)
-                  : passable50 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable50 >> (myLoc.x - 5)
+                  : passable50 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable51 >> (loc.x - 5)
-                  : passable51 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable51 >> (myLoc.x - 5)
+                  : passable51 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 47 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable42 >> (loc.x - 5)
-                  : passable42 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable42 >> (myLoc.x - 5)
+                  : passable42 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable43 >> (loc.x - 5)
-                  : passable43 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable43 >> (myLoc.x - 5)
+                  : passable43 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable44 >> (loc.x - 5)
-                  : passable44 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable44 >> (myLoc.x - 5)
+                  : passable44 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable45 >> (loc.x - 5)
-                  : passable45 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable45 >> (myLoc.x - 5)
+                  : passable45 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable46 >> (loc.x - 5)
-                  : passable46 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable46 >> (myLoc.x - 5)
+                  : passable46 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable47 >> (loc.x - 5)
-                  : passable47 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable47 >> (myLoc.x - 5)
+                  : passable47 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable47 >> (loc.x - 5)
-                  : passable47 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable47 >> (myLoc.x - 5)
+                  : passable47 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable48 >> (loc.x - 5)
-                  : passable48 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable48 >> (myLoc.x - 5)
+                  : passable48 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable49 >> (loc.x - 5)
-                  : passable49 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable49 >> (myLoc.x - 5)
+                  : passable49 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable50 >> (loc.x - 5)
-                  : passable50 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable50 >> (myLoc.x - 5)
+                  : passable50 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable51 >> (loc.x - 5)
-                  : passable51 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable51 >> (myLoc.x - 5)
+                  : passable51 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable52 >> (loc.x - 5)
-                  : passable52 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable52 >> (myLoc.x - 5)
+                  : passable52 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 48 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable43 >> (loc.x - 5)
-                  : passable43 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable43 >> (myLoc.x - 5)
+                  : passable43 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable44 >> (loc.x - 5)
-                  : passable44 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable44 >> (myLoc.x - 5)
+                  : passable44 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable45 >> (loc.x - 5)
-                  : passable45 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable45 >> (myLoc.x - 5)
+                  : passable45 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable46 >> (loc.x - 5)
-                  : passable46 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable46 >> (myLoc.x - 5)
+                  : passable46 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable47 >> (loc.x - 5)
-                  : passable47 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable47 >> (myLoc.x - 5)
+                  : passable47 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable48 >> (loc.x - 5)
-                  : passable48 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable48 >> (myLoc.x - 5)
+                  : passable48 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable48 >> (loc.x - 5)
-                  : passable48 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable48 >> (myLoc.x - 5)
+                  : passable48 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable49 >> (loc.x - 5)
-                  : passable49 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable49 >> (myLoc.x - 5)
+                  : passable49 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable50 >> (loc.x - 5)
-                  : passable50 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable50 >> (myLoc.x - 5)
+                  : passable50 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable51 >> (loc.x - 5)
-                  : passable51 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable51 >> (myLoc.x - 5)
+                  : passable51 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable52 >> (loc.x - 5)
-                  : passable52 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable52 >> (myLoc.x - 5)
+                  : passable52 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable53 >> (loc.x - 5)
-                  : passable53 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable53 >> (myLoc.x - 5)
+                  : passable53 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 49 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable44 >> (loc.x - 5)
-                  : passable44 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable44 >> (myLoc.x - 5)
+                  : passable44 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable45 >> (loc.x - 5)
-                  : passable45 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable45 >> (myLoc.x - 5)
+                  : passable45 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable46 >> (loc.x - 5)
-                  : passable46 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable46 >> (myLoc.x - 5)
+                  : passable46 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable47 >> (loc.x - 5)
-                  : passable47 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable47 >> (myLoc.x - 5)
+                  : passable47 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable48 >> (loc.x - 5)
-                  : passable48 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable48 >> (myLoc.x - 5)
+                  : passable48 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable49 >> (loc.x - 5)
-                  : passable49 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable49 >> (myLoc.x - 5)
+                  : passable49 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable49 >> (loc.x - 5)
-                  : passable49 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable49 >> (myLoc.x - 5)
+                  : passable49 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable50 >> (loc.x - 5)
-                  : passable50 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable50 >> (myLoc.x - 5)
+                  : passable50 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable51 >> (loc.x - 5)
-                  : passable51 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable51 >> (myLoc.x - 5)
+                  : passable51 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable52 >> (loc.x - 5)
-                  : passable52 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable52 >> (myLoc.x - 5)
+                  : passable52 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable53 >> (loc.x - 5)
-                  : passable53 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable53 >> (myLoc.x - 5)
+                  : passable53 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable54 >> (loc.x - 5)
-                  : passable54 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable54 >> (myLoc.x - 5)
+                  : passable54 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 50 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable45 >> (loc.x - 5)
-                  : passable45 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable45 >> (myLoc.x - 5)
+                  : passable45 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable46 >> (loc.x - 5)
-                  : passable46 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable46 >> (myLoc.x - 5)
+                  : passable46 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable47 >> (loc.x - 5)
-                  : passable47 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable47 >> (myLoc.x - 5)
+                  : passable47 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable48 >> (loc.x - 5)
-                  : passable48 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable48 >> (myLoc.x - 5)
+                  : passable48 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable49 >> (loc.x - 5)
-                  : passable49 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable49 >> (myLoc.x - 5)
+                  : passable49 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable50 >> (loc.x - 5)
-                  : passable50 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable50 >> (myLoc.x - 5)
+                  : passable50 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable50 >> (loc.x - 5)
-                  : passable50 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable50 >> (myLoc.x - 5)
+                  : passable50 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable51 >> (loc.x - 5)
-                  : passable51 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable51 >> (myLoc.x - 5)
+                  : passable51 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable52 >> (loc.x - 5)
-                  : passable52 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable52 >> (myLoc.x - 5)
+                  : passable52 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable53 >> (loc.x - 5)
-                  : passable53 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable53 >> (myLoc.x - 5)
+                  : passable53 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable54 >> (loc.x - 5)
-                  : passable54 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable54 >> (myLoc.x - 5)
+                  : passable54 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable55 >> (loc.x - 5)
-                  : passable55 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable55 >> (myLoc.x - 5)
+                  : passable55 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 51 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable46 >> (loc.x - 5)
-                  : passable46 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable46 >> (myLoc.x - 5)
+                  : passable46 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable47 >> (loc.x - 5)
-                  : passable47 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable47 >> (myLoc.x - 5)
+                  : passable47 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable48 >> (loc.x - 5)
-                  : passable48 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable48 >> (myLoc.x - 5)
+                  : passable48 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable49 >> (loc.x - 5)
-                  : passable49 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable49 >> (myLoc.x - 5)
+                  : passable49 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable50 >> (loc.x - 5)
-                  : passable50 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable50 >> (myLoc.x - 5)
+                  : passable50 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable51 >> (loc.x - 5)
-                  : passable51 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable51 >> (myLoc.x - 5)
+                  : passable51 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable51 >> (loc.x - 5)
-                  : passable51 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable51 >> (myLoc.x - 5)
+                  : passable51 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable52 >> (loc.x - 5)
-                  : passable52 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable52 >> (myLoc.x - 5)
+                  : passable52 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable53 >> (loc.x - 5)
-                  : passable53 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable53 >> (myLoc.x - 5)
+                  : passable53 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable54 >> (loc.x - 5)
-                  : passable54 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable54 >> (myLoc.x - 5)
+                  : passable54 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable55 >> (loc.x - 5)
-                  : passable55 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable55 >> (myLoc.x - 5)
+                  : passable55 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable56 >> (loc.x - 5)
-                  : passable56 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable56 >> (myLoc.x - 5)
+                  : passable56 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 52 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable47 >> (loc.x - 5)
-                  : passable47 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable47 >> (myLoc.x - 5)
+                  : passable47 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable48 >> (loc.x - 5)
-                  : passable48 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable48 >> (myLoc.x - 5)
+                  : passable48 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable49 >> (loc.x - 5)
-                  : passable49 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable49 >> (myLoc.x - 5)
+                  : passable49 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable50 >> (loc.x - 5)
-                  : passable50 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable50 >> (myLoc.x - 5)
+                  : passable50 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable51 >> (loc.x - 5)
-                  : passable51 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable51 >> (myLoc.x - 5)
+                  : passable51 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable52 >> (loc.x - 5)
-                  : passable52 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable52 >> (myLoc.x - 5)
+                  : passable52 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable52 >> (loc.x - 5)
-                  : passable52 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable52 >> (myLoc.x - 5)
+                  : passable52 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable53 >> (loc.x - 5)
-                  : passable53 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable53 >> (myLoc.x - 5)
+                  : passable53 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable54 >> (loc.x - 5)
-                  : passable54 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable54 >> (myLoc.x - 5)
+                  : passable54 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable55 >> (loc.x - 5)
-                  : passable55 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable55 >> (myLoc.x - 5)
+                  : passable55 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable56 >> (loc.x - 5)
-                  : passable56 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable56 >> (myLoc.x - 5)
+                  : passable56 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable57 >> (loc.x - 5)
-                  : passable57 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable57 >> (myLoc.x - 5)
+                  : passable57 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 53 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable48 >> (loc.x - 5)
-                  : passable48 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable48 >> (myLoc.x - 5)
+                  : passable48 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable49 >> (loc.x - 5)
-                  : passable49 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable49 >> (myLoc.x - 5)
+                  : passable49 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable50 >> (loc.x - 5)
-                  : passable50 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable50 >> (myLoc.x - 5)
+                  : passable50 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable51 >> (loc.x - 5)
-                  : passable51 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable51 >> (myLoc.x - 5)
+                  : passable51 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable52 >> (loc.x - 5)
-                  : passable52 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable52 >> (myLoc.x - 5)
+                  : passable52 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable53 >> (loc.x - 5)
-                  : passable53 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable53 >> (myLoc.x - 5)
+                  : passable53 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable53 >> (loc.x - 5)
-                  : passable53 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable53 >> (myLoc.x - 5)
+                  : passable53 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable54 >> (loc.x - 5)
-                  : passable54 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable54 >> (myLoc.x - 5)
+                  : passable54 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable55 >> (loc.x - 5)
-                  : passable55 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable55 >> (myLoc.x - 5)
+                  : passable55 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable56 >> (loc.x - 5)
-                  : passable56 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable56 >> (myLoc.x - 5)
+                  : passable56 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable57 >> (loc.x - 5)
-                  : passable57 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable57 >> (myLoc.x - 5)
+                  : passable57 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable58 >> (loc.x - 5)
-                  : passable58 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable58 >> (myLoc.x - 5)
+                  : passable58 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 54 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable49 >> (loc.x - 5)
-                  : passable49 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable49 >> (myLoc.x - 5)
+                  : passable49 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable50 >> (loc.x - 5)
-                  : passable50 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable50 >> (myLoc.x - 5)
+                  : passable50 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable51 >> (loc.x - 5)
-                  : passable51 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable51 >> (myLoc.x - 5)
+                  : passable51 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable52 >> (loc.x - 5)
-                  : passable52 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable52 >> (myLoc.x - 5)
+                  : passable52 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable53 >> (loc.x - 5)
-                  : passable53 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable53 >> (myLoc.x - 5)
+                  : passable53 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable54 >> (loc.x - 5)
-                  : passable54 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable54 >> (myLoc.x - 5)
+                  : passable54 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable54 >> (loc.x - 5)
-                  : passable54 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable54 >> (myLoc.x - 5)
+                  : passable54 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable55 >> (loc.x - 5)
-                  : passable55 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable55 >> (myLoc.x - 5)
+                  : passable55 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable56 >> (loc.x - 5)
-                  : passable56 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable56 >> (myLoc.x - 5)
+                  : passable56 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable57 >> (loc.x - 5)
-                  : passable57 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable57 >> (myLoc.x - 5)
+                  : passable57 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable58 >> (loc.x - 5)
-                  : passable58 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable58 >> (myLoc.x - 5)
+                  : passable58 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable59 >> (loc.x - 5)
-                  : passable59 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable59 >> (myLoc.x - 5)
+                  : passable59 << (5 - myLoc.x))
                  & 0x7ff)  << 49 ;
             }
             case 55 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable50 >> (loc.x - 5)
-                  : passable50 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable50 >> (myLoc.x - 5)
+                  : passable50 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable51 >> (loc.x - 5)
-                  : passable51 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable51 >> (myLoc.x - 5)
+                  : passable51 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable52 >> (loc.x - 5)
-                  : passable52 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable52 >> (myLoc.x - 5)
+                  : passable52 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable53 >> (loc.x - 5)
-                  : passable53 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable53 >> (myLoc.x - 5)
+                  : passable53 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable54 >> (loc.x - 5)
-                  : passable54 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable54 >> (myLoc.x - 5)
+                  : passable54 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable55 >> (loc.x - 5)
-                  : passable55 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable55 >> (myLoc.x - 5)
+                  : passable55 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable55 >> (loc.x - 5)
-                  : passable55 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable55 >> (myLoc.x - 5)
+                  : passable55 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable56 >> (loc.x - 5)
-                  : passable56 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable56 >> (myLoc.x - 5)
+                  : passable56 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable57 >> (loc.x - 5)
-                  : passable57 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable57 >> (myLoc.x - 5)
+                  : passable57 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable58 >> (loc.x - 5)
-                  : passable58 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable58 >> (myLoc.x - 5)
+                  : passable58 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable59 >> (loc.x - 5)
-                  : passable59 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable59 >> (myLoc.x - 5)
+                  : passable59 << (5 - myLoc.x))
                  & 0x7ff)  << 38 ;
             }
             case 56 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable51 >> (loc.x - 5)
-                  : passable51 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable51 >> (myLoc.x - 5)
+                  : passable51 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable52 >> (loc.x - 5)
-                  : passable52 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable52 >> (myLoc.x - 5)
+                  : passable52 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable53 >> (loc.x - 5)
-                  : passable53 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable53 >> (myLoc.x - 5)
+                  : passable53 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable54 >> (loc.x - 5)
-                  : passable54 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable54 >> (myLoc.x - 5)
+                  : passable54 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable55 >> (loc.x - 5)
-                  : passable55 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable55 >> (myLoc.x - 5)
+                  : passable55 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable56 >> (loc.x - 5)
-                  : passable56 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable56 >> (myLoc.x - 5)
+                  : passable56 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable56 >> (loc.x - 5)
-                  : passable56 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable56 >> (myLoc.x - 5)
+                  : passable56 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable57 >> (loc.x - 5)
-                  : passable57 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable57 >> (myLoc.x - 5)
+                  : passable57 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable58 >> (loc.x - 5)
-                  : passable58 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable58 >> (myLoc.x - 5)
+                  : passable58 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable59 >> (loc.x - 5)
-                  : passable59 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable59 >> (myLoc.x - 5)
+                  : passable59 << (5 - myLoc.x))
                  & 0x7ff)  << 27 ;
             }
             case 57 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable52 >> (loc.x - 5)
-                  : passable52 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable52 >> (myLoc.x - 5)
+                  : passable52 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable53 >> (loc.x - 5)
-                  : passable53 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable53 >> (myLoc.x - 5)
+                  : passable53 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable54 >> (loc.x - 5)
-                  : passable54 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable54 >> (myLoc.x - 5)
+                  : passable54 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable55 >> (loc.x - 5)
-                  : passable55 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable55 >> (myLoc.x - 5)
+                  : passable55 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable56 >> (loc.x - 5)
-                  : passable56 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable56 >> (myLoc.x - 5)
+                  : passable56 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable57 >> (loc.x - 5)
-                  : passable57 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable57 >> (myLoc.x - 5)
+                  : passable57 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable57 >> (loc.x - 5)
-                  : passable57 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable57 >> (myLoc.x - 5)
+                  : passable57 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable58 >> (loc.x - 5)
-                  : passable58 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable58 >> (myLoc.x - 5)
+                  : passable58 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable59 >> (loc.x - 5)
-                  : passable59 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable59 >> (myLoc.x - 5)
+                  : passable59 << (5 - myLoc.x))
                  & 0x7ff)  << 16 ;
             }
             case 58 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable53 >> (loc.x - 5)
-                  : passable53 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable53 >> (myLoc.x - 5)
+                  : passable53 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable54 >> (loc.x - 5)
-                  : passable54 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable54 >> (myLoc.x - 5)
+                  : passable54 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable55 >> (loc.x - 5)
-                  : passable55 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable55 >> (myLoc.x - 5)
+                  : passable55 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable56 >> (loc.x - 5)
-                  : passable56 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable56 >> (myLoc.x - 5)
+                  : passable56 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable57 >> (loc.x - 5)
-                  : passable57 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable57 >> (myLoc.x - 5)
+                  : passable57 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable58 >> (loc.x - 5)
-                  : passable58 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable58 >> (myLoc.x - 5)
+                  : passable58 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable58 >> (loc.x - 5)
-                  : passable58 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable58 >> (myLoc.x - 5)
+                  : passable58 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable59 >> (loc.x - 5)
-                  : passable59 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable59 >> (myLoc.x - 5)
+                  : passable59 << (5 - myLoc.x))
                  & 0x7ff)  << 5 ;
             }
             case 59 -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable54 >> (loc.x - 5)
-                  : passable54 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable54 >> (myLoc.x - 5)
+                  : passable54 << (5 - myLoc.x))
                  & 0x7ff) ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable55 >> (loc.x - 5)
-                  : passable55 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable55 >> (myLoc.x - 5)
+                  : passable55 << (5 - myLoc.x))
                  & 0x7ff)  << 11 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable56 >> (loc.x - 5)
-                  : passable56 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable56 >> (myLoc.x - 5)
+                  : passable56 << (5 - myLoc.x))
                  & 0x7ff)  << 22 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable57 >> (loc.x - 5)
-                  : passable57 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable57 >> (myLoc.x - 5)
+                  : passable57 << (5 - myLoc.x))
                  & 0x7ff)  << 33 ;
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable58 >> (loc.x - 5)
-                  : passable58 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable58 >> (myLoc.x - 5)
+                  : passable58 << (5 - myLoc.x))
                  & 0x7ff)  << 44 ;
 
-                localPassable0 |=                 ((loc.x - 5 >= 0
-                  ? passable59 >> (loc.x - 5)
-                  : passable59 << (5 - loc.x))
+                localPassable0 |=                 ((myLoc.x - 5 >= 0
+                  ? passable59 >> (myLoc.x - 5)
+                  : passable59 << (5 - myLoc.x))
                  & 0x7ff)  << 55  & 0x1f80000000000000l;
-                localPassable1 |=                 ((loc.x - 5 >= 0
-                  ? passable59 >> (loc.x - 5)
-                  : passable59 << (5 - loc.x))
+                localPassable1 |=                 ((myLoc.x - 5 >= 0
+                  ? passable59 >> (myLoc.x - 5)
+                  : passable59 << (5 - myLoc.x))
                  & 0x7ff)  >> 6;
 
             }
@@ -8906,9 +8898,8 @@ public class CellTracker {
     }
     static MapLocation localBfsPos = new MapLocation(-1, -1);
     public static void computeLocalBfsMasks() throws GameActionException {
-        var loc = rc.getLocation();
-        if(loc.equals(localBfsPos)) return;
-        localBfsPos = loc;
+        if(myLoc.equals(localBfsPos)) return;
+        localBfsPos = myLoc;
         computeLocalDirt();
         computeLocalPassable();
     }
@@ -8967,7 +8958,7 @@ public class CellTracker {
 
     static void checkHor() {
         var shiftAmount = 64 - mapWidth;
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 // IF TLE: change this range to [-4, 5) for all functions
                 {
@@ -14194,7 +14185,7 @@ public class CellTracker {
 
     static void applyHor() {
         var shiftAmount = 64 - mapWidth;
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     seen0 |= Long.reverse(seen0) >>> shiftAmount;
@@ -16840,7 +16831,7 @@ public class CellTracker {
     }
 
     private static void checkVer30() {
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & seen29;
@@ -19065,7 +19056,7 @@ public class CellTracker {
         }
     }
     private static void checkVer31() {
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & seen30;
@@ -21332,7 +21323,7 @@ public class CellTracker {
         }
     }
     private static void checkVer32() {
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & seen31;
@@ -23737,7 +23728,7 @@ public class CellTracker {
         }
     }
     private static void checkVer33() {
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & seen32;
@@ -26184,7 +26175,7 @@ public class CellTracker {
         }
     }
     private static void checkVer34() {
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & seen33;
@@ -28769,7 +28760,7 @@ public class CellTracker {
         }
     }
     private static void checkVer35() {
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & seen34;
@@ -31396,7 +31387,7 @@ public class CellTracker {
         }
     }
     private static void checkVer36() {
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & seen35;
@@ -34161,7 +34152,7 @@ public class CellTracker {
         }
     }
     private static void checkVer37() {
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & seen36;
@@ -36968,7 +36959,7 @@ public class CellTracker {
         }
     }
     private static void checkVer38() {
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & seen37;
@@ -39913,7 +39904,7 @@ public class CellTracker {
         }
     }
     private static void checkVer39() {
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & seen38;
@@ -42900,7 +42891,7 @@ public class CellTracker {
         }
     }
     private static void checkVer40() {
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & seen39;
@@ -46025,7 +46016,7 @@ public class CellTracker {
         }
     }
     private static void checkVer41() {
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & seen40;
@@ -49192,7 +49183,7 @@ public class CellTracker {
         }
     }
     private static void checkVer42() {
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & seen41;
@@ -52497,7 +52488,7 @@ public class CellTracker {
         }
     }
     private static void checkVer43() {
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & seen42;
@@ -55844,7 +55835,7 @@ public class CellTracker {
         }
     }
     private static void checkVer44() {
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & seen43;
@@ -59329,7 +59320,7 @@ public class CellTracker {
         }
     }
     private static void checkVer45() {
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & seen44;
@@ -62856,7 +62847,7 @@ public class CellTracker {
         }
     }
     private static void checkVer46() {
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & seen45;
@@ -66521,7 +66512,7 @@ public class CellTracker {
         }
     }
     private static void checkVer47() {
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & seen46;
@@ -70228,7 +70219,7 @@ public class CellTracker {
         }
     }
     private static void checkVer48() {
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & seen47;
@@ -74073,7 +74064,7 @@ public class CellTracker {
         }
     }
     private static void checkVer49() {
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & seen48;
@@ -77960,7 +77951,7 @@ public class CellTracker {
         }
     }
     private static void checkVer50() {
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & seen49;
@@ -81985,7 +81976,7 @@ public class CellTracker {
         }
     }
     private static void checkVer51() {
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & seen50;
@@ -86052,7 +86043,7 @@ public class CellTracker {
         }
     }
     private static void checkVer52() {
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & seen51;
@@ -90257,7 +90248,7 @@ public class CellTracker {
         }
     }
     private static void checkVer53() {
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & seen52;
@@ -94504,7 +94495,7 @@ public class CellTracker {
         }
     }
     private static void checkVer54() {
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & seen53;
@@ -98889,7 +98880,7 @@ public class CellTracker {
         }
     }
     private static void checkVer55() {
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & seen54;
@@ -103316,7 +103307,7 @@ public class CellTracker {
         }
     }
     private static void checkVer56() {
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & seen55;
@@ -107881,7 +107872,7 @@ public class CellTracker {
         }
     }
     private static void checkVer57() {
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & seen56;
@@ -112488,7 +112479,7 @@ public class CellTracker {
         }
     }
     private static void checkVer58() {
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & seen57;
@@ -117233,7 +117224,7 @@ public class CellTracker {
         }
     }
     private static void checkVer59() {
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & seen58;
@@ -122020,7 +122011,7 @@ public class CellTracker {
         }
     }
     private static void checkVer60() {
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & seen59;
@@ -127045,7 +127036,7 @@ public class CellTracker {
 
     private static void checkRot30() {
         var shiftAmount = 64 - mapWidth;
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & (Long.reverse(seen29) >>> shiftAmount);
@@ -129271,7 +129262,7 @@ public class CellTracker {
     }
     private static void checkRot31() {
         var shiftAmount = 64 - mapWidth;
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & (Long.reverse(seen30) >>> shiftAmount);
@@ -131539,7 +131530,7 @@ public class CellTracker {
     }
     private static void checkRot32() {
         var shiftAmount = 64 - mapWidth;
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & (Long.reverse(seen31) >>> shiftAmount);
@@ -133945,7 +133936,7 @@ public class CellTracker {
     }
     private static void checkRot33() {
         var shiftAmount = 64 - mapWidth;
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & (Long.reverse(seen32) >>> shiftAmount);
@@ -136393,7 +136384,7 @@ public class CellTracker {
     }
     private static void checkRot34() {
         var shiftAmount = 64 - mapWidth;
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & (Long.reverse(seen33) >>> shiftAmount);
@@ -138979,7 +138970,7 @@ public class CellTracker {
     }
     private static void checkRot35() {
         var shiftAmount = 64 - mapWidth;
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & (Long.reverse(seen34) >>> shiftAmount);
@@ -141607,7 +141598,7 @@ public class CellTracker {
     }
     private static void checkRot36() {
         var shiftAmount = 64 - mapWidth;
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & (Long.reverse(seen35) >>> shiftAmount);
@@ -144373,7 +144364,7 @@ public class CellTracker {
     }
     private static void checkRot37() {
         var shiftAmount = 64 - mapWidth;
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & (Long.reverse(seen36) >>> shiftAmount);
@@ -147181,7 +147172,7 @@ public class CellTracker {
     }
     private static void checkRot38() {
         var shiftAmount = 64 - mapWidth;
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & (Long.reverse(seen37) >>> shiftAmount);
@@ -150127,7 +150118,7 @@ public class CellTracker {
     }
     private static void checkRot39() {
         var shiftAmount = 64 - mapWidth;
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & (Long.reverse(seen38) >>> shiftAmount);
@@ -153115,7 +153106,7 @@ public class CellTracker {
     }
     private static void checkRot40() {
         var shiftAmount = 64 - mapWidth;
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & (Long.reverse(seen39) >>> shiftAmount);
@@ -156241,7 +156232,7 @@ public class CellTracker {
     }
     private static void checkRot41() {
         var shiftAmount = 64 - mapWidth;
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & (Long.reverse(seen40) >>> shiftAmount);
@@ -159409,7 +159400,7 @@ public class CellTracker {
     }
     private static void checkRot42() {
         var shiftAmount = 64 - mapWidth;
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & (Long.reverse(seen41) >>> shiftAmount);
@@ -162715,7 +162706,7 @@ public class CellTracker {
     }
     private static void checkRot43() {
         var shiftAmount = 64 - mapWidth;
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & (Long.reverse(seen42) >>> shiftAmount);
@@ -166063,7 +166054,7 @@ public class CellTracker {
     }
     private static void checkRot44() {
         var shiftAmount = 64 - mapWidth;
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & (Long.reverse(seen43) >>> shiftAmount);
@@ -169549,7 +169540,7 @@ public class CellTracker {
     }
     private static void checkRot45() {
         var shiftAmount = 64 - mapWidth;
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & (Long.reverse(seen44) >>> shiftAmount);
@@ -173077,7 +173068,7 @@ public class CellTracker {
     }
     private static void checkRot46() {
         var shiftAmount = 64 - mapWidth;
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & (Long.reverse(seen45) >>> shiftAmount);
@@ -176743,7 +176734,7 @@ public class CellTracker {
     }
     private static void checkRot47() {
         var shiftAmount = 64 - mapWidth;
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & (Long.reverse(seen46) >>> shiftAmount);
@@ -180451,7 +180442,7 @@ public class CellTracker {
     }
     private static void checkRot48() {
         var shiftAmount = 64 - mapWidth;
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & (Long.reverse(seen47) >>> shiftAmount);
@@ -184297,7 +184288,7 @@ public class CellTracker {
     }
     private static void checkRot49() {
         var shiftAmount = 64 - mapWidth;
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & (Long.reverse(seen48) >>> shiftAmount);
@@ -188185,7 +188176,7 @@ public class CellTracker {
     }
     private static void checkRot50() {
         var shiftAmount = 64 - mapWidth;
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & (Long.reverse(seen49) >>> shiftAmount);
@@ -192211,7 +192202,7 @@ public class CellTracker {
     }
     private static void checkRot51() {
         var shiftAmount = 64 - mapWidth;
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & (Long.reverse(seen50) >>> shiftAmount);
@@ -196279,7 +196270,7 @@ public class CellTracker {
     }
     private static void checkRot52() {
         var shiftAmount = 64 - mapWidth;
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & (Long.reverse(seen51) >>> shiftAmount);
@@ -200485,7 +200476,7 @@ public class CellTracker {
     }
     private static void checkRot53() {
         var shiftAmount = 64 - mapWidth;
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & (Long.reverse(seen52) >>> shiftAmount);
@@ -204733,7 +204724,7 @@ public class CellTracker {
     }
     private static void checkRot54() {
         var shiftAmount = 64 - mapWidth;
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & (Long.reverse(seen53) >>> shiftAmount);
@@ -209119,7 +209110,7 @@ public class CellTracker {
     }
     private static void checkRot55() {
         var shiftAmount = 64 - mapWidth;
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & (Long.reverse(seen54) >>> shiftAmount);
@@ -213547,7 +213538,7 @@ public class CellTracker {
     }
     private static void checkRot56() {
         var shiftAmount = 64 - mapWidth;
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & (Long.reverse(seen55) >>> shiftAmount);
@@ -218113,7 +218104,7 @@ public class CellTracker {
     }
     private static void checkRot57() {
         var shiftAmount = 64 - mapWidth;
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & (Long.reverse(seen56) >>> shiftAmount);
@@ -222721,7 +222712,7 @@ public class CellTracker {
     }
     private static void checkRot58() {
         var shiftAmount = 64 - mapWidth;
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & (Long.reverse(seen57) >>> shiftAmount);
@@ -227467,7 +227458,7 @@ public class CellTracker {
     }
     private static void checkRot59() {
         var shiftAmount = 64 - mapWidth;
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & (Long.reverse(seen58) >>> shiftAmount);
@@ -232255,7 +232246,7 @@ public class CellTracker {
     }
     private static void checkRot60() {
         var shiftAmount = 64 - mapWidth;
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             case 0 -> {
                 {
                     var seenFused = seen0 & (Long.reverse(seen59) >>> shiftAmount);

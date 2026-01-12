@@ -89,8 +89,8 @@ public class BabyRat {
 
         if (rc.canTurn() && shouldGlance) {
             indicate("glancing");
-            var leftDir = rc.getDirection().rotateLeft().rotateLeft();
-            var rightDir = rc.getDirection().rotateRight().rotateRight();
+            var leftDir = myDir.rotateLeft().rotateLeft();
+            var rightDir = myDir.rotateRight().rotateRight();
             if (lastGlance == leftDir) {
                 turn(rightDir);
                 lastGlance = rightDir;
@@ -109,7 +109,7 @@ public class BabyRat {
 
         // 1. Move TOWARD ENEMY KING (leading the cat there!)
         if (rc.isMovementReady() && theEnemyKingLoc != null) {
-            Direction toEnemy = loc.directionTo(theEnemyKingLoc);
+            Direction toEnemy = myLoc.directionTo(theEnemyKingLoc);
             Direction[] tryDirs = {toEnemy, toEnemy.rotateLeft(), toEnemy.rotateRight(),
                                    toEnemy.rotateLeft().rotateLeft(),
                                    toEnemy.rotateRight().rotateRight()};
@@ -128,7 +128,7 @@ public class BabyRat {
         boolean shouldStopLuring = false;
 
         // Stop if we reached enemy territory (close to enemy king loc)
-        if (theEnemyKingLoc != null && loc.distanceSquaredTo(theEnemyKingLoc) <= 36) {
+        if (theEnemyKingLoc != null && myLoc.distanceSquaredTo(theEnemyKingLoc) <= 36) {
             indicate("REACHED ENEMY TERRITORY - mission complete!");
             shouldStopLuring = true;
         }
@@ -175,7 +175,7 @@ public class BabyRat {
         for (int i = 0; i < 5; i++) {
             MapLocation kingLoc = GlobalArray.getRat(i);
             if (kingLoc != null && rc.onTheMap(kingLoc)) {
-                int dist = loc.distanceSquaredTo(kingLoc);
+                int dist = myLoc.distanceSquaredTo(kingLoc);
                 if (dist < bestDist) {
                     bestDist = dist;
                     home = kingLoc;
@@ -188,10 +188,10 @@ public class BabyRat {
         int cheese = rc.getRawCheese();
         if (cheese <= 0 || home == null) return;
 
-        if (Util.chebyshevDistance(loc, home) > 2) return;
+        if (Util.chebyshevDistance(myLoc, home) > 2) return;
 
-        Direction toHome = loc.directionTo(home);
-        MapLocation transferTarget = loc.add(toHome);
+        Direction toHome = myLoc.directionTo(home);
+        MapLocation transferTarget = myLoc.add(toHome);
 
         if (rc.canTransferCheese(transferTarget, cheese)) {
             rc.transferCheese(transferTarget, cheese);

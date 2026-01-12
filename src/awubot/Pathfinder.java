@@ -62,7 +62,7 @@ class BugnavInstance {
     public MapLocation path24;
 
     void clearPath() {
-        pos = rc.getLocation();
+        pos = myLoc;
         nextPathIndex = 0;
         stackSize = 0;
         emptyStackTurns = 1000;
@@ -372,10 +372,10 @@ class BugnavInstance {
         rc.setIndicatorDot(leftBug.pos, 255, 255, 0);
         rc.setIndicatorDot(rightBug.pos, 255, 255, 0);
         // Profiler.begin();
-        if(!rc.getLocation().equals(lastLoc) || !rc.getDirection().equals(lastDir)) {
+        if(!myLoc.equals(lastLoc) || !myDir.equals(lastDir)) {
             // we moved, so we might be able to advance previously stuck stuff further
-            lastLoc = rc.getLocation();
-            lastDir = rc.getDirection();
+            lastLoc = myLoc;
+            lastDir = myDir;
             leftDone = leftBug.hitEdge || leftBug.nextPathIndex == 24;
             rightDone = rightBug.hitEdge || leftBug.nextPathIndex == 24;
         }
@@ -416,7 +416,7 @@ class BugnavInstance {
         boolean leftReady = leftBug.nextPathIndex >= 5 || leftBug.hitEdge || leftBug.outOfSight || leftBug.arrived;
         boolean rightReady = rightBug.nextPathIndex >= 5 || rightBug.hitEdge || rightBug.outOfSight || rightBug.arrived;
         indicate("ready " + leftReady + " " + rightReady);
-        if(!rc.getLocation().equals(pos) && (!leftReady || !rightReady)) return !(leftDone && rightDone);
+        if(!myLoc.equals(pos) && (!leftReady || !rightReady)) return !(leftDone && rightDone);
         indicate("going ahead");
 
         var leftScore =  Math.sqrt(leftBug.pos.distanceSquaredTo(target)) + leftBug.nextPathIndex * 0.7 ;
@@ -700,7 +700,7 @@ class BugnavInstance {
         leftBug = null;
         rightBug = null;
 
-            } else if(!better.outOfSight || rc.getLocation().isAdjacentTo(pos)) {
+            } else if(!better.outOfSight || myLoc.isAdjacentTo(pos)) {
                 indicate("unclear, guessing");
                 leftScore = Math.pow(leftScore, 15);
                 rightScore = Math.pow(rightScore, 15);
@@ -840,7 +840,7 @@ class BugnavInstance {
             var greedyPassable = CellTracker.isPassable(greedyLoc);
             var greedyGood = greedyPassable || !CellTracker.isSeen(greedyLoc);
             if(greedyGood) {
-                            if(greedyPassable && chebyshevDistance(rc.getLocation(), greedyLoc) <= 5) {
+                            if(greedyPassable && chebyshevDistance(myLoc, greedyLoc) <= 5) {
                 // indicate("greedyLoc " + greedyLoc);
                 pos = greedyLoc;
                 topDir = bottomDir;
@@ -859,7 +859,7 @@ class BugnavInstance {
             var rightPassable = CellTracker.isPassable(rightLoc);
             var rightGood = rightPassable || !CellTracker.isSeen(rightLoc);
             if(leftGood && !rightGood) {
-                            if(leftPassable && chebyshevDistance(rc.getLocation(), leftLoc) <= 5) {
+                            if(leftPassable && chebyshevDistance(myLoc, leftLoc) <= 5) {
                 // indicate("leftLoc " + leftLoc);
                 pos = leftLoc;
                 topDir = bottomDir;
@@ -872,7 +872,7 @@ class BugnavInstance {
 
             }
             if(!leftGood && rightGood) {
-                            if(rightPassable && chebyshevDistance(rc.getLocation(), rightLoc) <= 5) {
+                            if(rightPassable && chebyshevDistance(myLoc, rightLoc) <= 5) {
                 // indicate("rightLoc " + rightLoc);
                 pos = rightLoc;
                 topDir = bottomDir;
@@ -886,7 +886,7 @@ class BugnavInstance {
             }
             if(leftGood && rightGood) {
                 if(leftLoc.distanceSquaredTo(target) < rightLoc.distanceSquaredTo(target)) {
-                                if(leftPassable && chebyshevDistance(rc.getLocation(), leftLoc) <= 5) {
+                                if(leftPassable && chebyshevDistance(myLoc, leftLoc) <= 5) {
                 // indicate("leftLoc " + leftLoc);
                 pos = leftLoc;
                 topDir = bottomDir;
@@ -898,7 +898,7 @@ class BugnavInstance {
             return false;
 
                 } else {
-                                if(rightPassable && chebyshevDistance(rc.getLocation(), rightLoc) <= 5) {
+                                if(rightPassable && chebyshevDistance(myLoc, rightLoc) <= 5) {
                 // indicate("rightLoc " + rightLoc);
                 pos = rightLoc;
                 topDir = bottomDir;
@@ -972,7 +972,7 @@ class BugnavInstance {
                     // indicate("bugnav " + -2 + " " + isMaster);
                     return false;
                 }
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
                     rc.setIndicatorDot(nextPos, 0, 255, 255);
                     outOfSight = true;
                     // Profiler.end("bugnav " + -2 + " " + isMaster);
@@ -1018,7 +1018,7 @@ class BugnavInstance {
                     // indicate("bugnav " + -1 + " " + isMaster);
                     return false;
                 }
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
                     rc.setIndicatorDot(nextPos, 0, 255, 255);
                     outOfSight = true;
                     // Profiler.end("bugnav " + -1 + " " + isMaster);
@@ -1061,7 +1061,7 @@ class BugnavInstance {
                     // indicate("bugnav " + 0 + " " + isMaster);
                     return false;
                 }
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
                     rc.setIndicatorDot(nextPos, 0, 255, 255);
                     outOfSight = true;
                     // Profiler.end("bugnav " + 0 + " " + isMaster);
@@ -1103,7 +1103,7 @@ class BugnavInstance {
                     // indicate("bugnav " + 1 + " " + isMaster);
                     return false;
                 }
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
                     rc.setIndicatorDot(nextPos, 0, 255, 255);
                     outOfSight = true;
                     // Profiler.end("bugnav " + 1 + " " + isMaster);
@@ -1146,7 +1146,7 @@ class BugnavInstance {
                     // indicate("bugnav " + 2 + " " + isMaster);
                     return false;
                 }
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
                     rc.setIndicatorDot(nextPos, 0, 255, 255);
                     outOfSight = true;
                     // Profiler.end("bugnav " + 2 + " " + isMaster);
@@ -1189,7 +1189,7 @@ class BugnavInstance {
                     // indicate("bugnav " + 3 + " " + isMaster);
                     return false;
                 }
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
                     rc.setIndicatorDot(nextPos, 0, 255, 255);
                     outOfSight = true;
                     // Profiler.end("bugnav " + 3 + " " + isMaster);
@@ -1232,7 +1232,7 @@ class BugnavInstance {
                     // indicate("bugnav " + 4 + " " + isMaster);
                     return false;
                 }
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
                     rc.setIndicatorDot(nextPos, 0, 255, 255);
                     outOfSight = true;
                     // Profiler.end("bugnav " + 4 + " " + isMaster);
@@ -1275,7 +1275,7 @@ class BugnavInstance {
                     // indicate("bugnav " + 5 + " " + isMaster);
                     return false;
                 }
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
                     rc.setIndicatorDot(nextPos, 0, 255, 255);
                     outOfSight = true;
                     // Profiler.end("bugnav " + 5 + " " + isMaster);
@@ -1329,7 +1329,7 @@ class BugnavInstance {
                     // indicate("bugnav " + -2 + " " + isMaster);
                     return false;
                 }
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
                     rc.setIndicatorDot(nextPos, 0, 255, 255);
                     outOfSight = true;
                     // Profiler.end("bugnav " + -2 + " " + isMaster);
@@ -1375,7 +1375,7 @@ class BugnavInstance {
                     // indicate("bugnav " + -1 + " " + isMaster);
                     return false;
                 }
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
                     rc.setIndicatorDot(nextPos, 0, 255, 255);
                     outOfSight = true;
                     // Profiler.end("bugnav " + -1 + " " + isMaster);
@@ -1418,7 +1418,7 @@ class BugnavInstance {
                     // indicate("bugnav " + 0 + " " + isMaster);
                     return false;
                 }
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
                     rc.setIndicatorDot(nextPos, 0, 255, 255);
                     outOfSight = true;
                     // Profiler.end("bugnav " + 0 + " " + isMaster);
@@ -1460,7 +1460,7 @@ class BugnavInstance {
                     // indicate("bugnav " + 1 + " " + isMaster);
                     return false;
                 }
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
                     rc.setIndicatorDot(nextPos, 0, 255, 255);
                     outOfSight = true;
                     // Profiler.end("bugnav " + 1 + " " + isMaster);
@@ -1503,7 +1503,7 @@ class BugnavInstance {
                     // indicate("bugnav " + 2 + " " + isMaster);
                     return false;
                 }
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
                     rc.setIndicatorDot(nextPos, 0, 255, 255);
                     outOfSight = true;
                     // Profiler.end("bugnav " + 2 + " " + isMaster);
@@ -1546,7 +1546,7 @@ class BugnavInstance {
                     // indicate("bugnav " + 3 + " " + isMaster);
                     return false;
                 }
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
                     rc.setIndicatorDot(nextPos, 0, 255, 255);
                     outOfSight = true;
                     // Profiler.end("bugnav " + 3 + " " + isMaster);
@@ -1589,7 +1589,7 @@ class BugnavInstance {
                     // indicate("bugnav " + 4 + " " + isMaster);
                     return false;
                 }
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
                     rc.setIndicatorDot(nextPos, 0, 255, 255);
                     outOfSight = true;
                     // Profiler.end("bugnav " + 4 + " " + isMaster);
@@ -1632,7 +1632,7 @@ class BugnavInstance {
                     // indicate("bugnav " + 5 + " " + isMaster);
                     return false;
                 }
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
                     rc.setIndicatorDot(nextPos, 0, 255, 255);
                     outOfSight = true;
                     // Profiler.end("bugnav " + 5 + " " + isMaster);
@@ -1888,12 +1888,12 @@ public class Pathfinder {
 
     public static void makeMove(Direction dir) throws GameActionException {
         if(rc.canTurn()) turn(dir);
-        var nextLoc = loc.add(dir);
-        if(canSense(loc, nextLoc, facing) && rc.senseMapInfo(nextLoc).isDirt()) {
-            if(rc.isActionReady()) rc.removeDirt(nextLoc);
+        var nextLoc = myLoc.add(dir);
+        if(canSense(myLoc, nextLoc, myDir) && rc.senseMapInfo(nextLoc).isDirt()) {
+            if(rc.canRemoveDirt(nextLoc)) rc.removeDirt(nextLoc);
             else return;
         }
-        if(dir == rc.getDirection()) {
+        if(dir == myDir) {
             if(rc.canMoveForward()) moveForward();
         } else {
             // if we can't turn, then strafe
@@ -1945,7 +1945,7 @@ public class Pathfinder {
 
         if(!rc.isMovementReady()) return;
 
-        if(bug.pos == secondLastBugPos && loc.equals(secondLastLoc)) {
+        if(bug.pos == secondLastBugPos && myLoc.equals(secondLastLoc)) {
             reps++;
             if(reps >= 5) {
                 indicate("stuck, resetting bug");
@@ -1958,18 +1958,18 @@ public class Pathfinder {
         } else {
             reps = 0;
         }
-        if(!lastLoc.equals(loc) || !lastBugPos.equals(bug.pos)) {
+        if(!lastLoc.equals(myLoc) || !lastBugPos.equals(bug.pos)) {
             secondLastBugPos = lastBugPos;
             secondLastLoc = lastLoc;
             lastBugPos = bug.pos;
-            lastLoc = loc;
+            lastLoc = myLoc;
         }
         rc.setIndicatorDot(bug.pos, 255, 0, 0);
 
         // no bfs needed
         {
-            var dir = rc.getLocation().directionTo(bug.pos);
-            if(rc.getLocation().add(dir).equals(bug.pos)) {
+            var dir = myLoc.directionTo(bug.pos);
+            if(myLoc.add(dir).equals(bug.pos)) {
                 if(dir != Direction.CENTER) {
                     indicate("adjacent");
                     makeMove(dir);
@@ -1993,8 +1993,8 @@ public class Pathfinder {
         for(int i = RobotTracker.allyCount - 1; i >= 0; i--) {
                     {
             var pos = RobotTracker.allies[i];
-            int xi = pos.x - loc.x + 5;
-            int yi = pos.y - loc.y + 5;
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
             {
                 int idx = yi * 11 + xi;
                 if(idx < 61) {
@@ -2006,15 +2006,14 @@ public class Pathfinder {
         }
 
         }
-        var loc = rc.getLocation();
         // d{i}0 + d{i}1 is the mask of reachable within i steps
         long d00 = 0, d01 = 0;
         long d10 = 0, d11 = 0;
 
                 {
             var pos = bug.getRecentPos(0 / 2);
-            int xi = pos.x - loc.x + 5;
-            int yi = pos.y - loc.y + 5;
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
             {
                 int idx = yi * 11 + xi;
@@ -2076,7 +2075,7 @@ public class Pathfinder {
             if(
                (d10 & (1l << 49))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTH);
+                var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -2093,7 +2092,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -2105,7 +2104,7 @@ public class Pathfinder {
             if(
                (d11 & (1l << 0))
                != 0) {
-                var nextLoc = loc.add(Direction.EAST);
+                var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -2122,7 +2121,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -2134,7 +2133,7 @@ public class Pathfinder {
             if(
                (d11 & (1l << 10))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTH);
+                var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -2151,7 +2150,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -2163,7 +2162,7 @@ public class Pathfinder {
             if(
                (d10 & (1l << 59))
                != 0) {
-                var nextLoc = loc.add(Direction.WEST);
+                var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -2180,7 +2179,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -2192,7 +2191,7 @@ public class Pathfinder {
             if(
                (d10 & (1l << 48))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHWEST);
+                var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -2209,7 +2208,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -2221,7 +2220,7 @@ public class Pathfinder {
             if(
                (d10 & (1l << 50))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHEAST);
+                var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -2238,7 +2237,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -2250,7 +2249,7 @@ public class Pathfinder {
             if(
                (d11 & (1l << 9))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHWEST);
+                var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -2267,7 +2266,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -2279,7 +2278,7 @@ public class Pathfinder {
             if(
                (d11 & (1l << 11))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHEAST);
+                var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -2296,7 +2295,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -2337,8 +2336,8 @@ public class Pathfinder {
         // Profiler.end("bfs iteration");
                 {
             var pos = bug.getRecentPos(2 / 2);
-            int xi = pos.x - loc.x + 5;
-            int yi = pos.y - loc.y + 5;
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
             {
                 int idx = yi * 11 + xi;
@@ -2373,7 +2372,7 @@ public class Pathfinder {
             if(
                (d20 & (1l << 49))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTH);
+                var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -2390,7 +2389,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -2402,7 +2401,7 @@ public class Pathfinder {
             if(
                (d21 & (1l << 0))
                != 0) {
-                var nextLoc = loc.add(Direction.EAST);
+                var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -2419,7 +2418,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -2431,7 +2430,7 @@ public class Pathfinder {
             if(
                (d21 & (1l << 10))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTH);
+                var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -2448,7 +2447,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -2460,7 +2459,7 @@ public class Pathfinder {
             if(
                (d20 & (1l << 59))
                != 0) {
-                var nextLoc = loc.add(Direction.WEST);
+                var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -2477,7 +2476,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -2489,7 +2488,7 @@ public class Pathfinder {
             if(
                (d20 & (1l << 48))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHWEST);
+                var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -2506,7 +2505,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -2518,7 +2517,7 @@ public class Pathfinder {
             if(
                (d20 & (1l << 50))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHEAST);
+                var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -2535,7 +2534,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -2547,7 +2546,7 @@ public class Pathfinder {
             if(
                (d21 & (1l << 9))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHWEST);
+                var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -2564,7 +2563,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -2576,7 +2575,7 @@ public class Pathfinder {
             if(
                (d21 & (1l << 11))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHEAST);
+                var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -2593,7 +2592,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -2655,7 +2654,7 @@ public class Pathfinder {
             if(
                (d30 & (1l << 49))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTH);
+                var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -2672,7 +2671,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -2684,7 +2683,7 @@ public class Pathfinder {
             if(
                (d31 & (1l << 0))
                != 0) {
-                var nextLoc = loc.add(Direction.EAST);
+                var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -2701,7 +2700,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -2713,7 +2712,7 @@ public class Pathfinder {
             if(
                (d31 & (1l << 10))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTH);
+                var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -2730,7 +2729,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -2742,7 +2741,7 @@ public class Pathfinder {
             if(
                (d30 & (1l << 59))
                != 0) {
-                var nextLoc = loc.add(Direction.WEST);
+                var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -2759,7 +2758,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -2771,7 +2770,7 @@ public class Pathfinder {
             if(
                (d30 & (1l << 48))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHWEST);
+                var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -2788,7 +2787,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -2800,7 +2799,7 @@ public class Pathfinder {
             if(
                (d30 & (1l << 50))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHEAST);
+                var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -2817,7 +2816,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -2829,7 +2828,7 @@ public class Pathfinder {
             if(
                (d31 & (1l << 9))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHWEST);
+                var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -2846,7 +2845,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -2858,7 +2857,7 @@ public class Pathfinder {
             if(
                (d31 & (1l << 11))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHEAST);
+                var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -2875,7 +2874,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -2916,8 +2915,8 @@ public class Pathfinder {
         // Profiler.end("bfs iteration");
                 {
             var pos = bug.getRecentPos(4 / 2);
-            int xi = pos.x - loc.x + 5;
-            int yi = pos.y - loc.y + 5;
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
             {
                 int idx = yi * 11 + xi;
@@ -2952,7 +2951,7 @@ public class Pathfinder {
             if(
                (d40 & (1l << 49))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTH);
+                var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -2969,7 +2968,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -2981,7 +2980,7 @@ public class Pathfinder {
             if(
                (d41 & (1l << 0))
                != 0) {
-                var nextLoc = loc.add(Direction.EAST);
+                var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -2998,7 +2997,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -3010,7 +3009,7 @@ public class Pathfinder {
             if(
                (d41 & (1l << 10))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTH);
+                var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -3027,7 +3026,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -3039,7 +3038,7 @@ public class Pathfinder {
             if(
                (d40 & (1l << 59))
                != 0) {
-                var nextLoc = loc.add(Direction.WEST);
+                var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -3056,7 +3055,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -3068,7 +3067,7 @@ public class Pathfinder {
             if(
                (d40 & (1l << 48))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHWEST);
+                var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -3085,7 +3084,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -3097,7 +3096,7 @@ public class Pathfinder {
             if(
                (d40 & (1l << 50))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHEAST);
+                var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -3114,7 +3113,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -3126,7 +3125,7 @@ public class Pathfinder {
             if(
                (d41 & (1l << 9))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHWEST);
+                var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -3143,7 +3142,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -3155,7 +3154,7 @@ public class Pathfinder {
             if(
                (d41 & (1l << 11))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHEAST);
+                var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -3172,7 +3171,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -3234,7 +3233,7 @@ public class Pathfinder {
             if(
                (d50 & (1l << 49))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTH);
+                var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -3251,7 +3250,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -3263,7 +3262,7 @@ public class Pathfinder {
             if(
                (d51 & (1l << 0))
                != 0) {
-                var nextLoc = loc.add(Direction.EAST);
+                var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -3280,7 +3279,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -3292,7 +3291,7 @@ public class Pathfinder {
             if(
                (d51 & (1l << 10))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTH);
+                var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -3309,7 +3308,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -3321,7 +3320,7 @@ public class Pathfinder {
             if(
                (d50 & (1l << 59))
                != 0) {
-                var nextLoc = loc.add(Direction.WEST);
+                var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -3338,7 +3337,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -3350,7 +3349,7 @@ public class Pathfinder {
             if(
                (d50 & (1l << 48))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHWEST);
+                var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -3367,7 +3366,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -3379,7 +3378,7 @@ public class Pathfinder {
             if(
                (d50 & (1l << 50))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHEAST);
+                var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -3396,7 +3395,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -3408,7 +3407,7 @@ public class Pathfinder {
             if(
                (d51 & (1l << 9))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHWEST);
+                var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -3425,7 +3424,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -3437,7 +3436,7 @@ public class Pathfinder {
             if(
                (d51 & (1l << 11))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHEAST);
+                var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -3454,7 +3453,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -3495,8 +3494,8 @@ public class Pathfinder {
         // Profiler.end("bfs iteration");
                 {
             var pos = bug.getRecentPos(6 / 2);
-            int xi = pos.x - loc.x + 5;
-            int yi = pos.y - loc.y + 5;
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
             {
                 int idx = yi * 11 + xi;
@@ -3531,7 +3530,7 @@ public class Pathfinder {
             if(
                (d60 & (1l << 49))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTH);
+                var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -3548,7 +3547,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -3560,7 +3559,7 @@ public class Pathfinder {
             if(
                (d61 & (1l << 0))
                != 0) {
-                var nextLoc = loc.add(Direction.EAST);
+                var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -3577,7 +3576,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -3589,7 +3588,7 @@ public class Pathfinder {
             if(
                (d61 & (1l << 10))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTH);
+                var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -3606,7 +3605,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -3618,7 +3617,7 @@ public class Pathfinder {
             if(
                (d60 & (1l << 59))
                != 0) {
-                var nextLoc = loc.add(Direction.WEST);
+                var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -3635,7 +3634,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -3647,7 +3646,7 @@ public class Pathfinder {
             if(
                (d60 & (1l << 48))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHWEST);
+                var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -3664,7 +3663,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -3676,7 +3675,7 @@ public class Pathfinder {
             if(
                (d60 & (1l << 50))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHEAST);
+                var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -3693,7 +3692,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -3705,7 +3704,7 @@ public class Pathfinder {
             if(
                (d61 & (1l << 9))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHWEST);
+                var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -3722,7 +3721,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -3734,7 +3733,7 @@ public class Pathfinder {
             if(
                (d61 & (1l << 11))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHEAST);
+                var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -3751,7 +3750,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -3813,7 +3812,7 @@ public class Pathfinder {
             if(
                (d70 & (1l << 49))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTH);
+                var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -3830,7 +3829,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -3842,7 +3841,7 @@ public class Pathfinder {
             if(
                (d71 & (1l << 0))
                != 0) {
-                var nextLoc = loc.add(Direction.EAST);
+                var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -3859,7 +3858,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -3871,7 +3870,7 @@ public class Pathfinder {
             if(
                (d71 & (1l << 10))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTH);
+                var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -3888,7 +3887,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -3900,7 +3899,7 @@ public class Pathfinder {
             if(
                (d70 & (1l << 59))
                != 0) {
-                var nextLoc = loc.add(Direction.WEST);
+                var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -3917,7 +3916,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -3929,7 +3928,7 @@ public class Pathfinder {
             if(
                (d70 & (1l << 48))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHWEST);
+                var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -3946,7 +3945,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -3958,7 +3957,7 @@ public class Pathfinder {
             if(
                (d70 & (1l << 50))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHEAST);
+                var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -3975,7 +3974,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -3987,7 +3986,7 @@ public class Pathfinder {
             if(
                (d71 & (1l << 9))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHWEST);
+                var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -4004,7 +4003,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -4016,7 +4015,7 @@ public class Pathfinder {
             if(
                (d71 & (1l << 11))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHEAST);
+                var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -4033,7 +4032,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -4074,8 +4073,8 @@ public class Pathfinder {
         // Profiler.end("bfs iteration");
                 {
             var pos = bug.getRecentPos(8 / 2);
-            int xi = pos.x - loc.x + 5;
-            int yi = pos.y - loc.y + 5;
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
             {
                 int idx = yi * 11 + xi;
@@ -4110,7 +4109,7 @@ public class Pathfinder {
             if(
                (d80 & (1l << 49))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTH);
+                var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -4127,7 +4126,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -4139,7 +4138,7 @@ public class Pathfinder {
             if(
                (d81 & (1l << 0))
                != 0) {
-                var nextLoc = loc.add(Direction.EAST);
+                var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -4156,7 +4155,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -4168,7 +4167,7 @@ public class Pathfinder {
             if(
                (d81 & (1l << 10))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTH);
+                var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -4185,7 +4184,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -4197,7 +4196,7 @@ public class Pathfinder {
             if(
                (d80 & (1l << 59))
                != 0) {
-                var nextLoc = loc.add(Direction.WEST);
+                var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -4214,7 +4213,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -4226,7 +4225,7 @@ public class Pathfinder {
             if(
                (d80 & (1l << 48))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHWEST);
+                var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -4243,7 +4242,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -4255,7 +4254,7 @@ public class Pathfinder {
             if(
                (d80 & (1l << 50))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHEAST);
+                var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -4272,7 +4271,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -4284,7 +4283,7 @@ public class Pathfinder {
             if(
                (d81 & (1l << 9))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHWEST);
+                var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -4301,7 +4300,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -4313,7 +4312,7 @@ public class Pathfinder {
             if(
                (d81 & (1l << 11))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHEAST);
+                var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -4330,7 +4329,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -4392,7 +4391,7 @@ public class Pathfinder {
             if(
                (d90 & (1l << 49))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTH);
+                var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -4409,7 +4408,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -4421,7 +4420,7 @@ public class Pathfinder {
             if(
                (d91 & (1l << 0))
                != 0) {
-                var nextLoc = loc.add(Direction.EAST);
+                var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -4438,7 +4437,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -4450,7 +4449,7 @@ public class Pathfinder {
             if(
                (d91 & (1l << 10))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTH);
+                var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -4467,7 +4466,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -4479,7 +4478,7 @@ public class Pathfinder {
             if(
                (d90 & (1l << 59))
                != 0) {
-                var nextLoc = loc.add(Direction.WEST);
+                var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -4496,7 +4495,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -4508,7 +4507,7 @@ public class Pathfinder {
             if(
                (d90 & (1l << 48))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHWEST);
+                var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -4525,7 +4524,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -4537,7 +4536,7 @@ public class Pathfinder {
             if(
                (d90 & (1l << 50))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHEAST);
+                var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -4554,7 +4553,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -4566,7 +4565,7 @@ public class Pathfinder {
             if(
                (d91 & (1l << 9))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHWEST);
+                var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -4583,7 +4582,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -4595,7 +4594,7 @@ public class Pathfinder {
             if(
                (d91 & (1l << 11))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHEAST);
+                var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -4612,7 +4611,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -4653,8 +4652,8 @@ public class Pathfinder {
         // Profiler.end("bfs iteration");
                 {
             var pos = bug.getRecentPos(10 / 2);
-            int xi = pos.x - loc.x + 5;
-            int yi = pos.y - loc.y + 5;
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
             {
                 int idx = yi * 11 + xi;
@@ -4689,7 +4688,7 @@ public class Pathfinder {
             if(
                (d100 & (1l << 49))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTH);
+                var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -4706,7 +4705,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -4718,7 +4717,7 @@ public class Pathfinder {
             if(
                (d101 & (1l << 0))
                != 0) {
-                var nextLoc = loc.add(Direction.EAST);
+                var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -4735,7 +4734,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -4747,7 +4746,7 @@ public class Pathfinder {
             if(
                (d101 & (1l << 10))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTH);
+                var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -4764,7 +4763,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -4776,7 +4775,7 @@ public class Pathfinder {
             if(
                (d100 & (1l << 59))
                != 0) {
-                var nextLoc = loc.add(Direction.WEST);
+                var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -4793,7 +4792,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -4805,7 +4804,7 @@ public class Pathfinder {
             if(
                (d100 & (1l << 48))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHWEST);
+                var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -4822,7 +4821,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -4834,7 +4833,7 @@ public class Pathfinder {
             if(
                (d100 & (1l << 50))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHEAST);
+                var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -4851,7 +4850,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -4863,7 +4862,7 @@ public class Pathfinder {
             if(
                (d101 & (1l << 9))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHWEST);
+                var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -4880,7 +4879,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -4892,7 +4891,7 @@ public class Pathfinder {
             if(
                (d101 & (1l << 11))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHEAST);
+                var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -4909,7 +4908,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -4971,7 +4970,7 @@ public class Pathfinder {
             if(
                (d110 & (1l << 49))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTH);
+                var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -4988,7 +4987,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -5000,7 +4999,7 @@ public class Pathfinder {
             if(
                (d111 & (1l << 0))
                != 0) {
-                var nextLoc = loc.add(Direction.EAST);
+                var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -5017,7 +5016,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -5029,7 +5028,7 @@ public class Pathfinder {
             if(
                (d111 & (1l << 10))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTH);
+                var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -5046,7 +5045,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -5058,7 +5057,7 @@ public class Pathfinder {
             if(
                (d110 & (1l << 59))
                != 0) {
-                var nextLoc = loc.add(Direction.WEST);
+                var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -5075,7 +5074,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -5087,7 +5086,7 @@ public class Pathfinder {
             if(
                (d110 & (1l << 48))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHWEST);
+                var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -5104,7 +5103,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -5116,7 +5115,7 @@ public class Pathfinder {
             if(
                (d110 & (1l << 50))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHEAST);
+                var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -5133,7 +5132,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -5145,7 +5144,7 @@ public class Pathfinder {
             if(
                (d111 & (1l << 9))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHWEST);
+                var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -5162,7 +5161,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -5174,7 +5173,7 @@ public class Pathfinder {
             if(
                (d111 & (1l << 11))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHEAST);
+                var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -5191,7 +5190,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -5232,8 +5231,8 @@ public class Pathfinder {
         // Profiler.end("bfs iteration");
                 {
             var pos = bug.getRecentPos(12 / 2);
-            int xi = pos.x - loc.x + 5;
-            int yi = pos.y - loc.y + 5;
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
             {
                 int idx = yi * 11 + xi;
@@ -5268,7 +5267,7 @@ public class Pathfinder {
             if(
                (d120 & (1l << 49))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTH);
+                var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -5285,7 +5284,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -5297,7 +5296,7 @@ public class Pathfinder {
             if(
                (d121 & (1l << 0))
                != 0) {
-                var nextLoc = loc.add(Direction.EAST);
+                var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -5314,7 +5313,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -5326,7 +5325,7 @@ public class Pathfinder {
             if(
                (d121 & (1l << 10))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTH);
+                var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -5343,7 +5342,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -5355,7 +5354,7 @@ public class Pathfinder {
             if(
                (d120 & (1l << 59))
                != 0) {
-                var nextLoc = loc.add(Direction.WEST);
+                var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -5372,7 +5371,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -5384,7 +5383,7 @@ public class Pathfinder {
             if(
                (d120 & (1l << 48))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHWEST);
+                var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -5401,7 +5400,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -5413,7 +5412,7 @@ public class Pathfinder {
             if(
                (d120 & (1l << 50))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHEAST);
+                var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -5430,7 +5429,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -5442,7 +5441,7 @@ public class Pathfinder {
             if(
                (d121 & (1l << 9))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHWEST);
+                var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -5459,7 +5458,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -5471,7 +5470,7 @@ public class Pathfinder {
             if(
                (d121 & (1l << 11))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHEAST);
+                var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -5488,7 +5487,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -5550,7 +5549,7 @@ public class Pathfinder {
             if(
                (d130 & (1l << 49))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTH);
+                var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -5567,7 +5566,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -5579,7 +5578,7 @@ public class Pathfinder {
             if(
                (d131 & (1l << 0))
                != 0) {
-                var nextLoc = loc.add(Direction.EAST);
+                var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -5596,7 +5595,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -5608,7 +5607,7 @@ public class Pathfinder {
             if(
                (d131 & (1l << 10))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTH);
+                var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -5625,7 +5624,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -5637,7 +5636,7 @@ public class Pathfinder {
             if(
                (d130 & (1l << 59))
                != 0) {
-                var nextLoc = loc.add(Direction.WEST);
+                var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -5654,7 +5653,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -5666,7 +5665,7 @@ public class Pathfinder {
             if(
                (d130 & (1l << 48))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHWEST);
+                var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -5683,7 +5682,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -5695,7 +5694,7 @@ public class Pathfinder {
             if(
                (d130 & (1l << 50))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHEAST);
+                var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -5712,7 +5711,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -5724,7 +5723,7 @@ public class Pathfinder {
             if(
                (d131 & (1l << 9))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHWEST);
+                var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -5741,7 +5740,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -5753,7 +5752,7 @@ public class Pathfinder {
             if(
                (d131 & (1l << 11))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHEAST);
+                var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -5770,7 +5769,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -5811,8 +5810,8 @@ public class Pathfinder {
         // Profiler.end("bfs iteration");
                 {
             var pos = bug.getRecentPos(14 / 2);
-            int xi = pos.x - loc.x + 5;
-            int yi = pos.y - loc.y + 5;
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
             {
                 int idx = yi * 11 + xi;
@@ -5847,7 +5846,7 @@ public class Pathfinder {
             if(
                (d140 & (1l << 49))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTH);
+                var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -5864,7 +5863,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -5876,7 +5875,7 @@ public class Pathfinder {
             if(
                (d141 & (1l << 0))
                != 0) {
-                var nextLoc = loc.add(Direction.EAST);
+                var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -5893,7 +5892,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -5905,7 +5904,7 @@ public class Pathfinder {
             if(
                (d141 & (1l << 10))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTH);
+                var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -5922,7 +5921,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -5934,7 +5933,7 @@ public class Pathfinder {
             if(
                (d140 & (1l << 59))
                != 0) {
-                var nextLoc = loc.add(Direction.WEST);
+                var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -5951,7 +5950,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -5963,7 +5962,7 @@ public class Pathfinder {
             if(
                (d140 & (1l << 48))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHWEST);
+                var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -5980,7 +5979,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -5992,7 +5991,7 @@ public class Pathfinder {
             if(
                (d140 & (1l << 50))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHEAST);
+                var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -6009,7 +6008,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -6021,7 +6020,7 @@ public class Pathfinder {
             if(
                (d141 & (1l << 9))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHWEST);
+                var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -6038,7 +6037,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -6050,7 +6049,7 @@ public class Pathfinder {
             if(
                (d141 & (1l << 11))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHEAST);
+                var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -6067,7 +6066,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -6129,7 +6128,7 @@ public class Pathfinder {
             if(
                (d150 & (1l << 49))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTH);
+                var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -6146,7 +6145,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -6158,7 +6157,7 @@ public class Pathfinder {
             if(
                (d151 & (1l << 0))
                != 0) {
-                var nextLoc = loc.add(Direction.EAST);
+                var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -6175,7 +6174,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -6187,7 +6186,7 @@ public class Pathfinder {
             if(
                (d151 & (1l << 10))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTH);
+                var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -6204,7 +6203,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -6216,7 +6215,7 @@ public class Pathfinder {
             if(
                (d150 & (1l << 59))
                != 0) {
-                var nextLoc = loc.add(Direction.WEST);
+                var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -6233,7 +6232,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -6245,7 +6244,7 @@ public class Pathfinder {
             if(
                (d150 & (1l << 48))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHWEST);
+                var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -6262,7 +6261,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -6274,7 +6273,7 @@ public class Pathfinder {
             if(
                (d150 & (1l << 50))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHEAST);
+                var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -6291,7 +6290,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -6303,7 +6302,7 @@ public class Pathfinder {
             if(
                (d151 & (1l << 9))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHWEST);
+                var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -6320,7 +6319,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -6332,7 +6331,7 @@ public class Pathfinder {
             if(
                (d151 & (1l << 11))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHEAST);
+                var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -6349,7 +6348,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -6390,8 +6389,8 @@ public class Pathfinder {
         // Profiler.end("bfs iteration");
                 {
             var pos = bug.getRecentPos(16 / 2);
-            int xi = pos.x - loc.x + 5;
-            int yi = pos.y - loc.y + 5;
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
             {
                 int idx = yi * 11 + xi;
@@ -6426,7 +6425,7 @@ public class Pathfinder {
             if(
                (d160 & (1l << 49))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTH);
+                var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -6443,7 +6442,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -6455,7 +6454,7 @@ public class Pathfinder {
             if(
                (d161 & (1l << 0))
                != 0) {
-                var nextLoc = loc.add(Direction.EAST);
+                var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -6472,7 +6471,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -6484,7 +6483,7 @@ public class Pathfinder {
             if(
                (d161 & (1l << 10))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTH);
+                var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -6501,7 +6500,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -6513,7 +6512,7 @@ public class Pathfinder {
             if(
                (d160 & (1l << 59))
                != 0) {
-                var nextLoc = loc.add(Direction.WEST);
+                var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -6530,7 +6529,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -6542,7 +6541,7 @@ public class Pathfinder {
             if(
                (d160 & (1l << 48))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHWEST);
+                var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -6559,7 +6558,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -6571,7 +6570,7 @@ public class Pathfinder {
             if(
                (d160 & (1l << 50))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHEAST);
+                var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -6588,7 +6587,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -6600,7 +6599,7 @@ public class Pathfinder {
             if(
                (d161 & (1l << 9))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHWEST);
+                var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -6617,7 +6616,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -6629,7 +6628,7 @@ public class Pathfinder {
             if(
                (d161 & (1l << 11))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHEAST);
+                var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -6646,7 +6645,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -6708,7 +6707,7 @@ public class Pathfinder {
             if(
                (d170 & (1l << 49))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTH);
+                var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -6725,7 +6724,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -6737,7 +6736,7 @@ public class Pathfinder {
             if(
                (d171 & (1l << 0))
                != 0) {
-                var nextLoc = loc.add(Direction.EAST);
+                var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -6754,7 +6753,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -6766,7 +6765,7 @@ public class Pathfinder {
             if(
                (d171 & (1l << 10))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTH);
+                var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -6783,7 +6782,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -6795,7 +6794,7 @@ public class Pathfinder {
             if(
                (d170 & (1l << 59))
                != 0) {
-                var nextLoc = loc.add(Direction.WEST);
+                var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -6812,7 +6811,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -6824,7 +6823,7 @@ public class Pathfinder {
             if(
                (d170 & (1l << 48))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHWEST);
+                var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -6841,7 +6840,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -6853,7 +6852,7 @@ public class Pathfinder {
             if(
                (d170 & (1l << 50))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHEAST);
+                var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -6870,7 +6869,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -6882,7 +6881,7 @@ public class Pathfinder {
             if(
                (d171 & (1l << 9))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHWEST);
+                var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -6899,7 +6898,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -6911,7 +6910,7 @@ public class Pathfinder {
             if(
                (d171 & (1l << 11))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHEAST);
+                var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -6928,7 +6927,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -6969,8 +6968,8 @@ public class Pathfinder {
         // Profiler.end("bfs iteration");
                 {
             var pos = bug.getRecentPos(18 / 2);
-            int xi = pos.x - loc.x + 5;
-            int yi = pos.y - loc.y + 5;
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
             {
                 int idx = yi * 11 + xi;
@@ -7005,7 +7004,7 @@ public class Pathfinder {
             if(
                (d180 & (1l << 49))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTH);
+                var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -7022,7 +7021,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -7034,7 +7033,7 @@ public class Pathfinder {
             if(
                (d181 & (1l << 0))
                != 0) {
-                var nextLoc = loc.add(Direction.EAST);
+                var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -7051,7 +7050,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -7063,7 +7062,7 @@ public class Pathfinder {
             if(
                (d181 & (1l << 10))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTH);
+                var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -7080,7 +7079,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -7092,7 +7091,7 @@ public class Pathfinder {
             if(
                (d180 & (1l << 59))
                != 0) {
-                var nextLoc = loc.add(Direction.WEST);
+                var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -7109,7 +7108,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -7121,7 +7120,7 @@ public class Pathfinder {
             if(
                (d180 & (1l << 48))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHWEST);
+                var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -7138,7 +7137,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -7150,7 +7149,7 @@ public class Pathfinder {
             if(
                (d180 & (1l << 50))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHEAST);
+                var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -7167,7 +7166,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -7179,7 +7178,7 @@ public class Pathfinder {
             if(
                (d181 & (1l << 9))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHWEST);
+                var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -7196,7 +7195,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -7208,7 +7207,7 @@ public class Pathfinder {
             if(
                (d181 & (1l << 11))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHEAST);
+                var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -7225,7 +7224,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -7287,7 +7286,7 @@ public class Pathfinder {
             if(
                (d190 & (1l << 49))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTH);
+                var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -7304,7 +7303,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -7316,7 +7315,7 @@ public class Pathfinder {
             if(
                (d191 & (1l << 0))
                != 0) {
-                var nextLoc = loc.add(Direction.EAST);
+                var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -7333,7 +7332,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -7345,7 +7344,7 @@ public class Pathfinder {
             if(
                (d191 & (1l << 10))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTH);
+                var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -7362,7 +7361,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -7374,7 +7373,7 @@ public class Pathfinder {
             if(
                (d190 & (1l << 59))
                != 0) {
-                var nextLoc = loc.add(Direction.WEST);
+                var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -7391,7 +7390,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -7403,7 +7402,7 @@ public class Pathfinder {
             if(
                (d190 & (1l << 48))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHWEST);
+                var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -7420,7 +7419,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -7432,7 +7431,7 @@ public class Pathfinder {
             if(
                (d190 & (1l << 50))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHEAST);
+                var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -7449,7 +7448,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -7461,7 +7460,7 @@ public class Pathfinder {
             if(
                (d191 & (1l << 9))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHWEST);
+                var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -7478,7 +7477,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -7490,7 +7489,7 @@ public class Pathfinder {
             if(
                (d191 & (1l << 11))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHEAST);
+                var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -7507,7 +7506,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -7548,8 +7547,8 @@ public class Pathfinder {
         // Profiler.end("bfs iteration");
                 {
             var pos = bug.getRecentPos(20 / 2);
-            int xi = pos.x - loc.x + 5;
-            int yi = pos.y - loc.y + 5;
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
             {
                 int idx = yi * 11 + xi;
@@ -7584,7 +7583,7 @@ public class Pathfinder {
             if(
                (d200 & (1l << 49))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTH);
+                var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -7601,7 +7600,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -7613,7 +7612,7 @@ public class Pathfinder {
             if(
                (d201 & (1l << 0))
                != 0) {
-                var nextLoc = loc.add(Direction.EAST);
+                var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -7630,7 +7629,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -7642,7 +7641,7 @@ public class Pathfinder {
             if(
                (d201 & (1l << 10))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTH);
+                var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -7659,7 +7658,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -7671,7 +7670,7 @@ public class Pathfinder {
             if(
                (d200 & (1l << 59))
                != 0) {
-                var nextLoc = loc.add(Direction.WEST);
+                var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -7688,7 +7687,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -7700,7 +7699,7 @@ public class Pathfinder {
             if(
                (d200 & (1l << 48))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHWEST);
+                var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -7717,7 +7716,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -7729,7 +7728,7 @@ public class Pathfinder {
             if(
                (d200 & (1l << 50))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHEAST);
+                var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -7746,7 +7745,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -7758,7 +7757,7 @@ public class Pathfinder {
             if(
                (d201 & (1l << 9))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHWEST);
+                var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -7775,7 +7774,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -7787,7 +7786,7 @@ public class Pathfinder {
             if(
                (d201 & (1l << 11))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHEAST);
+                var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -7804,7 +7803,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -7866,7 +7865,7 @@ public class Pathfinder {
             if(
                (d210 & (1l << 49))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTH);
+                var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -7883,7 +7882,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -7895,7 +7894,7 @@ public class Pathfinder {
             if(
                (d211 & (1l << 0))
                != 0) {
-                var nextLoc = loc.add(Direction.EAST);
+                var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -7912,7 +7911,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -7924,7 +7923,7 @@ public class Pathfinder {
             if(
                (d211 & (1l << 10))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTH);
+                var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -7941,7 +7940,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -7953,7 +7952,7 @@ public class Pathfinder {
             if(
                (d210 & (1l << 59))
                != 0) {
-                var nextLoc = loc.add(Direction.WEST);
+                var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -7970,7 +7969,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -7982,7 +7981,7 @@ public class Pathfinder {
             if(
                (d210 & (1l << 48))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHWEST);
+                var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -7999,7 +7998,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -8011,7 +8010,7 @@ public class Pathfinder {
             if(
                (d210 & (1l << 50))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHEAST);
+                var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -8028,7 +8027,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -8040,7 +8039,7 @@ public class Pathfinder {
             if(
                (d211 & (1l << 9))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHWEST);
+                var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -8057,7 +8056,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -8069,7 +8068,7 @@ public class Pathfinder {
             if(
                (d211 & (1l << 11))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHEAST);
+                var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -8086,7 +8085,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -8127,8 +8126,8 @@ public class Pathfinder {
         // Profiler.end("bfs iteration");
                 {
             var pos = bug.getRecentPos(22 / 2);
-            int xi = pos.x - loc.x + 5;
-            int yi = pos.y - loc.y + 5;
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
             {
                 int idx = yi * 11 + xi;
@@ -8163,7 +8162,7 @@ public class Pathfinder {
             if(
                (d220 & (1l << 49))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTH);
+                var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -8180,7 +8179,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -8192,7 +8191,7 @@ public class Pathfinder {
             if(
                (d221 & (1l << 0))
                != 0) {
-                var nextLoc = loc.add(Direction.EAST);
+                var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -8209,7 +8208,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -8221,7 +8220,7 @@ public class Pathfinder {
             if(
                (d221 & (1l << 10))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTH);
+                var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -8238,7 +8237,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -8250,7 +8249,7 @@ public class Pathfinder {
             if(
                (d220 & (1l << 59))
                != 0) {
-                var nextLoc = loc.add(Direction.WEST);
+                var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -8267,7 +8266,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -8279,7 +8278,7 @@ public class Pathfinder {
             if(
                (d220 & (1l << 48))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHWEST);
+                var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -8296,7 +8295,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -8308,7 +8307,7 @@ public class Pathfinder {
             if(
                (d220 & (1l << 50))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHEAST);
+                var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -8325,7 +8324,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -8337,7 +8336,7 @@ public class Pathfinder {
             if(
                (d221 & (1l << 9))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHWEST);
+                var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -8354,7 +8353,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -8366,7 +8365,7 @@ public class Pathfinder {
             if(
                (d221 & (1l << 11))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHEAST);
+                var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -8383,7 +8382,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -8445,7 +8444,7 @@ public class Pathfinder {
             if(
                (d230 & (1l << 49))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTH);
+                var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -8462,7 +8461,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -8474,7 +8473,7 @@ public class Pathfinder {
             if(
                (d231 & (1l << 0))
                != 0) {
-                var nextLoc = loc.add(Direction.EAST);
+                var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -8491,7 +8490,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -8503,7 +8502,7 @@ public class Pathfinder {
             if(
                (d231 & (1l << 10))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTH);
+                var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -8520,7 +8519,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -8532,7 +8531,7 @@ public class Pathfinder {
             if(
                (d230 & (1l << 59))
                != 0) {
-                var nextLoc = loc.add(Direction.WEST);
+                var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -8549,7 +8548,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -8561,7 +8560,7 @@ public class Pathfinder {
             if(
                (d230 & (1l << 48))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHWEST);
+                var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -8578,7 +8577,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -8590,7 +8589,7 @@ public class Pathfinder {
             if(
                (d230 & (1l << 50))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHEAST);
+                var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -8607,7 +8606,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -8619,7 +8618,7 @@ public class Pathfinder {
             if(
                (d231 & (1l << 9))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHWEST);
+                var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -8636,7 +8635,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -8648,7 +8647,7 @@ public class Pathfinder {
             if(
                (d231 & (1l << 11))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHEAST);
+                var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -8665,7 +8664,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -8706,8 +8705,8 @@ public class Pathfinder {
         // Profiler.end("bfs iteration");
                 {
             var pos = bug.getRecentPos(24 / 2);
-            int xi = pos.x - loc.x + 5;
-            int yi = pos.y - loc.y + 5;
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
             {
                 int idx = yi * 11 + xi;
@@ -8742,7 +8741,7 @@ public class Pathfinder {
             if(
                (d240 & (1l << 49))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTH);
+                var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -8759,7 +8758,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -8771,7 +8770,7 @@ public class Pathfinder {
             if(
                (d241 & (1l << 0))
                != 0) {
-                var nextLoc = loc.add(Direction.EAST);
+                var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -8788,7 +8787,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -8800,7 +8799,7 @@ public class Pathfinder {
             if(
                (d241 & (1l << 10))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTH);
+                var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -8817,7 +8816,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -8829,7 +8828,7 @@ public class Pathfinder {
             if(
                (d240 & (1l << 59))
                != 0) {
-                var nextLoc = loc.add(Direction.WEST);
+                var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -8846,7 +8845,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -8858,7 +8857,7 @@ public class Pathfinder {
             if(
                (d240 & (1l << 48))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHWEST);
+                var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -8875,7 +8874,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -8887,7 +8886,7 @@ public class Pathfinder {
             if(
                (d240 & (1l << 50))
                != 0) {
-                var nextLoc = loc.add(Direction.SOUTHEAST);
+                var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -8904,7 +8903,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -8916,7 +8915,7 @@ public class Pathfinder {
             if(
                (d241 & (1l << 9))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHWEST);
+                var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -8933,7 +8932,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {
@@ -8945,7 +8944,7 @@ public class Pathfinder {
             if(
                (d241 & (1l << 11))
                != 0) {
-                var nextLoc = loc.add(Direction.NORTHEAST);
+                var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -8962,7 +8961,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == rc.getDirection()) {
+                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {

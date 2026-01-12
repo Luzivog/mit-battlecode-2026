@@ -2169,8 +2169,6 @@ public class CellTracker {
                     }
                 }
                                                                     }
-            case Direction.CENTER -> {
-            }
         }
         Profiler.end("storeVisibleCells");
     }
@@ -2580,8 +2578,6 @@ public class CellTracker {
                     }
                 }
                                                                     }
-            case Direction.CENTER -> {
-            }
         }
         Profiler.end("storeVisibleCellsPostMove");
     }
@@ -8889,13 +8885,11 @@ public class CellTracker {
     public static void setSymmetry(int cur_sym) {
         if (cur_sym != 0) {
             CellTracker.rsym = CellTracker.hsym = CellTracker.vsym = 0;
-            // cur_sym is the ordinal of the Symmetry enum
-            // Unknown = 0, Rotational = 1, Horizontal = 2, Vertical = 3
-            if (cur_sym == Symmetry.Rotational.ordinal()) {
+            if (cur_sym == 1) {
                 CellTracker.rsym = 1;
-            } else if (cur_sym == Symmetry.Horizontal.ordinal()) {
+            } else if (cur_sym == 2) {
                 CellTracker.hsym = 1;
-            } else if (cur_sym == Symmetry.Vertical.ordinal()) {
+            } else if (cur_sym == 3) {
                 CellTracker.vsym = 1;
             }
         }

@@ -13,11 +13,10 @@ public class Rng {
     public static void init() {
         s0 *= 1103515245;
         s0 ^= rc.getRoundNum();
-        MapLocation loc = rc.getLocation();
         s0 *= 1103515245;
-        s0 ^= loc.x;
+        s0 ^= myLocX;
         s0 *= 1103515245;
-        s0 ^= loc.y;
+        s0 ^= myLocY;
     }
 
     /**
@@ -53,11 +52,10 @@ public class Rng {
      * 22 bytecode
      */
     public static void seed() {
-        MapLocation loc = rc.getLocation();
         s0 = rc.getID() * 0x41C64E6D;
-        s1 = rc.getRoundNum() * 0x515E1229;
-        s2 = loc.x * 0x5BCE2D95;
-        s3 = loc.y * 0x79797977;
+        s1 = time * 0x515E1229;
+        s2 = myLocX * 0x5BCE2D95;
+        s3 = myLocY * 0x79797977;
     }
 
     /**
@@ -65,9 +63,8 @@ public class Rng {
      * 22 bytecode
      */
     public static void init_xss() {
-        MapLocation loc = rc.getLocation();
-        s0 ^= Integer.rotateLeft(loc.x * 0x9E3779B9, 13);
-        s2 ^= Integer.rotateLeft(loc.y * 0x517cc1b7, 7);
+        s0 ^= Integer.rotateLeft(myLocX * 0x9E3779B9, 13);
+        s2 ^= Integer.rotateLeft(myLocY * 0x517cc1b7, 7);
     }
 
     /**

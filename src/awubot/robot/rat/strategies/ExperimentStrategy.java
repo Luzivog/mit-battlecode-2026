@@ -35,7 +35,7 @@ public class ExperimentStrategy extends Strategy {
         }
         for (RobotInfo ri : rc.senseNearbyRobots()) {
             if (ri.ID == id) {
-                println("found thrown guy at " + loc.distanceSquaredTo(ri.getLocation()));
+                println("found thrown guy at " + myLoc.distanceSquaredTo(ri.getLocation()));
             }
         }
         if (rc.getCarrying() != null) {
@@ -69,7 +69,7 @@ public class ExperimentStrategy extends Strategy {
             MapLocation target = info.getLocation();
             for (Direction dir : Direction.values()) {
                 if (dir == Direction.CENTER || rc.canMove(dir)) {
-                    MapLocation newLoc = loc.add(dir);
+                    MapLocation newLoc = myLoc.add(dir);
                     if (newLoc.distanceSquaredTo(target) <= 2) {
                         return () -> {
                             try {
@@ -77,9 +77,6 @@ public class ExperimentStrategy extends Strategy {
                                 rawMove(dir);
                                 turn(newLoc.directionTo(target));
                                 rc.attack(target);
-                                loc = rc.getLocation();
-                                locX = loc.x;
-                                locY = loc.y;
                             } catch (GameActionException e) {
                                 e.printStackTrace();
                             }
@@ -100,7 +97,7 @@ public class ExperimentStrategy extends Strategy {
             MapLocation target = info.getLocation();
             for (Direction dir : Direction.values()) {
                 if (dir == Direction.CENTER || rc.canMove(dir)) {
-                    MapLocation newLoc = loc.add(dir);
+                    MapLocation newLoc = myLoc.add(dir);
                     if (newLoc.distanceSquaredTo(target) <= 2) {
                         return () -> {
                             try {
@@ -108,9 +105,6 @@ public class ExperimentStrategy extends Strategy {
                                 rawMove(dir);
                                 turn(newLoc.directionTo(target));
                                 rc.carryRat(target);
-                                loc = rc.getLocation();
-                                locX = loc.x;
-                                locY = loc.y;
                             } catch (GameActionException e) {
                                 e.printStackTrace();
                             }
@@ -127,7 +121,7 @@ public class ExperimentStrategy extends Strategy {
         Direction best = null;
         int dist = 67;
         for (Direction dir : Direction.values()) {
-            MapLocation pos = loc;
+            MapLocation pos = myLoc;
             for (int i = 0; i < 8; i++) {
                 pos = pos.add(dir);
                 if (!rc.canSenseLocation(pos)) {
@@ -138,7 +132,7 @@ public class ExperimentStrategy extends Strategy {
                 if (!rc.senseMapInfo(pos).isPassable()) break;
             }
             if (pos == null) continue;
-            int d = Util.chebyshevDistance(loc, pos);
+            int d = Util.chebyshevDistance(myLoc, pos);
             if (d <= 1 || d == 8) continue;
             if (d < dist) {
                 best = dir;
@@ -151,7 +145,7 @@ public class ExperimentStrategy extends Strategy {
             try {
                 println("THROWING RAT " + _best);
                 {
-                    MapLocation pos = loc;
+                    MapLocation pos = myLoc;
                     for (int i = 0; i < 8; i++) {
                         pos = pos.add(_best);
                         if (!rc.canSenseLocation(pos)) break;
@@ -168,7 +162,7 @@ public class ExperimentStrategy extends Strategy {
                 for (RobotInfo ri : rc.senseNearbyRobots()) {
                     println("neighbour at " + ri.getLocation());
                     if (ri.ID == id) {
-                        println("found thrown guy at " + loc.distanceSquaredTo(ri.getLocation()));
+                        println("found thrown guy at " + myLoc.distanceSquaredTo(ri.getLocation()));
                     }
                 }
 

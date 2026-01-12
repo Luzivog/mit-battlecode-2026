@@ -74,13 +74,13 @@ public class CombatStrategy {
         double best = -1;
         for (Direction moveDir : allDirections) {
             if (moveDir != Direction.CENTER && !rc.canMove(moveDir)) continue;
-            MapLocation newLoc = loc.add(moveDir);
+            MapLocation newLoc = myLoc.add(moveDir);
             for (Direction throwDir : directions) {
                 int moveType = -1;
                 if (moveDir == Direction.CENTER && rc.canTurn()) moveType = 4;
-                else if (moveDir == throwDir && (moveDir == facing || rc.canTurn())) moveType = 0; // (turn or not turn) + straight forward
-                else if (moveDir == facing && rc.canTurn()) moveType = 1; // forward + turn throw
-                else if (throwDir == facing) moveType = 2; // strafe + forward
+                else if (moveDir == throwDir && (moveDir == myDir || rc.canTurn())) moveType = 0; // (turn or not turn) + straight forward
+                else if (moveDir == myDir && rc.canTurn()) moveType = 1; // forward + turn throw
+                else if (throwDir == myDir) moveType = 2; // strafe + forward
                 else if (rc.canTurn()) moveType = 3; // strafe + turn + throw 
                 if (moveType == -1) continue;
 
@@ -89,7 +89,7 @@ public class CombatStrategy {
                 if (!rc.senseMapInfo(throwTarget).isPassable()) continue; // need empty
                 // TODO: why does this line below not work?
                 // if (!CellTracker.isPassable(throwTarget)) continue; // need empty
-                if (throwTarget != loc && rc.senseRobotAtLocation(throwTarget) != null) continue; // need empty
+                if (throwTarget != myLoc && rc.senseRobotAtLocation(throwTarget) != null) continue; // need empty
                 double damage = -1;
                 // for now, allow the throw path to go through friendly rats
                 for (int rem = 7; rem >= 0; rem--) {
@@ -131,7 +131,7 @@ public class CombatStrategy {
         println("THROWING RAT");
         switch (mt) {
             case 0: // forward
-                if (facing != md) turn(md);
+                if (myDir != md) turn(md);
                 rawMove();
                 break;
             case 1:
@@ -164,7 +164,7 @@ public class CombatStrategy {
         double bestScore = -1;
         for (RobotInfo info : rc.senseNearbyRobots()) {
             if (info.getTeam() == team) continue;
-            if (chebyshevDistance(loc, info.getLocation()) > 2) continue; 
+            if (chebyshevDistance(myLoc, info.getLocation()) > 2) continue; 
             if (info.getHealth() >= rc.getHealth()) continue;
             if (info.getType() != UnitType.BABY_RAT) continue;
             MapLocation t = info.getLocation();
@@ -176,9 +176,9 @@ public class CombatStrategy {
             double best = -1;
             for (Direction moveDir : allDirections) {
                 if (moveDir != Direction.CENTER && !rc.canMove(moveDir)) continue;
-                MapLocation newLoc = loc.add(moveDir); 
+                MapLocation newLoc = myLoc.add(moveDir); 
                 if (newLoc.distanceSquaredTo(t) > 2) continue; 
-                if (!canSense(newLoc, t, facing) && !rc.canTurn()) continue;
+                if (!canSense(newLoc, t, myDir) && !rc.canTurn()) continue;
                 println("passed checks");
                 double score = weight;
                 // TODO: account for cell danger levels
@@ -195,7 +195,7 @@ public class CombatStrategy {
         }
         if (bestScore < 0) return false; 
         if (bestMove != Direction.CENTER) rawMove(bestMove);
-        if (!rc.canSenseLocation(target.getLocation())) turn(loc.directionTo(target.getLocation()));
+        if (!rc.canSenseLocation(target.getLocation())) turn(myLoc.directionTo(target.getLocation()));
         rc.carryRat(target.getLocation());
         println("napped rat");
         return true;
@@ -224,13 +224,13 @@ public class CombatStrategy {
                 if (rc.senseMapInfo(placeLoc).hasCheeseMine()) continue;
                 if (rc.senseRobotAtLocation(placeLoc) != null) continue;
                 if (dir == info.getDirection().opposite()) continue;
-                if (placeLoc.distanceSquaredTo(loc) > 4) continue; // impossible
+                if (placeLoc.distanceSquaredTo(myLoc) > 4) continue; // impossible
                 for (Direction moveDir : allDirections) {
                     if (moveDir != Direction.CENTER && !rc.canMove(moveDir)) continue;
-                    MapLocation newLoc = loc.add(moveDir);
+                    MapLocation newLoc = myLoc.add(moveDir);
                     if (newLoc == placeLoc) continue;
                     if (newLoc.distanceSquaredTo(placeLoc) > 2) continue; // unreachable
-                    if (canSense(newLoc, placeLoc, moveDir == Direction.CENTER ? facing : moveDir)) {
+                    if (canSense(newLoc, placeLoc, moveDir == Direction.CENTER ? myDir : moveDir)) {
                         // dont need strafe move
                         double score = 1.2 * newLoc.distanceSquaredTo(info.getLocation());
                         if (score > best) {
@@ -254,7 +254,7 @@ public class CombatStrategy {
         if (best < 0) return false;
         println("TRAPPING RAT");
         if (bestMoveDir != Direction.CENTER) rawMove(bestMoveDir);
-        if (!rc.canSenseLocation(bestPlaceLoc)) turn(loc.directionTo(bestPlaceLoc));
+        if (!rc.canSenseLocation(bestPlaceLoc)) turn(myLoc.directionTo(bestPlaceLoc));
         rc.placeRatTrap(bestPlaceLoc);
         return true;
     }
@@ -296,15 +296,15 @@ public class CombatStrategy {
             }
             if (!canMove) continue;
             if (canMoveForward) { // try attack without turn
-                MapLocation newLoc = loc.add(facing);
+                MapLocation newLoc = myLoc.add(myDir);
                 if (newLoc.distanceSquaredTo(target) <= 2) {
-                    boolean canSenseForward = canSense(newLoc, target, facing);
+                    boolean canSenseForward = canSense(newLoc, target, myDir);
                     if (canSenseForward || canTurn) {
                         double score = (canSenseForward ? 1.2 : 1.0) * baseScore;
                         if (score > bestScore) {
                             bestScore = score;
                             bestTarget = target;
-                            bestMoveDir = facing;
+                            bestMoveDir = myDir;
                             bestAction = canSenseForward ? 1 : 2;
                         }
                     }
@@ -312,9 +312,9 @@ public class CombatStrategy {
             }
             if (canTurn) {
                 for (Direction dir : directions) {
-                    if (dir == facing) continue;
+                    if (dir == myDir) continue;
                     if (!rc.canMove(dir)) continue;
-                    MapLocation newLoc = loc.add(dir);
+                    MapLocation newLoc = myLoc.add(dir);
                     if (newLoc.distanceSquaredTo(target) > 2) continue;
                     if (!canSense(newLoc, target, dir)) continue;
                     double score = baseScore;
@@ -337,7 +337,7 @@ public class CombatStrategy {
                 return true;
             case 2:
                 rawMove();
-                if (!rc.canSenseLocation(bestTarget)) turn(loc.directionTo(bestTarget));
+                if (!rc.canSenseLocation(bestTarget)) turn(myLoc.directionTo(bestTarget));
                 rc.attack(bestTarget);
                 return true;
             case 3:

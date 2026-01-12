@@ -54,7 +54,7 @@ public class KingSpawningStrategy extends Strategy {
         };
 
         for (Direction myDir : myTryDirs) {
-            MapLocation mySpawnLoc = loc.add(myDir).add(myDir);
+            MapLocation mySpawnLoc = myLoc.add(myDir).add(myDir);
             if (rc.canBuildRat(mySpawnLoc)) {
                 assignRole();
                 rc.buildRat(mySpawnLoc);
@@ -66,17 +66,17 @@ public class KingSpawningStrategy extends Strategy {
 
     private Direction selectSpawnDirection() {
         if (theContext.theNearestCat != null) {
-            return theContext.theNearestCat.getLocation().directionTo(loc);
+            return theContext.theNearestCat.getLocation().directionTo(myLoc);
         }
 
         if (theContext.theNearestEnemyRat != null) {
-            return theContext.theNearestEnemyRat.getLocation().directionTo(loc);
+            return theContext.theNearestEnemyRat.getLocation().directionTo(myLoc);
         }
 
         if (theContext.theDefenseState == ThreatContext.DefenseState.NORMAL) {
             MapLocation myMine = getNearestMine();
             if (myMine != null) {
-                return loc.directionTo(myMine);
+                return myLoc.directionTo(myMine);
             }
         }
 
@@ -98,7 +98,7 @@ public class KingSpawningStrategy extends Strategy {
         int myMineCount = GlobalArray.cheeseMines.set.length();
         for (int i = 0; i < myMineCount; i++) {
             MapLocation myMine = Util.decode2x2(GlobalArray.cheeseMines.at(i));
-            int myDist = loc.distanceSquaredTo(myMine);
+            int myDist = myLoc.distanceSquaredTo(myMine);
             if (myDist < myBestDist) {
                 myBestDist = myDist;
                 myBest = myMine;

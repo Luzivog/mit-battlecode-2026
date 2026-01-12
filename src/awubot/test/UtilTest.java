@@ -9,11 +9,11 @@ import static awubot.Game.*;
 
 public class UtilTest {
     public static void test() {
-        locX = 12;
-        locY = 23;
+        myLocX = 12;
+        myLocY = 23;
         GlobalArray.writeRatLoc(1);
         MapLocation read = GlobalArray.getRat(1);
-        println(locX, locY, read.x, read.y);
-        assert(read.x == (locX / 2 * 2) && read.y == (locY / 2 * 2));
+        println(myLocX, myLocY, read.x, read.y);
+        assert(read.x == (myLocX / 2 * 2) && read.y == (myLocY / 2 * 2));
     }
 }

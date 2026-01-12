@@ -13,39 +13,39 @@ public class Game {
     public static int mapWidth, mapHeight;
 
     // Cached for cheaper access
-    public static MapLocation loc;
-    public static int locX, locY;
+    public static MapLocation myLoc;
+    public static int myLocX, myLocY;
     public static int time;
-    public static Direction facing;
+    public static Direction myDir;
     public static Team team;
     public static MapLocation home;
 
     public static void rawMove(Direction dir) throws GameActionException {
-        if(dir == facing) {
+        if(dir == myDir) {
             rawMove();
             return;
         }
         rc.move(dir);
+        myLoc = rc.getLocation();
+        myLocX = myLoc.x;
+        myLocY = myLoc.y;
         // IF TLE: optimise this
         CellTracker.storeVisibleCells();
-        loc = rc.getLocation();
-        locX = loc.x;
-        locY = loc.y;
     }
 
     public static void turn(Direction dir) throws GameActionException {
         assert dir != Direction.CENTER;
-        if (dir == facing) return;
+        if (dir == myDir) return;
         rc.turn(dir);
-        facing = dir;
+        myDir = dir;
     }
 
     public static void rawMove() throws GameActionException {
         rc.moveForward();
+        myLoc = rc.getLocation();
+        myLocX = myLoc.x;
+        myLocY = myLoc.y;
         CellTracker.storeVisibleCellsPostMoveForward();
-        loc = rc.getLocation();
-        locX = loc.x;
-        locY = loc.y;
     }
 
     public static boolean isRatKing;
@@ -55,21 +55,22 @@ public class Game {
         Game.rc = rc;
         mapWidth = rc.getMapWidth();
         mapHeight = rc.getMapHeight();
-        locX = rc.getLocation().x;
-        locY = rc.getLocation().y;
-        loc = rc.getLocation();
-        facing = rc.getDirection();
+        myLoc = rc.getLocation();
+        myLocX = myLoc.x;
+        myLocY = myLoc.y;
+        myDir = rc.getDirection();
         time = rc.getRoundNum();
         isRatKing = (rc.getType() == UnitType.RAT_KING);
         team = rc.getTeam();
     }
 
-    public static void preTick() {
+    public static void preTick() throws GameActionException {
         time = rc.getRoundNum();
-        loc = rc.getLocation();
-        locX = loc.x;
-        locY = loc.y;
-        facing = rc.getDirection();
+        myLoc = rc.getLocation();
+        myLocX = myLoc.x;
+        myLocY = myLoc.y;
+        myDir = rc.getDirection();
+        CellTracker.storeVisibleCells();
         // Clear indicator string at the start of each turn
         indicatorString = "";
     }

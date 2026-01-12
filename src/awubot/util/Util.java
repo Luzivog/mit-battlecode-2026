@@ -164,12 +164,12 @@ public class Util {
         return (loc.x >>> 1) + ((loc.y >>> 1) << 5);
     }
 
-    public static int encode2x2(int locX, int locY) {
-        return (locX >>> 1) + ((locY >>> 1) << 5);
+    public static int encode2x2(int myLocX, int myLocY) {
+        return (myLocX >>> 1) + ((myLocY >>> 1) << 5);
     }
 
     public static int encode2x2() {
-        return (locX >>> 1) + ((locY >>> 1) << 5);
+        return (myLocX >>> 1) + ((myLocY >>> 1) << 5);
     }
 
     public static int writeBits(int bits, int start, int[] data, int[] lens) {
@@ -344,7 +344,7 @@ public class Util {
     //     MapInfo best = null;
     //     for (Direction dir : directions) {
     //         if (dir == Direction.CENTER) continue;
-    //         MapLocation newLoc = rc.getLocation().add(dir);
+    //         MapLocation newLoc = myLoc.add(dir);
     //         MapInfo newInfo = rc.senseMapInfo(newLoc);
     //         if (pred.test(newInfo)) {
     //             if (best == null || best.getMapLocation().distanceSquaredTo(dest) > newLoc.distanceSquaredTo(dest)) {
@@ -356,7 +356,7 @@ public class Util {
     // }
 
     // public static boolean canMove(MapLocation loc) throws GameActionException {
-    //     Direction dir = getDiff(rc.getLocation(), loc);
+    //     Direction dir = getDiff(myLoc, loc);
     //     return rc.canMove(dir);
     // }
 
@@ -364,11 +364,11 @@ public class Util {
     //     Direction best = null;
     //     for (Direction dir : directions) {
     //         if (dir == Direction.CENTER) continue;
-    //         MapLocation newLoc = rc.getLocation().add(dir);
+    //         MapLocation newLoc = myLoc.add(dir);
     //         if (rc.onTheMap(newLoc)) {
     //             MapInfo newInfo = rc.senseMapInfo(newLoc);
     //             if (pred.test(newInfo)) {
-    //                 if (best == null || rc.getLocation().add(best).distanceSquaredTo(dest) > newLoc.distanceSquaredTo(dest)) {
+    //                 if (best == null || myLoc.add(best).distanceSquaredTo(dest) > newLoc.distanceSquaredTo(dest)) {
     //                     best = dir;
     //                 }
     //             }
@@ -389,7 +389,7 @@ public class Util {
     }
 
     // public static boolean isInAttackRange(MapLocation loc) {
-    //     return loc.distanceSquaredTo(rc.getLocation()) <= rc.getType().actionRadiusSquared;
+    //     return loc.distanceSquaredTo(myLoc) <= rc.getType().actionRadiusSquared;
     // }
 
     // public static boolean isEnemyAgent(RobotInfo info) {

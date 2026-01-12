@@ -78,14 +78,14 @@ public class KingDefenseStrategy extends Strategy {
 
         Direction myAwayDir;
         if (theContext.theTrackedCatCount > 1 && (theContext.theThreatVectorX != 0 || theContext.theThreatVectorY != 0)) {
-            MapLocation myThreatCenter = new MapLocation(loc.x + theContext.theThreatVectorX, loc.y + theContext.theThreatVectorY);
-            myAwayDir = myThreatCenter.directionTo(loc);
+            MapLocation myThreatCenter = new MapLocation(myLoc.x + theContext.theThreatVectorX, myLoc.y + theContext.theThreatVectorY);
+            myAwayDir = myThreatCenter.directionTo(myLoc);
         } else if (theContext.theNearestCat != null) {
-            myAwayDir = theContext.theNearestCat.getLocation().directionTo(loc);
+            myAwayDir = theContext.theNearestCat.getLocation().directionTo(myLoc);
         } else if (theContext.theNearestEnemyRatKing != null) {
-            myAwayDir = theContext.theNearestEnemyRatKing.getLocation().directionTo(loc);
+            myAwayDir = theContext.theNearestEnemyRatKing.getLocation().directionTo(myLoc);
         } else if (theContext.theNearestEnemyRat != null) {
-            myAwayDir = theContext.theNearestEnemyRat.getLocation().directionTo(loc);
+            myAwayDir = theContext.theNearestEnemyRat.getLocation().directionTo(myLoc);
         } else {
             return false;
         }
@@ -113,7 +113,7 @@ public class KingDefenseStrategy extends Strategy {
                                 aPreferredDir.rotateRight().rotateRight()};
 
         for (Direction myDir : myDigDirs) {
-            MapLocation myDigTarget = loc.add(myDir);
+            MapLocation myDigTarget = myLoc.add(myDir);
             if (rc.canSenseLocation(myDigTarget)) {
                 MapInfo myInfo = rc.senseMapInfo(myDigTarget);
                 if (myInfo.isDirt() && rc.canRemoveDirt(myDigTarget)) {
@@ -131,9 +131,9 @@ public class KingDefenseStrategy extends Strategy {
         if (theContext.theNearestCat == null) return false;
 
         MapLocation myCatLoc = theContext.theNearestCat.getLocation();
-        Direction myTowardKing = myCatLoc.directionTo(loc);
+        Direction myTowardKing = myCatLoc.directionTo(myLoc);
 
-        MapLocation myBaseLoc = loc.add(myTowardKing.opposite()).add(myTowardKing.opposite());
+        MapLocation myBaseLoc = myLoc.add(myTowardKing.opposite()).add(myTowardKing.opposite());
         Direction myPerp = myTowardKing.rotateLeft().rotateLeft();
 
         for (Direction myD : new Direction[]{myPerp, myPerp.opposite(), Direction.CENTER}) {
@@ -167,9 +167,9 @@ public class KingDefenseStrategy extends Strategy {
         MapLocation myCenterTarget = theMiningStrategy.getCenterTarget();
 
         if (myMineTarget != null) {
-            myPriorityDir = loc.directionTo(myMineTarget);
+            myPriorityDir = myLoc.directionTo(myMineTarget);
         } else if (myCenterTarget != null) {
-            myPriorityDir = loc.directionTo(myCenterTarget);
+            myPriorityDir = myLoc.directionTo(myCenterTarget);
         }
 
         Direction[] myTrapDirections;
@@ -187,7 +187,7 @@ public class KingDefenseStrategy extends Strategy {
 
         for (int myRing = 2; myRing <= 3; myRing++) {
             for (Direction myDir : myTrapDirections) {
-                MapLocation myTrapLoc = loc;
+                MapLocation myTrapLoc = myLoc;
                 for (int i = 0; i < myRing; i++) {
                     myTrapLoc = myTrapLoc.add(myDir);
                 }
@@ -210,7 +210,7 @@ public class KingDefenseStrategy extends Strategy {
         if (theContext.theNearestCat == null) return false;
 
         MapLocation myCatLoc = theContext.theNearestCat.getLocation();
-        Direction myCatToKing = myCatLoc.directionTo(loc);
+        Direction myCatToKing = myCatLoc.directionTo(myLoc);
         MapLocation myTrapLoc = myCatLoc.add(myCatToKing).add(myCatToKing);
 
         if (!isLocationAlreadyTrapped(myTrapLoc) && rc.canPlaceCatTrap(myTrapLoc)) {

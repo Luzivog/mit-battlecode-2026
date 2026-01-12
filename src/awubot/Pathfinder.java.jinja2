@@ -42,7 +42,7 @@ class BugnavInstance {
     {% endfor %}
 
     void clearPath() {
-        pos = rc.getLocation();
+        pos = myLoc;
         nextPathIndex = 0;
         stackSize = 0;
         emptyStackTurns = 1000;
@@ -118,10 +118,10 @@ class BugnavInstance {
         rc.setIndicatorDot(leftBug.pos, 255, 255, 0);
         rc.setIndicatorDot(rightBug.pos, 255, 255, 0);
         // Profiler.begin();
-        if(!rc.getLocation().equals(lastLoc) || !rc.getDirection().equals(lastDir)) {
+        if(!myLoc.equals(lastLoc) || !myDir.equals(lastDir)) {
             // we moved, so we might be able to advance previously stuck stuff further
-            lastLoc = rc.getLocation();
-            lastDir = rc.getDirection();
+            lastLoc = myLoc;
+            lastDir = myDir;
             leftDone = leftBug.hitEdge || leftBug.nextPathIndex == {{MAX_PATH - 1}};
             rightDone = rightBug.hitEdge || leftBug.nextPathIndex == {{MAX_PATH - 1}};
         }
@@ -149,7 +149,7 @@ class BugnavInstance {
         boolean leftReady = leftBug.nextPathIndex >= 5 || leftBug.hitEdge || leftBug.outOfSight || leftBug.arrived;
         boolean rightReady = rightBug.nextPathIndex >= 5 || rightBug.hitEdge || rightBug.outOfSight || rightBug.arrived;
         indicate("ready " + leftReady + " " + rightReady);
-        if(!rc.getLocation().equals(pos) && (!leftReady || !rightReady)) return !(leftDone && rightDone);
+        if(!myLoc.equals(pos) && (!leftReady || !rightReady)) return !(leftDone && rightDone);
         indicate("going ahead");
 
         {% macro score(bug) %} Math.sqrt({{bug}}.pos.distanceSquaredTo(target)) + {{bug}}.nextPathIndex * 0.7 {% endmacro %}
@@ -195,7 +195,7 @@ class BugnavInstance {
             if(!better.outOfSight && worse.outOfSight) {
                 indicate("clear winner");
                 {{ chooseBug("better") }}
-            } else if(!better.outOfSight || rc.getLocation().isAdjacentTo(pos)) {
+            } else if(!better.outOfSight || myLoc.isAdjacentTo(pos)) {
                 indicate("unclear, guessing");
                 leftScore = Math.pow(leftScore, 15);
                 rightScore = Math.pow(rightScore, 15);
@@ -258,7 +258,7 @@ class BugnavInstance {
         MapLocation greedyLoc = pos.add(bottomDir);
         if(stackSize <= 1) {
             {% macro go(where) %}
-            if({{where}}Passable && chebyshevDistance(rc.getLocation(), {{where}}Loc) <= 5) {
+            if({{where}}Passable && chebyshevDistance(myLoc, {{where}}Loc) <= 5) {
                 // indicate("{{where}}Loc " + {{where}}Loc);
                 pos = {{where}}Loc;
                 topDir = bottomDir;
@@ -358,7 +358,7 @@ class BugnavInstance {
                     // indicate("bugnav " + {{turns}} + " " + isMaster);
                     return false;
                 }
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(rc.getLocation(), nextPos) > 5) {
+                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
                     rc.setIndicatorDot(nextPos, 0, 255, 255);
                     outOfSight = true;
                     // Profiler.end("bugnav " + {{turns}} + " " + isMaster);
@@ -436,12 +436,12 @@ public class Pathfinder {
 
     public static void makeMove(Direction dir) throws GameActionException {
         if(rc.canTurn()) turn(dir);
-        var nextLoc = loc.add(dir);
-        if(canSense(loc, nextLoc, facing) && rc.senseMapInfo(nextLoc).isDirt()) {
+        var nextLoc = myLoc.add(dir);
+        if(canSense(myLoc, nextLoc, myDir) && rc.senseMapInfo(nextLoc).isDirt()) {
             if(rc.canRemoveDirt(nextLoc)) rc.removeDirt(nextLoc);
             else return;
         }
-        if(dir == rc.getDirection()) {
+        if(dir == myDir) {
             if(rc.canMoveForward()) moveForward();
         } else {
             // if we can't turn, then strafe
@@ -479,7 +479,7 @@ public class Pathfinder {
 
         if(!rc.isMovementReady()) return;
 
-        if(bug.pos == secondLastBugPos && loc.equals(secondLastLoc)) {
+        if(bug.pos == secondLastBugPos && myLoc.equals(secondLastLoc)) {
             reps++;
             if(reps >= 5) {
                 indicate("stuck, resetting bug");
@@ -492,18 +492,18 @@ public class Pathfinder {
         } else {
             reps = 0;
         }
-        if(!lastLoc.equals(loc) || !lastBugPos.equals(bug.pos)) {
+        if(!lastLoc.equals(myLoc) || !lastBugPos.equals(bug.pos)) {
             secondLastBugPos = lastBugPos;
             secondLastLoc = lastLoc;
             lastBugPos = bug.pos;
-            lastLoc = loc;
+            lastLoc = myLoc;
         }
         rc.setIndicatorDot(bug.pos, 255, 0, 0);
 
         // no bfs needed
         {
-            var dir = rc.getLocation().directionTo(bug.pos);
-            if(rc.getLocation().add(dir).equals(bug.pos)) {
+            var dir = myLoc.directionTo(bug.pos);
+            if(myLoc.add(dir).equals(bug.pos)) {
                 if(dir != Direction.CENTER) {
                     indicate("adjacent");
                     makeMove(dir);
@@ -520,8 +520,8 @@ public class Pathfinder {
         {% set op = "|=" if val else "&= ~" %}
         {
             var pos = {{pos}};
-            int xi = pos.x - loc.x + 5;
-            int yi = pos.y - loc.y + 5;
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
             {% if boundsCheck %}
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
             {% endif %}
@@ -546,7 +546,6 @@ public class Pathfinder {
         for(int i = RobotTracker.allyCount - 1; i >= 0; i--) {
             {{ writePos("RobotTracker.allies[i]", "localPassableExceptAllies", 0, False) }}
         }
-        var loc = rc.getLocation();
         // d{i}0 + d{i}1 is the mask of reachable within i steps
         long d00 = 0, d01 = 0;
         long d10 = 0, d11 = 0;
@@ -593,7 +592,7 @@ public class Pathfinder {
                (d{{i}}1 & (1l << {{off - 61}}))
                {% endif %}
                != 0) {
-                var nextLoc = loc.add({{dir}});
+                var nextLoc = myLoc.add({{dir}});
                 boolean isDirt = false;
                 if(rc.canMove({{dir}}) || (isDirt = CellTracker.isDirt(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
@@ -614,7 +613,7 @@ public class Pathfinder {
                     }
                     // if we can't turn, then prefer moving straight
                     // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && {{dir}} == rc.getDirection()) {
+                    if(!rc.canTurn() && {{dir}} == myDir) {
                         score -= 500;
                     }
                     if(score < bestScore) {

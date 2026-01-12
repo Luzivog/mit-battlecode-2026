@@ -1,18 +1,10 @@
 package experiment;
 
-import battlecode.common.Direction;
-import battlecode.common.GameActionException;
-import battlecode.common.MapLocation;
-import static experiment.Game.loc;
-import static experiment.Game.locX;
-import static experiment.Game.locY;
-import static experiment.Game.mapHeight;
-import static experiment.Game.rc;
-import experiment.util.Profiler;
+import battlecode.common.*;
+import static experiment.util.Util.*;
 import experiment.util.Rng;
-import static experiment.util.Util.chebyshevDistance;
-import static experiment.util.Util.indicate;
-import static experiment.util.Util.indicatorString;
+import experiment.util.Profiler;
+import static experiment.Game.*;
 
 // IF TLE: lower these constants (especially MAX_BUG_ITERS)
 
@@ -1682,13 +1674,8 @@ public class Pathfinder {
 
     public static void turn(Direction dir) throws GameActionException {
         if(dir == Direction.CENTER || dir == rc.getDirection()) return;
-        if(!rc.canTurn()) return; // Turn not ready
         rc.turn(dir);
         CellTracker.storeVisibleCells();
-    }
-    
-    public static boolean isFacing(Direction dir) {
-        return rc.getDirection() == dir;
     }
 
     public static void moveForward() throws GameActionException {
@@ -1698,24 +1685,10 @@ public class Pathfinder {
 
     public static void makeMove(Direction dir) throws GameActionException {
         if(dir == Direction.CENTER) return;
-        
-        // Try to turn toward target direction
-        if(rc.getDirection() != dir) {
-            if(rc.canTurn()) {
-                rc.turn(dir);
-                CellTracker.storeVisibleCells();
-            } else {
-                // Can't turn yet, nothing more we can do
-                return;
-            }
-        }
-        
-        // Now try to move forward
-        if(!rc.isMovementReady()) return;
-        
+        turn(dir);
         var nextLoc = rc.getLocation().add(dir);
-        if(rc.canSenseLocation(nextLoc) && rc.senseMapInfo(nextLoc).isDirt()) {
-            if(rc.canRemoveDirt(nextLoc)) rc.removeDirt(nextLoc);
+        if(rc.senseMapInfo(nextLoc).isDirt()) {
+            if(rc.isActionReady()) rc.removeDirt(nextLoc);
             else return;
         }
         if(rc.canMoveForward()) moveForward();
@@ -1725,39 +1698,39 @@ public class Pathfinder {
     }
 
     public static void makeMove(MapLocation target) throws GameActionException {
-        // If movement not ready, at least try to turn toward target
-        if(!rc.isMovementReady()) {
-            Direction toTarget = rc.getLocation().directionTo(target);
-            if(toTarget != Direction.CENTER && rc.getDirection() != toTarget && rc.canTurn()) {
-                rc.turn(toTarget);
-                CellTracker.storeVisibleCells();
-            }
-            return;
-        }
-        
         // TODO: better handling when target changes
         if(bug == null || !target.equals(bug.target)) {
+            indicate("RETARGET");
             bug = new BugnavInstance(true, target);
         }
+        int shade = 255;
         // Profiler.begin();
         bugLoop: {
+            rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
             Profiler.begin();
             if(!bug.advance()) break bugLoop;
             Profiler.end("bug");
+            rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
             Profiler.begin();
             if(!bug.advance()) break bugLoop;
             Profiler.end("bug");
+            rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
             Profiler.begin();
             if(!bug.advance()) break bugLoop;
             Profiler.end("bug");
+            rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
             Profiler.begin();
             if(!bug.advance()) break bugLoop;
             Profiler.end("bug");
+            rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
             Profiler.begin();
             if(!bug.advance()) break bugLoop;
             Profiler.end("bug");
         }
         // Profiler.end("bug");
+        rc.setIndicatorDot(bug.pos, 255, 0, 0);
+
+        if(!rc.isMovementReady()) return;
 
         // no bfs needed
         {

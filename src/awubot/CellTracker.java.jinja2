@@ -47,9 +47,8 @@ public class CellTracker {
 
     public static void storeVisibleCells() throws GameActionException {
         Profiler.begin();
-        var loc = rc.getLocation();
-        int x = loc.x, y = loc.y;
-        switch(rc.getDirection()) {
+        int x = myLoc.x, y = myLoc.y;
+        switch(myDir) {
             {% for dir in directions %}
             case {{dir}} -> {
                 {% for dx in range(-5, 6) %}
@@ -81,9 +80,8 @@ public class CellTracker {
 
     public static void storeVisibleCellsPostMoveForward() throws GameActionException {
         Profiler.begin();
-        var loc = rc.getLocation();
-        int x = loc.x, y = loc.y;
-        switch(rc.getDirection()) {
+        int x = myLoc.x, y = myLoc.y;
+        switch(myDir) {
             {% for dir in directions %}
             case {{dir}} -> {
                 {% for dx in range(-5, 6) %}
@@ -117,17 +115,16 @@ public class CellTracker {
     public static long localDirt0, localDirt1;
     {% for mask in ["dirt", "passable"] %}
     private static void computeLocal{{capitalise(mask)}}() {
-        var loc = rc.getLocation();
         local{{capitalise(mask)}}0 = 0;
         local{{capitalise(mask)}}1 = 0;
-        switch(loc.y) {
+        switch(myLoc.y) {
             {% for i in range(MAX_MAP_SIZE) %}
             case {{i}} -> {
                 // get the 11 relevant bits from row i + dy, shifted by off
                 {% macro get11bits(dy, off) %}
-                ((loc.x - 5 >= 0
-                  ? {{mask}}{{i + dy}} >> (loc.x - 5)
-                  : {{mask}}{{i + dy}} << (5 - loc.x))
+                ((myLoc.x - 5 >= 0
+                  ? {{mask}}{{i + dy}} >> (myLoc.x - 5)
+                  : {{mask}}{{i + dy}} << (5 - myLoc.x))
                  & 0x7ff) {% if off %} << {{off}} {% endif %}
                 {% endmacro %}
 
@@ -152,9 +149,8 @@ public class CellTracker {
     {% endfor %}
     static MapLocation localBfsPos = new MapLocation(-1, -1);
     public static void computeLocalBfsMasks() throws GameActionException {
-        var loc = rc.getLocation();
-        if(loc.equals(localBfsPos)) return;
-        localBfsPos = loc;
+        if(myLoc.equals(localBfsPos)) return;
+        localBfsPos = myLoc;
         {% for mask in ["dirt", "passable"] %}
         computeLocal{{capitalise(mask)}}();
         {% endfor %}
@@ -214,7 +210,7 @@ public class CellTracker {
 
     static void checkHor() {
         var shiftAmount = 64 - mapWidth;
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             {% for posY in range(60) %}
             case {{posY}} -> {
                 // IF TLE: change this range to [-4, 5) for all functions
@@ -238,7 +234,7 @@ public class CellTracker {
 
     static void applyHor() {
         var shiftAmount = 64 - mapWidth;
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             {% for posY in range(60) %}
             case {{posY}} -> {
                 {% for y in range(posY - 5, posY + 6) %}
@@ -257,7 +253,7 @@ public class CellTracker {
 
     {% for height in range(30, 61) %}
     private static void checkVer{{height}}() {
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             {% for posY in range(height) %}
             case {{posY}} -> {
                 {% for y in range(posY - 5, posY + 6) %}
@@ -292,7 +288,7 @@ public class CellTracker {
     {% for height in range(30, 61) %}
     private static void checkRot{{height}}() {
         var shiftAmount = 64 - mapWidth;
-        switch(rc.getLocation().y) {
+        switch(myLoc.y) {
             {% for posY in range(height) %}
             case {{posY}} -> {
                 {% for y in range(posY - 5, posY + 6) %}

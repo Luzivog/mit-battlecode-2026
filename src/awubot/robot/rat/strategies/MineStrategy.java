@@ -26,7 +26,7 @@ public class MineStrategy extends Strategy {
     public void runTick() throws GameActionException {
         updateMineTarget();
         if (mineTarget == null) return;
-        rc.setIndicatorLine(rc.getLocation(), mineTarget, 255, 0, 0);
+        rc.setIndicatorLine(myLoc, mineTarget, 255, 0, 0);
         Pathfinder.makeMove(mineTarget);
     }
 
@@ -38,7 +38,7 @@ public class MineStrategy extends Strategy {
             }
         }
 
-        if (randomDestination == null || loc.distanceSquaredTo(randomDestination) <= 4) {
+        if (randomDestination == null || myLoc.distanceSquaredTo(randomDestination) <= 4) {
             randomDestination = new MapLocation(
                 Math.abs(Rng.mcg()) % mapWidth,
                 Math.abs(Rng.mcg()) % mapHeight

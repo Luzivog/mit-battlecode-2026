@@ -21,13 +21,13 @@ public class ExploreStrategy extends Strategy {
     @Override
     public void runTick() throws GameActionException {
         updateExploreTarget();
-        rc.setIndicatorLine(rc.getLocation(), exploreTarget, 255, 0, 0);
+        rc.setIndicatorLine(myLoc, exploreTarget, 255, 0, 0);
         Pathfinder.makeMove(exploreTarget);
     }
 
     private void updateExploreTarget() {
         if (exploreTarget != null
-            && rc.getLocation().distanceSquaredTo(exploreTarget) > 2) return;
+            && myLoc.distanceSquaredTo(exploreTarget) > 2) return;
 
         if (GlobalArray.cheeseMines.set.length() < 3 || (int)(Math.random() * 3) % 3 == 0) {
             exploreTarget = new MapLocation(

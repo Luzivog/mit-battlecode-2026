@@ -9,6 +9,7 @@ import awubot.robot.rat.BabyRatRole;
 import awubot.util.Rng;
 import awubot.util.Util;
 import static awubot.Game.*;
+import static awubot.util.Util.println;
 
 public class KingSpawningStrategy extends Strategy {
     private final ThreatContext theContext;
@@ -56,8 +57,7 @@ public class KingSpawningStrategy extends Strategy {
         for (Direction myDir : myTryDirs) {
             MapLocation mySpawnLoc = myLoc.add(myDir).add(myDir);
             if (rc.canBuildRat(mySpawnLoc)) {
-                rc.buildRat(mySpawnLoc);
-                assignRole(rc.senseRobotAtLocation(mySpawnLoc).getID());
+                spawnRat(mySpawnLoc, decideRole());
                 return true;
             }
         }
@@ -83,15 +83,11 @@ public class KingSpawningStrategy extends Strategy {
         return Direction.NORTHEAST;
     }
 
-    private void assignRole(int id) throws GameActionException {
+    private int decideRole() throws GameActionException {
         double myRusherRatio = calculateRusherRatio();
         boolean myIsRusher = (Rng.mcg() & 0x7fffffff) < (int)(myRusherRatio * 0x7fffffff);
         int myRole = myIsRusher ? BabyRatRole.RUSHER.value : BabyRatRole.MINER.value;
-        GlobalArray.writeSpawnStrategy(id, myRole);
-        if (myIsRusher) {
-            System.out.println("[SPAWN] K" + kingId + " t=" + time +
-                " spawning RUSHER (ratio=" + myRusherRatio + ")");
-        }
+        return myRole;
     }
 
     private double calculateRusherRatio() {

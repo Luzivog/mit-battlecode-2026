@@ -9,6 +9,7 @@ import java.util.List;
 import org.apache.commons.collections.FastArrayList;
 
 import awubot.CellTracker;
+import awubot.Game;
 import awubot.util.Profiler;
 import awubot.util.Rng;
 import awubot.util.string.FastIndexedIntSet;
@@ -21,7 +22,7 @@ public class GlobalArray {
 
     /*
       LAYOUT:
-      0: (unused - global rat counter)
+      0: global rat counter 
       1: symmetry
       2-6: rat king locations (rounded to 2x2)
       7: rat king turn counter (00, 01, 10 for alive) and (11) for dead
@@ -33,7 +34,7 @@ public class GlobalArray {
       32-63: cheese mines (count upwards from 32)
     */
 
-    // private static final int COUNTER = 0;
+    private static final int COUNTER = 0;
     private static final int SYMMETRY = 1;
     private static final int RAT_KING_LOC = 2;
     private static final int RAT_KING_TURN_COUNTER = 7;
@@ -51,9 +52,9 @@ public class GlobalArray {
     public static FastIndexedIntSet cheeseMines = new FastIndexedIntSet();
     public static MapLocation nearestRatKing;
     public static int nearestRatKingId;
+    public static int ratCounter;
 
-    private static boolean isFirstKingInTurn;
-
+    private static boolean isFirstKingInRound;
     private static List<Integer> strategyQueue = new ArrayList<>();
 
     public static void writeSharedArray(int i, int x) throws GameActionException {
@@ -81,9 +82,10 @@ public class GlobalArray {
     }
 
     public static void preTick() throws GameActionException {
+        ratCounter = rc.readSharedArray(COUNTER);
         if (isRatKing) {
             updateRatKingTurnCounters();
-            if (isFirstKingInTurn) {
+            if (isFirstKingInRound) {
                 for (int i = RAT_SPAWN_ROLE; i < MIN_CHEESE; i++) {
                     writeSharedArray(i, 1023);
                 }
@@ -108,21 +110,22 @@ public class GlobalArray {
             }
             writeCheeseMines();
             writeRatLoc(kingId);
+            rc.writeSharedArray(COUNTER, ratCounter);
         }
     }
 
     private static void updateRatKingTurnCounters() throws GameActionException {
         // check living
-        isFirstKingInTurn = true;
+        isFirstKingInRound = true;
         int x = rc.readSharedArray(RAT_KING_TURN_COUNTER);
         for (int j = 0; j < 5; j++, x >>= 2) {
             int t = (x & 0b11);
-            if (t == time % 3) isFirstKingInTurn = false;
+            if (t == time % 3) isFirstKingInRound = false;
             if (t == (time + 2) % 3) {
                 writeSharedArray(RAT_KING_TURN_COUNTER, rc.readSharedArray(RAT_KING_TURN_COUNTER) | (0b11 << (2 * j)));
             }
         }
-        if (isFirstKingInTurn) {
+        if (isFirstKingInRound) {
             indicate("am first king in turn");
         }
     }
@@ -193,15 +196,19 @@ public class GlobalArray {
 
     public static void writeSpawnStrategy(int babyRatID, int stratNum) throws GameActionException {
         assert(0 <= stratNum && stratNum < 4);
+        // println("registered spawn strategy for " + babyRatID);
         strategyQueue.add((babyRatID % 255) | (stratNum << 8));
     }
     public static void _writeSpawnStrategy(int payload) throws GameActionException {
+        // println("trying to write spawn strategy for payhload " + payload);
+        ratCounter++;
         int id = payload & 255;
         for (int i = RAT_SPAWN_ROLE; i < MIN_CHEESE; i++) {
             int x = rc.readSharedArray(i);
             int lo = x & 255;
             if (lo == 255) {
                 // can write
+                // println("wrote strategy for " + (payload & 255));
                 writeSharedArray(i, payload);
                 return;
             } else if (lo == id) {
@@ -209,9 +216,10 @@ public class GlobalArray {
                 break;
             }
         }
-        // println("no more space to write strategies");
+        println("no more space to write strategies");
     }
 
+    // MUST BE CALLED FOR EVERY RAT
     public static int readSpawnStrategy() throws GameActionException {
         int id = rc.getID() % 255;
         // println("reading strategy for " + rc.getID() + " modded " + id);
@@ -219,7 +227,9 @@ public class GlobalArray {
             int x = rc.readSharedArray(i);
             int lo = x & 255;
             // println("read " + i + " for " + lo);
-            if (lo == id) {
+            if (lo == id) { 
+                println("read " + i + " counter " + ratCounter);
+                Game.myIndex = (ratCounter - (i - RAT_SPAWN_ROLE) - 1 + 1024) % 1024;
                 return x >>> 8; // retrieve role id
             }
             if (lo == 255) { // null (shouldnt happen)
@@ -229,17 +239,19 @@ public class GlobalArray {
         // didnt find - pick one at random
         int i = Rng.mcg() % (MIN_CHEESE - RAT_SPAWN_ROLE);
         // println("didnt find strategy");
-        return rc.readSharedArray(i) >>> 8;
+        Game.myIndex = (ratCounter - i - 1 + 1024) % 1024;
+        return rc.readSharedArray(i + RAT_SPAWN_ROLE) >>> 8;
     }
 
     public static void writeRatLoc(int i) {
         try {
-            writeSharedArray(i + RAT_KING_LOC, encode2x2() + 1);
+            writeSharedArray(i + RAT_KING_LOC, encode2x2());
             // cycle counter
             int x = rc.readSharedArray(RAT_KING_TURN_COUNTER);
             int t = time % 3;
             x &= ~(0b11 << (2 * i));
             x |= t << (2 * i);
+            // println("update time for rat " + i);
             // can be optimised to xor'ing lmao
         } catch (GameActionException e) {
             e.printStackTrace();

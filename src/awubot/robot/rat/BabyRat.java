@@ -6,6 +6,7 @@ import awubot.comms.GlobalArray;
 import awubot.robot.Strategy;
 import awubot.robot.rat.strategies.CatLureStrategy2;
 import awubot.robot.rat.strategies.HybridStrategy;
+import awubot.util.Profiler;
 import awubot.util.Rng;
 import awubot.util.Util;
 import static awubot.Game.*;
@@ -30,7 +31,7 @@ public class BabyRat {
     }
 
     public static void run() throws GameActionException {
-        indicate("cheesemines: " + GlobalArray.cheeseMines.set.length());
+        // indicate("cheesemines: " + GlobalArray.cheeseMines.set.length());
         shouldGlance = true;
 
         tryTransferCheese();

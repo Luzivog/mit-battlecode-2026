@@ -27,6 +27,7 @@ public class Squeaker {
     rest will be prefixed with 0:
     (0)00: symmetry
     (0)01: strategy
+    (0)10: lure signal
       
 
     */
@@ -100,9 +101,18 @@ public class Squeaker {
                     }
                     break;
                 default:
+                    println("recieved bad packet " + msg);
+                    println("header is " + header);
                     assert(false);
             }
         }
+    }
+
+    public static void squeakLureSignal(MapLocation myCatLoc, MapLocation myEnemyKingLoc) {
+        int myEncodedCatLoc = encode2x2(myCatLoc);
+        int myEncodedEnemyLoc = encode2x2(myEnemyKingLoc);
+        int mySqueakContent = (0b10 << BODY) | (myEncodedCatLoc << 10) | myEncodedEnemyLoc;
+        rc.squeak(mySqueakContent);
     }
 
     // messages come in chronological order

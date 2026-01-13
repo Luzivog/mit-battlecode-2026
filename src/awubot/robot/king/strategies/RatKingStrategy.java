@@ -2,6 +2,8 @@ package awubot.robot.king.strategies;
 
 import battlecode.common.GameActionException;
 import awubot.robot.Strategy;
+import awubot.util.Profiler;
+
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 
@@ -18,9 +20,15 @@ public class RatKingStrategy extends Strategy {
         theCheeseStrategy = new KingCheeseStrategy();
         theMiningStrategy = new KingMiningStrategy();
         theMiningStrategy.init();
+        // Profiler.begin();
         theSpawningStrategy = new KingSpawningStrategy(theContext);
+        // Profiler.end("spawning");
+        // Profiler.begin();
         theDefenseStrategy = new KingDefenseStrategy(theContext, theMiningStrategy);
+        // Profiler.end("defence");
+        // Profiler.begin();
         theFormationStrategy = new KingFormationCoordinatorStrategy(theContext, theMiningStrategy);
+        // Profiler.end("spawning");
     }
 
     @Override

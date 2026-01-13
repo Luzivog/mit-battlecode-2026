@@ -7,6 +7,7 @@ import battlecode.common.MapLocation;
 import awubot.CellTracker;
 import awubot.Pathfinder;
 import awubot.comms.GlobalArray;
+import awubot.comms.Squeaker;
 import awubot.robot.Strategy;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
@@ -303,10 +304,7 @@ public class KingDefenseStrategy extends Strategy {
         if (!myShouldLure) return;
 
         MapLocation myEnemyKingLoc = getEnemyKingLocation();
-        int myEncodedCatLoc = encode2x2(myCatLoc);
-        int myEncodedEnemyLoc = encode2x2(myEnemyKingLoc);
-        int mySqueakContent = (0b10 << 29) | (myEncodedCatLoc << 10) | myEncodedEnemyLoc;
-        rc.squeak(mySqueakContent);
+        Squeaker.squeakLureSignal(myCatLoc, myEnemyKingLoc);
 
         theLastLureSignalRound = time;
         theTotalLureSignals++;

@@ -8,6 +8,8 @@ import battlecode.common.Team;
 import battlecode.common.UnitType;
 import static awubot.util.Util.*;
 
+import awubot.comms.GlobalArray;
+
 public class Game {
     public static RobotController rc;
     public static int mapWidth, mapHeight;
@@ -18,6 +20,7 @@ public class Game {
     public static int time;
     public static Direction myDir;
     public static Team team;
+    public static int myIndex; // estimate of rat index
 
     public static MapLocation spawn;
 
@@ -75,5 +78,22 @@ public class Game {
         CellTracker.storeVisibleCells();
         // Clear indicator string at the start of each turn
         indicatorString = "";
+    }
+
+    public static void spawnRat(MapLocation loc, int strat) throws GameActionException {
+        rc.buildRat(loc);
+        GlobalArray.writeSpawnStrategy(rc.senseRobotAtLocation(loc).ID, strat);
+    }
+
+    public static void postTick() {
+        if (!isRatKing) println("index: " + myIndex);
+        if (time != rc.getRoundNum()) {
+            println("bytecode exceeded");
+            rc.resign();
+        }
+        if (time > 100) {
+            println("large round num");
+            rc.resign();
+        }
     }
 }

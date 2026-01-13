@@ -41,14 +41,12 @@ public class BabyRat {
         }
 
         CellTracker.checkSymmetry();
-        // what happened here?
-        // Cat luring protocol - takes priority
-        // if (theIsLuring && theLureTTL > 0) {
-        //     theLureTTL--;
-        //     if (tryLureManeuver()) {
-        //         return;  // Skip normal behavior while luring
-        //     }
-        // }
+        CellTracker.storeVisibleCells();
+
+        indicate("sym " + CellTracker.hsym + " " + CellTracker.vsym + " " + CellTracker.rsym);
+        primaryStrategy.runTick();
+
+        executeGlance();
     }
 
     private static void tryTransferCheese() throws GameActionException {

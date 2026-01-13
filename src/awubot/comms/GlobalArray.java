@@ -57,9 +57,9 @@ public class GlobalArray {
     private static List<Integer> strategyQueue = new ArrayList<>();
 
     public static void writeSharedArray(int i, int x) throws GameActionException {
-        if (i == 21) {
-            println("WROTE TO " + i + " " + x);
-        }
+        // if (i == 21) {
+            // println("WROTE TO " + i + " " + x);
+        // }
         rc.writeSharedArray(i, x);
     }
 
@@ -205,20 +205,20 @@ public class GlobalArray {
                 writeSharedArray(i, payload);
                 return;
             } else if (lo == id) {
-                println("unlucky clashing id's");
+                // println("unlucky clashing id's");
                 break;
             }
         }
-        println("no more space to write strategies");
+        // println("no more space to write strategies");
     }
 
     public static int readSpawnStrategy() throws GameActionException {
         int id = rc.getID() % 255;
-        println("reading strategy for " + rc.getID() + " modded " + id);
+        // println("reading strategy for " + rc.getID() + " modded " + id);
         for (int i = RAT_SPAWN_ROLE; i < MIN_CHEESE; i++) {
             int x = rc.readSharedArray(i);
             int lo = x & 255;
-            println("read " + i + " for " + lo);
+            // println("read " + i + " for " + lo);
             if (lo == id) {
                 return x >>> 8; // retrieve role id
             }
@@ -228,7 +228,7 @@ public class GlobalArray {
         }
         // didnt find - pick one at random
         int i = Rng.mcg() % (MIN_CHEESE - RAT_SPAWN_ROLE);
-        println("didnt find strategy");
+        // println("didnt find strategy");
         return rc.readSharedArray(i) >>> 8;
     }
 

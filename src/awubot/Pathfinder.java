@@ -1454,6 +1454,7 @@ class BugnavInstance {
 
 public class Pathfinder {
     static BugnavInstance bug;
+    static int lastDist = 0;
 
     static int bfsPathLength = 0;
     static MapLocation bfsPath0;
@@ -1616,6 +1617,7 @@ public class Pathfinder {
     static int reps = 0;
 
     public static void makeMove(MapLocation target) throws GameActionException {
+        indicate("lastDist " + lastDist);
         // TODO: better handling when target changes
         if(bug == null || !target.equals(bug.target)) {
             if(bug != null && target.isAdjacentTo(bug.target)) {
@@ -1624,32 +1626,40 @@ public class Pathfinder {
             } else {
                 indicate("RETARGET");
                 lastBugPos = lastLoc = secondLastBugPos = secondLastLoc = new MapLocation(-1, -1);
+                lastDist = 0;
                 bug = new BugnavInstance(true, target);
             }
         }
         int shade = 255;
         // Profiler.begin();
-        bugLoop: {
-            rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
-            Profiler.begin();
-            if(!bug.advance()) break bugLoop;
-            Profiler.end("bug");
-            rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
-            Profiler.begin();
-            if(!bug.advance()) break bugLoop;
-            Profiler.end("bug");
-            rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
-            Profiler.begin();
-            if(!bug.advance()) break bugLoop;
-            Profiler.end("bug");
-            rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
-            Profiler.begin();
-            if(!bug.advance()) break bugLoop;
-            Profiler.end("bug");
-            rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
-            Profiler.begin();
-            if(!bug.advance()) break bugLoop;
-            Profiler.end("bug");
+        if(lastDist < 3) {
+            bugLoop: {
+                rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
+                Profiler.begin();
+                if(!bug.advance()) break bugLoop;
+                lastDist++;
+                Profiler.end("bug");
+                rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
+                Profiler.begin();
+                if(!bug.advance()) break bugLoop;
+                lastDist++;
+                Profiler.end("bug");
+                rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
+                Profiler.begin();
+                if(!bug.advance()) break bugLoop;
+                lastDist++;
+                Profiler.end("bug");
+                rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
+                Profiler.begin();
+                if(!bug.advance()) break bugLoop;
+                lastDist++;
+                Profiler.end("bug");
+                rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
+                Profiler.begin();
+                if(!bug.advance()) break bugLoop;
+                lastDist++;
+                Profiler.end("bug");
+            }
         }
         // Profiler.end("bug");
 
@@ -1663,6 +1673,7 @@ public class Pathfinder {
                 bug.clearPath();
                 bug.advance();
                 lastBugPos = lastLoc = new MapLocation(-1, -1);
+                lastDist = 0;
                 reps = 0;
             }
         } else {
@@ -1684,12 +1695,16 @@ public class Pathfinder {
                     indicate("adjacent");
                     makeMove(dir);
                 }
+                lastDist = 0;
                 return;
             }
         }
         // TODO: what if location == bug.pos?
 
-        // bfs
+        doBfs(target);
+    }
+
+    private static void doBfs(MapLocation target) throws GameActionException {
         Profiler.begin();
         CellTracker.computeLocalBfsMasks();
         var localPassableExceptAllies0 = CellTracker.localPassable0 & ~(1l << 60);
@@ -2035,6 +2050,7 @@ public class Pathfinder {
             if(bestMove != null) {
                 Profiler.end("bfs");
                 // indicate("bestMove: " + bestMove);
+                lastDist = 1;
                 indicate("bfs iterations: " + 1);
                 makeMove(bestMove);
                 return;
@@ -2338,6 +2354,7 @@ public class Pathfinder {
             if(bestMove != null) {
                 Profiler.end("bfs");
                 // indicate("bestMove: " + bestMove);
+                lastDist = 2;
                 indicate("bfs iterations: " + 2);
                 makeMove(bestMove);
                 return;
@@ -2621,6 +2638,7 @@ public class Pathfinder {
             if(bestMove != null) {
                 Profiler.end("bfs");
                 // indicate("bestMove: " + bestMove);
+                lastDist = 3;
                 indicate("bfs iterations: " + 3);
                 makeMove(bestMove);
                 return;
@@ -2924,6 +2942,7 @@ public class Pathfinder {
             if(bestMove != null) {
                 Profiler.end("bfs");
                 // indicate("bestMove: " + bestMove);
+                lastDist = 4;
                 indicate("bfs iterations: " + 4);
                 makeMove(bestMove);
                 return;
@@ -3207,6 +3226,7 @@ public class Pathfinder {
             if(bestMove != null) {
                 Profiler.end("bfs");
                 // indicate("bestMove: " + bestMove);
+                lastDist = 5;
                 indicate("bfs iterations: " + 5);
                 makeMove(bestMove);
                 return;
@@ -3510,6 +3530,7 @@ public class Pathfinder {
             if(bestMove != null) {
                 Profiler.end("bfs");
                 // indicate("bestMove: " + bestMove);
+                lastDist = 6;
                 indicate("bfs iterations: " + 6);
                 makeMove(bestMove);
                 return;
@@ -3793,6 +3814,7 @@ public class Pathfinder {
             if(bestMove != null) {
                 Profiler.end("bfs");
                 // indicate("bestMove: " + bestMove);
+                lastDist = 7;
                 indicate("bfs iterations: " + 7);
                 makeMove(bestMove);
                 return;
@@ -4096,6 +4118,7 @@ public class Pathfinder {
             if(bestMove != null) {
                 Profiler.end("bfs");
                 // indicate("bestMove: " + bestMove);
+                lastDist = 8;
                 indicate("bfs iterations: " + 8);
                 makeMove(bestMove);
                 return;
@@ -4379,6 +4402,7 @@ public class Pathfinder {
             if(bestMove != null) {
                 Profiler.end("bfs");
                 // indicate("bestMove: " + bestMove);
+                lastDist = 9;
                 indicate("bfs iterations: " + 9);
                 makeMove(bestMove);
                 return;
@@ -4682,6 +4706,7 @@ public class Pathfinder {
             if(bestMove != null) {
                 Profiler.end("bfs");
                 // indicate("bestMove: " + bestMove);
+                lastDist = 10;
                 indicate("bfs iterations: " + 10);
                 makeMove(bestMove);
                 return;
@@ -4965,6 +4990,7 @@ public class Pathfinder {
             if(bestMove != null) {
                 Profiler.end("bfs");
                 // indicate("bestMove: " + bestMove);
+                lastDist = 11;
                 indicate("bfs iterations: " + 11);
                 makeMove(bestMove);
                 return;
@@ -5268,6 +5294,7 @@ public class Pathfinder {
             if(bestMove != null) {
                 Profiler.end("bfs");
                 // indicate("bestMove: " + bestMove);
+                lastDist = 12;
                 indicate("bfs iterations: " + 12);
                 makeMove(bestMove);
                 return;
@@ -5551,6 +5578,7 @@ public class Pathfinder {
             if(bestMove != null) {
                 Profiler.end("bfs");
                 // indicate("bestMove: " + bestMove);
+                lastDist = 13;
                 indicate("bfs iterations: " + 13);
                 makeMove(bestMove);
                 return;
@@ -5854,6 +5882,7 @@ public class Pathfinder {
             if(bestMove != null) {
                 Profiler.end("bfs");
                 // indicate("bestMove: " + bestMove);
+                lastDist = 14;
                 indicate("bfs iterations: " + 14);
                 makeMove(bestMove);
                 return;
@@ -5899,6 +5928,8 @@ public class Pathfinder {
         if(rc.canMove(Direction.NORTHWEST)) dirs[dirCount++] = Direction.NORTHWEST;
         if(dirCount > 0) makeMove(dirs[Rng.mcg() % dirCount]);
 
+        lastDist = 0;
+        lastBugPos = lastLoc = secondLastBugPos = secondLastLoc = new MapLocation(-1, -1);
         bug.clearPath();
     }
 }

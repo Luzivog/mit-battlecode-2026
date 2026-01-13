@@ -398,6 +398,7 @@ class BugnavInstance {
 
 public class Pathfinder {
     static BugnavInstance bug;
+    static int lastDist = 0;
 
     static int bfsPathLength = 0;
     {% for i in range(MAX_PATH) %}
@@ -454,6 +455,7 @@ public class Pathfinder {
     static int reps = 0;
 
     public static void makeMove(MapLocation target) throws GameActionException {
+        indicate("lastDist " + lastDist);
         // TODO: better handling when target changes
         if(bug == null || !target.equals(bug.target)) {
             if(bug != null && target.isAdjacentTo(bug.target)) {
@@ -462,18 +464,22 @@ public class Pathfinder {
             } else {
                 indicate("RETARGET");
                 lastBugPos = lastLoc = secondLastBugPos = secondLastLoc = new MapLocation(-1, -1);
+                lastDist = 0;
                 bug = new BugnavInstance(true, target);
             }
         }
         int shade = 255;
         // Profiler.begin();
-        bugLoop: {
-            {% for i in range(MAX_BUG_ITERS) %}
-            rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
-            Profiler.begin();
-            if(!bug.advance()) break bugLoop;
-            Profiler.end("bug");
-            {% endfor %}
+        if(lastDist < {{(MAX_PATH / 4) | int}}) {
+            bugLoop: {
+                {% for i in range(MAX_BUG_ITERS) %}
+                rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
+                Profiler.begin();
+                if(!bug.advance()) break bugLoop;
+                lastDist++;
+                Profiler.end("bug");
+                {% endfor %}
+            }
         }
         // Profiler.end("bug");
 
@@ -487,6 +493,7 @@ public class Pathfinder {
                 bug.clearPath();
                 bug.advance();
                 lastBugPos = lastLoc = new MapLocation(-1, -1);
+                lastDist = 0;
                 reps = 0;
             }
         } else {
@@ -508,12 +515,16 @@ public class Pathfinder {
                     indicate("adjacent");
                     makeMove(dir);
                 }
+                lastDist = 0;
                 return;
             }
         }
         // TODO: what if location == bug.pos?
 
-        // bfs
+        doBfs(target);
+    }
+
+    private static void doBfs(MapLocation target) throws GameActionException {
         Profiler.begin();
         CellTracker.computeLocalBfsMasks();
         {% macro writePos(pos, mask, val, boundsCheck) %}
@@ -644,6 +655,7 @@ public class Pathfinder {
             if(bestMove != null) {
                 Profiler.end("bfs");
                 // indicate("bestMove: " + bestMove);
+                lastDist = {{i}};
                 indicate("bfs iterations: " + {{i}});
                 makeMove(bestMove);
                 return;
@@ -686,6 +698,8 @@ public class Pathfinder {
         {% endfor %}
         if(dirCount > 0) makeMove(dirs[Rng.mcg() % dirCount]);
 
+        lastDist = 0;
+        lastBugPos = lastLoc = secondLastBugPos = secondLastLoc = new MapLocation(-1, -1);
         bug.clearPath();
     }
 }

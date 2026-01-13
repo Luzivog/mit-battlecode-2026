@@ -56,7 +56,7 @@ public class BabyRat {
         int myBestSlot = -1;
         int myBestDist = Integer.MAX_VALUE;
         for (int i = 0; i < 5; i++) {
-            MapLocation myKingLoc = GlobalArray.getRat(i);
+            MapLocation myKingLoc = GlobalArray.getRatKing(i);
             if (myKingLoc != null) {
                 int myDist = myLoc.distanceSquaredTo(myKingLoc);
                 if (myDist <= 18 && myDist < myBestDist) {

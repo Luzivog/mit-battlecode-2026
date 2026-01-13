@@ -7,6 +7,7 @@ import battlecode.common.RobotInfo;
 import battlecode.common.UnitType;
 import awubot.CellTracker;
 import awubot.Pathfinder;
+import awubot.comms.GlobalArray;
 import awubot.robot.Strategy;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
@@ -170,10 +171,8 @@ public class CatLuringStrategy extends Strategy {
     }
 
     private MapLocation getEnemyKingLocation() {
-        if (home == null) return null;
-
-        int myX = home.x;
-        int myY = home.y;
+        int myX = GlobalArray.nearestRatKing.x;
+        int myY = GlobalArray.nearestRatKing.y;
 
         switch (CellTracker.getSymmetry()) {
             case Rotational:

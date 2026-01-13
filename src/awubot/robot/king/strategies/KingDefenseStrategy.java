@@ -6,6 +6,7 @@ import battlecode.common.MapInfo;
 import battlecode.common.MapLocation;
 import awubot.CellTracker;
 import awubot.Pathfinder;
+import awubot.comms.GlobalArray;
 import awubot.robot.Strategy;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
@@ -133,17 +134,7 @@ public class KingDefenseStrategy extends Strategy {
     }
 
     private boolean moveTowardSafety() throws GameActionException {
-        if (home == null) {
-            for (Direction myDir : Direction.values()) {
-                if (myDir != Direction.CENTER && rc.canMove(myDir)) {
-                    Pathfinder.makeMove(myDir);
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        Direction myTowardHome = myLoc.directionTo(home);
+        Direction myTowardHome = myLoc.directionTo(GlobalArray.nearestRatKing);
         Direction[] myTryDirs = {myTowardHome, myTowardHome.rotateLeft(), myTowardHome.rotateRight(),
                                 myTowardHome.rotateLeft().rotateLeft(), myTowardHome.rotateRight().rotateRight(),
                                 myTowardHome.opposite().rotateLeft(), myTowardHome.opposite().rotateRight(),

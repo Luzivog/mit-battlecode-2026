@@ -114,7 +114,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         int myScore = 0;
 
         for (int i = 0; i < 5; i++) {
-            MapLocation myKingLoc = GlobalArray.getRat(i);
+            MapLocation myKingLoc = GlobalArray.getRatKing(i);
             if (myKingLoc != null) {
                 int myDist = aMine.distanceSquaredTo(myKingLoc);
                 myScore += Math.min(myDist, 400);
@@ -168,7 +168,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
 
     private boolean isValidFormationCenter(MapLocation aCenter) throws GameActionException {
         for (int i = 0; i < 5; i++) {
-            MapLocation myKingLoc = GlobalArray.getRat(i);
+            MapLocation myKingLoc = GlobalArray.getRatKing(i);
             if (myKingLoc != null && aCenter.distanceSquaredTo(myKingLoc) < MIN_DIST_FROM_KINGS_SQ) {
                 return false;
             }

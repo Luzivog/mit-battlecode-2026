@@ -182,22 +182,20 @@ public class HybridStrategy extends Strategy {
     }
 
     private MapLocation getEnemyKingLocation() {
-        if (home == null) return null;
-
         if (CellTracker.isSymmetryKnown()) {
             switch (CellTracker.getSymmetry()) {
                 case Rotational:
-                    return new MapLocation(mapWidth - 1 - home.x, mapHeight - 1 - home.y);
+                    return new MapLocation(mapWidth - 1 - GlobalArray.nearestRatKing.x, mapHeight - 1 - GlobalArray.nearestRatKing.y);
                 case Horizontal:
-                    return new MapLocation(mapWidth - 1 - home.x, home.y);
+                    return new MapLocation(mapWidth - 1 - GlobalArray.nearestRatKing.x, GlobalArray.nearestRatKing.y);
                 case Vertical:
-                    return new MapLocation(home.x, mapHeight - 1 - home.y);
+                    return new MapLocation(GlobalArray.nearestRatKing.x, mapHeight - 1 - GlobalArray.nearestRatKing.y);
                 default:
                     break;
             }
         }
 
-        return new MapLocation(mapWidth - 1 - home.x, mapHeight - 1 - home.y);
+        return new MapLocation(mapWidth - 1 - GlobalArray.nearestRatKing.x, mapHeight - 1 - GlobalArray.nearestRatKing.y);
     }
 
     private boolean tryOpportunisticTransfer() throws GameActionException {

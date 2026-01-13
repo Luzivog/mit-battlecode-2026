@@ -3,10 +3,14 @@ package awubot.comms;
 import battlecode.common.*;
 import static awubot.util.Util.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.collections.FastArrayList;
 
 import awubot.CellTracker;
 import awubot.util.Profiler;
+import awubot.util.Rng;
 import awubot.util.string.FastIndexedIntSet;
 
 import static awubot.Game.*;
@@ -33,19 +37,39 @@ public class GlobalArray {
     private static final int SYMMETRY = 1;
     private static final int RAT_KING_LOC = 2;
     private static final int RAT_KING_TURN_COUNTER = 7;
-    private static final int RAT_SPAWN_ROLE = 8;  // 5 slots for 5 kings (indices 8-12)
+    // empty space 8 - 12 for now
     private static final int FORMATION_TARGET = 13;
     private static final int FORMATION_MINE = 14;
     private static final int FORMATION_COORDINATOR = 15;
     private static final int KING_MINE_ASSIGNMENT = 16;  // 5 slots for 5 kings (indices 16-20)
+
+    // layout: 
+    // lower bits: store target rat id modulo 255 (255 = null)
+    // upper bits: strategy index (0 to 3)
+    private static final int RAT_SPAWN_ROLE = 21;  // spam until MIN_CHEESE is hit
     private static final int MIN_CHEESE = 32;
     public static FastIndexedIntSet cheeseMines = new FastIndexedIntSet();
     public static MapLocation nearestRatKing;
+    public static int nearestRatKingId;
+
+    private static boolean isFirstKingInTurn;
+
+    private static List<Integer> strategyQueue = new ArrayList<>();
+
+    public static void writeSharedArray(int i, int x) throws GameActionException {
+        if (i == 21) {
+            println("WROTE TO " + i + " " + x);
+        }
+        rc.writeSharedArray(i, x);
+    }
 
     public static void initGlobalArray() throws GameActionException {
         if (isRatKing && time == 1) {
-            rc.writeSharedArray(RAT_KING_TURN_COUNTER, 1023);
-            rc.writeSharedArray(N - 1, 1023);
+            writeSharedArray(RAT_KING_TURN_COUNTER, 1023);
+            writeSharedArray(N - 1, 1023);
+            for (int i = 0; i < 5; i++) {
+                writeSharedArray(i + RAT_KING_LOC, 1023);
+            }
         }
 
         if (isRatKing) {
@@ -54,18 +78,21 @@ public class GlobalArray {
         } else {
             kingId = -1;
         }
-
-        if (isRatKing && time == 1) {
-            // println("YO IM THE FIRST RAT");
-            rc.writeSharedArray(RAT_KING_TURN_COUNTER, 1023);
-            rc.writeSharedArray(N - 1, 1023);
-            for (int i = 0; i < 5; i++) {
-                rc.writeSharedArray(i + RAT_KING_LOC, 1023);
-            }
-        }
     }
 
     public static void preTick() throws GameActionException {
+        if (isRatKing) {
+            updateRatKingTurnCounters();
+            if (isFirstKingInTurn) {
+                for (int i = RAT_SPAWN_ROLE; i < MIN_CHEESE; i++) {
+                    writeSharedArray(i, 1023);
+                }
+            }
+        }
+        if (isRatKing) {
+            for (int x : strategyQueue) _writeSpawnStrategy(x);
+            strategyQueue.clear();
+        }
         checkSymmetry();
         readCheeseMines();
         findNearestRatKing();
@@ -77,9 +104,26 @@ public class GlobalArray {
     public static void postTick() throws GameActionException {
         if (isRatKing) {
             if (cur_sym == 0 && CellTracker.isSymmetryKnown()) {
-                rc.writeSharedArray(SYMMETRY, CellTracker.getSymmetry().ordinal());
+                writeSharedArray(SYMMETRY, CellTracker.getSymmetry().ordinal());
             }
             writeCheeseMines();
+            writeRatLoc(kingId);
+        }
+    }
+
+    private static void updateRatKingTurnCounters() throws GameActionException {
+        // check living
+        isFirstKingInTurn = true;
+        int x = rc.readSharedArray(RAT_KING_TURN_COUNTER);
+        for (int j = 0; j < 5; j++, x >>= 2) {
+            int t = (x & 0b11);
+            if (t == time % 3) isFirstKingInTurn = false;
+            if (t == (time + 2) % 3) {
+                writeSharedArray(RAT_KING_TURN_COUNTER, rc.readSharedArray(RAT_KING_TURN_COUNTER) | (0b11 << (2 * j)));
+            }
+        }
+        if (isFirstKingInTurn) {
+            indicate("am first king in turn");
         }
     }
 
@@ -90,6 +134,7 @@ public class GlobalArray {
             if (king == null) continue;
             if (nearestRatKing == null || nearestRatKing.distanceSquaredTo(myLoc) > king.distanceSquaredTo(myLoc)) {
                 nearestRatKing = king;
+                nearestRatKingId = i;
             }
         }
     }
@@ -110,11 +155,11 @@ public class GlobalArray {
             int i = (time * (N - MIN_CHEESE)) % n;
             for (int j = 0; j < Math.min(n, N - MIN_CHEESE); j++) {
                 int k = (i + j) % n;
-                rc.writeSharedArray(N - k - 1, cheeseMines.at(k));
+                writeSharedArray(N - k - 1, cheeseMines.at(k));
             }
         }
         if (n < N - MIN_CHEESE) {
-            rc.writeSharedArray(N - 1 - n, 1023);
+            writeSharedArray(N - 1 - n, 1023);
         }
     }
 
@@ -146,36 +191,56 @@ public class GlobalArray {
         return CellTracker.Symmetry.values()[cur_sym];
     }
 
-    public static void writeSpawnRole(int aKingId, int aRole) throws GameActionException {
-        if (aKingId >= 0 && aKingId < 5) {
-            rc.writeSharedArray(RAT_SPAWN_ROLE + aKingId, aRole);
+    public static void writeSpawnStrategy(int babyRatID, int stratNum) throws GameActionException {
+        assert(0 <= stratNum && stratNum < 4);
+        strategyQueue.add((babyRatID % 255) | (stratNum << 8));
+    }
+    public static void _writeSpawnStrategy(int payload) throws GameActionException {
+        int id = payload & 255;
+        for (int i = RAT_SPAWN_ROLE; i < MIN_CHEESE; i++) {
+            int x = rc.readSharedArray(i);
+            int lo = x & 255;
+            if (lo == 255) {
+                // can write
+                writeSharedArray(i, payload);
+                return;
+            } else if (lo == id) {
+                println("unlucky clashing id's");
+                break;
+            }
         }
+        println("no more space to write strategies");
     }
 
-    public static int readSpawnRole(int aKingId) throws GameActionException {
-        if (aKingId >= 0 && aKingId < 5) {
-            return rc.readSharedArray(RAT_SPAWN_ROLE + aKingId);
+    public static int readSpawnStrategy() throws GameActionException {
+        int id = rc.getID() % 255;
+        println("reading strategy for " + rc.getID() + " modded " + id);
+        for (int i = RAT_SPAWN_ROLE; i < MIN_CHEESE; i++) {
+            int x = rc.readSharedArray(i);
+            int lo = x & 255;
+            println("read " + i + " for " + lo);
+            if (lo == id) {
+                return x >>> 8; // retrieve role id
+            }
+            if (lo == 255) { // null (shouldnt happen)
+                assert(false);
+            }
         }
-        return 0;
+        // didnt find - pick one at random
+        int i = Rng.mcg() % (MIN_CHEESE - RAT_SPAWN_ROLE);
+        println("didnt find strategy");
+        return rc.readSharedArray(i) >>> 8;
     }
 
     public static void writeRatLoc(int i) {
         try {
-            rc.writeSharedArray(i + RAT_KING_LOC, encode2x2() + 1);
+            writeSharedArray(i + RAT_KING_LOC, encode2x2() + 1);
             // cycle counter
             int x = rc.readSharedArray(RAT_KING_TURN_COUNTER);
             int t = time % 3;
             x &= ~(0b11 << (2 * i));
             x |= t << (2 * i);
             // can be optimised to xor'ing lmao
-
-            // check living
-            for (int j = 0; j < 5; j++, x >>= 2) {
-                if (i == j) continue;
-                if ((x & 0b11) == (time + 2) % 3) {
-                    rc.writeSharedArray(RAT_KING_TURN_COUNTER, rc.readSharedArray(RAT_KING_TURN_COUNTER) | (0b11 << (2 * j)));
-                }
-            }
         } catch (GameActionException e) {
             e.printStackTrace();
         }
@@ -186,7 +251,9 @@ public class GlobalArray {
             int x = rc.readSharedArray(RAT_KING_TURN_COUNTER);
             int i = 0;
             while (i < 5) {
-                if ((x & 0b11) == 0b11) return i;
+                if ((x & 0b11) == 0b11) {
+                    return i;
+                }
                 x >>= 2;
                 i++;
             }
@@ -198,9 +265,9 @@ public class GlobalArray {
     }
 
     public static void writeFormationTarget(MapLocation aTarget, MapLocation aMine, int aCoordinatorKingId) throws GameActionException {
-        rc.writeSharedArray(FORMATION_TARGET, aTarget != null ? encode2x2(aTarget) + 1 : 0);
-        rc.writeSharedArray(FORMATION_MINE, aMine != null ? encode2x2(aMine) + 1 : 0);
-        rc.writeSharedArray(FORMATION_COORDINATOR, aCoordinatorKingId);
+        writeSharedArray(FORMATION_TARGET, aTarget != null ? encode2x2(aTarget) + 1 : 0);
+        writeSharedArray(FORMATION_MINE, aMine != null ? encode2x2(aMine) + 1 : 0);
+        writeSharedArray(FORMATION_COORDINATOR, aCoordinatorKingId);
     }
 
     public static MapLocation getFormationTarget() throws GameActionException {
@@ -220,14 +287,14 @@ public class GlobalArray {
     }
 
     public static void clearFormation() throws GameActionException {
-        rc.writeSharedArray(FORMATION_TARGET, 0);
-        rc.writeSharedArray(FORMATION_MINE, 0);
-        rc.writeSharedArray(FORMATION_COORDINATOR, 0);
+        writeSharedArray(FORMATION_TARGET, 0);
+        writeSharedArray(FORMATION_MINE, 0);
+        writeSharedArray(FORMATION_COORDINATOR, 0);
     }
 
     public static void writeKingMineAssignment(int aKingId, MapLocation aMine) throws GameActionException {
         if (aKingId >= 0 && aKingId < 5) {
-            rc.writeSharedArray(KING_MINE_ASSIGNMENT + aKingId, aMine != null ? encode2x2(aMine) + 1 : 0);
+            writeSharedArray(KING_MINE_ASSIGNMENT + aKingId, aMine != null ? encode2x2(aMine) + 1 : 0);
         }
     }
 

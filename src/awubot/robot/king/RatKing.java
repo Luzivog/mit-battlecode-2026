@@ -16,7 +16,6 @@ public class RatKing {
     }
 
     public static void run() throws GameActionException {
-        GlobalArray.writeRatLoc(kingId);
         indicate(rc.getGlobalCheese() + " cheese, " + rc.getHealth() + " HP");
         primaryStrategy.runTick();
     }

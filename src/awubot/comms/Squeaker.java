@@ -25,8 +25,8 @@ public class Squeaker {
     11: enemy rat king location (up to 3) (rounded to 2x2)
 
     rest will be prefixed with 0:
-    000: symmetry
-    001: strategy
+    (0)00: symmetry
+    (0)01: strategy
       
 
     */

@@ -20,7 +20,7 @@ public class BabyRat {
 
     public static void init() throws GameActionException {
         CellTracker.storeVisibleCells();
-        readRole();
+        GlobalArray.readSpawnStrategy();
         primaryStrategy = new HybridStrategy();
         System.out.println("[INIT] R" + rc.getID() + " role=" + role);
     }
@@ -41,57 +41,14 @@ public class BabyRat {
         }
 
         CellTracker.checkSymmetry();
-        CellTracker.storeVisibleCells();
-
-        indicate("sym " + CellTracker.hsym + " " + CellTracker.vsym + " " + CellTracker.rsym);
-        primaryStrategy.runTick();
-
-        executeGlance();
-    }
-
-    private static void readRole() throws GameActionException {
-        for (RobotInfo myRobot : rc.senseNearbyRobots()) {
-            if (myRobot.getType() == UnitType.RAT_KING && myRobot.getTeam() == rc.getTeam()) {
-                int myKingSlot = findKingSlot(myRobot.getLocation());
-                if (myKingSlot >= 0) {
-                    int myRoleValue = GlobalArray.readSpawnRole(myKingSlot);
-                    role = BabyRatRole.fromValue(myRoleValue);
-                }
-                return;
-            }
-        }
-
-        int myBestSlot = findNearestKingSlot();
-        if (myBestSlot >= 0) {
-            int myRoleValue = GlobalArray.readSpawnRole(myBestSlot);
-            role = BabyRatRole.fromValue(myRoleValue);
-        }
-    }
-
-    private static int findNearestKingSlot() throws GameActionException {
-        int myBestSlot = -1;
-        int myBestDist = Integer.MAX_VALUE;
-        for (int i = 0; i < 5; i++) {
-            MapLocation myKingLoc = GlobalArray.getRatKing(i);
-            if (myKingLoc != null) {
-                int myDist = myLoc.distanceSquaredTo(myKingLoc);
-                if (myDist <= 18 && myDist < myBestDist) {
-                    myBestDist = myDist;
-                    myBestSlot = i;
-                }
-            }
-        }
-        return myBestSlot;
-    }
-
-    private static int findKingSlot(MapLocation aKingLoc) throws GameActionException {
-        for (int i = 0; i < 5; i++) {
-            MapLocation myStoredLoc = GlobalArray.getRatKing(i);
-            if (myStoredLoc != null && myStoredLoc.distanceSquaredTo(aKingLoc) <= 8) {
-                return i;
-            }
-        }
-        return -1;
+        // what happened here?
+        // Cat luring protocol - takes priority
+        // if (theIsLuring && theLureTTL > 0) {
+        //     theLureTTL--;
+        //     if (tryLureManeuver()) {
+        //         return;  // Skip normal behavior while luring
+        //     }
+        // }
     }
 
     private static void tryTransferCheese() throws GameActionException {

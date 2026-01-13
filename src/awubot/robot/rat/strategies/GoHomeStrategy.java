@@ -14,6 +14,7 @@ public class GoHomeStrategy extends Strategy {
 
     private final CheeseStrategy cheeseStrategy;
     private boolean goingHome;
+    private MapLocation kingLoc;
 
     public GoHomeStrategy(CheeseStrategy cheeseStrategy) {
         this.cheeseStrategy = cheeseStrategy;
@@ -28,14 +29,25 @@ public class GoHomeStrategy extends Strategy {
     public void runTick() throws GameActionException {
         goingHome = true;
         indicate("going home");
+        if(kingLoc == null) {
+            kingLoc = GlobalArray.nearestRatKing;
+        } else if(!GlobalArray.nearestRatKing.equals(kingLoc)) {
+            if(GlobalArray.nearestRatKing.distanceSquaredTo(kingLoc) <= 8) {
+                // the king moved
+                kingLoc = kingLoc.add(kingLoc.directionTo(GlobalArray.nearestRatKing));
+            } else {
+                // different king
+                kingLoc = GlobalArray.nearestRatKing;
+            }
+        }
 
-        rc.setIndicatorLine(myLoc, GlobalArray.nearestRatKing, 0, 255, 0);
-        Pathfinder.makeMove(GlobalArray.nearestRatKing);
+        rc.setIndicatorLine(myLoc, kingLoc, 0, 255, 0);
+        Pathfinder.makeMove(kingLoc);
 
-        var dir = myLoc.directionTo(GlobalArray.nearestRatKing);
+        var dir = myLoc.directionTo(kingLoc);
         var transferTarget = myLoc.add(dir);
 
-        if (myLoc.distanceSquaredTo(GlobalArray.nearestRatKing) <= 8) {
+        if (myLoc.distanceSquaredTo(kingLoc) <= 8) {
             shouldGlance = false;
             if (dir != Direction.CENTER && rc.canTurn()) turn(dir);
         }

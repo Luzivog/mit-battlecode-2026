@@ -8,7 +8,7 @@ import battlecode.common.MapLocation;
 import battlecode.common.RobotInfo;
 import battlecode.common.TrapType;
 import battlecode.common.UnitType;
-import experiment.CellTracker;
+import awubot.CellTracker;
 import awubot.Pathfinder;
 import awubot.comms.Squeaker;
 import awubot.robot.Strategy;

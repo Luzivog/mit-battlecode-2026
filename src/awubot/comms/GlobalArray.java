@@ -40,6 +40,7 @@ public class GlobalArray {
     private static final int KING_MINE_ASSIGNMENT = 16;  // 5 slots for 5 kings (indices 16-20)
     private static final int MIN_CHEESE = 32;
     public static FastIndexedIntSet cheeseMines = new FastIndexedIntSet();
+    public static MapLocation nearestRatKing;
 
     public static void initGlobalArray() throws GameActionException {
         if (isRatKing && time == 1) {
@@ -53,11 +54,21 @@ public class GlobalArray {
         } else {
             kingId = -1;
         }
+
+        if (isRatKing && time == 1) {
+            // println("YO IM THE FIRST RAT");
+            rc.writeSharedArray(RAT_KING_TURN_COUNTER, 1023);
+            rc.writeSharedArray(N - 1, 1023);
+            for (int i = 0; i < 5; i++) {
+                rc.writeSharedArray(i + RAT_KING_LOC, 1023);
+            }
+        }
     }
 
     public static void preTick() throws GameActionException {
         checkSymmetry();
         readCheeseMines();
+        findNearestRatKing();
         if (!isRatKing) {
 
         }
@@ -69,6 +80,17 @@ public class GlobalArray {
                 rc.writeSharedArray(SYMMETRY, CellTracker.getSymmetry().ordinal());
             }
             writeCheeseMines();
+        }
+    }
+
+    public static void findNearestRatKing() {
+        nearestRatKing = null;
+        for (int i = 0; i < 5; i++) {
+            MapLocation king = getRatKing(i);
+            if (king == null) continue;
+            if (nearestRatKing == null || nearestRatKing.distanceSquaredTo(myLoc) > king.distanceSquaredTo(myLoc)) {
+                nearestRatKing = king;
+            }
         }
     }
     
@@ -109,11 +131,11 @@ public class GlobalArray {
         }
     }
 
-    public static MapLocation getRat(int i) {
+    public static MapLocation getRatKing(int i) {
         try {
             int pos = rc.readSharedArray(i + RAT_KING_LOC);
-            if (pos == 0) return null;
-            return decode2x2(pos - 1);
+            if (pos == 1023) return null;
+            return decode2x2(pos);
         } catch (GameActionException e) {
             e.printStackTrace();
             return null;

@@ -20,7 +20,7 @@ public class CheeseStrategy extends Strategy {
         lastSeenCheese = rc.getRoundNum();
         if (myLoc.isAdjacentTo(cheeseTarget)) {
             var dir = myLoc.directionTo(cheeseTarget);
-            if(dir != Direction.CENTER) turn(dir);
+            if (dir != Direction.CENTER && rc.canTurn()) turn(dir);
             if (rc.canPickUpCheese(cheeseTarget)) {
                 rc.pickUpCheese(cheeseTarget);
                 cheeseTarget = null;

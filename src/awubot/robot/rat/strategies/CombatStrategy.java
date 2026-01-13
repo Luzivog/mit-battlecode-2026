@@ -6,6 +6,7 @@ import battlecode.common.GameConstants;
 import battlecode.common.MapInfo;
 import battlecode.common.MapLocation;
 import battlecode.common.RobotInfo;
+import battlecode.common.TrapType;
 import battlecode.common.UnitType;
 import experiment.CellTracker;
 import awubot.Pathfinder;
@@ -146,7 +147,7 @@ public class CombatStrategy {
                 turn(td);
             break;
             case 4:
-                rc.turn(td);
+                turn(td);
                 break;
             default:
                 assert(false);
@@ -222,6 +223,7 @@ public class CombatStrategy {
                 if (!rc.canSenseLocation(placeLoc)) continue;
                 if (!rc.senseMapInfo(placeLoc).isPassable()) continue;
                 if (rc.senseMapInfo(placeLoc).hasCheeseMine()) continue;
+                if (rc.senseMapInfo(placeLoc).getTrap() != TrapType.NONE) continue;
                 if (rc.senseRobotAtLocation(placeLoc) != null) continue;
                 if (dir == info.getDirection().opposite()) continue;
                 if (placeLoc.distanceSquaredTo(myLoc) > 4) continue; // impossible
@@ -253,8 +255,23 @@ public class CombatStrategy {
 
         if (best < 0) return false;
         println("TRAPPING RAT");
+        if (rc.canSenseLocation(bestPlaceLoc) && !rc.canPlaceRatTrap(bestPlaceLoc)) {
+            // likely means there is an enemy rat trap here
+            println("ENEMY RAT TRAP AT " + bestPlaceLoc);
+            return false;
+        }
         if (bestMoveDir != Direction.CENTER) rawMove(bestMoveDir);
+        if (!rc.canPlaceRatTrap(bestPlaceLoc)) {
+            // likely means there is an enemy rat trap here
+            println("ENEMY RAT TRAP AT " + bestPlaceLoc);
+            return false;
+        }
         if (!rc.canSenseLocation(bestPlaceLoc)) turn(myLoc.directionTo(bestPlaceLoc));
+        if (!rc.canPlaceRatTrap(bestPlaceLoc)) {
+            // likely means there is an enemy rat trap here
+            println("ENEMY RAT TRAP AT " + bestPlaceLoc);
+            return false;
+        }
         rc.placeRatTrap(bestPlaceLoc);
         return true;
     }

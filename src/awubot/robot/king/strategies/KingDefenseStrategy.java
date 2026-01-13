@@ -326,8 +326,8 @@ public class KingDefenseStrategy extends Strategy {
     }
 
     private MapLocation getEnemyKingLocation() {
-        int myX = home.x;
-        int myY = home.y;
+        int myX = spawn.x;
+        int myY = spawn.y;
 
         switch (CellTracker.getSymmetry()) {
             case Rotational:

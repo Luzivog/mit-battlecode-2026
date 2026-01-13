@@ -12,7 +12,7 @@ public class UtilTest {
         myLocX = 12;
         myLocY = 23;
         GlobalArray.writeRatLoc(1);
-        MapLocation read = GlobalArray.getRat(1);
+        MapLocation read = GlobalArray.getRatKing(1);
         println(myLocX, myLocY, read.x, read.y);
         assert(read.x == (myLocX / 2 * 2) && read.y == (myLocY / 2 * 2));
     }

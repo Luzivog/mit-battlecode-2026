@@ -137,7 +137,7 @@ public class HybridStrategy extends Strategy {
     }
 
     private void runRushBehavior() throws GameActionException {
-        MapLocation enemyTarget = Util.getOpposite(home);
+        MapLocation enemyTarget = Util.getOpposite(GlobalArray.nearestRatKing);
         Pathfinder.makeMove(enemyTarget);
     }
 
@@ -229,7 +229,7 @@ public class HybridStrategy extends Strategy {
         MapLocation bestKing = null;
         int bestDist = Integer.MAX_VALUE;
         for (int i = 0; i < 5; i++) {
-            MapLocation kingLoc = GlobalArray.getRat(i);
+            MapLocation kingLoc = GlobalArray.getRatKing(i);
             if (kingLoc != null && rc.onTheMap(kingLoc)) {
                 int dist = myLoc.distanceSquaredTo(kingLoc);
                 if (dist < bestDist) {

@@ -70,7 +70,7 @@ public class BabyRat {
 
     private static int findKingSlot(MapLocation aKingLoc) throws GameActionException {
         for (int i = 0; i < 5; i++) {
-            MapLocation myStoredLoc = GlobalArray.getRat(i);
+            MapLocation myStoredLoc = GlobalArray.getRatKing(i);
             if (myStoredLoc != null && myStoredLoc.distanceSquaredTo(aKingLoc) <= 8) {
                 return i;
             }
@@ -89,7 +89,6 @@ public class BabyRat {
         indicate("cheesemines: " + GlobalArray.cheeseMines.set.length());
         shouldGlance = true;
 
-        updateHome();
         tryTransferCheese();
 
         // Cat luring protocol - takes priority
@@ -185,38 +184,12 @@ public class BabyRat {
         return true;  // Still luring
     }
 
-    private static void updateHome() throws GameActionException {
-        for (RobotInfo robot : rc.senseNearbyRobots()) {
-            if (robot.getType() == UnitType.RAT_KING && robot.getTeam() == rc.getTeam()) {
-                home = robot.getLocation();
-                return;
-            }
-        }
-
-        int bestDist = Integer.MAX_VALUE;
-        for (int i = 0; i < 5; i++) {
-            MapLocation kingLoc = GlobalArray.getRat(i);
-            if (kingLoc != null && rc.onTheMap(kingLoc)) {
-                int dist = myLoc.distanceSquaredTo(kingLoc);
-                if (dist < bestDist) {
-                    bestDist = dist;
-                    home = kingLoc;
-                }
-            }
-        }
-    }
-
     private static void tryTransferCheese() throws GameActionException {
         int cheese = rc.getRawCheese();
-        if (cheese <= 0 || home == null) return;
-
-        if (Util.chebyshevDistance(myLoc, home) > 2) return;
-
-        Direction toHome = myLoc.directionTo(home);
-        MapLocation transferTarget = myLoc.add(toHome);
-
-        if (rc.canTransferCheese(transferTarget, cheese)) {
-            rc.transferCheese(transferTarget, cheese);
+        if (cheese <= 0) return;
+        if (Util.chebyshevDistance(myLoc, GlobalArray.nearestRatKing) > 2) return;
+        if (rc.canTransferCheese(GlobalArray.nearestRatKing, cheese)) {
+            rc.transferCheese(GlobalArray.nearestRatKing, cheese);
         }
     }
 

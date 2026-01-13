@@ -25,12 +25,12 @@ public class Squeaker {
     11: enemy rat king location (up to 3) (rounded to 2x2)
 
     rest will be prefixed with 0:
-    00: symmetry
-    01: strategy
+    000: symmetry
+    001: strategy
       
 
     */
-    public static final int HEADER = 2; // can be extended later
+    public static final int HEADER = 3; // can be extended later
     public static final int BODY = 31 - HEADER;
 
     private static FastIndexedIntSet minesToSend = new FastIndexedIntSet();

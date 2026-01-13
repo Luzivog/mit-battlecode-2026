@@ -18,7 +18,8 @@ public class Game {
     public static int time;
     public static Direction myDir;
     public static Team team;
-    public static MapLocation home;
+
+    public static MapLocation spawn;
 
     public static void rawMove(Direction dir) throws GameActionException {
         if(dir == myDir) {
@@ -62,6 +63,7 @@ public class Game {
         time = rc.getRoundNum();
         isRatKing = (rc.getType() == UnitType.RAT_KING);
         team = rc.getTeam();
+        spawn = myLoc;
     }
 
     public static void preTick() throws GameActionException {

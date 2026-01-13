@@ -29,47 +29,19 @@ public class GoHomeStrategy extends Strategy {
         goingHome = true;
         indicate("going home");
 
-        updateHomeToKingLocation();
+        rc.setIndicatorLine(myLoc, GlobalArray.nearestRatKing, 0, 255, 0);
+        Pathfinder.makeMove(GlobalArray.nearestRatKing);
 
-        if (home == null) {
-            indicate("no king found!");
-            return;
-        }
-
-        rc.setIndicatorLine(myLoc, home, 0, 255, 0);
-        Pathfinder.makeMove(home);
-
-        var dir = myLoc.directionTo(home);
+        var dir = myLoc.directionTo(GlobalArray.nearestRatKing);
         var transferTarget = myLoc.add(dir);
 
-        if (myLoc.distanceSquaredTo(home) <= 8) {
+        if (myLoc.distanceSquaredTo(GlobalArray.nearestRatKing) <= 8) {
             shouldGlance = false;
             if (dir != Direction.CENTER && rc.canTurn()) turn(dir);
         }
 
         if (rc.canTransferCheese(transferTarget, rc.getRawCheese())) {
             rc.transferCheese(transferTarget, rc.getRawCheese());
-        }
-    }
-
-    private void updateHomeToKingLocation() throws GameActionException {
-        for (RobotInfo robot : rc.senseNearbyRobots()) {
-            if (robot.getType() == UnitType.RAT_KING && robot.getTeam() == rc.getTeam()) {
-                home = robot.getLocation();
-                return;
-            }
-        }
-
-        int bestDist = Integer.MAX_VALUE;
-        for (int i = 0; i < 5; i++) {
-            MapLocation kingLoc = GlobalArray.getRat(i);
-            if (kingLoc != null && rc.onTheMap(kingLoc)) {
-                int dist = myLoc.distanceSquaredTo(kingLoc);
-                if (dist < bestDist) {
-                    bestDist = dist;
-                    home = kingLoc;
-                }
-            }
         }
     }
 

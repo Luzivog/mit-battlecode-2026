@@ -437,7 +437,7 @@ public class Pathfinder {
     public static void makeMove(Direction dir) throws GameActionException {
         if(rc.canTurn()) turn(dir);
         var nextLoc = myLoc.add(dir);
-        if(canSense(myLoc, nextLoc, myDir) && rc.senseMapInfo(nextLoc).isDirt()) {
+        if(rc.onTheMap(nextLoc) && canSense(myLoc, nextLoc, myDir) && rc.senseMapInfo(nextLoc).isDirt()) {
             if(rc.canRemoveDirt(nextLoc)) rc.removeDirt(nextLoc);
             else return;
         }

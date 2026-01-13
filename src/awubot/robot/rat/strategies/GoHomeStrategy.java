@@ -59,7 +59,7 @@ public class GoHomeStrategy extends Strategy {
 
         int cheese = rc.getRawCheese();
         if (cheese >= 200) return true;
-        if (cheese >= 50 && cheeseStrategy.getLastSeenCheese() < rc.getRoundNum() - 3) return true;
+        if (cheese > 50 && cheeseStrategy.getLastSeenCheese() < rc.getRoundNum() - 3) return true;
 
         int globalCheese = rc.getGlobalCheese();
         if (globalCheese < 100 && cheese >= 20) return true;

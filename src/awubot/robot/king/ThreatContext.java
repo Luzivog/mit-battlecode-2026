@@ -1,4 +1,4 @@
-package awubot.robot.king.strategies;
+package awubot.robot.king;
 
 import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;

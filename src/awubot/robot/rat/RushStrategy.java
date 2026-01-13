@@ -1,0 +1,83 @@
+package awubot.robot.rat;
+
+import battlecode.common.*;
+import awubot.CellTracker;
+import awubot.Pathfinder;
+import awubot.comms.GlobalArray;
+import awubot.robot.Strategy;
+
+import static awubot.Game.*;
+import static awubot.util.Util.indicate;
+
+// TODO: finish writing this
+
+public class RushStrategy extends Strategy {
+    private ExploreStrategy exploreStrategy;
+    private CheeseStrategy cheeseStrategy;
+    private FormationStrategy formationStrategy;
+    private CatLuringStrategy catLuringStrategy;
+
+    public RushStrategy() {
+        exploreStrategy = new ExploreStrategy();
+        cheeseStrategy = new CheeseStrategy();
+        formationStrategy = new FormationStrategy();
+        catLuringStrategy = new CatLuringStrategy();
+    }
+
+    public CatLuringStrategy getCatLuringStrategy() {
+        return catLuringStrategy;
+    }
+
+    @Override
+    public boolean isComplete() throws GameActionException {
+        return false;
+    }
+
+    @Override
+    public void runTick() throws GameActionException {
+        if (!catLuringStrategy.isComplete() || catLuringStrategy.tryAutoActivate()) {
+            catLuringStrategy.runTick();
+            return;
+        }
+
+        MapLocation myEnemyTarget = getEnemyKingLocation();
+        if (myEnemyTarget != null) {
+            indicate("RUSHING -> " + myEnemyTarget);
+            rc.setIndicatorLine(myLoc, myEnemyTarget, 255, 128, 0);
+            Pathfinder.makeMove(myEnemyTarget);
+        } else {
+            exploreStrategy.runTick();
+        }
+    }
+
+    private MapLocation getEnemyKingLocation() {
+        if (CellTracker.isSymmetryKnown()) {
+            switch (CellTracker.getSymmetry()) {
+                case Rotational:
+                    return new MapLocation(mapWidth - 1 - GlobalArray.nearestRatKing.x, mapHeight - 1 - GlobalArray.nearestRatKing.y);
+                case Horizontal:
+                    return new MapLocation(mapWidth - 1 - GlobalArray.nearestRatKing.x, GlobalArray.nearestRatKing.y);
+                case Vertical:
+                    return new MapLocation(GlobalArray.nearestRatKing.x, mapHeight - 1 - GlobalArray.nearestRatKing.y);
+                default:
+                    break;
+            }
+        }
+
+        return new MapLocation(mapWidth - 1 - GlobalArray.nearestRatKing.x, mapHeight - 1 - GlobalArray.nearestRatKing.y);
+    }
+
+    private static MapLocation findNearbyCat() {
+        for (RobotInfo robot : rc.senseNearbyRobots()) {
+            if (robot.getType() == UnitType.CAT) {
+                return robot.getLocation();
+            }
+        }
+        return null;
+    }
+
+    private void fleeFromCat(MapLocation catLoc) throws GameActionException {
+        Direction awayFromCat = catLoc.directionTo(myLoc);
+        Pathfinder.makeMove(myLoc.add(awayFromCat));
+    }
+}

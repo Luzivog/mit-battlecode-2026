@@ -1,4 +1,4 @@
-package awubot.robot.rat.strategies;
+package awubot.robot.rat;
 
 import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
@@ -12,13 +12,13 @@ import static awubot.Game.*;
 import static awubot.util.Util.indicate;
 
 public class MineStrategy extends Strategy {
-    private final CheeseStrategy cheeseStrategy;
+    private CheeseStrategy cheeseStrategy;
     private MapLocation mineTarget;
     private MapLocation randomDestination;
     private MapLocation seenMine;
 
-    public MineStrategy(CheeseStrategy cheeseStrategy) {
-        this.cheeseStrategy = cheeseStrategy;
+    public MineStrategy() {
+        cheeseStrategy = new CheeseStrategy();
     }
 
     @Override

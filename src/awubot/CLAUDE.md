@@ -19,7 +19,6 @@ Do **not** put:
 - Convenience wrappers
 
 ## Strategy Ownership
-- All strategy logic **must live in `/strategies`**.
 - General robot / engine classes should contain:
   - Shared mechanics
   - State plumbing

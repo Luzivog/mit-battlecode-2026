@@ -1,13 +1,15 @@
-package awubot.robot.rat.strategies;
+package awubot.robot.rat;
 
 import battlecode.common.*;
 import awubot.Pathfinder;
 import awubot.robot.Strategy;
 import static awubot.Game.*;
+import static awubot.util.Util.*;
 
+// TODO: go after a different target if given the opportunity
 public class CheeseStrategy extends Strategy {
-    private MapLocation cheeseTarget;
-    private int lastSeenCheese;
+    public MapLocation cheeseTarget;
+    public int lastSeenCheese;
 
     @Override
     public boolean isComplete() throws GameActionException {
@@ -17,6 +19,7 @@ public class CheeseStrategy extends Strategy {
 
     @Override
     public void runTick() throws GameActionException {
+        refreshCheeseTarget();
         lastSeenCheese = rc.getRoundNum();
         if (myLoc.isAdjacentTo(cheeseTarget)) {
             var dir = myLoc.directionTo(cheeseTarget);
@@ -32,6 +35,7 @@ public class CheeseStrategy extends Strategy {
     }
 
     private void refreshCheeseTarget() throws GameActionException {
+        indicate("HERE " + cheeseTarget);
         if (cheeseTarget != null
             && rc.canSenseLocation(cheeseTarget)
             && rc.senseMapInfo(cheeseTarget).getCheeseAmount() == 0) {
@@ -45,9 +49,6 @@ public class CheeseStrategy extends Strategy {
                 bestAmount = info.getCheeseAmount();
             }
         }
-    }
-
-    public int getLastSeenCheese() {
-        return lastSeenCheese;
+        indicate("New cheese target: " + cheeseTarget);
     }
 }

@@ -1,23 +1,22 @@
-package awubot.robot.rat.strategies;
-
+package awubot.robot.rat;
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
 import battlecode.common.GameConstants;
 import battlecode.common.MapLocation;
 import battlecode.common.RobotInfo;
 import battlecode.common.UnitType;
-import awubot.Pathfinder;
 import awubot.robot.Strategy;
 import awubot.util.Util;
 
 import static awubot.Game.*;
-import static awubot.util.Util.directions;
-import static awubot.util.Util.println;
+import static awubot.util.Util.*;
 
-public class ExperimentStrategy extends Strategy {
+public class MicroTestStrategy extends Strategy {
 
+    private CombatStrategy combatStrategy;
     private ExploreStrategy exploreStrategy;
-    public ExperimentStrategy() {
+    public MicroTestStrategy() {
+        this.combatStrategy = new CombatStrategy();
         this.exploreStrategy = new ExploreStrategy();
     }
 
@@ -30,32 +29,8 @@ public class ExperimentStrategy extends Strategy {
     private static int id = -1;
     @Override
     public void runTick() throws GameActionException {
-        if (id != -1) {
-            println("threw guy with id " + id);
-        }
-        for (RobotInfo ri : rc.senseNearbyRobots()) {
-            if (ri.ID == id) {
-                println("found thrown guy at " + myLoc.distanceSquaredTo(ri.getLocation()));
-            }
-        }
-        if (rc.getCarrying() != null) {
-            Runnable chuck = tryThrow();
-            if (chuck != null) {
-                chuck.run();
-                return;
-            }
-            exploreStrategy.runTick();
-            return;
-        }
-        Runnable ratnap = tryRatnapManeuver();
-        if (ratnap != null) {
-            ratnap.run();
-            return;
-        }
-        Runnable attack = tryAttack();
-        if (attack != null) {
-            attack.run();
-            return;
+        if (combatStrategy.tryTick()) {
+            indicate("FIGHTING!!!!!");
         }
         exploreStrategy.runTick();
     }

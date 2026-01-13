@@ -1,4 +1,4 @@
-package awubot.robot.rat.strategies;
+package awubot.robot.rat;
 
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;

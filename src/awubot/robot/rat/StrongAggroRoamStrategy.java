@@ -1,4 +1,4 @@
-package awubot.robot.rat.strategies;
+package awubot.robot.rat;
 
 import static awubot.Game.rc;
 
@@ -10,11 +10,11 @@ import awubot.util.Util;
 import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
 
-public class MigratedStrongAggroRoamStrategy extends Strategy {
+public class StrongAggroRoamStrategy extends Strategy {
     private MapLocation target;
     private List<MapLocation> targets;
 
-    public MigratedStrongAggroRoamStrategy() throws GameActionException {
+    public StrongAggroRoamStrategy() throws GameActionException {
         targets = Util.getEnemySpawnList();
         target = targets.getFirst();
     }

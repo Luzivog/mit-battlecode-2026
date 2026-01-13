@@ -216,7 +216,7 @@ public class GlobalArray {
                 break;
             }
         }
-        println("no more space to write strategies");
+        println("no more space to write");
     }
 
     // MUST BE CALLED FOR EVERY RAT

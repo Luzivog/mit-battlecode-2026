@@ -1,4 +1,4 @@
-package awubot.robot.rat.strategies;
+package awubot.robot.rat;
 
 import battlecode.common.*;
 import awubot.Pathfinder;
@@ -34,7 +34,6 @@ public class CatLureStrategy2 extends Strategy {
         indicate("LURING CAT TO ENEMY!");
 
         moveTowardEnemy();
-        rc.squeak(0);
 
         if (shouldTerminate()) {
             reset();

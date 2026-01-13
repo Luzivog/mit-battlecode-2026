@@ -4,9 +4,8 @@ import battlecode.common.*;
 import awubot.CellTracker;
 import awubot.comms.GlobalArray;
 import awubot.robot.Strategy;
-import awubot.robot.rat.strategies.CatLureStrategy2;
-import awubot.robot.rat.strategies.HybridStrategy;
-import awubot.util.Profiler;
+import awubot.robot.rat.CatLureStrategy2;
+import awubot.robot.rat.MinerStrategy;
 import awubot.util.Rng;
 import awubot.util.Util;
 import static awubot.Game.*;
@@ -16,14 +15,12 @@ public class BabyRat {
     private static Direction theLastGlance;
     public static boolean shouldGlance;
     public static Strategy primaryStrategy;
-    public static BabyRatRole role = BabyRatRole.MINER;
     private static final CatLureStrategy2 theCatLureStrategy = new CatLureStrategy2();
 
     public static void init() throws GameActionException {
         CellTracker.storeVisibleCells();
-        GlobalArray.readSpawnStrategy();
-        primaryStrategy = new HybridStrategy();
-        System.out.println("[INIT] R" + rc.getID() + " role=" + role);
+        // GlobalArray.readSpawnStrategy();
+        primaryStrategy = new MinerStrategy();
     }
 
     public static void setLureTarget(MapLocation aCatLoc, MapLocation aEnemyKingLoc) {
@@ -54,8 +51,14 @@ public class BabyRat {
         int myCheese = rc.getRawCheese();
         if (myCheese <= 0) return;
         if (Util.chebyshevDistance(myLoc, GlobalArray.nearestRatKing) > 2) return;
-        if (rc.canTransferCheese(GlobalArray.nearestRatKing, myCheese)) {
-            rc.transferCheese(GlobalArray.nearestRatKing, myCheese);
+        // try all possible directions
+        var dir = myDir.rotateLeft();
+        for(int i = 2; i >= 0; i--) {
+            var kingLoc = myLoc.add(dir);
+            if (rc.canTransferCheese(kingLoc, myCheese)) {
+                rc.transferCheese(kingLoc, myCheese);
+            }
+            dir = dir.rotateRight();
         }
     }
 

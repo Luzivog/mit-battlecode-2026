@@ -1,4 +1,4 @@
-package awubot.robot.rat.strategies;
+package awubot.robot.rat;
 
 import static awubot.Game.rc;
 
@@ -11,11 +11,11 @@ import awubot.util.Util;
 import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
 
-public class MigratedAggroRoamStrategy extends Strategy {
+public class AggroRoamStrategy extends Strategy {
     private MapLocation target;
     private List<MapLocation> targets;
 
-    public MigratedAggroRoamStrategy() throws GameActionException {
+    public AggroRoamStrategy() throws GameActionException {
         //assert (Game.origin != null) : "origin is null";
         targets = new LinkedList<>();
         for (int i = 0; i < 3; i++) {

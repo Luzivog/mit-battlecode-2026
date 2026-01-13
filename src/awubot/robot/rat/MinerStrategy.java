@@ -1,0 +1,91 @@
+package awubot.robot.rat;
+
+import battlecode.common.*;
+import awubot.CellTracker;
+import awubot.robot.Strategy;
+import awubot.comms.GlobalArray;
+import awubot.util.Rng;
+import static awubot.Game.*;
+import static awubot.util.Util.*;
+
+public class MinerStrategy extends Strategy {
+    private static final int CRITICAL_HP = 20;
+
+    private FormationStrategy formationStrategy;
+    private GoHomeStrategy goHomeStrategy;
+    private CheeseStrategy cheeseStrategy;
+    private TraverseStrategy goSomewhereStrategy; // either go to a mine or explore; TODO: make the mine strategy smarter
+
+    public MinerStrategy() {
+        formationStrategy = new FormationStrategy();
+        goHomeStrategy = new GoHomeStrategy();
+        cheeseStrategy = new CheeseStrategy();
+    }
+
+    @Override
+    public void runTick() throws GameActionException {
+        CellTracker.checkSymmetry();
+        indicate("sym " + CellTracker.hsym + " " + CellTracker.vsym + " " + CellTracker.rsym);
+        if (rc.getRawCheese() == 0) {
+            goHomeStrategy = null;
+        } else if(goHomeStrategy == null && shouldGoHome()) {
+            goHomeStrategy = new GoHomeStrategy();
+            cheeseStrategy.cheeseTarget = null;
+        }
+        // TODO: combat strategy
+        if(tryStrategy(formationStrategy)) return;
+        if(tryStrategy(goHomeStrategy)) return;
+        if(tryStrategy(cheeseStrategy)) return;
+
+        while(goSomewhereStrategy == null || goSomewhereStrategy.isComplete()) {
+            MapLocation target;
+
+            if (GlobalArray.cheeseMines.set.length() < 3 || Rng.mcg() % 5 == 0) {
+                target = new MapLocation(
+                    Math.abs(Rng.mcg()) % mapWidth,
+                    Math.abs(Rng.mcg()) % mapHeight
+                );
+            } else {
+                target = decode2x2(GlobalArray.cheeseMines.at(Rng.mcg() % GlobalArray.cheeseMines.set.length()));
+            }
+            goSomewhereStrategy = new TraverseStrategy(target, 2);
+        }
+        goSomewhereStrategy.runTick();
+    }
+
+    private boolean shouldGoHome() {
+        if (shouldReturnForHealth()) return true;
+
+        int cheese = rc.getRawCheese();
+        if (cheese >= 200) return true;
+        if (cheese > 50 && cheeseStrategy.lastSeenCheese < time - 3) return true;
+
+        int globalCheese = rc.getGlobalCheese();
+        if (globalCheese < 100 && cheese >= 20) return true;
+        if (globalCheese < 30 && cheese > 0) return true;
+
+        return false;
+    }
+
+    private boolean shouldReturnForHealth() {
+        int hp = rc.getHealth();
+        int cheese = rc.getRawCheese();
+
+        if (cheese == 0) return false;
+        if (hp <= CRITICAL_HP) return true;
+
+        int hpThreshold;
+        if (cheese >= 150) hpThreshold = 70;
+        else if (cheese >= 100) hpThreshold = 60;
+        else if (cheese >= 50) hpThreshold = 50;
+        else if (cheese >= 20) hpThreshold = 40;
+        else return false;
+
+        return hp <= hpThreshold;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return false;
+    }
+}

@@ -1,4 +1,4 @@
-package awubot.robot.rat.strategies;
+package awubot.robot.rat;
 
 import static awubot.Game.rc;
 
@@ -8,7 +8,7 @@ import awubot.util.Util;
 import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
 
-public class MigratedExploreStrategy extends Strategy {
+public class ExploreStrategy extends Strategy {
     private MapLocation target;
 
     @Override

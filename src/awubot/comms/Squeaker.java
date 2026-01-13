@@ -4,10 +4,6 @@ import battlecode.common.*;
 import static awubot.util.Util.*;
 
 import awubot.CellTracker;
-import awubot.robot.rat.BabyRat;
-import awubot.robot.rat.BabyRatRole;
-import awubot.robot.rat.strategies.HybridStrategy;
-import awubot.util.Profiler;
 import awubot.util.string.FastIndexedIntSet;
 
 import static awubot.Game.*;
@@ -84,21 +80,10 @@ public class Squeaker {
                     CellTracker.setSymmetry(bytes & 0b11);
                     break;
                 case 1: // set strategy
-                    // TODO: decide strategies
+                    // TODO: decide
                     break;
                 case 2: // Lure signal - cat location + enemy king location from rat king
-                    if (isRatKing) return;
-                    int catLocEncoded = (bytes >> 10) & 1023;
-                    int enemyKingLocEncoded = bytes & 1023;
-                    MapLocation catLoc = decode2x2(catLocEncoded);
-                    MapLocation enemyKingLoc = decode2x2(enemyKingLocEncoded);
-                    if (BabyRat.role == BabyRatRole.RUSHER &&
-                        BabyRat.primaryStrategy instanceof HybridStrategy) {
-                        HybridStrategy myHybrid = (HybridStrategy) BabyRat.primaryStrategy;
-                        myHybrid.getCatLuringStrategy().activateLure(catLoc, enemyKingLoc);
-                        System.out.println("[SQUEAK] R" + rc.getID() + " t=" + time +
-                            " received lure signal cat=" + catLoc + " target=" + enemyKingLoc);
-                    }
+                    // TODO
                     break;
                 default:
                     println("recieved bad packet " + msg);

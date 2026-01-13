@@ -1,11 +1,10 @@
-package awubot.robot.king.strategies;
+package awubot.robot.king;
 
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
 import awubot.comms.GlobalArray;
 import awubot.robot.Strategy;
-import awubot.robot.rat.BabyRatRole;
 import awubot.util.Rng;
 import awubot.util.Util;
 import static awubot.Game.*;
@@ -25,22 +24,8 @@ public class KingSpawningStrategy extends Strategy {
 
     @Override
     public void runTick() throws GameActionException {
-        int myCost = rc.getCurrentRatCost();
-        int myCheese = rc.getGlobalCheese();
-        int myMinCheese = myCost + 50;
-
-        if (myCheese < myMinCheese) return;
-
-        int myMaxSpawns = myCheese >= 300 ? 3 : 1;
-
-        for (int i = 0; i < myMaxSpawns && myCheese >= myMinCheese; i++) {
-            if (trySpawnRat()) {
-                myCheese = rc.getGlobalCheese();
-                myCost = rc.getCurrentRatCost();
-                myMinCheese = myCost + 50;
-            } else {
-                break;
-            }
+        while(rc.getCurrentRatCost() < 50 && rc.getGlobalCheese() >= 100) {
+            if(!trySpawnRat()) break;
         }
     }
 
@@ -86,8 +71,8 @@ public class KingSpawningStrategy extends Strategy {
     private int decideRole() throws GameActionException {
         double myRusherRatio = calculateRusherRatio();
         boolean myIsRusher = (Rng.mcg() & 0x7fffffff) < (int)(myRusherRatio * 0x7fffffff);
-        int myRole = myIsRusher ? BabyRatRole.RUSHER.value : BabyRatRole.MINER.value;
-        return myRole;
+        // TODO
+        return 0;
     }
 
     private double calculateRusherRatio() {

@@ -29,9 +29,8 @@ public class BabyRat {
     public static void init() throws GameActionException {
         CellTracker.storeVisibleCells();
         readRole();
-        // primaryStrategy = new HybridStrategy();
-        if (rc.getID() % 2 == 0) primaryStrategy = new MicroTestStrategy();
-        else primaryStrategy = new MinerStrategy();
+        primaryStrategy = new HybridStrategy();
+        System.out.println("[INIT] R" + rc.getID() + " role=" + role);
     }
 
     private static void readRole() throws GameActionException {
@@ -39,11 +38,34 @@ public class BabyRat {
             if (robot.getType() == UnitType.RAT_KING && robot.getTeam() == rc.getTeam()) {
                 int myKingSlot = findKingSlot(robot.getLocation());
                 if (myKingSlot >= 0) {
-                    role = BabyRatRole.fromValue(GlobalArray.readSpawnRole(myKingSlot));
+                    int myRoleValue = GlobalArray.readSpawnRole(myKingSlot);
+                    role = BabyRatRole.fromValue(myRoleValue);
                 }
                 return;
             }
         }
+
+        int myBestSlot = findNearestKingSlot();
+        if (myBestSlot >= 0) {
+            int myRoleValue = GlobalArray.readSpawnRole(myBestSlot);
+            role = BabyRatRole.fromValue(myRoleValue);
+        }
+    }
+
+    private static int findNearestKingSlot() throws GameActionException {
+        int myBestSlot = -1;
+        int myBestDist = Integer.MAX_VALUE;
+        for (int i = 0; i < 5; i++) {
+            MapLocation myKingLoc = GlobalArray.getRat(i);
+            if (myKingLoc != null) {
+                int myDist = myLoc.distanceSquaredTo(myKingLoc);
+                if (myDist <= 18 && myDist < myBestDist) {
+                    myBestDist = myDist;
+                    myBestSlot = i;
+                }
+            }
+        }
+        return myBestSlot;
     }
 
     private static int findKingSlot(MapLocation aKingLoc) throws GameActionException {

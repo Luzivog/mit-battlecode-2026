@@ -84,9 +84,22 @@ public class KingSpawningStrategy extends Strategy {
     }
 
     private void assignRole() throws GameActionException {
-        boolean myIsRusher = (Rng.mcg() & 0x7fffffff) < (int)(0.30 * 0x7fffffff);
+        double myRusherRatio = calculateRusherRatio();
+        boolean myIsRusher = (Rng.mcg() & 0x7fffffff) < (int)(myRusherRatio * 0x7fffffff);
         int myRole = myIsRusher ? BabyRatRole.RUSHER.value : BabyRatRole.MINER.value;
         GlobalArray.writeSpawnRole(kingId, myRole);
+
+        if (myIsRusher) {
+            System.out.println("[SPAWN] K" + kingId + " t=" + time +
+                " spawning RUSHER (ratio=" + myRusherRatio + ")");
+        }
+    }
+
+    private double calculateRusherRatio() {
+        if (time < 50) return 0.15;
+        if (time < 150) return 0.35;
+        if (time < 300) return 0.45;
+        return 0.50;
     }
 
     private MapLocation getNearestMine() {

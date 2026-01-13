@@ -5,6 +5,8 @@ import static awubot.util.Util.*;
 
 import awubot.CellTracker;
 import awubot.robot.rat.BabyRat;
+import awubot.robot.rat.BabyRatRole;
+import awubot.robot.rat.strategies.HybridStrategy;
 import awubot.util.Profiler;
 import awubot.util.string.FastIndexedIntSet;
 
@@ -84,10 +86,18 @@ public class Squeaker {
                     // TODO: decide strategies
                     break;
                 case 2: // Lure signal - cat location + enemy king location from rat king
-                    if (isRatKing) return;  // Only baby rats respond to lure signal
+                    if (isRatKing) return;
                     int catLocEncoded = (bytes >> 10) & 1023;
                     int enemyKingLocEncoded = bytes & 1023;
-                    BabyRat.setLureTarget(decode2x2(catLocEncoded), decode2x2(enemyKingLocEncoded));
+                    MapLocation catLoc = decode2x2(catLocEncoded);
+                    MapLocation enemyKingLoc = decode2x2(enemyKingLocEncoded);
+                    if (BabyRat.role == BabyRatRole.RUSHER &&
+                        BabyRat.primaryStrategy instanceof HybridStrategy) {
+                        HybridStrategy myHybrid = (HybridStrategy) BabyRat.primaryStrategy;
+                        myHybrid.getCatLuringStrategy().activateLure(catLoc, enemyKingLoc);
+                        System.out.println("[SQUEAK] R" + rc.getID() + " t=" + time +
+                            " received lure signal cat=" + catLoc + " target=" + enemyKingLoc);
+                    }
                     break;
                 default:
                     assert(false);

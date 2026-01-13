@@ -6,6 +6,7 @@ import battlecode.common.GameConstants;
 import battlecode.common.MapLocation;
 import battlecode.common.RobotInfo;
 import battlecode.common.UnitType;
+import awubot.CellTracker;
 import awubot.Pathfinder;
 import awubot.comms.GlobalArray;
 import awubot.robot.Strategy;
@@ -24,12 +25,20 @@ public class HybridStrategy extends Strategy {
     private final CheeseStrategy cheeseStrategy;
     private final MineStrategy mineStrategy;
     private final ExploreStrategy exploreStrategy;
+    private final FormationStrategy formationStrategy;
+    private final CatLuringStrategy catLuringStrategy;
 
     public HybridStrategy() {
         this.cheeseStrategy = new CheeseStrategy();
         this.goHomeStrategy = new GoHomeStrategy(cheeseStrategy);
         this.mineStrategy = new MineStrategy(cheeseStrategy);
         this.exploreStrategy = new ExploreStrategy();
+        this.formationStrategy = new FormationStrategy();
+        this.catLuringStrategy = new CatLuringStrategy();
+    }
+
+    public CatLuringStrategy getCatLuringStrategy() {
+        return catLuringStrategy;
     }
 
     @Override
@@ -49,15 +58,26 @@ public class HybridStrategy extends Strategy {
             indicate("transferred!");
         }
 
-        boolean carryingCheese = rc.getRawCheese() > 0;
-        if (!carryingCheese && BabyRat.role != BabyRatRole.DECOY) {
+        if (BabyRat.role == BabyRatRole.RUSHER) {
+            if (!catLuringStrategy.isComplete() || catLuringStrategy.tryAutoActivate()) {
+                catLuringStrategy.runTick();
+                return;
+            }
+        }
+
+        int cheese = rc.getRawCheese();
+        boolean goingHome = !goHomeStrategy.isComplete();
+        if (!goingHome && BabyRat.role != BabyRatRole.DECOY) {
             MapLocation catLoc = findNearbyCat();
             if (catLoc != null) {
                 int dangerDist = (BabyRat.role == BabyRatRole.RUSHER)
                     ? CAT_RUSHER_DANGER_DIST_SQ
                     : CAT_MINER_DANGER_DIST_SQ;
+
+                if (cheese >= 50) dangerDist *= 2;
+
                 if (myLoc.distanceSquaredTo(catLoc) <= dangerDist) {
-                    indicate("FLEEING from cat!");
+                    indicate("FLEEING (cheese: " + cheese + ")!");
                     fleeFromCat(catLoc);
                     return;
                 }
@@ -82,6 +102,20 @@ public class HybridStrategy extends Strategy {
     }
 
     private void runMinerTick() throws GameActionException {
+        if (goHomeStrategy.isEmergencyMode()) {
+            indicate("EMERGENCY!");
+            goHomeStrategy.runTick();
+            return;
+        }
+
+        if (formationStrategy.isActive() || formationStrategy.tryActivate()) {
+            if (!formationStrategy.isComplete()) {
+                formationStrategy.runTick();
+                return;
+            }
+            formationStrategy.deactivate();
+        }
+
         if (goHomeStrategy.tryStrategy(goHomeStrategy)) return;
 
         Runnable ratnap = tryRatnapManeuver();
@@ -108,6 +142,12 @@ public class HybridStrategy extends Strategy {
     }
 
     private void runRusherTick() throws GameActionException {
+        if (goHomeStrategy.isEmergencyMode()) {
+            indicate("EMERGENCY!");
+            goHomeStrategy.runTick();
+            return;
+        }
+
         Runnable ratnap = tryRatnapManeuver();
         if (ratnap != null) {
             ratnap.run();
@@ -120,11 +160,44 @@ public class HybridStrategy extends Strategy {
             return;
         }
 
-        if (goHomeStrategy.tryStrategy(goHomeStrategy)) return;
-        if (cheeseStrategy.tryStrategy(cheeseStrategy)) return;
-        if (mineStrategy.tryStrategy(mineStrategy)) return;
+        if (goHomeStrategy.isGoingHome()) {
+            goHomeStrategy.runTick();
+            return;
+        }
 
-        exploreStrategy.runTick();
+        runOffensiveRush();
+    }
+
+    private void runOffensiveRush() throws GameActionException {
+        MapLocation myEnemyTarget = getEnemyKingLocation();
+        if (myEnemyTarget != null) {
+            indicate("RUSHING -> " + myEnemyTarget);
+            rc.setIndicatorLine(myLoc, myEnemyTarget, 255, 128, 0);
+            System.out.println("[RUSH] R" + rc.getID() + " t=" + time +
+                " role=RUSHER pos=" + myLoc + " enemy=" + myEnemyTarget);
+            Pathfinder.makeMove(myEnemyTarget);
+        } else {
+            exploreStrategy.runTick();
+        }
+    }
+
+    private MapLocation getEnemyKingLocation() {
+        if (home == null) return null;
+
+        if (CellTracker.isSymmetryKnown()) {
+            switch (CellTracker.getSymmetry()) {
+                case Rotational:
+                    return new MapLocation(mapWidth - 1 - home.x, mapHeight - 1 - home.y);
+                case Horizontal:
+                    return new MapLocation(mapWidth - 1 - home.x, home.y);
+                case Vertical:
+                    return new MapLocation(home.x, mapHeight - 1 - home.y);
+                default:
+                    break;
+            }
+        }
+
+        return new MapLocation(mapWidth - 1 - home.x, mapHeight - 1 - home.y);
     }
 
     private boolean tryOpportunisticTransfer() throws GameActionException {

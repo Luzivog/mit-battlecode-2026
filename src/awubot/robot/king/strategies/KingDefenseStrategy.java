@@ -12,12 +12,17 @@ import static awubot.util.Util.*;
 
 public class KingDefenseStrategy extends Strategy {
     private static final int MAX_CAT_TRAPS = 4;
+    private static final int LURE_SIGNAL_COOLDOWN = 20;
+    private static final int OFFENSIVE_LURE_HP = 200;
+    private static final int OFFENSIVE_LURE_CHEESE = 150;
 
     private final ThreatContext theContext;
     private final KingMiningStrategy theMiningStrategy;
 
     private int thePlacedCatTraps = 0;
     private MapLocation[] theCatTrapLocations = new MapLocation[MAX_CAT_TRAPS];
+    private int theLastLureSignalRound = 0;
+    private int theTotalLureSignals = 0;
 
     public KingDefenseStrategy(ThreatContext aContext, KingMiningStrategy aMiningStrategy) {
         theContext = aContext;
@@ -31,6 +36,13 @@ public class KingDefenseStrategy extends Strategy {
 
     @Override
     public void runTick() throws GameActionException {
+        if (time % 50 == 0) {
+            System.out.println("[KING] K" + kingId + " t=" + time +
+                " hp=" + rc.getHealth() + " cheese=" + rc.getGlobalCheese() +
+                " nearestCat=" + theContext.theCatDistSq +
+                " state=" + theContext.theDefenseState);
+        }
+
         switch (theContext.theDefenseState) {
             case CRITICAL:
                 executeCritical();
@@ -52,23 +64,28 @@ public class KingDefenseStrategy extends Strategy {
                theContext.theDefenseState == ThreatContext.DefenseState.CRITICAL;
     }
 
+    public boolean wantsToFlee() {
+        return theContext.theNearestCat != null;
+    }
+
     private void executeCritical() throws GameActionException {
         indicate("DEFENSE: CRITICAL");
+        evadeFromThreat();
         placeReactiveCatTrap();
         signalLureBabyRats();
-        evadeFromThreat();
     }
 
     private void executeEvading() throws GameActionException {
         indicate("DEFENSE: EVADING");
+        evadeFromThreat();
         placeReactiveCatTrap();
         placeDefensiveDirt();
         signalLureBabyRats();
-        evadeFromThreat();
     }
 
     private void executeAlert() throws GameActionException {
         indicate("DEFENSE: ALERT");
+        evadeFromThreat();
         placeProactiveCatTrapMinefield();
         placeDefensiveDirt();
     }
@@ -87,14 +104,25 @@ public class KingDefenseStrategy extends Strategy {
         } else if (theContext.theNearestEnemyRat != null) {
             myAwayDir = theContext.theNearestEnemyRat.getLocation().directionTo(myLoc);
         } else {
-            return false;
+            return moveTowardSafety();
         }
 
-        Direction[] myTryDirs = {myAwayDir, myAwayDir.rotateLeft(), myAwayDir.rotateRight(),
+        Direction[] myPreferredDirs = {myAwayDir, myAwayDir.rotateLeft(), myAwayDir.rotateRight(),
                                 myAwayDir.rotateLeft().rotateLeft(),
                                 myAwayDir.rotateRight().rotateRight()};
 
-        for (Direction myDir : myTryDirs) {
+        for (Direction myDir : myPreferredDirs) {
+            if (rc.canMove(myDir)) {
+                Pathfinder.makeMove(myDir);
+                return true;
+            }
+        }
+
+        Direction[] myDesperateDirs = {myAwayDir.opposite().rotateLeft(),
+                                       myAwayDir.opposite().rotateRight(),
+                                       myAwayDir.opposite()};
+
+        for (Direction myDir : myDesperateDirs) {
             if (rc.canMove(myDir)) {
                 Pathfinder.makeMove(myDir);
                 return true;
@@ -102,6 +130,32 @@ public class KingDefenseStrategy extends Strategy {
         }
 
         return attemptDigToEscape(myAwayDir);
+    }
+
+    private boolean moveTowardSafety() throws GameActionException {
+        if (home == null) {
+            for (Direction myDir : Direction.values()) {
+                if (myDir != Direction.CENTER && rc.canMove(myDir)) {
+                    Pathfinder.makeMove(myDir);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        Direction myTowardHome = myLoc.directionTo(home);
+        Direction[] myTryDirs = {myTowardHome, myTowardHome.rotateLeft(), myTowardHome.rotateRight(),
+                                myTowardHome.rotateLeft().rotateLeft(), myTowardHome.rotateRight().rotateRight(),
+                                myTowardHome.opposite().rotateLeft(), myTowardHome.opposite().rotateRight(),
+                                myTowardHome.opposite()};
+
+        for (Direction myDir : myTryDirs) {
+            if (myDir != Direction.CENTER && rc.canMove(myDir)) {
+                Pathfinder.makeMove(myDir);
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean attemptDigToEscape(Direction aPreferredDir) throws GameActionException {
@@ -233,13 +287,42 @@ public class KingDefenseStrategy extends Strategy {
 
     private void signalLureBabyRats() throws GameActionException {
         if (theContext.theNearestCat == null) return;
+        if (time - theLastLureSignalRound < LURE_SIGNAL_COOLDOWN) return;
+
+        MapLocation myCatLoc = theContext.theNearestCat.getLocation();
+        boolean myShouldLure = false;
+        String myReason = "";
+
+        if (theContext.theCatDistSq <= ThreatContext.CAT_DANGER_DIST_SQ) {
+            myShouldLure = true;
+            myReason = "defensive";
+        }
+
+        if (rc.getHealth() >= OFFENSIVE_LURE_HP && rc.getGlobalCheese() >= OFFENSIVE_LURE_CHEESE) {
+            myShouldLure = true;
+            myReason = "offensive";
+        }
+
+        MapLocation myMapCenter = new MapLocation(mapWidth / 2, mapHeight / 2);
+        if (myCatLoc.distanceSquaredTo(myMapCenter) <= 100) {
+            myShouldLure = true;
+            myReason = "center_cat";
+        }
+
+        if (!myShouldLure) return;
 
         MapLocation myEnemyKingLoc = getEnemyKingLocation();
-
-        int myEncodedCatLoc = encode2x2(theContext.theNearestCat.getLocation());
+        int myEncodedCatLoc = encode2x2(myCatLoc);
         int myEncodedEnemyLoc = encode2x2(myEnemyKingLoc);
-        int mySqueakContent = (0b11 << 30) | (myEncodedCatLoc << 10) | myEncodedEnemyLoc;
+        int mySqueakContent = (0b10 << 29) | (myEncodedCatLoc << 10) | myEncodedEnemyLoc;
         rc.squeak(mySqueakContent);
+
+        theLastLureSignalRound = time;
+        theTotalLureSignals++;
+        System.out.println("[KING] K" + kingId + " t=" + time +
+            " LURE_SIGNAL reason=" + myReason +
+            " hp=" + rc.getHealth() + " cheese=" + rc.getGlobalCheese() +
+            " catDist=" + theContext.theCatDistSq + " total=" + theTotalLureSignals);
     }
 
     private MapLocation getEnemyKingLocation() {

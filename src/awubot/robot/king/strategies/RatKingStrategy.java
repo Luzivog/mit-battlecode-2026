@@ -11,6 +11,7 @@ public class RatKingStrategy extends Strategy {
     private final KingMiningStrategy theMiningStrategy;
     private final KingSpawningStrategy theSpawningStrategy;
     private final KingDefenseStrategy theDefenseStrategy;
+    private final KingFormationCoordinatorStrategy theFormationStrategy;
 
     public RatKingStrategy() {
         theContext = new ThreatContext();
@@ -19,6 +20,7 @@ public class RatKingStrategy extends Strategy {
         theMiningStrategy.init();
         theSpawningStrategy = new KingSpawningStrategy(theContext);
         theDefenseStrategy = new KingDefenseStrategy(theContext, theMiningStrategy);
+        theFormationStrategy = new KingFormationCoordinatorStrategy(theContext, theMiningStrategy);
     }
 
     @Override
@@ -33,7 +35,7 @@ public class RatKingStrategy extends Strategy {
 
         theDefenseStrategy.runTick();
 
-        if (theDefenseStrategy.isDefensiveActionTaken()) {
+        if (theDefenseStrategy.isDefensiveActionTaken() || theDefenseStrategy.wantsToFlee()) {
             theCheeseStrategy.runTick();
             theSpawningStrategy.runTick();
             return;
@@ -42,5 +44,6 @@ public class RatKingStrategy extends Strategy {
         theCheeseStrategy.runTick();
         theMiningStrategy.runTick();
         theSpawningStrategy.runTick();
+        theFormationStrategy.runTick();
     }
 }

@@ -10,6 +10,8 @@ import static awubot.util.Util.*;
 import static awubot.robot.rat.BabyRat.*;
 
 public class GoHomeStrategy extends Strategy {
+    private static final int CRITICAL_HP = 20;
+
     private final CheeseStrategy cheeseStrategy;
     private boolean goingHome;
 
@@ -75,8 +77,13 @@ public class GoHomeStrategy extends Strategy {
         this.goingHome = goingHome;
     }
 
+    public boolean isGoingHome() {
+        return goingHome && rc.getRawCheese() > 0;
+    }
+
     private boolean shouldGoHome() {
         if (goingHome) return true;
+        if (shouldReturnForHealth()) return true;
 
         int cheese = rc.getRawCheese();
         if (cheese >= 200) return true;
@@ -87,5 +94,26 @@ public class GoHomeStrategy extends Strategy {
         if (globalCheese < 30 && cheese > 0) return true;
 
         return false;
+    }
+
+    private boolean shouldReturnForHealth() {
+        int hp = rc.getHealth();
+        int cheese = rc.getRawCheese();
+
+        if (cheese == 0) return false;
+        if (hp <= CRITICAL_HP) return true;
+
+        int hpThreshold;
+        if (cheese >= 150) hpThreshold = 70;
+        else if (cheese >= 100) hpThreshold = 60;
+        else if (cheese >= 50) hpThreshold = 50;
+        else if (cheese >= 20) hpThreshold = 40;
+        else return false;
+
+        return hp <= hpThreshold;
+    }
+
+    public boolean isEmergencyMode() {
+        return rc.getHealth() <= CRITICAL_HP && rc.getRawCheese() > 0;
     }
 }

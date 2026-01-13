@@ -82,7 +82,7 @@ public class KingMiningStrategy extends Strategy {
 
     private void moveTowardMine() throws GameActionException {
         if (!rc.isMovementReady() || theMineTarget == null) return;
-        if (myLoc.distanceSquaredTo(theMineTarget) <= 9) return;
+        if (myLoc.distanceSquaredTo(theMineTarget) <= 4) return;
 
         Direction myDir = myLoc.directionTo(theMineTarget);
         for (Direction myTryDir : new Direction[]{myDir, myDir.rotateLeft(), myDir.rotateRight()}) {

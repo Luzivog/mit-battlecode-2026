@@ -8,7 +8,7 @@ import static awubot.Game.*;
 
 // IF TLE: lower these constants (especially MAX_BUG_ITERS)
 {% set MAX_BUG_ITERS = 5 %}
-{% set MAX_PATH = 25 %}
+{% set MAX_PATH = 24 %}
 
 class BugnavInstance {
     MapLocation target;
@@ -564,7 +564,12 @@ public class Pathfinder {
 
         {% for i in range(MAX_PATH) %}
         {% if i % 2 == 0 %}
-        {{ writePos("bug.getRecentPos(%s / 2)" % i, "d%s" % i, 1, True) }}
+        {
+            var bugPos = bug.getRecentPos({{i}} / 2);
+            if(!bugPos.equals(myLoc)) {
+                {{ writePos("bugPos", "d%s" % i, 1, True) }}
+            }
+        }
         {% endif %}
         // if(rc.getRoundNum() >= 731 && rc.getID() == 10281) {
         //     indicatorString = "";
@@ -606,7 +611,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add({{dir}});
                 boolean isDirt = false;
-                if(rc.canMove({{dir}}) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove({{dir}}) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -638,6 +643,7 @@ public class Pathfinder {
             // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
+                // indicate("bestMove: " + bestMove);
                 indicate("bfs iterations: " + {{i}});
                 makeMove(bestMove);
                 return;

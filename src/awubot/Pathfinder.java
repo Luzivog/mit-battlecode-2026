@@ -59,7 +59,6 @@ class BugnavInstance {
     public MapLocation path21;
     public MapLocation path22;
     public MapLocation path23;
-    public MapLocation path24;
 
     void clearPath() {
         pos = myLoc;
@@ -92,7 +91,6 @@ class BugnavInstance {
         path21 = new MapLocation(-1000, -1000);
         path22 = new MapLocation(-1000, -1000);
         path23 = new MapLocation(-1000, -1000);
-        path24 = new MapLocation(-1000, -1000);
     }
 
     BugnavInstance(boolean leftTurn, MapLocation target) {
@@ -116,7 +114,7 @@ class BugnavInstance {
     void appendPosition(MapLocation loc) {
         switch (nextPathIndex) {
             case 0 -> {
-                if (!path24.equals(loc)) {
+                if (!path23.equals(loc)) {
                     path0 = loc;
                     nextPathIndex = 1;
                 }
@@ -256,12 +254,6 @@ class BugnavInstance {
             case 23 -> {
                 if (!path22.equals(loc)) {
                     path23 = loc;
-                    nextPathIndex = 24;
-                }
-            }
-            case 24 -> {
-                if (!path23.equals(loc)) {
-                    path24 = loc;
                     nextPathIndex = 0;
                 }
             }
@@ -276,7 +268,7 @@ class BugnavInstance {
     }
 
     MapLocation getRecentPos(int i) {
-        switch ((nextPathIndex - i + 24) % 25) {
+        switch ((nextPathIndex - i + 23) % 24) {
             case 0 -> {
                 return path0;
             }
@@ -349,9 +341,6 @@ class BugnavInstance {
             case 23 -> {
                 return path23;
             }
-            case 24 -> {
-                return path24;
-            }
             default -> {
                 assert false : "index out of range";
                 return null;
@@ -376,8 +365,8 @@ class BugnavInstance {
             // we moved, so we might be able to advance previously stuck stuff further
             lastLoc = myLoc;
             lastDir = myDir;
-            leftDone = leftBug.hitEdge || leftBug.nextPathIndex == 24;
-            rightDone = rightBug.hitEdge || leftBug.nextPathIndex == 24;
+            leftDone = leftBug.hitEdge || leftBug.nextPathIndex == 23;
+            rightDone = rightBug.hitEdge || leftBug.nextPathIndex == 23;
         }
 
         if(!(leftDone && rightDone)) {
@@ -489,8 +478,6 @@ class BugnavInstance {
             appendPosition(bug.path22);
             if(bug.nextPathIndex == 23) break copyPath;
             appendPosition(bug.path23);
-            if(bug.nextPathIndex == 24) break copyPath;
-            appendPosition(bug.path24);
         }
         leftBug = null;
         rightBug = null;
@@ -556,8 +543,6 @@ class BugnavInstance {
             appendPosition(bug.path22);
             if(bug.nextPathIndex == 23) break copyPath;
             appendPosition(bug.path23);
-            if(bug.nextPathIndex == 24) break copyPath;
-            appendPosition(bug.path24);
         }
         leftBug = null;
         rightBug = null;
@@ -623,8 +608,6 @@ class BugnavInstance {
             appendPosition(bug.path22);
             if(bug.nextPathIndex == 23) break copyPath;
             appendPosition(bug.path23);
-            if(bug.nextPathIndex == 24) break copyPath;
-            appendPosition(bug.path24);
         }
         leftBug = null;
         rightBug = null;
@@ -694,8 +677,6 @@ class BugnavInstance {
             appendPosition(bug.path22);
             if(bug.nextPathIndex == 23) break copyPath;
             appendPosition(bug.path23);
-            if(bug.nextPathIndex == 24) break copyPath;
-            appendPosition(bug.path24);
         }
         leftBug = null;
         rightBug = null;
@@ -769,8 +750,6 @@ class BugnavInstance {
             appendPosition(bug.path22);
             if(bug.nextPathIndex == 23) break copyPath;
             appendPosition(bug.path23);
-            if(bug.nextPathIndex == 24) break copyPath;
-            appendPosition(bug.path24);
         }
         leftBug = null;
         rightBug = null;
@@ -1690,7 +1669,6 @@ public class Pathfinder {
     static MapLocation bfsPath21;
     static MapLocation bfsPath22;
     static MapLocation bfsPath23;
-    static MapLocation bfsPath24;
     static void appendPosition(MapLocation loc) {
         switch(bfsPathLength) {
             case 0 -> {
@@ -1789,10 +1767,6 @@ public class Pathfinder {
                 bfsPath23 = loc;
                 bfsPathLength = 24;
             }
-            case 24 -> {
-                bfsPath24 = loc;
-                bfsPathLength = 25;
-            }
             default -> {
                 assert false;
             }
@@ -1871,9 +1845,6 @@ public class Pathfinder {
             }
             case 23 -> {
                 return bfsPath23;
-            }
-            case 24 -> {
-                return bfsPath24;
             }
             default -> {
                 assert false : "index out of range";
@@ -2022,8 +1993,11 @@ public class Pathfinder {
         long d00 = 0, d01 = 0;
         long d10 = 0, d11 = 0;
 
-                {
-            var pos = bug.getRecentPos(0 / 2);
+        {
+            var bugPos = bug.getRecentPos(0 / 2);
+            if(!bugPos.equals(myLoc)) {
+                        {
+            var pos = bugPos;
             int xi = pos.x - myLoc.x + 5;
             int yi = pos.y - myLoc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
@@ -2037,6 +2011,8 @@ public class Pathfinder {
             }
         }
 
+            }
+        }
         // if(rc.getRoundNum() >= 731 && rc.getID() == 10281) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d00, d01);
@@ -2089,7 +2065,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -2118,7 +2094,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -2147,7 +2123,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -2176,7 +2152,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -2205,7 +2181,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -2234,7 +2210,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -2263,7 +2239,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -2292,7 +2268,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -2319,6 +2295,7 @@ public class Pathfinder {
             // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
+                // indicate("bestMove: " + bestMove);
                 indicate("bfs iterations: " + 1);
                 makeMove(bestMove);
                 return;
@@ -2346,8 +2323,11 @@ public class Pathfinder {
         d20 |= d10;
         d21 |= d11;
         // Profiler.end("bfs iteration");
-                {
-            var pos = bug.getRecentPos(2 / 2);
+        {
+            var bugPos = bug.getRecentPos(2 / 2);
+            if(!bugPos.equals(myLoc)) {
+                        {
+            var pos = bugPos;
             int xi = pos.x - myLoc.x + 5;
             int yi = pos.y - myLoc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
@@ -2361,6 +2341,8 @@ public class Pathfinder {
             }
         }
 
+            }
+        }
         // if(rc.getRoundNum() >= 731 && rc.getID() == 10281) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d20, d21);
@@ -2386,7 +2368,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -2415,7 +2397,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -2444,7 +2426,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -2473,7 +2455,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -2502,7 +2484,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -2531,7 +2513,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -2560,7 +2542,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -2589,7 +2571,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -2616,6 +2598,7 @@ public class Pathfinder {
             // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
+                // indicate("bestMove: " + bestMove);
                 indicate("bfs iterations: " + 2);
                 makeMove(bestMove);
                 return;
@@ -2668,7 +2651,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -2697,7 +2680,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -2726,7 +2709,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -2755,7 +2738,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -2784,7 +2767,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -2813,7 +2796,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -2842,7 +2825,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -2871,7 +2854,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -2898,6 +2881,7 @@ public class Pathfinder {
             // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
+                // indicate("bestMove: " + bestMove);
                 indicate("bfs iterations: " + 3);
                 makeMove(bestMove);
                 return;
@@ -2925,8 +2909,11 @@ public class Pathfinder {
         d40 |= d30;
         d41 |= d31;
         // Profiler.end("bfs iteration");
-                {
-            var pos = bug.getRecentPos(4 / 2);
+        {
+            var bugPos = bug.getRecentPos(4 / 2);
+            if(!bugPos.equals(myLoc)) {
+                        {
+            var pos = bugPos;
             int xi = pos.x - myLoc.x + 5;
             int yi = pos.y - myLoc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
@@ -2940,6 +2927,8 @@ public class Pathfinder {
             }
         }
 
+            }
+        }
         // if(rc.getRoundNum() >= 731 && rc.getID() == 10281) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d40, d41);
@@ -2965,7 +2954,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -2994,7 +2983,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -3023,7 +3012,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -3052,7 +3041,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -3081,7 +3070,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -3110,7 +3099,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -3139,7 +3128,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -3168,7 +3157,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -3195,6 +3184,7 @@ public class Pathfinder {
             // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
+                // indicate("bestMove: " + bestMove);
                 indicate("bfs iterations: " + 4);
                 makeMove(bestMove);
                 return;
@@ -3247,7 +3237,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -3276,7 +3266,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -3305,7 +3295,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -3334,7 +3324,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -3363,7 +3353,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -3392,7 +3382,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -3421,7 +3411,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -3450,7 +3440,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -3477,6 +3467,7 @@ public class Pathfinder {
             // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
+                // indicate("bestMove: " + bestMove);
                 indicate("bfs iterations: " + 5);
                 makeMove(bestMove);
                 return;
@@ -3504,8 +3495,11 @@ public class Pathfinder {
         d60 |= d50;
         d61 |= d51;
         // Profiler.end("bfs iteration");
-                {
-            var pos = bug.getRecentPos(6 / 2);
+        {
+            var bugPos = bug.getRecentPos(6 / 2);
+            if(!bugPos.equals(myLoc)) {
+                        {
+            var pos = bugPos;
             int xi = pos.x - myLoc.x + 5;
             int yi = pos.y - myLoc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
@@ -3519,6 +3513,8 @@ public class Pathfinder {
             }
         }
 
+            }
+        }
         // if(rc.getRoundNum() >= 731 && rc.getID() == 10281) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d60, d61);
@@ -3544,7 +3540,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -3573,7 +3569,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -3602,7 +3598,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -3631,7 +3627,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -3660,7 +3656,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -3689,7 +3685,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -3718,7 +3714,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -3747,7 +3743,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -3774,6 +3770,7 @@ public class Pathfinder {
             // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
+                // indicate("bestMove: " + bestMove);
                 indicate("bfs iterations: " + 6);
                 makeMove(bestMove);
                 return;
@@ -3826,7 +3823,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -3855,7 +3852,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -3884,7 +3881,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -3913,7 +3910,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -3942,7 +3939,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -3971,7 +3968,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -4000,7 +3997,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -4029,7 +4026,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -4056,6 +4053,7 @@ public class Pathfinder {
             // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
+                // indicate("bestMove: " + bestMove);
                 indicate("bfs iterations: " + 7);
                 makeMove(bestMove);
                 return;
@@ -4083,8 +4081,11 @@ public class Pathfinder {
         d80 |= d70;
         d81 |= d71;
         // Profiler.end("bfs iteration");
-                {
-            var pos = bug.getRecentPos(8 / 2);
+        {
+            var bugPos = bug.getRecentPos(8 / 2);
+            if(!bugPos.equals(myLoc)) {
+                        {
+            var pos = bugPos;
             int xi = pos.x - myLoc.x + 5;
             int yi = pos.y - myLoc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
@@ -4098,6 +4099,8 @@ public class Pathfinder {
             }
         }
 
+            }
+        }
         // if(rc.getRoundNum() >= 731 && rc.getID() == 10281) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d80, d81);
@@ -4123,7 +4126,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -4152,7 +4155,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -4181,7 +4184,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -4210,7 +4213,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -4239,7 +4242,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -4268,7 +4271,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -4297,7 +4300,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -4326,7 +4329,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -4353,6 +4356,7 @@ public class Pathfinder {
             // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
+                // indicate("bestMove: " + bestMove);
                 indicate("bfs iterations: " + 8);
                 makeMove(bestMove);
                 return;
@@ -4405,7 +4409,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -4434,7 +4438,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -4463,7 +4467,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -4492,7 +4496,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -4521,7 +4525,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -4550,7 +4554,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -4579,7 +4583,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -4608,7 +4612,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -4635,6 +4639,7 @@ public class Pathfinder {
             // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
+                // indicate("bestMove: " + bestMove);
                 indicate("bfs iterations: " + 9);
                 makeMove(bestMove);
                 return;
@@ -4662,8 +4667,11 @@ public class Pathfinder {
         d100 |= d90;
         d101 |= d91;
         // Profiler.end("bfs iteration");
-                {
-            var pos = bug.getRecentPos(10 / 2);
+        {
+            var bugPos = bug.getRecentPos(10 / 2);
+            if(!bugPos.equals(myLoc)) {
+                        {
+            var pos = bugPos;
             int xi = pos.x - myLoc.x + 5;
             int yi = pos.y - myLoc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
@@ -4677,6 +4685,8 @@ public class Pathfinder {
             }
         }
 
+            }
+        }
         // if(rc.getRoundNum() >= 731 && rc.getID() == 10281) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d100, d101);
@@ -4702,7 +4712,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -4731,7 +4741,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -4760,7 +4770,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -4789,7 +4799,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -4818,7 +4828,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -4847,7 +4857,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -4876,7 +4886,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -4905,7 +4915,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -4932,6 +4942,7 @@ public class Pathfinder {
             // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
+                // indicate("bestMove: " + bestMove);
                 indicate("bfs iterations: " + 10);
                 makeMove(bestMove);
                 return;
@@ -4984,7 +4995,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -5013,7 +5024,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -5042,7 +5053,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -5071,7 +5082,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -5100,7 +5111,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -5129,7 +5140,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -5158,7 +5169,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -5187,7 +5198,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -5214,6 +5225,7 @@ public class Pathfinder {
             // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
+                // indicate("bestMove: " + bestMove);
                 indicate("bfs iterations: " + 11);
                 makeMove(bestMove);
                 return;
@@ -5241,8 +5253,11 @@ public class Pathfinder {
         d120 |= d110;
         d121 |= d111;
         // Profiler.end("bfs iteration");
-                {
-            var pos = bug.getRecentPos(12 / 2);
+        {
+            var bugPos = bug.getRecentPos(12 / 2);
+            if(!bugPos.equals(myLoc)) {
+                        {
+            var pos = bugPos;
             int xi = pos.x - myLoc.x + 5;
             int yi = pos.y - myLoc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
@@ -5256,6 +5271,8 @@ public class Pathfinder {
             }
         }
 
+            }
+        }
         // if(rc.getRoundNum() >= 731 && rc.getID() == 10281) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d120, d121);
@@ -5281,7 +5298,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -5310,7 +5327,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -5339,7 +5356,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -5368,7 +5385,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -5397,7 +5414,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -5426,7 +5443,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -5455,7 +5472,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -5484,7 +5501,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -5511,6 +5528,7 @@ public class Pathfinder {
             // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
+                // indicate("bestMove: " + bestMove);
                 indicate("bfs iterations: " + 12);
                 makeMove(bestMove);
                 return;
@@ -5563,7 +5581,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -5592,7 +5610,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -5621,7 +5639,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -5650,7 +5668,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -5679,7 +5697,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -5708,7 +5726,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -5737,7 +5755,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -5766,7 +5784,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -5793,6 +5811,7 @@ public class Pathfinder {
             // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
+                // indicate("bestMove: " + bestMove);
                 indicate("bfs iterations: " + 13);
                 makeMove(bestMove);
                 return;
@@ -5820,8 +5839,11 @@ public class Pathfinder {
         d140 |= d130;
         d141 |= d131;
         // Profiler.end("bfs iteration");
-                {
-            var pos = bug.getRecentPos(14 / 2);
+        {
+            var bugPos = bug.getRecentPos(14 / 2);
+            if(!bugPos.equals(myLoc)) {
+                        {
+            var pos = bugPos;
             int xi = pos.x - myLoc.x + 5;
             int yi = pos.y - myLoc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
@@ -5835,6 +5857,8 @@ public class Pathfinder {
             }
         }
 
+            }
+        }
         // if(rc.getRoundNum() >= 731 && rc.getID() == 10281) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d140, d141);
@@ -5860,7 +5884,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -5889,7 +5913,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -5918,7 +5942,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -5947,7 +5971,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -5976,7 +6000,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -6005,7 +6029,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -6034,7 +6058,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -6063,7 +6087,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -6090,6 +6114,7 @@ public class Pathfinder {
             // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
+                // indicate("bestMove: " + bestMove);
                 indicate("bfs iterations: " + 14);
                 makeMove(bestMove);
                 return;
@@ -6142,7 +6167,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -6171,7 +6196,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -6200,7 +6225,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -6229,7 +6254,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -6258,7 +6283,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -6287,7 +6312,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -6316,7 +6341,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -6345,7 +6370,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -6372,6 +6397,7 @@ public class Pathfinder {
             // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
+                // indicate("bestMove: " + bestMove);
                 indicate("bfs iterations: " + 15);
                 makeMove(bestMove);
                 return;
@@ -6399,8 +6425,11 @@ public class Pathfinder {
         d160 |= d150;
         d161 |= d151;
         // Profiler.end("bfs iteration");
-                {
-            var pos = bug.getRecentPos(16 / 2);
+        {
+            var bugPos = bug.getRecentPos(16 / 2);
+            if(!bugPos.equals(myLoc)) {
+                        {
+            var pos = bugPos;
             int xi = pos.x - myLoc.x + 5;
             int yi = pos.y - myLoc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
@@ -6414,6 +6443,8 @@ public class Pathfinder {
             }
         }
 
+            }
+        }
         // if(rc.getRoundNum() >= 731 && rc.getID() == 10281) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d160, d161);
@@ -6439,7 +6470,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -6468,7 +6499,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -6497,7 +6528,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -6526,7 +6557,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -6555,7 +6586,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -6584,7 +6615,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -6613,7 +6644,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -6642,7 +6673,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -6669,6 +6700,7 @@ public class Pathfinder {
             // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
+                // indicate("bestMove: " + bestMove);
                 indicate("bfs iterations: " + 16);
                 makeMove(bestMove);
                 return;
@@ -6721,7 +6753,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -6750,7 +6782,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -6779,7 +6811,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -6808,7 +6840,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -6837,7 +6869,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -6866,7 +6898,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -6895,7 +6927,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -6924,7 +6956,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -6951,6 +6983,7 @@ public class Pathfinder {
             // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
+                // indicate("bestMove: " + bestMove);
                 indicate("bfs iterations: " + 17);
                 makeMove(bestMove);
                 return;
@@ -6978,8 +7011,11 @@ public class Pathfinder {
         d180 |= d170;
         d181 |= d171;
         // Profiler.end("bfs iteration");
-                {
-            var pos = bug.getRecentPos(18 / 2);
+        {
+            var bugPos = bug.getRecentPos(18 / 2);
+            if(!bugPos.equals(myLoc)) {
+                        {
+            var pos = bugPos;
             int xi = pos.x - myLoc.x + 5;
             int yi = pos.y - myLoc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
@@ -6993,6 +7029,8 @@ public class Pathfinder {
             }
         }
 
+            }
+        }
         // if(rc.getRoundNum() >= 731 && rc.getID() == 10281) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d180, d181);
@@ -7018,7 +7056,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -7047,7 +7085,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -7076,7 +7114,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -7105,7 +7143,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -7134,7 +7172,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -7163,7 +7201,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -7192,7 +7230,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -7221,7 +7259,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -7248,6 +7286,7 @@ public class Pathfinder {
             // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
+                // indicate("bestMove: " + bestMove);
                 indicate("bfs iterations: " + 18);
                 makeMove(bestMove);
                 return;
@@ -7300,7 +7339,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -7329,7 +7368,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -7358,7 +7397,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -7387,7 +7426,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -7416,7 +7455,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -7445,7 +7484,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -7474,7 +7513,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -7503,7 +7542,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -7530,6 +7569,7 @@ public class Pathfinder {
             // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
+                // indicate("bestMove: " + bestMove);
                 indicate("bfs iterations: " + 19);
                 makeMove(bestMove);
                 return;
@@ -7557,8 +7597,11 @@ public class Pathfinder {
         d200 |= d190;
         d201 |= d191;
         // Profiler.end("bfs iteration");
-                {
-            var pos = bug.getRecentPos(20 / 2);
+        {
+            var bugPos = bug.getRecentPos(20 / 2);
+            if(!bugPos.equals(myLoc)) {
+                        {
+            var pos = bugPos;
             int xi = pos.x - myLoc.x + 5;
             int yi = pos.y - myLoc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
@@ -7572,6 +7615,8 @@ public class Pathfinder {
             }
         }
 
+            }
+        }
         // if(rc.getRoundNum() >= 731 && rc.getID() == 10281) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d200, d201);
@@ -7597,7 +7642,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -7626,7 +7671,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -7655,7 +7700,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -7684,7 +7729,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -7713,7 +7758,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -7742,7 +7787,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -7771,7 +7816,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -7800,7 +7845,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -7827,6 +7872,7 @@ public class Pathfinder {
             // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
+                // indicate("bestMove: " + bestMove);
                 indicate("bfs iterations: " + 20);
                 makeMove(bestMove);
                 return;
@@ -7879,7 +7925,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -7908,7 +7954,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -7937,7 +7983,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -7966,7 +8012,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -7995,7 +8041,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -8024,7 +8070,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -8053,7 +8099,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -8082,7 +8128,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -8109,6 +8155,7 @@ public class Pathfinder {
             // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
+                // indicate("bestMove: " + bestMove);
                 indicate("bfs iterations: " + 21);
                 makeMove(bestMove);
                 return;
@@ -8136,8 +8183,11 @@ public class Pathfinder {
         d220 |= d210;
         d221 |= d211;
         // Profiler.end("bfs iteration");
-                {
-            var pos = bug.getRecentPos(22 / 2);
+        {
+            var bugPos = bug.getRecentPos(22 / 2);
+            if(!bugPos.equals(myLoc)) {
+                        {
+            var pos = bugPos;
             int xi = pos.x - myLoc.x + 5;
             int yi = pos.y - myLoc.y + 5;
             if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
@@ -8151,6 +8201,8 @@ public class Pathfinder {
             }
         }
 
+            }
+        }
         // if(rc.getRoundNum() >= 731 && rc.getID() == 10281) {
         //     indicatorString = "";
         //     CellTracker.printLocalMask(d220, d221);
@@ -8176,7 +8228,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -8205,7 +8257,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -8234,7 +8286,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -8263,7 +8315,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -8292,7 +8344,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -8321,7 +8373,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -8350,7 +8402,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -8379,7 +8431,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -8406,6 +8458,7 @@ public class Pathfinder {
             // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
+                // indicate("bestMove: " + bestMove);
                 indicate("bfs iterations: " + 22);
                 makeMove(bestMove);
                 return;
@@ -8458,7 +8511,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -8487,7 +8540,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -8516,7 +8569,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -8545,7 +8598,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -8574,7 +8627,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -8603,7 +8656,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -8632,7 +8685,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -8661,7 +8714,7 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
+                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -8688,6 +8741,7 @@ public class Pathfinder {
             // Profiler.end("bfs best move");
             if(bestMove != null) {
                 Profiler.end("bfs");
+                // indicate("bestMove: " + bestMove);
                 indicate("bfs iterations: " + 23);
                 makeMove(bestMove);
                 return;
@@ -8714,303 +8768,6 @@ public class Pathfinder {
         d231 &= ~CellTracker.localDirt1;
         d240 |= d230;
         d241 |= d231;
-        // Profiler.end("bfs iteration");
-                {
-            var pos = bug.getRecentPos(24 / 2);
-            int xi = pos.x - myLoc.x + 5;
-            int yi = pos.y - myLoc.y + 5;
-            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
-            {
-                int idx = yi * 11 + xi;
-                if(idx < 61) {
-                    d240 |= (1l << idx);
-                } else {
-                    d241 |= (1l << (idx - 61));
-                }
-            }
-        }
-
-        // if(rc.getRoundNum() >= 731 && rc.getID() == 10281) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(d240, d241);
-        //     Clock.yield();
-        // }
-        if((d240 & 0x807000000000000l) != 0 || (d241 & 0xe01) != 0) {
-            // Profiler.begin();
-            // this is sloppy since we only care about tiles <= 2 chebyshev distance away
-            long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
-            notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
-            notWallAdjacent0 &= notWallAdjacent0 << 1;
-            notWallAdjacent0 &= (notWallAdjacent0 >> 1) | ((notWallAdjacent1 & 1l) << 60);
-            notWallAdjacent1 &= notWallAdjacent1 >> 1;
-            notWallAdjacent1 &= (notWallAdjacent1 << 11) | (notWallAdjacent0 >> 50);
-            notWallAdjacent0 &= notWallAdjacent0 << 11;
-            notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
-            notWallAdjacent1 &= notWallAdjacent1 >> 11;
-
-            Direction bestMove = null;
-            double bestScore = 1e18;
-            if(
-               (d240 & (1l << 49))
-               != 0) {
-                var nextLoc = myLoc.add(Direction.SOUTH);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 49))
-                       != 0
-                       ) {
-                        score /= 2;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
-                        score -= 500;
-                    }
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTH;
-                        bestScore = score;
-                    }
-                }
-            }
-            if(
-               (d241 & (1l << 0))
-               != 0) {
-                var nextLoc = myLoc.add(Direction.EAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.EAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 0))
-                       != 0
-                       ) {
-                        score /= 2;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == myDir) {
-                        score -= 500;
-                    }
-                    if(score < bestScore) {
-                        bestMove = Direction.EAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            if(
-               (d241 & (1l << 10))
-               != 0) {
-                var nextLoc = myLoc.add(Direction.NORTH);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH) || (isDirt = CellTracker.isDirt(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 10))
-                       != 0
-                       ) {
-                        score /= 2;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == myDir) {
-                        score -= 500;
-                    }
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTH;
-                        bestScore = score;
-                    }
-                }
-            }
-            if(
-               (d240 & (1l << 59))
-               != 0) {
-                var nextLoc = myLoc.add(Direction.WEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.WEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 59))
-                       != 0
-                       ) {
-                        score /= 2;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == myDir) {
-                        score -= 500;
-                    }
-                    if(score < bestScore) {
-                        bestMove = Direction.WEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            if(
-               (d240 & (1l << 48))
-               != 0) {
-                var nextLoc = myLoc.add(Direction.SOUTHWEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 48))
-                       != 0
-                       ) {
-                        score /= 2;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
-                        score -= 500;
-                    }
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTHWEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            if(
-               (d240 & (1l << 50))
-               != 0) {
-                var nextLoc = myLoc.add(Direction.SOUTHEAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 50))
-                       != 0
-                       ) {
-                        score /= 2;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
-                        score -= 500;
-                    }
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTHEAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            if(
-               (d241 & (1l << 9))
-               != 0) {
-                var nextLoc = myLoc.add(Direction.NORTHWEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST) || (isDirt = CellTracker.isDirt(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 9))
-                       != 0
-                       ) {
-                        score /= 2;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
-                        score -= 500;
-                    }
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTHWEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            if(
-               (d241 & (1l << 11))
-               != 0) {
-                var nextLoc = myLoc.add(Direction.NORTHEAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST) || (isDirt = CellTracker.isDirt(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 11))
-                       != 0
-                       ) {
-                        score /= 2;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
-                        score -= 500;
-                    }
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTHEAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            // Profiler.end("bfs best move");
-            if(bestMove != null) {
-                Profiler.end("bfs");
-                indicate("bfs iterations: " + 24);
-                makeMove(bestMove);
-                return;
-            }
-        }
-
-        // Profiler.begin();
-
-        // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d240 |= (d240 & 0xfbff7feffdffbffl) << 1;
-        d241 |= (d241 & 0x7feffdffbff7fefl) << 1;
-        d240 |= (d240 & 0x1f7feffdffbff7fel) >> 1;
-        d241 |= (d241 & 0xffdffbff7feffdel) >> 1;
-
-        d241 |= ((d241 & 0x1ffffffffffffl) << 11) | (d240 >> 50);
-        d240 |= (d240 & 0x3ffffffffffffl) << 11;
-        d240 |= (d240 >> 11) | ((d241 & 0x7ffl) << 50);
-        d241 |= d241 >> 11;
-        d240 &= localPassableExceptAllies0;
-        d241 &= localPassableExceptAllies1;
-        long d260 = d240;
-        long d261 = d241;
-        d240 &= ~CellTracker.localDirt0;
-        d241 &= ~CellTracker.localDirt1;
-        d250 |= d240;
-        d251 |= d241;
         // Profiler.end("bfs iteration");
         Profiler.end("bfs");
 

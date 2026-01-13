@@ -1,3 +1,5 @@
+**when refactoring, always maintain 100% functionality the same as before**
+
 # Infrastructure & Code Organization Guidelines
 
 ## Abstraction
@@ -49,6 +51,8 @@ If behavior has a different goal → make it a separate strategy.
 - If code is unique, linear, and clearer inline, leave it.
 
 **Optimize for bytecode, readability and intent.**
+
+
 
 
 ## Movement & Performance Guidelines

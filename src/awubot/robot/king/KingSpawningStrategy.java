@@ -26,6 +26,7 @@ public class KingSpawningStrategy extends Strategy {
         return true;
     }
 
+    // TODO: fix this
     private boolean trySpawnRat() throws GameActionException {
         Direction mySpawnDir = selectSpawnDirection();
         Direction[] myTryDirs = {

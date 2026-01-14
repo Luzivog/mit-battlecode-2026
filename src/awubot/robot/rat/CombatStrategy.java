@@ -69,37 +69,43 @@ public class CombatStrategy extends Strategy {
         danger.setCharAt(i, (char) (x + y));
     }
 
-    public static double getBotDangerWeight(RobotInfo info) {
-        double base = (info.getTeam() == team ? -0.5 : 1);
-        switch (info.getType()) {
-            case UnitType.BABY_RAT:
-                base *= 1;
-                break;
-            case UnitType.RAT_KING:
-                base *= 0.5;
-                break;
-            case UnitType.CAT:
-                base *= 5;
-                break;
-        }
-        return base;
-    }
-
     public static double computeDangerFrom(RobotInfo info, MapLocation to) {
         if (!rc.onTheMap(to)) return 0;
+        if (info.getTeam() == rc.getTeam()) return 0; // ignore teammates
+        if (info.getType() == UnitType.CAT) {
+            // TODO: implement vision check
+            int dist = chebyshevDistance(to, info.getLocation()); 
+            if (dist >= 4) return 0;
+            else return (5 - dist) * 5;
+        }
         MapLocation enemyLoc = info.getLocation();
-        double base = getBotDangerWeight(info);
-        if (!canSense(enemyLoc, to, info.getDirection())) return 0;
-        double weight = 1 - Util.manhattanDistance(to, enemyLoc) / 5.0;
-        if (weight <= 0.01) return 0;
-        return base * weight;
+        int dist = chebyshevDistance(to, info.getLocation());
+        double base = 1;
+        if (info.getType() == UnitType.RAT_KING) {
+            base *= 0.5;
+            if (dist > 2) return 0; // is this correct?
+            else return base;
+        } else {
+            if (!canSense(enemyLoc, to, info.getDirection())) { // cant even see u
+                return 0;
+            }
+            if (info.getHealth() > rc.getHealth() && dist <= 1) {
+                return 3;
+            }
+            if (rc.getHealth() > 1.5 * info.getHealth()) {
+                base *= 0.7;
+                // u can beat them
+            }
+            base *= (1.0 / Math.sqrt(dist)); // incredible formula
+            return base;
+        }
     }
-    
+
     public static void computeDanger() {
         danger = new StringBuilder();
         danger.repeat((char) OFFSET, 3600);
         for (RobotInfo info : rc.senseNearbyRobots()) {
-            Profiler.begin();
+            if (info.getTeam() == rc.getTeam()) continue;
             for (Direction dir : relatedDirections(myDir)) {
                 MapLocation loc = myLoc.add(dir);
                 incDanger(loc, (int) (computeDangerFrom(info, loc) * 100));
@@ -445,21 +451,6 @@ public class CombatStrategy extends Strategy {
             return 1.2;
         }
         return 1;
-    }
-
-    // currently given arbitrary weights
-    public double enemyDanger(MapLocation s, RobotInfo info) {
-        if (info.getType() == UnitType.RAT_KING) return 0.1;
-        int dist = chebyshevDistance(s, info.getLocation());
-        if (info.getHealth() > rc.getHealth() && dist <= 2) {
-            return 3;
-        }
-        double mult = (1.0 / Math.sqrt(dist)); // incredible formula
-        if (rc.getHealth() > 1.5 * info.getHealth()) {
-            mult = 0.7;
-            // u can beat them
-        }
-        return mult;
     }
 
     public static int getCheeseNeeded(int damageBuff) {

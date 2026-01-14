@@ -147,17 +147,17 @@ public class Util {
     }
 
     public static Direction[] relatedDirections(Direction dir) {
-        if (dir == Direction.NORTH) {
-            return new Direction[]{dir, Direction.NORTHEAST, Direction.NORTHWEST};
-        } else if (dir == Direction.SOUTH) {
-            return new Direction[]{dir, Direction.SOUTHEAST, Direction.SOUTHWEST};
-        } else if (dir == Direction.EAST) {
-            return new Direction[]{dir, Direction.NORTHEAST, Direction.SOUTHEAST};
-        } else if (dir == Direction.WEST) {
-            return new Direction[]{dir, Direction.NORTHWEST, Direction.SOUTHWEST};
-        } else {
-            return new Direction[]{dir};
-        }
+        return switch(dir) {
+            case NORTH -> new Direction[]{Direction.NORTH, Direction.NORTHEAST, Direction.NORTHWEST};
+            case SOUTH -> new Direction[]{Direction.SOUTH, Direction.SOUTHEAST, Direction.SOUTHWEST};
+            case EAST -> new Direction[]{Direction.EAST, Direction.NORTHEAST, Direction.SOUTHEAST};
+            case WEST -> new Direction[]{Direction.WEST, Direction.NORTHWEST, Direction.SOUTHWEST};
+            case NORTHEAST -> new Direction[]{Direction.NORTHEAST, Direction.NORTH, Direction.EAST};
+            case NORTHWEST -> new Direction[]{Direction.NORTHWEST, Direction.NORTH, Direction.WEST};
+            case SOUTHEAST -> new Direction[]{Direction.SOUTHEAST, Direction.SOUTH, Direction.EAST};
+            case SOUTHWEST -> new Direction[]{Direction.SOUTHWEST, Direction.SOUTH, Direction.WEST};
+            default -> throw new IllegalStateException("Unexpected dir: " + dir);
+        };
     }
 
     public static MapLocation decode2x2(int pos) {

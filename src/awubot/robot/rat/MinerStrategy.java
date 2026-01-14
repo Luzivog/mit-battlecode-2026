@@ -8,8 +8,12 @@ import awubot.util.Rng;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MinerStrategy extends Strategy {
     private static final int CRITICAL_HP = 20;
+    private static final int SCALE = 10;
 
     private FormationStrategy formationStrategy;
     private GoHomeStrategy goHomeStrategy;
@@ -46,11 +50,27 @@ public class MinerStrategy extends Strategy {
                     Math.abs(Rng.mcg()) % mapHeight
                 );
             } else {
-                target = decode2x2(GlobalArray.cheeseMines.at(Rng.mcg() % GlobalArray.cheeseMines.set.length()));
+                target = pickSeenMine();
             }
             goSomewhereStrategy = new TraverseStrategy(target, 2);
         }
         return true;
+    }
+
+    private MapLocation pickSeenMine() {
+        List<Double> weights = new ArrayList<>();
+        double totalWeight = 0;
+        for (int i = 0; i < GlobalArray.cheeseMines.set.length(); i++) {
+            weights.add(1.0 / (double) myLoc.distanceSquaredTo(decode2x2(GlobalArray.cheeseMines.at(i))));
+            totalWeight += weights.get(weights.size() - 1);
+        }
+        double rnd = (((double) Rng.mcg() / ((1 << 31) - 1)) * totalWeight);
+        double pref = 0;
+        for (int i = 0; i < GlobalArray.cheeseMines.set.length(); i++) {
+            pref += weights.get(i);
+            if (rnd <= pref) return decode2x2(GlobalArray.cheeseMines.at(i));
+        }
+        return decode2x2(GlobalArray.cheeseMines.at(GlobalArray.cheeseMines.set.length() - 1));
     }
 
     private boolean shouldGoHome() {

@@ -253,7 +253,6 @@ public class CombatStrategy extends Strategy {
         for (RobotInfo info : rc.senseNearbyRobots()) {
             if (info.getTeam() == team) continue;
             if (chebyshevDistance(myLoc, info.getLocation()) > 2) continue;
-            if (info.getHealth() >= rc.getHealth()) continue;
             if (info.getHealth() < GameConstants.RAT_BITE_DAMAGE) continue; // just kill
             if (info.getType() != UnitType.BABY_RAT) continue;
             MapLocation t = info.getLocation();
@@ -267,6 +266,7 @@ public class CombatStrategy extends Strategy {
                 MapLocation newLoc = myLoc.add(moveDir);
                 if (newLoc.distanceSquaredTo(t) > 2) continue;
                 if (!canSense(newLoc, t, myDir) && !rc.canTurn()) continue;
+                if (canSense(t, newLoc, info.getDirection()) && info.getHealth() >= rc.getHealth()) continue;
                 double score = weight;
                 score -= getDangerFor(newLoc, info) / 3;
                 if (score > best) {

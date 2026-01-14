@@ -273,6 +273,23 @@ public class CellTracker {
             default -> {}
         }
     }
+    private static void applyVer{{height}}() {
+        switch(myLoc.y) {
+            {% for posY in range(height) %}
+            case {{posY}} -> {
+                {% for y in range(posY - 5, posY + 6) %}
+                {% if y >= 0 and y < height and y * 2 + 1 != height and (y < height / 2) == (posY < height / 2) %}
+                {
+                    seen{{y}} = seen{{height - y - 1}} |= seen{{y}};
+                    passable{{y}} = passable{{height - y - 1}} |= passable{{y}};
+                }
+                {% endif %}
+                {% endfor %}
+            }
+            {% endfor %}
+            default -> {}
+        }
+    }
     {% endfor %}
 
     static void checkVer() {
@@ -280,6 +297,15 @@ public class CellTracker {
             {% for height in range(20, 61) %}
             case {{height}} -> {
                 checkVer{{height}}();
+            }
+            {% endfor %}
+        }
+    }
+    static void applyVer() {
+        switch(mapHeight) {
+            {% for height in range(20, 61) %}
+            case {{height}} -> {
+                applyVer{{height}}();
             }
             {% endfor %}
         }
@@ -308,6 +334,26 @@ public class CellTracker {
             default -> {}
         }
     }
+    private static void applyRot{{height}}() {
+        var shiftAmount = 64 - mapWidth;
+        switch(myLoc.y) {
+            {% for posY in range(height) %}
+            case {{posY}} -> {
+                {% for y in range(posY - 5, posY + 6) %}
+                {% if y >= 0 and y < height and y * 2 + 1 != height and (y < height / 2) == (posY < height / 2) %}
+                {
+                    seen{{y}} |= (Long.reverse(seen{{height - y - 1}}) >>> shiftAmount);
+                    seen{{height - y - 1}} = (Long.reverse(seen{{y}}) >>> shiftAmount);
+                    passable{{y}} |= (Long.reverse(passable{{height - y - 1}}) >>> shiftAmount);
+                    passable{{height - y - 1}} = (Long.reverse(passable{{y}}) >>> shiftAmount);
+                }
+                {% endif %}
+                {% endfor %}
+            }
+            {% endfor %}
+            default -> {}
+        }
+    }
     {% endfor %}
 
     static void checkRot() {
@@ -319,13 +365,32 @@ public class CellTracker {
             {% endfor %}
         }
     }
+    static void applyRot() {
+        switch(mapHeight) {
+            {% for height in range(20, 61) %}
+            case {{height}} -> {
+                applyRot{{height}}();
+            }
+            {% endfor %}
+        }
+    }
 
     public static void checkSymmetry() {
         switch(getSymmetry()) {
             case Horizontal -> {
                 Profiler.begin();
                 applyHor();
-                Profiler.end("applyHorSymmetry");
+                Profiler.end("applyHor");
+            }
+            case Vertical -> {
+                Profiler.begin();
+                applyVer();
+                Profiler.end("applyVer");
+            }
+            case Rotational -> {
+                Profiler.begin();
+                applyRot();
+                Profiler.end("applyRot");
             }
             case Unknown -> {
                 Profiler.begin();

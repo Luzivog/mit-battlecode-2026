@@ -142,6 +142,10 @@ public class Util {
         }
     }
 
+    public static int manhattanDistance(MapLocation a, MapLocation b) {
+        return abs(a.x - b.x) + abs(a.y - b.y);
+    }
+
     public static Direction[] relatedDirections(Direction dir) {
         if (dir == Direction.NORTH) {
             return new Direction[]{dir, Direction.NORTHEAST, Direction.NORTHWEST};

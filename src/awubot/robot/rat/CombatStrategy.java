@@ -54,9 +54,62 @@ public class CombatStrategy extends Strategy {
         return RAT_TRAP_COST; // tf i cant see how many rat traps i have placed?
     }
 
+    private static final int OFFSET = 32000;
+    public static StringBuilder danger; // normal indexing, stores score multiplied by 100
+
+    public static double getDanger(MapLocation loc) {
+        int i = loc.y * 60 + loc.x;
+        return (danger.charAt(i) - OFFSET) / 100.0;
+    }
+
+    public static double getDangerFor(MapLocation loc, RobotInfo target) {
+        int i = loc.y * 60 + loc.x;
+        return (danger.charAt(i) - OFFSET) / 100.0 - computeDangerFrom(target, loc);
+    }
+
+    public static void incDanger(MapLocation loc, int y) {
+        int i = loc.y * 60 + loc.x;
+        int x = danger.charAt(i);
+        danger.setCharAt(i, (char) (x + y));
+    }
+
+    public static double computeDangerFrom(RobotInfo info, MapLocation to) {
+        double base = (info.getTeam() == team ? -0.5 : 1);
+        switch (info.getType()) {
+            case UnitType.BABY_RAT:
+                base *= 1;
+                break;
+            case UnitType.RAT_KING:
+                base *= 0.5;
+                break;
+            case UnitType.CAT:
+                base *= 5;
+                break;
+        }
+        if (!rc.onTheMap(to)) return 0;
+        if (!canSense(info.getLocation(), to, info.getDirection())) return 0;
+        double weight = 1 - Util.manhattanDistance(to, info.getLocation()) / 5.0;
+        assert(weight > 0.01);
+        return base * weight;
+    }
+    
+    public static void computeDanger() {
+        danger = new StringBuilder();
+        danger.repeat((char) OFFSET, 3600);
+        for (RobotInfo info : rc.senseNearbyRobots()) {
+            MapLocation enemyLoc = info.getLocation();
+            for (int x = enemyLoc.x - 2; x <= enemyLoc.x + 2; x++) {
+                for (int y = enemyLoc.y - 2; y <= enemyLoc.y + 2; y++) {
+                    MapLocation loc = new MapLocation(x, y);
+                    incDanger(loc, (int) (computeDangerFrom(info, loc) * 100));
+                }
+            }
+        }
+    }
+
     // idek why this is returning. check if can move anyways after to squeeze out some juice
-    @Override
     public boolean runTick() throws GameActionException {
+        computeDanger();
         if (rc.getCarrying() != null) {
             return tryThrow();
         }
@@ -121,6 +174,8 @@ public class CombatStrategy extends Strategy {
                         damage *= 1.1;
                         break;
                 }
+                // account for cell danger levels
+                damage -= getDanger(throwTarget) / 3;
                 if (damage > best) {
                     best = damage;
                     md = moveDir;
@@ -168,6 +223,7 @@ public class CombatStrategy extends Strategy {
             if (info.getTeam() == team) continue;
             if (chebyshevDistance(myLoc, info.getLocation()) > 2) continue;
             if (info.getHealth() >= rc.getHealth()) continue;
+            if (info.getHealth() < GameConstants.RAT_BITE_DAMAGE) continue; // just kill
             if (info.getType() != UnitType.BABY_RAT) continue;
             MapLocation t = info.getLocation();
             // double weight = scoreEnemy(info);
@@ -184,6 +240,7 @@ public class CombatStrategy extends Strategy {
                 println("passed checks");
                 double score = weight;
                 // TODO: account for cell danger levels
+                score -= getDangerFor(newLoc, info) / 3;
                 if (score > best) {
                     best = score;
                     md = moveDir;
@@ -244,6 +301,7 @@ public class CombatStrategy extends Strategy {
                     } else if (rc.canTurn(moveDir)) {
                         // need strafe move
                         double score = newLoc.distanceSquaredTo(info.getLocation());
+                        score -= getDangerFor(newLoc, info) / 3;
                         if (score > best) {
                             best = score;
                             bestPlaceLoc = placeLoc;
@@ -319,6 +377,7 @@ public class CombatStrategy extends Strategy {
                     boolean canSenseForward = canSense(newLoc, target, myDir);
                     if (canSenseForward || canTurn) {
                         double score = (canSenseForward ? 1.2 : 1.0) * baseScore;
+                        score -= getDangerFor(newLoc, info) / 3;
                         if (score > bestScore) {
                             bestScore = score;
                             bestTarget = target;
@@ -336,6 +395,7 @@ public class CombatStrategy extends Strategy {
                     if (newLoc.distanceSquaredTo(target) > 2) continue;
                     if (!canSense(newLoc, target, dir)) continue;
                     double score = baseScore;
+                    score -= getDangerFor(newLoc, info) / 3;
                     if (score > bestScore) {
                         bestScore = score;
                         bestTarget = target;

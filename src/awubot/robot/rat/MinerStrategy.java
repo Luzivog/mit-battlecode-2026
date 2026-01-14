@@ -78,8 +78,16 @@ public class MinerStrategy extends Strategy {
         if (shouldReturnForHealth()) return true;
 
         int cheese = rc.getRawCheese();
-        if (cheese >= 200) return true;
-        if (cheese > 50 && cheeseStrategy.lastSeenCheese < time - 3) return true;
+        int distSq = myLoc.distanceSquaredTo(GlobalArray.nearestRatKing);
+        int thresh;
+        if(distSq <= 25) thresh = 10;
+        else if(distSq <= 100) thresh = 25;
+        else if(distSq <= 225) thresh = 40;
+        else if(distSq <= 400) thresh = 60;
+        else if(distSq <= 900) thresh = 80;
+        else thresh = 105;
+        if (cheese >= thresh) return true;
+        if (cheese * 2 >= thresh && cheeseStrategy.lastSeenCheese < time - 3) return true;
 
         int globalCheese = rc.getGlobalCheese();
         if (globalCheese < 100 && cheese >= 20) return true;

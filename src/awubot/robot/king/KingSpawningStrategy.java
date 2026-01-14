@@ -19,7 +19,8 @@ public class KingSpawningStrategy extends Strategy {
 
     @Override
     public boolean runTick() throws GameActionException {
-        while(rc.getCurrentRatCost() < 50 && rc.getGlobalCheese() >= 100) {
+        var enemies = rc.senseNearbyRobots(8, team.opponent());
+        while((enemies.length > 0 || rc.getCurrentRatCost() < 50) && (rc.getGlobalCheese() >= 100 || rc.getCurrentRatCost() == 10)) {
             if(!trySpawnRat()) break;
         }
         return true;

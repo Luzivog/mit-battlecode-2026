@@ -106,6 +106,7 @@ public class CombatStrategy extends Strategy {
         danger.repeat((char) OFFSET, 3600);
         for (RobotInfo info : rc.senseNearbyRobots()) {
             if (info.getTeam() == rc.getTeam()) continue;
+            Profiler.begin();
             for (Direction dir : relatedDirections(myDir)) {
                 MapLocation loc = myLoc.add(dir);
                 incDanger(loc, (int) (computeDangerFrom(info, loc) * 100));
@@ -144,7 +145,7 @@ public class CombatStrategy extends Strategy {
                     best = dist;
                     md = moveDir;
                 }
-            }   
+            }
         }
         if (md == null) return false;
         if (md != myDir) {

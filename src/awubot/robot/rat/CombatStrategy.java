@@ -17,13 +17,7 @@ import awubot.util.Profiler;
 import awubot.util.Util;
 
 import static awubot.Game.*;
-import static awubot.util.Util.allDirections;
-import static awubot.util.Util.canSense;
-import static awubot.util.Util.chebyshevDistance;
-import static awubot.util.Util.directions;
-import static awubot.util.Util.orthDirections;
-import static awubot.util.Util.println;
-import static awubot.util.Util.relatedDirections;
+import static awubot.util.Util.*;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -105,10 +99,12 @@ public class CombatStrategy extends Strategy {
         danger = new StringBuilder();
         danger.repeat((char) OFFSET, 3600);
         for (RobotInfo info : rc.senseNearbyRobots()) {
+            Profiler.begin();
             for (Direction dir : relatedDirections(myDir)) {
                 MapLocation loc = myLoc.add(dir);
                 incDanger(loc, (int) (computeDangerFrom(info, loc) * 100));
             }
+            Profiler.end("computeDanger iteration");
         }
     }
 

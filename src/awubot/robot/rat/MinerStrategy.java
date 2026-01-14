@@ -30,7 +30,6 @@ public class MinerStrategy extends Strategy {
 
     @Override
     public boolean runTick() throws GameActionException {
-        CellTracker.checkSymmetry();
         indicate("sym " + CellTracker.hsym + " " + CellTracker.vsym + " " + CellTracker.rsym);
         if (rc.getRawCheese() == 0) {
             goHomeStrategy = null;

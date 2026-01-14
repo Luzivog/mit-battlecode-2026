@@ -75,7 +75,6 @@ public class Game {
         myLocX = myLoc.x;
         myLocY = myLoc.y;
         myDir = rc.getDirection();
-        CellTracker.storeVisibleCells();
         // Clear indicator string at the start of each turn
         indicatorString = "";
     }

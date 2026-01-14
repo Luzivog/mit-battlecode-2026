@@ -18,7 +18,6 @@ public class BabyRat {
     private static final CatLureStrategy2 theCatLureStrategy = new CatLureStrategy2();
 
     public static void init() throws GameActionException {
-        CellTracker.storeVisibleCells();
         // GlobalArray.readSpawnStrategy();
         primaryStrategy = new MinerStrategy();
     }
@@ -35,8 +34,8 @@ public class BabyRat {
 
         if (theCatLureStrategy.runTick()) return;
 
-        CellTracker.checkSymmetry();
         CellTracker.storeVisibleCells();
+        CellTracker.checkSymmetry();
 
         indicate("sym " + CellTracker.hsym + " " + CellTracker.vsym + " " + CellTracker.rsym);
         primaryStrategy.runTick();

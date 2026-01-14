@@ -110,7 +110,6 @@ public class CombatStrategy extends Strategy {
                 MapLocation loc = myLoc.add(dir);
                 incDanger(loc, (int) (computeDangerFrom(info, loc) * 100));
             }
-            Profiler.end("computeDanger iteration");
         }
     }
 
@@ -123,14 +122,41 @@ public class CombatStrategy extends Strategy {
         if (tryRatNap()) return true;
         if (tryTrap()) return true;
         if (tryAttack()) return true;
-        // TODO: default to avoidance behaviour
+        if (tryFight()) return true;
+        // TODO: deal with cats (maybe naman's job?)
         return false;
+    }
+
+    public boolean tryFight() throws GameActionException {
+        // TODO: replace with multisource bfs from enemies
+        Direction md = null;
+        double best = INF;
+        for (Direction moveDir : directions) {
+            if (!rc.canMove(moveDir)) continue;
+            if (moveDir != myDir && !rc.canTurn()) continue;
+            MapLocation newLoc = myLoc.add(moveDir);
+            for (RobotInfo info : rc.senseNearbyRobots()) {
+                if (info.getType() == UnitType.CAT) continue;
+                if (info.getTeam() == rc.getTeam()) continue;
+                double dist = chebyshevDistance(newLoc, info.getLocation());
+                dist += getDanger(newLoc) / 3;
+                if (dist < best) {
+                    best = dist;
+                    md = moveDir;
+                }
+            }   
+        }
+        if (md == null) return false;
+        if (md != myDir) {
+            turn(md);
+        }
+        rawMove();
+        return true;
     }
 
     // return false if didnt throw -- some other process can figure out how to move
     // TODO: maybe weight targets based on how close they are to friendly rats? might be too effort
     public boolean tryThrow() throws GameActionException {
-        println("trying throw");
         Direction md = null, td = null;
         int mt = -1;
         double best = -1;
@@ -168,7 +194,6 @@ public class CombatStrategy extends Strategy {
                     } else break;
                 }
                 if (damage < 0) continue;
-                println("yayyy");
                 switch (moveType) {
                     case 0:
                     case 1:
@@ -192,7 +217,6 @@ public class CombatStrategy extends Strategy {
             }
         }
         if (best < 0) return false;
-        println("THROWING RAT");
         switch (mt) {
             case 0: // forward
                 if (myDir != md) turn(md);
@@ -237,16 +261,13 @@ public class CombatStrategy extends Strategy {
             double weight = 1;
             Direction md = null;
 
-            println("found nearby rat that is tasty\n");
             double best = -1;
             for (Direction moveDir : allDirections) {
                 if (moveDir != Direction.CENTER && !rc.canMove(moveDir)) continue;
                 MapLocation newLoc = myLoc.add(moveDir);
                 if (newLoc.distanceSquaredTo(t) > 2) continue;
                 if (!canSense(newLoc, t, myDir) && !rc.canTurn()) continue;
-                println("passed checks");
                 double score = weight;
-                // TODO: account for cell danger levels
                 score -= getDangerFor(newLoc, info) / 3;
                 if (score > best) {
                     best = score;

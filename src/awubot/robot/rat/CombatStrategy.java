@@ -9,9 +9,11 @@ import battlecode.common.RobotInfo;
 import battlecode.common.TrapType;
 import battlecode.common.UnitType;
 import awubot.CellTracker;
+import awubot.Game;
 import awubot.Pathfinder;
 import awubot.comms.Squeaker;
 import awubot.robot.Strategy;
+import awubot.util.Profiler;
 import awubot.util.Util;
 
 import static awubot.Game.*;
@@ -73,7 +75,7 @@ public class CombatStrategy extends Strategy {
         danger.setCharAt(i, (char) (x + y));
     }
 
-    public static double computeDangerFrom(RobotInfo info, MapLocation to) {
+    public static double getBotDangerWeight(RobotInfo info) {
         double base = (info.getTeam() == team ? -0.5 : 1);
         switch (info.getType()) {
             case UnitType.BABY_RAT:
@@ -86,10 +88,16 @@ public class CombatStrategy extends Strategy {
                 base *= 5;
                 break;
         }
+        return base;
+    }
+
+    public static double computeDangerFrom(RobotInfo info, MapLocation to) {
         if (!rc.onTheMap(to)) return 0;
-        if (!canSense(info.getLocation(), to, info.getDirection())) return 0;
-        double weight = 1 - Util.manhattanDistance(to, info.getLocation()) / 5.0;
-        assert(weight > 0.01);
+        MapLocation enemyLoc = info.getLocation();
+        double base = getBotDangerWeight(info);
+        if (!canSense(enemyLoc, to, info.getDirection())) return 0;
+        double weight = 1 - Util.manhattanDistance(to, enemyLoc) / 5.0;
+        if (weight <= 0.01) return 0;
         return base * weight;
     }
     
@@ -97,12 +105,9 @@ public class CombatStrategy extends Strategy {
         danger = new StringBuilder();
         danger.repeat((char) OFFSET, 3600);
         for (RobotInfo info : rc.senseNearbyRobots()) {
-            MapLocation enemyLoc = info.getLocation();
-            for (int x = enemyLoc.x - 2; x <= enemyLoc.x + 2; x++) {
-                for (int y = enemyLoc.y - 2; y <= enemyLoc.y + 2; y++) {
-                    MapLocation loc = new MapLocation(x, y);
-                    incDanger(loc, (int) (computeDangerFrom(info, loc) * 100));
-                }
+            for (Direction dir : relatedDirections(myDir)) {
+                MapLocation loc = myLoc.add(dir);
+                incDanger(loc, (int) (computeDangerFrom(info, loc) * 100));
             }
         }
     }

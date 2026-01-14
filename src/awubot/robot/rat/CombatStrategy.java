@@ -96,7 +96,7 @@ public class CombatStrategy extends Strategy {
                 base *= 0.7;
                 // u can beat them
             }
-            base *= (1.0 / Math.sqrt(dist)); // incredible formula
+            base *= (1.0 / Math.sqrt(dist + 1)); // incredible formula
             return base;
         }
     }

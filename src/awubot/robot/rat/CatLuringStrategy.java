@@ -27,11 +27,6 @@ public class CatLuringStrategy extends Strategy {
     private int theSqueakCooldown = 0;
     private int theMissionsCompleted = 0;
 
-    @Override
-    public boolean isComplete() throws GameActionException {
-        return !theIsActive;
-    }
-
     public void activateLure(MapLocation aCatLoc, MapLocation aEnemyKingLoc) {
         theCatLoc = aCatLoc;
         theEnemyKingLoc = aEnemyKingLoc;
@@ -62,8 +57,8 @@ public class CatLuringStrategy extends Strategy {
     }
 
     @Override
-    public void runTick() throws GameActionException {
-        if (!theIsActive) return;
+    public boolean runTick() throws GameActionException {
+        if (!theIsActive) return false;
 
         theLureTTL--;
         indicate("LURING[" + theLureTTL + "] -> " + theEnemyKingLoc);
@@ -84,11 +79,12 @@ public class CatLuringStrategy extends Strategy {
 
         if (shouldTerminateLure(myCatNearby)) {
             terminateLure(myCatNearby);
-            return;
+            return true;
         }
 
         executeOffensiveMovement();
         executeSqueaking();
+        return true;
     }
 
     private boolean updateCatTracking() {

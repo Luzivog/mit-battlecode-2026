@@ -22,8 +22,7 @@ public class FormationStrategy extends Strategy {
     private int formationStartTurn = 0;
     private boolean active = false;
 
-    @Override
-    public boolean isComplete() throws GameActionException {
+    private boolean isComplete() throws GameActionException {
         if(!active) return true;
         if(formationTarget == null
            || time - formationStartTurn > FORMATION_TIMEOUT
@@ -35,19 +34,21 @@ public class FormationStrategy extends Strategy {
     }
 
     @Override
-    public void runTick() throws GameActionException {
+    public boolean runTick() throws GameActionException {
+        if(isComplete()) return false;
         tryActivate();
         if (rc.canBecomeRatKing()) {
             rc.becomeRatKing();
-            return;
+            return true;
         }
         if (RobotTracker.allyCount >= MIN_ALLIES_FOR_FORMATION) {
             if (myLoc.distanceSquaredTo(formationTarget) <= 2) {
                 tryMoveToCentre();
-                return;
+                return true;
             }
         }
         Pathfinder.makeMove(formationTarget);
+        return true;
     }
 
     public boolean tryActivate() throws GameActionException {

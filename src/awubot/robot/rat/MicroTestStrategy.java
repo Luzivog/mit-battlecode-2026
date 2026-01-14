@@ -20,19 +20,15 @@ public class MicroTestStrategy extends Strategy {
         this.exploreStrategy = new ExploreStrategy();
     }
 
-    @Override
-    public boolean isComplete() throws GameActionException {
-        return false;
-    }
-
 
     private static int id = -1;
     @Override
-    public void runTick() throws GameActionException {
-        if (combatStrategy.tryTick()) {
+    public boolean runTick() throws GameActionException {
+        if (combatStrategy.runTick()) {
             indicate("FIGHTING!!!!!");
         }
         exploreStrategy.runTick();
+        return true;
     }
 
     private static Runnable tryAttack() {

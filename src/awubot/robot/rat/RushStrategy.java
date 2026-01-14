@@ -15,31 +15,15 @@ public class RushStrategy extends Strategy {
     private ExploreStrategy exploreStrategy;
     private CheeseStrategy cheeseStrategy;
     private FormationStrategy formationStrategy;
-    private CatLuringStrategy catLuringStrategy;
 
     public RushStrategy() {
         exploreStrategy = new ExploreStrategy();
         cheeseStrategy = new CheeseStrategy();
         formationStrategy = new FormationStrategy();
-        catLuringStrategy = new CatLuringStrategy();
-    }
-
-    public CatLuringStrategy getCatLuringStrategy() {
-        return catLuringStrategy;
     }
 
     @Override
-    public boolean isComplete() throws GameActionException {
-        return false;
-    }
-
-    @Override
-    public void runTick() throws GameActionException {
-        if (!catLuringStrategy.isComplete() || catLuringStrategy.tryAutoActivate()) {
-            catLuringStrategy.runTick();
-            return;
-        }
-
+    public boolean runTick() throws GameActionException {
         MapLocation myEnemyTarget = getEnemyKingLocation();
         if (myEnemyTarget != null) {
             indicate("RUSHING -> " + myEnemyTarget);
@@ -48,6 +32,7 @@ public class RushStrategy extends Strategy {
         } else {
             exploreStrategy.runTick();
         }
+        return true;
     }
 
     private MapLocation getEnemyKingLocation() {

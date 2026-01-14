@@ -22,13 +22,8 @@ public class CatLureStrategy2 extends Strategy {
     }
 
     @Override
-    public boolean isComplete() throws GameActionException {
-        return !theIsActive;
-    }
-
-    @Override
-    public void runTick() throws GameActionException {
-        if (!theIsActive) return;
+    public boolean runTick() throws GameActionException {
+        if (!theIsActive) return false;
 
         theLureTTL--;
         indicate("LURING CAT TO ENEMY!");
@@ -38,6 +33,7 @@ public class CatLureStrategy2 extends Strategy {
         if (shouldTerminate()) {
             reset();
         }
+        return true;
     }
 
     private void moveTowardEnemy() throws GameActionException {

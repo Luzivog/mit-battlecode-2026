@@ -11,13 +11,10 @@ if the current strategy doesnt require painting, it should see that it can move 
 */
 
 public abstract class Strategy {
-    // returns true if the strategy is incomplete
     public boolean tryStrategy(Strategy strat) throws GameActionException {
         if (strat == null) return false;
-        if (strat.isComplete()) return false;
-        strat.runTick();
-        return !strat.isComplete();
+        return strat.runTick();
     }
-    public abstract boolean isComplete() throws GameActionException;
-    public abstract void runTick() throws GameActionException;
+    // returns true if the strategy did something (so the caller should exit)
+    public abstract boolean runTick() throws GameActionException;
 }

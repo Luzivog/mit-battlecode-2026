@@ -32,12 +32,7 @@ public class RatKingStrategy extends Strategy {
     }
 
     @Override
-    public boolean isComplete() throws GameActionException {
-        return false;
-    }
-
-    @Override
-    public void runTick() throws GameActionException {
+    public boolean runTick() throws GameActionException {
         theContext.scanThreats();
         theContext.updateDefenseState();
 
@@ -46,12 +41,13 @@ public class RatKingStrategy extends Strategy {
         if (theDefenseStrategy.isDefensiveActionTaken() || theDefenseStrategy.wantsToFlee()) {
             theCheeseStrategy.runTick();
             theSpawningStrategy.runTick();
-            return;
+            return true;
         }
 
         theCheeseStrategy.runTick();
         theMiningStrategy.runTick();
         theSpawningStrategy.runTick();
         theFormationStrategy.runTick();
+        return true;
     }
 }

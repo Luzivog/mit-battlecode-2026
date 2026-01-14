@@ -18,15 +18,11 @@ public class KingSpawningStrategy extends Strategy {
     }
 
     @Override
-    public boolean isComplete() throws GameActionException {
-        return false;
-    }
-
-    @Override
-    public void runTick() throws GameActionException {
+    public boolean runTick() throws GameActionException {
         while(rc.getCurrentRatCost() < 50 && rc.getGlobalCheese() >= 100) {
             if(!trySpawnRat()) break;
         }
+        return true;
     }
 
     private boolean trySpawnRat() throws GameActionException {

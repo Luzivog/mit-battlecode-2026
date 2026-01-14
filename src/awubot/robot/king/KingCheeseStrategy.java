@@ -8,12 +8,7 @@ import static awubot.util.Util.*;
 
 public class KingCheeseStrategy extends Strategy {
     @Override
-    public boolean isComplete() throws GameActionException {
-        return false;
-    }
-
-    @Override
-    public void runTick() throws GameActionException {
+    public boolean runTick() throws GameActionException {
         for (int myDx = -2; myDx <= 2; myDx++) {
             for (int myDy = -2; myDy <= 2; myDy++) {
                 MapLocation myCheesePos = new MapLocation(myLoc.x + myDx, myLoc.y + myDy);
@@ -22,5 +17,6 @@ public class KingCheeseStrategy extends Strategy {
                 }
             }
         }
+        return true;
     }
 }

@@ -32,12 +32,7 @@ public class KingDefenseStrategy extends Strategy {
     }
 
     @Override
-    public boolean isComplete() throws GameActionException {
-        return false;
-    }
-
-    @Override
-    public void runTick() throws GameActionException {
+    public boolean runTick() throws GameActionException {
         if (time % 50 == 0) {
             System.out.println("[KING] K" + kingId + " t=" + time +
                 " hp=" + rc.getHealth() + " cheese=" + rc.getGlobalCheese() +
@@ -59,6 +54,7 @@ public class KingDefenseStrategy extends Strategy {
             default:
                 break;
         }
+        return true;
     }
 
     public boolean isDefensiveActionTaken() throws GameActionException {

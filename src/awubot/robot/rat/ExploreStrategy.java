@@ -12,16 +12,12 @@ public class ExploreStrategy extends Strategy {
     private MapLocation target;
 
     @Override
-    public boolean isComplete() {
-        return false;
-    }
-
-    @Override
-    public void runTick() throws GameActionException {
+    public boolean runTick() throws GameActionException {
         while (target == null || rc.canSenseLocation(target)) {
             target = Util.genPassiveTarget();
         }
         Pathfinder.makeMove(target);
         rc.setIndicatorLine(rc.getLocation(), target, 0, 0, 255);
+        return true;
     }
 }

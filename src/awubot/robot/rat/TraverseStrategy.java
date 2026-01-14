@@ -19,14 +19,11 @@ public class TraverseStrategy extends Strategy {
     }
 
     @Override
-    public boolean isComplete() throws GameActionException {
-        return rc.getLocation().distanceSquaredTo(target) <= distSquared;
-    }
-
-    @Override
-    public void runTick() throws GameActionException {
+    public boolean runTick() throws GameActionException {
+        if(rc.getLocation().distanceSquaredTo(target) <= distSquared) return false;
         indicate("TRAVELLING TO " + target);
         Pathfinder.makeMove(target);
         rc.setIndicatorLine(myLoc, target, 255, 0, 0);
+        return true;
     }
 }

@@ -33,10 +33,7 @@ public class BabyRat {
 
         tryTransferCheese();
 
-        if (!theCatLureStrategy.isComplete()) {
-            theCatLureStrategy.runTick();
-            return;
-        }
+        if (theCatLureStrategy.runTick()) return;
 
         CellTracker.checkSymmetry();
         CellTracker.storeVisibleCells();

@@ -23,7 +23,7 @@ public class MinerStrategy extends Strategy {
     }
 
     @Override
-    public void runTick() throws GameActionException {
+    public boolean runTick() throws GameActionException {
         CellTracker.checkSymmetry();
         indicate("sym " + CellTracker.hsym + " " + CellTracker.vsym + " " + CellTracker.rsym);
         if (rc.getRawCheese() == 0) {
@@ -33,11 +33,11 @@ public class MinerStrategy extends Strategy {
             cheeseStrategy.cheeseTarget = null;
         }
         // TODO: combat strategy
-        if(tryStrategy(formationStrategy)) return;
-        if(tryStrategy(goHomeStrategy)) return;
-        if(tryStrategy(cheeseStrategy)) return;
+        if(tryStrategy(formationStrategy)) return true;
+        if(tryStrategy(goHomeStrategy)) return true;
+        if(tryStrategy(cheeseStrategy)) return true;
 
-        while(goSomewhereStrategy == null || goSomewhereStrategy.isComplete()) {
+        while(goSomewhereStrategy == null || !goSomewhereStrategy.runTick()) {
             MapLocation target;
 
             if (GlobalArray.cheeseMines.set.length() < 3 || Rng.mcg() % 5 == 0) {
@@ -50,7 +50,7 @@ public class MinerStrategy extends Strategy {
             }
             goSomewhereStrategy = new TraverseStrategy(target, 2);
         }
-        goSomewhereStrategy.runTick();
+        return true;
     }
 
     private boolean shouldGoHome() {
@@ -82,10 +82,5 @@ public class MinerStrategy extends Strategy {
         else return false;
 
         return hp <= hpThreshold;
-    }
-
-    @Override
-    public boolean isComplete() {
-        return false;
     }
 }

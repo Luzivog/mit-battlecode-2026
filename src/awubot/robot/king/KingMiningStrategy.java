@@ -31,12 +31,7 @@ public class KingMiningStrategy extends Strategy {
     }
 
     @Override
-    public boolean isComplete() throws GameActionException {
-        return false;
-    }
-
-    @Override
-    public void runTick() throws GameActionException {
+    public boolean runTick() throws GameActionException {
         if (!theFoundCheeseMine) {
             if (!scanForCheeseMines()) {
                 moveTowardCenter();
@@ -47,6 +42,7 @@ public class KingMiningStrategy extends Strategy {
             scanForCheeseMines();
             moveTowardMine();
         }
+        return true;
     }
 
     public boolean scanForCheeseMines() throws GameActionException {

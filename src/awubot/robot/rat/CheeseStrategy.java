@@ -12,14 +12,9 @@ public class CheeseStrategy extends Strategy {
     public int lastSeenCheese;
 
     @Override
-    public boolean isComplete() throws GameActionException {
+    public boolean runTick() throws GameActionException {
         refreshCheeseTarget();
-        return cheeseTarget == null;
-    }
-
-    @Override
-    public void runTick() throws GameActionException {
-        refreshCheeseTarget();
+        if(cheeseTarget == null) return false;
         lastSeenCheese = rc.getRoundNum();
         if (myLoc.isAdjacentTo(cheeseTarget)) {
             var dir = myLoc.directionTo(cheeseTarget);
@@ -28,10 +23,11 @@ public class CheeseStrategy extends Strategy {
                 rc.pickUpCheese(cheeseTarget);
                 cheeseTarget = null;
             }
-            return;
+            return true;
         }
         rc.setIndicatorLine(myLoc, cheeseTarget, 255, 0, 0);
         Pathfinder.makeMove(cheeseTarget);
+        return true;
     }
 
     private void refreshCheeseTarget() throws GameActionException {

@@ -39,17 +39,12 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     }
 
     @Override
-    public boolean isComplete() throws GameActionException {
-        return false;
-    }
-
-    @Override
-    public void runTick() throws GameActionException {
+    public boolean runTick() throws GameActionException {
         if (theContext.theDefenseState != ThreatContext.DefenseState.NORMAL) {
             if (theState == FormationState.COORDINATING) {
                 abortFormation();
             }
-            return;
+            return true;
         }
 
         switch (theState) {
@@ -61,6 +56,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
                 monitorFormation();
                 break;
         }
+        return true;
     }
 
     private void tryStartFormation() throws GameActionException {

@@ -20,12 +20,7 @@ public class StrongAggroRoamStrategy extends Strategy {
     }
 
     @Override
-    public boolean isComplete() {
-        return false;
-    }
-
-    @Override
-    public void runTick() throws GameActionException {
+    public boolean runTick() throws GameActionException {
         while (rc.canSenseLocation(target)) {
             targets.removeFirst();
             if (targets.isEmpty()) {
@@ -35,5 +30,6 @@ public class StrongAggroRoamStrategy extends Strategy {
         }
         Pathfinder.makeMove(target);
         rc.setIndicatorLine(rc.getLocation(), target, 0, 0, 255);
+        return true;
     }
 }

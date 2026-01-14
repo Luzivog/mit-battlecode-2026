@@ -13,12 +13,8 @@ public class GoHomeStrategy extends Strategy {
     private MapLocation kingLoc;
 
     @Override
-    public boolean isComplete() {
-        return rc.getRawCheese() == 0;
-    }
-
-    @Override
-    public void runTick() throws GameActionException {
+    public boolean runTick() throws GameActionException {
+        if(rc.getRawCheese() == 0) return false;
         indicate("going home");
         if(kingLoc == null) {
             kingLoc = GlobalArray.nearestRatKing;
@@ -39,6 +35,7 @@ public class GoHomeStrategy extends Strategy {
         var transferTarget = myLoc.add(dir);
 
         if (myLoc.distanceSquaredTo(kingLoc) <= 8) {
+            // don't glance so we can look at the king
             shouldGlance = false;
             if (dir != Direction.CENTER && rc.canTurn()) turn(dir);
         }
@@ -46,5 +43,6 @@ public class GoHomeStrategy extends Strategy {
         if (rc.canTransferCheese(transferTarget, rc.getRawCheese())) {
             rc.transferCheese(transferTarget, rc.getRawCheese());
         }
+        return true;
     }
 }

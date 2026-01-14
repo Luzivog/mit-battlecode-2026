@@ -468,7 +468,7 @@ public class Pathfinder {
         }
         int shade = 255;
         // Profiler.begin();
-        if(lastDist < {{(MAX_PATH / 4) | int}} || RobotTracker.kingSet.contains(bug.pos)) {
+        if(lastDist < {{(MAX_PATH / 4) | int}} || RobotTracker.allySet.contains(bug.pos)) {
             bugLoop: {
                 {% for i in range(MAX_BUG_ITERS) %}
                 rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);

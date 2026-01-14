@@ -1630,7 +1630,7 @@ public class Pathfinder {
         }
         int shade = 255;
         // Profiler.begin();
-        if(lastDist < 3 || RobotTracker.kingSet.contains(bug.pos)) {
+        if(lastDist < 3 || RobotTracker.allySet.contains(bug.pos)) {
             bugLoop: {
                 rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
                 Profiler.begin();

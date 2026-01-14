@@ -69,23 +69,18 @@ public class KingDefenseStrategy extends Strategy {
     private void executeCritical() throws GameActionException {
         indicate("DEFENSE: CRITICAL");
         evadeFromThreat();
-        placeReactiveCatTrap();
         signalLureBabyRats();
     }
 
     private void executeEvading() throws GameActionException {
         indicate("DEFENSE: EVADING");
         evadeFromThreat();
-        placeReactiveCatTrap();
-        placeDefensiveDirt();
         signalLureBabyRats();
     }
 
     private void executeAlert() throws GameActionException {
         indicate("DEFENSE: ALERT");
         evadeFromThreat();
-        placeProactiveCatTrapMinefield();
-        placeDefensiveDirt();
     }
 
     private boolean evadeFromThreat() throws GameActionException {

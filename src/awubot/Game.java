@@ -79,11 +79,6 @@ public class Game {
         indicatorString = "";
     }
 
-    public static void spawnRat(MapLocation loc, int strat) throws GameActionException {
-        rc.buildRat(loc);
-        GlobalArray.writeSpawnStrategy(rc.senseRobotAtLocation(loc).ID, strat);
-    }
-
     public static void postTick() {
         // if (!isRatKing) println("index: " + myIndex);
         // if (time != rc.getRoundNum()) {

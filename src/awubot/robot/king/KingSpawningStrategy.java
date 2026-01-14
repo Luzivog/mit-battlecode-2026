@@ -8,7 +8,7 @@ import awubot.robot.Strategy;
 import awubot.util.Rng;
 import awubot.util.Util;
 import static awubot.Game.*;
-import static awubot.util.Util.println;
+import static awubot.util.Util.*;
 
 public class KingSpawningStrategy extends Strategy {
     private final ThreatContext theContext;
@@ -17,53 +17,29 @@ public class KingSpawningStrategy extends Strategy {
         theContext = aContext;
     }
 
+    public static void spawnRat(MapLocation loc, int strat) throws GameActionException {
+        rc.buildRat(loc);
+        GlobalArray.writeSpawnStrategy(rc.senseRobotAtLocation(loc).ID, strat);
+    }
+
     @Override
     public boolean runTick() throws GameActionException {
-        var enemies = rc.senseNearbyRobots(8, team.opponent());
-        while((enemies.length > 0 || rc.getCurrentRatCost() < 50) && (rc.getGlobalCheese() >= 100 || rc.getCurrentRatCost() == 10)) {
-            if(!trySpawnRat()) break;
+        if(rc.getCurrentRatCost() <= 50 && (rc.getGlobalCheese() >= 100 || rc.getCurrentRatCost() == 10)) {
+            MapLocation best = null;
+            MapLocation centre = new MapLocation(mapWidth / 2, mapHeight / 2);
+            for(var dir : directions) {
+                MapLocation spawnLoc = myLoc.add(dir).add(dir);
+                if(rc.canBuildRat(spawnLoc)) {
+                    if(best == null || spawnLoc.distanceSquaredTo(centre) < best.distanceSquaredTo(centre)) {
+                        best = spawnLoc;
+                    }
+                }
+            }
+            if(best != null) {
+                spawnRat(best, decideRole());
+            }
         }
         return true;
-    }
-
-    // TODO: fix this
-    private boolean trySpawnRat() throws GameActionException {
-        Direction mySpawnDir = selectSpawnDirection();
-        Direction[] myTryDirs = {
-            mySpawnDir,
-            mySpawnDir.rotateLeft(),
-            mySpawnDir.rotateRight(),
-            mySpawnDir.rotateLeft().rotateLeft(),
-            mySpawnDir.rotateRight().rotateRight()
-        };
-
-        for (Direction myDir : myTryDirs) {
-            MapLocation mySpawnLoc = myLoc.add(myDir).add(myDir);
-            if (rc.canBuildRat(mySpawnLoc)) {
-                spawnRat(mySpawnLoc, decideRole());
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private Direction selectSpawnDirection() {
-        if (theContext.theNearestCat != null) {
-            return theContext.theNearestCat.getLocation().directionTo(myLoc);
-        }
-
-        if (theContext.theNearestEnemyRat != null) {
-            return theContext.theNearestEnemyRat.getLocation().directionTo(myLoc);
-        }
-
-        if (theContext.theDefenseState == ThreatContext.DefenseState.NORMAL) {
-            MapLocation myMine = getNearestMine();
-            if (myMine != null) {
-                return myLoc.directionTo(myMine);
-            }
-        }
-
-        return Direction.NORTHEAST;
     }
 
     private int decideRole() throws GameActionException {

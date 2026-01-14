@@ -3,11 +3,12 @@ package awubot;
 import awubot.util.string.FastMapLocationSet;
 import battlecode.common.*;
 import static awubot.Game.*;
+import static awubot.util.Util.*;
 
 public class RobotTracker {
     public static int allyCount = 0;
     public static MapLocation[] allies = new MapLocation[55];
-    private static FastMapLocationSet allySet;
+    public static FastMapLocationSet allySet, kingSet;
     private static MapLocation[][] pastKingLocs = new MapLocation[5][5];
     private static int[] pastKingCounts = new int[5];
     public static void addAlly(MapLocation loc) {
@@ -20,6 +21,7 @@ public class RobotTracker {
     public static void reset() throws GameActionException {
         allyCount = 0;
         allySet = new FastMapLocationSet();
+        kingSet = new FastMapLocationSet();
         pastKingCounts[time % 5] = 0;
         for(var robot : rc.senseNearbyRobots(-1, team)) {
             var loc = robot.location;
@@ -37,10 +39,15 @@ public class RobotTracker {
                 var locY = loc.y;
                 {% for dx in range(-1, 2) %}
                 {% for dy in range(-1, 2) %}
-                addAlly(new MapLocation(locX + {{dx}}, locY + {{dy}}));
+                {
+                    var kloc = new MapLocation(locX + {{dx}}, locY + {{dy}});
+                    addAlly(kloc);
+                    kingSet.add(kloc);
+                }
                 {% endfor %}
                 {% endfor %}
             }
         }
+        indicate("allyCount " + allyCount);
     }
 }

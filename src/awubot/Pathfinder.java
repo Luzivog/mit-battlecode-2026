@@ -628,7 +628,7 @@ class BugnavInstance {
         MapLocation greedyLoc = pos.add(bottomDir);
         if(stackSize <= 1) {
             var greedyPassable = CellTracker.isPassable(greedyLoc);
-            var greedyGood = greedyPassable || !CellTracker.isSeen(greedyLoc);
+            var greedyGood = (greedyPassable || !CellTracker.isSeen(greedyLoc)) && !RobotTracker.kingSet.contains(greedyLoc);
             if(greedyGood) {
                             if(greedyPassable && chebyshevDistance(myLoc, greedyLoc) <= 5) {
                 // indicate("greedyLoc " + greedyLoc);
@@ -645,9 +645,9 @@ class BugnavInstance {
             var leftLoc = pos.add(bottomDir.rotateLeft());
             var rightLoc = pos.add(bottomDir.rotateRight());
             var leftPassable = CellTracker.isPassable(leftLoc);
-            var leftGood = leftPassable || !CellTracker.isSeen(leftLoc);
+            var leftGood = (leftPassable || !CellTracker.isSeen(leftLoc)) && !RobotTracker.kingSet.contains(leftLoc);
             var rightPassable = CellTracker.isPassable(rightLoc);
-            var rightGood = rightPassable || !CellTracker.isSeen(rightLoc);
+            var rightGood = (rightPassable || !CellTracker.isSeen(rightLoc)) && !RobotTracker.kingSet.contains(rightLoc);
             if(leftGood && !rightGood) {
                             if(leftPassable && chebyshevDistance(myLoc, leftLoc) <= 5) {
                 // indicate("leftLoc " + leftLoc);
@@ -704,8 +704,7 @@ class BugnavInstance {
         }
 
         // guess rotation direction (kinda inefficient but wtv)
-        if(isMaster && stackSize == 0 && CellTracker.isSeen(greedyLoc)) {
-            assert !CellTracker.isPassable(greedyLoc);
+        if(isMaster && stackSize == 0 && (CellTracker.isSeen(greedyLoc) || RobotTracker.kingSet.contains(greedyLoc))) {
             if(emptyStackTurns >= 2) {
                 boolean pastLeft = ((guessedLeft[pos.y] >> pos.x) & 1l) != 0;
                 boolean pastRight = ((guessedRight[pos.y] >> pos.x) & 1l) != 0;
@@ -744,7 +743,7 @@ class BugnavInstance {
            && Math.abs(topDir.dx + topDir.dy) != 1
            )
         {
-            indicate("trying " + tryDir);
+            // indicate("trying " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
@@ -763,14 +762,14 @@ class BugnavInstance {
                 // indicate("bugnav " + -2 + " " + isMaster);
                 return false;
             }
-            if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+            if((!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos)) && chebyshevDistance(myLoc, nextPos) > 5 && !RobotTracker.kingSet.contains(nextPos)) {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 // Profiler.end("bugnav " + -2 + " " + isMaster);
                 // indicate("bugnav " + -2 + " " + isMaster);
                 return false;
             }
-            if(CellTracker.isPassable(nextPos)) {
+            if(CellTracker.isPassable(nextPos) && !RobotTracker.kingSet.contains(nextPos)) {
                 pos = nextPos;
                 topDir = tryDir;
                 stackSize += -2;
@@ -790,7 +789,7 @@ class BugnavInstance {
            // only try -2 for diagonals
            )
         {
-            indicate("trying " + tryDir);
+            // indicate("trying " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
@@ -809,14 +808,14 @@ class BugnavInstance {
                 // indicate("bugnav " + -1 + " " + isMaster);
                 return false;
             }
-            if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+            if((!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos)) && chebyshevDistance(myLoc, nextPos) > 5 && !RobotTracker.kingSet.contains(nextPos)) {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 // Profiler.end("bugnav " + -1 + " " + isMaster);
                 // indicate("bugnav " + -1 + " " + isMaster);
                 return false;
             }
-            if(CellTracker.isPassable(nextPos)) {
+            if(CellTracker.isPassable(nextPos) && !RobotTracker.kingSet.contains(nextPos)) {
                 pos = nextPos;
                 topDir = tryDir;
                 stackSize += -1;
@@ -833,7 +832,7 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotateLeft();
         {
-            indicate("trying " + tryDir);
+            // indicate("trying " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
@@ -852,14 +851,14 @@ class BugnavInstance {
                 // indicate("bugnav " + 0 + " " + isMaster);
                 return false;
             }
-            if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+            if((!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos)) && chebyshevDistance(myLoc, nextPos) > 5 && !RobotTracker.kingSet.contains(nextPos)) {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 // Profiler.end("bugnav " + 0 + " " + isMaster);
                 // indicate("bugnav " + 0 + " " + isMaster);
                 return false;
             }
-            if(CellTracker.isPassable(nextPos)) {
+            if(CellTracker.isPassable(nextPos) && !RobotTracker.kingSet.contains(nextPos)) {
                 pos = nextPos;
                 topDir = tryDir;
                 if(stackSize == 0) {
@@ -875,7 +874,7 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotateLeft();
         {
-            indicate("trying " + tryDir);
+            // indicate("trying " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
@@ -894,14 +893,14 @@ class BugnavInstance {
                 // indicate("bugnav " + 1 + " " + isMaster);
                 return false;
             }
-            if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+            if((!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos)) && chebyshevDistance(myLoc, nextPos) > 5 && !RobotTracker.kingSet.contains(nextPos)) {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 // Profiler.end("bugnav " + 1 + " " + isMaster);
                 // indicate("bugnav " + 1 + " " + isMaster);
                 return false;
             }
-            if(CellTracker.isPassable(nextPos)) {
+            if(CellTracker.isPassable(nextPos) && !RobotTracker.kingSet.contains(nextPos)) {
                 pos = nextPos;
                 topDir = tryDir;
                 stackSize += 1;
@@ -918,7 +917,7 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotateLeft();
         {
-            indicate("trying " + tryDir);
+            // indicate("trying " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
@@ -937,14 +936,14 @@ class BugnavInstance {
                 // indicate("bugnav " + 2 + " " + isMaster);
                 return false;
             }
-            if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+            if((!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos)) && chebyshevDistance(myLoc, nextPos) > 5 && !RobotTracker.kingSet.contains(nextPos)) {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 // Profiler.end("bugnav " + 2 + " " + isMaster);
                 // indicate("bugnav " + 2 + " " + isMaster);
                 return false;
             }
-            if(CellTracker.isPassable(nextPos)) {
+            if(CellTracker.isPassable(nextPos) && !RobotTracker.kingSet.contains(nextPos)) {
                 pos = nextPos;
                 topDir = tryDir;
                 stackSize += 2;
@@ -961,7 +960,7 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotateLeft();
         {
-            indicate("trying " + tryDir);
+            // indicate("trying " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
@@ -980,14 +979,14 @@ class BugnavInstance {
                 // indicate("bugnav " + 3 + " " + isMaster);
                 return false;
             }
-            if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+            if((!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos)) && chebyshevDistance(myLoc, nextPos) > 5 && !RobotTracker.kingSet.contains(nextPos)) {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 // Profiler.end("bugnav " + 3 + " " + isMaster);
                 // indicate("bugnav " + 3 + " " + isMaster);
                 return false;
             }
-            if(CellTracker.isPassable(nextPos)) {
+            if(CellTracker.isPassable(nextPos) && !RobotTracker.kingSet.contains(nextPos)) {
                 pos = nextPos;
                 topDir = tryDir;
                 stackSize += 3;
@@ -1004,7 +1003,7 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotateLeft();
         {
-            indicate("trying " + tryDir);
+            // indicate("trying " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
@@ -1023,14 +1022,14 @@ class BugnavInstance {
                 // indicate("bugnav " + 4 + " " + isMaster);
                 return false;
             }
-            if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+            if((!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos)) && chebyshevDistance(myLoc, nextPos) > 5 && !RobotTracker.kingSet.contains(nextPos)) {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 // Profiler.end("bugnav " + 4 + " " + isMaster);
                 // indicate("bugnav " + 4 + " " + isMaster);
                 return false;
             }
-            if(CellTracker.isPassable(nextPos)) {
+            if(CellTracker.isPassable(nextPos) && !RobotTracker.kingSet.contains(nextPos)) {
                 pos = nextPos;
                 topDir = tryDir;
                 stackSize += 4;
@@ -1047,7 +1046,7 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotateLeft();
         {
-            indicate("trying " + tryDir);
+            // indicate("trying " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
@@ -1066,14 +1065,14 @@ class BugnavInstance {
                 // indicate("bugnav " + 5 + " " + isMaster);
                 return false;
             }
-            if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+            if((!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos)) && chebyshevDistance(myLoc, nextPos) > 5 && !RobotTracker.kingSet.contains(nextPos)) {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 // Profiler.end("bugnav " + 5 + " " + isMaster);
                 // indicate("bugnav " + 5 + " " + isMaster);
                 return false;
             }
-            if(CellTracker.isPassable(nextPos)) {
+            if(CellTracker.isPassable(nextPos) && !RobotTracker.kingSet.contains(nextPos)) {
                 pos = nextPos;
                 topDir = tryDir;
                 stackSize += 5;
@@ -1089,7 +1088,7 @@ class BugnavInstance {
             }
         }
         tryDir = tryDir.rotateLeft();
-        assert false : "no valid move found from " + pos;
+        System.out.println("no valid move found from " + pos);
         return false;
     }
 
@@ -1100,7 +1099,7 @@ class BugnavInstance {
            && Math.abs(topDir.dx + topDir.dy) != 1
            )
         {
-            indicate("trying " + tryDir);
+            // indicate("trying " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
@@ -1119,14 +1118,14 @@ class BugnavInstance {
                 // indicate("bugnav " + -2 + " " + isMaster);
                 return false;
             }
-            if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+            if((!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos)) && chebyshevDistance(myLoc, nextPos) > 5 && !RobotTracker.kingSet.contains(nextPos)) {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 // Profiler.end("bugnav " + -2 + " " + isMaster);
                 // indicate("bugnav " + -2 + " " + isMaster);
                 return false;
             }
-            if(CellTracker.isPassable(nextPos)) {
+            if(CellTracker.isPassable(nextPos) && !RobotTracker.kingSet.contains(nextPos)) {
                 pos = nextPos;
                 topDir = tryDir;
                 stackSize += -2;
@@ -1146,7 +1145,7 @@ class BugnavInstance {
            // only try -2 for diagonals
            )
         {
-            indicate("trying " + tryDir);
+            // indicate("trying " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
@@ -1165,14 +1164,14 @@ class BugnavInstance {
                 // indicate("bugnav " + -1 + " " + isMaster);
                 return false;
             }
-            if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+            if((!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos)) && chebyshevDistance(myLoc, nextPos) > 5 && !RobotTracker.kingSet.contains(nextPos)) {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 // Profiler.end("bugnav " + -1 + " " + isMaster);
                 // indicate("bugnav " + -1 + " " + isMaster);
                 return false;
             }
-            if(CellTracker.isPassable(nextPos)) {
+            if(CellTracker.isPassable(nextPos) && !RobotTracker.kingSet.contains(nextPos)) {
                 pos = nextPos;
                 topDir = tryDir;
                 stackSize += -1;
@@ -1189,7 +1188,7 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotateRight();
         {
-            indicate("trying " + tryDir);
+            // indicate("trying " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
@@ -1208,14 +1207,14 @@ class BugnavInstance {
                 // indicate("bugnav " + 0 + " " + isMaster);
                 return false;
             }
-            if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+            if((!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos)) && chebyshevDistance(myLoc, nextPos) > 5 && !RobotTracker.kingSet.contains(nextPos)) {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 // Profiler.end("bugnav " + 0 + " " + isMaster);
                 // indicate("bugnav " + 0 + " " + isMaster);
                 return false;
             }
-            if(CellTracker.isPassable(nextPos)) {
+            if(CellTracker.isPassable(nextPos) && !RobotTracker.kingSet.contains(nextPos)) {
                 pos = nextPos;
                 topDir = tryDir;
                 if(stackSize == 0) {
@@ -1231,7 +1230,7 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotateRight();
         {
-            indicate("trying " + tryDir);
+            // indicate("trying " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
@@ -1250,14 +1249,14 @@ class BugnavInstance {
                 // indicate("bugnav " + 1 + " " + isMaster);
                 return false;
             }
-            if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+            if((!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos)) && chebyshevDistance(myLoc, nextPos) > 5 && !RobotTracker.kingSet.contains(nextPos)) {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 // Profiler.end("bugnav " + 1 + " " + isMaster);
                 // indicate("bugnav " + 1 + " " + isMaster);
                 return false;
             }
-            if(CellTracker.isPassable(nextPos)) {
+            if(CellTracker.isPassable(nextPos) && !RobotTracker.kingSet.contains(nextPos)) {
                 pos = nextPos;
                 topDir = tryDir;
                 stackSize += 1;
@@ -1274,7 +1273,7 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotateRight();
         {
-            indicate("trying " + tryDir);
+            // indicate("trying " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
@@ -1293,14 +1292,14 @@ class BugnavInstance {
                 // indicate("bugnav " + 2 + " " + isMaster);
                 return false;
             }
-            if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+            if((!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos)) && chebyshevDistance(myLoc, nextPos) > 5 && !RobotTracker.kingSet.contains(nextPos)) {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 // Profiler.end("bugnav " + 2 + " " + isMaster);
                 // indicate("bugnav " + 2 + " " + isMaster);
                 return false;
             }
-            if(CellTracker.isPassable(nextPos)) {
+            if(CellTracker.isPassable(nextPos) && !RobotTracker.kingSet.contains(nextPos)) {
                 pos = nextPos;
                 topDir = tryDir;
                 stackSize += 2;
@@ -1317,7 +1316,7 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotateRight();
         {
-            indicate("trying " + tryDir);
+            // indicate("trying " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
@@ -1336,14 +1335,14 @@ class BugnavInstance {
                 // indicate("bugnav " + 3 + " " + isMaster);
                 return false;
             }
-            if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+            if((!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos)) && chebyshevDistance(myLoc, nextPos) > 5 && !RobotTracker.kingSet.contains(nextPos)) {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 // Profiler.end("bugnav " + 3 + " " + isMaster);
                 // indicate("bugnav " + 3 + " " + isMaster);
                 return false;
             }
-            if(CellTracker.isPassable(nextPos)) {
+            if(CellTracker.isPassable(nextPos) && !RobotTracker.kingSet.contains(nextPos)) {
                 pos = nextPos;
                 topDir = tryDir;
                 stackSize += 3;
@@ -1360,7 +1359,7 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotateRight();
         {
-            indicate("trying " + tryDir);
+            // indicate("trying " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
@@ -1379,14 +1378,14 @@ class BugnavInstance {
                 // indicate("bugnav " + 4 + " " + isMaster);
                 return false;
             }
-            if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+            if((!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos)) && chebyshevDistance(myLoc, nextPos) > 5 && !RobotTracker.kingSet.contains(nextPos)) {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 // Profiler.end("bugnav " + 4 + " " + isMaster);
                 // indicate("bugnav " + 4 + " " + isMaster);
                 return false;
             }
-            if(CellTracker.isPassable(nextPos)) {
+            if(CellTracker.isPassable(nextPos) && !RobotTracker.kingSet.contains(nextPos)) {
                 pos = nextPos;
                 topDir = tryDir;
                 stackSize += 4;
@@ -1403,7 +1402,7 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotateRight();
         {
-            indicate("trying " + tryDir);
+            // indicate("trying " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
@@ -1422,14 +1421,14 @@ class BugnavInstance {
                 // indicate("bugnav " + 5 + " " + isMaster);
                 return false;
             }
-            if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+            if((!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos)) && chebyshevDistance(myLoc, nextPos) > 5 && !RobotTracker.kingSet.contains(nextPos)) {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 // Profiler.end("bugnav " + 5 + " " + isMaster);
                 // indicate("bugnav " + 5 + " " + isMaster);
                 return false;
             }
-            if(CellTracker.isPassable(nextPos)) {
+            if(CellTracker.isPassable(nextPos) && !RobotTracker.kingSet.contains(nextPos)) {
                 pos = nextPos;
                 topDir = tryDir;
                 stackSize += 5;
@@ -1445,7 +1444,7 @@ class BugnavInstance {
             }
         }
         tryDir = tryDir.rotateRight();
-        assert false : "no valid move found from " + pos;
+        System.out.println("no valid move found from " + pos);
         return false;
     }
 
@@ -1631,7 +1630,7 @@ public class Pathfinder {
         }
         int shade = 255;
         // Profiler.begin();
-        if(lastDist < 3) {
+        if(lastDist < 3 || RobotTracker.kingSet.contains(bug.pos)) {
             bugLoop: {
                 rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
                 Profiler.begin();

@@ -270,16 +270,16 @@ class BugnavInstance {
             return false;
             {% endmacro %}
             var greedyPassable = CellTracker.isPassable(greedyLoc);
-            var greedyGood = greedyPassable || !CellTracker.isSeen(greedyLoc);
+            var greedyGood = (greedyPassable || !CellTracker.isSeen(greedyLoc)) && !RobotTracker.kingSet.contains(greedyLoc);
             if(greedyGood) {
                 {{ go("greedy") }}
             }
             var leftLoc = pos.add(bottomDir.rotateLeft());
             var rightLoc = pos.add(bottomDir.rotateRight());
             var leftPassable = CellTracker.isPassable(leftLoc);
-            var leftGood = leftPassable || !CellTracker.isSeen(leftLoc);
+            var leftGood = (leftPassable || !CellTracker.isSeen(leftLoc)) && !RobotTracker.kingSet.contains(leftLoc);
             var rightPassable = CellTracker.isPassable(rightLoc);
-            var rightGood = rightPassable || !CellTracker.isSeen(rightLoc);
+            var rightGood = (rightPassable || !CellTracker.isSeen(rightLoc)) && !RobotTracker.kingSet.contains(rightLoc);
             if(leftGood && !rightGood) {
                 {{ go("left") }}
             }
@@ -296,8 +296,7 @@ class BugnavInstance {
         }
 
         // guess rotation direction (kinda inefficient but wtv)
-        if(isMaster && stackSize == 0 && CellTracker.isSeen(greedyLoc)) {
-            assert !CellTracker.isPassable(greedyLoc);
+        if(isMaster && stackSize == 0 && (CellTracker.isSeen(greedyLoc) || RobotTracker.kingSet.contains(greedyLoc))) {
             if(emptyStackTurns >= 2) {
                 boolean pastLeft = ((guessedLeft[pos.y] >> pos.x) & 1l) != 0;
                 boolean pastRight = ((guessedRight[pos.y] >> pos.x) & 1l) != 0;
@@ -342,7 +341,7 @@ class BugnavInstance {
            )
         {% endif %}
         {
-            indicate("trying " + tryDir);
+            // indicate("trying " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
@@ -361,14 +360,14 @@ class BugnavInstance {
                 // indicate("bugnav " + {{turns}} + " " + isMaster);
                 return false;
             }
-            if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+            if((!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos)) && chebyshevDistance(myLoc, nextPos) > 5 && !RobotTracker.kingSet.contains(nextPos)) {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 // Profiler.end("bugnav " + {{turns}} + " " + isMaster);
                 // indicate("bugnav " + {{turns}} + " " + isMaster);
                 return false;
             }
-            if(CellTracker.isPassable(nextPos)) {
+            if(CellTracker.isPassable(nextPos) && !RobotTracker.kingSet.contains(nextPos)) {
                 pos = nextPos;
                 topDir = tryDir;
                 {% if turns %}
@@ -387,7 +386,7 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotate{{turnDir}}();
         {% endfor %}
-        assert false : "no valid move found from " + pos;
+        System.out.println("no valid move found from " + pos);
         return false;
     }
     {% endmacro %}
@@ -469,7 +468,7 @@ public class Pathfinder {
         }
         int shade = 255;
         // Profiler.begin();
-        if(lastDist < {{(MAX_PATH / 4) | int}}) {
+        if(lastDist < {{(MAX_PATH / 4) | int}} || RobotTracker.kingSet.contains(bug.pos)) {
             bugLoop: {
                 {% for i in range(MAX_BUG_ITERS) %}
                 rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);

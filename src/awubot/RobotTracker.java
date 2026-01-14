@@ -3,11 +3,12 @@ package awubot;
 import awubot.util.string.FastMapLocationSet;
 import battlecode.common.*;
 import static awubot.Game.*;
+import static awubot.util.Util.*;
 
 public class RobotTracker {
     public static int allyCount = 0;
     public static MapLocation[] allies = new MapLocation[55];
-    private static FastMapLocationSet allySet;
+    public static FastMapLocationSet allySet, kingSet;
     private static MapLocation[][] pastKingLocs = new MapLocation[5][5];
     private static int[] pastKingCounts = new int[5];
     public static void addAlly(MapLocation loc) {
@@ -20,6 +21,7 @@ public class RobotTracker {
     public static void reset() throws GameActionException {
         allyCount = 0;
         allySet = new FastMapLocationSet();
+        kingSet = new FastMapLocationSet();
         pastKingCounts[time % 5] = 0;
         for(var robot : rc.senseNearbyRobots(-1, team)) {
             var loc = robot.location;
@@ -35,16 +37,53 @@ public class RobotTracker {
                 var loc = pastKingLocs[i][j];
                 var locX = loc.x;
                 var locY = loc.y;
-                addAlly(new MapLocation(locX + -1, locY + -1));
-                addAlly(new MapLocation(locX + -1, locY + 0));
-                addAlly(new MapLocation(locX + -1, locY + 1));
-                addAlly(new MapLocation(locX + 0, locY + -1));
-                addAlly(new MapLocation(locX + 0, locY + 0));
-                addAlly(new MapLocation(locX + 0, locY + 1));
-                addAlly(new MapLocation(locX + 1, locY + -1));
-                addAlly(new MapLocation(locX + 1, locY + 0));
-                addAlly(new MapLocation(locX + 1, locY + 1));
+                {
+                    var kloc = new MapLocation(locX + -1, locY + -1);
+                    addAlly(kloc);
+                    kingSet.add(kloc);
+                }
+                {
+                    var kloc = new MapLocation(locX + -1, locY + 0);
+                    addAlly(kloc);
+                    kingSet.add(kloc);
+                }
+                {
+                    var kloc = new MapLocation(locX + -1, locY + 1);
+                    addAlly(kloc);
+                    kingSet.add(kloc);
+                }
+                {
+                    var kloc = new MapLocation(locX + 0, locY + -1);
+                    addAlly(kloc);
+                    kingSet.add(kloc);
+                }
+                {
+                    var kloc = new MapLocation(locX + 0, locY + 0);
+                    addAlly(kloc);
+                    kingSet.add(kloc);
+                }
+                {
+                    var kloc = new MapLocation(locX + 0, locY + 1);
+                    addAlly(kloc);
+                    kingSet.add(kloc);
+                }
+                {
+                    var kloc = new MapLocation(locX + 1, locY + -1);
+                    addAlly(kloc);
+                    kingSet.add(kloc);
+                }
+                {
+                    var kloc = new MapLocation(locX + 1, locY + 0);
+                    addAlly(kloc);
+                    kingSet.add(kloc);
+                }
+                {
+                    var kloc = new MapLocation(locX + 1, locY + 1);
+                    addAlly(kloc);
+                    kingSet.add(kloc);
+                }
             }
         }
+        indicate("allyCount " + allyCount);
     }
 }

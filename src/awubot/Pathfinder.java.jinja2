@@ -323,77 +323,76 @@ class BugnavInstance {
                 emptyStackTurns = 0;
             }
         }
-
-        // Profiler.begin();
-        {% macro tryDirs(turnDir, reverseDir) %}
-        // this loop only exists to allow continue
-        while(true) {
-            var tryDir = topDir.rotate{{reverseDir}}().rotate{{reverseDir}}();
-            {% for turns in range(-2, 6) %}
-            {% if turns < 0 %}
-            if(stackSize + {{turns}} >= 0
-               // only try -2 for diagonals
-               {% if turns == -2 %}
-               && Math.abs(topDir.dx + topDir.dy) != 1
-               {% endif %}
-               )
-            {% endif %}
-            {
-                // indicate("trying " + tryDir);
-                var nextPos = pos.add(tryDir);
-                if(!rc.onTheMap(nextPos)) {
-                     if(isMaster) {
-                        // avoid following the edge of the map (TODO: 1-thick borders)
-                        indicate("bugnav hit edge of map");
-                        leftTurn = !leftTurn;
-                        clearPath();
-                        // don't guess turn direction, we know that one direction is bad already
-                        emptyStackTurns = -1000;
-                        // start again
-                        continue;
-                    } else {
-                        hitEdge = true;
-                    }
-                    // Profiler.end("bugnav " + {{turns}} + " " + isMaster);
-                    // indicate("bugnav " + {{turns}} + " " + isMaster);
-                    return false;
-                }
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
-                    rc.setIndicatorDot(nextPos, 0, 255, 255);
-                    outOfSight = true;
-                    // Profiler.end("bugnav " + {{turns}} + " " + isMaster);
-                    // indicate("bugnav " + {{turns}} + " " + isMaster);
-                    return false;
-                }
-                if(CellTracker.isPassable(nextPos)) {
-                    pos = nextPos;
-                    topDir = tryDir;
-                    {% if turns %}
-                    stackSize += {{turns}};
-                    {% endif %}
-                    if(stackSize == 0) {
-                        emptyStackTurns++;
-                    } else {
-                        emptyStackTurns = 0;
-                    }
-                    appendCurrentPosition();
-                    // Profiler.end("bugnav " + {{turns}} + " " + isMaster);
-                    // indicate("bugnav " + {{turns}} + " " + isMaster);
-                    return true;
-                }
-            }
-            tryDir = tryDir.rotate{{turnDir}}();
-            {% endfor %}
-            assert false : "no valid move found from " + pos;
-        }
-        {% endmacro %}
-
         if(leftTurn) {
-            {{ tryDirs("Left", "Right") }}
+            return tryDirsLeft();
         } else {
-            {{ tryDirs("Right", "Left") }}
+            return tryDirsRight();
         }
     }
+    {% macro tryDirs(turnDir, reverseDir) %}
+    private boolean tryDirs{{turnDir}}() throws GameActionException {
+        var tryDir = topDir.rotate{{reverseDir}}().rotate{{reverseDir}}();
+        {% for turns in range(-2, 6) %}
+        {% if turns < 0 %}
+        if(stackSize + {{turns}} >= 0
+           // only try -2 for diagonals
+           {% if turns == -2 %}
+           && Math.abs(topDir.dx + topDir.dy) != 1
+           {% endif %}
+           )
+        {% endif %}
+        {
+            indicate("trying " + tryDir);
+            var nextPos = pos.add(tryDir);
+            if(!rc.onTheMap(nextPos)) {
+                 if(isMaster) {
+                    // avoid following the edge of the map (TODO: 1-thick borders)
+                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + {{turns}});
+                    leftTurn = !leftTurn;
+                    clearPath();
+                    // don't guess turn direction, we know that one direction is bad already
+                    emptyStackTurns = -1000;
+                    // start again
+                    return tryDirs{{reverseDir}}();
+                } else {
+                    hitEdge = true;
+                }
+                // Profiler.end("bugnav " + {{turns}} + " " + isMaster);
+                // indicate("bugnav " + {{turns}} + " " + isMaster);
+                return false;
+            }
+            if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+                rc.setIndicatorDot(nextPos, 0, 255, 255);
+                outOfSight = true;
+                // Profiler.end("bugnav " + {{turns}} + " " + isMaster);
+                // indicate("bugnav " + {{turns}} + " " + isMaster);
+                return false;
+            }
+            if(CellTracker.isPassable(nextPos)) {
+                pos = nextPos;
+                topDir = tryDir;
+                {% if turns %}
+                stackSize += {{turns}};
+                {% endif %}
+                if(stackSize == 0) {
+                    emptyStackTurns++;
+                } else {
+                    emptyStackTurns = 0;
+                }
+                appendCurrentPosition();
+                // Profiler.end("bugnav " + {{turns}} + " " + isMaster);
+                // indicate("bugnav " + {{turns}} + " " + isMaster);
+                return true;
+            }
+        }
+        tryDir = tryDir.rotate{{turnDir}}();
+        {% endfor %}
+        assert false : "no valid move found from " + pos;
+        return false;
+    }
+    {% endmacro %}
+    {{ tryDirs("Left", "Right") }}
+    {{ tryDirs("Right", "Left") }}
 }
 
 public class Pathfinder {

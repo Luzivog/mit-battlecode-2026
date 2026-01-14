@@ -86,7 +86,7 @@ public class Game {
     }
 
     public static void postTick() {
-        if (!isRatKing) println("index: " + myIndex);
+        // if (!isRatKing) println("index: " + myIndex);
         // if (time != rc.getRoundNum()) {
         //     println("bytecode exceeded");
         //     rc.resign();

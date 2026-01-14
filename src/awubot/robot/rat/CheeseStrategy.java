@@ -31,7 +31,6 @@ public class CheeseStrategy extends Strategy {
     }
 
     private void refreshCheeseTarget() throws GameActionException {
-        indicate("HERE " + cheeseTarget);
         if (cheeseTarget != null
             && rc.canSenseLocation(cheeseTarget)
             && rc.senseMapInfo(cheeseTarget).getCheeseAmount() == 0) {
@@ -45,6 +44,5 @@ public class CheeseStrategy extends Strategy {
                 bestAmount = info.getCheeseAmount();
             }
         }
-        indicate("New cheese target: " + cheeseTarget);
     }
 }

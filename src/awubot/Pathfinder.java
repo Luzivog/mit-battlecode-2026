@@ -731,725 +731,724 @@ class BugnavInstance {
                 emptyStackTurns = 0;
             }
         }
-
-        // Profiler.begin();
-
         if(leftTurn) {
-                    // this loop only exists to allow continue
-        while(true) {
-            var tryDir = topDir.rotateRight().rotateRight();
-            if(stackSize + -2 >= 0
-               // only try -2 for diagonals
-               && Math.abs(topDir.dx + topDir.dy) != 1
-               )
-            {
-                // indicate("trying " + tryDir);
-                var nextPos = pos.add(tryDir);
-                if(!rc.onTheMap(nextPos)) {
-                     if(isMaster) {
-                        // avoid following the edge of the map (TODO: 1-thick borders)
-                        indicate("bugnav hit edge of map");
-                        leftTurn = !leftTurn;
-                        clearPath();
-                        // don't guess turn direction, we know that one direction is bad already
-                        emptyStackTurns = -1000;
-                        // start again
-                        continue;
-                    } else {
-                        hitEdge = true;
-                    }
-                    // Profiler.end("bugnav " + -2 + " " + isMaster);
-                    // indicate("bugnav " + -2 + " " + isMaster);
-                    return false;
-                }
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
-                    rc.setIndicatorDot(nextPos, 0, 255, 255);
-                    outOfSight = true;
-                    // Profiler.end("bugnav " + -2 + " " + isMaster);
-                    // indicate("bugnav " + -2 + " " + isMaster);
-                    return false;
-                }
-                if(CellTracker.isPassable(nextPos)) {
-                    pos = nextPos;
-                    topDir = tryDir;
-                    stackSize += -2;
-                    if(stackSize == 0) {
-                        emptyStackTurns++;
-                    } else {
-                        emptyStackTurns = 0;
-                    }
-                    appendCurrentPosition();
-                    // Profiler.end("bugnav " + -2 + " " + isMaster);
-                    // indicate("bugnav " + -2 + " " + isMaster);
-                    return true;
-                }
-            }
-            tryDir = tryDir.rotateLeft();
-            if(stackSize + -1 >= 0
-               // only try -2 for diagonals
-               )
-            {
-                // indicate("trying " + tryDir);
-                var nextPos = pos.add(tryDir);
-                if(!rc.onTheMap(nextPos)) {
-                     if(isMaster) {
-                        // avoid following the edge of the map (TODO: 1-thick borders)
-                        indicate("bugnav hit edge of map");
-                        leftTurn = !leftTurn;
-                        clearPath();
-                        // don't guess turn direction, we know that one direction is bad already
-                        emptyStackTurns = -1000;
-                        // start again
-                        continue;
-                    } else {
-                        hitEdge = true;
-                    }
-                    // Profiler.end("bugnav " + -1 + " " + isMaster);
-                    // indicate("bugnav " + -1 + " " + isMaster);
-                    return false;
-                }
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
-                    rc.setIndicatorDot(nextPos, 0, 255, 255);
-                    outOfSight = true;
-                    // Profiler.end("bugnav " + -1 + " " + isMaster);
-                    // indicate("bugnav " + -1 + " " + isMaster);
-                    return false;
-                }
-                if(CellTracker.isPassable(nextPos)) {
-                    pos = nextPos;
-                    topDir = tryDir;
-                    stackSize += -1;
-                    if(stackSize == 0) {
-                        emptyStackTurns++;
-                    } else {
-                        emptyStackTurns = 0;
-                    }
-                    appendCurrentPosition();
-                    // Profiler.end("bugnav " + -1 + " " + isMaster);
-                    // indicate("bugnav " + -1 + " " + isMaster);
-                    return true;
-                }
-            }
-            tryDir = tryDir.rotateLeft();
-            {
-                // indicate("trying " + tryDir);
-                var nextPos = pos.add(tryDir);
-                if(!rc.onTheMap(nextPos)) {
-                     if(isMaster) {
-                        // avoid following the edge of the map (TODO: 1-thick borders)
-                        indicate("bugnav hit edge of map");
-                        leftTurn = !leftTurn;
-                        clearPath();
-                        // don't guess turn direction, we know that one direction is bad already
-                        emptyStackTurns = -1000;
-                        // start again
-                        continue;
-                    } else {
-                        hitEdge = true;
-                    }
-                    // Profiler.end("bugnav " + 0 + " " + isMaster);
-                    // indicate("bugnav " + 0 + " " + isMaster);
-                    return false;
-                }
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
-                    rc.setIndicatorDot(nextPos, 0, 255, 255);
-                    outOfSight = true;
-                    // Profiler.end("bugnav " + 0 + " " + isMaster);
-                    // indicate("bugnav " + 0 + " " + isMaster);
-                    return false;
-                }
-                if(CellTracker.isPassable(nextPos)) {
-                    pos = nextPos;
-                    topDir = tryDir;
-                    if(stackSize == 0) {
-                        emptyStackTurns++;
-                    } else {
-                        emptyStackTurns = 0;
-                    }
-                    appendCurrentPosition();
-                    // Profiler.end("bugnav " + 0 + " " + isMaster);
-                    // indicate("bugnav " + 0 + " " + isMaster);
-                    return true;
-                }
-            }
-            tryDir = tryDir.rotateLeft();
-            {
-                // indicate("trying " + tryDir);
-                var nextPos = pos.add(tryDir);
-                if(!rc.onTheMap(nextPos)) {
-                     if(isMaster) {
-                        // avoid following the edge of the map (TODO: 1-thick borders)
-                        indicate("bugnav hit edge of map");
-                        leftTurn = !leftTurn;
-                        clearPath();
-                        // don't guess turn direction, we know that one direction is bad already
-                        emptyStackTurns = -1000;
-                        // start again
-                        continue;
-                    } else {
-                        hitEdge = true;
-                    }
-                    // Profiler.end("bugnav " + 1 + " " + isMaster);
-                    // indicate("bugnav " + 1 + " " + isMaster);
-                    return false;
-                }
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
-                    rc.setIndicatorDot(nextPos, 0, 255, 255);
-                    outOfSight = true;
-                    // Profiler.end("bugnav " + 1 + " " + isMaster);
-                    // indicate("bugnav " + 1 + " " + isMaster);
-                    return false;
-                }
-                if(CellTracker.isPassable(nextPos)) {
-                    pos = nextPos;
-                    topDir = tryDir;
-                    stackSize += 1;
-                    if(stackSize == 0) {
-                        emptyStackTurns++;
-                    } else {
-                        emptyStackTurns = 0;
-                    }
-                    appendCurrentPosition();
-                    // Profiler.end("bugnav " + 1 + " " + isMaster);
-                    // indicate("bugnav " + 1 + " " + isMaster);
-                    return true;
-                }
-            }
-            tryDir = tryDir.rotateLeft();
-            {
-                // indicate("trying " + tryDir);
-                var nextPos = pos.add(tryDir);
-                if(!rc.onTheMap(nextPos)) {
-                     if(isMaster) {
-                        // avoid following the edge of the map (TODO: 1-thick borders)
-                        indicate("bugnav hit edge of map");
-                        leftTurn = !leftTurn;
-                        clearPath();
-                        // don't guess turn direction, we know that one direction is bad already
-                        emptyStackTurns = -1000;
-                        // start again
-                        continue;
-                    } else {
-                        hitEdge = true;
-                    }
-                    // Profiler.end("bugnav " + 2 + " " + isMaster);
-                    // indicate("bugnav " + 2 + " " + isMaster);
-                    return false;
-                }
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
-                    rc.setIndicatorDot(nextPos, 0, 255, 255);
-                    outOfSight = true;
-                    // Profiler.end("bugnav " + 2 + " " + isMaster);
-                    // indicate("bugnav " + 2 + " " + isMaster);
-                    return false;
-                }
-                if(CellTracker.isPassable(nextPos)) {
-                    pos = nextPos;
-                    topDir = tryDir;
-                    stackSize += 2;
-                    if(stackSize == 0) {
-                        emptyStackTurns++;
-                    } else {
-                        emptyStackTurns = 0;
-                    }
-                    appendCurrentPosition();
-                    // Profiler.end("bugnav " + 2 + " " + isMaster);
-                    // indicate("bugnav " + 2 + " " + isMaster);
-                    return true;
-                }
-            }
-            tryDir = tryDir.rotateLeft();
-            {
-                // indicate("trying " + tryDir);
-                var nextPos = pos.add(tryDir);
-                if(!rc.onTheMap(nextPos)) {
-                     if(isMaster) {
-                        // avoid following the edge of the map (TODO: 1-thick borders)
-                        indicate("bugnav hit edge of map");
-                        leftTurn = !leftTurn;
-                        clearPath();
-                        // don't guess turn direction, we know that one direction is bad already
-                        emptyStackTurns = -1000;
-                        // start again
-                        continue;
-                    } else {
-                        hitEdge = true;
-                    }
-                    // Profiler.end("bugnav " + 3 + " " + isMaster);
-                    // indicate("bugnav " + 3 + " " + isMaster);
-                    return false;
-                }
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
-                    rc.setIndicatorDot(nextPos, 0, 255, 255);
-                    outOfSight = true;
-                    // Profiler.end("bugnav " + 3 + " " + isMaster);
-                    // indicate("bugnav " + 3 + " " + isMaster);
-                    return false;
-                }
-                if(CellTracker.isPassable(nextPos)) {
-                    pos = nextPos;
-                    topDir = tryDir;
-                    stackSize += 3;
-                    if(stackSize == 0) {
-                        emptyStackTurns++;
-                    } else {
-                        emptyStackTurns = 0;
-                    }
-                    appendCurrentPosition();
-                    // Profiler.end("bugnav " + 3 + " " + isMaster);
-                    // indicate("bugnav " + 3 + " " + isMaster);
-                    return true;
-                }
-            }
-            tryDir = tryDir.rotateLeft();
-            {
-                // indicate("trying " + tryDir);
-                var nextPos = pos.add(tryDir);
-                if(!rc.onTheMap(nextPos)) {
-                     if(isMaster) {
-                        // avoid following the edge of the map (TODO: 1-thick borders)
-                        indicate("bugnav hit edge of map");
-                        leftTurn = !leftTurn;
-                        clearPath();
-                        // don't guess turn direction, we know that one direction is bad already
-                        emptyStackTurns = -1000;
-                        // start again
-                        continue;
-                    } else {
-                        hitEdge = true;
-                    }
-                    // Profiler.end("bugnav " + 4 + " " + isMaster);
-                    // indicate("bugnav " + 4 + " " + isMaster);
-                    return false;
-                }
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
-                    rc.setIndicatorDot(nextPos, 0, 255, 255);
-                    outOfSight = true;
-                    // Profiler.end("bugnav " + 4 + " " + isMaster);
-                    // indicate("bugnav " + 4 + " " + isMaster);
-                    return false;
-                }
-                if(CellTracker.isPassable(nextPos)) {
-                    pos = nextPos;
-                    topDir = tryDir;
-                    stackSize += 4;
-                    if(stackSize == 0) {
-                        emptyStackTurns++;
-                    } else {
-                        emptyStackTurns = 0;
-                    }
-                    appendCurrentPosition();
-                    // Profiler.end("bugnav " + 4 + " " + isMaster);
-                    // indicate("bugnav " + 4 + " " + isMaster);
-                    return true;
-                }
-            }
-            tryDir = tryDir.rotateLeft();
-            {
-                // indicate("trying " + tryDir);
-                var nextPos = pos.add(tryDir);
-                if(!rc.onTheMap(nextPos)) {
-                     if(isMaster) {
-                        // avoid following the edge of the map (TODO: 1-thick borders)
-                        indicate("bugnav hit edge of map");
-                        leftTurn = !leftTurn;
-                        clearPath();
-                        // don't guess turn direction, we know that one direction is bad already
-                        emptyStackTurns = -1000;
-                        // start again
-                        continue;
-                    } else {
-                        hitEdge = true;
-                    }
-                    // Profiler.end("bugnav " + 5 + " " + isMaster);
-                    // indicate("bugnav " + 5 + " " + isMaster);
-                    return false;
-                }
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
-                    rc.setIndicatorDot(nextPos, 0, 255, 255);
-                    outOfSight = true;
-                    // Profiler.end("bugnav " + 5 + " " + isMaster);
-                    // indicate("bugnav " + 5 + " " + isMaster);
-                    return false;
-                }
-                if(CellTracker.isPassable(nextPos)) {
-                    pos = nextPos;
-                    topDir = tryDir;
-                    stackSize += 5;
-                    if(stackSize == 0) {
-                        emptyStackTurns++;
-                    } else {
-                        emptyStackTurns = 0;
-                    }
-                    appendCurrentPosition();
-                    // Profiler.end("bugnav " + 5 + " " + isMaster);
-                    // indicate("bugnav " + 5 + " " + isMaster);
-                    return true;
-                }
-            }
-            tryDir = tryDir.rotateLeft();
-            assert false : "no valid move found from " + pos;
-        }
-
+            return tryDirsLeft();
         } else {
-                    // this loop only exists to allow continue
-        while(true) {
-            var tryDir = topDir.rotateLeft().rotateLeft();
-            if(stackSize + -2 >= 0
-               // only try -2 for diagonals
-               && Math.abs(topDir.dx + topDir.dy) != 1
-               )
-            {
-                // indicate("trying " + tryDir);
-                var nextPos = pos.add(tryDir);
-                if(!rc.onTheMap(nextPos)) {
-                     if(isMaster) {
-                        // avoid following the edge of the map (TODO: 1-thick borders)
-                        indicate("bugnav hit edge of map");
-                        leftTurn = !leftTurn;
-                        clearPath();
-                        // don't guess turn direction, we know that one direction is bad already
-                        emptyStackTurns = -1000;
-                        // start again
-                        continue;
-                    } else {
-                        hitEdge = true;
-                    }
-                    // Profiler.end("bugnav " + -2 + " " + isMaster);
-                    // indicate("bugnav " + -2 + " " + isMaster);
-                    return false;
-                }
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
-                    rc.setIndicatorDot(nextPos, 0, 255, 255);
-                    outOfSight = true;
-                    // Profiler.end("bugnav " + -2 + " " + isMaster);
-                    // indicate("bugnav " + -2 + " " + isMaster);
-                    return false;
-                }
-                if(CellTracker.isPassable(nextPos)) {
-                    pos = nextPos;
-                    topDir = tryDir;
-                    stackSize += -2;
-                    if(stackSize == 0) {
-                        emptyStackTurns++;
-                    } else {
-                        emptyStackTurns = 0;
-                    }
-                    appendCurrentPosition();
-                    // Profiler.end("bugnav " + -2 + " " + isMaster);
-                    // indicate("bugnav " + -2 + " " + isMaster);
-                    return true;
-                }
-            }
-            tryDir = tryDir.rotateRight();
-            if(stackSize + -1 >= 0
-               // only try -2 for diagonals
-               )
-            {
-                // indicate("trying " + tryDir);
-                var nextPos = pos.add(tryDir);
-                if(!rc.onTheMap(nextPos)) {
-                     if(isMaster) {
-                        // avoid following the edge of the map (TODO: 1-thick borders)
-                        indicate("bugnav hit edge of map");
-                        leftTurn = !leftTurn;
-                        clearPath();
-                        // don't guess turn direction, we know that one direction is bad already
-                        emptyStackTurns = -1000;
-                        // start again
-                        continue;
-                    } else {
-                        hitEdge = true;
-                    }
-                    // Profiler.end("bugnav " + -1 + " " + isMaster);
-                    // indicate("bugnav " + -1 + " " + isMaster);
-                    return false;
-                }
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
-                    rc.setIndicatorDot(nextPos, 0, 255, 255);
-                    outOfSight = true;
-                    // Profiler.end("bugnav " + -1 + " " + isMaster);
-                    // indicate("bugnav " + -1 + " " + isMaster);
-                    return false;
-                }
-                if(CellTracker.isPassable(nextPos)) {
-                    pos = nextPos;
-                    topDir = tryDir;
-                    stackSize += -1;
-                    if(stackSize == 0) {
-                        emptyStackTurns++;
-                    } else {
-                        emptyStackTurns = 0;
-                    }
-                    appendCurrentPosition();
-                    // Profiler.end("bugnav " + -1 + " " + isMaster);
-                    // indicate("bugnav " + -1 + " " + isMaster);
-                    return true;
-                }
-            }
-            tryDir = tryDir.rotateRight();
-            {
-                // indicate("trying " + tryDir);
-                var nextPos = pos.add(tryDir);
-                if(!rc.onTheMap(nextPos)) {
-                     if(isMaster) {
-                        // avoid following the edge of the map (TODO: 1-thick borders)
-                        indicate("bugnav hit edge of map");
-                        leftTurn = !leftTurn;
-                        clearPath();
-                        // don't guess turn direction, we know that one direction is bad already
-                        emptyStackTurns = -1000;
-                        // start again
-                        continue;
-                    } else {
-                        hitEdge = true;
-                    }
-                    // Profiler.end("bugnav " + 0 + " " + isMaster);
-                    // indicate("bugnav " + 0 + " " + isMaster);
-                    return false;
-                }
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
-                    rc.setIndicatorDot(nextPos, 0, 255, 255);
-                    outOfSight = true;
-                    // Profiler.end("bugnav " + 0 + " " + isMaster);
-                    // indicate("bugnav " + 0 + " " + isMaster);
-                    return false;
-                }
-                if(CellTracker.isPassable(nextPos)) {
-                    pos = nextPos;
-                    topDir = tryDir;
-                    if(stackSize == 0) {
-                        emptyStackTurns++;
-                    } else {
-                        emptyStackTurns = 0;
-                    }
-                    appendCurrentPosition();
-                    // Profiler.end("bugnav " + 0 + " " + isMaster);
-                    // indicate("bugnav " + 0 + " " + isMaster);
-                    return true;
-                }
-            }
-            tryDir = tryDir.rotateRight();
-            {
-                // indicate("trying " + tryDir);
-                var nextPos = pos.add(tryDir);
-                if(!rc.onTheMap(nextPos)) {
-                     if(isMaster) {
-                        // avoid following the edge of the map (TODO: 1-thick borders)
-                        indicate("bugnav hit edge of map");
-                        leftTurn = !leftTurn;
-                        clearPath();
-                        // don't guess turn direction, we know that one direction is bad already
-                        emptyStackTurns = -1000;
-                        // start again
-                        continue;
-                    } else {
-                        hitEdge = true;
-                    }
-                    // Profiler.end("bugnav " + 1 + " " + isMaster);
-                    // indicate("bugnav " + 1 + " " + isMaster);
-                    return false;
-                }
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
-                    rc.setIndicatorDot(nextPos, 0, 255, 255);
-                    outOfSight = true;
-                    // Profiler.end("bugnav " + 1 + " " + isMaster);
-                    // indicate("bugnav " + 1 + " " + isMaster);
-                    return false;
-                }
-                if(CellTracker.isPassable(nextPos)) {
-                    pos = nextPos;
-                    topDir = tryDir;
-                    stackSize += 1;
-                    if(stackSize == 0) {
-                        emptyStackTurns++;
-                    } else {
-                        emptyStackTurns = 0;
-                    }
-                    appendCurrentPosition();
-                    // Profiler.end("bugnav " + 1 + " " + isMaster);
-                    // indicate("bugnav " + 1 + " " + isMaster);
-                    return true;
-                }
-            }
-            tryDir = tryDir.rotateRight();
-            {
-                // indicate("trying " + tryDir);
-                var nextPos = pos.add(tryDir);
-                if(!rc.onTheMap(nextPos)) {
-                     if(isMaster) {
-                        // avoid following the edge of the map (TODO: 1-thick borders)
-                        indicate("bugnav hit edge of map");
-                        leftTurn = !leftTurn;
-                        clearPath();
-                        // don't guess turn direction, we know that one direction is bad already
-                        emptyStackTurns = -1000;
-                        // start again
-                        continue;
-                    } else {
-                        hitEdge = true;
-                    }
-                    // Profiler.end("bugnav " + 2 + " " + isMaster);
-                    // indicate("bugnav " + 2 + " " + isMaster);
-                    return false;
-                }
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
-                    rc.setIndicatorDot(nextPos, 0, 255, 255);
-                    outOfSight = true;
-                    // Profiler.end("bugnav " + 2 + " " + isMaster);
-                    // indicate("bugnav " + 2 + " " + isMaster);
-                    return false;
-                }
-                if(CellTracker.isPassable(nextPos)) {
-                    pos = nextPos;
-                    topDir = tryDir;
-                    stackSize += 2;
-                    if(stackSize == 0) {
-                        emptyStackTurns++;
-                    } else {
-                        emptyStackTurns = 0;
-                    }
-                    appendCurrentPosition();
-                    // Profiler.end("bugnav " + 2 + " " + isMaster);
-                    // indicate("bugnav " + 2 + " " + isMaster);
-                    return true;
-                }
-            }
-            tryDir = tryDir.rotateRight();
-            {
-                // indicate("trying " + tryDir);
-                var nextPos = pos.add(tryDir);
-                if(!rc.onTheMap(nextPos)) {
-                     if(isMaster) {
-                        // avoid following the edge of the map (TODO: 1-thick borders)
-                        indicate("bugnav hit edge of map");
-                        leftTurn = !leftTurn;
-                        clearPath();
-                        // don't guess turn direction, we know that one direction is bad already
-                        emptyStackTurns = -1000;
-                        // start again
-                        continue;
-                    } else {
-                        hitEdge = true;
-                    }
-                    // Profiler.end("bugnav " + 3 + " " + isMaster);
-                    // indicate("bugnav " + 3 + " " + isMaster);
-                    return false;
-                }
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
-                    rc.setIndicatorDot(nextPos, 0, 255, 255);
-                    outOfSight = true;
-                    // Profiler.end("bugnav " + 3 + " " + isMaster);
-                    // indicate("bugnav " + 3 + " " + isMaster);
-                    return false;
-                }
-                if(CellTracker.isPassable(nextPos)) {
-                    pos = nextPos;
-                    topDir = tryDir;
-                    stackSize += 3;
-                    if(stackSize == 0) {
-                        emptyStackTurns++;
-                    } else {
-                        emptyStackTurns = 0;
-                    }
-                    appendCurrentPosition();
-                    // Profiler.end("bugnav " + 3 + " " + isMaster);
-                    // indicate("bugnav " + 3 + " " + isMaster);
-                    return true;
-                }
-            }
-            tryDir = tryDir.rotateRight();
-            {
-                // indicate("trying " + tryDir);
-                var nextPos = pos.add(tryDir);
-                if(!rc.onTheMap(nextPos)) {
-                     if(isMaster) {
-                        // avoid following the edge of the map (TODO: 1-thick borders)
-                        indicate("bugnav hit edge of map");
-                        leftTurn = !leftTurn;
-                        clearPath();
-                        // don't guess turn direction, we know that one direction is bad already
-                        emptyStackTurns = -1000;
-                        // start again
-                        continue;
-                    } else {
-                        hitEdge = true;
-                    }
-                    // Profiler.end("bugnav " + 4 + " " + isMaster);
-                    // indicate("bugnav " + 4 + " " + isMaster);
-                    return false;
-                }
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
-                    rc.setIndicatorDot(nextPos, 0, 255, 255);
-                    outOfSight = true;
-                    // Profiler.end("bugnav " + 4 + " " + isMaster);
-                    // indicate("bugnav " + 4 + " " + isMaster);
-                    return false;
-                }
-                if(CellTracker.isPassable(nextPos)) {
-                    pos = nextPos;
-                    topDir = tryDir;
-                    stackSize += 4;
-                    if(stackSize == 0) {
-                        emptyStackTurns++;
-                    } else {
-                        emptyStackTurns = 0;
-                    }
-                    appendCurrentPosition();
-                    // Profiler.end("bugnav " + 4 + " " + isMaster);
-                    // indicate("bugnav " + 4 + " " + isMaster);
-                    return true;
-                }
-            }
-            tryDir = tryDir.rotateRight();
-            {
-                // indicate("trying " + tryDir);
-                var nextPos = pos.add(tryDir);
-                if(!rc.onTheMap(nextPos)) {
-                     if(isMaster) {
-                        // avoid following the edge of the map (TODO: 1-thick borders)
-                        indicate("bugnav hit edge of map");
-                        leftTurn = !leftTurn;
-                        clearPath();
-                        // don't guess turn direction, we know that one direction is bad already
-                        emptyStackTurns = -1000;
-                        // start again
-                        continue;
-                    } else {
-                        hitEdge = true;
-                    }
-                    // Profiler.end("bugnav " + 5 + " " + isMaster);
-                    // indicate("bugnav " + 5 + " " + isMaster);
-                    return false;
-                }
-                if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
-                    rc.setIndicatorDot(nextPos, 0, 255, 255);
-                    outOfSight = true;
-                    // Profiler.end("bugnav " + 5 + " " + isMaster);
-                    // indicate("bugnav " + 5 + " " + isMaster);
-                    return false;
-                }
-                if(CellTracker.isPassable(nextPos)) {
-                    pos = nextPos;
-                    topDir = tryDir;
-                    stackSize += 5;
-                    if(stackSize == 0) {
-                        emptyStackTurns++;
-                    } else {
-                        emptyStackTurns = 0;
-                    }
-                    appendCurrentPosition();
-                    // Profiler.end("bugnav " + 5 + " " + isMaster);
-                    // indicate("bugnav " + 5 + " " + isMaster);
-                    return true;
-                }
-            }
-            tryDir = tryDir.rotateRight();
-            assert false : "no valid move found from " + pos;
-        }
-
+            return tryDirsRight();
         }
     }
+        private boolean tryDirsLeft() throws GameActionException {
+        var tryDir = topDir.rotateRight().rotateRight();
+        if(stackSize + -2 >= 0
+           // only try -2 for diagonals
+           && Math.abs(topDir.dx + topDir.dy) != 1
+           )
+        {
+            indicate("trying " + tryDir);
+            var nextPos = pos.add(tryDir);
+            if(!rc.onTheMap(nextPos)) {
+                 if(isMaster) {
+                    // avoid following the edge of the map (TODO: 1-thick borders)
+                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + -2);
+                    leftTurn = !leftTurn;
+                    clearPath();
+                    // don't guess turn direction, we know that one direction is bad already
+                    emptyStackTurns = -1000;
+                    // start again
+                    return tryDirsRight();
+                } else {
+                    hitEdge = true;
+                }
+                // Profiler.end("bugnav " + -2 + " " + isMaster);
+                // indicate("bugnav " + -2 + " " + isMaster);
+                return false;
+            }
+            if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+                rc.setIndicatorDot(nextPos, 0, 255, 255);
+                outOfSight = true;
+                // Profiler.end("bugnav " + -2 + " " + isMaster);
+                // indicate("bugnav " + -2 + " " + isMaster);
+                return false;
+            }
+            if(CellTracker.isPassable(nextPos)) {
+                pos = nextPos;
+                topDir = tryDir;
+                stackSize += -2;
+                if(stackSize == 0) {
+                    emptyStackTurns++;
+                } else {
+                    emptyStackTurns = 0;
+                }
+                appendCurrentPosition();
+                // Profiler.end("bugnav " + -2 + " " + isMaster);
+                // indicate("bugnav " + -2 + " " + isMaster);
+                return true;
+            }
+        }
+        tryDir = tryDir.rotateLeft();
+        if(stackSize + -1 >= 0
+           // only try -2 for diagonals
+           )
+        {
+            indicate("trying " + tryDir);
+            var nextPos = pos.add(tryDir);
+            if(!rc.onTheMap(nextPos)) {
+                 if(isMaster) {
+                    // avoid following the edge of the map (TODO: 1-thick borders)
+                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + -1);
+                    leftTurn = !leftTurn;
+                    clearPath();
+                    // don't guess turn direction, we know that one direction is bad already
+                    emptyStackTurns = -1000;
+                    // start again
+                    return tryDirsRight();
+                } else {
+                    hitEdge = true;
+                }
+                // Profiler.end("bugnav " + -1 + " " + isMaster);
+                // indicate("bugnav " + -1 + " " + isMaster);
+                return false;
+            }
+            if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+                rc.setIndicatorDot(nextPos, 0, 255, 255);
+                outOfSight = true;
+                // Profiler.end("bugnav " + -1 + " " + isMaster);
+                // indicate("bugnav " + -1 + " " + isMaster);
+                return false;
+            }
+            if(CellTracker.isPassable(nextPos)) {
+                pos = nextPos;
+                topDir = tryDir;
+                stackSize += -1;
+                if(stackSize == 0) {
+                    emptyStackTurns++;
+                } else {
+                    emptyStackTurns = 0;
+                }
+                appendCurrentPosition();
+                // Profiler.end("bugnav " + -1 + " " + isMaster);
+                // indicate("bugnav " + -1 + " " + isMaster);
+                return true;
+            }
+        }
+        tryDir = tryDir.rotateLeft();
+        {
+            indicate("trying " + tryDir);
+            var nextPos = pos.add(tryDir);
+            if(!rc.onTheMap(nextPos)) {
+                 if(isMaster) {
+                    // avoid following the edge of the map (TODO: 1-thick borders)
+                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 0);
+                    leftTurn = !leftTurn;
+                    clearPath();
+                    // don't guess turn direction, we know that one direction is bad already
+                    emptyStackTurns = -1000;
+                    // start again
+                    return tryDirsRight();
+                } else {
+                    hitEdge = true;
+                }
+                // Profiler.end("bugnav " + 0 + " " + isMaster);
+                // indicate("bugnav " + 0 + " " + isMaster);
+                return false;
+            }
+            if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+                rc.setIndicatorDot(nextPos, 0, 255, 255);
+                outOfSight = true;
+                // Profiler.end("bugnav " + 0 + " " + isMaster);
+                // indicate("bugnav " + 0 + " " + isMaster);
+                return false;
+            }
+            if(CellTracker.isPassable(nextPos)) {
+                pos = nextPos;
+                topDir = tryDir;
+                if(stackSize == 0) {
+                    emptyStackTurns++;
+                } else {
+                    emptyStackTurns = 0;
+                }
+                appendCurrentPosition();
+                // Profiler.end("bugnav " + 0 + " " + isMaster);
+                // indicate("bugnav " + 0 + " " + isMaster);
+                return true;
+            }
+        }
+        tryDir = tryDir.rotateLeft();
+        {
+            indicate("trying " + tryDir);
+            var nextPos = pos.add(tryDir);
+            if(!rc.onTheMap(nextPos)) {
+                 if(isMaster) {
+                    // avoid following the edge of the map (TODO: 1-thick borders)
+                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 1);
+                    leftTurn = !leftTurn;
+                    clearPath();
+                    // don't guess turn direction, we know that one direction is bad already
+                    emptyStackTurns = -1000;
+                    // start again
+                    return tryDirsRight();
+                } else {
+                    hitEdge = true;
+                }
+                // Profiler.end("bugnav " + 1 + " " + isMaster);
+                // indicate("bugnav " + 1 + " " + isMaster);
+                return false;
+            }
+            if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+                rc.setIndicatorDot(nextPos, 0, 255, 255);
+                outOfSight = true;
+                // Profiler.end("bugnav " + 1 + " " + isMaster);
+                // indicate("bugnav " + 1 + " " + isMaster);
+                return false;
+            }
+            if(CellTracker.isPassable(nextPos)) {
+                pos = nextPos;
+                topDir = tryDir;
+                stackSize += 1;
+                if(stackSize == 0) {
+                    emptyStackTurns++;
+                } else {
+                    emptyStackTurns = 0;
+                }
+                appendCurrentPosition();
+                // Profiler.end("bugnav " + 1 + " " + isMaster);
+                // indicate("bugnav " + 1 + " " + isMaster);
+                return true;
+            }
+        }
+        tryDir = tryDir.rotateLeft();
+        {
+            indicate("trying " + tryDir);
+            var nextPos = pos.add(tryDir);
+            if(!rc.onTheMap(nextPos)) {
+                 if(isMaster) {
+                    // avoid following the edge of the map (TODO: 1-thick borders)
+                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 2);
+                    leftTurn = !leftTurn;
+                    clearPath();
+                    // don't guess turn direction, we know that one direction is bad already
+                    emptyStackTurns = -1000;
+                    // start again
+                    return tryDirsRight();
+                } else {
+                    hitEdge = true;
+                }
+                // Profiler.end("bugnav " + 2 + " " + isMaster);
+                // indicate("bugnav " + 2 + " " + isMaster);
+                return false;
+            }
+            if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+                rc.setIndicatorDot(nextPos, 0, 255, 255);
+                outOfSight = true;
+                // Profiler.end("bugnav " + 2 + " " + isMaster);
+                // indicate("bugnav " + 2 + " " + isMaster);
+                return false;
+            }
+            if(CellTracker.isPassable(nextPos)) {
+                pos = nextPos;
+                topDir = tryDir;
+                stackSize += 2;
+                if(stackSize == 0) {
+                    emptyStackTurns++;
+                } else {
+                    emptyStackTurns = 0;
+                }
+                appendCurrentPosition();
+                // Profiler.end("bugnav " + 2 + " " + isMaster);
+                // indicate("bugnav " + 2 + " " + isMaster);
+                return true;
+            }
+        }
+        tryDir = tryDir.rotateLeft();
+        {
+            indicate("trying " + tryDir);
+            var nextPos = pos.add(tryDir);
+            if(!rc.onTheMap(nextPos)) {
+                 if(isMaster) {
+                    // avoid following the edge of the map (TODO: 1-thick borders)
+                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 3);
+                    leftTurn = !leftTurn;
+                    clearPath();
+                    // don't guess turn direction, we know that one direction is bad already
+                    emptyStackTurns = -1000;
+                    // start again
+                    return tryDirsRight();
+                } else {
+                    hitEdge = true;
+                }
+                // Profiler.end("bugnav " + 3 + " " + isMaster);
+                // indicate("bugnav " + 3 + " " + isMaster);
+                return false;
+            }
+            if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+                rc.setIndicatorDot(nextPos, 0, 255, 255);
+                outOfSight = true;
+                // Profiler.end("bugnav " + 3 + " " + isMaster);
+                // indicate("bugnav " + 3 + " " + isMaster);
+                return false;
+            }
+            if(CellTracker.isPassable(nextPos)) {
+                pos = nextPos;
+                topDir = tryDir;
+                stackSize += 3;
+                if(stackSize == 0) {
+                    emptyStackTurns++;
+                } else {
+                    emptyStackTurns = 0;
+                }
+                appendCurrentPosition();
+                // Profiler.end("bugnav " + 3 + " " + isMaster);
+                // indicate("bugnav " + 3 + " " + isMaster);
+                return true;
+            }
+        }
+        tryDir = tryDir.rotateLeft();
+        {
+            indicate("trying " + tryDir);
+            var nextPos = pos.add(tryDir);
+            if(!rc.onTheMap(nextPos)) {
+                 if(isMaster) {
+                    // avoid following the edge of the map (TODO: 1-thick borders)
+                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 4);
+                    leftTurn = !leftTurn;
+                    clearPath();
+                    // don't guess turn direction, we know that one direction is bad already
+                    emptyStackTurns = -1000;
+                    // start again
+                    return tryDirsRight();
+                } else {
+                    hitEdge = true;
+                }
+                // Profiler.end("bugnav " + 4 + " " + isMaster);
+                // indicate("bugnav " + 4 + " " + isMaster);
+                return false;
+            }
+            if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+                rc.setIndicatorDot(nextPos, 0, 255, 255);
+                outOfSight = true;
+                // Profiler.end("bugnav " + 4 + " " + isMaster);
+                // indicate("bugnav " + 4 + " " + isMaster);
+                return false;
+            }
+            if(CellTracker.isPassable(nextPos)) {
+                pos = nextPos;
+                topDir = tryDir;
+                stackSize += 4;
+                if(stackSize == 0) {
+                    emptyStackTurns++;
+                } else {
+                    emptyStackTurns = 0;
+                }
+                appendCurrentPosition();
+                // Profiler.end("bugnav " + 4 + " " + isMaster);
+                // indicate("bugnav " + 4 + " " + isMaster);
+                return true;
+            }
+        }
+        tryDir = tryDir.rotateLeft();
+        {
+            indicate("trying " + tryDir);
+            var nextPos = pos.add(tryDir);
+            if(!rc.onTheMap(nextPos)) {
+                 if(isMaster) {
+                    // avoid following the edge of the map (TODO: 1-thick borders)
+                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 5);
+                    leftTurn = !leftTurn;
+                    clearPath();
+                    // don't guess turn direction, we know that one direction is bad already
+                    emptyStackTurns = -1000;
+                    // start again
+                    return tryDirsRight();
+                } else {
+                    hitEdge = true;
+                }
+                // Profiler.end("bugnav " + 5 + " " + isMaster);
+                // indicate("bugnav " + 5 + " " + isMaster);
+                return false;
+            }
+            if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+                rc.setIndicatorDot(nextPos, 0, 255, 255);
+                outOfSight = true;
+                // Profiler.end("bugnav " + 5 + " " + isMaster);
+                // indicate("bugnav " + 5 + " " + isMaster);
+                return false;
+            }
+            if(CellTracker.isPassable(nextPos)) {
+                pos = nextPos;
+                topDir = tryDir;
+                stackSize += 5;
+                if(stackSize == 0) {
+                    emptyStackTurns++;
+                } else {
+                    emptyStackTurns = 0;
+                }
+                appendCurrentPosition();
+                // Profiler.end("bugnav " + 5 + " " + isMaster);
+                // indicate("bugnav " + 5 + " " + isMaster);
+                return true;
+            }
+        }
+        tryDir = tryDir.rotateLeft();
+        assert false : "no valid move found from " + pos;
+        return false;
+    }
+
+        private boolean tryDirsRight() throws GameActionException {
+        var tryDir = topDir.rotateLeft().rotateLeft();
+        if(stackSize + -2 >= 0
+           // only try -2 for diagonals
+           && Math.abs(topDir.dx + topDir.dy) != 1
+           )
+        {
+            indicate("trying " + tryDir);
+            var nextPos = pos.add(tryDir);
+            if(!rc.onTheMap(nextPos)) {
+                 if(isMaster) {
+                    // avoid following the edge of the map (TODO: 1-thick borders)
+                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + -2);
+                    leftTurn = !leftTurn;
+                    clearPath();
+                    // don't guess turn direction, we know that one direction is bad already
+                    emptyStackTurns = -1000;
+                    // start again
+                    return tryDirsLeft();
+                } else {
+                    hitEdge = true;
+                }
+                // Profiler.end("bugnav " + -2 + " " + isMaster);
+                // indicate("bugnav " + -2 + " " + isMaster);
+                return false;
+            }
+            if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+                rc.setIndicatorDot(nextPos, 0, 255, 255);
+                outOfSight = true;
+                // Profiler.end("bugnav " + -2 + " " + isMaster);
+                // indicate("bugnav " + -2 + " " + isMaster);
+                return false;
+            }
+            if(CellTracker.isPassable(nextPos)) {
+                pos = nextPos;
+                topDir = tryDir;
+                stackSize += -2;
+                if(stackSize == 0) {
+                    emptyStackTurns++;
+                } else {
+                    emptyStackTurns = 0;
+                }
+                appendCurrentPosition();
+                // Profiler.end("bugnav " + -2 + " " + isMaster);
+                // indicate("bugnav " + -2 + " " + isMaster);
+                return true;
+            }
+        }
+        tryDir = tryDir.rotateRight();
+        if(stackSize + -1 >= 0
+           // only try -2 for diagonals
+           )
+        {
+            indicate("trying " + tryDir);
+            var nextPos = pos.add(tryDir);
+            if(!rc.onTheMap(nextPos)) {
+                 if(isMaster) {
+                    // avoid following the edge of the map (TODO: 1-thick borders)
+                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + -1);
+                    leftTurn = !leftTurn;
+                    clearPath();
+                    // don't guess turn direction, we know that one direction is bad already
+                    emptyStackTurns = -1000;
+                    // start again
+                    return tryDirsLeft();
+                } else {
+                    hitEdge = true;
+                }
+                // Profiler.end("bugnav " + -1 + " " + isMaster);
+                // indicate("bugnav " + -1 + " " + isMaster);
+                return false;
+            }
+            if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+                rc.setIndicatorDot(nextPos, 0, 255, 255);
+                outOfSight = true;
+                // Profiler.end("bugnav " + -1 + " " + isMaster);
+                // indicate("bugnav " + -1 + " " + isMaster);
+                return false;
+            }
+            if(CellTracker.isPassable(nextPos)) {
+                pos = nextPos;
+                topDir = tryDir;
+                stackSize += -1;
+                if(stackSize == 0) {
+                    emptyStackTurns++;
+                } else {
+                    emptyStackTurns = 0;
+                }
+                appendCurrentPosition();
+                // Profiler.end("bugnav " + -1 + " " + isMaster);
+                // indicate("bugnav " + -1 + " " + isMaster);
+                return true;
+            }
+        }
+        tryDir = tryDir.rotateRight();
+        {
+            indicate("trying " + tryDir);
+            var nextPos = pos.add(tryDir);
+            if(!rc.onTheMap(nextPos)) {
+                 if(isMaster) {
+                    // avoid following the edge of the map (TODO: 1-thick borders)
+                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 0);
+                    leftTurn = !leftTurn;
+                    clearPath();
+                    // don't guess turn direction, we know that one direction is bad already
+                    emptyStackTurns = -1000;
+                    // start again
+                    return tryDirsLeft();
+                } else {
+                    hitEdge = true;
+                }
+                // Profiler.end("bugnav " + 0 + " " + isMaster);
+                // indicate("bugnav " + 0 + " " + isMaster);
+                return false;
+            }
+            if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+                rc.setIndicatorDot(nextPos, 0, 255, 255);
+                outOfSight = true;
+                // Profiler.end("bugnav " + 0 + " " + isMaster);
+                // indicate("bugnav " + 0 + " " + isMaster);
+                return false;
+            }
+            if(CellTracker.isPassable(nextPos)) {
+                pos = nextPos;
+                topDir = tryDir;
+                if(stackSize == 0) {
+                    emptyStackTurns++;
+                } else {
+                    emptyStackTurns = 0;
+                }
+                appendCurrentPosition();
+                // Profiler.end("bugnav " + 0 + " " + isMaster);
+                // indicate("bugnav " + 0 + " " + isMaster);
+                return true;
+            }
+        }
+        tryDir = tryDir.rotateRight();
+        {
+            indicate("trying " + tryDir);
+            var nextPos = pos.add(tryDir);
+            if(!rc.onTheMap(nextPos)) {
+                 if(isMaster) {
+                    // avoid following the edge of the map (TODO: 1-thick borders)
+                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 1);
+                    leftTurn = !leftTurn;
+                    clearPath();
+                    // don't guess turn direction, we know that one direction is bad already
+                    emptyStackTurns = -1000;
+                    // start again
+                    return tryDirsLeft();
+                } else {
+                    hitEdge = true;
+                }
+                // Profiler.end("bugnav " + 1 + " " + isMaster);
+                // indicate("bugnav " + 1 + " " + isMaster);
+                return false;
+            }
+            if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+                rc.setIndicatorDot(nextPos, 0, 255, 255);
+                outOfSight = true;
+                // Profiler.end("bugnav " + 1 + " " + isMaster);
+                // indicate("bugnav " + 1 + " " + isMaster);
+                return false;
+            }
+            if(CellTracker.isPassable(nextPos)) {
+                pos = nextPos;
+                topDir = tryDir;
+                stackSize += 1;
+                if(stackSize == 0) {
+                    emptyStackTurns++;
+                } else {
+                    emptyStackTurns = 0;
+                }
+                appendCurrentPosition();
+                // Profiler.end("bugnav " + 1 + " " + isMaster);
+                // indicate("bugnav " + 1 + " " + isMaster);
+                return true;
+            }
+        }
+        tryDir = tryDir.rotateRight();
+        {
+            indicate("trying " + tryDir);
+            var nextPos = pos.add(tryDir);
+            if(!rc.onTheMap(nextPos)) {
+                 if(isMaster) {
+                    // avoid following the edge of the map (TODO: 1-thick borders)
+                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 2);
+                    leftTurn = !leftTurn;
+                    clearPath();
+                    // don't guess turn direction, we know that one direction is bad already
+                    emptyStackTurns = -1000;
+                    // start again
+                    return tryDirsLeft();
+                } else {
+                    hitEdge = true;
+                }
+                // Profiler.end("bugnav " + 2 + " " + isMaster);
+                // indicate("bugnav " + 2 + " " + isMaster);
+                return false;
+            }
+            if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+                rc.setIndicatorDot(nextPos, 0, 255, 255);
+                outOfSight = true;
+                // Profiler.end("bugnav " + 2 + " " + isMaster);
+                // indicate("bugnav " + 2 + " " + isMaster);
+                return false;
+            }
+            if(CellTracker.isPassable(nextPos)) {
+                pos = nextPos;
+                topDir = tryDir;
+                stackSize += 2;
+                if(stackSize == 0) {
+                    emptyStackTurns++;
+                } else {
+                    emptyStackTurns = 0;
+                }
+                appendCurrentPosition();
+                // Profiler.end("bugnav " + 2 + " " + isMaster);
+                // indicate("bugnav " + 2 + " " + isMaster);
+                return true;
+            }
+        }
+        tryDir = tryDir.rotateRight();
+        {
+            indicate("trying " + tryDir);
+            var nextPos = pos.add(tryDir);
+            if(!rc.onTheMap(nextPos)) {
+                 if(isMaster) {
+                    // avoid following the edge of the map (TODO: 1-thick borders)
+                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 3);
+                    leftTurn = !leftTurn;
+                    clearPath();
+                    // don't guess turn direction, we know that one direction is bad already
+                    emptyStackTurns = -1000;
+                    // start again
+                    return tryDirsLeft();
+                } else {
+                    hitEdge = true;
+                }
+                // Profiler.end("bugnav " + 3 + " " + isMaster);
+                // indicate("bugnav " + 3 + " " + isMaster);
+                return false;
+            }
+            if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+                rc.setIndicatorDot(nextPos, 0, 255, 255);
+                outOfSight = true;
+                // Profiler.end("bugnav " + 3 + " " + isMaster);
+                // indicate("bugnav " + 3 + " " + isMaster);
+                return false;
+            }
+            if(CellTracker.isPassable(nextPos)) {
+                pos = nextPos;
+                topDir = tryDir;
+                stackSize += 3;
+                if(stackSize == 0) {
+                    emptyStackTurns++;
+                } else {
+                    emptyStackTurns = 0;
+                }
+                appendCurrentPosition();
+                // Profiler.end("bugnav " + 3 + " " + isMaster);
+                // indicate("bugnav " + 3 + " " + isMaster);
+                return true;
+            }
+        }
+        tryDir = tryDir.rotateRight();
+        {
+            indicate("trying " + tryDir);
+            var nextPos = pos.add(tryDir);
+            if(!rc.onTheMap(nextPos)) {
+                 if(isMaster) {
+                    // avoid following the edge of the map (TODO: 1-thick borders)
+                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 4);
+                    leftTurn = !leftTurn;
+                    clearPath();
+                    // don't guess turn direction, we know that one direction is bad already
+                    emptyStackTurns = -1000;
+                    // start again
+                    return tryDirsLeft();
+                } else {
+                    hitEdge = true;
+                }
+                // Profiler.end("bugnav " + 4 + " " + isMaster);
+                // indicate("bugnav " + 4 + " " + isMaster);
+                return false;
+            }
+            if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+                rc.setIndicatorDot(nextPos, 0, 255, 255);
+                outOfSight = true;
+                // Profiler.end("bugnav " + 4 + " " + isMaster);
+                // indicate("bugnav " + 4 + " " + isMaster);
+                return false;
+            }
+            if(CellTracker.isPassable(nextPos)) {
+                pos = nextPos;
+                topDir = tryDir;
+                stackSize += 4;
+                if(stackSize == 0) {
+                    emptyStackTurns++;
+                } else {
+                    emptyStackTurns = 0;
+                }
+                appendCurrentPosition();
+                // Profiler.end("bugnav " + 4 + " " + isMaster);
+                // indicate("bugnav " + 4 + " " + isMaster);
+                return true;
+            }
+        }
+        tryDir = tryDir.rotateRight();
+        {
+            indicate("trying " + tryDir);
+            var nextPos = pos.add(tryDir);
+            if(!rc.onTheMap(nextPos)) {
+                 if(isMaster) {
+                    // avoid following the edge of the map (TODO: 1-thick borders)
+                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 5);
+                    leftTurn = !leftTurn;
+                    clearPath();
+                    // don't guess turn direction, we know that one direction is bad already
+                    emptyStackTurns = -1000;
+                    // start again
+                    return tryDirsLeft();
+                } else {
+                    hitEdge = true;
+                }
+                // Profiler.end("bugnav " + 5 + " " + isMaster);
+                // indicate("bugnav " + 5 + " " + isMaster);
+                return false;
+            }
+            if(!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+                rc.setIndicatorDot(nextPos, 0, 255, 255);
+                outOfSight = true;
+                // Profiler.end("bugnav " + 5 + " " + isMaster);
+                // indicate("bugnav " + 5 + " " + isMaster);
+                return false;
+            }
+            if(CellTracker.isPassable(nextPos)) {
+                pos = nextPos;
+                topDir = tryDir;
+                stackSize += 5;
+                if(stackSize == 0) {
+                    emptyStackTurns++;
+                } else {
+                    emptyStackTurns = 0;
+                }
+                appendCurrentPosition();
+                // Profiler.end("bugnav " + 5 + " " + isMaster);
+                // indicate("bugnav " + 5 + " " + isMaster);
+                return true;
+            }
+        }
+        tryDir = tryDir.rotateRight();
+        assert false : "no valid move found from " + pos;
+        return false;
+    }
+
 }
 
 public class Pathfinder {

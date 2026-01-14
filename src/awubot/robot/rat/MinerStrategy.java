@@ -15,12 +15,14 @@ public class MinerStrategy extends Strategy {
     private static final int CRITICAL_HP = 20;
     private static final int SCALE = 10;
 
+    private CombatStrategy combatStrategy;
     private FormationStrategy formationStrategy;
     private GoHomeStrategy goHomeStrategy;
     private CheeseStrategy cheeseStrategy;
     private TraverseStrategy goSomewhereStrategy; // either go to a mine or explore; TODO: make the mine strategy smarter
 
     public MinerStrategy() {
+        combatStrategy = new CombatStrategy();
         formationStrategy = new FormationStrategy();
         goHomeStrategy = new GoHomeStrategy();
         cheeseStrategy = new CheeseStrategy();
@@ -36,7 +38,7 @@ public class MinerStrategy extends Strategy {
             goHomeStrategy = new GoHomeStrategy();
             cheeseStrategy.cheeseTarget = null;
         }
-        // TODO: combat strategy
+        if(tryStrategy(combatStrategy)) return true;
         if(tryStrategy(formationStrategy)) return true;
         if(tryStrategy(goHomeStrategy)) return true;
         if(tryStrategy(cheeseStrategy)) return true;

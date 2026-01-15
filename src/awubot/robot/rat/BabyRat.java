@@ -12,27 +12,21 @@ import static awubot.Game.*;
 import static awubot.util.Util.*;
 
 public class BabyRat {
-    private static Direction theLastGlance;
+    private static Direction lastGlance;
     public static boolean shouldGlance;
     public static Strategy primaryStrategy;
-    private static final CatLureStrategy2 theCatLureStrategy = new CatLureStrategy2();
 
     public static void init() throws GameActionException {
         // GlobalArray.readSpawnStrategy();
         primaryStrategy = new MinerStrategy();
     }
 
-    public static void setLureTarget(MapLocation aCatLoc, MapLocation aEnemyKingLoc) {
-        theCatLureStrategy.setLureTarget(aCatLoc, aEnemyKingLoc);
-    }
-
     public static void run() throws GameActionException {
         // indicate("cheesemines: " + GlobalArray.cheeseMines.set.length());
         shouldGlance = true;
 
+        tryPickUpCheese();
         tryTransferCheese();
-
-        if (theCatLureStrategy.runTick()) return;
 
         CellTracker.storeVisibleCells();
         CellTracker.checkSymmetry();
@@ -43,10 +37,40 @@ public class BabyRat {
         executeGlance();
     }
 
+    private static void executeGlance() throws GameActionException {
+        if (!rc.canTurn() || !shouldGlance) return;
+
+        indicate("glancing");
+        Direction myLeftDir = myDir.rotateLeft().rotateLeft();
+        Direction myRightDir = myDir.rotateRight().rotateRight();
+
+        if (lastGlance == myLeftDir) {
+            turn(myRightDir);
+            lastGlance = myRightDir;
+        } else if (lastGlance == myRightDir || Rng.mcg() >> 30 != 0) {
+            turn(myLeftDir);
+            lastGlance = myLeftDir;
+        } else {
+            turn(myRightDir);
+            lastGlance = myRightDir;
+        }
+    }
+
+    public static void tryPickUpCheese() throws GameActionException {
+        var dirs = relatedDirections(myDir);
+        for(var dir : dirs) {
+            var loc = myLoc.add(dir);
+            if(rc.canPickUpCheese(loc)) {
+                rc.pickUpCheese(loc);
+            }
+        }
+    }
+
+    // IF TLE: spam this less / optimise
     private static void tryTransferCheese() throws GameActionException {
         int myCheese = rc.getRawCheese();
         if (myCheese <= 0) return;
-        if (Util.chebyshevDistance(myLoc, GlobalArray.nearestRatKing) > 2) return;
+        if (chebyshevDistance(myLoc, GlobalArray.nearestRatKing) > 2) return;
         // try all possible directions
         var dir = myDir.rotateLeft();
         for(int i = 2; i >= 0; i--) {
@@ -58,22 +82,28 @@ public class BabyRat {
         }
     }
 
-    private static void executeGlance() throws GameActionException {
-        if (!rc.canTurn() || !shouldGlance) return;
-
-        indicate("glancing");
-        Direction myLeftDir = myDir.rotateLeft().rotateLeft();
-        Direction myRightDir = myDir.rotateRight().rotateRight();
-
-        if (theLastGlance == myLeftDir) {
-            turn(myRightDir);
-            theLastGlance = myRightDir;
-        } else if (theLastGlance == myRightDir || Rng.mcg() >> 30 != 0) {
-            turn(myLeftDir);
-            theLastGlance = myLeftDir;
-        } else {
-            turn(myRightDir);
-            theLastGlance = myRightDir;
+    public static void rawMove(Direction dir) throws GameActionException {
+        if(dir == myDir) {
+            rawMove();
+            return;
         }
+        _rawMove(dir);
+        // IF TLE: optimise this
+        CellTracker.storeVisibleCells();
+        tryPickUpCheese();
+        tryTransferCheese();
+    }
+
+    public static void turn(Direction dir) throws GameActionException {
+        _turn(dir);
+        tryPickUpCheese();
+        tryTransferCheese();
+    }
+
+    public static void rawMove() throws GameActionException {
+        _rawMove(myDir);
+        CellTracker.storeVisibleCellsPostMoveForward();
+        tryPickUpCheese();
+        tryTransferCheese();
     }
 }

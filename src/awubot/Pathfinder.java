@@ -5,6 +5,7 @@ import static awubot.util.Util.*;
 import awubot.util.Rng;
 import awubot.util.Profiler;
 import static awubot.Game.*;
+import static awubot.robot.rat.BabyRat.*; // TODO: make pathfinder compatible with rat king
 
 // IF TLE: lower these constants (especially MAX_BUG_ITERS)
 

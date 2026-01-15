@@ -55,6 +55,7 @@ public class MinerStrategy extends Strategy {
             }
             goSomewhereStrategy = new TraverseStrategy(target, 2);
         }
+
         return true;
     }
 

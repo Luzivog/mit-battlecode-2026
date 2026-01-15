@@ -16,6 +16,7 @@ import awubot.robot.Strategy;
 import awubot.util.Profiler;
 import awubot.util.Util;
 
+import static awubot.robot.rat.BabyRat.*;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 

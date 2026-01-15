@@ -7,6 +7,8 @@ import static awubot.Game.*;
 import static awubot.util.Util.*;
 
 // TODO: go after a different target if given the opportunity
+// this strategy doesn't pick up cheese (that's handled in BabyRat
+// since we want to pick up in any circumstances since it doesn't cost action cd)
 public class CheeseStrategy extends Strategy {
     public MapLocation cheeseTarget;
     public int lastSeenCheese;
@@ -16,15 +18,6 @@ public class CheeseStrategy extends Strategy {
         refreshCheeseTarget();
         if(cheeseTarget == null) return false;
         lastSeenCheese = rc.getRoundNum();
-        if (myLoc.isAdjacentTo(cheeseTarget)) {
-            var dir = myLoc.directionTo(cheeseTarget);
-            if (dir != Direction.CENTER && rc.canTurn()) turn(dir);
-            if (rc.canPickUpCheese(cheeseTarget)) {
-                rc.pickUpCheese(cheeseTarget);
-                cheeseTarget = null;
-            }
-            return true;
-        }
         rc.setIndicatorLine(myLoc, cheeseTarget, 255, 0, 0);
         Pathfinder.makeMove(cheeseTarget);
         return true;
@@ -36,10 +29,9 @@ public class CheeseStrategy extends Strategy {
             && rc.senseMapInfo(cheeseTarget).getCheeseAmount() == 0) {
             cheeseTarget = null;
         }
-        if (cheeseTarget != null) return;
         int bestAmount = 0;
         for (var info : rc.senseNearbyMapInfos()) {
-            if (info.getCheeseAmount() > bestAmount) {
+            if(cheeseTarget == null && info.getCheeseAmount() > bestAmount) {
                 cheeseTarget = info.getMapLocation();
                 bestAmount = info.getCheeseAmount();
             }

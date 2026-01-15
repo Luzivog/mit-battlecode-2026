@@ -8,46 +8,23 @@ import static awubot.Game.*;
 import static awubot.util.Util.*;
 
 public class RatKingStrategy extends Strategy {
-    private final ThreatContext theContext;
-    private final KingCheeseStrategy theCheeseStrategy;
-    private final KingMiningStrategy theMiningStrategy;
-    private final KingSpawningStrategy theSpawningStrategy;
-    private final KingDefenseStrategy theDefenseStrategy;
-    private final KingFormationCoordinatorStrategy theFormationStrategy;
+    private final KingCheeseStrategy cheeseStrategy;
+    private final KingMiningStrategy miningStrategy;
+    private final KingSpawningStrategy spawningStrategy;
 
     public RatKingStrategy() {
-        theContext = new ThreatContext();
-        theCheeseStrategy = new KingCheeseStrategy();
-        theMiningStrategy = new KingMiningStrategy();
-        theMiningStrategy.init();
+        cheeseStrategy = new KingCheeseStrategy();
+        miningStrategy = new KingMiningStrategy();
+        miningStrategy.init();
         // Profiler.begin();
-        theSpawningStrategy = new KingSpawningStrategy(theContext);
-        // Profiler.end("spawning");
-        // Profiler.begin();
-        theDefenseStrategy = new KingDefenseStrategy(theContext, theMiningStrategy);
-        // Profiler.end("defence");
-        // Profiler.begin();
-        theFormationStrategy = new KingFormationCoordinatorStrategy(theContext, theMiningStrategy);
-        // Profiler.end("spawning");
+        spawningStrategy = new KingSpawningStrategy();
     }
 
     @Override
     public boolean runTick() throws GameActionException {
-        theContext.scanThreats();
-        theContext.updateDefenseState();
-
-        theDefenseStrategy.runTick();
-
-        if (theDefenseStrategy.isDefensiveActionTaken() || theDefenseStrategy.wantsToFlee()) {
-            theCheeseStrategy.runTick();
-            theSpawningStrategy.runTick();
-            return true;
-        }
-
-        theCheeseStrategy.runTick();
-        theMiningStrategy.runTick();
-        theSpawningStrategy.runTick();
-        theFormationStrategy.runTick();
+        cheeseStrategy.runTick();
+        miningStrategy.runTick();
+        spawningStrategy.runTick();
         return true;
     }
 }

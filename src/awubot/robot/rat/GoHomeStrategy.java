@@ -34,12 +34,6 @@ public class GoHomeStrategy extends Strategy {
         var dir = myLoc.directionTo(kingLoc);
         var transferTarget = myLoc.add(dir);
 
-        if (myLoc.distanceSquaredTo(kingLoc) <= 8) {
-            // don't glance so we can look at the king
-            shouldGlance = false;
-            if (dir != Direction.CENTER && rc.canTurn()) turn(dir);
-        }
-
         if (rc.canTransferCheese(transferTarget, rc.getRawCheese())) {
             rc.transferCheese(transferTarget, rc.getRawCheese());
         }

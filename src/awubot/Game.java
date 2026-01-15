@@ -24,32 +24,18 @@ public class Game {
 
     public static MapLocation spawn;
 
-    public static void rawMove(Direction dir) throws GameActionException {
-        if(dir == myDir) {
-            rawMove();
-            return;
-        }
+    public static void _rawMove(Direction dir) throws GameActionException {
         rc.move(dir);
         myLoc = rc.getLocation();
         myLocX = myLoc.x;
         myLocY = myLoc.y;
-        // IF TLE: optimise this
-        CellTracker.storeVisibleCells();
     }
 
-    public static void turn(Direction dir) throws GameActionException {
+    public static void _turn(Direction dir) throws GameActionException {
         assert dir != Direction.CENTER;
         if (dir == myDir) return;
         rc.turn(dir);
         myDir = dir;
-    }
-
-    public static void rawMove() throws GameActionException {
-        rc.moveForward();
-        myLoc = rc.getLocation();
-        myLocX = myLoc.x;
-        myLocY = myLoc.y;
-        CellTracker.storeVisibleCellsPostMoveForward();
     }
 
     public static boolean isRatKing;

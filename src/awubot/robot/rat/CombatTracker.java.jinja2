@@ -10,6 +10,8 @@ import battlecode.common.UnitType;
 
 import static awubot.Game.*;
 import static awubot.util.Util.*;
+import awubot.util.Profiler;
+import awubot.CellTracker;
 
 public class CombatTracker {
     private static final int GRID_RADIUS = 2;
@@ -165,7 +167,11 @@ public class CombatTracker {
     }
 
     public static void tick() throws GameActionException {
+        // Profiler.push();
         loadThreatFromMap();
+        // Profiler.pop("loading threats");
+
+        // Profiler.push();
         for (MapInfo info : rc.senseNearbyMapInfos(8)) {
             if (info.getTrap() == TrapType.NONE) continue;
             MapLocation loc = info.getMapLocation();
@@ -174,13 +180,20 @@ public class CombatTracker {
             if (dx < -2 || dx > 2 || dy < -2 || dy > 2) continue;
             registerTrap(dx, dy);
         }
+        // Profiler.pop("registering traps");
+        
+        // Profiler.push();
         recomputeThreatMasks();
+        // Profiler.pop("recomputing threat masks");
+
         resetEnemyCounts();
+        // Profiler.push();
         for (RobotInfo info : rc.senseNearbyRobots()) {
             if (info.getTeam() == rc.getTeam()) continue;
             if (info.getType() != UnitType.BABY_RAT) continue;
             registerEnemy(info);
         }
+        // Profiler.pop("registering enemies");
     }
 
     public static void resetEnemyCounts() {
@@ -197,9 +210,42 @@ public class CombatTracker {
         int y = myLoc.y;
         {% for dy in range(2, -3, -1) %}
         {% for dx in range(-2, 3) %}
-        {{ cell_var(dx, dy) }} = isCellMaybePassable(new MapLocation(x {% if dx %} + {{dx}} {% endif %}, y {% if dy %} + {{dy}} {% endif %}));
+        {%- if dx == 0 and dy == 0 %}
+        {{ cell_var(dx, dy) }} = true;
+        {%- else %}
+        {
+            MapLocation loc = new MapLocation(x {% if dx %} + {{dx}} {% endif %}, y {% if dy %} + {{dy}} {% endif %});
+            if (CellTracker.isSeen(loc)) {
+                {{ cell_var(dx, dy) }} = CellTracker.isPassable(loc);
+            } else {
+                {{ cell_var(dx, dy) }} = false;
+            }
+        }
+        {%- endif %}
         {% endfor %}
         {% endfor %}
+        for (RobotInfo info : rc.senseNearbyRobots()) {
+            if (info.getType() != UnitType.BABY_RAT) continue;
+            int dx = info.getLocation().x - x;
+            int dy = info.getLocation().y - y;
+            switch (dx) {
+                {% for dx in range(-2, 3) %}
+                case {{ dx }} -> {
+                    switch (dy) {
+                        {% for dy in range(-2, 3) %}
+                        case {{ dy }} -> {
+                            {%- if dx != 0 or dy != 0 %}
+                            {{ cell_var(dx, dy) }} = info.getTeam() != team;
+                            {%- endif %}
+                        }
+                        {% endfor %}
+                        default -> { }
+                    }
+                }
+                {% endfor %}
+                default -> { }
+            }
+        }
     }
 
     public static void registerTrap(int dx, int dy) {
@@ -254,11 +300,11 @@ public class CombatTracker {
                 switch (dy) {
                     {% for dy in range(-2, 3) %}
                     case {{ dy }} -> {
-                        switch (facing) {
-                            {% for facing in directions %}
-                            case {{ facing }} -> {
+                        switch (facing.ordinal()) {
+                            {% for fi in range(directions|length) %}
+                            case {{ fi }} -> {
                                 {% for i in range(moveDirs|length) %}
-                                {{ add_mask("low" ~ moveShort[i], dx, dy, facing, moveDirs[i]) }}
+                                {{ add_mask("low" ~ moveShort[i], dx, dy, directions[fi], moveDirs[i]) }}
                                 {% endfor %}
                             }
                             {% endfor %}
@@ -281,11 +327,11 @@ public class CombatTracker {
                 switch (dy) {
                     {% for dy in range(-2, 3) %}
                     case {{ dy }} -> {
-                        switch (facing) {
-                            {% for facing in directions %}
-                            case {{ facing }} -> {
+                        switch (facing.ordinal()) {
+                            {% for fi in range(directions|length) %}
+                            case {{ fi }} -> {
                                 {% for i in range(moveDirs|length) %}
-                                {{ add_mask("high" ~ moveShort[i], dx, dy, facing, moveDirs[i]) }}
+                                {{ add_mask("high" ~ moveShort[i], dx, dy, directions[fi], moveDirs[i]) }}
                                 {% endfor %}
                             }
                             {% endfor %}
@@ -332,56 +378,56 @@ public class CombatTracker {
     }
 
     private static long getLowMask(Direction moveDir) {
-        return switch (moveDir) {
+        return switch (moveDir.ordinal()) {
             {% for i in range(moveDirs|length) %}
-            case {{ moveDirs[i] }} -> low{{ moveShort[i] }};
+            case {{ i }} -> low{{ moveShort[i] }};
             {% endfor %}
             default -> 0L;
         };
     }
 
     private static long getHighMask(Direction moveDir) {
-        return switch (moveDir) {
+        return switch (moveDir.ordinal()) {
             {% for i in range(moveDirs|length) %}
-            case {{ moveDirs[i] }} -> high{{ moveShort[i] }};
+            case {{ i }} -> high{{ moveShort[i] }};
             {% endfor %}
             default -> 0L;
         };
     }
 
     private static long getMoveThreatMask(Direction moveDir) {
-        return switch (moveDir) {
+        return switch (moveDir.ordinal()) {
             {% for i in range(moveDirs|length) %}
-            case {{ moveDirs[i] }} -> moveThreat{{ moveShort[i] }};
+            case {{ i }} -> moveThreat{{ moveShort[i] }};
             {% endfor %}
             default -> 0L;
         };
     }
 
     private static long getHiddenMask(Direction facing) {
-        return switch (facing) {
+        return switch (facing.ordinal()) {
             {% for i in range(directions|length) %}
-            case {{ directions[i] }} -> hidden{{ shortDirections[i] }};
+            case {{ i }} -> hidden{{ shortDirections[i] }};
             {% endfor %}
             default -> 0L;
         };
     }
 
     private static long enemyMaskForMove(int dx, int dy, Direction facing, Direction moveDir) {
+        int faceIdx = facing.ordinal();
+        int moveIdx = moveDir.ordinal();
         switch (dx) {
             {% for dx in range(-2, 3) %}
             case {{ dx }} -> {
                 switch (dy) {
                     {% for dy in range(-2, 3) %}
                     case {{ dy }} -> {
-                        switch (facing) {
-                            {% for facing in directions %}
-                            case {{ facing }} -> {
-                                switch (moveDir) {
-                                    {% for i in range(moveDirs|length) %}
-                                    case {{ moveDirs[i] }} -> {
-                                        return {{ enemy_mask(dx, dy, facing, moveDirs[i]) }};
-                                    }
+                        switch (faceIdx) {
+                            {% for fi in range(directions|length) %}
+                            case {{ fi }} -> {
+                                switch (moveIdx) {
+                                    {% for mi in range(moveDirs|length) %}
+                                    case {{ mi }} -> { return {{ enemy_mask(dx, dy, directions[fi], moveDirs[mi]) }}; }
                                     {% endfor %}
                                     default -> { return 0L; }
                                 }

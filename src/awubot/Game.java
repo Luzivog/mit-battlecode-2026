@@ -9,6 +9,7 @@ import battlecode.common.UnitType;
 import static awubot.util.Util.*;
 
 import awubot.comms.GlobalArray;
+import awubot.util.Profiler;
 
 public class Game {
     public static RobotController rc;
@@ -53,6 +54,68 @@ public class Game {
         isRatKing = (rc.getType() == UnitType.RAT_KING);
         team = rc.getTeam();
         spawn = myLoc;
+
+        // Direction dir = Direction.NORTHEAST;
+        // int[] arr = new int[2];
+
+        // boolean a = false, b = false;
+        // Profiler.begin();
+        // if (a || b);
+        // Profiler.end_print("combined");
+        
+        // Profiler.begin();
+        // if (a);
+        // if (b);
+        // Profiler.end_print("separate");
+
+        // rc.resign();
+        // Profiler.begin();
+        // int x = arr[dir.ordinal()];
+        // Profiler.end_print("c1");
+
+        // Profiler.begin();
+        // int y;
+        // switch (dir) {
+        //     case NORTH:
+        //         y = 0;
+        //         break;
+        //     case NORTHEAST:
+        //         y = 1;
+        //         break;
+        //     case EAST:
+        //         y = 2;
+        //         break;
+        //     default:
+        //         y = -1;
+        //         break;
+        // };
+        // Profiler.end_print("c2");
+
+        // int z;
+        // int i = 2;
+        // Profiler.begin();
+        // switch (i) {
+        //     case 0:
+        //         z = 0;
+        //         break;
+        //     case 1:
+        //         z = 1;
+        //         break;
+        //     case 2:
+        //         z = 2;
+        //         break;
+        //     case 3:
+        //         z = 3;
+        //         break;
+        //     case 4:
+        //         z = 4;
+        //         break;
+        //     default:
+        //         z = -1;
+        //         break;
+        // }
+        // Profiler.end_print("c3");
+        // rc.resign();
     }
 
     public static void preTick() throws GameActionException {
@@ -67,7 +130,7 @@ public class Game {
 
     public static void postTick() {
         // if (!isRatKing) println("index: " + myIndex);
-        // if (time > 100) rc.resign();
+        if (time > 100) rc.resign();
         // if (time != rc.getRoundNum()) {
         //     println("bytecode exceeded");
         //     rc.resign();

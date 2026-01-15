@@ -10,6 +10,8 @@ import battlecode.common.UnitType;
 
 import static awubot.Game.*;
 import static awubot.util.Util.*;
+import awubot.util.Profiler;
+import awubot.CellTracker;
 
 public class CombatTracker {
     private static final int GRID_RADIUS = 2;
@@ -100,7 +102,11 @@ private static final long hiddenNW = 0x0000ffffffffff00L;
     }
 
     public static void tick() throws GameActionException {
+        // Profiler.push();
         loadThreatFromMap();
+        // Profiler.pop("loading threats");
+
+        // Profiler.push();
         for (MapInfo info : rc.senseNearbyMapInfos(8)) {
             if (info.getTrap() == TrapType.NONE) continue;
             MapLocation loc = info.getMapLocation();
@@ -109,13 +115,20 @@ private static final long hiddenNW = 0x0000ffffffffff00L;
             if (dx < -2 || dx > 2 || dy < -2 || dy > 2) continue;
             registerTrap(dx, dy);
         }
+        // Profiler.pop("registering traps");
+        
+        // Profiler.push();
         recomputeThreatMasks();
+        // Profiler.pop("recomputing threat masks");
+
         resetEnemyCounts();
+        // Profiler.push();
         for (RobotInfo info : rc.senseNearbyRobots()) {
             if (info.getTeam() == rc.getTeam()) continue;
             if (info.getType() != UnitType.BABY_RAT) continue;
             registerEnemy(info);
         }
+        // Profiler.pop("registering enemies");
     }
 
     public static void resetEnemyCounts() {
@@ -142,31 +155,232 @@ private static final long hiddenNW = 0x0000ffffffffff00L;
     public static void loadThreatFromMap() throws GameActionException {
         int x = myLoc.x;
         int y = myLoc.y;
-        t_m2_2 = isCellMaybePassable(new MapLocation(x  + -2 , y  + 2 ));
-        t_m1_2 = isCellMaybePassable(new MapLocation(x  + -1 , y  + 2 ));
-        t_0_2 = isCellMaybePassable(new MapLocation(x , y  + 2 ));
-        t_1_2 = isCellMaybePassable(new MapLocation(x  + 1 , y  + 2 ));
-        t_2_2 = isCellMaybePassable(new MapLocation(x  + 2 , y  + 2 ));
-        t_m2_1 = isCellMaybePassable(new MapLocation(x  + -2 , y  + 1 ));
-        t_m1_1 = isCellMaybePassable(new MapLocation(x  + -1 , y  + 1 ));
-        t_0_1 = isCellMaybePassable(new MapLocation(x , y  + 1 ));
-        t_1_1 = isCellMaybePassable(new MapLocation(x  + 1 , y  + 1 ));
-        t_2_1 = isCellMaybePassable(new MapLocation(x  + 2 , y  + 1 ));
-        t_m2_0 = isCellMaybePassable(new MapLocation(x  + -2 , y ));
-        t_m1_0 = isCellMaybePassable(new MapLocation(x  + -1 , y ));
-        t_0_0 = isCellMaybePassable(new MapLocation(x , y ));
-        t_1_0 = isCellMaybePassable(new MapLocation(x  + 1 , y ));
-        t_2_0 = isCellMaybePassable(new MapLocation(x  + 2 , y ));
-        t_m2_m1 = isCellMaybePassable(new MapLocation(x  + -2 , y  + -1 ));
-        t_m1_m1 = isCellMaybePassable(new MapLocation(x  + -1 , y  + -1 ));
-        t_0_m1 = isCellMaybePassable(new MapLocation(x , y  + -1 ));
-        t_1_m1 = isCellMaybePassable(new MapLocation(x  + 1 , y  + -1 ));
-        t_2_m1 = isCellMaybePassable(new MapLocation(x  + 2 , y  + -1 ));
-        t_m2_m2 = isCellMaybePassable(new MapLocation(x  + -2 , y  + -2 ));
-        t_m1_m2 = isCellMaybePassable(new MapLocation(x  + -1 , y  + -2 ));
-        t_0_m2 = isCellMaybePassable(new MapLocation(x , y  + -2 ));
-        t_1_m2 = isCellMaybePassable(new MapLocation(x  + 1 , y  + -2 ));
-        t_2_m2 = isCellMaybePassable(new MapLocation(x  + 2 , y  + -2 ));
+        {
+            MapLocation loc = new MapLocation(x  + -2 , y  + 2 );
+            if (CellTracker.isSeen(loc)) {
+                t_m2_2 = CellTracker.isPassable(loc);
+            } else {
+                t_m2_2 = false;
+            }
+        }        {
+            MapLocation loc = new MapLocation(x  + -1 , y  + 2 );
+            if (CellTracker.isSeen(loc)) {
+                t_m1_2 = CellTracker.isPassable(loc);
+            } else {
+                t_m1_2 = false;
+            }
+        }        {
+            MapLocation loc = new MapLocation(x , y  + 2 );
+            if (CellTracker.isSeen(loc)) {
+                t_0_2 = CellTracker.isPassable(loc);
+            } else {
+                t_0_2 = false;
+            }
+        }        {
+            MapLocation loc = new MapLocation(x  + 1 , y  + 2 );
+            if (CellTracker.isSeen(loc)) {
+                t_1_2 = CellTracker.isPassable(loc);
+            } else {
+                t_1_2 = false;
+            }
+        }        {
+            MapLocation loc = new MapLocation(x  + 2 , y  + 2 );
+            if (CellTracker.isSeen(loc)) {
+                t_2_2 = CellTracker.isPassable(loc);
+            } else {
+                t_2_2 = false;
+            }
+        }        {
+            MapLocation loc = new MapLocation(x  + -2 , y  + 1 );
+            if (CellTracker.isSeen(loc)) {
+                t_m2_1 = CellTracker.isPassable(loc);
+            } else {
+                t_m2_1 = false;
+            }
+        }        {
+            MapLocation loc = new MapLocation(x  + -1 , y  + 1 );
+            if (CellTracker.isSeen(loc)) {
+                t_m1_1 = CellTracker.isPassable(loc);
+            } else {
+                t_m1_1 = false;
+            }
+        }        {
+            MapLocation loc = new MapLocation(x , y  + 1 );
+            if (CellTracker.isSeen(loc)) {
+                t_0_1 = CellTracker.isPassable(loc);
+            } else {
+                t_0_1 = false;
+            }
+        }        {
+            MapLocation loc = new MapLocation(x  + 1 , y  + 1 );
+            if (CellTracker.isSeen(loc)) {
+                t_1_1 = CellTracker.isPassable(loc);
+            } else {
+                t_1_1 = false;
+            }
+        }        {
+            MapLocation loc = new MapLocation(x  + 2 , y  + 1 );
+            if (CellTracker.isSeen(loc)) {
+                t_2_1 = CellTracker.isPassable(loc);
+            } else {
+                t_2_1 = false;
+            }
+        }        {
+            MapLocation loc = new MapLocation(x  + -2 , y );
+            if (CellTracker.isSeen(loc)) {
+                t_m2_0 = CellTracker.isPassable(loc);
+            } else {
+                t_m2_0 = false;
+            }
+        }        {
+            MapLocation loc = new MapLocation(x  + -1 , y );
+            if (CellTracker.isSeen(loc)) {
+                t_m1_0 = CellTracker.isPassable(loc);
+            } else {
+                t_m1_0 = false;
+            }
+        }        t_0_0 = true;        {
+            MapLocation loc = new MapLocation(x  + 1 , y );
+            if (CellTracker.isSeen(loc)) {
+                t_1_0 = CellTracker.isPassable(loc);
+            } else {
+                t_1_0 = false;
+            }
+        }        {
+            MapLocation loc = new MapLocation(x  + 2 , y );
+            if (CellTracker.isSeen(loc)) {
+                t_2_0 = CellTracker.isPassable(loc);
+            } else {
+                t_2_0 = false;
+            }
+        }        {
+            MapLocation loc = new MapLocation(x  + -2 , y  + -1 );
+            if (CellTracker.isSeen(loc)) {
+                t_m2_m1 = CellTracker.isPassable(loc);
+            } else {
+                t_m2_m1 = false;
+            }
+        }        {
+            MapLocation loc = new MapLocation(x  + -1 , y  + -1 );
+            if (CellTracker.isSeen(loc)) {
+                t_m1_m1 = CellTracker.isPassable(loc);
+            } else {
+                t_m1_m1 = false;
+            }
+        }        {
+            MapLocation loc = new MapLocation(x , y  + -1 );
+            if (CellTracker.isSeen(loc)) {
+                t_0_m1 = CellTracker.isPassable(loc);
+            } else {
+                t_0_m1 = false;
+            }
+        }        {
+            MapLocation loc = new MapLocation(x  + 1 , y  + -1 );
+            if (CellTracker.isSeen(loc)) {
+                t_1_m1 = CellTracker.isPassable(loc);
+            } else {
+                t_1_m1 = false;
+            }
+        }        {
+            MapLocation loc = new MapLocation(x  + 2 , y  + -1 );
+            if (CellTracker.isSeen(loc)) {
+                t_2_m1 = CellTracker.isPassable(loc);
+            } else {
+                t_2_m1 = false;
+            }
+        }        {
+            MapLocation loc = new MapLocation(x  + -2 , y  + -2 );
+            if (CellTracker.isSeen(loc)) {
+                t_m2_m2 = CellTracker.isPassable(loc);
+            } else {
+                t_m2_m2 = false;
+            }
+        }        {
+            MapLocation loc = new MapLocation(x  + -1 , y  + -2 );
+            if (CellTracker.isSeen(loc)) {
+                t_m1_m2 = CellTracker.isPassable(loc);
+            } else {
+                t_m1_m2 = false;
+            }
+        }        {
+            MapLocation loc = new MapLocation(x , y  + -2 );
+            if (CellTracker.isSeen(loc)) {
+                t_0_m2 = CellTracker.isPassable(loc);
+            } else {
+                t_0_m2 = false;
+            }
+        }        {
+            MapLocation loc = new MapLocation(x  + 1 , y  + -2 );
+            if (CellTracker.isSeen(loc)) {
+                t_1_m2 = CellTracker.isPassable(loc);
+            } else {
+                t_1_m2 = false;
+            }
+        }        {
+            MapLocation loc = new MapLocation(x  + 2 , y  + -2 );
+            if (CellTracker.isSeen(loc)) {
+                t_2_m2 = CellTracker.isPassable(loc);
+            } else {
+                t_2_m2 = false;
+            }
+        }        for (RobotInfo info : rc.senseNearbyRobots()) {
+            if (info.getType() != UnitType.BABY_RAT) continue;
+            int dx = info.getLocation().x - x;
+            int dy = info.getLocation().y - y;
+            switch (dx) {
+                case -2 -> {
+                    switch (dy) {
+                        case -2 -> {                            t_m2_m2 = info.getTeam() != team;                        }
+                        case -1 -> {                            t_m2_m1 = info.getTeam() != team;                        }
+                        case 0 -> {                            t_m2_0 = info.getTeam() != team;                        }
+                        case 1 -> {                            t_m2_1 = info.getTeam() != team;                        }
+                        case 2 -> {                            t_m2_2 = info.getTeam() != team;                        }
+                        default -> { }
+                    }
+                }
+                case -1 -> {
+                    switch (dy) {
+                        case -2 -> {                            t_m1_m2 = info.getTeam() != team;                        }
+                        case -1 -> {                            t_m1_m1 = info.getTeam() != team;                        }
+                        case 0 -> {                            t_m1_0 = info.getTeam() != team;                        }
+                        case 1 -> {                            t_m1_1 = info.getTeam() != team;                        }
+                        case 2 -> {                            t_m1_2 = info.getTeam() != team;                        }
+                        default -> { }
+                    }
+                }
+                case 0 -> {
+                    switch (dy) {
+                        case -2 -> {                            t_0_m2 = info.getTeam() != team;                        }
+                        case -1 -> {                            t_0_m1 = info.getTeam() != team;                        }
+                        case 0 -> {                        }
+                        case 1 -> {                            t_0_1 = info.getTeam() != team;                        }
+                        case 2 -> {                            t_0_2 = info.getTeam() != team;                        }
+                        default -> { }
+                    }
+                }
+                case 1 -> {
+                    switch (dy) {
+                        case -2 -> {                            t_1_m2 = info.getTeam() != team;                        }
+                        case -1 -> {                            t_1_m1 = info.getTeam() != team;                        }
+                        case 0 -> {                            t_1_0 = info.getTeam() != team;                        }
+                        case 1 -> {                            t_1_1 = info.getTeam() != team;                        }
+                        case 2 -> {                            t_1_2 = info.getTeam() != team;                        }
+                        default -> { }
+                    }
+                }
+                case 2 -> {
+                    switch (dy) {
+                        case -2 -> {                            t_2_m2 = info.getTeam() != team;                        }
+                        case -1 -> {                            t_2_m1 = info.getTeam() != team;                        }
+                        case 0 -> {                            t_2_0 = info.getTeam() != team;                        }
+                        case 1 -> {                            t_2_1 = info.getTeam() != team;                        }
+                        case 2 -> {                            t_2_2 = info.getTeam() != team;                        }
+                        default -> { }
+                    }
+                }
+                default -> { }
+            }
+        }
     }
 
     public static void registerTrap(int dx, int dy) {
@@ -448,8 +662,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
             case -2 -> {
                 switch (dy) {
                     case -2 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 
                                 
                                 
@@ -460,7 +674,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 lowC += 0x0000010000000000L;
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 
                                 
                                 
@@ -471,7 +685,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 lowC += 0x0000010000000000L;
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 
                                 
                                 
@@ -482,7 +696,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 lowC += 0x0000010000000000L;
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 
                                 
@@ -493,7 +707,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 
@@ -504,7 +718,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 
@@ -515,7 +729,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 
                                 
                                 
@@ -526,7 +740,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 
                                 
                                 
@@ -541,8 +755,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case -1 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 lowN += 0x0000010000000000L;
                                 
                                 
@@ -553,7 +767,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0000010100000000L;
                                 
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 lowN += 0x0000010000000000L;
                                 
                                 
@@ -564,7 +778,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0000010100000000L;
                                 lowC += 0x0001010000000000L;
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 lowN += 0x0000010000000000L;
                                 
                                 
@@ -575,7 +789,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 lowC += 0x0001010000000000L;
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 
                                 
@@ -586,7 +800,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 
@@ -597,7 +811,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 
@@ -608,7 +822,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 
                                 
                                 
@@ -619,7 +833,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 
                                 
                                 
@@ -634,8 +848,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 0 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 
                                 
                                 
@@ -646,7 +860,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0001010100000000L;
                                 
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 lowN += 0x0001010000000000L;
                                 
                                 
@@ -657,7 +871,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0001010100000000L;
                                 lowC += 0x0101010000000000L;
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 lowN += 0x0001010000000000L;
                                 
                                 
@@ -668,7 +882,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0001010100000000L;
                                 lowC += 0x0101010000000000L;
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 
                                 
@@ -679,7 +893,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 lowC += 0x0101010000000000L;
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 
@@ -690,7 +904,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 
@@ -701,7 +915,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 
                                 
                                 
@@ -712,7 +926,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 
                                 
                                 
@@ -727,8 +941,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 1 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 
                                 
                                 
@@ -739,7 +953,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 lowN += 0x0101010000000000L;
                                 
                                 
@@ -750,7 +964,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0101010100000001L;
                                 
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 lowN += 0x0101010000000000L;
                                 
                                 
@@ -761,7 +975,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0101010100000001L;
                                 lowC += 0x0101000000000000L;
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 lowN += 0x0101010000000000L;
                                 
                                 
@@ -772,7 +986,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0101010100000001L;
                                 lowC += 0x0101000000000000L;
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 
@@ -783,7 +997,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 
@@ -794,7 +1008,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 
                                 
                                 
@@ -805,7 +1019,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 
                                 
                                 
@@ -820,8 +1034,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 2 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 
                                 
                                 
@@ -832,7 +1046,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 
                                 
                                 
@@ -843,7 +1057,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 lowN += 0x0101000000000000L;
                                 
                                 
@@ -854,7 +1068,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0101000000000001L;
                                 lowC += 0x0100000000000000L;
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 lowN += 0x0101000000000000L;
                                 
                                 
@@ -865,7 +1079,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0101000000000001L;
                                 lowC += 0x0100000000000000L;
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 
@@ -876,7 +1090,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0101000000000001L;
                                 lowC += 0x0100000000000000L;
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 
@@ -887,7 +1101,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 
                                 
                                 
@@ -898,7 +1112,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 
                                 
                                 
@@ -918,8 +1132,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
             case -1 -> {
                 switch (dy) {
                     case -2 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 
                                 
                                 lowE += 0x0000010000000000L;
@@ -930,7 +1144,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 lowC += 0x0000010100000000L;
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 
                                 
                                 lowE += 0x0000010000000000L;
@@ -941,7 +1155,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 lowC += 0x0000010100000000L;
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 
                                 
                                 lowE += 0x0000010000000000L;
@@ -952,7 +1166,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 
                                 
@@ -963,7 +1177,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 
@@ -974,7 +1188,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 
@@ -985,7 +1199,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 
                                 
                                 
@@ -996,7 +1210,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 
                                 
                                 
@@ -1011,8 +1225,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case -1 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 lowN += 0x0000010100000000L;
                                 lowNE += 0x0000010000000000L;
                                 
@@ -1023,7 +1237,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0000010101000000L;
                                 lowC += 0x0001010100000000L;
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 lowN += 0x0000010100000000L;
                                 lowNE += 0x0000010000000000L;
                                 lowE += 0x0001010000000000L;
@@ -1034,7 +1248,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0000010101000000L;
                                 lowC += 0x0001010100000000L;
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 
                                 lowNE += 0x0000010000000000L;
                                 lowE += 0x0001010000000000L;
@@ -1045,7 +1259,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 lowC += 0x0001010100000000L;
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 
                                 
@@ -1056,7 +1270,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 
@@ -1067,7 +1281,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 
@@ -1078,7 +1292,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 
                                 
                                 
@@ -1089,7 +1303,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 
                                 
                                 
@@ -1104,8 +1318,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 0 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 lowN += 0x0001010100000000L;
                                 
                                 
@@ -1116,7 +1330,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0001010101010000L;
                                 
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 lowN += 0x0001010100000000L;
                                 lowNE += 0x0001010000000000L;
                                 lowE += 0x0101010000000000L;
@@ -1127,7 +1341,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0001010101010000L;
                                 lowC += 0x0101010100000001L;
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 lowN += 0x0001010100000000L;
                                 lowNE += 0x0001010000000000L;
                                 lowE += 0x0101010000000000L;
@@ -1138,7 +1352,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 lowC += 0x0101010100000001L;
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 
                                 lowE += 0x0101010000000000L;
@@ -1149,7 +1363,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 lowC += 0x0101010100000001L;
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 
@@ -1160,7 +1374,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 
@@ -1171,7 +1385,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 
                                 
                                 
@@ -1182,7 +1396,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 
                                 
                                 
@@ -1197,8 +1411,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 1 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 
                                 
                                 
@@ -1209,7 +1423,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0101010101010101L;
                                 
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 lowN += 0x0101010100000001L;
                                 lowNE += 0x0101010000000000L;
                                 
@@ -1220,7 +1434,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0101010101010101L;
                                 
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 lowN += 0x0101010100000001L;
                                 lowNE += 0x0101010000000000L;
                                 lowE += 0x0101000000000000L;
@@ -1231,7 +1445,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0101010101010101L;
                                 lowC += 0x0101000000000001L;
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 lowN += 0x0101010100000001L;
                                 lowNE += 0x0101010000000000L;
                                 lowE += 0x0101000000000000L;
@@ -1242,7 +1456,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0101010101010101L;
                                 lowC += 0x0101000000000001L;
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 
@@ -1253,7 +1467,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0101010101010101L;
                                 lowC += 0x0101000000000001L;
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 
@@ -1264,7 +1478,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0101010101010101L;
                                 
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 
                                 
                                 
@@ -1275,7 +1489,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0101010101010101L;
                                 
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 
                                 
                                 
@@ -1290,8 +1504,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 2 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 
                                 
                                 
@@ -1302,7 +1516,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 
                                 
                                 
@@ -1313,7 +1527,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 lowN += 0x0101000000000001L;
                                 lowNE += 0x0101000000000000L;
                                 lowE += 0x0100000000000000L;
@@ -1324,7 +1538,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 lowN += 0x0101000000000001L;
                                 lowNE += 0x0101000000000000L;
                                 lowE += 0x0100000000000000L;
@@ -1335,7 +1549,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0101000000010101L;
                                 lowC += 0x0100000000000001L;
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 lowN += 0x0101000000000001L;
                                 
                                 lowE += 0x0100000000000000L;
@@ -1346,7 +1560,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0101000000010101L;
                                 lowC += 0x0100000000000001L;
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 
@@ -1357,7 +1571,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0101000000010101L;
                                 
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 
                                 
                                 
@@ -1368,7 +1582,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 
                                 
                                 
@@ -1388,8 +1602,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
             case 0 -> {
                 switch (dy) {
                     case -2 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 
                                 
                                 lowE += 0x0000010100000000L;
@@ -1400,7 +1614,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 lowC += 0x0000010101000000L;
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 
                                 
                                 lowE += 0x0000010100000000L;
@@ -1411,7 +1625,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 lowC += 0x0000010101000000L;
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 
                                 
                                 
@@ -1422,7 +1636,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 
                                 
@@ -1433,7 +1647,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 
@@ -1444,7 +1658,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 
@@ -1455,7 +1669,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 
                                 
                                 
@@ -1466,7 +1680,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 
                                 
                                 
@@ -1481,8 +1695,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case -1 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 lowN += 0x0000010101000000L;
                                 lowNE += 0x0000010100000000L;
                                 lowE += 0x0001010100000000L;
@@ -1493,7 +1707,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0000000101000000L;
                                 lowC += 0x0001010101010000L;
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 lowN += 0x0000010101000000L;
                                 lowNE += 0x0000010100000000L;
                                 lowE += 0x0001010100000000L;
@@ -1504,7 +1718,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 lowC += 0x0001010101010000L;
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 
                                 
                                 lowE += 0x0001010100000000L;
@@ -1515,7 +1729,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 
                                 
@@ -1526,7 +1740,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 
@@ -1537,7 +1751,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 
@@ -1548,7 +1762,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 
                                 
                                 
@@ -1559,7 +1773,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 lowN += 0x0000010101000000L;
                                 
                                 
@@ -1574,8 +1788,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 0 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 lowN += 0x0001010101010000L;
                                 lowNE += 0x0001010100000000L;
                                 
@@ -1586,7 +1800,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0000000101010000L;
                                 lowC += 0x0101010101010101L;
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 lowN += 0x0001010101010000L;
                                 lowNE += 0x0001010100000000L;
                                 lowE += 0x0101010100000001L;
@@ -1597,7 +1811,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 lowC += 0x0101010101010101L;
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 
                                 lowNE += 0x0001010100000000L;
                                 lowE += 0x0101010100000001L;
@@ -1608,7 +1822,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 lowC += 0x0101010101010101L;
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 
                                 lowE += 0x0101010100000001L;
@@ -1619,7 +1833,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 lowC += 0x0101010101010101L;
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 
@@ -1630,7 +1844,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 lowC += 0x0101010101010101L;
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 
@@ -1641,7 +1855,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 lowC += 0x0101010101010101L;
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 
                                 
                                 
@@ -1652,7 +1866,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0000000101010000L;
                                 lowC += 0x0101010101010101L;
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 lowN += 0x0001010101010000L;
                                 
                                 
@@ -1667,8 +1881,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 1 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 lowN += 0x0101010101010101L;
                                 
                                 
@@ -1679,7 +1893,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 lowN += 0x0101010101010101L;
                                 lowNE += 0x0101010100000001L;
                                 
@@ -1690,7 +1904,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 lowN += 0x0101010101010101L;
                                 lowNE += 0x0101010100000001L;
                                 lowE += 0x0101000000000001L;
@@ -1701,7 +1915,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 lowN += 0x0101010101010101L;
                                 lowNE += 0x0101010100000001L;
                                 lowE += 0x0101000000000001L;
@@ -1712,7 +1926,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 lowC += 0x0101000000010101L;
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 lowN += 0x0101010101010101L;
                                 
                                 lowE += 0x0101000000000001L;
@@ -1723,7 +1937,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 lowC += 0x0101000000010101L;
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 lowN += 0x0101010101010101L;
                                 
                                 
@@ -1734,7 +1948,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0000000101010101L;
                                 lowC += 0x0101000000010101L;
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 lowN += 0x0101010101010101L;
                                 
                                 
@@ -1745,7 +1959,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0000000101010101L;
                                 
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 lowN += 0x0101010101010101L;
                                 
                                 
@@ -1760,8 +1974,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 2 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 
                                 
                                 
@@ -1772,7 +1986,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 
                                 
                                 
@@ -1783,7 +1997,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 
                                 lowNE += 0x0101000000000001L;
                                 
@@ -1794,7 +2008,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 lowN += 0x0101000000010101L;
                                 lowNE += 0x0101000000000001L;
                                 lowE += 0x0100000000000001L;
@@ -1805,7 +2019,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 lowC += 0x0100000000000101L;
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 lowN += 0x0101000000010101L;
                                 lowNE += 0x0101000000000001L;
                                 lowE += 0x0100000000000001L;
@@ -1816,7 +2030,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0000000000010101L;
                                 lowC += 0x0100000000000101L;
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 lowN += 0x0101000000010101L;
                                 
                                 
@@ -1827,7 +2041,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0000000000010101L;
                                 lowC += 0x0100000000000101L;
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 
                                 
                                 
@@ -1838,7 +2052,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0000000000010101L;
                                 
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 
                                 
                                 
@@ -1858,8 +2072,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
             case 1 -> {
                 switch (dy) {
                     case -2 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 
                                 
                                 lowE += 0x0000010101000000L;
@@ -1870,7 +2084,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 lowC += 0x0000000101000000L;
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 
                                 
                                 lowE += 0x0000010101000000L;
@@ -1881,7 +2095,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 
                                 
                                 
@@ -1892,7 +2106,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 
                                 
@@ -1903,7 +2117,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 
@@ -1914,7 +2128,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 
@@ -1925,7 +2139,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 
                                 
                                 
@@ -1936,7 +2150,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 
                                 
                                 lowE += 0x0000010101000000L;
@@ -1951,8 +2165,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case -1 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 lowN += 0x0000000101000000L;
                                 lowNE += 0x0000010101000000L;
                                 lowE += 0x0001010101010000L;
@@ -1963,7 +2177,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0000000001000000L;
                                 lowC += 0x0000000101010000L;
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 
                                 lowNE += 0x0000010101000000L;
                                 lowE += 0x0001010101010000L;
@@ -1974,7 +2188,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 
                                 
                                 
@@ -1985,7 +2199,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 
                                 
@@ -1996,7 +2210,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 
@@ -2007,7 +2221,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 
@@ -2018,7 +2232,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 
                                 
                                 
@@ -2029,7 +2243,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0000000001000000L;
                                 lowC += 0x0000000101010000L;
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 lowN += 0x0000000101000000L;
                                 lowNE += 0x0000010101000000L;
                                 lowE += 0x0001010101010000L;
@@ -2044,8 +2258,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 0 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 lowN += 0x0000000101010000L;
                                 lowNE += 0x0001010101010000L;
                                 lowE += 0x0101010101010101L;
@@ -2056,7 +2270,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 
                                 lowNE += 0x0001010101010000L;
                                 lowE += 0x0101010101010101L;
@@ -2067,7 +2281,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 
                                 
                                 lowE += 0x0101010101010101L;
@@ -2078,7 +2292,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 
                                 lowE += 0x0101010101010101L;
@@ -2089,7 +2303,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 lowE += 0x0101010101010101L;
@@ -2100,7 +2314,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 lowE += 0x0101010101010101L;
@@ -2111,7 +2325,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 lowC += 0x0000000101010101L;
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 lowN += 0x0000000101010000L;
                                 
                                 lowE += 0x0101010101010101L;
@@ -2122,7 +2336,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0000000001010000L;
                                 lowC += 0x0000000101010101L;
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 lowN += 0x0000000101010000L;
                                 lowNE += 0x0001010101010000L;
                                 lowE += 0x0101010101010101L;
@@ -2137,8 +2351,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 1 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 
                                 lowNE += 0x0101010101010101L;
                                 
@@ -2149,7 +2363,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 
                                 lowNE += 0x0101010101010101L;
                                 
@@ -2160,7 +2374,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 
                                 lowNE += 0x0101010101010101L;
                                 
@@ -2171,7 +2385,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 lowNE += 0x0101010101010101L;
                                 lowE += 0x0101000000010101L;
@@ -2182,7 +2396,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 lowNE += 0x0101010101010101L;
                                 lowE += 0x0101000000010101L;
@@ -2193,7 +2407,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 lowC += 0x0000000000010101L;
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 lowN += 0x0000000101010101L;
                                 lowNE += 0x0101010101010101L;
                                 lowE += 0x0101000000010101L;
@@ -2204,7 +2418,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0000000001010100L;
                                 lowC += 0x0000000000010101L;
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 lowN += 0x0000000101010101L;
                                 lowNE += 0x0101010101010101L;
                                 
@@ -2215,7 +2429,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0000000001010100L;
                                 lowC += 0x0000000000010101L;
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 lowN += 0x0000000101010101L;
                                 lowNE += 0x0101010101010101L;
                                 
@@ -2230,8 +2444,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 2 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 
                                 
                                 
@@ -2242,7 +2456,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 
                                 
                                 
@@ -2253,7 +2467,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 
                                 
                                 
@@ -2264,7 +2478,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 lowNE += 0x0101000000010101L;
                                 lowE += 0x0100000000000101L;
@@ -2275,7 +2489,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 lowN += 0x0000000000010101L;
                                 lowNE += 0x0101000000010101L;
                                 lowE += 0x0100000000000101L;
@@ -2286,7 +2500,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 lowC += 0x0000000000000101L;
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 lowN += 0x0000000000010101L;
                                 lowNE += 0x0101000000010101L;
                                 lowE += 0x0100000000000101L;
@@ -2297,7 +2511,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0000000000010100L;
                                 lowC += 0x0000000000000101L;
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 lowN += 0x0000000000010101L;
                                 
                                 
@@ -2308,7 +2522,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowNW += 0x0000000000010100L;
                                 
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 
                                 
                                 
@@ -2328,8 +2542,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
             case 2 -> {
                 switch (dy) {
                     case -2 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 
                                 
                                 lowE += 0x0000000101000000L;
@@ -2340,7 +2554,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 lowC += 0x0000000001000000L;
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 
                                 
                                 
@@ -2351,7 +2565,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 
                                 
                                 
@@ -2362,7 +2576,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 
                                 
@@ -2373,7 +2587,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 
@@ -2384,7 +2598,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 
@@ -2395,7 +2609,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 
                                 
                                 
@@ -2406,7 +2620,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 lowC += 0x0000000001000000L;
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 
                                 
                                 lowE += 0x0000000101000000L;
@@ -2421,8 +2635,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case -1 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 lowN += 0x0000000001000000L;
                                 lowNE += 0x0000000101000000L;
                                 lowE += 0x0000000101010000L;
@@ -2433,7 +2647,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 
                                 
                                 
@@ -2444,7 +2658,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 
                                 
                                 
@@ -2455,7 +2669,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 
                                 
@@ -2466,7 +2680,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 
@@ -2477,7 +2691,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 
@@ -2488,7 +2702,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 lowN += 0x0000000001000000L;
                                 
                                 lowE += 0x0000000101010000L;
@@ -2499,7 +2713,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 lowC += 0x0000000001010000L;
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 lowN += 0x0000000001000000L;
                                 lowNE += 0x0000000101000000L;
                                 lowE += 0x0000000101010000L;
@@ -2514,8 +2728,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 0 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 
                                 lowNE += 0x0000000101010000L;
                                 
@@ -2526,7 +2740,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 
                                 
                                 
@@ -2537,7 +2751,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 
                                 
                                 
@@ -2548,7 +2762,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 
                                 
@@ -2559,7 +2773,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 
@@ -2570,7 +2784,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 lowE += 0x0000000101010101L;
@@ -2581,7 +2795,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 lowC += 0x0000000001010100L;
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 lowN += 0x0000000001010000L;
                                 lowNE += 0x0000000101010000L;
                                 lowE += 0x0000000101010101L;
@@ -2592,7 +2806,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 lowC += 0x0000000001010100L;
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 lowN += 0x0000000001010000L;
                                 lowNE += 0x0000000101010000L;
                                 lowE += 0x0000000101010101L;
@@ -2607,8 +2821,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 1 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 
                                 
                                 
@@ -2619,7 +2833,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 
                                 
                                 
@@ -2630,7 +2844,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 
                                 
                                 
@@ -2641,7 +2855,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 
                                 
@@ -2652,7 +2866,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 lowE += 0x0000000000010101L;
@@ -2663,7 +2877,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 lowN += 0x0000000001010100L;
                                 lowNE += 0x0000000101010101L;
                                 lowE += 0x0000000000010101L;
@@ -2674,7 +2888,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 lowC += 0x0000000000010100L;
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 lowN += 0x0000000001010100L;
                                 lowNE += 0x0000000101010101L;
                                 lowE += 0x0000000000010101L;
@@ -2685,7 +2899,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 lowC += 0x0000000000010100L;
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 lowN += 0x0000000001010100L;
                                 lowNE += 0x0000000101010101L;
                                 
@@ -2700,8 +2914,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 2 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 
                                 
                                 
@@ -2712,7 +2926,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 
                                 
                                 
@@ -2723,7 +2937,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 
                                 
                                 
@@ -2734,7 +2948,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 
                                 
@@ -2745,7 +2959,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 lowNE += 0x0000000000010101L;
                                 lowE += 0x0000000000000101L;
@@ -2756,7 +2970,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 lowC += 0x0000000000000100L;
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 lowN += 0x0000000000010100L;
                                 lowNE += 0x0000000000010101L;
                                 lowE += 0x0000000000000101L;
@@ -2767,7 +2981,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 lowC += 0x0000000000000100L;
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 lowN += 0x0000000000010100L;
                                 lowNE += 0x0000000000010101L;
                                 
@@ -2778,7 +2992,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 lowC += 0x0000000000000100L;
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 
                                 
                                 
@@ -2804,8 +3018,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
             case -2 -> {
                 switch (dy) {
                     case -2 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 
                                 
                                 
@@ -2816,7 +3030,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 highC += 0x0000010000000000L;
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 
                                 
                                 
@@ -2827,7 +3041,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 highC += 0x0000010000000000L;
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 
                                 
                                 
@@ -2838,7 +3052,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 highC += 0x0000010000000000L;
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 
                                 
@@ -2849,7 +3063,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 
@@ -2860,7 +3074,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 
@@ -2871,7 +3085,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 
                                 
                                 
@@ -2882,7 +3096,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 
                                 
                                 
@@ -2897,8 +3111,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case -1 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 highN += 0x0000010000000000L;
                                 
                                 
@@ -2909,7 +3123,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0000010100000000L;
                                 
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 highN += 0x0000010000000000L;
                                 
                                 
@@ -2920,7 +3134,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0000010100000000L;
                                 highC += 0x0001010000000000L;
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 highN += 0x0000010000000000L;
                                 
                                 
@@ -2931,7 +3145,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 highC += 0x0001010000000000L;
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 
                                 
@@ -2942,7 +3156,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 
@@ -2953,7 +3167,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 
@@ -2964,7 +3178,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 
                                 
                                 
@@ -2975,7 +3189,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 
                                 
                                 
@@ -2990,8 +3204,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 0 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 
                                 
                                 
@@ -3002,7 +3216,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0001010100000000L;
                                 
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 highN += 0x0001010000000000L;
                                 
                                 
@@ -3013,7 +3227,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0001010100000000L;
                                 highC += 0x0101010000000000L;
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 highN += 0x0001010000000000L;
                                 
                                 
@@ -3024,7 +3238,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0001010100000000L;
                                 highC += 0x0101010000000000L;
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 
                                 
@@ -3035,7 +3249,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 highC += 0x0101010000000000L;
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 
@@ -3046,7 +3260,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 
@@ -3057,7 +3271,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 
                                 
                                 
@@ -3068,7 +3282,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 
                                 
                                 
@@ -3083,8 +3297,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 1 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 
                                 
                                 
@@ -3095,7 +3309,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 highN += 0x0101010000000000L;
                                 
                                 
@@ -3106,7 +3320,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0101010100000001L;
                                 
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 highN += 0x0101010000000000L;
                                 
                                 
@@ -3117,7 +3331,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0101010100000001L;
                                 highC += 0x0101000000000000L;
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 highN += 0x0101010000000000L;
                                 
                                 
@@ -3128,7 +3342,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0101010100000001L;
                                 highC += 0x0101000000000000L;
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 
@@ -3139,7 +3353,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 
@@ -3150,7 +3364,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 
                                 
                                 
@@ -3161,7 +3375,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 
                                 
                                 
@@ -3176,8 +3390,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 2 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 
                                 
                                 
@@ -3188,7 +3402,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 
                                 
                                 
@@ -3199,7 +3413,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 highN += 0x0101000000000000L;
                                 
                                 
@@ -3210,7 +3424,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0101000000000001L;
                                 highC += 0x0100000000000000L;
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 highN += 0x0101000000000000L;
                                 
                                 
@@ -3221,7 +3435,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0101000000000001L;
                                 highC += 0x0100000000000000L;
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 
@@ -3232,7 +3446,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0101000000000001L;
                                 highC += 0x0100000000000000L;
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 
@@ -3243,7 +3457,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 
                                 
                                 
@@ -3254,7 +3468,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 
                                 
                                 
@@ -3274,8 +3488,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
             case -1 -> {
                 switch (dy) {
                     case -2 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 
                                 
                                 highE += 0x0000010000000000L;
@@ -3286,7 +3500,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 highC += 0x0000010100000000L;
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 
                                 
                                 highE += 0x0000010000000000L;
@@ -3297,7 +3511,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 highC += 0x0000010100000000L;
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 
                                 
                                 highE += 0x0000010000000000L;
@@ -3308,7 +3522,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 
                                 
@@ -3319,7 +3533,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 
@@ -3330,7 +3544,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 
@@ -3341,7 +3555,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 
                                 
                                 
@@ -3352,7 +3566,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 
                                 
                                 
@@ -3367,8 +3581,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case -1 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 highN += 0x0000010100000000L;
                                 highNE += 0x0000010000000000L;
                                 
@@ -3379,7 +3593,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0000010101000000L;
                                 highC += 0x0001010100000000L;
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 highN += 0x0000010100000000L;
                                 highNE += 0x0000010000000000L;
                                 highE += 0x0001010000000000L;
@@ -3390,7 +3604,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0000010101000000L;
                                 highC += 0x0001010100000000L;
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 
                                 highNE += 0x0000010000000000L;
                                 highE += 0x0001010000000000L;
@@ -3401,7 +3615,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 highC += 0x0001010100000000L;
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 
                                 
@@ -3412,7 +3626,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 
@@ -3423,7 +3637,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 
@@ -3434,7 +3648,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 
                                 
                                 
@@ -3445,7 +3659,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 
                                 
                                 
@@ -3460,8 +3674,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 0 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 highN += 0x0001010100000000L;
                                 
                                 
@@ -3472,7 +3686,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0001010101010000L;
                                 
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 highN += 0x0001010100000000L;
                                 highNE += 0x0001010000000000L;
                                 highE += 0x0101010000000000L;
@@ -3483,7 +3697,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0001010101010000L;
                                 highC += 0x0101010100000001L;
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 highN += 0x0001010100000000L;
                                 highNE += 0x0001010000000000L;
                                 highE += 0x0101010000000000L;
@@ -3494,7 +3708,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 highC += 0x0101010100000001L;
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 
                                 highE += 0x0101010000000000L;
@@ -3505,7 +3719,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 highC += 0x0101010100000001L;
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 
@@ -3516,7 +3730,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 
@@ -3527,7 +3741,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 
                                 
                                 
@@ -3538,7 +3752,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 
                                 
                                 
@@ -3553,8 +3767,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 1 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 
                                 
                                 
@@ -3565,7 +3779,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0101010101010101L;
                                 
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 highN += 0x0101010100000001L;
                                 highNE += 0x0101010000000000L;
                                 
@@ -3576,7 +3790,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0101010101010101L;
                                 
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 highN += 0x0101010100000001L;
                                 highNE += 0x0101010000000000L;
                                 highE += 0x0101000000000000L;
@@ -3587,7 +3801,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0101010101010101L;
                                 highC += 0x0101000000000001L;
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 highN += 0x0101010100000001L;
                                 highNE += 0x0101010000000000L;
                                 highE += 0x0101000000000000L;
@@ -3598,7 +3812,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0101010101010101L;
                                 highC += 0x0101000000000001L;
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 
@@ -3609,7 +3823,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0101010101010101L;
                                 highC += 0x0101000000000001L;
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 
@@ -3620,7 +3834,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0101010101010101L;
                                 
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 
                                 
                                 
@@ -3631,7 +3845,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0101010101010101L;
                                 
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 
                                 
                                 
@@ -3646,8 +3860,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 2 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 
                                 
                                 
@@ -3658,7 +3872,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 
                                 
                                 
@@ -3669,7 +3883,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 highN += 0x0101000000000001L;
                                 highNE += 0x0101000000000000L;
                                 highE += 0x0100000000000000L;
@@ -3680,7 +3894,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 highN += 0x0101000000000001L;
                                 highNE += 0x0101000000000000L;
                                 highE += 0x0100000000000000L;
@@ -3691,7 +3905,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0101000000010101L;
                                 highC += 0x0100000000000001L;
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 highN += 0x0101000000000001L;
                                 
                                 highE += 0x0100000000000000L;
@@ -3702,7 +3916,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0101000000010101L;
                                 highC += 0x0100000000000001L;
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 
@@ -3713,7 +3927,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0101000000010101L;
                                 
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 
                                 
                                 
@@ -3724,7 +3938,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 
                                 
                                 
@@ -3744,8 +3958,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
             case 0 -> {
                 switch (dy) {
                     case -2 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 
                                 
                                 highE += 0x0000010100000000L;
@@ -3756,7 +3970,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 highC += 0x0000010101000000L;
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 
                                 
                                 highE += 0x0000010100000000L;
@@ -3767,7 +3981,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 highC += 0x0000010101000000L;
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 
                                 
                                 
@@ -3778,7 +3992,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 
                                 
@@ -3789,7 +4003,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 
@@ -3800,7 +4014,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 
@@ -3811,7 +4025,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 
                                 
                                 
@@ -3822,7 +4036,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 
                                 
                                 
@@ -3837,8 +4051,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case -1 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 highN += 0x0000010101000000L;
                                 highNE += 0x0000010100000000L;
                                 highE += 0x0001010100000000L;
@@ -3849,7 +4063,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0000000101000000L;
                                 highC += 0x0001010101010000L;
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 highN += 0x0000010101000000L;
                                 highNE += 0x0000010100000000L;
                                 highE += 0x0001010100000000L;
@@ -3860,7 +4074,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 highC += 0x0001010101010000L;
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 
                                 
                                 highE += 0x0001010100000000L;
@@ -3871,7 +4085,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 
                                 
@@ -3882,7 +4096,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 
@@ -3893,7 +4107,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 
@@ -3904,7 +4118,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 
                                 
                                 
@@ -3915,7 +4129,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 highN += 0x0000010101000000L;
                                 
                                 
@@ -3930,8 +4144,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 0 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 highN += 0x0001010101010000L;
                                 highNE += 0x0001010100000000L;
                                 
@@ -3942,7 +4156,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0000000101010000L;
                                 highC += 0x0101010101010101L;
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 highN += 0x0001010101010000L;
                                 highNE += 0x0001010100000000L;
                                 highE += 0x0101010100000001L;
@@ -3953,7 +4167,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 highC += 0x0101010101010101L;
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 
                                 highNE += 0x0001010100000000L;
                                 highE += 0x0101010100000001L;
@@ -3964,7 +4178,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 highC += 0x0101010101010101L;
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 
                                 highE += 0x0101010100000001L;
@@ -3975,7 +4189,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 highC += 0x0101010101010101L;
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 
@@ -3986,7 +4200,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 highC += 0x0101010101010101L;
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 
@@ -3997,7 +4211,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 highC += 0x0101010101010101L;
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 
                                 
                                 
@@ -4008,7 +4222,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0000000101010000L;
                                 highC += 0x0101010101010101L;
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 highN += 0x0001010101010000L;
                                 
                                 
@@ -4023,8 +4237,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 1 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 highN += 0x0101010101010101L;
                                 
                                 
@@ -4035,7 +4249,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 highN += 0x0101010101010101L;
                                 highNE += 0x0101010100000001L;
                                 
@@ -4046,7 +4260,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 highN += 0x0101010101010101L;
                                 highNE += 0x0101010100000001L;
                                 highE += 0x0101000000000001L;
@@ -4057,7 +4271,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 highN += 0x0101010101010101L;
                                 highNE += 0x0101010100000001L;
                                 highE += 0x0101000000000001L;
@@ -4068,7 +4282,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 highC += 0x0101000000010101L;
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 highN += 0x0101010101010101L;
                                 
                                 highE += 0x0101000000000001L;
@@ -4079,7 +4293,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 highC += 0x0101000000010101L;
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 highN += 0x0101010101010101L;
                                 
                                 
@@ -4090,7 +4304,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0000000101010101L;
                                 highC += 0x0101000000010101L;
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 highN += 0x0101010101010101L;
                                 
                                 
@@ -4101,7 +4315,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0000000101010101L;
                                 
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 highN += 0x0101010101010101L;
                                 
                                 
@@ -4116,8 +4330,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 2 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 
                                 
                                 
@@ -4128,7 +4342,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 
                                 
                                 
@@ -4139,7 +4353,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 
                                 highNE += 0x0101000000000001L;
                                 
@@ -4150,7 +4364,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 highN += 0x0101000000010101L;
                                 highNE += 0x0101000000000001L;
                                 highE += 0x0100000000000001L;
@@ -4161,7 +4375,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 highC += 0x0100000000000101L;
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 highN += 0x0101000000010101L;
                                 highNE += 0x0101000000000001L;
                                 highE += 0x0100000000000001L;
@@ -4172,7 +4386,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0000000000010101L;
                                 highC += 0x0100000000000101L;
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 highN += 0x0101000000010101L;
                                 
                                 
@@ -4183,7 +4397,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0000000000010101L;
                                 highC += 0x0100000000000101L;
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 
                                 
                                 
@@ -4194,7 +4408,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0000000000010101L;
                                 
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 
                                 
                                 
@@ -4214,8 +4428,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
             case 1 -> {
                 switch (dy) {
                     case -2 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 
                                 
                                 highE += 0x0000010101000000L;
@@ -4226,7 +4440,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 highC += 0x0000000101000000L;
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 
                                 
                                 highE += 0x0000010101000000L;
@@ -4237,7 +4451,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 
                                 
                                 
@@ -4248,7 +4462,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 
                                 
@@ -4259,7 +4473,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 
@@ -4270,7 +4484,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 
@@ -4281,7 +4495,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 
                                 
                                 
@@ -4292,7 +4506,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 
                                 
                                 highE += 0x0000010101000000L;
@@ -4307,8 +4521,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case -1 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 highN += 0x0000000101000000L;
                                 highNE += 0x0000010101000000L;
                                 highE += 0x0001010101010000L;
@@ -4319,7 +4533,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0000000001000000L;
                                 highC += 0x0000000101010000L;
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 
                                 highNE += 0x0000010101000000L;
                                 highE += 0x0001010101010000L;
@@ -4330,7 +4544,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 
                                 
                                 
@@ -4341,7 +4555,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 
                                 
@@ -4352,7 +4566,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 
@@ -4363,7 +4577,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 
@@ -4374,7 +4588,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 
                                 
                                 
@@ -4385,7 +4599,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0000000001000000L;
                                 highC += 0x0000000101010000L;
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 highN += 0x0000000101000000L;
                                 highNE += 0x0000010101000000L;
                                 highE += 0x0001010101010000L;
@@ -4400,8 +4614,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 0 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 highN += 0x0000000101010000L;
                                 highNE += 0x0001010101010000L;
                                 highE += 0x0101010101010101L;
@@ -4412,7 +4626,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 
                                 highNE += 0x0001010101010000L;
                                 highE += 0x0101010101010101L;
@@ -4423,7 +4637,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 
                                 
                                 highE += 0x0101010101010101L;
@@ -4434,7 +4648,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 
                                 highE += 0x0101010101010101L;
@@ -4445,7 +4659,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 highE += 0x0101010101010101L;
@@ -4456,7 +4670,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 highE += 0x0101010101010101L;
@@ -4467,7 +4681,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 highC += 0x0000000101010101L;
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 highN += 0x0000000101010000L;
                                 
                                 highE += 0x0101010101010101L;
@@ -4478,7 +4692,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0000000001010000L;
                                 highC += 0x0000000101010101L;
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 highN += 0x0000000101010000L;
                                 highNE += 0x0001010101010000L;
                                 highE += 0x0101010101010101L;
@@ -4493,8 +4707,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 1 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 
                                 highNE += 0x0101010101010101L;
                                 
@@ -4505,7 +4719,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 
                                 highNE += 0x0101010101010101L;
                                 
@@ -4516,7 +4730,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 
                                 highNE += 0x0101010101010101L;
                                 
@@ -4527,7 +4741,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 highNE += 0x0101010101010101L;
                                 highE += 0x0101000000010101L;
@@ -4538,7 +4752,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 highNE += 0x0101010101010101L;
                                 highE += 0x0101000000010101L;
@@ -4549,7 +4763,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 highC += 0x0000000000010101L;
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 highN += 0x0000000101010101L;
                                 highNE += 0x0101010101010101L;
                                 highE += 0x0101000000010101L;
@@ -4560,7 +4774,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0000000001010100L;
                                 highC += 0x0000000000010101L;
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 highN += 0x0000000101010101L;
                                 highNE += 0x0101010101010101L;
                                 
@@ -4571,7 +4785,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0000000001010100L;
                                 highC += 0x0000000000010101L;
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 highN += 0x0000000101010101L;
                                 highNE += 0x0101010101010101L;
                                 
@@ -4586,8 +4800,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 2 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 
                                 
                                 
@@ -4598,7 +4812,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 
                                 
                                 
@@ -4609,7 +4823,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 
                                 
                                 
@@ -4620,7 +4834,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 highNE += 0x0101000000010101L;
                                 highE += 0x0100000000000101L;
@@ -4631,7 +4845,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 highN += 0x0000000000010101L;
                                 highNE += 0x0101000000010101L;
                                 highE += 0x0100000000000101L;
@@ -4642,7 +4856,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 highC += 0x0000000000000101L;
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 highN += 0x0000000000010101L;
                                 highNE += 0x0101000000010101L;
                                 highE += 0x0100000000000101L;
@@ -4653,7 +4867,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0000000000010100L;
                                 highC += 0x0000000000000101L;
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 highN += 0x0000000000010101L;
                                 
                                 
@@ -4664,7 +4878,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highNW += 0x0000000000010100L;
                                 
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 
                                 
                                 
@@ -4684,8 +4898,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
             case 2 -> {
                 switch (dy) {
                     case -2 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 
                                 
                                 highE += 0x0000000101000000L;
@@ -4696,7 +4910,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 highC += 0x0000000001000000L;
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 
                                 
                                 
@@ -4707,7 +4921,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 
                                 
                                 
@@ -4718,7 +4932,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 
                                 
@@ -4729,7 +4943,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 
@@ -4740,7 +4954,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 
@@ -4751,7 +4965,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 
                                 
                                 
@@ -4762,7 +4976,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 highC += 0x0000000001000000L;
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 
                                 
                                 highE += 0x0000000101000000L;
@@ -4777,8 +4991,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case -1 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 highN += 0x0000000001000000L;
                                 highNE += 0x0000000101000000L;
                                 highE += 0x0000000101010000L;
@@ -4789,7 +5003,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 
                                 
                                 
@@ -4800,7 +5014,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 
                                 
                                 
@@ -4811,7 +5025,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 
                                 
@@ -4822,7 +5036,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 
@@ -4833,7 +5047,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 
@@ -4844,7 +5058,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 highN += 0x0000000001000000L;
                                 
                                 highE += 0x0000000101010000L;
@@ -4855,7 +5069,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 highC += 0x0000000001010000L;
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 highN += 0x0000000001000000L;
                                 highNE += 0x0000000101000000L;
                                 highE += 0x0000000101010000L;
@@ -4870,8 +5084,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 0 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 
                                 highNE += 0x0000000101010000L;
                                 
@@ -4882,7 +5096,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 
                                 
                                 
@@ -4893,7 +5107,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 
                                 
                                 
@@ -4904,7 +5118,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 
                                 
@@ -4915,7 +5129,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 
@@ -4926,7 +5140,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 
                                 
                                 highE += 0x0000000101010101L;
@@ -4937,7 +5151,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 highC += 0x0000000001010100L;
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 highN += 0x0000000001010000L;
                                 highNE += 0x0000000101010000L;
                                 highE += 0x0000000101010101L;
@@ -4948,7 +5162,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 highC += 0x0000000001010100L;
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 highN += 0x0000000001010000L;
                                 highNE += 0x0000000101010000L;
                                 highE += 0x0000000101010101L;
@@ -4963,8 +5177,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 1 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 
                                 
                                 
@@ -4975,7 +5189,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 
                                 
                                 
@@ -4986,7 +5200,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 
                                 
                                 
@@ -4997,7 +5211,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 
                                 
@@ -5008,7 +5222,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 
                                 highE += 0x0000000000010101L;
@@ -5019,7 +5233,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 highN += 0x0000000001010100L;
                                 highNE += 0x0000000101010101L;
                                 highE += 0x0000000000010101L;
@@ -5030,7 +5244,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 highC += 0x0000000000010100L;
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 highN += 0x0000000001010100L;
                                 highNE += 0x0000000101010101L;
                                 highE += 0x0000000000010101L;
@@ -5041,7 +5255,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 highC += 0x0000000000010100L;
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 highN += 0x0000000001010100L;
                                 highNE += 0x0000000101010101L;
                                 
@@ -5056,8 +5270,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 2 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
                                 
                                 
                                 
@@ -5068,7 +5282,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.NORTHEAST -> {
+                            case 1 -> {
                                 
                                 
                                 
@@ -5079,7 +5293,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.EAST -> {
+                            case 2 -> {
                                 
                                 
                                 
@@ -5090,7 +5304,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTHEAST -> {
+                            case 3 -> {
                                 
                                 
                                 
@@ -5101,7 +5315,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                             }
-                            case Direction.SOUTH -> {
+                            case 4 -> {
                                 
                                 highNE += 0x0000000000010101L;
                                 highE += 0x0000000000000101L;
@@ -5112,7 +5326,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 highC += 0x0000000000000100L;
                             }
-                            case Direction.SOUTHWEST -> {
+                            case 5 -> {
                                 highN += 0x0000000000010100L;
                                 highNE += 0x0000000000010101L;
                                 highE += 0x0000000000000101L;
@@ -5123,7 +5337,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 highC += 0x0000000000000100L;
                             }
-                            case Direction.WEST -> {
+                            case 6 -> {
                                 highN += 0x0000000000010100L;
                                 highNE += 0x0000000000010101L;
                                 
@@ -5134,7 +5348,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 highC += 0x0000000000000100L;
                             }
-                            case Direction.NORTHWEST -> {
+                            case 7 -> {
                                 
                                 
                                 
@@ -5186,323 +5400,181 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
     }
 
     private static long getLowMask(Direction moveDir) {
-        return switch (moveDir) {
-            case Direction.NORTH -> lowN;
-            case Direction.NORTHEAST -> lowNE;
-            case Direction.EAST -> lowE;
-            case Direction.SOUTHEAST -> lowSE;
-            case Direction.SOUTH -> lowS;
-            case Direction.SOUTHWEST -> lowSW;
-            case Direction.WEST -> lowW;
-            case Direction.NORTHWEST -> lowNW;
-            case Direction.CENTER -> lowC;
+        return switch (moveDir.ordinal()) {
+            case 0 -> lowN;
+            case 1 -> lowNE;
+            case 2 -> lowE;
+            case 3 -> lowSE;
+            case 4 -> lowS;
+            case 5 -> lowSW;
+            case 6 -> lowW;
+            case 7 -> lowNW;
+            case 8 -> lowC;
             default -> 0L;
         };
     }
 
     private static long getHighMask(Direction moveDir) {
-        return switch (moveDir) {
-            case Direction.NORTH -> highN;
-            case Direction.NORTHEAST -> highNE;
-            case Direction.EAST -> highE;
-            case Direction.SOUTHEAST -> highSE;
-            case Direction.SOUTH -> highS;
-            case Direction.SOUTHWEST -> highSW;
-            case Direction.WEST -> highW;
-            case Direction.NORTHWEST -> highNW;
-            case Direction.CENTER -> highC;
+        return switch (moveDir.ordinal()) {
+            case 0 -> highN;
+            case 1 -> highNE;
+            case 2 -> highE;
+            case 3 -> highSE;
+            case 4 -> highS;
+            case 5 -> highSW;
+            case 6 -> highW;
+            case 7 -> highNW;
+            case 8 -> highC;
             default -> 0L;
         };
     }
 
     private static long getMoveThreatMask(Direction moveDir) {
-        return switch (moveDir) {
-            case Direction.NORTH -> moveThreatN;
-            case Direction.NORTHEAST -> moveThreatNE;
-            case Direction.EAST -> moveThreatE;
-            case Direction.SOUTHEAST -> moveThreatSE;
-            case Direction.SOUTH -> moveThreatS;
-            case Direction.SOUTHWEST -> moveThreatSW;
-            case Direction.WEST -> moveThreatW;
-            case Direction.NORTHWEST -> moveThreatNW;
-            case Direction.CENTER -> moveThreatC;
+        return switch (moveDir.ordinal()) {
+            case 0 -> moveThreatN;
+            case 1 -> moveThreatNE;
+            case 2 -> moveThreatE;
+            case 3 -> moveThreatSE;
+            case 4 -> moveThreatS;
+            case 5 -> moveThreatSW;
+            case 6 -> moveThreatW;
+            case 7 -> moveThreatNW;
+            case 8 -> moveThreatC;
             default -> 0L;
         };
     }
 
     private static long getHiddenMask(Direction facing) {
-        return switch (facing) {
-            case Direction.NORTH -> hiddenN;
-            case Direction.NORTHEAST -> hiddenNE;
-            case Direction.EAST -> hiddenE;
-            case Direction.SOUTHEAST -> hiddenSE;
-            case Direction.SOUTH -> hiddenS;
-            case Direction.SOUTHWEST -> hiddenSW;
-            case Direction.WEST -> hiddenW;
-            case Direction.NORTHWEST -> hiddenNW;
+        return switch (facing.ordinal()) {
+            case 0 -> hiddenN;
+            case 1 -> hiddenNE;
+            case 2 -> hiddenE;
+            case 3 -> hiddenSE;
+            case 4 -> hiddenS;
+            case 5 -> hiddenSW;
+            case 6 -> hiddenW;
+            case 7 -> hiddenNW;
             default -> 0L;
         };
     }
 
     private static long enemyMaskForMove(int dx, int dy, Direction facing, Direction moveDir) {
+        int faceIdx = facing.ordinal();
+        int moveIdx = moveDir.ordinal();
         switch (dx) {
             case -2 -> {
                 switch (dy) {
                     case -2 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0001010100000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000010100000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000010000000000L;
-                                    }
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0001010100000000L; }
+                                    case 6 -> { return 0x0000010100000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000010000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0001010000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0001010100000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000010100000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000010000000000L;
-                                    }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0001010000000000L; }
+                                    case 5 -> { return 0x0001010100000000L; }
+                                    case 6 -> { return 0x0000010100000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000010000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.EAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0001010000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0001010100000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000010000000000L;
-                                    }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0001010000000000L; }
+                                    case 5 -> { return 0x0001010100000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000010000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.WEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
@@ -5510,260 +5582,116 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case -1 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000010000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0001010100000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000010100000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000010000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0001010100000000L; }
+                                    case 7 -> { return 0x0000010100000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000010000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0101010000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0101010100000001L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0001010100000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000010100000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0001010000000000L;
-                                    }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000010000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0101010000000000L; }
+                                    case 5 -> { return 0x0101010100000001L; }
+                                    case 6 -> { return 0x0001010100000000L; }
+                                    case 7 -> { return 0x0000010100000000L; }
+                                    case 8 -> { return 0x0001010000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.EAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000010000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0101010000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0101010100000001L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0001010100000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0001010000000000L;
-                                    }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000010000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0101010000000000L; }
+                                    case 5 -> { return 0x0101010100000001L; }
+                                    case 6 -> { return 0x0001010100000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0001010000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0101010000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0101010100000001L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0101010000000000L; }
+                                    case 5 -> { return 0x0101010100000001L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.WEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
@@ -5771,260 +5699,116 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 0 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0001010100000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0001010100000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0001010000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0101010100000001L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0001010100000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0101010000000000L;
-                                    }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0001010000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0101010100000001L; }
+                                    case 7 -> { return 0x0001010100000000L; }
+                                    case 8 -> { return 0x0101010000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.EAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0001010000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0101000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0101000000000001L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0101010100000001L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0001010100000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0101010000000000L;
-                                    }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0001010000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0101000000000000L; }
+                                    case 5 -> { return 0x0101000000000001L; }
+                                    case 6 -> { return 0x0101010100000001L; }
+                                    case 7 -> { return 0x0001010100000000L; }
+                                    case 8 -> { return 0x0101010000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0101000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0101000000000001L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0101010100000001L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0101010000000000L;
-                                    }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0101000000000000L; }
+                                    case 5 -> { return 0x0101000000000001L; }
+                                    case 6 -> { return 0x0101010100000001L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0101010000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0101000000000001L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0101000000000001L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.WEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
@@ -6032,260 +5816,116 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 1 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0101010000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0101010100000001L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0101010000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0101010100000001L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.EAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0101010000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0100000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0101000000000001L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0101010100000001L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0101000000000000L;
-                                    }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0101010000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0100000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0101000000000001L; }
+                                    case 7 -> { return 0x0101010100000001L; }
+                                    case 8 -> { return 0x0101000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0101010000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0100000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0100000000000001L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0101000000000001L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0101010100000001L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0101000000000000L;
-                                    }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0101010000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0100000000000000L; }
+                                    case 5 -> { return 0x0100000000000001L; }
+                                    case 6 -> { return 0x0101000000000001L; }
+                                    case 7 -> { return 0x0101010100000001L; }
+                                    case 8 -> { return 0x0101000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0100000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0100000000000001L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0101000000000001L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0100000000000000L; }
+                                    case 5 -> { return 0x0100000000000001L; }
+                                    case 6 -> { return 0x0101000000000001L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.WEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
@@ -6293,260 +5933,116 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 2 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.EAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0101000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0101000000000001L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0100000000000000L;
-                                    }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0101000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0101000000000001L; }
+                                    case 8 -> { return 0x0100000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0101000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0100000000000001L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0101000000000001L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0100000000000000L;
-                                    }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0101000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0100000000000001L; }
+                                    case 7 -> { return 0x0101000000000001L; }
+                                    case 8 -> { return 0x0100000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0100000000000001L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0101000000000001L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0100000000000000L;
-                                    }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0100000000000001L; }
+                                    case 7 -> { return 0x0101000000000001L; }
+                                    case 8 -> { return 0x0100000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.WEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
@@ -6559,260 +6055,116 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
             case -1 -> {
                 switch (dy) {
                     case -2 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000010000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0001010100000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0001010101010000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000010101000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000010100000000L;
-                                    }
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000010000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0001010100000000L; }
+                                    case 5 -> { return 0x0001010101010000L; }
+                                    case 6 -> { return 0x0000010101000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000010100000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000010000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0001010000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0001010100000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0001010101010000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000010101000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000010100000000L;
-                                    }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000010000000000L; }
+                                    case 3 -> { return 0x0001010000000000L; }
+                                    case 4 -> { return 0x0001010100000000L; }
+                                    case 5 -> { return 0x0001010101010000L; }
+                                    case 6 -> { return 0x0000010101000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000010100000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.EAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000010000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0001010000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0001010100000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000010000000000L; }
+                                    case 3 -> { return 0x0001010000000000L; }
+                                    case 4 -> { return 0x0001010100000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.WEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0001010101010000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000010101000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0001010101010000L; }
+                                    case 6 -> { return 0x0000010101000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
@@ -6820,260 +6172,116 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case -1 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000010100000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000010000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0001010101010000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000010101000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0001010100000000L;
-                                    }
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000010100000000L; }
+                                    case 1 -> { return 0x0000010000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0101010101010101L; }
+                                    case 6 -> { return 0x0001010101010000L; }
+                                    case 7 -> { return 0x0000010101000000L; }
+                                    case 8 -> { return 0x0001010100000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000010100000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000010000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0001010000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0101010000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0101010100000001L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0001010101010000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000010101000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0001010100000000L;
-                                    }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000010100000000L; }
+                                    case 1 -> { return 0x0000010000000000L; }
+                                    case 2 -> { return 0x0001010000000000L; }
+                                    case 3 -> { return 0x0101010000000000L; }
+                                    case 4 -> { return 0x0101010100000001L; }
+                                    case 5 -> { return 0x0101010101010101L; }
+                                    case 6 -> { return 0x0001010101010000L; }
+                                    case 7 -> { return 0x0000010101000000L; }
+                                    case 8 -> { return 0x0001010100000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.EAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000010000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0001010000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0101010000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0101010100000001L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0001010100000000L;
-                                    }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000010000000000L; }
+                                    case 2 -> { return 0x0001010000000000L; }
+                                    case 3 -> { return 0x0101010000000000L; }
+                                    case 4 -> { return 0x0101010100000001L; }
+                                    case 5 -> { return 0x0101010101010101L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0001010100000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0101010000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0101010100000001L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0101010000000000L; }
+                                    case 4 -> { return 0x0101010100000001L; }
+                                    case 5 -> { return 0x0101010101010101L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0101010101010101L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0101010101010101L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.WEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0101010101010101L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0001010101010000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000010101000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0101010101010101L; }
+                                    case 6 -> { return 0x0001010101010000L; }
+                                    case 7 -> { return 0x0000010101000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
@@ -7081,260 +6289,116 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 0 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0001010100000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0001010101010000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0001010100000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0101010101010101L; }
+                                    case 7 -> { return 0x0001010101010000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0001010100000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0001010000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0101010000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0001010101010000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0101010100000001L;
-                                    }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0001010100000000L; }
+                                    case 1 -> { return 0x0001010000000000L; }
+                                    case 2 -> { return 0x0101010000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0101010101010101L; }
+                                    case 7 -> { return 0x0001010101010000L; }
+                                    case 8 -> { return 0x0101010100000001L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.EAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0001010100000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0001010000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0101010000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0101000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0101000000000001L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0101010100000001L;
-                                    }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0001010100000000L; }
+                                    case 1 -> { return 0x0001010000000000L; }
+                                    case 2 -> { return 0x0101010000000000L; }
+                                    case 3 -> { return 0x0101000000000000L; }
+                                    case 4 -> { return 0x0101000000000001L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0101010101010101L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0101010100000001L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0101010000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0101000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0101000000000001L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0101000000010101L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0101010100000001L;
-                                    }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0101010000000000L; }
+                                    case 3 -> { return 0x0101000000000000L; }
+                                    case 4 -> { return 0x0101000000000001L; }
+                                    case 5 -> { return 0x0101000000010101L; }
+                                    case 6 -> { return 0x0101010101010101L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0101010100000001L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0101000000000001L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0101000000010101L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0101000000000001L; }
+                                    case 5 -> { return 0x0101000000010101L; }
+                                    case 6 -> { return 0x0101010101010101L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0101000000010101L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0101000000010101L; }
+                                    case 6 -> { return 0x0101010101010101L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.WEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0101010101010101L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0001010101010000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0101010101010101L; }
+                                    case 7 -> { return 0x0001010101010000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
@@ -7342,260 +6406,116 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 1 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0101010101010101L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0101010100000001L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0101010000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0101010100000001L; }
+                                    case 1 -> { return 0x0101010000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0101010101010101L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.EAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0101010100000001L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0101010000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0101000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0100000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0101000000000001L;
-                                    }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0101010100000001L; }
+                                    case 1 -> { return 0x0101010000000000L; }
+                                    case 2 -> { return 0x0101000000000000L; }
+                                    case 3 -> { return 0x0100000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0101010101010101L; }
+                                    case 8 -> { return 0x0101000000000001L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0101010100000001L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0101010000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0101000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0100000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0100000000000001L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0100000000000101L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0101000000010101L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0101000000000001L;
-                                    }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0101010100000001L; }
+                                    case 1 -> { return 0x0101010000000000L; }
+                                    case 2 -> { return 0x0101000000000000L; }
+                                    case 3 -> { return 0x0100000000000000L; }
+                                    case 4 -> { return 0x0100000000000001L; }
+                                    case 5 -> { return 0x0100000000000101L; }
+                                    case 6 -> { return 0x0101000000010101L; }
+                                    case 7 -> { return 0x0101010101010101L; }
+                                    case 8 -> { return 0x0101000000000001L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0100000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0100000000000001L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0100000000000101L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0101000000010101L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0101000000000001L;
-                                    }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0100000000000000L; }
+                                    case 4 -> { return 0x0100000000000001L; }
+                                    case 5 -> { return 0x0100000000000101L; }
+                                    case 6 -> { return 0x0101000000010101L; }
+                                    case 7 -> { return 0x0101010101010101L; }
+                                    case 8 -> { return 0x0101000000000001L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0100000000000101L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0101000000010101L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0100000000000101L; }
+                                    case 6 -> { return 0x0101000000010101L; }
+                                    case 7 -> { return 0x0101010101010101L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.WEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0101010101010101L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0101010101010101L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
@@ -7603,260 +6523,116 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 2 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.EAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0101000000000001L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0101000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0100000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0101000000000001L; }
+                                    case 1 -> { return 0x0101000000000000L; }
+                                    case 2 -> { return 0x0100000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0101000000000001L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0101000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0100000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0100000000000101L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0101000000010101L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0100000000000001L;
-                                    }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0101000000000001L; }
+                                    case 1 -> { return 0x0101000000000000L; }
+                                    case 2 -> { return 0x0100000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0100000000000101L; }
+                                    case 7 -> { return 0x0101000000010101L; }
+                                    case 8 -> { return 0x0100000000000001L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0101000000000001L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0100000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0100000000000101L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0101000000010101L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0100000000000001L;
-                                    }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0101000000000001L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0100000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0100000000000101L; }
+                                    case 7 -> { return 0x0101000000010101L; }
+                                    case 8 -> { return 0x0100000000000001L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0100000000000101L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0101000000010101L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0100000000000101L; }
+                                    case 7 -> { return 0x0101000000010101L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.WEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
@@ -7869,260 +6645,116 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
             case 0 -> {
                 switch (dy) {
                     case -2 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000010100000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0001010100000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0001010101010000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000101010000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000101000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000010101000000L;
-                                    }
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000010100000000L; }
+                                    case 3 -> { return 0x0001010100000000L; }
+                                    case 4 -> { return 0x0001010101010000L; }
+                                    case 5 -> { return 0x0000000101010000L; }
+                                    case 6 -> { return 0x0000000101000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000010101000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000010100000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0001010100000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0001010101010000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000010101000000L;
-                                    }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000010100000000L; }
+                                    case 3 -> { return 0x0001010100000000L; }
+                                    case 4 -> { return 0x0001010101010000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000010101000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.EAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0001010100000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0001010100000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.WEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000101010000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000101010000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0001010101010000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000101010000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000101000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000010101000000L;
-                                    }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0001010101010000L; }
+                                    case 5 -> { return 0x0000000101010000L; }
+                                    case 6 -> { return 0x0000000101000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000010101000000L; }
                                     default -> { return 0L; }
                                 }
                             }
@@ -8130,260 +6762,116 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case -1 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000010101000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000010100000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0001010100000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000101010000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000101000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0001010101010000L;
-                                    }
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000010101000000L; }
+                                    case 1 -> { return 0x0000010100000000L; }
+                                    case 2 -> { return 0x0001010100000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0101010101010101L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000101010000L; }
+                                    case 7 -> { return 0x0000000101000000L; }
+                                    case 8 -> { return 0x0001010101010000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000010101000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000010100000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0001010100000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0101010100000001L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0001010101010000L;
-                                    }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000010101000000L; }
+                                    case 1 -> { return 0x0000010100000000L; }
+                                    case 2 -> { return 0x0001010100000000L; }
+                                    case 3 -> { return 0x0101010100000001L; }
+                                    case 4 -> { return 0x0101010101010101L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0001010101010000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.EAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0001010100000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0101010100000001L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0001010100000000L; }
+                                    case 3 -> { return 0x0101010100000001L; }
+                                    case 4 -> { return 0x0101010101010101L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0101010100000001L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0101010100000001L; }
+                                    case 4 -> { return 0x0101010101010101L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0101010101010101L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000101010101L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0101010101010101L; }
+                                    case 5 -> { return 0x0000000101010101L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.WEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000101010101L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000101010000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0101010101010101L; }
+                                    case 5 -> { return 0x0000000101010101L; }
+                                    case 6 -> { return 0x0000000101010000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000010101000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000101010101L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000101010000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000101000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0001010101010000L;
-                                    }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000010101000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0101010101010101L; }
+                                    case 5 -> { return 0x0000000101010101L; }
+                                    case 6 -> { return 0x0000000101010000L; }
+                                    case 7 -> { return 0x0000000101000000L; }
+                                    case 8 -> { return 0x0001010101010000L; }
                                     default -> { return 0L; }
                                 }
                             }
@@ -8391,260 +6879,116 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 0 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0001010101010000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0001010100000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000101010000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0101010101010101L;
-                                    }
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0001010101010000L; }
+                                    case 1 -> { return 0x0001010100000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000101010000L; }
+                                    case 8 -> { return 0x0101010101010101L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0001010101010000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0001010100000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0101010100000001L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0101010101010101L;
-                                    }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0001010101010000L; }
+                                    case 1 -> { return 0x0001010100000000L; }
+                                    case 2 -> { return 0x0101010100000001L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0101010101010101L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.EAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0001010100000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0101010100000001L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0101000000000001L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0101010101010101L;
-                                    }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0001010100000000L; }
+                                    case 2 -> { return 0x0101010100000001L; }
+                                    case 3 -> { return 0x0101000000000001L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0101010101010101L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0101010100000001L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0101000000000001L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0101000000010101L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0101010101010101L;
-                                    }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0101010100000001L; }
+                                    case 3 -> { return 0x0101000000000001L; }
+                                    case 4 -> { return 0x0101000000010101L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0101010101010101L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0101000000000001L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0101000000010101L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000010101L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0101010101010101L;
-                                    }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0101000000000001L; }
+                                    case 4 -> { return 0x0101000000010101L; }
+                                    case 5 -> { return 0x0000000000010101L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0101010101010101L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0101000000010101L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000010101L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000101010101L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0101010101010101L;
-                                    }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0101000000010101L; }
+                                    case 5 -> { return 0x0000000000010101L; }
+                                    case 6 -> { return 0x0000000101010101L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0101010101010101L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.WEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000010101L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000101010101L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000101010000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0101010101010101L;
-                                    }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000010101L; }
+                                    case 6 -> { return 0x0000000101010101L; }
+                                    case 7 -> { return 0x0000000101010000L; }
+                                    case 8 -> { return 0x0101010101010101L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0001010101010000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000101010101L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000101010000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0101010101010101L;
-                                    }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0001010101010000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000101010101L; }
+                                    case 7 -> { return 0x0000000101010000L; }
+                                    case 8 -> { return 0x0101010101010101L; }
                                     default -> { return 0L; }
                                 }
                             }
@@ -8652,260 +6996,116 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 1 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0101010101010101L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0101010100000001L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0101010101010101L; }
+                                    case 1 -> { return 0x0101010100000001L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.EAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0101010100000001L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0101000000000001L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0101010101010101L; }
+                                    case 1 -> { return 0x0101010100000001L; }
+                                    case 2 -> { return 0x0101000000000001L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0101010100000001L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0101000000000001L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0100000000000001L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0100000000000101L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0101000000010101L;
-                                    }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0101010101010101L; }
+                                    case 1 -> { return 0x0101010100000001L; }
+                                    case 2 -> { return 0x0101000000000001L; }
+                                    case 3 -> { return 0x0100000000000001L; }
+                                    case 4 -> { return 0x0100000000000101L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0101000000010101L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0101000000000001L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0100000000000001L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0100000000000101L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000101L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000010101L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0101000000010101L;
-                                    }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0101010101010101L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0101000000000001L; }
+                                    case 3 -> { return 0x0100000000000001L; }
+                                    case 4 -> { return 0x0100000000000101L; }
+                                    case 5 -> { return 0x0000000000000101L; }
+                                    case 6 -> { return 0x0000000000010101L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0101000000010101L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0100000000000101L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000101L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000010101L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000101010101L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0101000000010101L;
-                                    }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0101010101010101L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0100000000000101L; }
+                                    case 5 -> { return 0x0000000000000101L; }
+                                    case 6 -> { return 0x0000000000010101L; }
+                                    case 7 -> { return 0x0000000101010101L; }
+                                    case 8 -> { return 0x0101000000010101L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.WEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000010101L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000101010101L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0101010101010101L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000010101L; }
+                                    case 7 -> { return 0x0000000101010101L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000101010101L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0101010101010101L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000101010101L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
@@ -8913,260 +7113,116 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 2 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.EAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0101000000000001L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0101000000000001L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0101000000010101L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0101000000000001L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0100000000000001L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0100000000000101L;
-                                    }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0101000000010101L; }
+                                    case 1 -> { return 0x0101000000000001L; }
+                                    case 2 -> { return 0x0100000000000001L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0100000000000101L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0101000000010101L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0101000000000001L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0100000000000001L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000101L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000010101L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0100000000000101L;
-                                    }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0101000000010101L; }
+                                    case 1 -> { return 0x0101000000000001L; }
+                                    case 2 -> { return 0x0100000000000001L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000101L; }
+                                    case 7 -> { return 0x0000000000010101L; }
+                                    case 8 -> { return 0x0100000000000101L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0101000000010101L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000101L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000010101L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0100000000000101L;
-                                    }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0101000000010101L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000101L; }
+                                    case 7 -> { return 0x0000000000010101L; }
+                                    case 8 -> { return 0x0100000000000101L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.WEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000010101L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000010101L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
@@ -9179,260 +7235,116 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
             case 1 -> {
                 switch (dy) {
                     case -2 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000010101000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0001010101010000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000101010000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000001000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000101000000L;
-                                    }
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000010101000000L; }
+                                    case 3 -> { return 0x0001010101010000L; }
+                                    case 4 -> { return 0x0000000101010000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000001000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000101000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000010101000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0001010101010000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000010101000000L; }
+                                    case 3 -> { return 0x0001010101010000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.EAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.WEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000101010000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000001010000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000001000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000101010000L; }
+                                    case 5 -> { return 0x0000000001010000L; }
+                                    case 6 -> { return 0x0000000001000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000010101000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0001010101010000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000101010000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000001010000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000001000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000101000000L;
-                                    }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000010101000000L; }
+                                    case 3 -> { return 0x0001010101010000L; }
+                                    case 4 -> { return 0x0000000101010000L; }
+                                    case 5 -> { return 0x0000000001010000L; }
+                                    case 6 -> { return 0x0000000001000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000101000000L; }
                                     default -> { return 0L; }
                                 }
                             }
@@ -9440,260 +7352,116 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case -1 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000101000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000010101000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0001010101010000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000001000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000101010000L;
-                                    }
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000101000000L; }
+                                    case 1 -> { return 0x0000010101000000L; }
+                                    case 2 -> { return 0x0001010101010000L; }
+                                    case 3 -> { return 0x0101010101010101L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000001000000L; }
+                                    case 8 -> { return 0x0000000101010000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000010101000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0001010101010000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000010101000000L; }
+                                    case 2 -> { return 0x0001010101010000L; }
+                                    case 3 -> { return 0x0101010101010101L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.EAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0101010101010101L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0101010101010101L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0101010101010101L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000101010101L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000001010100L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0101010101010101L; }
+                                    case 4 -> { return 0x0000000101010101L; }
+                                    case 5 -> { return 0x0000000001010100L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.WEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000101010101L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000001010100L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000001010000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000001000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000101010000L;
-                                    }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0101010101010101L; }
+                                    case 4 -> { return 0x0000000101010101L; }
+                                    case 5 -> { return 0x0000000001010100L; }
+                                    case 6 -> { return 0x0000000001010000L; }
+                                    case 7 -> { return 0x0000000001000000L; }
+                                    case 8 -> { return 0x0000000101010000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000101000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000010101000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0001010101010000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000101010101L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000001010100L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000001010000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000001000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000101010000L;
-                                    }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000101000000L; }
+                                    case 1 -> { return 0x0000010101000000L; }
+                                    case 2 -> { return 0x0001010101010000L; }
+                                    case 3 -> { return 0x0101010101010101L; }
+                                    case 4 -> { return 0x0000000101010101L; }
+                                    case 5 -> { return 0x0000000001010100L; }
+                                    case 6 -> { return 0x0000000001010000L; }
+                                    case 7 -> { return 0x0000000001000000L; }
+                                    case 8 -> { return 0x0000000101010000L; }
                                     default -> { return 0L; }
                                 }
                             }
@@ -9701,260 +7469,116 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 0 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000101010000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0001010101010000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000101010000L; }
+                                    case 1 -> { return 0x0001010101010000L; }
+                                    case 2 -> { return 0x0101010101010101L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0001010101010000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0001010101010000L; }
+                                    case 2 -> { return 0x0101010101010101L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.EAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0101010101010101L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0101000000010101L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0101010101010101L; }
+                                    case 3 -> { return 0x0101000000010101L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0101000000010101L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000010101L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0101010101010101L; }
+                                    case 3 -> { return 0x0101000000010101L; }
+                                    case 4 -> { return 0x0000000000010101L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0101000000010101L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000010101L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000010100L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000001010100L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000101010101L;
-                                    }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0101010101010101L; }
+                                    case 3 -> { return 0x0101000000010101L; }
+                                    case 4 -> { return 0x0000000000010101L; }
+                                    case 5 -> { return 0x0000000000010100L; }
+                                    case 6 -> { return 0x0000000001010100L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000101010101L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.WEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000101010000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000010101L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000010100L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000001010100L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000001010000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000101010101L;
-                                    }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000101010000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0101010101010101L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000010101L; }
+                                    case 5 -> { return 0x0000000000010100L; }
+                                    case 6 -> { return 0x0000000001010100L; }
+                                    case 7 -> { return 0x0000000001010000L; }
+                                    case 8 -> { return 0x0000000101010101L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000101010000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0001010101010000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000001010100L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000001010000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000101010101L;
-                                    }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000101010000L; }
+                                    case 1 -> { return 0x0001010101010000L; }
+                                    case 2 -> { return 0x0101010101010101L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000001010100L; }
+                                    case 7 -> { return 0x0000000001010000L; }
+                                    case 8 -> { return 0x0000000101010101L; }
                                     default -> { return 0L; }
                                 }
                             }
@@ -9962,260 +7586,116 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 1 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0101010101010101L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0101010101010101L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.EAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0101010101010101L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0101000000010101L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0100000000000101L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0101010101010101L; }
+                                    case 2 -> { return 0x0101000000010101L; }
+                                    case 3 -> { return 0x0100000000000101L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0101000000010101L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0100000000000101L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000101L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000100L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000010101L;
-                                    }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0101010101010101L; }
+                                    case 2 -> { return 0x0101000000010101L; }
+                                    case 3 -> { return 0x0100000000000101L; }
+                                    case 4 -> { return 0x0000000000000101L; }
+                                    case 5 -> { return 0x0000000000000100L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000010101L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000101010101L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0101000000010101L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0100000000000101L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000101L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000100L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000010100L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000001010100L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000010101L;
-                                    }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000101010101L; }
+                                    case 1 -> { return 0x0101010101010101L; }
+                                    case 2 -> { return 0x0101000000010101L; }
+                                    case 3 -> { return 0x0100000000000101L; }
+                                    case 4 -> { return 0x0000000000000101L; }
+                                    case 5 -> { return 0x0000000000000100L; }
+                                    case 6 -> { return 0x0000000000010100L; }
+                                    case 7 -> { return 0x0000000001010100L; }
+                                    case 8 -> { return 0x0000000000010101L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.WEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000101010101L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000100L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000010100L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000001010100L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000010101L;
-                                    }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000101010101L; }
+                                    case 1 -> { return 0x0101010101010101L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000100L; }
+                                    case 6 -> { return 0x0000000000010100L; }
+                                    case 7 -> { return 0x0000000001010100L; }
+                                    case 8 -> { return 0x0000000000010101L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000101010101L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0101010101010101L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000001010100L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000101010101L; }
+                                    case 1 -> { return 0x0101010101010101L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000001010100L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
@@ -10223,260 +7703,116 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 2 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.EAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0101000000010101L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0100000000000101L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0101000000010101L; }
+                                    case 2 -> { return 0x0100000000000101L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000010101L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0101000000010101L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0100000000000101L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000100L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000101L;
-                                    }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000010101L; }
+                                    case 1 -> { return 0x0101000000010101L; }
+                                    case 2 -> { return 0x0100000000000101L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000100L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000101L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000010101L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0101000000010101L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0100000000000101L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000100L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000010100L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000101L;
-                                    }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000010101L; }
+                                    case 1 -> { return 0x0101000000010101L; }
+                                    case 2 -> { return 0x0100000000000101L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000100L; }
+                                    case 7 -> { return 0x0000000000010100L; }
+                                    case 8 -> { return 0x0000000000000101L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.WEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000010101L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000100L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000010100L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000010101L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000100L; }
+                                    case 7 -> { return 0x0000000000010100L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
@@ -10489,260 +7825,116 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
             case 2 -> {
                 switch (dy) {
                     case -2 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000101000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000101010000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000001000000L;
-                                    }
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000101000000L; }
+                                    case 3 -> { return 0x0000000101010000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000001000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.EAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.WEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000101010000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000001010000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000001000000L;
-                                    }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000101010000L; }
+                                    case 4 -> { return 0x0000000001010000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000001000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000101000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000101010000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000001010000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000001000000L;
-                                    }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000101000000L; }
+                                    case 3 -> { return 0x0000000101010000L; }
+                                    case 4 -> { return 0x0000000001010000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000001000000L; }
                                     default -> { return 0L; }
                                 }
                             }
@@ -10750,260 +7942,116 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case -1 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000001000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000101000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000101010000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000001000000L; }
+                                    case 1 -> { return 0x0000000101000000L; }
+                                    case 2 -> { return 0x0000000101010000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.EAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000101010101L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000001010100L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000101010101L; }
+                                    case 4 -> { return 0x0000000001010100L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.WEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000001000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000101010000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000101010101L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000001010100L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000001010000L;
-                                    }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000001000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000101010000L; }
+                                    case 3 -> { return 0x0000000101010101L; }
+                                    case 4 -> { return 0x0000000001010100L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000001010000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000001000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000101000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000101010000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000101010101L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000001010100L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000001010000L;
-                                    }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000001000000L; }
+                                    case 1 -> { return 0x0000000101000000L; }
+                                    case 2 -> { return 0x0000000101010000L; }
+                                    case 3 -> { return 0x0000000101010101L; }
+                                    case 4 -> { return 0x0000000001010100L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000001010000L; }
                                     default -> { return 0L; }
                                 }
                             }
@@ -11011,260 +8059,116 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 0 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000101010000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000101010000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.EAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000010101L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000010101L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000101010101L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000010101L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000010100L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000001010100L;
-                                    }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000101010101L; }
+                                    case 3 -> { return 0x0000000000010101L; }
+                                    case 4 -> { return 0x0000000000010100L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000001010100L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.WEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000001010000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000101010000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000101010101L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000010101L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000010100L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000001010100L;
-                                    }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000001010000L; }
+                                    case 1 -> { return 0x0000000101010000L; }
+                                    case 2 -> { return 0x0000000101010101L; }
+                                    case 3 -> { return 0x0000000000010101L; }
+                                    case 4 -> { return 0x0000000000010100L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000001010100L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000001010000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000101010000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000101010101L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000001010100L;
-                                    }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000001010000L; }
+                                    case 1 -> { return 0x0000000101010000L; }
+                                    case 2 -> { return 0x0000000101010101L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000001010100L; }
                                     default -> { return 0L; }
                                 }
                             }
@@ -11272,260 +8176,116 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 1 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.EAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000010101L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000101L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000100L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000010101L; }
+                                    case 3 -> { return 0x0000000000000101L; }
+                                    case 4 -> { return 0x0000000000000100L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000001010100L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000101010101L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000010101L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000101L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000100L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000010100L;
-                                    }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000001010100L; }
+                                    case 1 -> { return 0x0000000101010101L; }
+                                    case 2 -> { return 0x0000000000010101L; }
+                                    case 3 -> { return 0x0000000000000101L; }
+                                    case 4 -> { return 0x0000000000000100L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000010100L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.WEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000001010100L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000101010101L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000010101L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000100L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000010100L;
-                                    }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000001010100L; }
+                                    case 1 -> { return 0x0000000101010101L; }
+                                    case 2 -> { return 0x0000000000010101L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000100L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000010100L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000001010100L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000101010101L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000001010100L; }
+                                    case 1 -> { return 0x0000000101010101L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
@@ -11533,260 +8293,116 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                         }
                     }
                     case 2 -> {
-                        switch (facing) {
-                            case Direction.NORTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.EAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHEAST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTH -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000010101L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000101L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000100L;
-                                    }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000010101L; }
+                                    case 2 -> { return 0x0000000000000101L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000100L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.SOUTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000010100L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000010101L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000101L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000100L;
-                                    }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000010100L; }
+                                    case 1 -> { return 0x0000000000010101L; }
+                                    case 2 -> { return 0x0000000000000101L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000100L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.WEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000010100L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000010101L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000100L;
-                                    }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000010100L; }
+                                    case 1 -> { return 0x0000000000010101L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000100L; }
                                     default -> { return 0L; }
                                 }
                             }
-                            case Direction.NORTHWEST -> {
-                                switch (moveDir) {
-                                    case Direction.NORTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.EAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHEAST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTH -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.SOUTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.WEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.NORTHWEST -> {
-                                        return 0x0000000000000000L;
-                                    }
-                                    case Direction.CENTER -> {
-                                        return 0x0000000000000000L;
-                                    }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }

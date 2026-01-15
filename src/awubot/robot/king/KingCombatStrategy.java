@@ -35,8 +35,8 @@ public class KingCombatStrategy extends Strategy {
                     case CAT -> 5;
                 };
                 var dir = myLoc.directionTo(robot.location);
-                switch(dir) {
-                    case Direction.NORTH -> {
+                switch(dir.ordinal()) {
+                    case 0 -> {
                         score0           -= weight * 3;
                         score7 -= weight * 2;
                         score1 -= weight * 2;
@@ -44,7 +44,7 @@ public class KingCombatStrategy extends Strategy {
                         score4 += weight;
                         score5 += weight;
                     }
-                    case Direction.NORTHEAST -> {
+                    case 1 -> {
                         score1           -= weight * 3;
                         score0 -= weight * 2;
                         score2 -= weight * 2;
@@ -52,7 +52,7 @@ public class KingCombatStrategy extends Strategy {
                         score5 += weight;
                         score6 += weight;
                     }
-                    case Direction.EAST -> {
+                    case 2 -> {
                         score2           -= weight * 3;
                         score1 -= weight * 2;
                         score3 -= weight * 2;
@@ -60,7 +60,7 @@ public class KingCombatStrategy extends Strategy {
                         score6 += weight;
                         score7 += weight;
                     }
-                    case Direction.SOUTHEAST -> {
+                    case 3 -> {
                         score3           -= weight * 3;
                         score2 -= weight * 2;
                         score4 -= weight * 2;
@@ -68,7 +68,7 @@ public class KingCombatStrategy extends Strategy {
                         score7 += weight;
                         score0 += weight;
                     }
-                    case Direction.SOUTH -> {
+                    case 4 -> {
                         score4           -= weight * 3;
                         score3 -= weight * 2;
                         score5 -= weight * 2;
@@ -76,7 +76,7 @@ public class KingCombatStrategy extends Strategy {
                         score0 += weight;
                         score1 += weight;
                     }
-                    case Direction.SOUTHWEST -> {
+                    case 5 -> {
                         score5           -= weight * 3;
                         score4 -= weight * 2;
                         score6 -= weight * 2;
@@ -84,7 +84,7 @@ public class KingCombatStrategy extends Strategy {
                         score1 += weight;
                         score2 += weight;
                     }
-                    case Direction.WEST -> {
+                    case 6 -> {
                         score6           -= weight * 3;
                         score5 -= weight * 2;
                         score7 -= weight * 2;
@@ -92,7 +92,7 @@ public class KingCombatStrategy extends Strategy {
                         score2 += weight;
                         score3 += weight;
                     }
-                    case Direction.NORTHWEST -> {
+                    case 7 -> {
                         score7           -= weight * 3;
                         score6 -= weight * 2;
                         score0 -= weight * 2;

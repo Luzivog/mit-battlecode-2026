@@ -58,8 +58,8 @@ public class Util {
         int dy = t.y - s.y;
         if (dx * dx + dy * dy > 20) return false;
         int key = dx + 20 * dy;
-        switch (dir) {
-            case NORTH -> {
+        switch(dir.ordinal()) {
+            case 0 -> {
                 switch (key) {
                     case 0, 19, 20, 21, 38, 39, 40, 41, 42, 57, 58, 59, 60, 61, 62, 63, 78, 79, 80, 81, 82 -> {
                         return true;
@@ -69,7 +69,7 @@ public class Util {
                     }
                 }
             }
-            case SOUTH -> {
+            case 4 -> {
                 switch (key) {
                     case 0, -82, -81, -80, -79, -78, -63, -62, -61, -60, -59, -58, -57, -42, -41, -40, -39, -38, -21, -20, -19 -> {
                         return true;
@@ -79,7 +79,7 @@ public class Util {
                     }
                 }
             }
-            case EAST -> {
+            case 2 -> {
                 switch (key) {
                     case 0, -57, -38, -37, -36, -19, -18, -17, -16, 1, 2, 3, 4, 21, 22, 23, 24, 42, 43, 44, 63 -> {
                         return true;
@@ -89,7 +89,7 @@ public class Util {
                     }
                 }
             }
-            case WEST -> {
+            case 6 -> {
                 switch (key) {
                     case 0, -63, -44, -43, -42, -24, -23, -22, -21, -4, -3, -2, -1, 16, 17, 18, 19, 36, 37, 38, 57 -> {
                         return true;
@@ -99,7 +99,7 @@ public class Util {
                     }
                 }
             }
-            case NORTHEAST -> {
+            case 1 -> {
                 switch (key) {
                     case 0, 1, 2, 3, 4, 20, 21, 22, 23, 24, 40, 41, 42, 43, 44, 60, 61, 62, 63, 80, 81, 82 -> {
                         return true;
@@ -109,7 +109,7 @@ public class Util {
                     }
                 }
             }
-            case NORTHWEST -> {
+            case 7 -> {
                 switch (key) {
                     case 0, -4, -3, -2, -1, 16, 17, 18, 19, 20, 36, 37, 38, 39, 40, 57, 58, 59, 60, 78, 79, 80 -> {
                         return true;
@@ -119,7 +119,7 @@ public class Util {
                     }
                 }
             }
-            case SOUTHEAST -> {
+            case 3 -> {
                 switch (key) {
                     case 0, -80, -79, -78, -60, -59, -58, -57, -40, -39, -38, -37, -36, -20, -19, -18, -17, -16, 1, 2, 3, 4 -> {
                         return true;
@@ -129,7 +129,7 @@ public class Util {
                     }
                 }
             }
-            case SOUTHWEST -> {
+            case 5 -> {
                 switch (key) {
                     case 0, -82, -81, -80, -63, -62, -61, -60, -44, -43, -42, -41, -40, -24, -23, -22, -21, -20, -4, -3, -2, -1 -> {
                         return true;
@@ -150,29 +150,29 @@ public class Util {
     }
 
     public static Direction cw(Direction dir) {
-        return switch (dir) {
-            case NORTH -> Direction.NORTHEAST;
-            case NORTHEAST -> Direction.EAST;
-            case EAST -> Direction.SOUTHEAST;
-            case SOUTHEAST -> Direction.SOUTH;
-            case SOUTH -> Direction.SOUTHWEST;
-            case SOUTHWEST -> Direction.WEST;
-            case WEST -> Direction.NORTHWEST;
-            case NORTHWEST -> Direction.NORTH;
+        return switch(dir.ordinal()) {
+            case 0 -> Direction.NORTHEAST;
+            case 1 -> Direction.EAST;
+            case 2 -> Direction.SOUTHEAST;
+            case 3 -> Direction.SOUTH;
+            case 4 -> Direction.SOUTHWEST;
+            case 5 -> Direction.WEST;
+            case 6 -> Direction.NORTHWEST;
+            case 7 -> Direction.NORTH;
             default -> Direction.CENTER;
         };
     }
 
     public static Direction ccw(Direction dir) {
-        return switch (dir) {
-            case NORTH -> Direction.NORTHWEST;
-            case NORTHWEST -> Direction.WEST;
-            case WEST -> Direction.SOUTHWEST;
-            case SOUTHWEST -> Direction.SOUTH;
-            case SOUTH -> Direction.SOUTHEAST;
-            case SOUTHEAST -> Direction.EAST;
-            case EAST -> Direction.NORTHEAST;
-            case NORTHEAST -> Direction.NORTH;
+        return switch(dir.ordinal()) {
+            case 0 -> Direction.NORTHWEST;
+            case 7 -> Direction.WEST;
+            case 6 -> Direction.SOUTHWEST;
+            case 5 -> Direction.SOUTH;
+            case 4 -> Direction.SOUTHEAST;
+            case 3 -> Direction.EAST;
+            case 2 -> Direction.NORTHEAST;
+            case 1 -> Direction.NORTH;
             default -> Direction.CENTER;
         };
     }
@@ -204,7 +204,7 @@ public class Util {
         if (rc.canSenseLocation(loc)) {
             RobotInfo info = rc.senseRobotAtLocation(loc);
             return info == null || info.getTeam() != team;
-        } 
+        }
         return false;
     }
 
@@ -221,71 +221,71 @@ public class Util {
     }
 
     public static Direction[] relatedDirections(Direction dir) {
-        return switch(dir) {
-            case NORTH -> new Direction[]{Direction.NORTH, Direction.NORTHEAST, Direction.NORTHWEST};
-            case SOUTH -> new Direction[]{Direction.SOUTH, Direction.SOUTHEAST, Direction.SOUTHWEST};
-            case EAST -> new Direction[]{Direction.EAST, Direction.NORTHEAST, Direction.SOUTHEAST};
-            case WEST -> new Direction[]{Direction.WEST, Direction.NORTHWEST, Direction.SOUTHWEST};
-            case NORTHEAST -> new Direction[]{Direction.NORTHEAST, Direction.NORTH, Direction.EAST};
-            case NORTHWEST -> new Direction[]{Direction.NORTHWEST, Direction.NORTH, Direction.WEST};
-            case SOUTHEAST -> new Direction[]{Direction.SOUTHEAST, Direction.SOUTH, Direction.EAST};
-            case SOUTHWEST -> new Direction[]{Direction.SOUTHWEST, Direction.SOUTH, Direction.WEST};
+        return switch(dir.ordinal()) {
+            case 0 -> new Direction[]{Direction.NORTH, Direction.NORTHEAST, Direction.NORTHWEST};
+            case 4 -> new Direction[]{Direction.SOUTH, Direction.SOUTHEAST, Direction.SOUTHWEST};
+            case 2 -> new Direction[]{Direction.EAST, Direction.NORTHEAST, Direction.SOUTHEAST};
+            case 6 -> new Direction[]{Direction.WEST, Direction.NORTHWEST, Direction.SOUTHWEST};
+            case 1 -> new Direction[]{Direction.NORTHEAST, Direction.NORTH, Direction.EAST};
+            case 7 -> new Direction[]{Direction.NORTHWEST, Direction.NORTH, Direction.WEST};
+            case 3 -> new Direction[]{Direction.SOUTHEAST, Direction.SOUTH, Direction.EAST};
+            case 5 -> new Direction[]{Direction.SOUTHWEST, Direction.SOUTH, Direction.WEST};
             default -> throw new IllegalStateException("Unexpected dir: " + dir);
         };
     }
 
     public static Direction[] unrelated5Directions(Direction dir) {
-        return switch(dir) {
-            case NORTH -> new Direction[]{Direction.EAST, Direction.SOUTHEAST, Direction.SOUTH, Direction.SOUTHWEST, Direction.WEST};
-            case SOUTH -> new Direction[]{Direction.EAST, Direction.NORTHEAST, Direction.NORTH, Direction.NORTHWEST, Direction.WEST};
-            case EAST -> new Direction[]{Direction.NORTH, Direction.NORTHWEST, Direction.WEST,  Direction.SOUTHWEST, Direction.SOUTH};
-            case WEST -> new Direction[]{Direction.NORTH, Direction.NORTHEAST, Direction.EAST, Direction.SOUTHEAST, Direction.SOUTH};
-            case NORTHEAST -> new Direction[]{Direction.SOUTH, Direction.SOUTHWEST, Direction.WEST, Direction.SOUTHWEST, Direction.SOUTH};
-            case NORTHWEST -> new Direction[]{Direction.SOUTH, Direction.SOUTHEAST, Direction.EAST, Direction.SOUTHEAST, Direction.SOUTH};
-            case SOUTHEAST -> new Direction[]{Direction.NORTH, Direction.NORTHWEST, Direction.WEST, Direction.NORTHWEST, Direction.NORTH};
-            case SOUTHWEST -> new Direction[]{Direction.NORTH, Direction.NORTHEAST, Direction.EAST, Direction.NORTHEAST, Direction.NORTH};
+        return switch(dir.ordinal()) {
+            case 0 -> new Direction[]{Direction.EAST, Direction.SOUTHEAST, Direction.SOUTH, Direction.SOUTHWEST, Direction.WEST};
+            case 4 -> new Direction[]{Direction.EAST, Direction.NORTHEAST, Direction.NORTH, Direction.NORTHWEST, Direction.WEST};
+            case 2 -> new Direction[]{Direction.NORTH, Direction.NORTHWEST, Direction.WEST,  Direction.SOUTHWEST, Direction.SOUTH};
+            case 6 -> new Direction[]{Direction.NORTH, Direction.NORTHEAST, Direction.EAST, Direction.SOUTHEAST, Direction.SOUTH};
+            case 1 -> new Direction[]{Direction.SOUTH, Direction.SOUTHWEST, Direction.WEST, Direction.SOUTHWEST, Direction.SOUTH};
+            case 7 -> new Direction[]{Direction.SOUTH, Direction.SOUTHEAST, Direction.EAST, Direction.SOUTHEAST, Direction.SOUTH};
+            case 3 -> new Direction[]{Direction.NORTH, Direction.NORTHWEST, Direction.WEST, Direction.NORTHWEST, Direction.NORTH};
+            case 5 -> new Direction[]{Direction.NORTH, Direction.NORTHEAST, Direction.EAST, Direction.NORTHEAST, Direction.NORTH};
             default -> throw new IllegalStateException("Unexpected dir: " + dir);
         };
     }
 
     public static Direction[] relatedDirectionsIncludingCenter(Direction dir) {
-        return switch(dir) {
-            case NORTH -> new Direction[]{Direction.NORTH, Direction.NORTHEAST, Direction.NORTHWEST, Direction.CENTER};
-            case SOUTH -> new Direction[]{Direction.SOUTH, Direction.SOUTHEAST, Direction.SOUTHWEST, Direction.CENTER};
-            case EAST -> new Direction[]{Direction.EAST, Direction.NORTHEAST, Direction.SOUTHEAST, Direction.CENTER};
-            case WEST -> new Direction[]{Direction.WEST, Direction.NORTHWEST, Direction.SOUTHWEST, Direction.CENTER};
-            case NORTHEAST -> new Direction[]{Direction.NORTHEAST, Direction.NORTH, Direction.EAST, Direction.CENTER};
-            case NORTHWEST -> new Direction[]{Direction.NORTHWEST, Direction.NORTH, Direction.WEST, Direction.CENTER};
-            case SOUTHEAST -> new Direction[]{Direction.SOUTHEAST, Direction.SOUTH, Direction.EAST, Direction.CENTER};
-            case SOUTHWEST -> new Direction[]{Direction.SOUTHWEST, Direction.SOUTH, Direction.WEST, Direction.CENTER};
+        return switch(dir.ordinal()) {
+            case 0 -> new Direction[]{Direction.NORTH, Direction.NORTHEAST, Direction.NORTHWEST, Direction.CENTER};
+            case 4 -> new Direction[]{Direction.SOUTH, Direction.SOUTHEAST, Direction.SOUTHWEST, Direction.CENTER};
+            case 2 -> new Direction[]{Direction.EAST, Direction.NORTHEAST, Direction.SOUTHEAST, Direction.CENTER};
+            case 6 -> new Direction[]{Direction.WEST, Direction.NORTHWEST, Direction.SOUTHWEST, Direction.CENTER};
+            case 1 -> new Direction[]{Direction.NORTHEAST, Direction.NORTH, Direction.EAST, Direction.CENTER};
+            case 7 -> new Direction[]{Direction.NORTHWEST, Direction.NORTH, Direction.WEST, Direction.CENTER};
+            case 3 -> new Direction[]{Direction.SOUTHEAST, Direction.SOUTH, Direction.EAST, Direction.CENTER};
+            case 5 -> new Direction[]{Direction.SOUTHWEST, Direction.SOUTH, Direction.WEST, Direction.CENTER};
             default -> throw new IllegalStateException("Unexpected dir: " + dir);
         };
     }
 
     public static Direction[] wideRelatedDirections(Direction dir) {
-        return switch(dir) {
-            case NORTH -> new Direction[]{Direction.NORTH, Direction.NORTHEAST, Direction.NORTHWEST, Direction.EAST, Direction.WEST};
-            case SOUTH -> new Direction[]{Direction.SOUTH, Direction.SOUTHEAST, Direction.SOUTHWEST, Direction.EAST, Direction.WEST};
-            case EAST -> new Direction[]{Direction.EAST, Direction.NORTHEAST, Direction.SOUTHEAST, Direction.NORTH, Direction.SOUTH};
-            case WEST -> new Direction[]{Direction.WEST, Direction.NORTHWEST, Direction.SOUTHWEST, Direction.NORTH, Direction.SOUTH};
-            case NORTHEAST -> new Direction[]{Direction.NORTHEAST, Direction.NORTH, Direction.EAST, Direction.NORTHWEST, Direction.SOUTHEAST};
-            case NORTHWEST -> new Direction[]{Direction.NORTHWEST, Direction.NORTH, Direction.WEST, Direction.NORTHEAST, Direction.SOUTHWEST};
-            case SOUTHEAST -> new Direction[]{Direction.SOUTHEAST, Direction.SOUTH, Direction.EAST, Direction.NORTHEAST, Direction.SOUTHWEST};
-            case SOUTHWEST -> new Direction[]{Direction.SOUTHWEST, Direction.SOUTH, Direction.WEST, Direction.NORTHWEST, Direction.SOUTHEAST};
+        return switch(dir.ordinal()) {
+            case 0 -> new Direction[]{Direction.NORTH, Direction.NORTHEAST, Direction.NORTHWEST, Direction.EAST, Direction.WEST};
+            case 4 -> new Direction[]{Direction.SOUTH, Direction.SOUTHEAST, Direction.SOUTHWEST, Direction.EAST, Direction.WEST};
+            case 2 -> new Direction[]{Direction.EAST, Direction.NORTHEAST, Direction.SOUTHEAST, Direction.NORTH, Direction.SOUTH};
+            case 6 -> new Direction[]{Direction.WEST, Direction.NORTHWEST, Direction.SOUTHWEST, Direction.NORTH, Direction.SOUTH};
+            case 1 -> new Direction[]{Direction.NORTHEAST, Direction.NORTH, Direction.EAST, Direction.NORTHWEST, Direction.SOUTHEAST};
+            case 7 -> new Direction[]{Direction.NORTHWEST, Direction.NORTH, Direction.WEST, Direction.NORTHEAST, Direction.SOUTHWEST};
+            case 3 -> new Direction[]{Direction.SOUTHEAST, Direction.SOUTH, Direction.EAST, Direction.NORTHEAST, Direction.SOUTHWEST};
+            case 5 -> new Direction[]{Direction.SOUTHWEST, Direction.SOUTH, Direction.WEST, Direction.NORTHWEST, Direction.SOUTHEAST};
             default -> throw new IllegalStateException("Unexpected dir: " + dir);
         };
     }
 
     public static Direction[] wideRelatedDirectionsIncludingCenter(Direction dir) {
-        return switch(dir) {
-            case NORTH -> new Direction[]{Direction.NORTH, Direction.NORTHEAST, Direction.NORTHWEST, Direction.EAST, Direction.WEST, Direction.CENTER};
-            case SOUTH -> new Direction[]{Direction.SOUTH, Direction.SOUTHEAST, Direction.SOUTHWEST, Direction.EAST, Direction.WEST, Direction.CENTER};
-            case EAST -> new Direction[]{Direction.EAST, Direction.NORTHEAST, Direction.SOUTHEAST, Direction.NORTH, Direction.SOUTH, Direction.CENTER};
-            case WEST -> new Direction[]{Direction.WEST, Direction.NORTHWEST, Direction.SOUTHWEST, Direction.NORTH, Direction.SOUTH, Direction.CENTER};
-            case NORTHEAST -> new Direction[]{Direction.NORTHEAST, Direction.NORTH, Direction.EAST, Direction.NORTHWEST, Direction.SOUTHEAST, Direction.CENTER};
-            case NORTHWEST -> new Direction[]{Direction.NORTHWEST, Direction.NORTH, Direction.WEST, Direction.NORTHEAST, Direction.SOUTHWEST,  Direction.CENTER};
-            case SOUTHEAST -> new Direction[]{Direction.SOUTHEAST, Direction.SOUTH, Direction.EAST, Direction.NORTHEAST, Direction.SOUTHWEST,  Direction.CENTER};
-            case SOUTHWEST -> new Direction[]{Direction.SOUTHWEST, Direction.SOUTH, Direction.WEST, Direction.NORTHWEST, Direction.SOUTHEAST,  Direction.CENTER};
+        return switch(dir.ordinal()) {
+            case 0 -> new Direction[]{Direction.NORTH, Direction.NORTHEAST, Direction.NORTHWEST, Direction.EAST, Direction.WEST, Direction.CENTER};
+            case 4 -> new Direction[]{Direction.SOUTH, Direction.SOUTHEAST, Direction.SOUTHWEST, Direction.EAST, Direction.WEST, Direction.CENTER};
+            case 2 -> new Direction[]{Direction.EAST, Direction.NORTHEAST, Direction.SOUTHEAST, Direction.NORTH, Direction.SOUTH, Direction.CENTER};
+            case 6 -> new Direction[]{Direction.WEST, Direction.NORTHWEST, Direction.SOUTHWEST, Direction.NORTH, Direction.SOUTH, Direction.CENTER};
+            case 1 -> new Direction[]{Direction.NORTHEAST, Direction.NORTH, Direction.EAST, Direction.NORTHWEST, Direction.SOUTHEAST, Direction.CENTER};
+            case 7 -> new Direction[]{Direction.NORTHWEST, Direction.NORTH, Direction.WEST, Direction.NORTHEAST, Direction.SOUTHWEST,  Direction.CENTER};
+            case 3 -> new Direction[]{Direction.SOUTHEAST, Direction.SOUTH, Direction.EAST, Direction.NORTHEAST, Direction.SOUTHWEST,  Direction.CENTER};
+            case 5 -> new Direction[]{Direction.SOUTHWEST, Direction.SOUTH, Direction.WEST, Direction.NORTHWEST, Direction.SOUTHEAST,  Direction.CENTER};
             default -> throw new IllegalStateException("Unexpected dir: " + dir);
         };
     }
@@ -415,7 +415,7 @@ public class Util {
                 enemyLocs.addLast(rot180(src));
             }
 
-        // } else if (dist_hormiddle < dist_vertmiddle) {
+            // } else if (dist_hormiddle < dist_vertmiddle) {
         } else {
             // first is vert ref
             enemyLocs.addLast(flipVer(src));
@@ -431,20 +431,20 @@ public class Util {
                 enemyLocs.addLast(rot180(src));
             }
 
-        // } else {
-        //     // first is rot 180
-        //     enemyLocs.addLast(rot180(src));
+            // } else {
+            //     // first is rot 180
+            //     enemyLocs.addLast(rot180(src));
 
-        //     int d1 = rot180(src).distanceSquaredTo(flipHor(src)) + flipHor(src).distanceSquaredTo(flipVer(src));
-        //     int d2 = rot180(src).distanceSquaredTo(flipVer(src)) + flipVer(src).distanceSquaredTo(flipHor(src));
+            //     int d1 = rot180(src).distanceSquaredTo(flipHor(src)) + flipHor(src).distanceSquaredTo(flipVer(src));
+            //     int d2 = rot180(src).distanceSquaredTo(flipVer(src)) + flipVer(src).distanceSquaredTo(flipHor(src));
 
-        //     if (d1 < d2) {
-        //         enemyLocs.addLast(flipHor(src));
-        //         enemyLocs.addLast(flipVer(src));
-        //     } else {
-        //         enemyLocs.addLast(flipVer(src));
-        //         enemyLocs.addLast(flipHor(src));
-        //     }
+            //     if (d1 < d2) {
+            //         enemyLocs.addLast(flipHor(src));
+            //         enemyLocs.addLast(flipVer(src));
+            //     } else {
+            //         enemyLocs.addLast(flipVer(src));
+            //         enemyLocs.addLast(flipHor(src));
+            //     }
         }
         return enemyLocs;
     }

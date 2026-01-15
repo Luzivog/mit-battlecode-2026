@@ -89,9 +89,10 @@ public class CellTracker {
     public static void storeVisibleCells() throws GameActionException {
         Profiler.begin();
         int x = myLoc.x, y = myLoc.y;
-        switch(myDir) {
-            {% for dir in directions %}
-            case {{dir}} -> {
+        switch(myDir.ordinal()) {
+            {% for i in range(8) %}
+            {% set dir = directions[i] %}
+            case {{i}} -> {
                 {% for dx in range(-5, 6) %}
                 {% for dy in range(-5, 6) %}
                 {% if dir == "Direction.NORTH" %}       {% set visible = dy >= (dx|abs) %}
@@ -122,9 +123,10 @@ public class CellTracker {
     public static void storeVisibleCellsPostMoveForward() throws GameActionException {
         Profiler.begin();
         int x = myLoc.x, y = myLoc.y;
-        switch(myDir) {
-            {% for dir in directions %}
-            case {{dir}} -> {
+        switch(myDir.ordinal()) {
+            {% for i in range(8) %}
+            {% set dir = directions[i] %}
+            case {{i}} -> {
                 {% for dx in range(-5, 6) %}
                 {% for dy in range(-5, 6) %}
                 {% if dir == "Direction.NORTH" %}       {% set visible = dy >= (dx|abs)      and dx ** 2 + (dy + 1) ** 2 > 20 %}
@@ -426,29 +428,29 @@ public class CellTracker {
     }
 
     public static void checkSymmetry() {
-        switch(getSymmetry()) {
-            case Horizontal -> {
-                Profiler.begin();
-                applyHor();
-                Profiler.end("applyHor");
-            }
-            case Vertical -> {
-                Profiler.begin();
-                applyVer();
-                Profiler.end("applyVer");
-            }
-            case Rotational -> {
-                Profiler.begin();
-                applyRot();
-                Profiler.end("applyRot");
-            }
-            case Unknown -> {
+        switch(getSymmetry().ordinal()) {
+            case 0 -> {
                 Profiler.begin();
                 // IF TLE: check one per turn instead of all 3
                 if(hsym != 0) checkHor();
                 if(vsym != 0) checkVer();
                 if(rsym != 0) checkRot();
                 Profiler.end("checkSymmetry");
+            }
+            case 1 -> {
+                Profiler.begin();
+                applyRot();
+                Profiler.end("applyRot");
+            }
+            case 2 -> {
+                Profiler.begin();
+                applyHor();
+                Profiler.end("applyHor");
+            }
+            case 3 -> {
+                Profiler.begin();
+                applyVer();
+                Profiler.end("applyVer");
             }
         }
     }

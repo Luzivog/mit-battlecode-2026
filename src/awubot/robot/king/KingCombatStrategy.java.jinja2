@@ -30,9 +30,9 @@ public class KingCombatStrategy extends Strategy {
                     case CAT -> 5;
                 };
                 var dir = myLoc.directionTo(robot.location);
-                switch(dir) {
+                switch(dir.ordinal()) {
                     {% for i in range(8) %}
-                    case {{directions[i]}} -> {
+                    case {{i}} -> {
                         score{{i}}           -= weight * 3;
                         score{{(i + 7) % 8}} -= weight * 2;
                         score{{(i + 1) % 8}} -= weight * 2;

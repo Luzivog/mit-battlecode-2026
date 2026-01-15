@@ -2055,8 +2055,8 @@ public class CellTracker {
     public static void storeVisibleCells() throws GameActionException {
         Profiler.begin();
         int x = myLoc.x, y = myLoc.y;
-        switch(myDir) {
-            case Direction.NORTH -> {
+        switch(myDir.ordinal()) {
+            case 0 -> {
                                                                                                                                                                                                                                          {
                     var l = new MapLocation(x  + -3 , y  + 3 );
                     if(rc.onTheMap(l)) {
@@ -2184,7 +2184,7 @@ public class CellTracker {
                     }
                 }
                                                                                                                                                                                     }
-            case Direction.NORTHEAST -> {
+            case 1 -> {
                                                                              {
                     var l = new MapLocation(x , y );
                     if(rc.onTheMap(l)) {
@@ -2318,7 +2318,7 @@ public class CellTracker {
                     }
                 }
                           }
-            case Direction.EAST -> {
+            case 2 -> {
                                                                                                                                                                                                                                                                                                                                                                                               {
                     var l = new MapLocation(x , y );
                     if(rc.onTheMap(l)) {
@@ -2446,7 +2446,7 @@ public class CellTracker {
                     }
                 }
                                                                                                 }
-            case Direction.SOUTHEAST -> {
+            case 3 -> {
                                                                          {
                     var l = new MapLocation(x , y  + -4 );
                     if(rc.onTheMap(l)) {
@@ -2580,7 +2580,7 @@ public class CellTracker {
                     }
                 }
                             }
-            case Direction.SOUTH -> {
+            case 4 -> {
                                                                                                                                              {
                     var l = new MapLocation(x  + -3 , y  + -3 );
                     if(rc.onTheMap(l)) {
@@ -2708,7 +2708,7 @@ public class CellTracker {
                     }
                 }
                                                                                                                                                                   }
-            case Direction.SOUTHWEST -> {
+            case 5 -> {
                                {
                     var l = new MapLocation(x  + -4 , y  + -2 );
                     if(rc.onTheMap(l)) {
@@ -2842,7 +2842,7 @@ public class CellTracker {
                     }
                 }
                                                                         }
-            case Direction.WEST -> {
+            case 6 -> {
                                                                                                           {
                     var l = new MapLocation(x  + -4 , y  + -2 );
                     if(rc.onTheMap(l)) {
@@ -2970,7 +2970,7 @@ public class CellTracker {
                     }
                 }
                                                                                                                                                                                                                                                                                                                                                                                     }
-            case Direction.NORTHWEST -> {
+            case 7 -> {
                                  {
                     var l = new MapLocation(x  + -4 , y );
                     if(rc.onTheMap(l)) {
@@ -3111,8 +3111,8 @@ public class CellTracker {
     public static void storeVisibleCellsPostMoveForward() throws GameActionException {
         Profiler.begin();
         int x = myLoc.x, y = myLoc.y;
-        switch(myDir) {
-            case Direction.NORTH -> {
+        switch(myDir.ordinal()) {
+            case 0 -> {
                                                                                                                                                                                                                                          {
                     var l = new MapLocation(x  + -3 , y  + 3 );
                     if(rc.onTheMap(l)) {
@@ -3156,7 +3156,7 @@ public class CellTracker {
                     }
                 }
                                                                                                                                                                                     }
-            case Direction.NORTHEAST -> {
+            case 1 -> {
                                                                                  {
                     var l = new MapLocation(x , y  + 4 );
                     if(rc.onTheMap(l)) {
@@ -3212,7 +3212,7 @@ public class CellTracker {
                     }
                 }
                           }
-            case Direction.EAST -> {
+            case 2 -> {
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   {
                     var l = new MapLocation(x  + 3 , y  + -3 );
                     if(rc.onTheMap(l)) {
@@ -3256,7 +3256,7 @@ public class CellTracker {
                     }
                 }
                                                                                                 }
-            case Direction.SOUTHEAST -> {
+            case 3 -> {
                                                                          {
                     var l = new MapLocation(x , y  + -4 );
                     if(rc.onTheMap(l)) {
@@ -3312,7 +3312,7 @@ public class CellTracker {
                     }
                 }
                             }
-            case Direction.SOUTH -> {
+            case 4 -> {
                                                                                                                                              {
                     var l = new MapLocation(x  + -3 , y  + -3 );
                     if(rc.onTheMap(l)) {
@@ -3356,7 +3356,7 @@ public class CellTracker {
                     }
                 }
                                                                                                                                                                   }
-            case Direction.SOUTHWEST -> {
+            case 5 -> {
                                {
                     var l = new MapLocation(x  + -4 , y  + -2 );
                     if(rc.onTheMap(l)) {
@@ -3412,7 +3412,7 @@ public class CellTracker {
                     }
                 }
                                                                             }
-            case Direction.WEST -> {
+            case 6 -> {
                                                                                                           {
                     var l = new MapLocation(x  + -4 , y  + -2 );
                     if(rc.onTheMap(l)) {
@@ -3456,7 +3456,7 @@ public class CellTracker {
                     }
                 }
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         }
-            case Direction.NORTHWEST -> {
+            case 7 -> {
                                  {
                     var l = new MapLocation(x  + -4 , y );
                     if(rc.onTheMap(l)) {
@@ -434208,29 +434208,29 @@ public class CellTracker {
     }
 
     public static void checkSymmetry() {
-        switch(getSymmetry()) {
-            case Horizontal -> {
-                Profiler.begin();
-                applyHor();
-                Profiler.end("applyHor");
-            }
-            case Vertical -> {
-                Profiler.begin();
-                applyVer();
-                Profiler.end("applyVer");
-            }
-            case Rotational -> {
-                Profiler.begin();
-                applyRot();
-                Profiler.end("applyRot");
-            }
-            case Unknown -> {
+        switch(getSymmetry().ordinal()) {
+            case 0 -> {
                 Profiler.begin();
                 // IF TLE: check one per turn instead of all 3
                 if(hsym != 0) checkHor();
                 if(vsym != 0) checkVer();
                 if(rsym != 0) checkRot();
                 Profiler.end("checkSymmetry");
+            }
+            case 1 -> {
+                Profiler.begin();
+                applyRot();
+                Profiler.end("applyRot");
+            }
+            case 2 -> {
+                Profiler.begin();
+                applyHor();
+                Profiler.end("applyHor");
+            }
+            case 3 -> {
+                Profiler.begin();
+                applyVer();
+                Profiler.end("applyVer");
             }
         }
     }

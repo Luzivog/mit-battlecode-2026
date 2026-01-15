@@ -10,6 +10,18 @@ import static awubot.Game.*;
 {% set MAX_BUG_ITERS = 5 %}
 {% set MAX_PATH = 15 %}
 
+class Config {
+    private static boolean dirtAllowed = false;
+    public static boolean allowDirt() {
+        if(dirtAllowed) return true;
+        var globalCheese = rc.getGlobalCheese();
+        if(time >= 100 && globalCheese >= 1500 || globalCheese >= 3000) {
+            dirtAllowed = true;
+        }
+        return dirtAllowed;
+    }
+}
+
 class BugnavInstance {
     MapLocation target;
 
@@ -103,6 +115,14 @@ class BugnavInstance {
                 return null;
             }
         }
+    }
+
+    private static boolean isPassable(MapLocation loc) {
+        return CellTracker.isPassable(loc) && !RobotTracker.kingSet.contains(loc) && (Config.allowDirt() || !CellTracker.isDirt(loc) || CellTracker.isWallAdjacent(loc));
+    }
+
+    private static boolean possiblyPassable(MapLocation loc) {
+        return (CellTracker.isPassable(loc) || !CellTracker.isSeen(loc)) && !RobotTracker.kingSet.contains(loc) && (Config.allowDirt() || !CellTracker.isDirt(loc) || CellTracker.isWallAdjacent(loc));
     }
 
     boolean doLookahead() throws GameActionException {
@@ -258,7 +278,7 @@ class BugnavInstance {
         MapLocation greedyLoc = pos.add(bottomDir);
         if(stackSize <= 1) {
             {% macro go(where) %}
-            if({{where}}Passable && chebyshevDistance(myLoc, {{where}}Loc) <= 5) {
+            if(isPassable({{where}}Loc) && chebyshevDistance(myLoc, {{where}}Loc) <= 5) {
                 // indicate("{{where}}Loc " + {{where}}Loc);
                 pos = {{where}}Loc;
                 topDir = bottomDir;
@@ -269,17 +289,14 @@ class BugnavInstance {
             }
             return false;
             {% endmacro %}
-            var greedyPassable = CellTracker.isPassable(greedyLoc);
-            var greedyGood = (greedyPassable || !CellTracker.isSeen(greedyLoc)) && !RobotTracker.kingSet.contains(greedyLoc);
+            var greedyGood = possiblyPassable(greedyLoc);
             if(greedyGood) {
                 {{ go("greedy") }}
             }
             var leftLoc = pos.add(bottomDir.rotateLeft());
             var rightLoc = pos.add(bottomDir.rotateRight());
-            var leftPassable = CellTracker.isPassable(leftLoc);
-            var leftGood = (leftPassable || !CellTracker.isSeen(leftLoc)) && !RobotTracker.kingSet.contains(leftLoc);
-            var rightPassable = CellTracker.isPassable(rightLoc);
-            var rightGood = (rightPassable || !CellTracker.isSeen(rightLoc)) && !RobotTracker.kingSet.contains(rightLoc);
+            var leftGood = possiblyPassable(leftLoc);
+            var rightGood = possiblyPassable(rightLoc);
             if(leftGood && !rightGood) {
                 {{ go("left") }}
             }
@@ -360,14 +377,14 @@ class BugnavInstance {
                 // indicate("bugnav " + {{turns}} + " " + isMaster);
                 return false;
             }
-            if((!CellTracker.isSeen(nextPos) || CellTracker.isPassable(nextPos)) && chebyshevDistance(myLoc, nextPos) > 5 && !RobotTracker.kingSet.contains(nextPos)) {
+            if(possiblyPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 // Profiler.end("bugnav " + {{turns}} + " " + isMaster);
                 // indicate("bugnav " + {{turns}} + " " + isMaster);
                 return false;
             }
-            if(CellTracker.isPassable(nextPos) && !RobotTracker.kingSet.contains(nextPos)) {
+            if(isPassable(nextPos)) {
                 pos = nextPos;
                 topDir = tryDir;
                 {% if turns %}
@@ -620,7 +637,10 @@ public class Pathfinder {
                != 0) {
                 var nextLoc = myLoc.add({{dir}});
                 boolean isDirt = false;
-                if(rc.canMove({{dir}}) || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                if(rc.canMove({{dir}})
+                   || (isDirt = CellTracker.isDirt(nextLoc))
+                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
+                   && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(

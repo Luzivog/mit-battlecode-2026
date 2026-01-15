@@ -751,6 +751,366 @@ public class CellTracker {
         }
     }
 
+    public static boolean isWallAdjacent(MapLocation loc) {
+        if(loc.y == mapHeight - 1 || loc.x == 0 || loc.x == mapWidth - 1) return true;
+        switch(loc.y) {
+            case 0 -> {
+                return true;
+            }
+            case 1 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen1 & ~passable1 & ((7l << loc.x) >>> 1))
+                        | (seen0 & ~passable0 & adjRowMask)
+                        | (seen2 & ~passable2 & adjRowMask)) != 0;
+            }
+            case 2 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen2 & ~passable2 & ((7l << loc.x) >>> 1))
+                        | (seen1 & ~passable1 & adjRowMask)
+                        | (seen3 & ~passable3 & adjRowMask)) != 0;
+            }
+            case 3 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen3 & ~passable3 & ((7l << loc.x) >>> 1))
+                        | (seen2 & ~passable2 & adjRowMask)
+                        | (seen4 & ~passable4 & adjRowMask)) != 0;
+            }
+            case 4 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen4 & ~passable4 & ((7l << loc.x) >>> 1))
+                        | (seen3 & ~passable3 & adjRowMask)
+                        | (seen5 & ~passable5 & adjRowMask)) != 0;
+            }
+            case 5 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen5 & ~passable5 & ((7l << loc.x) >>> 1))
+                        | (seen4 & ~passable4 & adjRowMask)
+                        | (seen6 & ~passable6 & adjRowMask)) != 0;
+            }
+            case 6 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen6 & ~passable6 & ((7l << loc.x) >>> 1))
+                        | (seen5 & ~passable5 & adjRowMask)
+                        | (seen7 & ~passable7 & adjRowMask)) != 0;
+            }
+            case 7 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen7 & ~passable7 & ((7l << loc.x) >>> 1))
+                        | (seen6 & ~passable6 & adjRowMask)
+                        | (seen8 & ~passable8 & adjRowMask)) != 0;
+            }
+            case 8 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen8 & ~passable8 & ((7l << loc.x) >>> 1))
+                        | (seen7 & ~passable7 & adjRowMask)
+                        | (seen9 & ~passable9 & adjRowMask)) != 0;
+            }
+            case 9 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen9 & ~passable9 & ((7l << loc.x) >>> 1))
+                        | (seen8 & ~passable8 & adjRowMask)
+                        | (seen10 & ~passable10 & adjRowMask)) != 0;
+            }
+            case 10 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen10 & ~passable10 & ((7l << loc.x) >>> 1))
+                        | (seen9 & ~passable9 & adjRowMask)
+                        | (seen11 & ~passable11 & adjRowMask)) != 0;
+            }
+            case 11 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen11 & ~passable11 & ((7l << loc.x) >>> 1))
+                        | (seen10 & ~passable10 & adjRowMask)
+                        | (seen12 & ~passable12 & adjRowMask)) != 0;
+            }
+            case 12 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen12 & ~passable12 & ((7l << loc.x) >>> 1))
+                        | (seen11 & ~passable11 & adjRowMask)
+                        | (seen13 & ~passable13 & adjRowMask)) != 0;
+            }
+            case 13 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen13 & ~passable13 & ((7l << loc.x) >>> 1))
+                        | (seen12 & ~passable12 & adjRowMask)
+                        | (seen14 & ~passable14 & adjRowMask)) != 0;
+            }
+            case 14 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen14 & ~passable14 & ((7l << loc.x) >>> 1))
+                        | (seen13 & ~passable13 & adjRowMask)
+                        | (seen15 & ~passable15 & adjRowMask)) != 0;
+            }
+            case 15 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen15 & ~passable15 & ((7l << loc.x) >>> 1))
+                        | (seen14 & ~passable14 & adjRowMask)
+                        | (seen16 & ~passable16 & adjRowMask)) != 0;
+            }
+            case 16 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen16 & ~passable16 & ((7l << loc.x) >>> 1))
+                        | (seen15 & ~passable15 & adjRowMask)
+                        | (seen17 & ~passable17 & adjRowMask)) != 0;
+            }
+            case 17 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen17 & ~passable17 & ((7l << loc.x) >>> 1))
+                        | (seen16 & ~passable16 & adjRowMask)
+                        | (seen18 & ~passable18 & adjRowMask)) != 0;
+            }
+            case 18 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen18 & ~passable18 & ((7l << loc.x) >>> 1))
+                        | (seen17 & ~passable17 & adjRowMask)
+                        | (seen19 & ~passable19 & adjRowMask)) != 0;
+            }
+            case 19 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen19 & ~passable19 & ((7l << loc.x) >>> 1))
+                        | (seen18 & ~passable18 & adjRowMask)
+                        | (seen20 & ~passable20 & adjRowMask)) != 0;
+            }
+            case 20 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen20 & ~passable20 & ((7l << loc.x) >>> 1))
+                        | (seen19 & ~passable19 & adjRowMask)
+                        | (seen21 & ~passable21 & adjRowMask)) != 0;
+            }
+            case 21 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen21 & ~passable21 & ((7l << loc.x) >>> 1))
+                        | (seen20 & ~passable20 & adjRowMask)
+                        | (seen22 & ~passable22 & adjRowMask)) != 0;
+            }
+            case 22 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen22 & ~passable22 & ((7l << loc.x) >>> 1))
+                        | (seen21 & ~passable21 & adjRowMask)
+                        | (seen23 & ~passable23 & adjRowMask)) != 0;
+            }
+            case 23 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen23 & ~passable23 & ((7l << loc.x) >>> 1))
+                        | (seen22 & ~passable22 & adjRowMask)
+                        | (seen24 & ~passable24 & adjRowMask)) != 0;
+            }
+            case 24 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen24 & ~passable24 & ((7l << loc.x) >>> 1))
+                        | (seen23 & ~passable23 & adjRowMask)
+                        | (seen25 & ~passable25 & adjRowMask)) != 0;
+            }
+            case 25 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen25 & ~passable25 & ((7l << loc.x) >>> 1))
+                        | (seen24 & ~passable24 & adjRowMask)
+                        | (seen26 & ~passable26 & adjRowMask)) != 0;
+            }
+            case 26 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen26 & ~passable26 & ((7l << loc.x) >>> 1))
+                        | (seen25 & ~passable25 & adjRowMask)
+                        | (seen27 & ~passable27 & adjRowMask)) != 0;
+            }
+            case 27 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen27 & ~passable27 & ((7l << loc.x) >>> 1))
+                        | (seen26 & ~passable26 & adjRowMask)
+                        | (seen28 & ~passable28 & adjRowMask)) != 0;
+            }
+            case 28 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen28 & ~passable28 & ((7l << loc.x) >>> 1))
+                        | (seen27 & ~passable27 & adjRowMask)
+                        | (seen29 & ~passable29 & adjRowMask)) != 0;
+            }
+            case 29 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen29 & ~passable29 & ((7l << loc.x) >>> 1))
+                        | (seen28 & ~passable28 & adjRowMask)
+                        | (seen30 & ~passable30 & adjRowMask)) != 0;
+            }
+            case 30 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen30 & ~passable30 & ((7l << loc.x) >>> 1))
+                        | (seen29 & ~passable29 & adjRowMask)
+                        | (seen31 & ~passable31 & adjRowMask)) != 0;
+            }
+            case 31 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen31 & ~passable31 & ((7l << loc.x) >>> 1))
+                        | (seen30 & ~passable30 & adjRowMask)
+                        | (seen32 & ~passable32 & adjRowMask)) != 0;
+            }
+            case 32 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen32 & ~passable32 & ((7l << loc.x) >>> 1))
+                        | (seen31 & ~passable31 & adjRowMask)
+                        | (seen33 & ~passable33 & adjRowMask)) != 0;
+            }
+            case 33 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen33 & ~passable33 & ((7l << loc.x) >>> 1))
+                        | (seen32 & ~passable32 & adjRowMask)
+                        | (seen34 & ~passable34 & adjRowMask)) != 0;
+            }
+            case 34 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen34 & ~passable34 & ((7l << loc.x) >>> 1))
+                        | (seen33 & ~passable33 & adjRowMask)
+                        | (seen35 & ~passable35 & adjRowMask)) != 0;
+            }
+            case 35 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen35 & ~passable35 & ((7l << loc.x) >>> 1))
+                        | (seen34 & ~passable34 & adjRowMask)
+                        | (seen36 & ~passable36 & adjRowMask)) != 0;
+            }
+            case 36 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen36 & ~passable36 & ((7l << loc.x) >>> 1))
+                        | (seen35 & ~passable35 & adjRowMask)
+                        | (seen37 & ~passable37 & adjRowMask)) != 0;
+            }
+            case 37 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen37 & ~passable37 & ((7l << loc.x) >>> 1))
+                        | (seen36 & ~passable36 & adjRowMask)
+                        | (seen38 & ~passable38 & adjRowMask)) != 0;
+            }
+            case 38 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen38 & ~passable38 & ((7l << loc.x) >>> 1))
+                        | (seen37 & ~passable37 & adjRowMask)
+                        | (seen39 & ~passable39 & adjRowMask)) != 0;
+            }
+            case 39 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen39 & ~passable39 & ((7l << loc.x) >>> 1))
+                        | (seen38 & ~passable38 & adjRowMask)
+                        | (seen40 & ~passable40 & adjRowMask)) != 0;
+            }
+            case 40 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen40 & ~passable40 & ((7l << loc.x) >>> 1))
+                        | (seen39 & ~passable39 & adjRowMask)
+                        | (seen41 & ~passable41 & adjRowMask)) != 0;
+            }
+            case 41 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen41 & ~passable41 & ((7l << loc.x) >>> 1))
+                        | (seen40 & ~passable40 & adjRowMask)
+                        | (seen42 & ~passable42 & adjRowMask)) != 0;
+            }
+            case 42 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen42 & ~passable42 & ((7l << loc.x) >>> 1))
+                        | (seen41 & ~passable41 & adjRowMask)
+                        | (seen43 & ~passable43 & adjRowMask)) != 0;
+            }
+            case 43 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen43 & ~passable43 & ((7l << loc.x) >>> 1))
+                        | (seen42 & ~passable42 & adjRowMask)
+                        | (seen44 & ~passable44 & adjRowMask)) != 0;
+            }
+            case 44 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen44 & ~passable44 & ((7l << loc.x) >>> 1))
+                        | (seen43 & ~passable43 & adjRowMask)
+                        | (seen45 & ~passable45 & adjRowMask)) != 0;
+            }
+            case 45 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen45 & ~passable45 & ((7l << loc.x) >>> 1))
+                        | (seen44 & ~passable44 & adjRowMask)
+                        | (seen46 & ~passable46 & adjRowMask)) != 0;
+            }
+            case 46 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen46 & ~passable46 & ((7l << loc.x) >>> 1))
+                        | (seen45 & ~passable45 & adjRowMask)
+                        | (seen47 & ~passable47 & adjRowMask)) != 0;
+            }
+            case 47 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen47 & ~passable47 & ((7l << loc.x) >>> 1))
+                        | (seen46 & ~passable46 & adjRowMask)
+                        | (seen48 & ~passable48 & adjRowMask)) != 0;
+            }
+            case 48 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen48 & ~passable48 & ((7l << loc.x) >>> 1))
+                        | (seen47 & ~passable47 & adjRowMask)
+                        | (seen49 & ~passable49 & adjRowMask)) != 0;
+            }
+            case 49 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen49 & ~passable49 & ((7l << loc.x) >>> 1))
+                        | (seen48 & ~passable48 & adjRowMask)
+                        | (seen50 & ~passable50 & adjRowMask)) != 0;
+            }
+            case 50 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen50 & ~passable50 & ((7l << loc.x) >>> 1))
+                        | (seen49 & ~passable49 & adjRowMask)
+                        | (seen51 & ~passable51 & adjRowMask)) != 0;
+            }
+            case 51 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen51 & ~passable51 & ((7l << loc.x) >>> 1))
+                        | (seen50 & ~passable50 & adjRowMask)
+                        | (seen52 & ~passable52 & adjRowMask)) != 0;
+            }
+            case 52 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen52 & ~passable52 & ((7l << loc.x) >>> 1))
+                        | (seen51 & ~passable51 & adjRowMask)
+                        | (seen53 & ~passable53 & adjRowMask)) != 0;
+            }
+            case 53 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen53 & ~passable53 & ((7l << loc.x) >>> 1))
+                        | (seen52 & ~passable52 & adjRowMask)
+                        | (seen54 & ~passable54 & adjRowMask)) != 0;
+            }
+            case 54 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen54 & ~passable54 & ((7l << loc.x) >>> 1))
+                        | (seen53 & ~passable53 & adjRowMask)
+                        | (seen55 & ~passable55 & adjRowMask)) != 0;
+            }
+            case 55 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen55 & ~passable55 & ((7l << loc.x) >>> 1))
+                        | (seen54 & ~passable54 & adjRowMask)
+                        | (seen56 & ~passable56 & adjRowMask)) != 0;
+            }
+            case 56 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen56 & ~passable56 & ((7l << loc.x) >>> 1))
+                        | (seen55 & ~passable55 & adjRowMask)
+                        | (seen57 & ~passable57 & adjRowMask)) != 0;
+            }
+            case 57 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen57 & ~passable57 & ((7l << loc.x) >>> 1))
+                        | (seen56 & ~passable56 & adjRowMask)
+                        | (seen58 & ~passable58 & adjRowMask)) != 0;
+            }
+            case 58 -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen58 & ~passable58 & ((7l << loc.x) >>> 1))
+                        | (seen57 & ~passable57 & adjRowMask)
+                        | (seen59 & ~passable59 & adjRowMask)) != 0;
+            }
+            default -> {
+                return false;
+            }
+        }
+    }
+
     public static void storeCell(MapInfo info) throws GameActionException {
         var loc = info.getMapLocation();
         // rc.setIndicatorDot(loc, 255, 255, 0);

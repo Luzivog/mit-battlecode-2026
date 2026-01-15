@@ -29,6 +29,26 @@ public class CellTracker {
     }
     {% endfor %}
 
+    public static boolean isWallAdjacent(MapLocation loc) {
+        if(loc.y == mapHeight - 1 || loc.x == 0 || loc.x == mapWidth - 1) return true;
+        switch(loc.y) {
+            case 0 -> {
+                return true;
+            }
+            {% for i in range(1, MAX_MAP_SIZE - 1) %}
+            case {{i}} -> {
+                var adjRowMask = 1l << loc.x;
+                return ((seen{{i}} & ~passable{{i}} & ((7l << loc.x) >>> 1))
+                        | (seen{{i - 1}} & ~passable{{i - 1}} & adjRowMask)
+                        | (seen{{i + 1}} & ~passable{{i + 1}} & adjRowMask)) != 0;
+            }
+            {% endfor %}
+            default -> {
+                return false;
+            }
+        }
+    }
+
     public static void storeCell(MapInfo info) throws GameActionException {
         var loc = info.getMapLocation();
         // rc.setIndicatorDot(loc, 255, 255, 0);

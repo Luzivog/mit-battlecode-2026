@@ -1,0 +1,419 @@
+package awubot.robot.rat;
+
+import battlecode.common.Direction;
+import battlecode.common.GameActionException;
+import battlecode.common.MapInfo;
+import battlecode.common.MapLocation;
+import battlecode.common.RobotInfo;
+import battlecode.common.TrapType;
+import battlecode.common.UnitType;
+
+import static awubot.Game.*;
+import static awubot.util.Util.*;
+
+public class CombatTracker {
+    private static final int GRID_RADIUS = 2;
+
+    {% set moveDirs = directions + ['Direction.CENTER'] %}
+    {% set moveShort = shortDirections + ['C'] %}
+    {% set dir_dx = {
+        'Direction.NORTH': 0,
+        'Direction.NORTHEAST': 1,
+        'Direction.EAST': 1,
+        'Direction.SOUTHEAST': 1,
+        'Direction.SOUTH': 0,
+        'Direction.SOUTHWEST': -1,
+        'Direction.WEST': -1,
+        'Direction.NORTHWEST': -1,
+        'Direction.CENTER': 0
+    } %}
+    {% set dir_dy = {
+        'Direction.NORTH': 1,
+        'Direction.NORTHEAST': 1,
+        'Direction.EAST': 0,
+        'Direction.SOUTHEAST': -1,
+        'Direction.SOUTH': -1,
+        'Direction.SOUTHWEST': -1,
+        'Direction.WEST': 0,
+        'Direction.NORTHWEST': 1,
+        'Direction.CENTER': 0
+    } %}
+    {% set visible_dirs = {
+        'Direction.NORTH': ['Direction.NORTH', 'Direction.NORTHEAST', 'Direction.NORTHWEST'],
+        'Direction.SOUTH': ['Direction.SOUTH', 'Direction.SOUTHEAST', 'Direction.SOUTHWEST'],
+        'Direction.EAST': ['Direction.EAST', 'Direction.NORTHEAST', 'Direction.SOUTHEAST'],
+        'Direction.WEST': ['Direction.WEST', 'Direction.NORTHWEST', 'Direction.SOUTHWEST'],
+        'Direction.NORTHEAST': ['Direction.NORTHEAST', 'Direction.NORTH', 'Direction.EAST'],
+        'Direction.NORTHWEST': ['Direction.NORTHWEST', 'Direction.NORTH', 'Direction.WEST'],
+        'Direction.SOUTHEAST': ['Direction.SOUTHEAST', 'Direction.SOUTH', 'Direction.EAST'],
+        'Direction.SOUTHWEST': ['Direction.SOUTHWEST', 'Direction.SOUTH', 'Direction.WEST']
+    } %}
+
+    {% macro cell_var(dx, dy) -%}
+    t_{{ "m" if dx < 0 else "" }}{{ dx|abs }}_{{ "m" if dy < 0 else "" }}{{ dy|abs }}
+    {%- endmacro %}
+
+    {% macro long_hex(val) -%}
+    0x{{ "%016x"|format(val) }}L
+    {%- endmacro %}
+
+    {% macro threat_expr(dx_m, dy_m) -%}
+    {%- set ns = namespace(terms=[]) -%}
+    {%- for i in range(8) -%}
+    {%- set ndir = directions[i] -%}
+    {%- set nx = dx_m + dir_dx[ndir] -%}
+    {%- set ny = dy_m + dir_dy[ndir] -%}
+    {%- if nx >= -2 and nx <= 2 and ny >= -2 and ny <= 2 -%}
+    {%- set term = "(" ~ cell_var(nx, ny) ~ " ? " ~ long_hex(bitLeftShift(255, i * 8)) ~ " : 0L)" -%}
+    {%- set ns.terms = ns.terms + [term] -%}
+    {%- endif -%}
+    {%- endfor -%}
+    {%- if ns.terms|length == 0 -%}
+    0L
+    {%- else -%}
+    {{ ns.terms | join(" | ") }}
+    {%- endif -%}
+    {%- endmacro %}
+
+    {% macro enemy_mask(dx_e, dy_e, facing, moveDir) -%}
+    {%- set dx_m = dir_dx[moveDir] -%}
+    {%- set dy_m = dir_dy[moveDir] -%}
+    {%- set dx_rel = dx_m - dx_e -%}
+    {%- set dy_rel = dy_m - dy_e -%}
+    {%- set dist_ok = (dx_rel * dx_rel + dy_rel * dy_rel) <= 20 -%}
+    {%- set ns = namespace(mask=0, visible=false) -%}
+    {%- if facing == "Direction.NORTH" -%}
+    {%- set ns.visible = dy_rel >= (dx_rel | abs) -%}
+    {%- elif facing == "Direction.NORTHEAST" -%}
+    {%- set ns.visible = dx_rel >= 0 and dy_rel >= 0 -%}
+    {%- elif facing == "Direction.EAST" -%}
+    {%- set ns.visible = dx_rel >= (dy_rel | abs) -%}
+    {%- elif facing == "Direction.SOUTHEAST" -%}
+    {%- set ns.visible = dx_rel >= 0 and dy_rel <= 0 -%}
+    {%- elif facing == "Direction.SOUTH" -%}
+    {%- set ns.visible = dy_rel <= -(dx_rel | abs) -%}
+    {%- elif facing == "Direction.SOUTHWEST" -%}
+    {%- set ns.visible = dx_rel <= 0 and dy_rel <= 0 -%}
+    {%- elif facing == "Direction.WEST" -%}
+    {%- set ns.visible = dx_rel <= -(dy_rel | abs) -%}
+    {%- elif facing == "Direction.NORTHWEST" -%}
+    {%- set ns.visible = dx_rel <= 0 and dy_rel >= 0 -%}
+    {%- endif -%}
+    {%- if dist_ok and ns.visible -%}
+    {%- for i in range(8) -%}
+    {%- set ndir = directions[i] -%}
+    {%- set nx = dx_m + dir_dx[ndir] -%}
+    {%- set ny = dy_m + dir_dy[ndir] -%}
+    {%- set adx = (nx - dx_e) | abs -%}
+    {%- set ady = (ny - dy_e) | abs -%}
+    {%- if adx <= 1 and ady <= 1 -%}
+    {%- set ns.mask = bitOr(ns.mask, bitLeftShift(1, i * 8)) -%}
+    {%- endif -%}
+    {%- endfor -%}
+    {%- endif -%}
+    {{ long_hex(ns.mask) }}
+    {%- endmacro %}
+
+    {% macro add_mask(var, dx_e, dy_e, facing, moveDir) -%}
+    {%- set mask = enemy_mask(dx_e, dy_e, facing, moveDir) -%}
+    {%- if mask|trim != "0x0000000000000000L" -%}
+    {{ var }} += {{ mask }};
+    {%- endif -%}
+    {%- endmacro %}
+
+    // isThreat flags for the 5x5 around the player.
+    {% for dy in range(2, -3, -1) %}
+    {% for dx in range(-2, 3) %}
+    private static boolean {{ cell_var(dx, dy) }};
+    {% endfor %}
+    {% endfor %}
+
+    // Byte-packed enemy counters (low/high health) per move direction.
+    {% for s in moveShort %}
+    private static long low{{ s }};
+    {% endfor %}
+    {% for s in moveShort %}
+    private static long high{{ s }};
+    {% endfor %}
+
+    // Byte-packed threat masks per move direction (0xFF per reachable neighbor).
+    {% for s in moveShort %}
+    private static long moveThreat{{ s }};
+    {% endfor %}
+
+    // Hidden-neighbor masks per facing (0xFF for hidden, 0x00 for visible).
+    {% for facing in directions %}
+    {%- set ns = namespace(mask=0) -%}
+    {%- for i in range(8) -%}
+    {%- set dir = directions[i] -%}
+    {%- if dir not in visible_dirs[facing] -%}
+    {%- set ns.mask = bitOr(ns.mask, bitLeftShift(255, i * 8)) -%}
+    {%- endif -%}
+    {%- endfor -%}
+    private static final long hidden{{ shortDirections[loop.index0] }} = {{ long_hex(ns.mask) }};
+    {% endfor %}
+
+    public static void debug() {
+        StringBuilder sb = new StringBuilder();
+        for (int y = GRID_RADIUS; y >= -GRID_RADIUS; y--) {
+            for (int x = -GRID_RADIUS; x <= GRID_RADIUS; x++) {
+                sb.append(isThreatAt(x, y) ? "X " : ". ");
+            }
+            sb.append('\n');
+        }
+        indicate(sb.toString());
+    }
+
+    public static void tick() throws GameActionException {
+        loadThreatFromMap();
+        for (MapInfo info : rc.senseNearbyMapInfos(8)) {
+            if (info.getTrap() == TrapType.NONE) continue;
+            MapLocation loc = info.getMapLocation();
+            int dx = loc.x - myLocX;
+            int dy = loc.y - myLocY;
+            if (dx < -2 || dx > 2 || dy < -2 || dy > 2) continue;
+            registerTrap(dx, dy);
+        }
+        recomputeThreatMasks();
+        resetEnemyCounts();
+        for (RobotInfo info : rc.senseNearbyRobots()) {
+            if (info.getTeam() == rc.getTeam()) continue;
+            if (info.getType() != UnitType.BABY_RAT) continue;
+            registerEnemy(info);
+        }
+    }
+
+    public static void resetEnemyCounts() {
+        {% for s in moveShort %}
+        low{{ s }} = 0L;
+        {% endfor %}
+        {% for s in moveShort %}
+        high{{ s }} = 0L;
+        {% endfor %}
+    }
+
+    public static void loadThreatFromMap() throws GameActionException {
+        int x = myLoc.x;
+        int y = myLoc.y;
+        {% for dy in range(2, -3, -1) %}
+        {% for dx in range(-2, 3) %}
+        {{ cell_var(dx, dy) }} = isCellMaybePassable(new MapLocation(x {% if dx %} + {{dx}} {% endif %}, y {% if dy %} + {{dy}} {% endif %}));
+        {% endfor %}
+        {% endfor %}
+    }
+
+    public static void registerTrap(int dx, int dy) {
+        switch (dx) {
+            {% for dx in range(-2, 3) %}
+            case {{ dx }} -> {
+                switch (dy) {
+                    {% for dy in range(-2, 3) %}
+                    case {{ dy }} -> {
+                        {% for cx in range(-2, 3) %}
+                        {% for cy in range(-2, 3) %}
+                        {% if (cx - dx)|abs <= 1 and (cy - dy)|abs <= 1 %}
+                        {{ cell_var(cx, cy) }} = false;
+                        {% endif %}
+                        {% endfor %}
+                        {% endfor %}
+                    }
+                    {% endfor %}
+                    default -> { }
+                }
+            }
+            {% endfor %}
+            default -> { }
+        }
+    }
+
+    public static void recomputeThreatMasks() {
+        {% for i in range(moveDirs|length) %}
+        {%- set moveDir = moveDirs[i] -%}
+        {%- set dx_m = dir_dx[moveDir] -%}
+        {%- set dy_m = dir_dy[moveDir] -%}
+        moveThreat{{ moveShort[i] }} = {{ threat_expr(dx_m, dy_m) }};
+        {% endfor %}
+    }
+
+    public static void registerEnemy(RobotInfo info) {
+        int dx = info.getLocation().x - myLocX;
+        int dy = info.getLocation().y - myLocY;
+        if (dx < -2 || dx > 2 || dy < -2 || dy > 2) return;
+        boolean highHealth = info.getHealth() > rc.getHealth();
+        if (highHealth) {
+            registerEnemyHigh(dx, dy, info.getDirection());
+        } else {
+            registerEnemyLow(dx, dy, info.getDirection());
+        }
+    }
+
+    public static void registerEnemyLow(int dx, int dy, Direction facing) {
+        switch (dx) {
+            {% for dx in range(-2, 3) %}
+            case {{ dx }} -> {
+                switch (dy) {
+                    {% for dy in range(-2, 3) %}
+                    case {{ dy }} -> {
+                        switch (facing) {
+                            {% for facing in directions %}
+                            case {{ facing }} -> {
+                                {% for i in range(moveDirs|length) %}
+                                {{ add_mask("low" ~ moveShort[i], dx, dy, facing, moveDirs[i]) }}
+                                {% endfor %}
+                            }
+                            {% endfor %}
+                            default -> { }
+                        }
+                    }
+                    {% endfor %}
+                    default -> { }
+                }
+            }
+            {% endfor %}
+            default -> { }
+        }
+    }
+
+    public static void registerEnemyHigh(int dx, int dy, Direction facing) {
+        switch (dx) {
+            {% for dx in range(-2, 3) %}
+            case {{ dx }} -> {
+                switch (dy) {
+                    {% for dy in range(-2, 3) %}
+                    case {{ dy }} -> {
+                        switch (facing) {
+                            {% for facing in directions %}
+                            case {{ facing }} -> {
+                                {% for i in range(moveDirs|length) %}
+                                {{ add_mask("high" ~ moveShort[i], dx, dy, facing, moveDirs[i]) }}
+                                {% endfor %}
+                            }
+                            {% endfor %}
+                            default -> { }
+                        }
+                    }
+                    {% endfor %}
+                    default -> { }
+                }
+            }
+            {% endfor %}
+            default -> { }
+        }
+    }
+
+    public static boolean hasThreat(Direction moveDir, Direction facing) {
+        long low = getLowMask(moveDir);
+        long high = getHighMask(moveDir);
+        long hidden = getHiddenMask(facing);
+        long threat = getMoveThreatMask(moveDir);
+        long combined = high + (low & hidden);
+        return (combined & threat) != 0L;
+    }
+
+    public static boolean hasThreat(Direction moveDir, Direction facing, RobotInfo target) {
+        if (target == null) return hasThreat(moveDir, facing);
+        if (target.getTeam() == rc.getTeam()) return hasThreat(moveDir, facing);
+        if (target.getType() != UnitType.BABY_RAT) return hasThreat(moveDir, facing);
+        int enemyDx = target.getLocation().x - myLocX;
+        int enemyDy = target.getLocation().y - myLocY;
+        if (enemyDx < -2 || enemyDx > 2 || enemyDy < -2 || enemyDy > 2) return hasThreat(moveDir, facing);
+        long low = getLowMask(moveDir);
+        long high = getHighMask(moveDir);
+        long hidden = getHiddenMask(facing);
+        long threat = getMoveThreatMask(moveDir);
+        long sub = enemyMaskForMove(enemyDx, enemyDy, target.getDirection(), moveDir);
+        if (target.getHealth() > rc.getHealth()) {
+            high -= sub;
+        } else {
+            low -= sub;
+        }
+        long combined = high + (low & hidden);
+        return (combined & threat) != 0L;
+    }
+
+    private static long getLowMask(Direction moveDir) {
+        return switch (moveDir) {
+            {% for i in range(moveDirs|length) %}
+            case {{ moveDirs[i] }} -> low{{ moveShort[i] }};
+            {% endfor %}
+            default -> 0L;
+        };
+    }
+
+    private static long getHighMask(Direction moveDir) {
+        return switch (moveDir) {
+            {% for i in range(moveDirs|length) %}
+            case {{ moveDirs[i] }} -> high{{ moveShort[i] }};
+            {% endfor %}
+            default -> 0L;
+        };
+    }
+
+    private static long getMoveThreatMask(Direction moveDir) {
+        return switch (moveDir) {
+            {% for i in range(moveDirs|length) %}
+            case {{ moveDirs[i] }} -> moveThreat{{ moveShort[i] }};
+            {% endfor %}
+            default -> 0L;
+        };
+    }
+
+    private static long getHiddenMask(Direction facing) {
+        return switch (facing) {
+            {% for i in range(directions|length) %}
+            case {{ directions[i] }} -> hidden{{ shortDirections[i] }};
+            {% endfor %}
+            default -> 0L;
+        };
+    }
+
+    private static long enemyMaskForMove(int dx, int dy, Direction facing, Direction moveDir) {
+        switch (dx) {
+            {% for dx in range(-2, 3) %}
+            case {{ dx }} -> {
+                switch (dy) {
+                    {% for dy in range(-2, 3) %}
+                    case {{ dy }} -> {
+                        switch (facing) {
+                            {% for facing in directions %}
+                            case {{ facing }} -> {
+                                switch (moveDir) {
+                                    {% for i in range(moveDirs|length) %}
+                                    case {{ moveDirs[i] }} -> {
+                                        return {{ enemy_mask(dx, dy, facing, moveDirs[i]) }};
+                                    }
+                                    {% endfor %}
+                                    default -> { return 0L; }
+                                }
+                            }
+                            {% endfor %}
+                            default -> { return 0L; }
+                        }
+                    }
+                    {% endfor %}
+                    default -> { return 0L; }
+                }
+            }
+            {% endfor %}
+            default -> { return 0L; }
+        }
+    }
+
+    private static boolean isThreatAt(int dx, int dy) {
+        switch (dx) {
+            {% for dx in range(-2, 3) %}
+            case {{ dx }} -> {
+                switch (dy) {
+                    {% for dy in range(-2, 3) %}
+                    case {{ dy }} -> { return {{ cell_var(dx, dy) }}; }
+                    {% endfor %}
+                    default -> { return false; }
+                }
+            }
+            {% endfor %}
+            default -> { return false; }
+        }
+    }
+
+    // vision is fully precomputed into enemy masks, no runtime cone checks needed
+}

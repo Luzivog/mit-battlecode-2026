@@ -7,8 +7,6 @@ import awubot.robot.Strategy;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 
-import static awubot.robot.rat.BabyRat.*;
-
 public class GoHomeStrategy extends Strategy {
     private MapLocation kingLoc;
 

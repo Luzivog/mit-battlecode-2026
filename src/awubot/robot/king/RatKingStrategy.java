@@ -8,23 +8,21 @@ import static awubot.Game.*;
 import static awubot.util.Util.*;
 
 public class RatKingStrategy extends Strategy {
-    private final KingCheeseStrategy cheeseStrategy;
-    private final KingMiningStrategy miningStrategy;
-    private final KingSpawningStrategy spawningStrategy;
+    private KingSpawningStrategy spawningStrategy;
+    private KingCombatStrategy combatStrategy;
+    private KingMiningStrategy miningStrategy;
 
     public RatKingStrategy() {
-        cheeseStrategy = new KingCheeseStrategy();
-        miningStrategy = new KingMiningStrategy();
-        miningStrategy.init();
-        // Profiler.begin();
         spawningStrategy = new KingSpawningStrategy();
+        combatStrategy = new KingCombatStrategy();
+        miningStrategy = new KingMiningStrategy();
     }
 
     @Override
     public boolean runTick() throws GameActionException {
-        cheeseStrategy.runTick();
-        miningStrategy.runTick();
         spawningStrategy.runTick();
+        combatStrategy.runTick();
+        miningStrategy.runTick();
         return true;
     }
 }

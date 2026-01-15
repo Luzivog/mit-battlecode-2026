@@ -618,12 +618,16 @@ class BugnavInstance {
                     bottomDir = dirToTarget;
                     stackSize++;
                 } else {
-                    assert dirToTarget == bottomDir.rotateLeft() : "unexpected direction change from " + bottomDir + " to " + dirToTarget;
-                    bottomDir = dirToTarget;
-                    stackSize--;
-                    if(stackSize < 0) {
-                        stackSize = 0;
-                        topDir = bottomDir;
+                    if(dirToTarget != bottomDir.rotateLeft()) {
+                        System.out.println("unexpected direction change from " + bottomDir + " to " + dirToTarget);
+                        clearPath();
+                    } else {
+                        bottomDir = dirToTarget;
+                        stackSize--;
+                        if(stackSize < 0) {
+                            stackSize = 0;
+                            topDir = bottomDir;
+                        }
                     }
                 }
 
@@ -632,12 +636,16 @@ class BugnavInstance {
                     bottomDir = dirToTarget;
                     stackSize++;
                 } else {
-                    assert dirToTarget == bottomDir.rotateRight() : "unexpected direction change from " + bottomDir + " to " + dirToTarget;
-                    bottomDir = dirToTarget;
-                    stackSize--;
-                    if(stackSize < 0) {
-                        stackSize = 0;
-                        topDir = bottomDir;
+                    if(dirToTarget != bottomDir.rotateRight()) {
+                        System.out.println("unexpected direction change from " + bottomDir + " to " + dirToTarget);
+                        clearPath();
+                    } else {
+                        bottomDir = dirToTarget;
+                        stackSize--;
+                        if(stackSize < 0) {
+                            stackSize = 0;
+                            topDir = bottomDir;
+                        }
                     }
                 }
 

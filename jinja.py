@@ -121,6 +121,17 @@ def compile_template(path: Path, debug: bool):
                 'Direction.NORTHWEST'
             ],
             shortDirections=['N','NE','E','SE','S','SW','W','NW'],
+            allDirections=[
+                'Direction.NORTH',
+                'Direction.NORTHEAST',
+                'Direction.EAST',
+                'Direction.SOUTHEAST',
+                'Direction.SOUTH',
+                'Direction.SOUTHWEST',
+                'Direction.WEST',
+                'Direction.NORTHWEST',
+                'Direction.CENTER'
+            ],
             debug=debug
         )
 

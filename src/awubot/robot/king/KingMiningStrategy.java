@@ -10,6 +10,8 @@ import awubot.robot.Strategy;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 
+// TODO: clean up
+
 public class KingMiningStrategy extends Strategy {
     private static final int STUCK_THRESHOLD = 3;
 
@@ -18,7 +20,7 @@ public class KingMiningStrategy extends Strategy {
     private boolean theFoundCheeseMine = false;
     private int theStuckCounter = 0;
 
-    public void init() {
+    public KingMiningStrategy() {
         theCenterTarget = new MapLocation(mapWidth / 2, mapHeight / 2);
     }
 

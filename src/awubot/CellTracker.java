@@ -1539,6 +1539,8 @@ public class CellTracker {
     }
 
     public static void storeVisibleCells() throws GameActionException {
+        assert(myLoc == rc.getLocation());
+        assert(myDir == rc.getDirection());
         Profiler.begin();
         int x = myLoc.x, y = myLoc.y;
         switch(myDir) {

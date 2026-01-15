@@ -50,6 +50,11 @@ public class RobotPlayer {
                 Game.postTick();
             } catch (Exception e) {
                 e.printStackTrace();
+                if (time != rc.getRoundNum()) {
+                    println("BYTECODE EXCEEDED");
+                    // rc.resign();
+                }
+                // rc.resign();
             } finally {
                 Clock.yield();
             }

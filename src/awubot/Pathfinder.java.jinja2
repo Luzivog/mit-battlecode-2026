@@ -136,8 +136,8 @@ class BugnavInstance {
             lastDir = Direction.CENTER;
             return true;
         }
-        rc.setIndicatorDot(leftBug.pos, 255, 255, 0);
-        rc.setIndicatorDot(rightBug.pos, 255, 255, 0);
+        // rc.setIndicatorDot(leftBug.pos, 255, 255, 0);
+        // rc.setIndicatorDot(rightBug.pos, 255, 255, 0);
         // Profiler.begin();
         if(!myLoc.equals(lastLoc) || !myDir.equals(lastDir)) {
             // we moved, so we might be able to advance previously stuck stuff further
@@ -153,7 +153,7 @@ class BugnavInstance {
             {{side}}Bug.outOfSight = false;
             {{side}}Done = !{{side}}Bug.advance();
             // indicate({{side}}Bug.pos);
-            rc.setIndicatorDot({{side}}Bug.pos, 255, 0, 255);
+            // rc.setIndicatorDot({{side}}Bug.pos, 255, 0, 255);
             {% endmacro %}
             if(rightDone) {
                 {{ advance("left") }}
@@ -493,7 +493,7 @@ public class Pathfinder {
         if(lastDist < {{(MAX_PATH / 4) | int}} || RobotTracker.allySet.contains(bug.pos)) {
             bugLoop: {
                 {% for i in range(MAX_BUG_ITERS) %}
-                rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
+                // rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
                 Profiler.begin();
                 if(!bug.advance()) break bugLoop;
                 lastDist++;
@@ -525,7 +525,7 @@ public class Pathfinder {
             lastBugPos = bug.pos;
             lastLoc = myLoc;
         }
-        rc.setIndicatorDot(bug.pos, 255, 0, 0);
+        // rc.setIndicatorDot(bug.pos, 255, 0, 0);
 
         // no bfs needed
         {

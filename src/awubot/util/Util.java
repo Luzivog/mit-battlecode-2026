@@ -4,6 +4,9 @@ import battlecode.common.*;
 import static awubot.Game.*;
 
 import java.util.*;
+
+import awubot.CellTracker;
+
 import static java.lang.Math.*;
 
 public class Util {
@@ -146,6 +149,77 @@ public class Util {
         return abs(a.x - b.x) + abs(a.y - b.y);
     }
 
+    public static Direction cw(Direction dir) {
+        return switch (dir) {
+            case NORTH -> Direction.NORTHEAST;
+            case NORTHEAST -> Direction.EAST;
+            case EAST -> Direction.SOUTHEAST;
+            case SOUTHEAST -> Direction.SOUTH;
+            case SOUTH -> Direction.SOUTHWEST;
+            case SOUTHWEST -> Direction.WEST;
+            case WEST -> Direction.NORTHWEST;
+            case NORTHWEST -> Direction.NORTH;
+            default -> Direction.CENTER;
+        };
+    }
+
+    public static Direction ccw(Direction dir) {
+        return switch (dir) {
+            case NORTH -> Direction.NORTHWEST;
+            case NORTHWEST -> Direction.WEST;
+            case WEST -> Direction.SOUTHWEST;
+            case SOUTHWEST -> Direction.SOUTH;
+            case SOUTH -> Direction.SOUTHEAST;
+            case SOUTHEAST -> Direction.EAST;
+            case EAST -> Direction.NORTHEAST;
+            case NORTHEAST -> Direction.NORTH;
+            default -> Direction.CENTER;
+        };
+    }
+
+    // note: assumes you might turn + walk in this direction
+    public static boolean canTraverse(Direction to) throws GameActionException {
+        if (to == Direction.CENTER) return true;
+        if (rc.canMove(to)) return true;
+        MapLocation pos = myLoc.add(to);
+        if (!rc.canSenseLocation(pos)) return false;
+        return rc.senseMapInfo(pos).isPassable() && rc.senseRobotAtLocation(pos) == null;
+    }
+
+    public static boolean isCellMaybePassable(MapLocation loc) throws GameActionException {
+        if (rc.canSenseLocation(loc)) {
+            return rc.senseMapInfo(loc).isPassable() && rc.senseRobotAtLocation(loc) == null;
+        } else {
+            if (CellTracker.isSeen(loc)) {
+                return CellTracker.isPassable(loc);
+            } else {
+                return false;
+            }
+        }
+    }
+
+    public static boolean isCellAThreat(MapLocation loc) throws GameActionException {
+        if (loc.equals(myLoc)) return true;
+        if (CellTracker.isSeen(loc) && !CellTracker.isPassable(loc)) return false;
+        if (rc.canSenseLocation(loc)) {
+            RobotInfo info = rc.senseRobotAtLocation(loc);
+            return info == null || info.getTeam() != team;
+        } 
+        return false;
+    }
+
+    public static boolean canStrafe() {
+        return rc.getActionCooldownTurns() <= 18;
+    }
+
+    public static int angleDistance(Direction a, Direction b) {
+        int da = a.ordinal();
+        int db = b.ordinal();
+        int diff = abs(da - db);
+        println("dist " + a + " " + b + " " + min(diff, 8 - diff));
+        return min(diff, 8 - diff);
+    }
+
     public static Direction[] relatedDirections(Direction dir) {
         return switch(dir) {
             case NORTH -> new Direction[]{Direction.NORTH, Direction.NORTHEAST, Direction.NORTHWEST};
@@ -156,6 +230,62 @@ public class Util {
             case NORTHWEST -> new Direction[]{Direction.NORTHWEST, Direction.NORTH, Direction.WEST};
             case SOUTHEAST -> new Direction[]{Direction.SOUTHEAST, Direction.SOUTH, Direction.EAST};
             case SOUTHWEST -> new Direction[]{Direction.SOUTHWEST, Direction.SOUTH, Direction.WEST};
+            default -> throw new IllegalStateException("Unexpected dir: " + dir);
+        };
+    }
+
+    public static Direction[] unrelated5Directions(Direction dir) {
+        return switch(dir) {
+            case NORTH -> new Direction[]{Direction.EAST, Direction.SOUTHEAST, Direction.SOUTH, Direction.SOUTHWEST, Direction.WEST};
+            case SOUTH -> new Direction[]{Direction.EAST, Direction.NORTHEAST, Direction.NORTH, Direction.NORTHWEST, Direction.WEST};
+            case EAST -> new Direction[]{Direction.NORTH, Direction.NORTHWEST, Direction.WEST,  Direction.SOUTHWEST, Direction.SOUTH};
+            case WEST -> new Direction[]{Direction.NORTH, Direction.NORTHEAST, Direction.EAST, Direction.SOUTHEAST, Direction.SOUTH};
+            case NORTHEAST -> new Direction[]{Direction.SOUTH, Direction.SOUTHWEST, Direction.WEST, Direction.SOUTHWEST, Direction.SOUTH};
+            case NORTHWEST -> new Direction[]{Direction.SOUTH, Direction.SOUTHEAST, Direction.EAST, Direction.SOUTHEAST, Direction.SOUTH};
+            case SOUTHEAST -> new Direction[]{Direction.NORTH, Direction.NORTHWEST, Direction.WEST, Direction.NORTHWEST, Direction.NORTH};
+            case SOUTHWEST -> new Direction[]{Direction.NORTH, Direction.NORTHEAST, Direction.EAST, Direction.NORTHEAST, Direction.NORTH};
+            default -> throw new IllegalStateException("Unexpected dir: " + dir);
+        };
+    }
+
+    public static Direction[] relatedDirectionsIncludingCenter(Direction dir) {
+        return switch(dir) {
+            case NORTH -> new Direction[]{Direction.NORTH, Direction.NORTHEAST, Direction.NORTHWEST, Direction.CENTER};
+            case SOUTH -> new Direction[]{Direction.SOUTH, Direction.SOUTHEAST, Direction.SOUTHWEST, Direction.CENTER};
+            case EAST -> new Direction[]{Direction.EAST, Direction.NORTHEAST, Direction.SOUTHEAST, Direction.CENTER};
+            case WEST -> new Direction[]{Direction.WEST, Direction.NORTHWEST, Direction.SOUTHWEST, Direction.CENTER};
+            case NORTHEAST -> new Direction[]{Direction.NORTHEAST, Direction.NORTH, Direction.EAST, Direction.CENTER};
+            case NORTHWEST -> new Direction[]{Direction.NORTHWEST, Direction.NORTH, Direction.WEST, Direction.CENTER};
+            case SOUTHEAST -> new Direction[]{Direction.SOUTHEAST, Direction.SOUTH, Direction.EAST, Direction.CENTER};
+            case SOUTHWEST -> new Direction[]{Direction.SOUTHWEST, Direction.SOUTH, Direction.WEST, Direction.CENTER};
+            default -> throw new IllegalStateException("Unexpected dir: " + dir);
+        };
+    }
+
+    public static Direction[] wideRelatedDirections(Direction dir) {
+        return switch(dir) {
+            case NORTH -> new Direction[]{Direction.NORTH, Direction.NORTHEAST, Direction.NORTHWEST, Direction.EAST, Direction.WEST};
+            case SOUTH -> new Direction[]{Direction.SOUTH, Direction.SOUTHEAST, Direction.SOUTHWEST, Direction.EAST, Direction.WEST};
+            case EAST -> new Direction[]{Direction.EAST, Direction.NORTHEAST, Direction.SOUTHEAST, Direction.NORTH, Direction.SOUTH};
+            case WEST -> new Direction[]{Direction.WEST, Direction.NORTHWEST, Direction.SOUTHWEST, Direction.NORTH, Direction.SOUTH};
+            case NORTHEAST -> new Direction[]{Direction.NORTHEAST, Direction.NORTH, Direction.EAST, Direction.NORTHWEST, Direction.SOUTHEAST};
+            case NORTHWEST -> new Direction[]{Direction.NORTHWEST, Direction.NORTH, Direction.WEST, Direction.NORTHEAST, Direction.SOUTHWEST};
+            case SOUTHEAST -> new Direction[]{Direction.SOUTHEAST, Direction.SOUTH, Direction.EAST, Direction.NORTHEAST, Direction.SOUTHWEST};
+            case SOUTHWEST -> new Direction[]{Direction.SOUTHWEST, Direction.SOUTH, Direction.WEST, Direction.NORTHWEST, Direction.SOUTHEAST};
+            default -> throw new IllegalStateException("Unexpected dir: " + dir);
+        };
+    }
+
+    public static Direction[] wideRelatedDirectionsIncludingCenter(Direction dir) {
+        return switch(dir) {
+            case NORTH -> new Direction[]{Direction.NORTH, Direction.NORTHEAST, Direction.NORTHWEST, Direction.EAST, Direction.WEST, Direction.CENTER};
+            case SOUTH -> new Direction[]{Direction.SOUTH, Direction.SOUTHEAST, Direction.SOUTHWEST, Direction.EAST, Direction.WEST, Direction.CENTER};
+            case EAST -> new Direction[]{Direction.EAST, Direction.NORTHEAST, Direction.SOUTHEAST, Direction.NORTH, Direction.SOUTH, Direction.CENTER};
+            case WEST -> new Direction[]{Direction.WEST, Direction.NORTHWEST, Direction.SOUTHWEST, Direction.NORTH, Direction.SOUTH, Direction.CENTER};
+            case NORTHEAST -> new Direction[]{Direction.NORTHEAST, Direction.NORTH, Direction.EAST, Direction.NORTHWEST, Direction.SOUTHEAST, Direction.CENTER};
+            case NORTHWEST -> new Direction[]{Direction.NORTHWEST, Direction.NORTH, Direction.WEST, Direction.NORTHEAST, Direction.SOUTHWEST,  Direction.CENTER};
+            case SOUTHEAST -> new Direction[]{Direction.SOUTHEAST, Direction.SOUTH, Direction.EAST, Direction.NORTHEAST, Direction.SOUTHWEST,  Direction.CENTER};
+            case SOUTHWEST -> new Direction[]{Direction.SOUTHWEST, Direction.SOUTH, Direction.WEST, Direction.NORTHWEST, Direction.SOUTHEAST,  Direction.CENTER};
             default -> throw new IllegalStateException("Unexpected dir: " + dir);
         };
     }
@@ -241,7 +371,7 @@ public class Util {
     }
 
     public static void dead(Object msg) {
-        System.out.println("Robot " + rc.getID() + " hit a dead end: " + msg);
+        println("Robot " + rc.getID() + " hit a dead end: " + msg);
         rc.disintegrate();
     }
 
@@ -402,7 +532,7 @@ public class Util {
 
     // public static void println(Object obj) {
     //     if (time > 100) return;
-    //     System.out.println(obj);
+    //     println(obj);
     // }
 
     // public static MapInfo getClosestCellTo(MapLocation dest, GamePredicate<MapInfo> pred) throws GameActionException {

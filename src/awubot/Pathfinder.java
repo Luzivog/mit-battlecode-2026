@@ -280,8 +280,8 @@ class BugnavInstance {
             lastDir = Direction.CENTER;
             return true;
         }
-        rc.setIndicatorDot(leftBug.pos, 255, 255, 0);
-        rc.setIndicatorDot(rightBug.pos, 255, 255, 0);
+        // rc.setIndicatorDot(leftBug.pos, 255, 255, 0);
+        // rc.setIndicatorDot(rightBug.pos, 255, 255, 0);
         // Profiler.begin();
         if(!myLoc.equals(lastLoc) || !myDir.equals(lastDir)) {
             // we moved, so we might be able to advance previously stuck stuff further
@@ -297,28 +297,28 @@ class BugnavInstance {
             leftBug.outOfSight = false;
             leftDone = !leftBug.advance();
             // indicate(leftBug.pos);
-            rc.setIndicatorDot(leftBug.pos, 255, 0, 255);
+            // rc.setIndicatorDot(leftBug.pos, 255, 0, 255);
 
             } else if(leftDone) {
                             // indicate("advance right");
             rightBug.outOfSight = false;
             rightDone = !rightBug.advance();
             // indicate(rightBug.pos);
-            rc.setIndicatorDot(rightBug.pos, 255, 0, 255);
+            // rc.setIndicatorDot(rightBug.pos, 255, 0, 255);
 
             } else if(leftBug.nextPathIndex > rightBug.nextPathIndex) {
                             // indicate("advance right");
             rightBug.outOfSight = false;
             rightDone = !rightBug.advance();
             // indicate(rightBug.pos);
-            rc.setIndicatorDot(rightBug.pos, 255, 0, 255);
+            // rc.setIndicatorDot(rightBug.pos, 255, 0, 255);
 
             } else {
                             // indicate("advance left");
             leftBug.outOfSight = false;
             leftDone = !leftBug.advance();
             // indicate(leftBug.pos);
-            rc.setIndicatorDot(leftBug.pos, 255, 0, 255);
+            // rc.setIndicatorDot(leftBug.pos, 255, 0, 255);
 
             }
         }
@@ -1658,27 +1658,27 @@ public class Pathfinder {
         // Profiler.begin();
         if(lastDist < 3 || RobotTracker.allySet.contains(bug.pos)) {
             bugLoop: {
-                rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
+                // rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
                 Profiler.begin();
                 if(!bug.advance()) break bugLoop;
                 lastDist++;
                 Profiler.end("bug");
-                rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
+                // rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
                 Profiler.begin();
                 if(!bug.advance()) break bugLoop;
                 lastDist++;
                 Profiler.end("bug");
-                rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
+                // rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
                 Profiler.begin();
                 if(!bug.advance()) break bugLoop;
                 lastDist++;
                 Profiler.end("bug");
-                rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
+                // rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
                 Profiler.begin();
                 if(!bug.advance()) break bugLoop;
                 lastDist++;
                 Profiler.end("bug");
-                rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
+                // rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
                 Profiler.begin();
                 if(!bug.advance()) break bugLoop;
                 lastDist++;
@@ -1709,7 +1709,7 @@ public class Pathfinder {
             lastBugPos = bug.pos;
             lastLoc = myLoc;
         }
-        rc.setIndicatorDot(bug.pos, 255, 0, 0);
+        // rc.setIndicatorDot(bug.pos, 255, 0, 0);
 
         // no bfs needed
         {

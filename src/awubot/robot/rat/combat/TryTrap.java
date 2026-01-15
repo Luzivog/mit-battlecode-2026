@@ -1,0 +1,2711 @@
+package awubot.robot.rat.combat;
+
+import battlecode.common.Direction;
+import battlecode.common.GameActionException;
+import battlecode.common.MapInfo;
+import battlecode.common.MapLocation;
+import battlecode.common.RobotInfo;
+import battlecode.common.TrapType;
+import battlecode.common.UnitType;
+
+import static awubot.Game.*;
+import static awubot.util.Util.*;
+import static awubot.robot.rat.BabyRat.*;
+import awubot.util.Profiler;
+
+
+
+
+public final class TryTrap {
+    private TryTrap() {
+    }
+
+    static boolean confirmedCanPlace;
+    static double w_m2_2;
+    static double w_m1_2;
+    static double w_0_2;
+    static double w_1_2;
+    static double w_2_2;
+    static double w_m2_1;
+    static double w_m1_1;
+    static double w_0_1;
+    static double w_1_1;
+    static double w_2_1;
+    static double w_m2_0;
+    static double w_m1_0;
+    static double w_0_0;
+    static double w_1_0;
+    static double w_2_0;
+    static double w_m2_m1;
+    static double w_m1_m1;
+    static double w_0_m1;
+    static double w_1_m1;
+    static double w_2_m1;
+    static double w_m2_m2;
+    static double w_m1_m2;
+    static double w_0_m2;
+    static double w_1_m2;
+    static double w_2_m2;
+    static MapLocation bestPlaceLoc;
+    static Direction bestMoveDir;
+    static Direction bestFacing;
+    static double best;
+    static MapLocation curMoveLoc;
+
+    public static boolean run() throws GameActionException {
+        if (!confirmCanPlace()) return false;
+        computeWeights();
+        resetBest();
+        selectMoves();
+        if (best <= 0.5) return false;
+        assert(CombatStrategy.performMoves(bestMoveDir, bestFacing));
+        rc.placeRatTrap(bestPlaceLoc);
+        println("!!!!!!!!!! placed rat trap");
+        return true;
+    }
+
+    private static boolean confirmCanPlace() throws GameActionException {
+        confirmedCanPlace = false;
+        for (MapInfo info : rc.senseNearbyMapInfos(2)) {
+            if (rc.canPlaceRatTrap(info.getMapLocation())) {
+                confirmedCanPlace = true;
+                break;
+            }
+        }
+        return confirmedCanPlace;
+    }
+
+    private static void computeWeights() throws GameActionException {
+        w_m2_2 = 0;
+        w_m1_2 = 0;
+        w_0_2 = 0;
+        w_1_2 = 0;
+        w_2_2 = 0;
+        w_m2_1 = 0;
+        w_m1_1 = 0;
+        w_0_1 = 0;
+        w_1_1 = 0;
+        w_2_1 = 0;
+        w_m2_0 = 0;
+        w_m1_0 = 0;
+        w_0_0 = 0;
+        w_1_0 = 0;
+        w_2_0 = 0;
+        w_m2_m1 = 0;
+        w_m1_m1 = 0;
+        w_0_m1 = 0;
+        w_1_m1 = 0;
+        w_2_m1 = 0;
+        w_m2_m2 = 0;
+        w_m1_m2 = 0;
+        w_0_m2 = 0;
+        w_1_m2 = 0;
+        w_2_m2 = 0;
+        {
+            MapLocation loc = new MapLocation(myLocX  + -2, myLocY  + 2);
+            if (!rc.canSenseLocation(loc)) {
+                w_m2_2 = -1000;
+            } else {
+                MapInfo info = rc.senseMapInfo(loc);
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_m2_2 = -1000;
+                } else {
+                    w_m2_2 = 0;
+                }
+            }
+        }
+        {
+            MapLocation loc = new MapLocation(myLocX  + -1, myLocY  + 2);
+            if (!rc.canSenseLocation(loc)) {
+                w_m1_2 = -1000;
+            } else {
+                MapInfo info = rc.senseMapInfo(loc);
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_m1_2 = -1000;
+                } else {
+                    w_m1_2 = 0;
+                }
+            }
+        }
+        {
+            MapLocation loc = new MapLocation(myLocX , myLocY  + 2);
+            if (!rc.canSenseLocation(loc)) {
+                w_0_2 = -1000;
+            } else {
+                MapInfo info = rc.senseMapInfo(loc);
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_0_2 = -1000;
+                } else {
+                    w_0_2 = 0;
+                }
+            }
+        }
+        {
+            MapLocation loc = new MapLocation(myLocX  + 1, myLocY  + 2);
+            if (!rc.canSenseLocation(loc)) {
+                w_1_2 = -1000;
+            } else {
+                MapInfo info = rc.senseMapInfo(loc);
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_1_2 = -1000;
+                } else {
+                    w_1_2 = 0;
+                }
+            }
+        }
+        {
+            MapLocation loc = new MapLocation(myLocX  + 2, myLocY  + 2);
+            if (!rc.canSenseLocation(loc)) {
+                w_2_2 = -1000;
+            } else {
+                MapInfo info = rc.senseMapInfo(loc);
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_2_2 = -1000;
+                } else {
+                    w_2_2 = 0;
+                }
+            }
+        }
+        {
+            MapLocation loc = new MapLocation(myLocX  + -2, myLocY  + 1);
+            if (!rc.canSenseLocation(loc)) {
+                w_m2_1 = -1000;
+            } else {
+                MapInfo info = rc.senseMapInfo(loc);
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_m2_1 = -1000;
+                } else {
+                    w_m2_1 = 0;
+                }
+            }
+        }
+        {
+            MapLocation loc = new MapLocation(myLocX  + -1, myLocY  + 1);
+            if (!rc.canSenseLocation(loc)) {
+                w_m1_1 = -1000;
+            } else {
+                MapInfo info = rc.senseMapInfo(loc);
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_m1_1 = -1000;
+                } else {
+                    w_m1_1 = 0;
+                }
+            }
+        }
+        {
+            MapLocation loc = new MapLocation(myLocX , myLocY  + 1);
+            if (!rc.canSenseLocation(loc)) {
+                w_0_1 = -1000;
+            } else {
+                MapInfo info = rc.senseMapInfo(loc);
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_0_1 = -1000;
+                } else {
+                    w_0_1 = 0;
+                }
+            }
+        }
+        {
+            MapLocation loc = new MapLocation(myLocX  + 1, myLocY  + 1);
+            if (!rc.canSenseLocation(loc)) {
+                w_1_1 = -1000;
+            } else {
+                MapInfo info = rc.senseMapInfo(loc);
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_1_1 = -1000;
+                } else {
+                    w_1_1 = 0;
+                }
+            }
+        }
+        {
+            MapLocation loc = new MapLocation(myLocX  + 2, myLocY  + 1);
+            if (!rc.canSenseLocation(loc)) {
+                w_2_1 = -1000;
+            } else {
+                MapInfo info = rc.senseMapInfo(loc);
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_2_1 = -1000;
+                } else {
+                    w_2_1 = 0;
+                }
+            }
+        }
+        {
+            MapLocation loc = new MapLocation(myLocX  + -2, myLocY );
+            if (!rc.canSenseLocation(loc)) {
+                w_m2_0 = -1000;
+            } else {
+                MapInfo info = rc.senseMapInfo(loc);
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_m2_0 = -1000;
+                } else {
+                    w_m2_0 = 0;
+                }
+            }
+        }
+        {
+            MapLocation loc = new MapLocation(myLocX  + -1, myLocY );
+            if (!rc.canSenseLocation(loc)) {
+                w_m1_0 = -1000;
+            } else {
+                MapInfo info = rc.senseMapInfo(loc);
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_m1_0 = -1000;
+                } else {
+                    w_m1_0 = 0;
+                }
+            }
+        }
+        {
+            MapLocation loc = new MapLocation(myLocX , myLocY );
+            if (!rc.canSenseLocation(loc)) {
+                w_0_0 = -1000;
+            } else {
+                MapInfo info = rc.senseMapInfo(loc);
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE) {
+                    w_0_0 = -1000;
+                } else {
+                    w_0_0 = 0;
+                }
+            }
+        }
+        {
+            MapLocation loc = new MapLocation(myLocX  + 1, myLocY );
+            if (!rc.canSenseLocation(loc)) {
+                w_1_0 = -1000;
+            } else {
+                MapInfo info = rc.senseMapInfo(loc);
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_1_0 = -1000;
+                } else {
+                    w_1_0 = 0;
+                }
+            }
+        }
+        {
+            MapLocation loc = new MapLocation(myLocX  + 2, myLocY );
+            if (!rc.canSenseLocation(loc)) {
+                w_2_0 = -1000;
+            } else {
+                MapInfo info = rc.senseMapInfo(loc);
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_2_0 = -1000;
+                } else {
+                    w_2_0 = 0;
+                }
+            }
+        }
+        {
+            MapLocation loc = new MapLocation(myLocX  + -2, myLocY  + -1);
+            if (!rc.canSenseLocation(loc)) {
+                w_m2_m1 = -1000;
+            } else {
+                MapInfo info = rc.senseMapInfo(loc);
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_m2_m1 = -1000;
+                } else {
+                    w_m2_m1 = 0;
+                }
+            }
+        }
+        {
+            MapLocation loc = new MapLocation(myLocX  + -1, myLocY  + -1);
+            if (!rc.canSenseLocation(loc)) {
+                w_m1_m1 = -1000;
+            } else {
+                MapInfo info = rc.senseMapInfo(loc);
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_m1_m1 = -1000;
+                } else {
+                    w_m1_m1 = 0;
+                }
+            }
+        }
+        {
+            MapLocation loc = new MapLocation(myLocX , myLocY  + -1);
+            if (!rc.canSenseLocation(loc)) {
+                w_0_m1 = -1000;
+            } else {
+                MapInfo info = rc.senseMapInfo(loc);
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_0_m1 = -1000;
+                } else {
+                    w_0_m1 = 0;
+                }
+            }
+        }
+        {
+            MapLocation loc = new MapLocation(myLocX  + 1, myLocY  + -1);
+            if (!rc.canSenseLocation(loc)) {
+                w_1_m1 = -1000;
+            } else {
+                MapInfo info = rc.senseMapInfo(loc);
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_1_m1 = -1000;
+                } else {
+                    w_1_m1 = 0;
+                }
+            }
+        }
+        {
+            MapLocation loc = new MapLocation(myLocX  + 2, myLocY  + -1);
+            if (!rc.canSenseLocation(loc)) {
+                w_2_m1 = -1000;
+            } else {
+                MapInfo info = rc.senseMapInfo(loc);
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_2_m1 = -1000;
+                } else {
+                    w_2_m1 = 0;
+                }
+            }
+        }
+        {
+            MapLocation loc = new MapLocation(myLocX  + -2, myLocY  + -2);
+            if (!rc.canSenseLocation(loc)) {
+                w_m2_m2 = -1000;
+            } else {
+                MapInfo info = rc.senseMapInfo(loc);
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_m2_m2 = -1000;
+                } else {
+                    w_m2_m2 = 0;
+                }
+            }
+        }
+        {
+            MapLocation loc = new MapLocation(myLocX  + -1, myLocY  + -2);
+            if (!rc.canSenseLocation(loc)) {
+                w_m1_m2 = -1000;
+            } else {
+                MapInfo info = rc.senseMapInfo(loc);
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_m1_m2 = -1000;
+                } else {
+                    w_m1_m2 = 0;
+                }
+            }
+        }
+        {
+            MapLocation loc = new MapLocation(myLocX , myLocY  + -2);
+            if (!rc.canSenseLocation(loc)) {
+                w_0_m2 = -1000;
+            } else {
+                MapInfo info = rc.senseMapInfo(loc);
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_0_m2 = -1000;
+                } else {
+                    w_0_m2 = 0;
+                }
+            }
+        }
+        {
+            MapLocation loc = new MapLocation(myLocX  + 1, myLocY  + -2);
+            if (!rc.canSenseLocation(loc)) {
+                w_1_m2 = -1000;
+            } else {
+                MapInfo info = rc.senseMapInfo(loc);
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_1_m2 = -1000;
+                } else {
+                    w_1_m2 = 0;
+                }
+            }
+        }
+        {
+            MapLocation loc = new MapLocation(myLocX  + 2, myLocY  + -2);
+            if (!rc.canSenseLocation(loc)) {
+                w_2_m2 = -1000;
+            } else {
+                MapInfo info = rc.senseMapInfo(loc);
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_2_m2 = -1000;
+                } else {
+                    w_2_m2 = 0;
+                }
+            }
+        }
+        for (RobotInfo rinfo : rc.senseNearbyRobots()) {
+            if (rinfo.getTeam() == rc.getTeam()) continue;
+            if (rinfo.getType() != UnitType.BABY_RAT) continue;
+            int dx = rinfo.getLocation().x - myLocX;
+            int dy = rinfo.getLocation().y - myLocY;
+            if (dx < -3 || dx > 3 || dy < -3 || dy > 3) continue;
+            switch (dx) {
+                case -3 -> {
+                    switch (dy) {
+                        case -3 -> {
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_m2_m2 += 3;                                }
+                                case 1 -> {
+w_m2_m2 += 4;                                }
+                                case 2 -> {
+w_m2_m2 += 3;                                }
+                                case 3 -> {
+w_m2_m2 += 2;                                }
+                                case 4 -> {
+w_m2_m2 += 1;                                }
+                                case 6 -> {
+w_m2_m2 += 1;                                }
+                                case 7 -> {
+w_m2_m2 += 2;                                }
+                                default -> { }
+                            }
+                        }
+                        case -2 -> {
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_m2_m2 += 2;w_m2_m1 += 3;                                }
+                                case 1 -> {
+w_m2_m2 += 3;w_m2_m1 += 4;                                }
+                                case 2 -> {
+w_m2_m2 += 4;w_m2_m1 += 3;                                }
+                                case 3 -> {
+w_m2_m2 += 3;w_m2_m1 += 2;                                }
+                                case 4 -> {
+w_m2_m2 += 2;w_m2_m1 += 1;                                }
+                                case 5 -> {
+w_m2_m2 += 1;                                }
+                                case 6 -> {
+w_m2_m1 += 1;                                }
+                                case 7 -> {
+w_m2_m2 += 1;w_m2_m1 += 2;                                }
+                                default -> { }
+                            }
+                        }
+                        case -1 -> {
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_m2_m2 += 1;w_m2_m1 += 2;w_m2_0 += 3;                                }
+                                case 1 -> {
+w_m2_m2 += 2;w_m2_m1 += 3;w_m2_0 += 4;                                }
+                                case 2 -> {
+w_m2_m2 += 3;w_m2_m1 += 4;w_m2_0 += 3;                                }
+                                case 3 -> {
+w_m2_m2 += 4;w_m2_m1 += 3;w_m2_0 += 2;                                }
+                                case 4 -> {
+w_m2_m2 += 3;w_m2_m1 += 2;w_m2_0 += 1;                                }
+                                case 5 -> {
+w_m2_m2 += 2;w_m2_m1 += 1;                                }
+                                case 6 -> {
+w_m2_m2 += 1;w_m2_0 += 1;                                }
+                                case 7 -> {
+w_m2_m1 += 1;w_m2_0 += 2;                                }
+                                default -> { }
+                            }
+                        }
+                        case 0 -> {
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_m2_m1 += 1;w_m2_0 += 2;w_m2_1 += 3;                                }
+                                case 1 -> {
+w_m2_m1 += 2;w_m2_0 += 3;w_m2_1 += 4;                                }
+                                case 2 -> {
+w_m2_m1 += 3;w_m2_0 += 4;w_m2_1 += 3;                                }
+                                case 3 -> {
+w_m2_m1 += 4;w_m2_0 += 3;w_m2_1 += 2;                                }
+                                case 4 -> {
+w_m2_m1 += 3;w_m2_0 += 2;w_m2_1 += 1;                                }
+                                case 5 -> {
+w_m2_m1 += 2;w_m2_0 += 1;                                }
+                                case 6 -> {
+w_m2_m1 += 1;w_m2_1 += 1;                                }
+                                case 7 -> {
+w_m2_0 += 1;w_m2_1 += 2;                                }
+                                default -> { }
+                            }
+                        }
+                        case 1 -> {
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_m2_0 += 1;w_m2_1 += 2;w_m2_2 += 3;                                }
+                                case 1 -> {
+w_m2_0 += 2;w_m2_1 += 3;w_m2_2 += 4;                                }
+                                case 2 -> {
+w_m2_0 += 3;w_m2_1 += 4;w_m2_2 += 3;                                }
+                                case 3 -> {
+w_m2_0 += 4;w_m2_1 += 3;w_m2_2 += 2;                                }
+                                case 4 -> {
+w_m2_0 += 3;w_m2_1 += 2;w_m2_2 += 1;                                }
+                                case 5 -> {
+w_m2_0 += 2;w_m2_1 += 1;                                }
+                                case 6 -> {
+w_m2_0 += 1;w_m2_2 += 1;                                }
+                                case 7 -> {
+w_m2_1 += 1;w_m2_2 += 2;                                }
+                                default -> { }
+                            }
+                        }
+                        case 2 -> {
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_m2_1 += 1;w_m2_2 += 2;                                }
+                                case 1 -> {
+w_m2_1 += 2;w_m2_2 += 3;                                }
+                                case 2 -> {
+w_m2_1 += 3;w_m2_2 += 4;                                }
+                                case 3 -> {
+w_m2_1 += 4;w_m2_2 += 3;                                }
+                                case 4 -> {
+w_m2_1 += 3;w_m2_2 += 2;                                }
+                                case 5 -> {
+w_m2_1 += 2;w_m2_2 += 1;                                }
+                                case 6 -> {
+w_m2_1 += 1;                                }
+                                case 7 -> {
+w_m2_2 += 1;                                }
+                                default -> { }
+                            }
+                        }
+                        case 3 -> {
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_m2_2 += 1;                                }
+                                case 1 -> {
+w_m2_2 += 2;                                }
+                                case 2 -> {
+w_m2_2 += 3;                                }
+                                case 3 -> {
+w_m2_2 += 4;                                }
+                                case 4 -> {
+w_m2_2 += 3;                                }
+                                case 5 -> {
+w_m2_2 += 2;                                }
+                                case 6 -> {
+w_m2_2 += 1;                                }
+                                default -> { }
+                            }
+                        }
+                        default -> { }
+                    }
+                }
+                case -2 -> {
+                    switch (dy) {
+                        case -3 -> {
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_m2_m2 += 4;w_m1_m2 += 3;                                }
+                                case 1 -> {
+w_m2_m2 += 3;w_m1_m2 += 4;                                }
+                                case 2 -> {
+w_m2_m2 += 2;w_m1_m2 += 3;                                }
+                                case 3 -> {
+w_m2_m2 += 1;w_m1_m2 += 2;                                }
+                                case 4 -> {
+w_m1_m2 += 1;                                }
+                                case 5 -> {
+w_m2_m2 += 1;                                }
+                                case 6 -> {
+w_m2_m2 += 2;w_m1_m2 += 1;                                }
+                                case 7 -> {
+w_m2_m2 += 3;w_m1_m2 += 2;                                }
+                                default -> { }
+                            }
+                        }
+                        case -2 -> {
+                            w_m2_m2 += 10;
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_m2_m1 += 4;w_m1_m2 += 2;w_m1_m1 += 3;                                }
+                                case 1 -> {
+w_m2_m1 += 3;w_m1_m2 += 3;w_m1_m1 += 4;                                }
+                                case 2 -> {
+w_m2_m1 += 2;w_m1_m2 += 4;w_m1_m1 += 3;                                }
+                                case 3 -> {
+w_m2_m1 += 1;w_m1_m2 += 3;w_m1_m1 += 2;                                }
+                                case 4 -> {
+w_m1_m2 += 2;w_m1_m1 += 1;                                }
+                                case 5 -> {
+w_m2_m1 += 1;w_m1_m2 += 1;                                }
+                                case 6 -> {
+w_m2_m1 += 2;w_m1_m1 += 1;                                }
+                                case 7 -> {
+w_m2_m1 += 3;w_m1_m2 += 1;w_m1_m1 += 2;                                }
+                                default -> { }
+                            }
+                        }
+                        case -1 -> {
+                            w_m2_m1 += 10;
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_m2_0 += 4;w_m1_m2 += 1;w_m1_m1 += 2;w_m1_0 += 3;                                }
+                                case 1 -> {
+w_m2_m2 += 1;w_m2_0 += 3;w_m1_m2 += 2;w_m1_m1 += 3;w_m1_0 += 4;                                }
+                                case 2 -> {
+w_m2_m2 += 2;w_m2_0 += 2;w_m1_m2 += 3;w_m1_m1 += 4;w_m1_0 += 3;                                }
+                                case 3 -> {
+w_m2_m2 += 3;w_m2_0 += 1;w_m1_m2 += 4;w_m1_m1 += 3;w_m1_0 += 2;                                }
+                                case 4 -> {
+w_m2_m2 += 4;w_m1_m2 += 3;w_m1_m1 += 2;w_m1_0 += 1;                                }
+                                case 5 -> {
+w_m2_m2 += 3;w_m2_0 += 1;w_m1_m2 += 2;w_m1_m1 += 1;                                }
+                                case 6 -> {
+w_m2_m2 += 2;w_m2_0 += 2;w_m1_m2 += 1;w_m1_0 += 1;                                }
+                                case 7 -> {
+w_m2_m2 += 1;w_m2_0 += 3;w_m1_m1 += 1;w_m1_0 += 2;                                }
+                                default -> { }
+                            }
+                        }
+                        case 0 -> {
+                            w_m2_0 += 10;
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_m2_1 += 4;w_m1_m1 += 1;w_m1_0 += 2;w_m1_1 += 3;                                }
+                                case 1 -> {
+w_m2_m1 += 1;w_m2_1 += 3;w_m1_m1 += 2;w_m1_0 += 3;w_m1_1 += 4;                                }
+                                case 2 -> {
+w_m2_m1 += 2;w_m2_1 += 2;w_m1_m1 += 3;w_m1_0 += 4;w_m1_1 += 3;                                }
+                                case 3 -> {
+w_m2_m1 += 3;w_m2_1 += 1;w_m1_m1 += 4;w_m1_0 += 3;w_m1_1 += 2;                                }
+                                case 4 -> {
+w_m2_m1 += 4;w_m1_m1 += 3;w_m1_0 += 2;w_m1_1 += 1;                                }
+                                case 5 -> {
+w_m2_m1 += 3;w_m2_1 += 1;w_m1_m1 += 2;w_m1_0 += 1;                                }
+                                case 6 -> {
+w_m2_m1 += 2;w_m2_1 += 2;w_m1_m1 += 1;w_m1_1 += 1;                                }
+                                case 7 -> {
+w_m2_m1 += 1;w_m2_1 += 3;w_m1_0 += 1;w_m1_1 += 2;                                }
+                                default -> { }
+                            }
+                        }
+                        case 1 -> {
+                            w_m2_1 += 10;
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_m2_2 += 4;w_m1_0 += 1;w_m1_1 += 2;w_m1_2 += 3;                                }
+                                case 1 -> {
+w_m2_0 += 1;w_m2_2 += 3;w_m1_0 += 2;w_m1_1 += 3;w_m1_2 += 4;                                }
+                                case 2 -> {
+w_m2_0 += 2;w_m2_2 += 2;w_m1_0 += 3;w_m1_1 += 4;w_m1_2 += 3;                                }
+                                case 3 -> {
+w_m2_0 += 3;w_m2_2 += 1;w_m1_0 += 4;w_m1_1 += 3;w_m1_2 += 2;                                }
+                                case 4 -> {
+w_m2_0 += 4;w_m1_0 += 3;w_m1_1 += 2;w_m1_2 += 1;                                }
+                                case 5 -> {
+w_m2_0 += 3;w_m2_2 += 1;w_m1_0 += 2;w_m1_1 += 1;                                }
+                                case 6 -> {
+w_m2_0 += 2;w_m2_2 += 2;w_m1_0 += 1;w_m1_2 += 1;                                }
+                                case 7 -> {
+w_m2_0 += 1;w_m2_2 += 3;w_m1_1 += 1;w_m1_2 += 2;                                }
+                                default -> { }
+                            }
+                        }
+                        case 2 -> {
+                            w_m2_2 += 10;
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_m1_1 += 1;w_m1_2 += 2;                                }
+                                case 1 -> {
+w_m2_1 += 1;w_m1_1 += 2;w_m1_2 += 3;                                }
+                                case 2 -> {
+w_m2_1 += 2;w_m1_1 += 3;w_m1_2 += 4;                                }
+                                case 3 -> {
+w_m2_1 += 3;w_m1_1 += 4;w_m1_2 += 3;                                }
+                                case 4 -> {
+w_m2_1 += 4;w_m1_1 += 3;w_m1_2 += 2;                                }
+                                case 5 -> {
+w_m2_1 += 3;w_m1_1 += 2;w_m1_2 += 1;                                }
+                                case 6 -> {
+w_m2_1 += 2;w_m1_1 += 1;                                }
+                                case 7 -> {
+w_m2_1 += 1;w_m1_2 += 1;                                }
+                                default -> { }
+                            }
+                        }
+                        case 3 -> {
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_m1_2 += 1;                                }
+                                case 1 -> {
+w_m2_2 += 1;w_m1_2 += 2;                                }
+                                case 2 -> {
+w_m2_2 += 2;w_m1_2 += 3;                                }
+                                case 3 -> {
+w_m2_2 += 3;w_m1_2 += 4;                                }
+                                case 4 -> {
+w_m2_2 += 4;w_m1_2 += 3;                                }
+                                case 5 -> {
+w_m2_2 += 3;w_m1_2 += 2;                                }
+                                case 6 -> {
+w_m2_2 += 2;w_m1_2 += 1;                                }
+                                case 7 -> {
+w_m2_2 += 1;                                }
+                                default -> { }
+                            }
+                        }
+                        default -> { }
+                    }
+                }
+                case -1 -> {
+                    switch (dy) {
+                        case -3 -> {
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_m2_m2 += 3;w_m1_m2 += 4;w_0_m2 += 3;                                }
+                                case 1 -> {
+w_m2_m2 += 2;w_m1_m2 += 3;w_0_m2 += 4;                                }
+                                case 2 -> {
+w_m2_m2 += 1;w_m1_m2 += 2;w_0_m2 += 3;                                }
+                                case 3 -> {
+w_m1_m2 += 1;w_0_m2 += 2;                                }
+                                case 4 -> {
+w_m2_m2 += 1;w_0_m2 += 1;                                }
+                                case 5 -> {
+w_m2_m2 += 2;w_m1_m2 += 1;                                }
+                                case 6 -> {
+w_m2_m2 += 3;w_m1_m2 += 2;w_0_m2 += 1;                                }
+                                case 7 -> {
+w_m2_m2 += 4;w_m1_m2 += 3;w_0_m2 += 2;                                }
+                                default -> { }
+                            }
+                        }
+                        case -2 -> {
+                            w_m1_m2 += 10;
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_m2_m2 += 2;w_m2_m1 += 3;w_m1_m1 += 4;w_0_m2 += 2;w_0_m1 += 3;                                }
+                                case 1 -> {
+w_m2_m2 += 1;w_m2_m1 += 2;w_m1_m1 += 3;w_0_m2 += 3;w_0_m1 += 4;                                }
+                                case 2 -> {
+w_m2_m1 += 1;w_m1_m1 += 2;w_0_m2 += 4;w_0_m1 += 3;                                }
+                                case 3 -> {
+w_m2_m2 += 1;w_m1_m1 += 1;w_0_m2 += 3;w_0_m1 += 2;                                }
+                                case 4 -> {
+w_m2_m2 += 2;w_m2_m1 += 1;w_0_m2 += 2;w_0_m1 += 1;                                }
+                                case 5 -> {
+w_m2_m2 += 3;w_m2_m1 += 2;w_m1_m1 += 1;w_0_m2 += 1;                                }
+                                case 6 -> {
+w_m2_m2 += 4;w_m2_m1 += 3;w_m1_m1 += 2;w_0_m1 += 1;                                }
+                                case 7 -> {
+w_m2_m2 += 3;w_m2_m1 += 4;w_m1_m1 += 3;w_0_m2 += 1;w_0_m1 += 2;                                }
+                                default -> { }
+                            }
+                        }
+                        case -1 -> {
+                            w_m1_m1 += 10;
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_m2_m2 += 1;w_m2_m1 += 2;w_m2_0 += 3;w_m1_0 += 4;w_0_m2 += 1;w_0_m1 += 2;w_0_0 += 3;                                }
+                                case 1 -> {
+w_m2_m1 += 1;w_m2_0 += 2;w_m1_m2 += 1;w_m1_0 += 3;w_0_m2 += 2;w_0_m1 += 3;w_0_0 += 4;                                }
+                                case 2 -> {
+w_m2_m2 += 1;w_m2_0 += 1;w_m1_m2 += 2;w_m1_0 += 2;w_0_m2 += 3;w_0_m1 += 4;w_0_0 += 3;                                }
+                                case 3 -> {
+w_m2_m2 += 2;w_m2_m1 += 1;w_m1_m2 += 3;w_m1_0 += 1;w_0_m2 += 4;w_0_m1 += 3;w_0_0 += 2;                                }
+                                case 4 -> {
+w_m2_m2 += 3;w_m2_m1 += 2;w_m2_0 += 1;w_m1_m2 += 4;w_0_m2 += 3;w_0_m1 += 2;w_0_0 += 1;                                }
+                                case 5 -> {
+w_m2_m2 += 4;w_m2_m1 += 3;w_m2_0 += 2;w_m1_m2 += 3;w_m1_0 += 1;w_0_m2 += 2;w_0_m1 += 1;                                }
+                                case 6 -> {
+w_m2_m2 += 3;w_m2_m1 += 4;w_m2_0 += 3;w_m1_m2 += 2;w_m1_0 += 2;w_0_m2 += 1;w_0_0 += 1;                                }
+                                case 7 -> {
+w_m2_m2 += 2;w_m2_m1 += 3;w_m2_0 += 4;w_m1_m2 += 1;w_m1_0 += 3;w_0_m1 += 1;w_0_0 += 2;                                }
+                                default -> { }
+                            }
+                        }
+                        case 0 -> {
+                            w_m1_0 += 10;
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_m2_m1 += 1;w_m2_0 += 2;w_m2_1 += 3;w_m1_1 += 4;w_0_m1 += 1;w_0_0 += 2;w_0_1 += 3;                                }
+                                case 1 -> {
+w_m2_0 += 1;w_m2_1 += 2;w_m1_m1 += 1;w_m1_1 += 3;w_0_m1 += 2;w_0_0 += 3;w_0_1 += 4;                                }
+                                case 2 -> {
+w_m2_m1 += 1;w_m2_1 += 1;w_m1_m1 += 2;w_m1_1 += 2;w_0_m1 += 3;w_0_0 += 4;w_0_1 += 3;                                }
+                                case 3 -> {
+w_m2_m1 += 2;w_m2_0 += 1;w_m1_m1 += 3;w_m1_1 += 1;w_0_m1 += 4;w_0_0 += 3;w_0_1 += 2;                                }
+                                case 4 -> {
+w_m2_m1 += 3;w_m2_0 += 2;w_m2_1 += 1;w_m1_m1 += 4;w_0_m1 += 3;w_0_0 += 2;w_0_1 += 1;                                }
+                                case 5 -> {
+w_m2_m1 += 4;w_m2_0 += 3;w_m2_1 += 2;w_m1_m1 += 3;w_m1_1 += 1;w_0_m1 += 2;w_0_0 += 1;                                }
+                                case 6 -> {
+w_m2_m1 += 3;w_m2_0 += 4;w_m2_1 += 3;w_m1_m1 += 2;w_m1_1 += 2;w_0_m1 += 1;w_0_1 += 1;                                }
+                                case 7 -> {
+w_m2_m1 += 2;w_m2_0 += 3;w_m2_1 += 4;w_m1_m1 += 1;w_m1_1 += 3;w_0_0 += 1;w_0_1 += 2;                                }
+                                default -> { }
+                            }
+                        }
+                        case 1 -> {
+                            w_m1_1 += 10;
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_m2_0 += 1;w_m2_1 += 2;w_m2_2 += 3;w_m1_2 += 4;w_0_0 += 1;w_0_1 += 2;w_0_2 += 3;                                }
+                                case 1 -> {
+w_m2_1 += 1;w_m2_2 += 2;w_m1_0 += 1;w_m1_2 += 3;w_0_0 += 2;w_0_1 += 3;w_0_2 += 4;                                }
+                                case 2 -> {
+w_m2_0 += 1;w_m2_2 += 1;w_m1_0 += 2;w_m1_2 += 2;w_0_0 += 3;w_0_1 += 4;w_0_2 += 3;                                }
+                                case 3 -> {
+w_m2_0 += 2;w_m2_1 += 1;w_m1_0 += 3;w_m1_2 += 1;w_0_0 += 4;w_0_1 += 3;w_0_2 += 2;                                }
+                                case 4 -> {
+w_m2_0 += 3;w_m2_1 += 2;w_m2_2 += 1;w_m1_0 += 4;w_0_0 += 3;w_0_1 += 2;w_0_2 += 1;                                }
+                                case 5 -> {
+w_m2_0 += 4;w_m2_1 += 3;w_m2_2 += 2;w_m1_0 += 3;w_m1_2 += 1;w_0_0 += 2;w_0_1 += 1;                                }
+                                case 6 -> {
+w_m2_0 += 3;w_m2_1 += 4;w_m2_2 += 3;w_m1_0 += 2;w_m1_2 += 2;w_0_0 += 1;w_0_2 += 1;                                }
+                                case 7 -> {
+w_m2_0 += 2;w_m2_1 += 3;w_m2_2 += 4;w_m1_0 += 1;w_m1_2 += 3;w_0_1 += 1;w_0_2 += 2;                                }
+                                default -> { }
+                            }
+                        }
+                        case 2 -> {
+                            w_m1_2 += 10;
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_m2_1 += 1;w_m2_2 += 2;w_0_1 += 1;w_0_2 += 2;                                }
+                                case 1 -> {
+w_m2_2 += 1;w_m1_1 += 1;w_0_1 += 2;w_0_2 += 3;                                }
+                                case 2 -> {
+w_m2_1 += 1;w_m1_1 += 2;w_0_1 += 3;w_0_2 += 4;                                }
+                                case 3 -> {
+w_m2_1 += 2;w_m2_2 += 1;w_m1_1 += 3;w_0_1 += 4;w_0_2 += 3;                                }
+                                case 4 -> {
+w_m2_1 += 3;w_m2_2 += 2;w_m1_1 += 4;w_0_1 += 3;w_0_2 += 2;                                }
+                                case 5 -> {
+w_m2_1 += 4;w_m2_2 += 3;w_m1_1 += 3;w_0_1 += 2;w_0_2 += 1;                                }
+                                case 6 -> {
+w_m2_1 += 3;w_m2_2 += 4;w_m1_1 += 2;w_0_1 += 1;                                }
+                                case 7 -> {
+w_m2_1 += 2;w_m2_2 += 3;w_m1_1 += 1;w_0_2 += 1;                                }
+                                default -> { }
+                            }
+                        }
+                        case 3 -> {
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_m2_2 += 1;w_0_2 += 1;                                }
+                                case 1 -> {
+w_m1_2 += 1;w_0_2 += 2;                                }
+                                case 2 -> {
+w_m2_2 += 1;w_m1_2 += 2;w_0_2 += 3;                                }
+                                case 3 -> {
+w_m2_2 += 2;w_m1_2 += 3;w_0_2 += 4;                                }
+                                case 4 -> {
+w_m2_2 += 3;w_m1_2 += 4;w_0_2 += 3;                                }
+                                case 5 -> {
+w_m2_2 += 4;w_m1_2 += 3;w_0_2 += 2;                                }
+                                case 6 -> {
+w_m2_2 += 3;w_m1_2 += 2;w_0_2 += 1;                                }
+                                case 7 -> {
+w_m2_2 += 2;w_m1_2 += 1;                                }
+                                default -> { }
+                            }
+                        }
+                        default -> { }
+                    }
+                }
+                case 0 -> {
+                    switch (dy) {
+                        case -3 -> {
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_m1_m2 += 3;w_0_m2 += 4;w_1_m2 += 3;                                }
+                                case 1 -> {
+w_m1_m2 += 2;w_0_m2 += 3;w_1_m2 += 4;                                }
+                                case 2 -> {
+w_m1_m2 += 1;w_0_m2 += 2;w_1_m2 += 3;                                }
+                                case 3 -> {
+w_0_m2 += 1;w_1_m2 += 2;                                }
+                                case 4 -> {
+w_m1_m2 += 1;w_1_m2 += 1;                                }
+                                case 5 -> {
+w_m1_m2 += 2;w_0_m2 += 1;                                }
+                                case 6 -> {
+w_m1_m2 += 3;w_0_m2 += 2;w_1_m2 += 1;                                }
+                                case 7 -> {
+w_m1_m2 += 4;w_0_m2 += 3;w_1_m2 += 2;                                }
+                                default -> { }
+                            }
+                        }
+                        case -2 -> {
+                            w_0_m2 += 10;
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_m1_m2 += 2;w_m1_m1 += 3;w_0_m1 += 4;w_1_m2 += 2;w_1_m1 += 3;                                }
+                                case 1 -> {
+w_m1_m2 += 1;w_m1_m1 += 2;w_0_m1 += 3;w_1_m2 += 3;w_1_m1 += 4;                                }
+                                case 2 -> {
+w_m1_m1 += 1;w_0_m1 += 2;w_1_m2 += 4;w_1_m1 += 3;                                }
+                                case 3 -> {
+w_m1_m2 += 1;w_0_m1 += 1;w_1_m2 += 3;w_1_m1 += 2;                                }
+                                case 4 -> {
+w_m1_m2 += 2;w_m1_m1 += 1;w_1_m2 += 2;w_1_m1 += 1;                                }
+                                case 5 -> {
+w_m1_m2 += 3;w_m1_m1 += 2;w_0_m1 += 1;w_1_m2 += 1;                                }
+                                case 6 -> {
+w_m1_m2 += 4;w_m1_m1 += 3;w_0_m1 += 2;w_1_m1 += 1;                                }
+                                case 7 -> {
+w_m1_m2 += 3;w_m1_m1 += 4;w_0_m1 += 3;w_1_m2 += 1;w_1_m1 += 2;                                }
+                                default -> { }
+                            }
+                        }
+                        case -1 -> {
+                            w_0_m1 += 10;
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_m1_m2 += 1;w_m1_m1 += 2;w_m1_0 += 3;w_0_0 += 4;w_1_m2 += 1;w_1_m1 += 2;w_1_0 += 3;                                }
+                                case 1 -> {
+w_m1_m1 += 1;w_m1_0 += 2;w_0_m2 += 1;w_0_0 += 3;w_1_m2 += 2;w_1_m1 += 3;w_1_0 += 4;                                }
+                                case 2 -> {
+w_m1_m2 += 1;w_m1_0 += 1;w_0_m2 += 2;w_0_0 += 2;w_1_m2 += 3;w_1_m1 += 4;w_1_0 += 3;                                }
+                                case 3 -> {
+w_m1_m2 += 2;w_m1_m1 += 1;w_0_m2 += 3;w_0_0 += 1;w_1_m2 += 4;w_1_m1 += 3;w_1_0 += 2;                                }
+                                case 4 -> {
+w_m1_m2 += 3;w_m1_m1 += 2;w_m1_0 += 1;w_0_m2 += 4;w_1_m2 += 3;w_1_m1 += 2;w_1_0 += 1;                                }
+                                case 5 -> {
+w_m1_m2 += 4;w_m1_m1 += 3;w_m1_0 += 2;w_0_m2 += 3;w_0_0 += 1;w_1_m2 += 2;w_1_m1 += 1;                                }
+                                case 6 -> {
+w_m1_m2 += 3;w_m1_m1 += 4;w_m1_0 += 3;w_0_m2 += 2;w_0_0 += 2;w_1_m2 += 1;w_1_0 += 1;                                }
+                                case 7 -> {
+w_m1_m2 += 2;w_m1_m1 += 3;w_m1_0 += 4;w_0_m2 += 1;w_0_0 += 3;w_1_m1 += 1;w_1_0 += 2;                                }
+                                default -> { }
+                            }
+                        }
+                        case 0 -> {
+                            w_0_0 += 10;
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_m1_m1 += 1;w_m1_0 += 2;w_m1_1 += 3;w_0_1 += 4;w_1_m1 += 1;w_1_0 += 2;w_1_1 += 3;                                }
+                                case 1 -> {
+w_m1_0 += 1;w_m1_1 += 2;w_0_m1 += 1;w_0_1 += 3;w_1_m1 += 2;w_1_0 += 3;w_1_1 += 4;                                }
+                                case 2 -> {
+w_m1_m1 += 1;w_m1_1 += 1;w_0_m1 += 2;w_0_1 += 2;w_1_m1 += 3;w_1_0 += 4;w_1_1 += 3;                                }
+                                case 3 -> {
+w_m1_m1 += 2;w_m1_0 += 1;w_0_m1 += 3;w_0_1 += 1;w_1_m1 += 4;w_1_0 += 3;w_1_1 += 2;                                }
+                                case 4 -> {
+w_m1_m1 += 3;w_m1_0 += 2;w_m1_1 += 1;w_0_m1 += 4;w_1_m1 += 3;w_1_0 += 2;w_1_1 += 1;                                }
+                                case 5 -> {
+w_m1_m1 += 4;w_m1_0 += 3;w_m1_1 += 2;w_0_m1 += 3;w_0_1 += 1;w_1_m1 += 2;w_1_0 += 1;                                }
+                                case 6 -> {
+w_m1_m1 += 3;w_m1_0 += 4;w_m1_1 += 3;w_0_m1 += 2;w_0_1 += 2;w_1_m1 += 1;w_1_1 += 1;                                }
+                                case 7 -> {
+w_m1_m1 += 2;w_m1_0 += 3;w_m1_1 += 4;w_0_m1 += 1;w_0_1 += 3;w_1_0 += 1;w_1_1 += 2;                                }
+                                default -> { }
+                            }
+                        }
+                        case 1 -> {
+                            w_0_1 += 10;
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_m1_0 += 1;w_m1_1 += 2;w_m1_2 += 3;w_0_2 += 4;w_1_0 += 1;w_1_1 += 2;w_1_2 += 3;                                }
+                                case 1 -> {
+w_m1_1 += 1;w_m1_2 += 2;w_0_0 += 1;w_0_2 += 3;w_1_0 += 2;w_1_1 += 3;w_1_2 += 4;                                }
+                                case 2 -> {
+w_m1_0 += 1;w_m1_2 += 1;w_0_0 += 2;w_0_2 += 2;w_1_0 += 3;w_1_1 += 4;w_1_2 += 3;                                }
+                                case 3 -> {
+w_m1_0 += 2;w_m1_1 += 1;w_0_0 += 3;w_0_2 += 1;w_1_0 += 4;w_1_1 += 3;w_1_2 += 2;                                }
+                                case 4 -> {
+w_m1_0 += 3;w_m1_1 += 2;w_m1_2 += 1;w_0_0 += 4;w_1_0 += 3;w_1_1 += 2;w_1_2 += 1;                                }
+                                case 5 -> {
+w_m1_0 += 4;w_m1_1 += 3;w_m1_2 += 2;w_0_0 += 3;w_0_2 += 1;w_1_0 += 2;w_1_1 += 1;                                }
+                                case 6 -> {
+w_m1_0 += 3;w_m1_1 += 4;w_m1_2 += 3;w_0_0 += 2;w_0_2 += 2;w_1_0 += 1;w_1_2 += 1;                                }
+                                case 7 -> {
+w_m1_0 += 2;w_m1_1 += 3;w_m1_2 += 4;w_0_0 += 1;w_0_2 += 3;w_1_1 += 1;w_1_2 += 2;                                }
+                                default -> { }
+                            }
+                        }
+                        case 2 -> {
+                            w_0_2 += 10;
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_m1_1 += 1;w_m1_2 += 2;w_1_1 += 1;w_1_2 += 2;                                }
+                                case 1 -> {
+w_m1_2 += 1;w_0_1 += 1;w_1_1 += 2;w_1_2 += 3;                                }
+                                case 2 -> {
+w_m1_1 += 1;w_0_1 += 2;w_1_1 += 3;w_1_2 += 4;                                }
+                                case 3 -> {
+w_m1_1 += 2;w_m1_2 += 1;w_0_1 += 3;w_1_1 += 4;w_1_2 += 3;                                }
+                                case 4 -> {
+w_m1_1 += 3;w_m1_2 += 2;w_0_1 += 4;w_1_1 += 3;w_1_2 += 2;                                }
+                                case 5 -> {
+w_m1_1 += 4;w_m1_2 += 3;w_0_1 += 3;w_1_1 += 2;w_1_2 += 1;                                }
+                                case 6 -> {
+w_m1_1 += 3;w_m1_2 += 4;w_0_1 += 2;w_1_1 += 1;                                }
+                                case 7 -> {
+w_m1_1 += 2;w_m1_2 += 3;w_0_1 += 1;w_1_2 += 1;                                }
+                                default -> { }
+                            }
+                        }
+                        case 3 -> {
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_m1_2 += 1;w_1_2 += 1;                                }
+                                case 1 -> {
+w_0_2 += 1;w_1_2 += 2;                                }
+                                case 2 -> {
+w_m1_2 += 1;w_0_2 += 2;w_1_2 += 3;                                }
+                                case 3 -> {
+w_m1_2 += 2;w_0_2 += 3;w_1_2 += 4;                                }
+                                case 4 -> {
+w_m1_2 += 3;w_0_2 += 4;w_1_2 += 3;                                }
+                                case 5 -> {
+w_m1_2 += 4;w_0_2 += 3;w_1_2 += 2;                                }
+                                case 6 -> {
+w_m1_2 += 3;w_0_2 += 2;w_1_2 += 1;                                }
+                                case 7 -> {
+w_m1_2 += 2;w_0_2 += 1;                                }
+                                default -> { }
+                            }
+                        }
+                        default -> { }
+                    }
+                }
+                case 1 -> {
+                    switch (dy) {
+                        case -3 -> {
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_0_m2 += 3;w_1_m2 += 4;w_2_m2 += 3;                                }
+                                case 1 -> {
+w_0_m2 += 2;w_1_m2 += 3;w_2_m2 += 4;                                }
+                                case 2 -> {
+w_0_m2 += 1;w_1_m2 += 2;w_2_m2 += 3;                                }
+                                case 3 -> {
+w_1_m2 += 1;w_2_m2 += 2;                                }
+                                case 4 -> {
+w_0_m2 += 1;w_2_m2 += 1;                                }
+                                case 5 -> {
+w_0_m2 += 2;w_1_m2 += 1;                                }
+                                case 6 -> {
+w_0_m2 += 3;w_1_m2 += 2;w_2_m2 += 1;                                }
+                                case 7 -> {
+w_0_m2 += 4;w_1_m2 += 3;w_2_m2 += 2;                                }
+                                default -> { }
+                            }
+                        }
+                        case -2 -> {
+                            w_1_m2 += 10;
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_0_m2 += 2;w_0_m1 += 3;w_1_m1 += 4;w_2_m2 += 2;w_2_m1 += 3;                                }
+                                case 1 -> {
+w_0_m2 += 1;w_0_m1 += 2;w_1_m1 += 3;w_2_m2 += 3;w_2_m1 += 4;                                }
+                                case 2 -> {
+w_0_m1 += 1;w_1_m1 += 2;w_2_m2 += 4;w_2_m1 += 3;                                }
+                                case 3 -> {
+w_0_m2 += 1;w_1_m1 += 1;w_2_m2 += 3;w_2_m1 += 2;                                }
+                                case 4 -> {
+w_0_m2 += 2;w_0_m1 += 1;w_2_m2 += 2;w_2_m1 += 1;                                }
+                                case 5 -> {
+w_0_m2 += 3;w_0_m1 += 2;w_1_m1 += 1;w_2_m2 += 1;                                }
+                                case 6 -> {
+w_0_m2 += 4;w_0_m1 += 3;w_1_m1 += 2;w_2_m1 += 1;                                }
+                                case 7 -> {
+w_0_m2 += 3;w_0_m1 += 4;w_1_m1 += 3;w_2_m2 += 1;w_2_m1 += 2;                                }
+                                default -> { }
+                            }
+                        }
+                        case -1 -> {
+                            w_1_m1 += 10;
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_0_m2 += 1;w_0_m1 += 2;w_0_0 += 3;w_1_0 += 4;w_2_m2 += 1;w_2_m1 += 2;w_2_0 += 3;                                }
+                                case 1 -> {
+w_0_m1 += 1;w_0_0 += 2;w_1_m2 += 1;w_1_0 += 3;w_2_m2 += 2;w_2_m1 += 3;w_2_0 += 4;                                }
+                                case 2 -> {
+w_0_m2 += 1;w_0_0 += 1;w_1_m2 += 2;w_1_0 += 2;w_2_m2 += 3;w_2_m1 += 4;w_2_0 += 3;                                }
+                                case 3 -> {
+w_0_m2 += 2;w_0_m1 += 1;w_1_m2 += 3;w_1_0 += 1;w_2_m2 += 4;w_2_m1 += 3;w_2_0 += 2;                                }
+                                case 4 -> {
+w_0_m2 += 3;w_0_m1 += 2;w_0_0 += 1;w_1_m2 += 4;w_2_m2 += 3;w_2_m1 += 2;w_2_0 += 1;                                }
+                                case 5 -> {
+w_0_m2 += 4;w_0_m1 += 3;w_0_0 += 2;w_1_m2 += 3;w_1_0 += 1;w_2_m2 += 2;w_2_m1 += 1;                                }
+                                case 6 -> {
+w_0_m2 += 3;w_0_m1 += 4;w_0_0 += 3;w_1_m2 += 2;w_1_0 += 2;w_2_m2 += 1;w_2_0 += 1;                                }
+                                case 7 -> {
+w_0_m2 += 2;w_0_m1 += 3;w_0_0 += 4;w_1_m2 += 1;w_1_0 += 3;w_2_m1 += 1;w_2_0 += 2;                                }
+                                default -> { }
+                            }
+                        }
+                        case 0 -> {
+                            w_1_0 += 10;
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_0_m1 += 1;w_0_0 += 2;w_0_1 += 3;w_1_1 += 4;w_2_m1 += 1;w_2_0 += 2;w_2_1 += 3;                                }
+                                case 1 -> {
+w_0_0 += 1;w_0_1 += 2;w_1_m1 += 1;w_1_1 += 3;w_2_m1 += 2;w_2_0 += 3;w_2_1 += 4;                                }
+                                case 2 -> {
+w_0_m1 += 1;w_0_1 += 1;w_1_m1 += 2;w_1_1 += 2;w_2_m1 += 3;w_2_0 += 4;w_2_1 += 3;                                }
+                                case 3 -> {
+w_0_m1 += 2;w_0_0 += 1;w_1_m1 += 3;w_1_1 += 1;w_2_m1 += 4;w_2_0 += 3;w_2_1 += 2;                                }
+                                case 4 -> {
+w_0_m1 += 3;w_0_0 += 2;w_0_1 += 1;w_1_m1 += 4;w_2_m1 += 3;w_2_0 += 2;w_2_1 += 1;                                }
+                                case 5 -> {
+w_0_m1 += 4;w_0_0 += 3;w_0_1 += 2;w_1_m1 += 3;w_1_1 += 1;w_2_m1 += 2;w_2_0 += 1;                                }
+                                case 6 -> {
+w_0_m1 += 3;w_0_0 += 4;w_0_1 += 3;w_1_m1 += 2;w_1_1 += 2;w_2_m1 += 1;w_2_1 += 1;                                }
+                                case 7 -> {
+w_0_m1 += 2;w_0_0 += 3;w_0_1 += 4;w_1_m1 += 1;w_1_1 += 3;w_2_0 += 1;w_2_1 += 2;                                }
+                                default -> { }
+                            }
+                        }
+                        case 1 -> {
+                            w_1_1 += 10;
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_0_0 += 1;w_0_1 += 2;w_0_2 += 3;w_1_2 += 4;w_2_0 += 1;w_2_1 += 2;w_2_2 += 3;                                }
+                                case 1 -> {
+w_0_1 += 1;w_0_2 += 2;w_1_0 += 1;w_1_2 += 3;w_2_0 += 2;w_2_1 += 3;w_2_2 += 4;                                }
+                                case 2 -> {
+w_0_0 += 1;w_0_2 += 1;w_1_0 += 2;w_1_2 += 2;w_2_0 += 3;w_2_1 += 4;w_2_2 += 3;                                }
+                                case 3 -> {
+w_0_0 += 2;w_0_1 += 1;w_1_0 += 3;w_1_2 += 1;w_2_0 += 4;w_2_1 += 3;w_2_2 += 2;                                }
+                                case 4 -> {
+w_0_0 += 3;w_0_1 += 2;w_0_2 += 1;w_1_0 += 4;w_2_0 += 3;w_2_1 += 2;w_2_2 += 1;                                }
+                                case 5 -> {
+w_0_0 += 4;w_0_1 += 3;w_0_2 += 2;w_1_0 += 3;w_1_2 += 1;w_2_0 += 2;w_2_1 += 1;                                }
+                                case 6 -> {
+w_0_0 += 3;w_0_1 += 4;w_0_2 += 3;w_1_0 += 2;w_1_2 += 2;w_2_0 += 1;w_2_2 += 1;                                }
+                                case 7 -> {
+w_0_0 += 2;w_0_1 += 3;w_0_2 += 4;w_1_0 += 1;w_1_2 += 3;w_2_1 += 1;w_2_2 += 2;                                }
+                                default -> { }
+                            }
+                        }
+                        case 2 -> {
+                            w_1_2 += 10;
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_0_1 += 1;w_0_2 += 2;w_2_1 += 1;w_2_2 += 2;                                }
+                                case 1 -> {
+w_0_2 += 1;w_1_1 += 1;w_2_1 += 2;w_2_2 += 3;                                }
+                                case 2 -> {
+w_0_1 += 1;w_1_1 += 2;w_2_1 += 3;w_2_2 += 4;                                }
+                                case 3 -> {
+w_0_1 += 2;w_0_2 += 1;w_1_1 += 3;w_2_1 += 4;w_2_2 += 3;                                }
+                                case 4 -> {
+w_0_1 += 3;w_0_2 += 2;w_1_1 += 4;w_2_1 += 3;w_2_2 += 2;                                }
+                                case 5 -> {
+w_0_1 += 4;w_0_2 += 3;w_1_1 += 3;w_2_1 += 2;w_2_2 += 1;                                }
+                                case 6 -> {
+w_0_1 += 3;w_0_2 += 4;w_1_1 += 2;w_2_1 += 1;                                }
+                                case 7 -> {
+w_0_1 += 2;w_0_2 += 3;w_1_1 += 1;w_2_2 += 1;                                }
+                                default -> { }
+                            }
+                        }
+                        case 3 -> {
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_0_2 += 1;w_2_2 += 1;                                }
+                                case 1 -> {
+w_1_2 += 1;w_2_2 += 2;                                }
+                                case 2 -> {
+w_0_2 += 1;w_1_2 += 2;w_2_2 += 3;                                }
+                                case 3 -> {
+w_0_2 += 2;w_1_2 += 3;w_2_2 += 4;                                }
+                                case 4 -> {
+w_0_2 += 3;w_1_2 += 4;w_2_2 += 3;                                }
+                                case 5 -> {
+w_0_2 += 4;w_1_2 += 3;w_2_2 += 2;                                }
+                                case 6 -> {
+w_0_2 += 3;w_1_2 += 2;w_2_2 += 1;                                }
+                                case 7 -> {
+w_0_2 += 2;w_1_2 += 1;                                }
+                                default -> { }
+                            }
+                        }
+                        default -> { }
+                    }
+                }
+                case 2 -> {
+                    switch (dy) {
+                        case -3 -> {
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_1_m2 += 3;w_2_m2 += 4;                                }
+                                case 1 -> {
+w_1_m2 += 2;w_2_m2 += 3;                                }
+                                case 2 -> {
+w_1_m2 += 1;w_2_m2 += 2;                                }
+                                case 3 -> {
+w_2_m2 += 1;                                }
+                                case 4 -> {
+w_1_m2 += 1;                                }
+                                case 5 -> {
+w_1_m2 += 2;w_2_m2 += 1;                                }
+                                case 6 -> {
+w_1_m2 += 3;w_2_m2 += 2;                                }
+                                case 7 -> {
+w_1_m2 += 4;w_2_m2 += 3;                                }
+                                default -> { }
+                            }
+                        }
+                        case -2 -> {
+                            w_2_m2 += 10;
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_1_m2 += 2;w_1_m1 += 3;w_2_m1 += 4;                                }
+                                case 1 -> {
+w_1_m2 += 1;w_1_m1 += 2;w_2_m1 += 3;                                }
+                                case 2 -> {
+w_1_m1 += 1;w_2_m1 += 2;                                }
+                                case 3 -> {
+w_1_m2 += 1;w_2_m1 += 1;                                }
+                                case 4 -> {
+w_1_m2 += 2;w_1_m1 += 1;                                }
+                                case 5 -> {
+w_1_m2 += 3;w_1_m1 += 2;w_2_m1 += 1;                                }
+                                case 6 -> {
+w_1_m2 += 4;w_1_m1 += 3;w_2_m1 += 2;                                }
+                                case 7 -> {
+w_1_m2 += 3;w_1_m1 += 4;w_2_m1 += 3;                                }
+                                default -> { }
+                            }
+                        }
+                        case -1 -> {
+                            w_2_m1 += 10;
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_1_m2 += 1;w_1_m1 += 2;w_1_0 += 3;w_2_0 += 4;                                }
+                                case 1 -> {
+w_1_m1 += 1;w_1_0 += 2;w_2_m2 += 1;w_2_0 += 3;                                }
+                                case 2 -> {
+w_1_m2 += 1;w_1_0 += 1;w_2_m2 += 2;w_2_0 += 2;                                }
+                                case 3 -> {
+w_1_m2 += 2;w_1_m1 += 1;w_2_m2 += 3;w_2_0 += 1;                                }
+                                case 4 -> {
+w_1_m2 += 3;w_1_m1 += 2;w_1_0 += 1;w_2_m2 += 4;                                }
+                                case 5 -> {
+w_1_m2 += 4;w_1_m1 += 3;w_1_0 += 2;w_2_m2 += 3;w_2_0 += 1;                                }
+                                case 6 -> {
+w_1_m2 += 3;w_1_m1 += 4;w_1_0 += 3;w_2_m2 += 2;w_2_0 += 2;                                }
+                                case 7 -> {
+w_1_m2 += 2;w_1_m1 += 3;w_1_0 += 4;w_2_m2 += 1;w_2_0 += 3;                                }
+                                default -> { }
+                            }
+                        }
+                        case 0 -> {
+                            w_2_0 += 10;
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_1_m1 += 1;w_1_0 += 2;w_1_1 += 3;w_2_1 += 4;                                }
+                                case 1 -> {
+w_1_0 += 1;w_1_1 += 2;w_2_m1 += 1;w_2_1 += 3;                                }
+                                case 2 -> {
+w_1_m1 += 1;w_1_1 += 1;w_2_m1 += 2;w_2_1 += 2;                                }
+                                case 3 -> {
+w_1_m1 += 2;w_1_0 += 1;w_2_m1 += 3;w_2_1 += 1;                                }
+                                case 4 -> {
+w_1_m1 += 3;w_1_0 += 2;w_1_1 += 1;w_2_m1 += 4;                                }
+                                case 5 -> {
+w_1_m1 += 4;w_1_0 += 3;w_1_1 += 2;w_2_m1 += 3;w_2_1 += 1;                                }
+                                case 6 -> {
+w_1_m1 += 3;w_1_0 += 4;w_1_1 += 3;w_2_m1 += 2;w_2_1 += 2;                                }
+                                case 7 -> {
+w_1_m1 += 2;w_1_0 += 3;w_1_1 += 4;w_2_m1 += 1;w_2_1 += 3;                                }
+                                default -> { }
+                            }
+                        }
+                        case 1 -> {
+                            w_2_1 += 10;
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_1_0 += 1;w_1_1 += 2;w_1_2 += 3;w_2_2 += 4;                                }
+                                case 1 -> {
+w_1_1 += 1;w_1_2 += 2;w_2_0 += 1;w_2_2 += 3;                                }
+                                case 2 -> {
+w_1_0 += 1;w_1_2 += 1;w_2_0 += 2;w_2_2 += 2;                                }
+                                case 3 -> {
+w_1_0 += 2;w_1_1 += 1;w_2_0 += 3;w_2_2 += 1;                                }
+                                case 4 -> {
+w_1_0 += 3;w_1_1 += 2;w_1_2 += 1;w_2_0 += 4;                                }
+                                case 5 -> {
+w_1_0 += 4;w_1_1 += 3;w_1_2 += 2;w_2_0 += 3;w_2_2 += 1;                                }
+                                case 6 -> {
+w_1_0 += 3;w_1_1 += 4;w_1_2 += 3;w_2_0 += 2;w_2_2 += 2;                                }
+                                case 7 -> {
+w_1_0 += 2;w_1_1 += 3;w_1_2 += 4;w_2_0 += 1;w_2_2 += 3;                                }
+                                default -> { }
+                            }
+                        }
+                        case 2 -> {
+                            w_2_2 += 10;
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_1_1 += 1;w_1_2 += 2;                                }
+                                case 1 -> {
+w_1_2 += 1;w_2_1 += 1;                                }
+                                case 2 -> {
+w_1_1 += 1;w_2_1 += 2;                                }
+                                case 3 -> {
+w_1_1 += 2;w_1_2 += 1;w_2_1 += 3;                                }
+                                case 4 -> {
+w_1_1 += 3;w_1_2 += 2;w_2_1 += 4;                                }
+                                case 5 -> {
+w_1_1 += 4;w_1_2 += 3;w_2_1 += 3;                                }
+                                case 6 -> {
+w_1_1 += 3;w_1_2 += 4;w_2_1 += 2;                                }
+                                case 7 -> {
+w_1_1 += 2;w_1_2 += 3;w_2_1 += 1;                                }
+                                default -> { }
+                            }
+                        }
+                        case 3 -> {
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_1_2 += 1;                                }
+                                case 1 -> {
+w_2_2 += 1;                                }
+                                case 2 -> {
+w_1_2 += 1;w_2_2 += 2;                                }
+                                case 3 -> {
+w_1_2 += 2;w_2_2 += 3;                                }
+                                case 4 -> {
+w_1_2 += 3;w_2_2 += 4;                                }
+                                case 5 -> {
+w_1_2 += 4;w_2_2 += 3;                                }
+                                case 6 -> {
+w_1_2 += 3;w_2_2 += 2;                                }
+                                case 7 -> {
+w_1_2 += 2;w_2_2 += 1;                                }
+                                default -> { }
+                            }
+                        }
+                        default -> { }
+                    }
+                }
+                case 3 -> {
+                    switch (dy) {
+                        case -3 -> {
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_2_m2 += 3;                                }
+                                case 1 -> {
+w_2_m2 += 2;                                }
+                                case 2 -> {
+w_2_m2 += 1;                                }
+                                case 4 -> {
+w_2_m2 += 1;                                }
+                                case 5 -> {
+w_2_m2 += 2;                                }
+                                case 6 -> {
+w_2_m2 += 3;                                }
+                                case 7 -> {
+w_2_m2 += 4;                                }
+                                default -> { }
+                            }
+                        }
+                        case -2 -> {
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_2_m2 += 2;w_2_m1 += 3;                                }
+                                case 1 -> {
+w_2_m2 += 1;w_2_m1 += 2;                                }
+                                case 2 -> {
+w_2_m1 += 1;                                }
+                                case 3 -> {
+w_2_m2 += 1;                                }
+                                case 4 -> {
+w_2_m2 += 2;w_2_m1 += 1;                                }
+                                case 5 -> {
+w_2_m2 += 3;w_2_m1 += 2;                                }
+                                case 6 -> {
+w_2_m2 += 4;w_2_m1 += 3;                                }
+                                case 7 -> {
+w_2_m2 += 3;w_2_m1 += 4;                                }
+                                default -> { }
+                            }
+                        }
+                        case -1 -> {
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_2_m2 += 1;w_2_m1 += 2;w_2_0 += 3;                                }
+                                case 1 -> {
+w_2_m1 += 1;w_2_0 += 2;                                }
+                                case 2 -> {
+w_2_m2 += 1;w_2_0 += 1;                                }
+                                case 3 -> {
+w_2_m2 += 2;w_2_m1 += 1;                                }
+                                case 4 -> {
+w_2_m2 += 3;w_2_m1 += 2;w_2_0 += 1;                                }
+                                case 5 -> {
+w_2_m2 += 4;w_2_m1 += 3;w_2_0 += 2;                                }
+                                case 6 -> {
+w_2_m2 += 3;w_2_m1 += 4;w_2_0 += 3;                                }
+                                case 7 -> {
+w_2_m2 += 2;w_2_m1 += 3;w_2_0 += 4;                                }
+                                default -> { }
+                            }
+                        }
+                        case 0 -> {
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_2_m1 += 1;w_2_0 += 2;w_2_1 += 3;                                }
+                                case 1 -> {
+w_2_0 += 1;w_2_1 += 2;                                }
+                                case 2 -> {
+w_2_m1 += 1;w_2_1 += 1;                                }
+                                case 3 -> {
+w_2_m1 += 2;w_2_0 += 1;                                }
+                                case 4 -> {
+w_2_m1 += 3;w_2_0 += 2;w_2_1 += 1;                                }
+                                case 5 -> {
+w_2_m1 += 4;w_2_0 += 3;w_2_1 += 2;                                }
+                                case 6 -> {
+w_2_m1 += 3;w_2_0 += 4;w_2_1 += 3;                                }
+                                case 7 -> {
+w_2_m1 += 2;w_2_0 += 3;w_2_1 += 4;                                }
+                                default -> { }
+                            }
+                        }
+                        case 1 -> {
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_2_0 += 1;w_2_1 += 2;w_2_2 += 3;                                }
+                                case 1 -> {
+w_2_1 += 1;w_2_2 += 2;                                }
+                                case 2 -> {
+w_2_0 += 1;w_2_2 += 1;                                }
+                                case 3 -> {
+w_2_0 += 2;w_2_1 += 1;                                }
+                                case 4 -> {
+w_2_0 += 3;w_2_1 += 2;w_2_2 += 1;                                }
+                                case 5 -> {
+w_2_0 += 4;w_2_1 += 3;w_2_2 += 2;                                }
+                                case 6 -> {
+w_2_0 += 3;w_2_1 += 4;w_2_2 += 3;                                }
+                                case 7 -> {
+w_2_0 += 2;w_2_1 += 3;w_2_2 += 4;                                }
+                                default -> { }
+                            }
+                        }
+                        case 2 -> {
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_2_1 += 1;w_2_2 += 2;                                }
+                                case 1 -> {
+w_2_2 += 1;                                }
+                                case 2 -> {
+w_2_1 += 1;                                }
+                                case 3 -> {
+w_2_1 += 2;w_2_2 += 1;                                }
+                                case 4 -> {
+w_2_1 += 3;w_2_2 += 2;                                }
+                                case 5 -> {
+w_2_1 += 4;w_2_2 += 3;                                }
+                                case 6 -> {
+w_2_1 += 3;w_2_2 += 4;                                }
+                                case 7 -> {
+w_2_1 += 2;w_2_2 += 3;                                }
+                                default -> { }
+                            }
+                        }
+                        case 3 -> {
+                            switch (rinfo.getDirection().ordinal()) {
+                                case 0 -> {
+w_2_2 += 1;                                }
+                                case 2 -> {
+w_2_2 += 1;                                }
+                                case 3 -> {
+w_2_2 += 2;                                }
+                                case 4 -> {
+w_2_2 += 3;                                }
+                                case 5 -> {
+w_2_2 += 4;                                }
+                                case 6 -> {
+w_2_2 += 3;                                }
+                                case 7 -> {
+w_2_2 += 2;                                }
+                                default -> { }
+                            }
+                        }
+                        default -> { }
+                    }
+                }
+                default -> { }
+            }
+        }
+    }
+
+    private static void resetBest() {
+        bestPlaceLoc = null;
+        bestMoveDir = null;
+        bestFacing = null;
+        best = -1;
+    }
+
+    private static void selectMoves() throws GameActionException {
+        switch (myDir.ordinal()) {
+            case 0 -> {
+                moveN();
+                moveNE();
+                moveNW();
+                moveE();
+                moveW();
+            }
+            case 1 -> {
+                moveNE();
+                moveN();
+                moveE();
+                moveNW();
+                moveSE();
+            }
+            case 2 -> {
+                moveE();
+                moveNE();
+                moveSE();
+                moveN();
+                moveS();
+            }
+            case 3 -> {
+                moveSE();
+                moveS();
+                moveE();
+                moveNE();
+                moveSW();
+            }
+            case 4 -> {
+                moveS();
+                moveSE();
+                moveSW();
+                moveE();
+                moveW();
+            }
+            case 5 -> {
+                moveSW();
+                moveS();
+                moveW();
+                moveNW();
+                moveSE();
+            }
+            case 6 -> {
+                moveW();
+                moveNW();
+                moveSW();
+                moveN();
+                moveS();
+            }
+            case 7 -> {
+                moveNW();
+                moveN();
+                moveW();
+                moveNE();
+                moveSW();
+            }
+            default -> { }
+        }
+    }
+
+    private static void moveN() throws GameActionException {
+        if (!CombatCommon.canMoveN) return;
+        curMoveLoc = myLoc.add(Direction.NORTH);
+        faceNN();
+        faceNEN();
+        faceNWN();
+    }
+
+    private static void faceNN() throws GameActionException {
+        if (!CombatCommon.canPerformN_N) return;
+        if (CombatTracker.threatNN != 0L) return;
+        placeNNN();
+        placeNENN();
+        placeNWNN();
+    }
+
+private static void placeNNN() {
+        if (w_0_2 >= 0) {
+            double score = w_0_2;
+            if (Direction.NORTH != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.NORTH);
+                bestMoveDir = Direction.NORTH;
+                bestFacing = Direction.NORTH;
+            }
+        }
+    }
+private static void placeNENN() {
+        if (w_1_2 >= 0) {
+            double score = w_1_2;
+            if (Direction.NORTH != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.NORTHEAST);
+                bestMoveDir = Direction.NORTH;
+                bestFacing = Direction.NORTH;
+            }
+        }
+    }
+private static void placeNWNN() {
+        if (w_m1_2 >= 0) {
+            double score = w_m1_2;
+            if (Direction.NORTH != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.NORTHWEST);
+                bestMoveDir = Direction.NORTH;
+                bestFacing = Direction.NORTH;
+            }
+        }
+    }
+    private static void faceNEN() throws GameActionException {
+        if (!CombatCommon.canPerformN_NE) return;
+        if (CombatTracker.threatNNE != 0L) return;
+        placeNENEN();
+        placeNNEN();
+        placeENEN();
+    }
+
+private static void placeNENEN() {
+        if (w_1_2 >= 0) {
+            double score = w_1_2;
+            if (Direction.NORTHEAST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.NORTHEAST);
+                bestMoveDir = Direction.NORTH;
+                bestFacing = Direction.NORTHEAST;
+            }
+        }
+    }
+private static void placeNNEN() {
+        if (w_0_2 >= 0) {
+            double score = w_0_2;
+            if (Direction.NORTHEAST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.NORTH);
+                bestMoveDir = Direction.NORTH;
+                bestFacing = Direction.NORTHEAST;
+            }
+        }
+    }
+private static void placeENEN() {
+        if (w_1_1 >= 0) {
+            double score = w_1_1;
+            if (Direction.NORTHEAST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.EAST);
+                bestMoveDir = Direction.NORTH;
+                bestFacing = Direction.NORTHEAST;
+            }
+        }
+    }
+    private static void faceNWN() throws GameActionException {
+        if (!CombatCommon.canPerformN_NW) return;
+        if (CombatTracker.threatNNW != 0L) return;
+        placeNWNWN();
+        placeNNWN();
+        placeWNWN();
+    }
+
+private static void placeNWNWN() {
+        if (w_m1_2 >= 0) {
+            double score = w_m1_2;
+            if (Direction.NORTHWEST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.NORTHWEST);
+                bestMoveDir = Direction.NORTH;
+                bestFacing = Direction.NORTHWEST;
+            }
+        }
+    }
+private static void placeNNWN() {
+        if (w_0_2 >= 0) {
+            double score = w_0_2;
+            if (Direction.NORTHWEST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.NORTH);
+                bestMoveDir = Direction.NORTH;
+                bestFacing = Direction.NORTHWEST;
+            }
+        }
+    }
+private static void placeWNWN() {
+        if (w_m1_1 >= 0) {
+            double score = w_m1_1;
+            if (Direction.NORTHWEST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.WEST);
+                bestMoveDir = Direction.NORTH;
+                bestFacing = Direction.NORTHWEST;
+            }
+        }
+    }
+    private static void moveNE() throws GameActionException {
+        if (!CombatCommon.canMoveNE) return;
+        curMoveLoc = myLoc.add(Direction.NORTHEAST);
+        faceNENE();
+        faceNNE();
+        faceENE();
+    }
+
+    private static void faceNENE() throws GameActionException {
+        if (!CombatCommon.canPerformNE_NE) return;
+        if (CombatTracker.threatNENE != 0L) return;
+        placeNENENE();
+        placeNNENE();
+        placeENENE();
+    }
+
+private static void placeNENENE() {
+        if (w_2_2 >= 0) {
+            double score = w_2_2;
+            if (Direction.NORTHEAST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.NORTHEAST);
+                bestMoveDir = Direction.NORTHEAST;
+                bestFacing = Direction.NORTHEAST;
+            }
+        }
+    }
+private static void placeNNENE() {
+        if (w_1_2 >= 0) {
+            double score = w_1_2;
+            if (Direction.NORTHEAST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.NORTH);
+                bestMoveDir = Direction.NORTHEAST;
+                bestFacing = Direction.NORTHEAST;
+            }
+        }
+    }
+private static void placeENENE() {
+        if (w_2_1 >= 0) {
+            double score = w_2_1;
+            if (Direction.NORTHEAST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.EAST);
+                bestMoveDir = Direction.NORTHEAST;
+                bestFacing = Direction.NORTHEAST;
+            }
+        }
+    }
+    private static void faceNNE() throws GameActionException {
+        if (!CombatCommon.canPerformNE_N) return;
+        if (CombatTracker.threatNEN != 0L) return;
+        placeNNNE();
+        placeNENNE();
+        placeNWNNE();
+    }
+
+private static void placeNNNE() {
+        if (w_1_2 >= 0) {
+            double score = w_1_2;
+            if (Direction.NORTH != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.NORTH);
+                bestMoveDir = Direction.NORTHEAST;
+                bestFacing = Direction.NORTH;
+            }
+        }
+    }
+private static void placeNENNE() {
+        if (w_2_2 >= 0) {
+            double score = w_2_2;
+            if (Direction.NORTH != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.NORTHEAST);
+                bestMoveDir = Direction.NORTHEAST;
+                bestFacing = Direction.NORTH;
+            }
+        }
+    }
+private static void placeNWNNE() {
+        if (w_0_2 >= 0) {
+            double score = w_0_2;
+            if (Direction.NORTH != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.NORTHWEST);
+                bestMoveDir = Direction.NORTHEAST;
+                bestFacing = Direction.NORTH;
+            }
+        }
+    }
+    private static void faceENE() throws GameActionException {
+        if (!CombatCommon.canPerformNE_E) return;
+        if (CombatTracker.threatNEE != 0L) return;
+        placeEENE();
+        placeNEENE();
+        placeSEENE();
+    }
+
+private static void placeEENE() {
+        if (w_2_1 >= 0) {
+            double score = w_2_1;
+            if (Direction.EAST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.EAST);
+                bestMoveDir = Direction.NORTHEAST;
+                bestFacing = Direction.EAST;
+            }
+        }
+    }
+private static void placeNEENE() {
+        if (w_2_2 >= 0) {
+            double score = w_2_2;
+            if (Direction.EAST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.NORTHEAST);
+                bestMoveDir = Direction.NORTHEAST;
+                bestFacing = Direction.EAST;
+            }
+        }
+    }
+private static void placeSEENE() {
+        if (w_2_0 >= 0) {
+            double score = w_2_0;
+            if (Direction.EAST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.SOUTHEAST);
+                bestMoveDir = Direction.NORTHEAST;
+                bestFacing = Direction.EAST;
+            }
+        }
+    }
+    private static void moveE() throws GameActionException {
+        if (!CombatCommon.canMoveE) return;
+        curMoveLoc = myLoc.add(Direction.EAST);
+        faceEE();
+        faceNEE();
+        faceSEE();
+    }
+
+    private static void faceEE() throws GameActionException {
+        if (!CombatCommon.canPerformE_E) return;
+        if (CombatTracker.threatEE != 0L) return;
+        placeEEE();
+        placeNEEE();
+        placeSEEE();
+    }
+
+private static void placeEEE() {
+        if (w_2_0 >= 0) {
+            double score = w_2_0;
+            if (Direction.EAST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.EAST);
+                bestMoveDir = Direction.EAST;
+                bestFacing = Direction.EAST;
+            }
+        }
+    }
+private static void placeNEEE() {
+        if (w_2_1 >= 0) {
+            double score = w_2_1;
+            if (Direction.EAST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.NORTHEAST);
+                bestMoveDir = Direction.EAST;
+                bestFacing = Direction.EAST;
+            }
+        }
+    }
+private static void placeSEEE() {
+        if (w_2_m1 >= 0) {
+            double score = w_2_m1;
+            if (Direction.EAST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.SOUTHEAST);
+                bestMoveDir = Direction.EAST;
+                bestFacing = Direction.EAST;
+            }
+        }
+    }
+    private static void faceNEE() throws GameActionException {
+        if (!CombatCommon.canPerformE_NE) return;
+        if (CombatTracker.threatENE != 0L) return;
+        placeNENEE();
+        placeNNEE();
+        placeENEE();
+    }
+
+private static void placeNENEE() {
+        if (w_2_1 >= 0) {
+            double score = w_2_1;
+            if (Direction.NORTHEAST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.NORTHEAST);
+                bestMoveDir = Direction.EAST;
+                bestFacing = Direction.NORTHEAST;
+            }
+        }
+    }
+private static void placeNNEE() {
+        if (w_1_1 >= 0) {
+            double score = w_1_1;
+            if (Direction.NORTHEAST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.NORTH);
+                bestMoveDir = Direction.EAST;
+                bestFacing = Direction.NORTHEAST;
+            }
+        }
+    }
+private static void placeENEE() {
+        if (w_2_0 >= 0) {
+            double score = w_2_0;
+            if (Direction.NORTHEAST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.EAST);
+                bestMoveDir = Direction.EAST;
+                bestFacing = Direction.NORTHEAST;
+            }
+        }
+    }
+    private static void faceSEE() throws GameActionException {
+        if (!CombatCommon.canPerformE_SE) return;
+        if (CombatTracker.threatESE != 0L) return;
+        placeSESEE();
+        placeSSEE();
+        placeESEE();
+    }
+
+private static void placeSESEE() {
+        if (w_2_m1 >= 0) {
+            double score = w_2_m1;
+            if (Direction.SOUTHEAST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.SOUTHEAST);
+                bestMoveDir = Direction.EAST;
+                bestFacing = Direction.SOUTHEAST;
+            }
+        }
+    }
+private static void placeSSEE() {
+        if (w_1_m1 >= 0) {
+            double score = w_1_m1;
+            if (Direction.SOUTHEAST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.SOUTH);
+                bestMoveDir = Direction.EAST;
+                bestFacing = Direction.SOUTHEAST;
+            }
+        }
+    }
+private static void placeESEE() {
+        if (w_2_0 >= 0) {
+            double score = w_2_0;
+            if (Direction.SOUTHEAST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.EAST);
+                bestMoveDir = Direction.EAST;
+                bestFacing = Direction.SOUTHEAST;
+            }
+        }
+    }
+    private static void moveSE() throws GameActionException {
+        if (!CombatCommon.canMoveSE) return;
+        curMoveLoc = myLoc.add(Direction.SOUTHEAST);
+        faceSESE();
+        faceSSE();
+        faceESE();
+    }
+
+    private static void faceSESE() throws GameActionException {
+        if (!CombatCommon.canPerformSE_SE) return;
+        if (CombatTracker.threatSESE != 0L) return;
+        placeSESESE();
+        placeSSESE();
+        placeESESE();
+    }
+
+private static void placeSESESE() {
+        if (w_2_m2 >= 0) {
+            double score = w_2_m2;
+            if (Direction.SOUTHEAST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.SOUTHEAST);
+                bestMoveDir = Direction.SOUTHEAST;
+                bestFacing = Direction.SOUTHEAST;
+            }
+        }
+    }
+private static void placeSSESE() {
+        if (w_1_m2 >= 0) {
+            double score = w_1_m2;
+            if (Direction.SOUTHEAST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.SOUTH);
+                bestMoveDir = Direction.SOUTHEAST;
+                bestFacing = Direction.SOUTHEAST;
+            }
+        }
+    }
+private static void placeESESE() {
+        if (w_2_m1 >= 0) {
+            double score = w_2_m1;
+            if (Direction.SOUTHEAST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.EAST);
+                bestMoveDir = Direction.SOUTHEAST;
+                bestFacing = Direction.SOUTHEAST;
+            }
+        }
+    }
+    private static void faceSSE() throws GameActionException {
+        if (!CombatCommon.canPerformSE_S) return;
+        if (CombatTracker.threatSES != 0L) return;
+        placeSSSE();
+        placeSESSE();
+        placeSWSSE();
+    }
+
+private static void placeSSSE() {
+        if (w_1_m2 >= 0) {
+            double score = w_1_m2;
+            if (Direction.SOUTH != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.SOUTH);
+                bestMoveDir = Direction.SOUTHEAST;
+                bestFacing = Direction.SOUTH;
+            }
+        }
+    }
+private static void placeSESSE() {
+        if (w_2_m2 >= 0) {
+            double score = w_2_m2;
+            if (Direction.SOUTH != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.SOUTHEAST);
+                bestMoveDir = Direction.SOUTHEAST;
+                bestFacing = Direction.SOUTH;
+            }
+        }
+    }
+private static void placeSWSSE() {
+        if (w_0_m2 >= 0) {
+            double score = w_0_m2;
+            if (Direction.SOUTH != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.SOUTHWEST);
+                bestMoveDir = Direction.SOUTHEAST;
+                bestFacing = Direction.SOUTH;
+            }
+        }
+    }
+    private static void faceESE() throws GameActionException {
+        if (!CombatCommon.canPerformSE_E) return;
+        if (CombatTracker.threatSEE != 0L) return;
+        placeEESE();
+        placeNEESE();
+        placeSEESE();
+    }
+
+private static void placeEESE() {
+        if (w_2_m1 >= 0) {
+            double score = w_2_m1;
+            if (Direction.EAST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.EAST);
+                bestMoveDir = Direction.SOUTHEAST;
+                bestFacing = Direction.EAST;
+            }
+        }
+    }
+private static void placeNEESE() {
+        if (w_2_0 >= 0) {
+            double score = w_2_0;
+            if (Direction.EAST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.NORTHEAST);
+                bestMoveDir = Direction.SOUTHEAST;
+                bestFacing = Direction.EAST;
+            }
+        }
+    }
+private static void placeSEESE() {
+        if (w_2_m2 >= 0) {
+            double score = w_2_m2;
+            if (Direction.EAST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.SOUTHEAST);
+                bestMoveDir = Direction.SOUTHEAST;
+                bestFacing = Direction.EAST;
+            }
+        }
+    }
+    private static void moveS() throws GameActionException {
+        if (!CombatCommon.canMoveS) return;
+        curMoveLoc = myLoc.add(Direction.SOUTH);
+        faceSS();
+        faceSES();
+        faceSWS();
+    }
+
+    private static void faceSS() throws GameActionException {
+        if (!CombatCommon.canPerformS_S) return;
+        if (CombatTracker.threatSS != 0L) return;
+        placeSSS();
+        placeSESS();
+        placeSWSS();
+    }
+
+private static void placeSSS() {
+        if (w_0_m2 >= 0) {
+            double score = w_0_m2;
+            if (Direction.SOUTH != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.SOUTH);
+                bestMoveDir = Direction.SOUTH;
+                bestFacing = Direction.SOUTH;
+            }
+        }
+    }
+private static void placeSESS() {
+        if (w_1_m2 >= 0) {
+            double score = w_1_m2;
+            if (Direction.SOUTH != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.SOUTHEAST);
+                bestMoveDir = Direction.SOUTH;
+                bestFacing = Direction.SOUTH;
+            }
+        }
+    }
+private static void placeSWSS() {
+        if (w_m1_m2 >= 0) {
+            double score = w_m1_m2;
+            if (Direction.SOUTH != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.SOUTHWEST);
+                bestMoveDir = Direction.SOUTH;
+                bestFacing = Direction.SOUTH;
+            }
+        }
+    }
+    private static void faceSES() throws GameActionException {
+        if (!CombatCommon.canPerformS_SE) return;
+        if (CombatTracker.threatSSE != 0L) return;
+        placeSESES();
+        placeSSES();
+        placeESES();
+    }
+
+private static void placeSESES() {
+        if (w_1_m2 >= 0) {
+            double score = w_1_m2;
+            if (Direction.SOUTHEAST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.SOUTHEAST);
+                bestMoveDir = Direction.SOUTH;
+                bestFacing = Direction.SOUTHEAST;
+            }
+        }
+    }
+private static void placeSSES() {
+        if (w_0_m2 >= 0) {
+            double score = w_0_m2;
+            if (Direction.SOUTHEAST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.SOUTH);
+                bestMoveDir = Direction.SOUTH;
+                bestFacing = Direction.SOUTHEAST;
+            }
+        }
+    }
+private static void placeESES() {
+        if (w_1_m1 >= 0) {
+            double score = w_1_m1;
+            if (Direction.SOUTHEAST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.EAST);
+                bestMoveDir = Direction.SOUTH;
+                bestFacing = Direction.SOUTHEAST;
+            }
+        }
+    }
+    private static void faceSWS() throws GameActionException {
+        if (!CombatCommon.canPerformS_SW) return;
+        if (CombatTracker.threatSSW != 0L) return;
+        placeSWSWS();
+        placeSSWS();
+        placeWSWS();
+    }
+
+private static void placeSWSWS() {
+        if (w_m1_m2 >= 0) {
+            double score = w_m1_m2;
+            if (Direction.SOUTHWEST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.SOUTHWEST);
+                bestMoveDir = Direction.SOUTH;
+                bestFacing = Direction.SOUTHWEST;
+            }
+        }
+    }
+private static void placeSSWS() {
+        if (w_0_m2 >= 0) {
+            double score = w_0_m2;
+            if (Direction.SOUTHWEST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.SOUTH);
+                bestMoveDir = Direction.SOUTH;
+                bestFacing = Direction.SOUTHWEST;
+            }
+        }
+    }
+private static void placeWSWS() {
+        if (w_m1_m1 >= 0) {
+            double score = w_m1_m1;
+            if (Direction.SOUTHWEST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.WEST);
+                bestMoveDir = Direction.SOUTH;
+                bestFacing = Direction.SOUTHWEST;
+            }
+        }
+    }
+    private static void moveSW() throws GameActionException {
+        if (!CombatCommon.canMoveSW) return;
+        curMoveLoc = myLoc.add(Direction.SOUTHWEST);
+        faceSWSW();
+        faceSSW();
+        faceWSW();
+    }
+
+    private static void faceSWSW() throws GameActionException {
+        if (!CombatCommon.canPerformSW_SW) return;
+        if (CombatTracker.threatSWSW != 0L) return;
+        placeSWSWSW();
+        placeSSWSW();
+        placeWSWSW();
+    }
+
+private static void placeSWSWSW() {
+        if (w_m2_m2 >= 0) {
+            double score = w_m2_m2;
+            if (Direction.SOUTHWEST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.SOUTHWEST);
+                bestMoveDir = Direction.SOUTHWEST;
+                bestFacing = Direction.SOUTHWEST;
+            }
+        }
+    }
+private static void placeSSWSW() {
+        if (w_m1_m2 >= 0) {
+            double score = w_m1_m2;
+            if (Direction.SOUTHWEST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.SOUTH);
+                bestMoveDir = Direction.SOUTHWEST;
+                bestFacing = Direction.SOUTHWEST;
+            }
+        }
+    }
+private static void placeWSWSW() {
+        if (w_m2_m1 >= 0) {
+            double score = w_m2_m1;
+            if (Direction.SOUTHWEST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.WEST);
+                bestMoveDir = Direction.SOUTHWEST;
+                bestFacing = Direction.SOUTHWEST;
+            }
+        }
+    }
+    private static void faceSSW() throws GameActionException {
+        if (!CombatCommon.canPerformSW_S) return;
+        if (CombatTracker.threatSWS != 0L) return;
+        placeSSSW();
+        placeSESSW();
+        placeSWSSW();
+    }
+
+private static void placeSSSW() {
+        if (w_m1_m2 >= 0) {
+            double score = w_m1_m2;
+            if (Direction.SOUTH != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.SOUTH);
+                bestMoveDir = Direction.SOUTHWEST;
+                bestFacing = Direction.SOUTH;
+            }
+        }
+    }
+private static void placeSESSW() {
+        if (w_0_m2 >= 0) {
+            double score = w_0_m2;
+            if (Direction.SOUTH != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.SOUTHEAST);
+                bestMoveDir = Direction.SOUTHWEST;
+                bestFacing = Direction.SOUTH;
+            }
+        }
+    }
+private static void placeSWSSW() {
+        if (w_m2_m2 >= 0) {
+            double score = w_m2_m2;
+            if (Direction.SOUTH != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.SOUTHWEST);
+                bestMoveDir = Direction.SOUTHWEST;
+                bestFacing = Direction.SOUTH;
+            }
+        }
+    }
+    private static void faceWSW() throws GameActionException {
+        if (!CombatCommon.canPerformSW_W) return;
+        if (CombatTracker.threatSWW != 0L) return;
+        placeWWSW();
+        placeNWWSW();
+        placeSWWSW();
+    }
+
+private static void placeWWSW() {
+        if (w_m2_m1 >= 0) {
+            double score = w_m2_m1;
+            if (Direction.WEST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.WEST);
+                bestMoveDir = Direction.SOUTHWEST;
+                bestFacing = Direction.WEST;
+            }
+        }
+    }
+private static void placeNWWSW() {
+        if (w_m2_0 >= 0) {
+            double score = w_m2_0;
+            if (Direction.WEST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.NORTHWEST);
+                bestMoveDir = Direction.SOUTHWEST;
+                bestFacing = Direction.WEST;
+            }
+        }
+    }
+private static void placeSWWSW() {
+        if (w_m2_m2 >= 0) {
+            double score = w_m2_m2;
+            if (Direction.WEST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.SOUTHWEST);
+                bestMoveDir = Direction.SOUTHWEST;
+                bestFacing = Direction.WEST;
+            }
+        }
+    }
+    private static void moveW() throws GameActionException {
+        if (!CombatCommon.canMoveW) return;
+        curMoveLoc = myLoc.add(Direction.WEST);
+        faceWW();
+        faceNWW();
+        faceSWW();
+    }
+
+    private static void faceWW() throws GameActionException {
+        if (!CombatCommon.canPerformW_W) return;
+        if (CombatTracker.threatWW != 0L) return;
+        placeWWW();
+        placeNWWW();
+        placeSWWW();
+    }
+
+private static void placeWWW() {
+        if (w_m2_0 >= 0) {
+            double score = w_m2_0;
+            if (Direction.WEST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.WEST);
+                bestMoveDir = Direction.WEST;
+                bestFacing = Direction.WEST;
+            }
+        }
+    }
+private static void placeNWWW() {
+        if (w_m2_1 >= 0) {
+            double score = w_m2_1;
+            if (Direction.WEST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.NORTHWEST);
+                bestMoveDir = Direction.WEST;
+                bestFacing = Direction.WEST;
+            }
+        }
+    }
+private static void placeSWWW() {
+        if (w_m2_m1 >= 0) {
+            double score = w_m2_m1;
+            if (Direction.WEST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.SOUTHWEST);
+                bestMoveDir = Direction.WEST;
+                bestFacing = Direction.WEST;
+            }
+        }
+    }
+    private static void faceNWW() throws GameActionException {
+        if (!CombatCommon.canPerformW_NW) return;
+        if (CombatTracker.threatWNW != 0L) return;
+        placeNWNWW();
+        placeNNWW();
+        placeWNWW();
+    }
+
+private static void placeNWNWW() {
+        if (w_m2_1 >= 0) {
+            double score = w_m2_1;
+            if (Direction.NORTHWEST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.NORTHWEST);
+                bestMoveDir = Direction.WEST;
+                bestFacing = Direction.NORTHWEST;
+            }
+        }
+    }
+private static void placeNNWW() {
+        if (w_m1_1 >= 0) {
+            double score = w_m1_1;
+            if (Direction.NORTHWEST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.NORTH);
+                bestMoveDir = Direction.WEST;
+                bestFacing = Direction.NORTHWEST;
+            }
+        }
+    }
+private static void placeWNWW() {
+        if (w_m2_0 >= 0) {
+            double score = w_m2_0;
+            if (Direction.NORTHWEST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.WEST);
+                bestMoveDir = Direction.WEST;
+                bestFacing = Direction.NORTHWEST;
+            }
+        }
+    }
+    private static void faceSWW() throws GameActionException {
+        if (!CombatCommon.canPerformW_SW) return;
+        if (CombatTracker.threatWSW != 0L) return;
+        placeSWSWW();
+        placeSSWW();
+        placeWSWW();
+    }
+
+private static void placeSWSWW() {
+        if (w_m2_m1 >= 0) {
+            double score = w_m2_m1;
+            if (Direction.SOUTHWEST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.SOUTHWEST);
+                bestMoveDir = Direction.WEST;
+                bestFacing = Direction.SOUTHWEST;
+            }
+        }
+    }
+private static void placeSSWW() {
+        if (w_m1_m1 >= 0) {
+            double score = w_m1_m1;
+            if (Direction.SOUTHWEST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.SOUTH);
+                bestMoveDir = Direction.WEST;
+                bestFacing = Direction.SOUTHWEST;
+            }
+        }
+    }
+private static void placeWSWW() {
+        if (w_m2_0 >= 0) {
+            double score = w_m2_0;
+            if (Direction.SOUTHWEST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.WEST);
+                bestMoveDir = Direction.WEST;
+                bestFacing = Direction.SOUTHWEST;
+            }
+        }
+    }
+    private static void moveNW() throws GameActionException {
+        if (!CombatCommon.canMoveNW) return;
+        curMoveLoc = myLoc.add(Direction.NORTHWEST);
+        faceNWNW();
+        faceNNW();
+        faceWNW();
+    }
+
+    private static void faceNWNW() throws GameActionException {
+        if (!CombatCommon.canPerformNW_NW) return;
+        if (CombatTracker.threatNWNW != 0L) return;
+        placeNWNWNW();
+        placeNNWNW();
+        placeWNWNW();
+    }
+
+private static void placeNWNWNW() {
+        if (w_m2_2 >= 0) {
+            double score = w_m2_2;
+            if (Direction.NORTHWEST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.NORTHWEST);
+                bestMoveDir = Direction.NORTHWEST;
+                bestFacing = Direction.NORTHWEST;
+            }
+        }
+    }
+private static void placeNNWNW() {
+        if (w_m1_2 >= 0) {
+            double score = w_m1_2;
+            if (Direction.NORTHWEST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.NORTH);
+                bestMoveDir = Direction.NORTHWEST;
+                bestFacing = Direction.NORTHWEST;
+            }
+        }
+    }
+private static void placeWNWNW() {
+        if (w_m2_1 >= 0) {
+            double score = w_m2_1;
+            if (Direction.NORTHWEST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.WEST);
+                bestMoveDir = Direction.NORTHWEST;
+                bestFacing = Direction.NORTHWEST;
+            }
+        }
+    }
+    private static void faceNNW() throws GameActionException {
+        if (!CombatCommon.canPerformNW_N) return;
+        if (CombatTracker.threatNWN != 0L) return;
+        placeNNNW();
+        placeNENNW();
+        placeNWNNW();
+    }
+
+private static void placeNNNW() {
+        if (w_m1_2 >= 0) {
+            double score = w_m1_2;
+            if (Direction.NORTH != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.NORTH);
+                bestMoveDir = Direction.NORTHWEST;
+                bestFacing = Direction.NORTH;
+            }
+        }
+    }
+private static void placeNENNW() {
+        if (w_0_2 >= 0) {
+            double score = w_0_2;
+            if (Direction.NORTH != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.NORTHEAST);
+                bestMoveDir = Direction.NORTHWEST;
+                bestFacing = Direction.NORTH;
+            }
+        }
+    }
+private static void placeNWNNW() {
+        if (w_m2_2 >= 0) {
+            double score = w_m2_2;
+            if (Direction.NORTH != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.NORTHWEST);
+                bestMoveDir = Direction.NORTHWEST;
+                bestFacing = Direction.NORTH;
+            }
+        }
+    }
+    private static void faceWNW() throws GameActionException {
+        if (!CombatCommon.canPerformNW_W) return;
+        if (CombatTracker.threatNWW != 0L) return;
+        placeWWNW();
+        placeNWWNW();
+        placeSWWNW();
+    }
+
+private static void placeWWNW() {
+        if (w_m2_1 >= 0) {
+            double score = w_m2_1;
+            if (Direction.WEST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.WEST);
+                bestMoveDir = Direction.NORTHWEST;
+                bestFacing = Direction.WEST;
+            }
+        }
+    }
+private static void placeNWWNW() {
+        if (w_m2_2 >= 0) {
+            double score = w_m2_2;
+            if (Direction.WEST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.NORTHWEST);
+                bestMoveDir = Direction.NORTHWEST;
+                bestFacing = Direction.WEST;
+            }
+        }
+    }
+private static void placeSWWNW() {
+        if (w_m2_0 >= 0) {
+            double score = w_m2_0;
+            if (Direction.WEST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.SOUTHWEST);
+                bestMoveDir = Direction.NORTHWEST;
+                bestFacing = Direction.WEST;
+            }
+        }
+    }
+}

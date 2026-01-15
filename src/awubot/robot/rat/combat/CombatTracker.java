@@ -1,4 +1,4 @@
-package awubot.robot.rat;
+package awubot.robot.rat.combat;
 
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
@@ -80,6 +80,80 @@ public class CombatTracker {
     private static long moveThreatNW;
     private static long moveThreatC;
 
+    // Cached (combined & threat) per move/facing.
+    public static long threatNN;
+    public static long threatNNE;
+    public static long threatNE;
+    public static long threatNSE;
+    public static long threatNS;
+    public static long threatNSW;
+    public static long threatNW;
+    public static long threatNNW;
+    public static long threatNEN;
+    public static long threatNENE;
+    public static long threatNEE;
+    public static long threatNESE;
+    public static long threatNES;
+    public static long threatNESW;
+    public static long threatNEW;
+    public static long threatNENW;
+    public static long threatEN;
+    public static long threatENE;
+    public static long threatEE;
+    public static long threatESE;
+    public static long threatES;
+    public static long threatESW;
+    public static long threatEW;
+    public static long threatENW;
+    public static long threatSEN;
+    public static long threatSENE;
+    public static long threatSEE;
+    public static long threatSESE;
+    public static long threatSES;
+    public static long threatSESW;
+    public static long threatSEW;
+    public static long threatSENW;
+    public static long threatSN;
+    public static long threatSNE;
+    public static long threatSE;
+    public static long threatSSE;
+    public static long threatSS;
+    public static long threatSSW;
+    public static long threatSW;
+    public static long threatSNW;
+    public static long threatSWN;
+    public static long threatSWNE;
+    public static long threatSWE;
+    public static long threatSWSE;
+    public static long threatSWS;
+    public static long threatSWSW;
+    public static long threatSWW;
+    public static long threatSWNW;
+    public static long threatWN;
+    public static long threatWNE;
+    public static long threatWE;
+    public static long threatWSE;
+    public static long threatWS;
+    public static long threatWSW;
+    public static long threatWW;
+    public static long threatWNW;
+    public static long threatNWN;
+    public static long threatNWNE;
+    public static long threatNWE;
+    public static long threatNWSE;
+    public static long threatNWS;
+    public static long threatNWSW;
+    public static long threatNWW;
+    public static long threatNWNW;
+    public static long threatCN;
+    public static long threatCNE;
+    public static long threatCE;
+    public static long threatCSE;
+    public static long threatCS;
+    public static long threatCSW;
+    public static long threatCW;
+    public static long threatCNW;
+
     // Hidden-neighbor masks per facing (0xFF for hidden, 0x00 for visible).
 private static final long hiddenN = 0x00ffffffffff0000L;
 private static final long hiddenNE = 0xffffffffff000000L;
@@ -104,7 +178,7 @@ private static final long hiddenNW = 0x0000ffffffffff00L;
     public static void tick() throws GameActionException {
         // Profiler.push();
         loadThreatFromMap();
-        // Profiler.pop("loading threats");
+        // Profiler.pop("CombatTracker: loading threats");
 
         // Profiler.push();
         for (MapInfo info : rc.senseNearbyMapInfos(8)) {
@@ -115,20 +189,25 @@ private static final long hiddenNW = 0x0000ffffffffff00L;
             if (dx < -2 || dx > 2 || dy < -2 || dy > 2) continue;
             registerTrap(dx, dy);
         }
-        // Profiler.pop("registering traps");
+        // Profiler.pop("CombatTracker: registering traps");
         
         // Profiler.push();
         recomputeThreatMasks();
-        // Profiler.pop("recomputing threat masks");
+        // Profiler.pop("CombatTracker: recomputing threat masks");
 
         resetEnemyCounts();
+        
         // Profiler.push();
         for (RobotInfo info : rc.senseNearbyRobots()) {
             if (info.getTeam() == rc.getTeam()) continue;
             if (info.getType() != UnitType.BABY_RAT) continue;
             registerEnemy(info);
         }
-        // Profiler.pop("registering enemies");
+        // Profiler.pop("CombatTracker: registering enemies");
+
+        // Profiler.push();
+        precomputeThreatCombos();
+        // Profiler.pop("CombatTracker: precomputing threat combos");
     }
 
     public static void resetEnemyCounts() {
@@ -152,177 +231,306 @@ private static final long hiddenNW = 0x0000ffffffffff00L;
         highC = 0L;
     }
 
+    private static void precomputeThreatCombos() {
+        {
+            long low = lowN;
+            long high = highN;
+            long threat = moveThreatN;
+            long combined;
+            combined = high + (low & hiddenN);
+            threatNN = combined & threat;
+            combined = high + (low & hiddenNE);
+            threatNNE = combined & threat;
+            combined = high + (low & hiddenE);
+            threatNE = combined & threat;
+            combined = high + (low & hiddenSE);
+            threatNSE = combined & threat;
+            combined = high + (low & hiddenS);
+            threatNS = combined & threat;
+            combined = high + (low & hiddenSW);
+            threatNSW = combined & threat;
+            combined = high + (low & hiddenW);
+            threatNW = combined & threat;
+            combined = high + (low & hiddenNW);
+            threatNNW = combined & threat;
+        }
+        {
+            long low = lowNE;
+            long high = highNE;
+            long threat = moveThreatNE;
+            long combined;
+            combined = high + (low & hiddenN);
+            threatNEN = combined & threat;
+            combined = high + (low & hiddenNE);
+            threatNENE = combined & threat;
+            combined = high + (low & hiddenE);
+            threatNEE = combined & threat;
+            combined = high + (low & hiddenSE);
+            threatNESE = combined & threat;
+            combined = high + (low & hiddenS);
+            threatNES = combined & threat;
+            combined = high + (low & hiddenSW);
+            threatNESW = combined & threat;
+            combined = high + (low & hiddenW);
+            threatNEW = combined & threat;
+            combined = high + (low & hiddenNW);
+            threatNENW = combined & threat;
+        }
+        {
+            long low = lowE;
+            long high = highE;
+            long threat = moveThreatE;
+            long combined;
+            combined = high + (low & hiddenN);
+            threatEN = combined & threat;
+            combined = high + (low & hiddenNE);
+            threatENE = combined & threat;
+            combined = high + (low & hiddenE);
+            threatEE = combined & threat;
+            combined = high + (low & hiddenSE);
+            threatESE = combined & threat;
+            combined = high + (low & hiddenS);
+            threatES = combined & threat;
+            combined = high + (low & hiddenSW);
+            threatESW = combined & threat;
+            combined = high + (low & hiddenW);
+            threatEW = combined & threat;
+            combined = high + (low & hiddenNW);
+            threatENW = combined & threat;
+        }
+        {
+            long low = lowSE;
+            long high = highSE;
+            long threat = moveThreatSE;
+            long combined;
+            combined = high + (low & hiddenN);
+            threatSEN = combined & threat;
+            combined = high + (low & hiddenNE);
+            threatSENE = combined & threat;
+            combined = high + (low & hiddenE);
+            threatSEE = combined & threat;
+            combined = high + (low & hiddenSE);
+            threatSESE = combined & threat;
+            combined = high + (low & hiddenS);
+            threatSES = combined & threat;
+            combined = high + (low & hiddenSW);
+            threatSESW = combined & threat;
+            combined = high + (low & hiddenW);
+            threatSEW = combined & threat;
+            combined = high + (low & hiddenNW);
+            threatSENW = combined & threat;
+        }
+        {
+            long low = lowS;
+            long high = highS;
+            long threat = moveThreatS;
+            long combined;
+            combined = high + (low & hiddenN);
+            threatSN = combined & threat;
+            combined = high + (low & hiddenNE);
+            threatSNE = combined & threat;
+            combined = high + (low & hiddenE);
+            threatSE = combined & threat;
+            combined = high + (low & hiddenSE);
+            threatSSE = combined & threat;
+            combined = high + (low & hiddenS);
+            threatSS = combined & threat;
+            combined = high + (low & hiddenSW);
+            threatSSW = combined & threat;
+            combined = high + (low & hiddenW);
+            threatSW = combined & threat;
+            combined = high + (low & hiddenNW);
+            threatSNW = combined & threat;
+        }
+        {
+            long low = lowSW;
+            long high = highSW;
+            long threat = moveThreatSW;
+            long combined;
+            combined = high + (low & hiddenN);
+            threatSWN = combined & threat;
+            combined = high + (low & hiddenNE);
+            threatSWNE = combined & threat;
+            combined = high + (low & hiddenE);
+            threatSWE = combined & threat;
+            combined = high + (low & hiddenSE);
+            threatSWSE = combined & threat;
+            combined = high + (low & hiddenS);
+            threatSWS = combined & threat;
+            combined = high + (low & hiddenSW);
+            threatSWSW = combined & threat;
+            combined = high + (low & hiddenW);
+            threatSWW = combined & threat;
+            combined = high + (low & hiddenNW);
+            threatSWNW = combined & threat;
+        }
+        {
+            long low = lowW;
+            long high = highW;
+            long threat = moveThreatW;
+            long combined;
+            combined = high + (low & hiddenN);
+            threatWN = combined & threat;
+            combined = high + (low & hiddenNE);
+            threatWNE = combined & threat;
+            combined = high + (low & hiddenE);
+            threatWE = combined & threat;
+            combined = high + (low & hiddenSE);
+            threatWSE = combined & threat;
+            combined = high + (low & hiddenS);
+            threatWS = combined & threat;
+            combined = high + (low & hiddenSW);
+            threatWSW = combined & threat;
+            combined = high + (low & hiddenW);
+            threatWW = combined & threat;
+            combined = high + (low & hiddenNW);
+            threatWNW = combined & threat;
+        }
+        {
+            long low = lowNW;
+            long high = highNW;
+            long threat = moveThreatNW;
+            long combined;
+            combined = high + (low & hiddenN);
+            threatNWN = combined & threat;
+            combined = high + (low & hiddenNE);
+            threatNWNE = combined & threat;
+            combined = high + (low & hiddenE);
+            threatNWE = combined & threat;
+            combined = high + (low & hiddenSE);
+            threatNWSE = combined & threat;
+            combined = high + (low & hiddenS);
+            threatNWS = combined & threat;
+            combined = high + (low & hiddenSW);
+            threatNWSW = combined & threat;
+            combined = high + (low & hiddenW);
+            threatNWW = combined & threat;
+            combined = high + (low & hiddenNW);
+            threatNWNW = combined & threat;
+        }
+        {
+            long low = lowC;
+            long high = highC;
+            long threat = moveThreatC;
+            long combined;
+            combined = high + (low & hiddenN);
+            threatCN = combined & threat;
+            combined = high + (low & hiddenNE);
+            threatCNE = combined & threat;
+            combined = high + (low & hiddenE);
+            threatCE = combined & threat;
+            combined = high + (low & hiddenSE);
+            threatCSE = combined & threat;
+            combined = high + (low & hiddenS);
+            threatCS = combined & threat;
+            combined = high + (low & hiddenSW);
+            threatCSW = combined & threat;
+            combined = high + (low & hiddenW);
+            threatCW = combined & threat;
+            combined = high + (low & hiddenNW);
+            threatCNW = combined & threat;
+        }
+    }
+
     public static void loadThreatFromMap() throws GameActionException {
         int x = myLoc.x;
         int y = myLoc.y;
-        {
-            MapLocation loc = new MapLocation(x  + -2 , y  + 2 );
-            if (CellTracker.isSeen(loc)) {
-                t_m2_2 = CellTracker.isPassable(loc);
-            } else {
-                t_m2_2 = false;
-            }
-        }        {
-            MapLocation loc = new MapLocation(x  + -1 , y  + 2 );
-            if (CellTracker.isSeen(loc)) {
-                t_m1_2 = CellTracker.isPassable(loc);
-            } else {
-                t_m1_2 = false;
-            }
-        }        {
-            MapLocation loc = new MapLocation(x , y  + 2 );
-            if (CellTracker.isSeen(loc)) {
-                t_0_2 = CellTracker.isPassable(loc);
-            } else {
-                t_0_2 = false;
-            }
-        }        {
-            MapLocation loc = new MapLocation(x  + 1 , y  + 2 );
-            if (CellTracker.isSeen(loc)) {
-                t_1_2 = CellTracker.isPassable(loc);
-            } else {
-                t_1_2 = false;
-            }
-        }        {
-            MapLocation loc = new MapLocation(x  + 2 , y  + 2 );
-            if (CellTracker.isSeen(loc)) {
-                t_2_2 = CellTracker.isPassable(loc);
-            } else {
-                t_2_2 = false;
-            }
-        }        {
-            MapLocation loc = new MapLocation(x  + -2 , y  + 1 );
-            if (CellTracker.isSeen(loc)) {
-                t_m2_1 = CellTracker.isPassable(loc);
-            } else {
-                t_m2_1 = false;
-            }
-        }        {
-            MapLocation loc = new MapLocation(x  + -1 , y  + 1 );
-            if (CellTracker.isSeen(loc)) {
-                t_m1_1 = CellTracker.isPassable(loc);
-            } else {
-                t_m1_1 = false;
-            }
-        }        {
-            MapLocation loc = new MapLocation(x , y  + 1 );
-            if (CellTracker.isSeen(loc)) {
-                t_0_1 = CellTracker.isPassable(loc);
-            } else {
-                t_0_1 = false;
-            }
-        }        {
-            MapLocation loc = new MapLocation(x  + 1 , y  + 1 );
-            if (CellTracker.isSeen(loc)) {
-                t_1_1 = CellTracker.isPassable(loc);
-            } else {
-                t_1_1 = false;
-            }
-        }        {
-            MapLocation loc = new MapLocation(x  + 2 , y  + 1 );
-            if (CellTracker.isSeen(loc)) {
-                t_2_1 = CellTracker.isPassable(loc);
-            } else {
-                t_2_1 = false;
-            }
-        }        {
-            MapLocation loc = new MapLocation(x  + -2 , y );
-            if (CellTracker.isSeen(loc)) {
-                t_m2_0 = CellTracker.isPassable(loc);
-            } else {
-                t_m2_0 = false;
-            }
-        }        {
-            MapLocation loc = new MapLocation(x  + -1 , y );
-            if (CellTracker.isSeen(loc)) {
-                t_m1_0 = CellTracker.isPassable(loc);
-            } else {
-                t_m1_0 = false;
-            }
-        }        t_0_0 = true;        {
-            MapLocation loc = new MapLocation(x  + 1 , y );
-            if (CellTracker.isSeen(loc)) {
-                t_1_0 = CellTracker.isPassable(loc);
-            } else {
-                t_1_0 = false;
-            }
-        }        {
-            MapLocation loc = new MapLocation(x  + 2 , y );
-            if (CellTracker.isSeen(loc)) {
-                t_2_0 = CellTracker.isPassable(loc);
-            } else {
-                t_2_0 = false;
-            }
-        }        {
-            MapLocation loc = new MapLocation(x  + -2 , y  + -1 );
-            if (CellTracker.isSeen(loc)) {
-                t_m2_m1 = CellTracker.isPassable(loc);
-            } else {
-                t_m2_m1 = false;
-            }
-        }        {
-            MapLocation loc = new MapLocation(x  + -1 , y  + -1 );
-            if (CellTracker.isSeen(loc)) {
-                t_m1_m1 = CellTracker.isPassable(loc);
-            } else {
-                t_m1_m1 = false;
-            }
-        }        {
-            MapLocation loc = new MapLocation(x , y  + -1 );
-            if (CellTracker.isSeen(loc)) {
-                t_0_m1 = CellTracker.isPassable(loc);
-            } else {
-                t_0_m1 = false;
-            }
-        }        {
-            MapLocation loc = new MapLocation(x  + 1 , y  + -1 );
-            if (CellTracker.isSeen(loc)) {
-                t_1_m1 = CellTracker.isPassable(loc);
-            } else {
-                t_1_m1 = false;
-            }
-        }        {
-            MapLocation loc = new MapLocation(x  + 2 , y  + -1 );
-            if (CellTracker.isSeen(loc)) {
-                t_2_m1 = CellTracker.isPassable(loc);
-            } else {
-                t_2_m1 = false;
-            }
-        }        {
-            MapLocation loc = new MapLocation(x  + -2 , y  + -2 );
-            if (CellTracker.isSeen(loc)) {
-                t_m2_m2 = CellTracker.isPassable(loc);
-            } else {
-                t_m2_m2 = false;
-            }
-        }        {
-            MapLocation loc = new MapLocation(x  + -1 , y  + -2 );
-            if (CellTracker.isSeen(loc)) {
-                t_m1_m2 = CellTracker.isPassable(loc);
-            } else {
-                t_m1_m2 = false;
-            }
-        }        {
-            MapLocation loc = new MapLocation(x , y  + -2 );
-            if (CellTracker.isSeen(loc)) {
-                t_0_m2 = CellTracker.isPassable(loc);
-            } else {
-                t_0_m2 = false;
-            }
-        }        {
-            MapLocation loc = new MapLocation(x  + 1 , y  + -2 );
-            if (CellTracker.isSeen(loc)) {
-                t_1_m2 = CellTracker.isPassable(loc);
-            } else {
-                t_1_m2 = false;
-            }
-        }        {
-            MapLocation loc = new MapLocation(x  + 2 , y  + -2 );
-            if (CellTracker.isSeen(loc)) {
-                t_2_m2 = CellTracker.isPassable(loc);
-            } else {
-                t_2_m2 = false;
-            }
+        if (CellTracker.isSeen(x  + -2, y  + 2)) {
+            t_m2_2 = CellTracker.isPassable(x  + -2, y  + 2);
+        } else {
+            t_m2_2 = false;
+        }        if (CellTracker.isSeen(x  + -1, y  + 2)) {
+            t_m1_2 = CellTracker.isPassable(x  + -1, y  + 2);
+        } else {
+            t_m1_2 = false;
+        }        if (CellTracker.isSeen(x , y  + 2)) {
+            t_0_2 = CellTracker.isPassable(x , y  + 2);
+        } else {
+            t_0_2 = false;
+        }        if (CellTracker.isSeen(x  + 1, y  + 2)) {
+            t_1_2 = CellTracker.isPassable(x  + 1, y  + 2);
+        } else {
+            t_1_2 = false;
+        }        if (CellTracker.isSeen(x  + 2, y  + 2)) {
+            t_2_2 = CellTracker.isPassable(x  + 2, y  + 2);
+        } else {
+            t_2_2 = false;
+        }        if (CellTracker.isSeen(x  + -2, y  + 1)) {
+            t_m2_1 = CellTracker.isPassable(x  + -2, y  + 1);
+        } else {
+            t_m2_1 = false;
+        }        if (CellTracker.isSeen(x  + -1, y  + 1)) {
+            t_m1_1 = CellTracker.isPassable(x  + -1, y  + 1);
+        } else {
+            t_m1_1 = false;
+        }        if (CellTracker.isSeen(x , y  + 1)) {
+            t_0_1 = CellTracker.isPassable(x , y  + 1);
+        } else {
+            t_0_1 = false;
+        }        if (CellTracker.isSeen(x  + 1, y  + 1)) {
+            t_1_1 = CellTracker.isPassable(x  + 1, y  + 1);
+        } else {
+            t_1_1 = false;
+        }        if (CellTracker.isSeen(x  + 2, y  + 1)) {
+            t_2_1 = CellTracker.isPassable(x  + 2, y  + 1);
+        } else {
+            t_2_1 = false;
+        }        if (CellTracker.isSeen(x  + -2, y )) {
+            t_m2_0 = CellTracker.isPassable(x  + -2, y );
+        } else {
+            t_m2_0 = false;
+        }        if (CellTracker.isSeen(x  + -1, y )) {
+            t_m1_0 = CellTracker.isPassable(x  + -1, y );
+        } else {
+            t_m1_0 = false;
+        }        t_0_0 = true;        if (CellTracker.isSeen(x  + 1, y )) {
+            t_1_0 = CellTracker.isPassable(x  + 1, y );
+        } else {
+            t_1_0 = false;
+        }        if (CellTracker.isSeen(x  + 2, y )) {
+            t_2_0 = CellTracker.isPassable(x  + 2, y );
+        } else {
+            t_2_0 = false;
+        }        if (CellTracker.isSeen(x  + -2, y  + -1)) {
+            t_m2_m1 = CellTracker.isPassable(x  + -2, y  + -1);
+        } else {
+            t_m2_m1 = false;
+        }        if (CellTracker.isSeen(x  + -1, y  + -1)) {
+            t_m1_m1 = CellTracker.isPassable(x  + -1, y  + -1);
+        } else {
+            t_m1_m1 = false;
+        }        if (CellTracker.isSeen(x , y  + -1)) {
+            t_0_m1 = CellTracker.isPassable(x , y  + -1);
+        } else {
+            t_0_m1 = false;
+        }        if (CellTracker.isSeen(x  + 1, y  + -1)) {
+            t_1_m1 = CellTracker.isPassable(x  + 1, y  + -1);
+        } else {
+            t_1_m1 = false;
+        }        if (CellTracker.isSeen(x  + 2, y  + -1)) {
+            t_2_m1 = CellTracker.isPassable(x  + 2, y  + -1);
+        } else {
+            t_2_m1 = false;
+        }        if (CellTracker.isSeen(x  + -2, y  + -2)) {
+            t_m2_m2 = CellTracker.isPassable(x  + -2, y  + -2);
+        } else {
+            t_m2_m2 = false;
+        }        if (CellTracker.isSeen(x  + -1, y  + -2)) {
+            t_m1_m2 = CellTracker.isPassable(x  + -1, y  + -2);
+        } else {
+            t_m1_m2 = false;
+        }        if (CellTracker.isSeen(x , y  + -2)) {
+            t_0_m2 = CellTracker.isPassable(x , y  + -2);
+        } else {
+            t_0_m2 = false;
+        }        if (CellTracker.isSeen(x  + 1, y  + -2)) {
+            t_1_m2 = CellTracker.isPassable(x  + 1, y  + -2);
+        } else {
+            t_1_m2 = false;
+        }        if (CellTracker.isSeen(x  + 2, y  + -2)) {
+            t_2_m2 = CellTracker.isPassable(x  + 2, y  + -2);
+        } else {
+            t_2_m2 = false;
         }        for (RobotInfo info : rc.senseNearbyRobots()) {
             if (info.getType() != UnitType.BABY_RAT) continue;
             int dx = info.getLocation().x - x;
@@ -5370,63 +5578,264 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
     }
 
     public static boolean hasThreat(Direction moveDir, Direction facing) {
-        long low = getLowMask(moveDir);
-        long high = getHighMask(moveDir);
-        long hidden = getHiddenMask(facing);
-        long threat = getMoveThreatMask(moveDir);
-        long combined = high + (low & hidden);
-        return (combined & threat) != 0L;
+        switch (moveDir.ordinal()) {
+            case 0 -> {
+                switch (facing.ordinal()) {
+                    case 0 -> { return threatNN != 0L; }
+                    case 1 -> { return threatNNE != 0L; }
+                    case 2 -> { return threatNE != 0L; }
+                    case 3 -> { return threatNSE != 0L; }
+                    case 4 -> { return threatNS != 0L; }
+                    case 5 -> { return threatNSW != 0L; }
+                    case 6 -> { return threatNW != 0L; }
+                    case 7 -> { return threatNNW != 0L; }
+                    default -> { return false; }
+                }
+            }
+            case 1 -> {
+                switch (facing.ordinal()) {
+                    case 0 -> { return threatNEN != 0L; }
+                    case 1 -> { return threatNENE != 0L; }
+                    case 2 -> { return threatNEE != 0L; }
+                    case 3 -> { return threatNESE != 0L; }
+                    case 4 -> { return threatNES != 0L; }
+                    case 5 -> { return threatNESW != 0L; }
+                    case 6 -> { return threatNEW != 0L; }
+                    case 7 -> { return threatNENW != 0L; }
+                    default -> { return false; }
+                }
+            }
+            case 2 -> {
+                switch (facing.ordinal()) {
+                    case 0 -> { return threatEN != 0L; }
+                    case 1 -> { return threatENE != 0L; }
+                    case 2 -> { return threatEE != 0L; }
+                    case 3 -> { return threatESE != 0L; }
+                    case 4 -> { return threatES != 0L; }
+                    case 5 -> { return threatESW != 0L; }
+                    case 6 -> { return threatEW != 0L; }
+                    case 7 -> { return threatENW != 0L; }
+                    default -> { return false; }
+                }
+            }
+            case 3 -> {
+                switch (facing.ordinal()) {
+                    case 0 -> { return threatSEN != 0L; }
+                    case 1 -> { return threatSENE != 0L; }
+                    case 2 -> { return threatSEE != 0L; }
+                    case 3 -> { return threatSESE != 0L; }
+                    case 4 -> { return threatSES != 0L; }
+                    case 5 -> { return threatSESW != 0L; }
+                    case 6 -> { return threatSEW != 0L; }
+                    case 7 -> { return threatSENW != 0L; }
+                    default -> { return false; }
+                }
+            }
+            case 4 -> {
+                switch (facing.ordinal()) {
+                    case 0 -> { return threatSN != 0L; }
+                    case 1 -> { return threatSNE != 0L; }
+                    case 2 -> { return threatSE != 0L; }
+                    case 3 -> { return threatSSE != 0L; }
+                    case 4 -> { return threatSS != 0L; }
+                    case 5 -> { return threatSSW != 0L; }
+                    case 6 -> { return threatSW != 0L; }
+                    case 7 -> { return threatSNW != 0L; }
+                    default -> { return false; }
+                }
+            }
+            case 5 -> {
+                switch (facing.ordinal()) {
+                    case 0 -> { return threatSWN != 0L; }
+                    case 1 -> { return threatSWNE != 0L; }
+                    case 2 -> { return threatSWE != 0L; }
+                    case 3 -> { return threatSWSE != 0L; }
+                    case 4 -> { return threatSWS != 0L; }
+                    case 5 -> { return threatSWSW != 0L; }
+                    case 6 -> { return threatSWW != 0L; }
+                    case 7 -> { return threatSWNW != 0L; }
+                    default -> { return false; }
+                }
+            }
+            case 6 -> {
+                switch (facing.ordinal()) {
+                    case 0 -> { return threatWN != 0L; }
+                    case 1 -> { return threatWNE != 0L; }
+                    case 2 -> { return threatWE != 0L; }
+                    case 3 -> { return threatWSE != 0L; }
+                    case 4 -> { return threatWS != 0L; }
+                    case 5 -> { return threatWSW != 0L; }
+                    case 6 -> { return threatWW != 0L; }
+                    case 7 -> { return threatWNW != 0L; }
+                    default -> { return false; }
+                }
+            }
+            case 7 -> {
+                switch (facing.ordinal()) {
+                    case 0 -> { return threatNWN != 0L; }
+                    case 1 -> { return threatNWNE != 0L; }
+                    case 2 -> { return threatNWE != 0L; }
+                    case 3 -> { return threatNWSE != 0L; }
+                    case 4 -> { return threatNWS != 0L; }
+                    case 5 -> { return threatNWSW != 0L; }
+                    case 6 -> { return threatNWW != 0L; }
+                    case 7 -> { return threatNWNW != 0L; }
+                    default -> { return false; }
+                }
+            }
+            case 8 -> {
+                switch (facing.ordinal()) {
+                    case 0 -> { return threatCN != 0L; }
+                    case 1 -> { return threatCNE != 0L; }
+                    case 2 -> { return threatCE != 0L; }
+                    case 3 -> { return threatCSE != 0L; }
+                    case 4 -> { return threatCS != 0L; }
+                    case 5 -> { return threatCSW != 0L; }
+                    case 6 -> { return threatCW != 0L; }
+                    case 7 -> { return threatCNW != 0L; }
+                    default -> { return false; }
+                }
+            }
+            default -> { return false; }
+        }
     }
 
     public static boolean hasThreat(Direction moveDir, Direction facing, RobotInfo target) {
-        if (target == null) return hasThreat(moveDir, facing);
-        if (target.getTeam() == rc.getTeam()) return hasThreat(moveDir, facing);
-        if (target.getType() != UnitType.BABY_RAT) return hasThreat(moveDir, facing);
+        long base;
+        switch (moveDir.ordinal()) {
+            case 0 -> {
+                switch (facing.ordinal()) {
+                    case 0 -> { base = threatNN; }
+                    case 1 -> { base = threatNNE; }
+                    case 2 -> { base = threatNE; }
+                    case 3 -> { base = threatNSE; }
+                    case 4 -> { base = threatNS; }
+                    case 5 -> { base = threatNSW; }
+                    case 6 -> { base = threatNW; }
+                    case 7 -> { base = threatNNW; }
+                    default -> { base = 0L; }
+                }
+            }
+            case 1 -> {
+                switch (facing.ordinal()) {
+                    case 0 -> { base = threatNEN; }
+                    case 1 -> { base = threatNENE; }
+                    case 2 -> { base = threatNEE; }
+                    case 3 -> { base = threatNESE; }
+                    case 4 -> { base = threatNES; }
+                    case 5 -> { base = threatNESW; }
+                    case 6 -> { base = threatNEW; }
+                    case 7 -> { base = threatNENW; }
+                    default -> { base = 0L; }
+                }
+            }
+            case 2 -> {
+                switch (facing.ordinal()) {
+                    case 0 -> { base = threatEN; }
+                    case 1 -> { base = threatENE; }
+                    case 2 -> { base = threatEE; }
+                    case 3 -> { base = threatESE; }
+                    case 4 -> { base = threatES; }
+                    case 5 -> { base = threatESW; }
+                    case 6 -> { base = threatEW; }
+                    case 7 -> { base = threatENW; }
+                    default -> { base = 0L; }
+                }
+            }
+            case 3 -> {
+                switch (facing.ordinal()) {
+                    case 0 -> { base = threatSEN; }
+                    case 1 -> { base = threatSENE; }
+                    case 2 -> { base = threatSEE; }
+                    case 3 -> { base = threatSESE; }
+                    case 4 -> { base = threatSES; }
+                    case 5 -> { base = threatSESW; }
+                    case 6 -> { base = threatSEW; }
+                    case 7 -> { base = threatSENW; }
+                    default -> { base = 0L; }
+                }
+            }
+            case 4 -> {
+                switch (facing.ordinal()) {
+                    case 0 -> { base = threatSN; }
+                    case 1 -> { base = threatSNE; }
+                    case 2 -> { base = threatSE; }
+                    case 3 -> { base = threatSSE; }
+                    case 4 -> { base = threatSS; }
+                    case 5 -> { base = threatSSW; }
+                    case 6 -> { base = threatSW; }
+                    case 7 -> { base = threatSNW; }
+                    default -> { base = 0L; }
+                }
+            }
+            case 5 -> {
+                switch (facing.ordinal()) {
+                    case 0 -> { base = threatSWN; }
+                    case 1 -> { base = threatSWNE; }
+                    case 2 -> { base = threatSWE; }
+                    case 3 -> { base = threatSWSE; }
+                    case 4 -> { base = threatSWS; }
+                    case 5 -> { base = threatSWSW; }
+                    case 6 -> { base = threatSWW; }
+                    case 7 -> { base = threatSWNW; }
+                    default -> { base = 0L; }
+                }
+            }
+            case 6 -> {
+                switch (facing.ordinal()) {
+                    case 0 -> { base = threatWN; }
+                    case 1 -> { base = threatWNE; }
+                    case 2 -> { base = threatWE; }
+                    case 3 -> { base = threatWSE; }
+                    case 4 -> { base = threatWS; }
+                    case 5 -> { base = threatWSW; }
+                    case 6 -> { base = threatWW; }
+                    case 7 -> { base = threatWNW; }
+                    default -> { base = 0L; }
+                }
+            }
+            case 7 -> {
+                switch (facing.ordinal()) {
+                    case 0 -> { base = threatNWN; }
+                    case 1 -> { base = threatNWNE; }
+                    case 2 -> { base = threatNWE; }
+                    case 3 -> { base = threatNWSE; }
+                    case 4 -> { base = threatNWS; }
+                    case 5 -> { base = threatNWSW; }
+                    case 6 -> { base = threatNWW; }
+                    case 7 -> { base = threatNWNW; }
+                    default -> { base = 0L; }
+                }
+            }
+            case 8 -> {
+                switch (facing.ordinal()) {
+                    case 0 -> { base = threatCN; }
+                    case 1 -> { base = threatCNE; }
+                    case 2 -> { base = threatCE; }
+                    case 3 -> { base = threatCSE; }
+                    case 4 -> { base = threatCS; }
+                    case 5 -> { base = threatCSW; }
+                    case 6 -> { base = threatCW; }
+                    case 7 -> { base = threatCNW; }
+                    default -> { base = 0L; }
+                }
+            }
+            default -> { base = 0L; }
+        }
+        if (target == null) return base != 0L;
+        if (target.getTeam() == rc.getTeam()) return base != 0L;
+        if (target.getType() != UnitType.BABY_RAT) return base != 0L;
         int enemyDx = target.getLocation().x - myLocX;
         int enemyDy = target.getLocation().y - myLocY;
-        if (enemyDx < -2 || enemyDx > 2 || enemyDy < -2 || enemyDy > 2) return hasThreat(moveDir, facing);
-        long low = getLowMask(moveDir);
-        long high = getHighMask(moveDir);
-        long hidden = getHiddenMask(facing);
-        long threat = getMoveThreatMask(moveDir);
+        if (enemyDx < -2 || enemyDx > 2 || enemyDy < -2 || enemyDy > 2) return base != 0L;
         long sub = enemyMaskForMove(enemyDx, enemyDy, target.getDirection(), moveDir);
+        long threat = getMoveThreatMask(moveDir);
         if (target.getHealth() > rc.getHealth()) {
-            high -= sub;
+            base -= (sub & threat);
         } else {
-            low -= sub;
+            base -= (sub & getHiddenMask(facing) & threat);
         }
-        long combined = high + (low & hidden);
-        return (combined & threat) != 0L;
-    }
-
-    private static long getLowMask(Direction moveDir) {
-        return switch (moveDir.ordinal()) {
-            case 0 -> lowN;
-            case 1 -> lowNE;
-            case 2 -> lowE;
-            case 3 -> lowSE;
-            case 4 -> lowS;
-            case 5 -> lowSW;
-            case 6 -> lowW;
-            case 7 -> lowNW;
-            case 8 -> lowC;
-            default -> 0L;
-        };
-    }
-
-    private static long getHighMask(Direction moveDir) {
-        return switch (moveDir.ordinal()) {
-            case 0 -> highN;
-            case 1 -> highNE;
-            case 2 -> highE;
-            case 3 -> highSE;
-            case 4 -> highS;
-            case 5 -> highSW;
-            case 6 -> highW;
-            case 7 -> highNW;
-            case 8 -> highC;
-            default -> 0L;
-        };
+        return base != 0L;
     }
 
     private static long getMoveThreatMask(Direction moveDir) {

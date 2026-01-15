@@ -3,6 +3,7 @@ package awubot.robot.rat;
 import battlecode.common.*;
 import awubot.CellTracker;
 import awubot.robot.Strategy;
+import awubot.robot.rat.combat.CombatStrategy;
 import awubot.comms.GlobalArray;
 import awubot.util.Rng;
 import static awubot.Game.*;

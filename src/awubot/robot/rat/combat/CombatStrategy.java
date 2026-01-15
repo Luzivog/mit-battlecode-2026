@@ -1,0 +1,1037 @@
+package awubot.robot.rat.combat;
+
+import battlecode.common.Clock;
+import battlecode.common.Direction;
+import battlecode.common.GameActionException;
+import battlecode.common.GameConstants;
+import battlecode.common.MapInfo;
+import battlecode.common.MapLocation;
+import battlecode.common.RobotInfo;
+import battlecode.common.TrapType;
+import battlecode.common.UnitType;
+import awubot.CellTracker;
+import awubot.Game;
+import awubot.Pathfinder;
+import awubot.comms.GlobalArray;
+import awubot.comms.Squeaker;
+import awubot.robot.Strategy;
+import awubot.util.Profiler;
+import awubot.util.Util;
+
+import static awubot.robot.rat.BabyRat.*;
+import static awubot.Game.*;
+import static awubot.util.Util.*;
+
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+
+
+
+
+/*
+
+TODO: add code for detecting enemies out of vision
+
+
+i am writing combat micro for this bot, and but i need to efficiently check if certain states are vulnerable to ratnapping. currently, each robot can see in a 90 degree vision cone of radius sqrt(20), so in other words among the 8 neighbnouring cells exactly 3 of them can be seen. if an enemy rat is able to move into a neighbouring cell (one of the 8) that you cant see, then they can "ratnap" or pick you up, which is very bad.
+
+since this depends on the direction you move and also the direction you end up facing, i want to be able to quickly answer queries about which ending states are vulnerable to ratnapping. my plan for this is to precompute, for each of the 9 cells i could be in during the next turn, and for each of the 8 direcitons i might be facing (so 72 cases), i want each enemy in a 5x5 square centered on the player (that we can see) to contribute to the state whether or not a) it can see the player and b) it can go into a spot where it can be ratnapped. 
+
+since i need all this to be done efficiently with minimal bytecode usage (since java bytecode is what is counted for "runtime"), i want some extremely efficient unrolled code
+
+here is the plan:
+first, make a variable for each of the cells in 5x5 square around the player, and then load into them whether or not they are passable
+then, for each of the 9 possible movement directions, i will track the # of enemies that can move into each of the 8 neighbouring cells compressed inside a single long long. the ith byte will correspond to the ith direction, by doing unsigned addition using these longs, it effectively results in 8 counters for each direction.
+to use this, i want a function such that given the displacement of an enemy and the direction they are facing from the player, for each of the 9 movement cells that they can see (90 degree vision cone), increment the corresponding long by a "bitmask" of which has a 1 in a byte if they can move to a cell that can ratnap the player given where they moved and where they are facing after the move
+the calculation of the bitmask for enemy location, enemy facing -> bitmask for location should be given as a function, since when judginug safety of moves during combat micro the risk of the targetted enemy needs to be subtracted. 
+since we need efficiency, everything here should be unrolled - each variable is its own, and the bitmasks should all be precomputed and put in two nested switch statements based on enemy displacement and enemy facing direction. 
+to keep code simple and readable, we will use jinja to write macros that will generate the unrolled code for us. this will be done in CombatTracker.java.jinja2, and CombatStrategy will use this class.
+before making any changes, outline what you will write, and i will approve and suggest changes if needed to make sure we are on the same page
+
+
+
+*/
+
+public class CombatStrategy extends Strategy {
+    private static final double INF = 1e9;
+    private static final int RAT_TRAP_COST = 30;
+    private static final int RAT_TRAP_CAP = 25;
+
+    public CombatStrategy() {
+    }
+
+    /*
+
+      the returned score should be a multiplier for any "damage" dealt to it
+
+    */
+
+
+
+    // in cheese units
+    public double trapCost() {
+        return RAT_TRAP_COST; // tf i cant see how many rat traps i have placed?
+    }
+
+    public static double[] basicDanger; // [movement direction]
+
+    private void precomp() throws GameActionException {
+        CombatCommon.precomp();
+        CombatTracker.tick();
+
+        StringBuilder sb = new StringBuilder();
+        // for (Direction moveDir : directions) {
+        //     sb.append(moveDir);
+        //     sb.append(": ");
+        //     for (Direction facing : directions) {
+        //         // boolean q = CombatTracker.hasThreat(moveDir, facing);
+        //         boolean q = false;
+        //         sb.append(q ? 1 : 0);
+        //     }
+        //     sb.append('\n');
+        // }
+        // // CombatTracker.debug();        
+        // for (int y = 4; y >= 0; y--) {
+            // for (int x = 0; x < 5; x++) {
+                // sb.append(String.format("%.1f ", weight[x][y]));
+            // }
+            // sb.append('\n');
+        // }
+        indicate(sb.toString());
+
+        // Profiler.push();
+        computeDanger();
+        // Profiler.pop("compute danger");
+    }
+
+    // TODO: bring this back in the future
+    public static void computeDanger() throws GameActionException {
+        // Profiler.begin();
+        basicDanger = new double[9];
+        // for (RobotInfo info : rc.senseNearbyRobots(9)) { // shrink radius to optimise
+        //     if (info.getTeam() == rc.getTeam()) continue;
+        //     for (Direction moveDir : allDirections) {
+        //         basicDanger[moveDir.ordinal()] += computeDangerFrom(info, moveDir);
+        //     }
+        // }
+        // Profiler.end("compute danger");
+    }
+
+    // idek why this is returning. check if can move anyways after to squeeze out some juice
+    public boolean runTick() throws GameActionException {
+        if (rc.isBeingCarried()) return false;
+        precomp();
+
+        if (rc.getCarrying() != null) {
+            return tryThrow();
+        }
+
+        Profiler.push();
+        boolean tryRatNapRes = tryRatNap();
+        Profiler.pop("try ratnap", 1000);
+        if (tryRatNapRes) return true;
+
+        Profiler.push();
+        boolean tryTrapRes = tryTrap();
+        Profiler.pop("try trap", 1000);
+        if (tryTrapRes) return true;
+
+        Profiler.push();
+        boolean tryAttackRes = tryAttack();
+        Profiler.pop("try attack", 1000);
+        if (tryAttackRes) return true;
+
+        Profiler.push();
+        boolean tryFightRes = tryFight();
+        Profiler.pop("try fight", 1000);
+        if (tryFightRes) return true;
+        // TODO: deal with cats (maybe naman's job?)
+        // TODO: after moving, quickly run through possible attacks in case you see a new enemy
+        return false;
+    }
+
+    /*
+    
+    move towards enemy (no strafing)
+
+    
+    */
+    public boolean tryFight() throws GameActionException {
+        // Profiler.push();
+
+        // TODO: replace with multisource bfs from enemies
+        // actually maybe not
+        Direction md = null, fd = null;
+        double best = INF;
+        RobotInfo target = getNearestTarget();
+        if (target == null) return false;
+        for (Direction moveDir : allDirections) {
+            if (moveDir != Direction.CENTER && !rc.isMovementReady()) continue;
+            if (!CombatCommon.canMove(moveDir)) continue;
+            MapLocation newLoc = myLoc.add(moveDir);
+            for (Direction facing : directions) { // maybe shrink search space if TLE
+                if (rc.canTurn()) {
+                    if (moveDir != facing) continue; // ban strafing
+                } else {
+                    if (facing != myDir || (!canStrafe() && moveDir != myDir)) continue; // forced to strafe (no turning)
+                }
+                double dangerLevel = getDangerFor(moveDir, facing, target);
+                boolean facingTarget = canSense(newLoc, target.getLocation(), facing);
+                if (!facingTarget) {
+                    // penalize not facing target
+                    dangerLevel *= 1.2;
+                }
+                if (facing != myDir && facingTarget) {
+                    // prefer turning 
+                    dangerLevel *= 0.9;
+                }
+                if (dangerLevel < best) {
+                    best = dangerLevel;
+                    md = moveDir;
+                    fd = facing;
+                }
+            }
+        }
+        // Profiler.pop("try fight");
+        if (md == null) return false;
+        performMoves(md, fd);
+        return true;
+    }
+
+    // return false if didnt throw -- some other process can figure out how to move
+    // TODO: maybe weight targets based on how close they are to friendly rats? might be too effort
+    public boolean tryThrow() throws GameActionException {
+        // Profiler.push();
+
+        Direction md = null, td = null;
+        double best = -1;
+        for (Direction moveDir : allDirections) {
+            if (moveDir != Direction.CENTER && !rc.canMove(moveDir)) continue;
+            MapLocation newLoc = myLoc.add(moveDir);
+            for (Direction throwDir : directions) {
+                if (!canPerformMoves(moveDir, throwDir)) continue;
+                MapLocation throwTarget = newLoc.add(throwDir);
+                if (!rc.canSenseLocation(throwTarget)) continue; // make sure u know whats happening there
+                if (!rc.senseMapInfo(throwTarget).isPassable()) continue; // need empty
+                if (throwTarget != myLoc && rc.senseRobotAtLocation(throwTarget) != null) continue; // need empty
+                double damage = -getDangerFor(moveDir, throwDir) / 5;
+                // for now, allow the throw path to go through friendly rats
+                for (int rem = 7; rem >= 0; rem--) {
+                    throwTarget = throwTarget.add(throwDir);
+                    if (!rc.onTheMap(throwTarget)) {
+                        damage += rem;
+                        break;
+                    }
+                    if (rc.canSenseLocation(throwTarget)) {
+                        if (!rc.senseMapInfo(throwTarget).isPassable()) {
+                            damage += rem;
+                            break;
+                        }
+                    } else {
+                        break;
+                    }
+                }
+                if (damage <= 0.1) continue;
+                // account for cell danger levels
+                damage -= basicDanger[moveDir.ordinal()] / 7;
+                if (damage > best) {
+                    best = damage;
+                    md = moveDir;
+                    td = throwDir;
+                }
+            }
+        }
+        // Profiler.pop("try throw");
+        if (best < 0) return false;
+        assert(performMoves(md, td));
+        rc.throwRat();
+        println("tried throwing rat");
+        return true;
+    }
+
+    /*
+    
+    move 
+    move turn
+    turn move
+    strafe 
+    strafe turn
+    
+    */
+
+    static boolean canPerformMoves(Direction moveDir, Direction facing) throws GameActionException {
+        return CombatCommon.canPerformMoves(moveDir, facing);
+    }
+
+    static boolean performMoves(Direction moveDir, Direction facing) throws GameActionException {
+        if (moveDir != Direction.CENTER && !CombatCommon.canMove(moveDir)) return false;
+        if (moveDir == Direction.CENTER) {
+            if (facing != myDir) turn(facing);
+            return true;
+        }
+        if (moveDir == myDir && facing == myDir) {
+            rawMove();
+            return true; // move
+        }
+        if (moveDir == myDir) { // move turn
+            rawMove();
+            if (facing != myDir) turn(facing);
+            return true;
+        }
+        if (moveDir == facing && rc.canTurn()) { // turn move
+            turn(moveDir);
+            rawMove();
+            return true;
+        }
+        if (canStrafe()) {
+            if (facing == myDir) { // strafe
+                rawMove(moveDir);
+                return true;
+            }
+            // strafe turn
+            rawMove(moveDir);
+            turn(facing);
+            return true;
+        }
+        return false;
+    }
+
+    public static double getDangerFor(Direction moveDir, Direction facing, RobotInfo target) throws GameActionException {
+        if (CombatTracker.hasThreat(moveDir, facing, target)) return 100;
+        return basicDanger[moveDir.ordinal()];
+    }
+
+    public static double getDangerFor(Direction moveDir, Direction facing) throws GameActionException {
+        if (CombatTracker.hasThreat(moveDir, facing)) return 100;
+        return basicDanger[moveDir.ordinal()];
+    }
+
+    public static double computeDangerFrom(RobotInfo info, Direction moveDir) {
+        MapLocation to = myLoc.add(moveDir);
+        if (!rc.onTheMap(to)) return 0;
+        if (info.getTeam() == rc.getTeam()) return 0; // ignore teammates
+        if (info.getType() == UnitType.CAT) {
+            // TODO: implement vision check
+            int dist = chebyshevDistance(to, info.getLocation()); 
+            if (dist >= 4) return 0;
+            else return 5;
+        }
+        MapLocation enemyLoc = info.getLocation();
+        int dist = chebyshevDistance(to, info.getLocation());
+        if (dist > 3) return 0; // ignore
+        double base = 1;
+        if (info.getType() == UnitType.RAT_KING) {
+            base *= 0.5;
+            if (dist > 2) return 0; // is this correct?
+            else return base;
+        } else {
+            if (!canSense(enemyLoc, to, info.getDirection())) { // cant even see u
+                return 0;
+            }
+            if (info.getHealth() > rc.getHealth() && dist <= 1) {
+                return 3; // high danger
+            }
+            if (rc.getHealth() > 1.5 * info.getHealth()) {
+                base *= 0.7;
+                // u can beat them
+            }
+            base *= (1.0 / Math.sqrt(dist + 1)); // incredible formula
+            return base;
+        }
+    }
+
+    // return true if successfully ratnapped someone
+    // TODO: do danger levels and verify you dont die on the next turn
+    public boolean tryRatNap() throws GameActionException {
+        if (!rc.isActionReady()) return false;
+        // Profiler.push();
+        RobotInfo target = null;
+        Direction bestMove = null, bestFacing = null;
+        double bestScore = -1;
+        for (RobotInfo info : rc.senseNearbyRobots()) {
+            if (info.getTeam() == team) continue;
+            if (chebyshevDistance(myLoc, info.getLocation()) > 2) continue;
+            if (info.getHealth() <= GameConstants.RAT_BITE_DAMAGE) continue; // just kill
+            if (info.getType() != UnitType.BABY_RAT) continue;
+            MapLocation t = info.getLocation();
+            // double weight = scoreEnemy(info);
+            double weight = 1;
+            Direction md = null;
+
+            double best = -1;
+            for (Direction moveDir : allDirections) {
+                MapLocation newLoc = myLoc.add(moveDir);
+                if (newLoc.distanceSquaredTo(t) > 2) continue;
+                if (!CombatCommon.canMove(moveDir)) continue;
+                if (canSense(t, newLoc, info.getDirection()) && info.getHealth() >= rc.getHealth()) continue; // can i ratnap this guy
+                for (Direction facing : directions) {
+                    if (!canSense(newLoc, t, facing)) continue;
+                    if (!canPerformMoves(moveDir, facing)) continue;
+                    double score = weight;
+                    if (moveDir == Direction.CENTER) {
+                        score *= 3; // prefer standing still
+                    }
+                    score -= getDangerFor(moveDir, facing, info) / 5;
+                    // println("danger: " + getDangerFor(moveDir, facing, info));
+                    if (score <= 0) continue;
+                    if (facing != myDir) {
+                        score *= 1.2; // prefer turning
+                    }
+                    if (score > best) {
+                        best = score;
+                        md = moveDir;
+                        bestFacing = facing;
+                    }
+                }
+            }
+            if (best > bestScore) {
+                bestScore = best;
+                target = info;
+                bestMove = md;
+            }
+        }
+        // Profiler.pop("try ratnap");
+        if (bestScore < 0) return false;
+        assert(performMoves(bestMove, bestFacing));
+        if (rc.canCarryRat(target.getLocation())) {
+            rc.carryRat(target.getLocation());
+        } else {
+            rc.attack(target.getLocation());
+            println("was just shoved against a wall");
+        }
+        println("!!!!!!!!!!!!!!!!!!!!!!! napped rat");
+        return true;
+    }
+
+    public boolean tryTrap() throws GameActionException {
+        return TryTrap.run();
+    }
+
+    /*
+
+      attacking another solo rat is safe as if:
+      - you end the turn with at least as much health (no ratnap)
+      - they can't see you
+      if you are in a horde, it should be safe to run at them
+
+    */
+    public static boolean shouldFight(RobotInfo enemy) {
+        if (enemy.getType() == UnitType.CAT) return false; // TODO
+        if (enemy.getHealth() <= rc.getHealth()) return true;
+        if (!canSense(enemy.getLocation(), myLoc, enemy.getDirection())) return true;
+        if (GlobalArray.nearestRatKing.distanceSquaredTo(myLoc) <= 36) return true;
+        int allies = Squeaker.squeaksSinceLastTurn, enemies = 0;
+        for (RobotInfo info : rc.senseNearbyRobots()) {
+            if (info.getType() == UnitType.CAT) continue;
+            if (info.getTeam() != rc.getTeam()) {
+                enemies++;
+                continue;
+            }
+            if (info.getLocation().distanceSquaredTo(myLoc) > 2) allies++;
+        }
+        if (allies > enemies) return true;
+        return false;
+    }
+
+
+    public boolean tryAttack() throws GameActionException {
+        if (!rc.isActionReady()) return false;
+        // Profiler.push();
+        RobotInfo target = null;
+        Direction bestMove = null, bestFacing = null;
+        double bestScore = -1;
+        for (RobotInfo info : rc.senseNearbyRobots()) {
+            if (info.getTeam() == team) continue;
+            if (!shouldFight(info)) continue;
+            if (chebyshevDistance(myLoc, info.getLocation()) > 2) continue;
+
+            MapLocation t = info.getLocation();
+            // double weight = scoreEnemy(info);
+            double weight = 1;
+            if (info.getHealth() <= GameConstants.RAT_BITE_DAMAGE) {
+                weight += 2.0; // prefer one tapping
+            }
+
+            for (Direction moveDir : allDirections) {
+                if (!CombatCommon.canMove(moveDir)) continue;
+                MapLocation newLoc = myLoc.add(moveDir);
+                if (newLoc.distanceSquaredTo(t) > 2) continue;
+switch (newLoc.directionTo(t).ordinal()) {
+    case 0 -> {
+                        {
+                    Direction facing = Direction.NORTH;
+                    if (canSense(newLoc, t, facing) && canPerformMoves(moveDir, facing)) {
+                        double score = weight;
+                        score -= getDangerFor(moveDir, facing, info) / 5;
+                        if (score > 0) {
+                            if (facing != myDir) {
+                                score *= 1.1; // prefer turning
+                            }
+                            if (score > bestScore) {
+                                bestScore = score;
+                                target = info;
+                                bestMove = moveDir;
+                                bestFacing = facing;
+                            }
+                        } else {
+                            println("poop score!");
+                        }
+                    }
+                }
+
+                        {
+                    Direction facing = Direction.NORTHEAST;
+                    if (canSense(newLoc, t, facing) && canPerformMoves(moveDir, facing)) {
+                        double score = weight;
+                        score -= getDangerFor(moveDir, facing, info) / 5;
+                        if (score > 0) {
+                            if (facing != myDir) {
+                                score *= 1.1; // prefer turning
+                            }
+                            if (score > bestScore) {
+                                bestScore = score;
+                                target = info;
+                                bestMove = moveDir;
+                                bestFacing = facing;
+                            }
+                        } else {
+                            println("poop score!");
+                        }
+                    }
+                }
+
+                        {
+                    Direction facing = Direction.NORTHWEST;
+                    if (canSense(newLoc, t, facing) && canPerformMoves(moveDir, facing)) {
+                        double score = weight;
+                        score -= getDangerFor(moveDir, facing, info) / 5;
+                        if (score > 0) {
+                            if (facing != myDir) {
+                                score *= 1.1; // prefer turning
+                            }
+                            if (score > bestScore) {
+                                bestScore = score;
+                                target = info;
+                                bestMove = moveDir;
+                                bestFacing = facing;
+                            }
+                        } else {
+                            println("poop score!");
+                        }
+                    }
+                }
+
+    }
+    case 1 -> {
+                        {
+                    Direction facing = Direction.NORTHEAST;
+                    if (canSense(newLoc, t, facing) && canPerformMoves(moveDir, facing)) {
+                        double score = weight;
+                        score -= getDangerFor(moveDir, facing, info) / 5;
+                        if (score > 0) {
+                            if (facing != myDir) {
+                                score *= 1.1; // prefer turning
+                            }
+                            if (score > bestScore) {
+                                bestScore = score;
+                                target = info;
+                                bestMove = moveDir;
+                                bestFacing = facing;
+                            }
+                        } else {
+                            println("poop score!");
+                        }
+                    }
+                }
+
+                        {
+                    Direction facing = Direction.NORTH;
+                    if (canSense(newLoc, t, facing) && canPerformMoves(moveDir, facing)) {
+                        double score = weight;
+                        score -= getDangerFor(moveDir, facing, info) / 5;
+                        if (score > 0) {
+                            if (facing != myDir) {
+                                score *= 1.1; // prefer turning
+                            }
+                            if (score > bestScore) {
+                                bestScore = score;
+                                target = info;
+                                bestMove = moveDir;
+                                bestFacing = facing;
+                            }
+                        } else {
+                            println("poop score!");
+                        }
+                    }
+                }
+
+                        {
+                    Direction facing = Direction.EAST;
+                    if (canSense(newLoc, t, facing) && canPerformMoves(moveDir, facing)) {
+                        double score = weight;
+                        score -= getDangerFor(moveDir, facing, info) / 5;
+                        if (score > 0) {
+                            if (facing != myDir) {
+                                score *= 1.1; // prefer turning
+                            }
+                            if (score > bestScore) {
+                                bestScore = score;
+                                target = info;
+                                bestMove = moveDir;
+                                bestFacing = facing;
+                            }
+                        } else {
+                            println("poop score!");
+                        }
+                    }
+                }
+
+    }
+    case 2 -> {
+                        {
+                    Direction facing = Direction.EAST;
+                    if (canSense(newLoc, t, facing) && canPerformMoves(moveDir, facing)) {
+                        double score = weight;
+                        score -= getDangerFor(moveDir, facing, info) / 5;
+                        if (score > 0) {
+                            if (facing != myDir) {
+                                score *= 1.1; // prefer turning
+                            }
+                            if (score > bestScore) {
+                                bestScore = score;
+                                target = info;
+                                bestMove = moveDir;
+                                bestFacing = facing;
+                            }
+                        } else {
+                            println("poop score!");
+                        }
+                    }
+                }
+
+                        {
+                    Direction facing = Direction.NORTHEAST;
+                    if (canSense(newLoc, t, facing) && canPerformMoves(moveDir, facing)) {
+                        double score = weight;
+                        score -= getDangerFor(moveDir, facing, info) / 5;
+                        if (score > 0) {
+                            if (facing != myDir) {
+                                score *= 1.1; // prefer turning
+                            }
+                            if (score > bestScore) {
+                                bestScore = score;
+                                target = info;
+                                bestMove = moveDir;
+                                bestFacing = facing;
+                            }
+                        } else {
+                            println("poop score!");
+                        }
+                    }
+                }
+
+                        {
+                    Direction facing = Direction.SOUTHEAST;
+                    if (canSense(newLoc, t, facing) && canPerformMoves(moveDir, facing)) {
+                        double score = weight;
+                        score -= getDangerFor(moveDir, facing, info) / 5;
+                        if (score > 0) {
+                            if (facing != myDir) {
+                                score *= 1.1; // prefer turning
+                            }
+                            if (score > bestScore) {
+                                bestScore = score;
+                                target = info;
+                                bestMove = moveDir;
+                                bestFacing = facing;
+                            }
+                        } else {
+                            println("poop score!");
+                        }
+                    }
+                }
+
+    }
+    case 3 -> {
+                        {
+                    Direction facing = Direction.SOUTHEAST;
+                    if (canSense(newLoc, t, facing) && canPerformMoves(moveDir, facing)) {
+                        double score = weight;
+                        score -= getDangerFor(moveDir, facing, info) / 5;
+                        if (score > 0) {
+                            if (facing != myDir) {
+                                score *= 1.1; // prefer turning
+                            }
+                            if (score > bestScore) {
+                                bestScore = score;
+                                target = info;
+                                bestMove = moveDir;
+                                bestFacing = facing;
+                            }
+                        } else {
+                            println("poop score!");
+                        }
+                    }
+                }
+
+                        {
+                    Direction facing = Direction.SOUTH;
+                    if (canSense(newLoc, t, facing) && canPerformMoves(moveDir, facing)) {
+                        double score = weight;
+                        score -= getDangerFor(moveDir, facing, info) / 5;
+                        if (score > 0) {
+                            if (facing != myDir) {
+                                score *= 1.1; // prefer turning
+                            }
+                            if (score > bestScore) {
+                                bestScore = score;
+                                target = info;
+                                bestMove = moveDir;
+                                bestFacing = facing;
+                            }
+                        } else {
+                            println("poop score!");
+                        }
+                    }
+                }
+
+                        {
+                    Direction facing = Direction.EAST;
+                    if (canSense(newLoc, t, facing) && canPerformMoves(moveDir, facing)) {
+                        double score = weight;
+                        score -= getDangerFor(moveDir, facing, info) / 5;
+                        if (score > 0) {
+                            if (facing != myDir) {
+                                score *= 1.1; // prefer turning
+                            }
+                            if (score > bestScore) {
+                                bestScore = score;
+                                target = info;
+                                bestMove = moveDir;
+                                bestFacing = facing;
+                            }
+                        } else {
+                            println("poop score!");
+                        }
+                    }
+                }
+
+    }
+    case 4 -> {
+                        {
+                    Direction facing = Direction.SOUTH;
+                    if (canSense(newLoc, t, facing) && canPerformMoves(moveDir, facing)) {
+                        double score = weight;
+                        score -= getDangerFor(moveDir, facing, info) / 5;
+                        if (score > 0) {
+                            if (facing != myDir) {
+                                score *= 1.1; // prefer turning
+                            }
+                            if (score > bestScore) {
+                                bestScore = score;
+                                target = info;
+                                bestMove = moveDir;
+                                bestFacing = facing;
+                            }
+                        } else {
+                            println("poop score!");
+                        }
+                    }
+                }
+
+                        {
+                    Direction facing = Direction.SOUTHEAST;
+                    if (canSense(newLoc, t, facing) && canPerformMoves(moveDir, facing)) {
+                        double score = weight;
+                        score -= getDangerFor(moveDir, facing, info) / 5;
+                        if (score > 0) {
+                            if (facing != myDir) {
+                                score *= 1.1; // prefer turning
+                            }
+                            if (score > bestScore) {
+                                bestScore = score;
+                                target = info;
+                                bestMove = moveDir;
+                                bestFacing = facing;
+                            }
+                        } else {
+                            println("poop score!");
+                        }
+                    }
+                }
+
+                        {
+                    Direction facing = Direction.SOUTHWEST;
+                    if (canSense(newLoc, t, facing) && canPerformMoves(moveDir, facing)) {
+                        double score = weight;
+                        score -= getDangerFor(moveDir, facing, info) / 5;
+                        if (score > 0) {
+                            if (facing != myDir) {
+                                score *= 1.1; // prefer turning
+                            }
+                            if (score > bestScore) {
+                                bestScore = score;
+                                target = info;
+                                bestMove = moveDir;
+                                bestFacing = facing;
+                            }
+                        } else {
+                            println("poop score!");
+                        }
+                    }
+                }
+
+    }
+    case 5 -> {
+                        {
+                    Direction facing = Direction.SOUTHWEST;
+                    if (canSense(newLoc, t, facing) && canPerformMoves(moveDir, facing)) {
+                        double score = weight;
+                        score -= getDangerFor(moveDir, facing, info) / 5;
+                        if (score > 0) {
+                            if (facing != myDir) {
+                                score *= 1.1; // prefer turning
+                            }
+                            if (score > bestScore) {
+                                bestScore = score;
+                                target = info;
+                                bestMove = moveDir;
+                                bestFacing = facing;
+                            }
+                        } else {
+                            println("poop score!");
+                        }
+                    }
+                }
+
+                        {
+                    Direction facing = Direction.SOUTH;
+                    if (canSense(newLoc, t, facing) && canPerformMoves(moveDir, facing)) {
+                        double score = weight;
+                        score -= getDangerFor(moveDir, facing, info) / 5;
+                        if (score > 0) {
+                            if (facing != myDir) {
+                                score *= 1.1; // prefer turning
+                            }
+                            if (score > bestScore) {
+                                bestScore = score;
+                                target = info;
+                                bestMove = moveDir;
+                                bestFacing = facing;
+                            }
+                        } else {
+                            println("poop score!");
+                        }
+                    }
+                }
+
+                        {
+                    Direction facing = Direction.WEST;
+                    if (canSense(newLoc, t, facing) && canPerformMoves(moveDir, facing)) {
+                        double score = weight;
+                        score -= getDangerFor(moveDir, facing, info) / 5;
+                        if (score > 0) {
+                            if (facing != myDir) {
+                                score *= 1.1; // prefer turning
+                            }
+                            if (score > bestScore) {
+                                bestScore = score;
+                                target = info;
+                                bestMove = moveDir;
+                                bestFacing = facing;
+                            }
+                        } else {
+                            println("poop score!");
+                        }
+                    }
+                }
+
+    }
+    case 6 -> {
+                        {
+                    Direction facing = Direction.WEST;
+                    if (canSense(newLoc, t, facing) && canPerformMoves(moveDir, facing)) {
+                        double score = weight;
+                        score -= getDangerFor(moveDir, facing, info) / 5;
+                        if (score > 0) {
+                            if (facing != myDir) {
+                                score *= 1.1; // prefer turning
+                            }
+                            if (score > bestScore) {
+                                bestScore = score;
+                                target = info;
+                                bestMove = moveDir;
+                                bestFacing = facing;
+                            }
+                        } else {
+                            println("poop score!");
+                        }
+                    }
+                }
+
+                        {
+                    Direction facing = Direction.NORTHWEST;
+                    if (canSense(newLoc, t, facing) && canPerformMoves(moveDir, facing)) {
+                        double score = weight;
+                        score -= getDangerFor(moveDir, facing, info) / 5;
+                        if (score > 0) {
+                            if (facing != myDir) {
+                                score *= 1.1; // prefer turning
+                            }
+                            if (score > bestScore) {
+                                bestScore = score;
+                                target = info;
+                                bestMove = moveDir;
+                                bestFacing = facing;
+                            }
+                        } else {
+                            println("poop score!");
+                        }
+                    }
+                }
+
+                        {
+                    Direction facing = Direction.SOUTHWEST;
+                    if (canSense(newLoc, t, facing) && canPerformMoves(moveDir, facing)) {
+                        double score = weight;
+                        score -= getDangerFor(moveDir, facing, info) / 5;
+                        if (score > 0) {
+                            if (facing != myDir) {
+                                score *= 1.1; // prefer turning
+                            }
+                            if (score > bestScore) {
+                                bestScore = score;
+                                target = info;
+                                bestMove = moveDir;
+                                bestFacing = facing;
+                            }
+                        } else {
+                            println("poop score!");
+                        }
+                    }
+                }
+
+    }
+    case 7 -> {
+                        {
+                    Direction facing = Direction.NORTHWEST;
+                    if (canSense(newLoc, t, facing) && canPerformMoves(moveDir, facing)) {
+                        double score = weight;
+                        score -= getDangerFor(moveDir, facing, info) / 5;
+                        if (score > 0) {
+                            if (facing != myDir) {
+                                score *= 1.1; // prefer turning
+                            }
+                            if (score > bestScore) {
+                                bestScore = score;
+                                target = info;
+                                bestMove = moveDir;
+                                bestFacing = facing;
+                            }
+                        } else {
+                            println("poop score!");
+                        }
+                    }
+                }
+
+                        {
+                    Direction facing = Direction.NORTH;
+                    if (canSense(newLoc, t, facing) && canPerformMoves(moveDir, facing)) {
+                        double score = weight;
+                        score -= getDangerFor(moveDir, facing, info) / 5;
+                        if (score > 0) {
+                            if (facing != myDir) {
+                                score *= 1.1; // prefer turning
+                            }
+                            if (score > bestScore) {
+                                bestScore = score;
+                                target = info;
+                                bestMove = moveDir;
+                                bestFacing = facing;
+                            }
+                        } else {
+                            println("poop score!");
+                        }
+                    }
+                }
+
+                        {
+                    Direction facing = Direction.WEST;
+                    if (canSense(newLoc, t, facing) && canPerformMoves(moveDir, facing)) {
+                        double score = weight;
+                        score -= getDangerFor(moveDir, facing, info) / 5;
+                        if (score > 0) {
+                            if (facing != myDir) {
+                                score *= 1.1; // prefer turning
+                            }
+                            if (score > bestScore) {
+                                bestScore = score;
+                                target = info;
+                                bestMove = moveDir;
+                                bestFacing = facing;
+                            }
+                        } else {
+                            println("poop score!");
+                        }
+                    }
+                }
+
+    }
+    default -> { }
+}            }
+        }
+        // Profiler.pop("try attack");
+        if (bestScore < 0) return false;
+        assert(performMoves(bestMove, bestFacing));
+        rc.attack(target.getLocation());
+        println("!!!!!!!!!!!!!!!!!!!!!!! attacked rat");
+        return true;
+    }
+
+    // currently given arbitrary weights
+    public double scoreEnemy(RobotInfo info) {
+        if (info.getType() == UnitType.RAT_KING) return 5;
+        // one tap this guy
+        if (info.getHealth() - GameConstants.RAT_BITE_DAMAGE <= 0) {
+            return 3.0;
+        }
+        if (info.getHealth() <= 30) {
+            // try to get rid of low hp rats
+            return 1.3;
+        }
+        if (info.getHealth() >= rc.getHealth()) {
+            // try to bring enemy rats into napping distance
+            return 1.2;
+        }
+        return 1;
+    }
+
+    public static int getCheeseNeeded(int damageBuff) {
+        if (damageBuff == 0) return 0;
+        int base = damageBuff - 1;
+        return base * base + 1;
+    }
+
+    public static int canEnemyReach(RobotInfo info, Direction moveDir) throws GameActionException {
+        MapLocation to = myLoc.add(moveDir);
+        int dist = chebyshevDistance(to, info.getLocation());
+        if (dist > 2) return 0;
+        if (!isCellMaybePassable(to)) return 0;;
+        return 1;
+    }
+
+    public static RobotInfo getNearestTarget() {
+        RobotInfo best = null;
+        int bestDist = Integer.MAX_VALUE;
+        for (RobotInfo info : rc.senseNearbyRobots()) {
+            if (info.getTeam() == rc.getTeam()) continue;
+            if (!shouldFight(info)) continue;
+            int dist = chebyshevDistance(myLoc, info.getLocation());
+            if (dist < bestDist) {
+                bestDist = dist;
+                best = info;
+            }
+        }
+        return best;
+    }   
+}

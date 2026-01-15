@@ -43,6 +43,15 @@ public class Profiler {
         println(obj.toString() + ": " + res + (res >= 17500 ? " EXCEEDED" : ""));
     }
 
+    public static void pop(Object obj, int lwb) {
+        int res = Clock.getBytecodeNum() - stk.remove(stk.size() - 1);
+        if (res < 0) {
+            if (isRatKing) res += 20000;
+            else res += 17500;
+        }
+        if (res >= lwb) println(obj.toString() + ": " + res + (res >= 17500 ? " EXCEEDED" : ""));
+    }
+
     public static void pause() {
         if(!running) return;
         int res = cnt - Clock.getBytecodesLeft() + (rc.getRoundNum() - turnNum) * 17500;

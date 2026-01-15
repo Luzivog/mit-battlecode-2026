@@ -1,0 +1,81 @@
+package awubot.robot.rat.combat;
+
+import battlecode.common.Direction;
+import battlecode.common.GameActionException;
+
+import static awubot.Game.*;
+import static awubot.util.Util.*;
+
+public final class CombatCommon {
+    private CombatCommon() {
+    }
+
+    {% set move_dirs = directions + ['Direction.CENTER'] %}
+    {% set move_short = shortDirections + ['C'] %}
+
+    {% for idx in range(move_dirs|length) %}
+    static boolean canMove{{ move_short[idx] }};
+    {% endfor %}
+
+    {% for m in move_short %}
+    {% for f in shortDirections %}
+    static boolean canPerform{{ m }}_{{ f }};
+    {% endfor %}
+    {% endfor %}
+
+    public static void precomp() throws GameActionException {
+        {% for idx in range(move_dirs|length) %}
+        canMove{{ move_short[idx] }} = canTraverse({{ move_dirs[idx] }});
+        {% endfor %}
+    {% for mi in range(move_dirs|length) %}
+    {% for fi in range(directions|length) %}
+    canPerform{{ move_short[mi] }}_{{ shortDirections[fi] }} = computeCanPerform({{ move_dirs[mi] }}, {{ directions[fi] }});
+    {% endfor %}
+    {% endfor %}
+    }
+
+    public static boolean canMove(Direction dir) {
+        return switch (dir.ordinal()) {
+            {% for idx in range(move_dirs|length) %}
+            case {{ idx }} -> canMove{{ move_short[idx] }};
+            {% endfor %}
+            default -> false;
+        };
+    }
+
+    public static boolean canPerformMoves(Direction moveDir, Direction facing) {
+        switch (moveDir.ordinal()) {
+            {% for mi in range(move_short|length) %}
+            case {{ mi }} -> {
+                switch (facing.ordinal()) {
+                    {% for fi in range(shortDirections|length) %}
+                    case {{ fi }} -> {
+                        return canPerform{{ move_short[mi] }}_{{ shortDirections[fi] }};
+                    }
+                    {% endfor %}
+                    default -> { return false; }
+                }
+            }
+            {% endfor %}
+            default -> { return false; }
+        }
+    }
+
+    private static boolean computeCanPerform(Direction moveDir, Direction facing) throws GameActionException {
+        if (moveDir != Direction.CENTER && !canMove(moveDir)) return false;
+        if (moveDir == Direction.CENTER) {
+            return facing == myDir || rc.canTurn();
+        }
+        if (!rc.isMovementReady() || !canMove(moveDir)) return false;
+        if (moveDir == myDir && facing == myDir) return true;
+        if (moveDir == myDir) {
+            return myDir == facing || rc.canTurn();
+        }
+        if (moveDir == facing && rc.canTurn()) return true;
+        if (canStrafe()) {
+            if (facing == myDir) return true;
+            return rc.canTurn();
+        }
+        return false;
+    }
+}

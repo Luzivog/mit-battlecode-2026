@@ -181,6 +181,7 @@ public class Util {
     public static boolean canTraverse(Direction to) throws GameActionException {
         if (to == Direction.CENTER) return true;
         if (rc.canMove(to)) return true;
+        if (!rc.isMovementReady()) return false;
         MapLocation pos = myLoc.add(to);
         if (!rc.canSenseLocation(pos)) return false;
         return rc.senseMapInfo(pos).isPassable() && rc.senseRobotAtLocation(pos) == null;

@@ -1,4 +1,4 @@
-package awubot.robot.rat;
+package awubot.robot.rat.combat;
 
 import battlecode.common.Clock;
 import battlecode.common.Direction;
@@ -24,6 +24,53 @@ import static awubot.util.Util.*;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+
+{% set related_map = {
+    0: ["NORTH", "NORTHEAST", "NORTHWEST"],
+    1: ["NORTHEAST", "NORTH", "EAST"],
+    2: ["EAST", "NORTHEAST", "SOUTHEAST"],
+    3: ["SOUTHEAST", "SOUTH", "EAST"],
+    4: ["SOUTH", "SOUTHEAST", "SOUTHWEST"],
+    5: ["SOUTHWEST", "SOUTH", "WEST"],
+    6: ["WEST", "NORTHWEST", "SOUTHWEST"],
+    7: ["NORTHWEST", "NORTH", "WEST"],
+} %}
+{% set wide_related_map = {
+    0: ["NORTH", "NORTHEAST", "NORTHWEST", "EAST", "WEST"],
+    1: ["NORTHEAST", "NORTH", "EAST", "NORTHWEST", "SOUTHEAST"],
+    2: ["EAST", "NORTHEAST", "SOUTHEAST", "NORTH", "SOUTH"],
+    3: ["SOUTHEAST", "SOUTH", "EAST", "NORTHEAST", "SOUTHWEST"],
+    4: ["SOUTH", "SOUTHEAST", "SOUTHWEST", "EAST", "WEST"],
+    5: ["SOUTHWEST", "SOUTH", "WEST", "NORTHWEST", "SOUTHEAST"],
+    6: ["WEST", "NORTHWEST", "SOUTHWEST", "NORTH", "SOUTH"],
+    7: ["NORTHWEST", "NORTH", "WEST", "NORTHEAST", "SOUTHWEST"],
+} %}
+
+{% macro for_related(dir_expr) -%}
+switch ({{dir_expr}}.ordinal()) {
+    {% for ord in range(8) %}
+    case {{ord}} -> {
+        {% for d in related_map[ord] %}
+        {{ caller("Direction." + d) }}
+        {% endfor %}
+    }
+    {% endfor %}
+    default -> { }
+}
+{%- endmacro %}
+
+{% macro for_wide_related(dir_expr) -%}
+switch ({{dir_expr}}.ordinal()) {
+    {% for ord in range(8) %}
+    case {{ord}} -> {
+        {% for d in wide_related_map[ord] %}
+        {{ caller("Direction." + d) }}
+        {% endfor %}
+    }
+    {% endfor %}
+    default -> { }
+}
+{%- endmacro %}
 
 /*
 
@@ -71,15 +118,14 @@ public class CombatStrategy extends Strategy {
     }
 
     public static double[] basicDanger; // [movement direction]
-    private static boolean[] canMove = new boolean[9];
 
     private void precomp() throws GameActionException {
-        for (Direction moveDir : Direction.values()) {
-            canMove[moveDir.ordinal()] = canTraverse(moveDir);
-        }
-        Profiler.push();
+        {# Profiler.push(); #}
+        CombatCommon.precomp();
+        {# Profiler.pop("common"); #}
+        {# Profiler.push(); #}
         CombatTracker.tick();
-        Profiler.pop("combat tracker");
+        {# Profiler.pop("combat tracker"); #}
 
         StringBuilder sb = new StringBuilder();
         // for (Direction moveDir : directions) {
@@ -122,9 +168,9 @@ public class CombatStrategy extends Strategy {
     // idek why this is returning. check if can move anyways after to squeeze out some juice
     public boolean runTick() throws GameActionException {
         if (rc.isBeingCarried()) return false;
-        Profiler.push();
+        {# Profiler.push(); #}
         precomp();
-        Profiler.pop("precomp");
+        {# Profiler.pop("precomp"); #}
 
         if (rc.getCarrying() != null) {
             return tryThrow();
@@ -132,22 +178,22 @@ public class CombatStrategy extends Strategy {
 
         Profiler.push();
         boolean tryRatNapRes = tryRatNap();
-        Profiler.pop("try ratnap");
+        Profiler.pop("try ratnap", 1000);
         if (tryRatNapRes) return true;
 
         Profiler.push();
         boolean tryTrapRes = tryTrap();
-        Profiler.pop("try trap");
+        Profiler.pop("try trap", 1000);
         if (tryTrapRes) return true;
 
         Profiler.push();
         boolean tryAttackRes = tryAttack();
-        Profiler.pop("try attack");
+        Profiler.pop("try attack", 1000);
         if (tryAttackRes) return true;
 
         Profiler.push();
         boolean tryFightRes = tryFight();
-        Profiler.pop("try fight");
+        Profiler.pop("try fight", 1000);
         if (tryFightRes) return true;
         // TODO: deal with cats (maybe naman's job?)
         // TODO: after moving, quickly run through possible attacks in case you see a new enemy
@@ -171,7 +217,7 @@ public class CombatStrategy extends Strategy {
         if (target == null) return false;
         for (Direction moveDir : allDirections) {
             if (moveDir != Direction.CENTER && !rc.isMovementReady()) continue;
-            if (!canMove[moveDir.ordinal()]) continue;
+            if (!CombatCommon.canMove(moveDir)) continue;
             MapLocation newLoc = myLoc.add(moveDir);
             for (Direction facing : directions) { // maybe shrink search space if TLE
                 if (rc.canTurn()) {
@@ -263,26 +309,12 @@ public class CombatStrategy extends Strategy {
     
     */
 
-    private static boolean canPerformMoves(Direction moveDir, Direction facing) throws GameActionException {
-        if (moveDir != Direction.CENTER && !canMove[moveDir.ordinal()]) return false;
-        if (moveDir == Direction.CENTER) {
-            return facing == myDir || rc.canTurn();
-        }
-        if (!rc.isMovementReady() || !canMove[moveDir.ordinal()]) return false;
-        if (moveDir == myDir && facing == myDir) return true; // move
-        if (moveDir == myDir) { // move turn
-            return myDir == facing || rc.canTurn();
-        }
-        if (moveDir == facing && rc.canTurn()) return true; // turn move
-        if (canStrafe()) {
-            if (facing == myDir) return true; // strafe
-            return rc.canTurn(); // strafe turn
-        }
-        return false;
+    static boolean canPerformMoves(Direction moveDir, Direction facing) throws GameActionException {
+        return CombatCommon.canPerformMoves(moveDir, facing);
     }
 
-    private static boolean performMoves(Direction moveDir, Direction facing) throws GameActionException {
-        if (moveDir != Direction.CENTER && !canMove[moveDir.ordinal()]) return false;
+    static boolean performMoves(Direction moveDir, Direction facing) throws GameActionException {
+        if (moveDir != Direction.CENTER && !CombatCommon.canMove(moveDir)) return false;
         if (moveDir == Direction.CENTER) {
             if (facing != myDir) turn(facing);
             return true;
@@ -380,9 +412,10 @@ public class CombatStrategy extends Strategy {
             for (Direction moveDir : allDirections) {
                 MapLocation newLoc = myLoc.add(moveDir);
                 if (newLoc.distanceSquaredTo(t) > 2) continue;
-                if (!canMove[moveDir.ordinal()]) continue;
+                if (!CombatCommon.canMove(moveDir)) continue;
                 if (canSense(t, newLoc, info.getDirection()) && info.getHealth() >= rc.getHealth()) continue; // can i ratnap this guy
-                for (Direction facing : relatedDirections(newLoc.directionTo(t))) {
+                {# for (Direction facing : relatedDirections(newLoc.directionTo(t))) { #}
+                for (Direction facing : directions) {
                     if (!canSense(newLoc, t, facing)) continue;
                     if (!canPerformMoves(moveDir, facing)) continue;
                     double score = weight;
@@ -417,99 +450,12 @@ public class CombatStrategy extends Strategy {
             rc.attack(target.getLocation());
             println("was just shoved against a wall");
         }
-        println("napped rat");
-        return true;
-    }
-
-    public boolean canPlaceTrap(MapLocation loc) throws GameActionException {
-        if (!rc.canSenseLocation(loc)) return false;
-        if (!rc.senseMapInfo(loc).isPassable()) return false;
-        if (rc.senseMapInfo(loc).hasCheeseMine()) return false;
-        if (rc.senseMapInfo(loc).getTrap() != TrapType.NONE) return false;
-        if (loc != myLoc && rc.senseRobotAtLocation(loc) != null) return false;
+        println("!!!!!!!!!!!!!!!!!!!!!!! napped rat");
         return true;
     }
 
     public boolean tryTrap() throws GameActionException {
-        boolean confirmedCanPlace = false;
-        for (MapInfo info : rc.senseNearbyMapInfos(2)) {
-            if (rc.canPlaceRatTrap(info.getMapLocation())) {
-                confirmedCanPlace = true;
-                break;
-            }
-        }
-        if (!confirmedCanPlace) return false;
-        // Profiler.push();
-
-        double[][] weight = new double[5][5];
-        for (MapInfo info : rc.senseNearbyMapInfos(4)) {
-            MapLocation loc = info.getMapLocation();
-            if (chebyshevDistance(myLoc, loc) > 2) continue;
-            int dx = loc.x - myLocX + 2;
-            int dy = loc.y - myLocY + 2;
-            if (!canPlaceTrap(loc)) {
-                weight[dx][dy] = -1000;
-                continue;
-            }
-            // println("found reasonable cell");
-            for (RobotInfo rinfo : rc.senseNearbyRobots()) {
-                if (rinfo.getTeam() == rc.getTeam()) continue;
-                if (rinfo.getType() != UnitType.BABY_RAT) continue;
-                if (rinfo.getLocation().distanceSquaredTo(loc) > 2) continue;
-                if (rinfo.getLocation().equals(loc)) {
-                    weight[dx][dy] += 10;
-                } else {
-                    int angDist = angleDistance(rinfo.getDirection(), rinfo.getLocation().directionTo(loc));
-                    if (angDist > 3) continue;
-                    weight[dx][dy] += 4 - angDist;
-                }
-                // println("increment weight " + weight[dx][dy]);
-            }
-        }
-        // StringBuilder sb = new StringBuilder();
-        // for (int y = 4; y >= 0; y--) {
-        //     for (int x = 0; x < 5; x++) {
-        //         sb.append(String.format("%.1f ", weight[x][y]));
-        //     }
-        //     sb.append('\n');
-        // }
-        // indicate(sb.toString());
-
-        // Profiler.pop("compute trap weights");
-        // Profiler.push();
-
-        MapLocation bestPlaceLoc = null;
-        Direction bestMoveDir = null, bestFacing = null;
-        double best = -1;
-        for (Direction moveDir : wideRelatedDirections(myDir)) {
-            if (!canMove[moveDir.ordinal()]) continue;
-            MapLocation newLoc = myLoc.add(moveDir);
-            for (Direction facing : relatedDirections(moveDir)) {
-                if (!canPerformMoves(moveDir, facing)) continue;
-                for (Direction placeDir : relatedDirections(facing)) {
-                    MapLocation placeLoc = newLoc.add(placeDir);
-                    int dx = placeLoc.x - myLocX + 2;
-                    int dy = placeLoc.y - myLocY + 2;
-                    double score = weight[dx][dy];
-                    if (score < 0) continue;
-                    // println(score);
-                    if (facing != myDir) score *= 1.1;
-                    if (score > best) {
-                        best = score;
-                        bestPlaceLoc = placeLoc;
-                        bestMoveDir = moveDir;
-                        bestFacing = facing;
-                    }
-                }
-            }
-        }
-        // Profiler.pop("try trap");
-        if (best <= 0.5) return false;
-        // println("found spot");
-        assert(performMoves(bestMoveDir, bestFacing));
-        rc.placeRatTrap(bestPlaceLoc);
-        println("!!!!!!!!!! placed rat trap");
-        return true;
+        return TryTrap.run();
     }
 
     /*
@@ -558,35 +504,38 @@ public class CombatStrategy extends Strategy {
             }
 
             for (Direction moveDir : allDirections) {
-                if (!canMove[moveDir.ordinal()]) continue;
+                if (!CombatCommon.canMove(moveDir)) continue;
                 MapLocation newLoc = myLoc.add(moveDir);
                 if (newLoc.distanceSquaredTo(t) > 2) continue;
-                for (Direction facing : relatedDirections(newLoc.directionTo(t))) {
-                    if (!canSense(newLoc, t, facing)) continue;
-                    if (!canPerformMoves(moveDir, facing)) continue;
-                    double score = weight;
-                    score -= getDangerFor(moveDir, facing, info) / 5;
-                    if (score <= 0) {
-                        println("poop score!");
-                        continue;
-                    }
-                    if (facing != myDir) {
-                        score *= 1.1; // prefer turning
-                    }
-                    if (score > bestScore) {
-                        bestScore = score;
-                        target = info;
-                        bestMove = moveDir;
-                        bestFacing = facing;
+                {% call(facing) for_related("newLoc.directionTo(t)") %}
+                {
+                    Direction facing = {{facing}};
+                    if (canSense(newLoc, t, facing) && canPerformMoves(moveDir, facing)) {
+                        double score = weight;
+                        score -= getDangerFor(moveDir, facing, info) / 5;
+                        if (score > 0) {
+                            if (facing != myDir) {
+                                score *= 1.1; // prefer turning
+                            }
+                            if (score > bestScore) {
+                                bestScore = score;
+                                target = info;
+                                bestMove = moveDir;
+                                bestFacing = facing;
+                            }
+                        } else {
+                            println("poop score!");
+                        }
                     }
                 }
+                {% endcall %}
             }
         }
         // Profiler.pop("try attack");
         if (bestScore < 0) return false;
         assert(performMoves(bestMove, bestFacing));
         rc.attack(target.getLocation());
-        println("attacked rat");
+        println("!!!!!!!!!!!!!!!!!!!!!!! attacked rat");
         return true;
     }
 

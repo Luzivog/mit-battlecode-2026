@@ -69,7 +69,7 @@ public class CellTracker {
     static long seen58;
     static long seen59;
     public static boolean isSeen(MapLocation loc) {
-        if(!rc.onTheMap(loc)) return true;
+        if (loc.x < 0 || loc.x >= mapWidth) return true;
         switch(loc.y) {
             case 0 -> {
                 return (seen0 & (1l << loc.x)) != 0;
@@ -252,7 +252,195 @@ public class CellTracker {
                 return (seen59 & (1l << loc.x)) != 0;
             }
             default -> {
-                return false;
+                return true;
+            }
+        }
+    }
+    public static boolean isSeen(int x, int y) {
+        if (x < 0 || x >= mapWidth) return true;
+        switch(y) {
+            case 0 -> {
+                return (seen0 & (1l << x)) != 0;
+            }
+            case 1 -> {
+                return (seen1 & (1l << x)) != 0;
+            }
+            case 2 -> {
+                return (seen2 & (1l << x)) != 0;
+            }
+            case 3 -> {
+                return (seen3 & (1l << x)) != 0;
+            }
+            case 4 -> {
+                return (seen4 & (1l << x)) != 0;
+            }
+            case 5 -> {
+                return (seen5 & (1l << x)) != 0;
+            }
+            case 6 -> {
+                return (seen6 & (1l << x)) != 0;
+            }
+            case 7 -> {
+                return (seen7 & (1l << x)) != 0;
+            }
+            case 8 -> {
+                return (seen8 & (1l << x)) != 0;
+            }
+            case 9 -> {
+                return (seen9 & (1l << x)) != 0;
+            }
+            case 10 -> {
+                return (seen10 & (1l << x)) != 0;
+            }
+            case 11 -> {
+                return (seen11 & (1l << x)) != 0;
+            }
+            case 12 -> {
+                return (seen12 & (1l << x)) != 0;
+            }
+            case 13 -> {
+                return (seen13 & (1l << x)) != 0;
+            }
+            case 14 -> {
+                return (seen14 & (1l << x)) != 0;
+            }
+            case 15 -> {
+                return (seen15 & (1l << x)) != 0;
+            }
+            case 16 -> {
+                return (seen16 & (1l << x)) != 0;
+            }
+            case 17 -> {
+                return (seen17 & (1l << x)) != 0;
+            }
+            case 18 -> {
+                return (seen18 & (1l << x)) != 0;
+            }
+            case 19 -> {
+                return (seen19 & (1l << x)) != 0;
+            }
+            case 20 -> {
+                return (seen20 & (1l << x)) != 0;
+            }
+            case 21 -> {
+                return (seen21 & (1l << x)) != 0;
+            }
+            case 22 -> {
+                return (seen22 & (1l << x)) != 0;
+            }
+            case 23 -> {
+                return (seen23 & (1l << x)) != 0;
+            }
+            case 24 -> {
+                return (seen24 & (1l << x)) != 0;
+            }
+            case 25 -> {
+                return (seen25 & (1l << x)) != 0;
+            }
+            case 26 -> {
+                return (seen26 & (1l << x)) != 0;
+            }
+            case 27 -> {
+                return (seen27 & (1l << x)) != 0;
+            }
+            case 28 -> {
+                return (seen28 & (1l << x)) != 0;
+            }
+            case 29 -> {
+                return (seen29 & (1l << x)) != 0;
+            }
+            case 30 -> {
+                return (seen30 & (1l << x)) != 0;
+            }
+            case 31 -> {
+                return (seen31 & (1l << x)) != 0;
+            }
+            case 32 -> {
+                return (seen32 & (1l << x)) != 0;
+            }
+            case 33 -> {
+                return (seen33 & (1l << x)) != 0;
+            }
+            case 34 -> {
+                return (seen34 & (1l << x)) != 0;
+            }
+            case 35 -> {
+                return (seen35 & (1l << x)) != 0;
+            }
+            case 36 -> {
+                return (seen36 & (1l << x)) != 0;
+            }
+            case 37 -> {
+                return (seen37 & (1l << x)) != 0;
+            }
+            case 38 -> {
+                return (seen38 & (1l << x)) != 0;
+            }
+            case 39 -> {
+                return (seen39 & (1l << x)) != 0;
+            }
+            case 40 -> {
+                return (seen40 & (1l << x)) != 0;
+            }
+            case 41 -> {
+                return (seen41 & (1l << x)) != 0;
+            }
+            case 42 -> {
+                return (seen42 & (1l << x)) != 0;
+            }
+            case 43 -> {
+                return (seen43 & (1l << x)) != 0;
+            }
+            case 44 -> {
+                return (seen44 & (1l << x)) != 0;
+            }
+            case 45 -> {
+                return (seen45 & (1l << x)) != 0;
+            }
+            case 46 -> {
+                return (seen46 & (1l << x)) != 0;
+            }
+            case 47 -> {
+                return (seen47 & (1l << x)) != 0;
+            }
+            case 48 -> {
+                return (seen48 & (1l << x)) != 0;
+            }
+            case 49 -> {
+                return (seen49 & (1l << x)) != 0;
+            }
+            case 50 -> {
+                return (seen50 & (1l << x)) != 0;
+            }
+            case 51 -> {
+                return (seen51 & (1l << x)) != 0;
+            }
+            case 52 -> {
+                return (seen52 & (1l << x)) != 0;
+            }
+            case 53 -> {
+                return (seen53 & (1l << x)) != 0;
+            }
+            case 54 -> {
+                return (seen54 & (1l << x)) != 0;
+            }
+            case 55 -> {
+                return (seen55 & (1l << x)) != 0;
+            }
+            case 56 -> {
+                return (seen56 & (1l << x)) != 0;
+            }
+            case 57 -> {
+                return (seen57 & (1l << x)) != 0;
+            }
+            case 58 -> {
+                return (seen58 & (1l << x)) != 0;
+            }
+            case 59 -> {
+                return (seen59 & (1l << x)) != 0;
+            }
+            default -> {
+                return true;
             }
         }
     }
@@ -317,6 +505,7 @@ public class CellTracker {
     static long passable58;
     static long passable59;
     public static boolean isPassable(MapLocation loc) {
+        if (loc.x < 0 || loc.x >= mapWidth) return false;
         switch(loc.y) {
             case 0 -> {
                 return (passable0 & (1l << loc.x)) != 0;
@@ -503,6 +692,194 @@ public class CellTracker {
             }
         }
     }
+    public static boolean isPassable(int x, int y) {
+        if (x < 0 || x >= mapWidth) return false;
+        switch(y) {
+            case 0 -> {
+                return (passable0 & (1l << x)) != 0;
+            }
+            case 1 -> {
+                return (passable1 & (1l << x)) != 0;
+            }
+            case 2 -> {
+                return (passable2 & (1l << x)) != 0;
+            }
+            case 3 -> {
+                return (passable3 & (1l << x)) != 0;
+            }
+            case 4 -> {
+                return (passable4 & (1l << x)) != 0;
+            }
+            case 5 -> {
+                return (passable5 & (1l << x)) != 0;
+            }
+            case 6 -> {
+                return (passable6 & (1l << x)) != 0;
+            }
+            case 7 -> {
+                return (passable7 & (1l << x)) != 0;
+            }
+            case 8 -> {
+                return (passable8 & (1l << x)) != 0;
+            }
+            case 9 -> {
+                return (passable9 & (1l << x)) != 0;
+            }
+            case 10 -> {
+                return (passable10 & (1l << x)) != 0;
+            }
+            case 11 -> {
+                return (passable11 & (1l << x)) != 0;
+            }
+            case 12 -> {
+                return (passable12 & (1l << x)) != 0;
+            }
+            case 13 -> {
+                return (passable13 & (1l << x)) != 0;
+            }
+            case 14 -> {
+                return (passable14 & (1l << x)) != 0;
+            }
+            case 15 -> {
+                return (passable15 & (1l << x)) != 0;
+            }
+            case 16 -> {
+                return (passable16 & (1l << x)) != 0;
+            }
+            case 17 -> {
+                return (passable17 & (1l << x)) != 0;
+            }
+            case 18 -> {
+                return (passable18 & (1l << x)) != 0;
+            }
+            case 19 -> {
+                return (passable19 & (1l << x)) != 0;
+            }
+            case 20 -> {
+                return (passable20 & (1l << x)) != 0;
+            }
+            case 21 -> {
+                return (passable21 & (1l << x)) != 0;
+            }
+            case 22 -> {
+                return (passable22 & (1l << x)) != 0;
+            }
+            case 23 -> {
+                return (passable23 & (1l << x)) != 0;
+            }
+            case 24 -> {
+                return (passable24 & (1l << x)) != 0;
+            }
+            case 25 -> {
+                return (passable25 & (1l << x)) != 0;
+            }
+            case 26 -> {
+                return (passable26 & (1l << x)) != 0;
+            }
+            case 27 -> {
+                return (passable27 & (1l << x)) != 0;
+            }
+            case 28 -> {
+                return (passable28 & (1l << x)) != 0;
+            }
+            case 29 -> {
+                return (passable29 & (1l << x)) != 0;
+            }
+            case 30 -> {
+                return (passable30 & (1l << x)) != 0;
+            }
+            case 31 -> {
+                return (passable31 & (1l << x)) != 0;
+            }
+            case 32 -> {
+                return (passable32 & (1l << x)) != 0;
+            }
+            case 33 -> {
+                return (passable33 & (1l << x)) != 0;
+            }
+            case 34 -> {
+                return (passable34 & (1l << x)) != 0;
+            }
+            case 35 -> {
+                return (passable35 & (1l << x)) != 0;
+            }
+            case 36 -> {
+                return (passable36 & (1l << x)) != 0;
+            }
+            case 37 -> {
+                return (passable37 & (1l << x)) != 0;
+            }
+            case 38 -> {
+                return (passable38 & (1l << x)) != 0;
+            }
+            case 39 -> {
+                return (passable39 & (1l << x)) != 0;
+            }
+            case 40 -> {
+                return (passable40 & (1l << x)) != 0;
+            }
+            case 41 -> {
+                return (passable41 & (1l << x)) != 0;
+            }
+            case 42 -> {
+                return (passable42 & (1l << x)) != 0;
+            }
+            case 43 -> {
+                return (passable43 & (1l << x)) != 0;
+            }
+            case 44 -> {
+                return (passable44 & (1l << x)) != 0;
+            }
+            case 45 -> {
+                return (passable45 & (1l << x)) != 0;
+            }
+            case 46 -> {
+                return (passable46 & (1l << x)) != 0;
+            }
+            case 47 -> {
+                return (passable47 & (1l << x)) != 0;
+            }
+            case 48 -> {
+                return (passable48 & (1l << x)) != 0;
+            }
+            case 49 -> {
+                return (passable49 & (1l << x)) != 0;
+            }
+            case 50 -> {
+                return (passable50 & (1l << x)) != 0;
+            }
+            case 51 -> {
+                return (passable51 & (1l << x)) != 0;
+            }
+            case 52 -> {
+                return (passable52 & (1l << x)) != 0;
+            }
+            case 53 -> {
+                return (passable53 & (1l << x)) != 0;
+            }
+            case 54 -> {
+                return (passable54 & (1l << x)) != 0;
+            }
+            case 55 -> {
+                return (passable55 & (1l << x)) != 0;
+            }
+            case 56 -> {
+                return (passable56 & (1l << x)) != 0;
+            }
+            case 57 -> {
+                return (passable57 & (1l << x)) != 0;
+            }
+            case 58 -> {
+                return (passable58 & (1l << x)) != 0;
+            }
+            case 59 -> {
+                return (passable59 & (1l << x)) != 0;
+            }
+            default -> {
+                return false;
+            }
+        }
+    }
     static long dirt0;
     static long dirt1;
     static long dirt2;
@@ -564,6 +941,7 @@ public class CellTracker {
     static long dirt58;
     static long dirt59;
     public static boolean isDirt(MapLocation loc) {
+        if (loc.x < 0 || loc.x >= mapWidth) return false;
         switch(loc.y) {
             case 0 -> {
                 return (dirt0 & (1l << loc.x)) != 0;
@@ -744,6 +1122,194 @@ public class CellTracker {
             }
             case 59 -> {
                 return (dirt59 & (1l << loc.x)) != 0;
+            }
+            default -> {
+                return false;
+            }
+        }
+    }
+    public static boolean isDirt(int x, int y) {
+        if (x < 0 || x >= mapWidth) return false;
+        switch(y) {
+            case 0 -> {
+                return (dirt0 & (1l << x)) != 0;
+            }
+            case 1 -> {
+                return (dirt1 & (1l << x)) != 0;
+            }
+            case 2 -> {
+                return (dirt2 & (1l << x)) != 0;
+            }
+            case 3 -> {
+                return (dirt3 & (1l << x)) != 0;
+            }
+            case 4 -> {
+                return (dirt4 & (1l << x)) != 0;
+            }
+            case 5 -> {
+                return (dirt5 & (1l << x)) != 0;
+            }
+            case 6 -> {
+                return (dirt6 & (1l << x)) != 0;
+            }
+            case 7 -> {
+                return (dirt7 & (1l << x)) != 0;
+            }
+            case 8 -> {
+                return (dirt8 & (1l << x)) != 0;
+            }
+            case 9 -> {
+                return (dirt9 & (1l << x)) != 0;
+            }
+            case 10 -> {
+                return (dirt10 & (1l << x)) != 0;
+            }
+            case 11 -> {
+                return (dirt11 & (1l << x)) != 0;
+            }
+            case 12 -> {
+                return (dirt12 & (1l << x)) != 0;
+            }
+            case 13 -> {
+                return (dirt13 & (1l << x)) != 0;
+            }
+            case 14 -> {
+                return (dirt14 & (1l << x)) != 0;
+            }
+            case 15 -> {
+                return (dirt15 & (1l << x)) != 0;
+            }
+            case 16 -> {
+                return (dirt16 & (1l << x)) != 0;
+            }
+            case 17 -> {
+                return (dirt17 & (1l << x)) != 0;
+            }
+            case 18 -> {
+                return (dirt18 & (1l << x)) != 0;
+            }
+            case 19 -> {
+                return (dirt19 & (1l << x)) != 0;
+            }
+            case 20 -> {
+                return (dirt20 & (1l << x)) != 0;
+            }
+            case 21 -> {
+                return (dirt21 & (1l << x)) != 0;
+            }
+            case 22 -> {
+                return (dirt22 & (1l << x)) != 0;
+            }
+            case 23 -> {
+                return (dirt23 & (1l << x)) != 0;
+            }
+            case 24 -> {
+                return (dirt24 & (1l << x)) != 0;
+            }
+            case 25 -> {
+                return (dirt25 & (1l << x)) != 0;
+            }
+            case 26 -> {
+                return (dirt26 & (1l << x)) != 0;
+            }
+            case 27 -> {
+                return (dirt27 & (1l << x)) != 0;
+            }
+            case 28 -> {
+                return (dirt28 & (1l << x)) != 0;
+            }
+            case 29 -> {
+                return (dirt29 & (1l << x)) != 0;
+            }
+            case 30 -> {
+                return (dirt30 & (1l << x)) != 0;
+            }
+            case 31 -> {
+                return (dirt31 & (1l << x)) != 0;
+            }
+            case 32 -> {
+                return (dirt32 & (1l << x)) != 0;
+            }
+            case 33 -> {
+                return (dirt33 & (1l << x)) != 0;
+            }
+            case 34 -> {
+                return (dirt34 & (1l << x)) != 0;
+            }
+            case 35 -> {
+                return (dirt35 & (1l << x)) != 0;
+            }
+            case 36 -> {
+                return (dirt36 & (1l << x)) != 0;
+            }
+            case 37 -> {
+                return (dirt37 & (1l << x)) != 0;
+            }
+            case 38 -> {
+                return (dirt38 & (1l << x)) != 0;
+            }
+            case 39 -> {
+                return (dirt39 & (1l << x)) != 0;
+            }
+            case 40 -> {
+                return (dirt40 & (1l << x)) != 0;
+            }
+            case 41 -> {
+                return (dirt41 & (1l << x)) != 0;
+            }
+            case 42 -> {
+                return (dirt42 & (1l << x)) != 0;
+            }
+            case 43 -> {
+                return (dirt43 & (1l << x)) != 0;
+            }
+            case 44 -> {
+                return (dirt44 & (1l << x)) != 0;
+            }
+            case 45 -> {
+                return (dirt45 & (1l << x)) != 0;
+            }
+            case 46 -> {
+                return (dirt46 & (1l << x)) != 0;
+            }
+            case 47 -> {
+                return (dirt47 & (1l << x)) != 0;
+            }
+            case 48 -> {
+                return (dirt48 & (1l << x)) != 0;
+            }
+            case 49 -> {
+                return (dirt49 & (1l << x)) != 0;
+            }
+            case 50 -> {
+                return (dirt50 & (1l << x)) != 0;
+            }
+            case 51 -> {
+                return (dirt51 & (1l << x)) != 0;
+            }
+            case 52 -> {
+                return (dirt52 & (1l << x)) != 0;
+            }
+            case 53 -> {
+                return (dirt53 & (1l << x)) != 0;
+            }
+            case 54 -> {
+                return (dirt54 & (1l << x)) != 0;
+            }
+            case 55 -> {
+                return (dirt55 & (1l << x)) != 0;
+            }
+            case 56 -> {
+                return (dirt56 & (1l << x)) != 0;
+            }
+            case 57 -> {
+                return (dirt57 & (1l << x)) != 0;
+            }
+            case 58 -> {
+                return (dirt58 & (1l << x)) != 0;
+            }
+            case 59 -> {
+                return (dirt59 & (1l << x)) != 0;
             }
             default -> {
                 return false;

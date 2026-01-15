@@ -6,6 +6,7 @@ import battlecode.common.MapLocation;
 import battlecode.common.RobotInfo;
 import battlecode.common.UnitType;
 import awubot.robot.Strategy;
+import awubot.robot.rat.combat.CombatStrategy;
 import awubot.util.Util;
 
 import static awubot.robot.rat.BabyRat.*;

@@ -119,6 +119,7 @@ class BugnavInstance {
     }
 
     private static boolean isPassable(MapLocation loc) {
+        if(isRatKing) return CellTracker.isKingPassable(loc);
         return CellTracker.isPassable(loc) && !RobotTracker.kingSet.contains(loc) && (Config.allowDirt() || !CellTracker.isDirt(loc) || CellTracker.isWallAdjacent(loc));
     }
 
@@ -153,7 +154,7 @@ class BugnavInstance {
             {{side}}Bug.outOfSight = false;
             {{side}}Done = !{{side}}Bug.advance();
             // indicate({{side}}Bug.pos);
-            // rc.setIndicatorDot({{side}}Bug.pos, 255, 0, 255);
+            rc.setIndicatorDot({{side}}Bug.pos, 255, 0, 255);
             {% endmacro %}
             if(rightDone) {
                 {{ advance("left") }}
@@ -490,12 +491,12 @@ public class Pathfinder {
         }
         int shade = 255;
         // Profiler.begin();
-        if(lastDist < {{(MAX_PATH / 4) | int}} || RobotTracker.allySet.contains(bug.pos)) {
+        if((!isRatKing || myLoc.equals(bug.pos)) && (lastDist < {{(MAX_PATH / 4) | int}} || RobotTracker.allySet.contains(bug.pos))) {
             bugLoop: {
                 {% for i in range(MAX_BUG_ITERS) %}
-                // rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
+                rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
                 Profiler.begin();
-                if(!bug.advance()) break bugLoop;
+                if(!bug.advance() || isRatKing) break bugLoop;
                 lastDist++;
                 Profiler.end("bug");
                 {% endfor %}
@@ -525,7 +526,7 @@ public class Pathfinder {
             lastBugPos = bug.pos;
             lastLoc = myLoc;
         }
-        // rc.setIndicatorDot(bug.pos, 255, 0, 0);
+        rc.setIndicatorDot(bug.pos, 255, 0, 0);
 
         // no bfs needed
         {
@@ -547,6 +548,7 @@ public class Pathfinder {
     private static void doBfs(MapLocation target) throws GameActionException {
         Profiler.begin();
         CellTracker.computeLocalBfsMasks();
+        boolean dirtAllowed = Config.allowDirt();
         {% macro writePos(pos, mask, val, boundsCheck) %}
         {% set op = "|=" if val else "&= ~" %}
         {
@@ -573,6 +575,7 @@ public class Pathfinder {
             localPassableExceptAllies0 &= ~CellTracker.localDirt0;
             localPassableExceptAllies1 &= ~CellTracker.localDirt1;
             // minkowski sum the walls for the rat king
+            {% macro kingMinkowski() %}
             if(isRatKing) {
                 localPassableExceptAllies0 |= (localPassableExceptAllies0 & 0xfbff7feffdffbffl) << 1;
                 localPassableExceptAllies1 |= (localPassableExceptAllies1 & 0x7feffdffbff7fefl) << 1;
@@ -584,11 +587,15 @@ public class Pathfinder {
                 localPassableExceptAllies0 |= (localPassableExceptAllies0 >> 11) | ((localPassableExceptAllies1 & 0x7ffl) << 50);
                 localPassableExceptAllies1 |= localPassableExceptAllies1 >> 11;
             }
+            {% endmacro %}
+            {{ kingMinkowski() }}
         }
         // IF TLE: unroll this
         for(int i = RobotTracker.allyCount - 1; i >= 0; i--) {
             {{ writePos("RobotTracker.allies[i]", "localPassableExceptAllies", 0, False) }}
         }
+        // minkowski sum the walls for the rat king again (5x5 hitbox for walls, 3x3 hitbox for allies)
+        {{ kingMinkowski() }}
         // d{i}0 + d{i}1 is the mask of reachable within i steps
         long d00 = 0, d01 = 0;
         long d10 = 0, d11 = 0;
@@ -602,10 +609,14 @@ public class Pathfinder {
             }
         }
         {% endif %}
-        // if(rc.getRoundNum() >= 731 && rc.getID() == 10281) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(d{{i}}0, d{{i}}1);
-        //     Clock.yield();
+        // {
+        //     var A = rc.getRoundNum() >= 63;
+        //     var B = rc.getID() == 10950;
+        //     if(A && B) {
+        //         indicatorString = "";
+        //         CellTracker.printLocalMask(d{{i}}0, d{{i}}1);
+        //         Clock.yield();
+        //     }
         // }
         {% if i %}
         if((d{{i}}0 & 0x807000000000000l) != 0 || (d{{i}}1 & 0xe01) != 0) {
@@ -700,8 +711,12 @@ public class Pathfinder {
         d{{i}}1 |= d{{i}}1 >> 11;
         d{{i}}0 &= localPassableExceptAllies0;
         d{{i}}1 &= localPassableExceptAllies1;
-        long d{{i + 2}}0 = d{{i}}0;
-        long d{{i + 2}}1 = d{{i}}1;
+        long d{{i + 2}}0 = 0l;
+        long d{{i + 2}}1 = 0l;
+        if(dirtAllowed) {
+            d{{i + 2}}0 = d{{i}}0;
+            d{{i + 2}}1 = d{{i}}1;
+        }
         d{{i}}0 &= ~CellTracker.localDirt0;
         d{{i}}1 &= ~CellTracker.localDirt1;
         d{{i + 1}}0 |= d{{i}}0;

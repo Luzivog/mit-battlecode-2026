@@ -2,7 +2,7 @@ package awubot.robot.king;
 
 import battlecode.common.*;
 import awubot.robot.Strategy;
-
+import awubot.CellTracker;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 
@@ -15,6 +15,7 @@ public class RatKing {
 
     public static void run() throws GameActionException {
         indicate(rc.getGlobalCheese() + " cheese, " + rc.getHealth() + " HP");
+        CellTracker.storeVisibleCellsKing();
 
         tryPickUpCheese();
 

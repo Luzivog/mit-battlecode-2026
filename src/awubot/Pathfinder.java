@@ -263,6 +263,7 @@ class BugnavInstance {
     }
 
     private static boolean isPassable(MapLocation loc) {
+        if(isRatKing) return CellTracker.isKingPassable(loc);
         return CellTracker.isPassable(loc) && !RobotTracker.kingSet.contains(loc) && (Config.allowDirt() || !CellTracker.isDirt(loc) || CellTracker.isWallAdjacent(loc));
     }
 
@@ -297,28 +298,28 @@ class BugnavInstance {
             leftBug.outOfSight = false;
             leftDone = !leftBug.advance();
             // indicate(leftBug.pos);
-            // rc.setIndicatorDot(leftBug.pos, 255, 0, 255);
+            rc.setIndicatorDot(leftBug.pos, 255, 0, 255);
 
             } else if(leftDone) {
                             // indicate("advance right");
             rightBug.outOfSight = false;
             rightDone = !rightBug.advance();
             // indicate(rightBug.pos);
-            // rc.setIndicatorDot(rightBug.pos, 255, 0, 255);
+            rc.setIndicatorDot(rightBug.pos, 255, 0, 255);
 
             } else if(leftBug.nextPathIndex > rightBug.nextPathIndex) {
                             // indicate("advance right");
             rightBug.outOfSight = false;
             rightDone = !rightBug.advance();
             // indicate(rightBug.pos);
-            // rc.setIndicatorDot(rightBug.pos, 255, 0, 255);
+            rc.setIndicatorDot(rightBug.pos, 255, 0, 255);
 
             } else {
                             // indicate("advance left");
             leftBug.outOfSight = false;
             leftDone = !leftBug.advance();
             // indicate(leftBug.pos);
-            // rc.setIndicatorDot(leftBug.pos, 255, 0, 255);
+            rc.setIndicatorDot(leftBug.pos, 255, 0, 255);
 
             }
         }
@@ -1656,31 +1657,31 @@ public class Pathfinder {
         }
         int shade = 255;
         // Profiler.begin();
-        if(lastDist < 3 || RobotTracker.allySet.contains(bug.pos)) {
+        if((!isRatKing || myLoc.equals(bug.pos)) && (lastDist < 3 || RobotTracker.allySet.contains(bug.pos))) {
             bugLoop: {
-                // rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
+                rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
                 Profiler.begin();
-                if(!bug.advance()) break bugLoop;
+                if(!bug.advance() || isRatKing) break bugLoop;
                 lastDist++;
                 Profiler.end("bug");
-                // rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
+                rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
                 Profiler.begin();
-                if(!bug.advance()) break bugLoop;
+                if(!bug.advance() || isRatKing) break bugLoop;
                 lastDist++;
                 Profiler.end("bug");
-                // rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
+                rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
                 Profiler.begin();
-                if(!bug.advance()) break bugLoop;
+                if(!bug.advance() || isRatKing) break bugLoop;
                 lastDist++;
                 Profiler.end("bug");
-                // rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
+                rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
                 Profiler.begin();
-                if(!bug.advance()) break bugLoop;
+                if(!bug.advance() || isRatKing) break bugLoop;
                 lastDist++;
                 Profiler.end("bug");
-                // rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
+                rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
                 Profiler.begin();
-                if(!bug.advance()) break bugLoop;
+                if(!bug.advance() || isRatKing) break bugLoop;
                 lastDist++;
                 Profiler.end("bug");
             }
@@ -1709,7 +1710,7 @@ public class Pathfinder {
             lastBugPos = bug.pos;
             lastLoc = myLoc;
         }
-        // rc.setIndicatorDot(bug.pos, 255, 0, 0);
+        rc.setIndicatorDot(bug.pos, 255, 0, 0);
 
         // no bfs needed
         {
@@ -1731,6 +1732,7 @@ public class Pathfinder {
     private static void doBfs(MapLocation target) throws GameActionException {
         Profiler.begin();
         CellTracker.computeLocalBfsMasks();
+        boolean dirtAllowed = Config.allowDirt();
         var localPassableExceptAllies0 = CellTracker.localPassable0 & ~(1l << 60);
         var localPassableExceptAllies1 = CellTracker.localPassable1;
         // can't dig dirt if we don't have enough cheese or are a rat king
@@ -1738,7 +1740,7 @@ public class Pathfinder {
             localPassableExceptAllies0 &= ~CellTracker.localDirt0;
             localPassableExceptAllies1 &= ~CellTracker.localDirt1;
             // minkowski sum the walls for the rat king
-            if(isRatKing) {
+                        if(isRatKing) {
                 localPassableExceptAllies0 |= (localPassableExceptAllies0 & 0xfbff7feffdffbffl) << 1;
                 localPassableExceptAllies1 |= (localPassableExceptAllies1 & 0x7feffdffbff7fefl) << 1;
                 localPassableExceptAllies0 |= (localPassableExceptAllies0 & 0x1f7feffdffbff7fel) >> 1;
@@ -1749,6 +1751,7 @@ public class Pathfinder {
                 localPassableExceptAllies0 |= (localPassableExceptAllies0 >> 11) | ((localPassableExceptAllies1 & 0x7ffl) << 50);
                 localPassableExceptAllies1 |= localPassableExceptAllies1 >> 11;
             }
+
         }
         // IF TLE: unroll this
         for(int i = RobotTracker.allyCount - 1; i >= 0; i--) {
@@ -1767,6 +1770,19 @@ public class Pathfinder {
         }
 
         }
+        // minkowski sum the walls for the rat king again (5x5 hitbox for walls, 3x3 hitbox for allies)
+                    if(isRatKing) {
+                localPassableExceptAllies0 |= (localPassableExceptAllies0 & 0xfbff7feffdffbffl) << 1;
+                localPassableExceptAllies1 |= (localPassableExceptAllies1 & 0x7feffdffbff7fefl) << 1;
+                localPassableExceptAllies0 |= (localPassableExceptAllies0 & 0x1f7feffdffbff7fel) >> 1;
+                localPassableExceptAllies1 |= (localPassableExceptAllies1 & 0xffdffbff7feffdel) >> 1;
+
+                localPassableExceptAllies1 |= ((localPassableExceptAllies1 & 0x1ffffffffffffl) << 11) | (localPassableExceptAllies0 >> 50);
+                localPassableExceptAllies0 |= (localPassableExceptAllies0 & 0x3ffffffffffffl) << 11;
+                localPassableExceptAllies0 |= (localPassableExceptAllies0 >> 11) | ((localPassableExceptAllies1 & 0x7ffl) << 50);
+                localPassableExceptAllies1 |= localPassableExceptAllies1 >> 11;
+            }
+
         // d{i}0 + d{i}1 is the mask of reachable within i steps
         long d00 = 0, d01 = 0;
         long d10 = 0, d11 = 0;
@@ -1791,10 +1807,14 @@ public class Pathfinder {
 
             }
         }
-        // if(rc.getRoundNum() >= 731 && rc.getID() == 10281) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(d00, d01);
-        //     Clock.yield();
+        // {
+        //     var A = rc.getRoundNum() >= 63;
+        //     var B = rc.getID() == 10950;
+        //     if(A && B) {
+        //         indicatorString = "";
+        //         CellTracker.printLocalMask(d00, d01);
+        //         Clock.yield();
+        //     }
         // }
 
         // Profiler.begin();
@@ -1811,17 +1831,25 @@ public class Pathfinder {
         d01 |= d01 >> 11;
         d00 &= localPassableExceptAllies0;
         d01 &= localPassableExceptAllies1;
-        long d20 = d00;
-        long d21 = d01;
+        long d20 = 0l;
+        long d21 = 0l;
+        if(dirtAllowed) {
+            d20 = d00;
+            d21 = d01;
+        }
         d00 &= ~CellTracker.localDirt0;
         d01 &= ~CellTracker.localDirt1;
         d10 |= d00;
         d11 |= d01;
         // Profiler.end("bfs iteration");
-        // if(rc.getRoundNum() >= 731 && rc.getID() == 10281) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(d10, d11);
-        //     Clock.yield();
+        // {
+        //     var A = rc.getRoundNum() >= 63;
+        //     var B = rc.getID() == 10950;
+        //     if(A && B) {
+        //         indicatorString = "";
+        //         CellTracker.printLocalMask(d10, d11);
+        //         Clock.yield();
+        //     }
         // }
         if((d10 & 0x807000000000000l) != 0 || (d11 & 0xe01) != 0) {
             // Profiler.begin();
@@ -2119,8 +2147,12 @@ public class Pathfinder {
         d11 |= d11 >> 11;
         d10 &= localPassableExceptAllies0;
         d11 &= localPassableExceptAllies1;
-        long d30 = d10;
-        long d31 = d11;
+        long d30 = 0l;
+        long d31 = 0l;
+        if(dirtAllowed) {
+            d30 = d10;
+            d31 = d11;
+        }
         d10 &= ~CellTracker.localDirt0;
         d11 &= ~CellTracker.localDirt1;
         d20 |= d10;
@@ -2146,10 +2178,14 @@ public class Pathfinder {
 
             }
         }
-        // if(rc.getRoundNum() >= 731 && rc.getID() == 10281) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(d20, d21);
-        //     Clock.yield();
+        // {
+        //     var A = rc.getRoundNum() >= 63;
+        //     var B = rc.getID() == 10950;
+        //     if(A && B) {
+        //         indicatorString = "";
+        //         CellTracker.printLocalMask(d20, d21);
+        //         Clock.yield();
+        //     }
         // }
         if((d20 & 0x807000000000000l) != 0 || (d21 & 0xe01) != 0) {
             // Profiler.begin();
@@ -2447,17 +2483,25 @@ public class Pathfinder {
         d21 |= d21 >> 11;
         d20 &= localPassableExceptAllies0;
         d21 &= localPassableExceptAllies1;
-        long d40 = d20;
-        long d41 = d21;
+        long d40 = 0l;
+        long d41 = 0l;
+        if(dirtAllowed) {
+            d40 = d20;
+            d41 = d21;
+        }
         d20 &= ~CellTracker.localDirt0;
         d21 &= ~CellTracker.localDirt1;
         d30 |= d20;
         d31 |= d21;
         // Profiler.end("bfs iteration");
-        // if(rc.getRoundNum() >= 731 && rc.getID() == 10281) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(d30, d31);
-        //     Clock.yield();
+        // {
+        //     var A = rc.getRoundNum() >= 63;
+        //     var B = rc.getID() == 10950;
+        //     if(A && B) {
+        //         indicatorString = "";
+        //         CellTracker.printLocalMask(d30, d31);
+        //         Clock.yield();
+        //     }
         // }
         if((d30 & 0x807000000000000l) != 0 || (d31 & 0xe01) != 0) {
             // Profiler.begin();
@@ -2755,8 +2799,12 @@ public class Pathfinder {
         d31 |= d31 >> 11;
         d30 &= localPassableExceptAllies0;
         d31 &= localPassableExceptAllies1;
-        long d50 = d30;
-        long d51 = d31;
+        long d50 = 0l;
+        long d51 = 0l;
+        if(dirtAllowed) {
+            d50 = d30;
+            d51 = d31;
+        }
         d30 &= ~CellTracker.localDirt0;
         d31 &= ~CellTracker.localDirt1;
         d40 |= d30;
@@ -2782,10 +2830,14 @@ public class Pathfinder {
 
             }
         }
-        // if(rc.getRoundNum() >= 731 && rc.getID() == 10281) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(d40, d41);
-        //     Clock.yield();
+        // {
+        //     var A = rc.getRoundNum() >= 63;
+        //     var B = rc.getID() == 10950;
+        //     if(A && B) {
+        //         indicatorString = "";
+        //         CellTracker.printLocalMask(d40, d41);
+        //         Clock.yield();
+        //     }
         // }
         if((d40 & 0x807000000000000l) != 0 || (d41 & 0xe01) != 0) {
             // Profiler.begin();
@@ -3083,17 +3135,25 @@ public class Pathfinder {
         d41 |= d41 >> 11;
         d40 &= localPassableExceptAllies0;
         d41 &= localPassableExceptAllies1;
-        long d60 = d40;
-        long d61 = d41;
+        long d60 = 0l;
+        long d61 = 0l;
+        if(dirtAllowed) {
+            d60 = d40;
+            d61 = d41;
+        }
         d40 &= ~CellTracker.localDirt0;
         d41 &= ~CellTracker.localDirt1;
         d50 |= d40;
         d51 |= d41;
         // Profiler.end("bfs iteration");
-        // if(rc.getRoundNum() >= 731 && rc.getID() == 10281) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(d50, d51);
-        //     Clock.yield();
+        // {
+        //     var A = rc.getRoundNum() >= 63;
+        //     var B = rc.getID() == 10950;
+        //     if(A && B) {
+        //         indicatorString = "";
+        //         CellTracker.printLocalMask(d50, d51);
+        //         Clock.yield();
+        //     }
         // }
         if((d50 & 0x807000000000000l) != 0 || (d51 & 0xe01) != 0) {
             // Profiler.begin();
@@ -3391,8 +3451,12 @@ public class Pathfinder {
         d51 |= d51 >> 11;
         d50 &= localPassableExceptAllies0;
         d51 &= localPassableExceptAllies1;
-        long d70 = d50;
-        long d71 = d51;
+        long d70 = 0l;
+        long d71 = 0l;
+        if(dirtAllowed) {
+            d70 = d50;
+            d71 = d51;
+        }
         d50 &= ~CellTracker.localDirt0;
         d51 &= ~CellTracker.localDirt1;
         d60 |= d50;
@@ -3418,10 +3482,14 @@ public class Pathfinder {
 
             }
         }
-        // if(rc.getRoundNum() >= 731 && rc.getID() == 10281) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(d60, d61);
-        //     Clock.yield();
+        // {
+        //     var A = rc.getRoundNum() >= 63;
+        //     var B = rc.getID() == 10950;
+        //     if(A && B) {
+        //         indicatorString = "";
+        //         CellTracker.printLocalMask(d60, d61);
+        //         Clock.yield();
+        //     }
         // }
         if((d60 & 0x807000000000000l) != 0 || (d61 & 0xe01) != 0) {
             // Profiler.begin();
@@ -3719,17 +3787,25 @@ public class Pathfinder {
         d61 |= d61 >> 11;
         d60 &= localPassableExceptAllies0;
         d61 &= localPassableExceptAllies1;
-        long d80 = d60;
-        long d81 = d61;
+        long d80 = 0l;
+        long d81 = 0l;
+        if(dirtAllowed) {
+            d80 = d60;
+            d81 = d61;
+        }
         d60 &= ~CellTracker.localDirt0;
         d61 &= ~CellTracker.localDirt1;
         d70 |= d60;
         d71 |= d61;
         // Profiler.end("bfs iteration");
-        // if(rc.getRoundNum() >= 731 && rc.getID() == 10281) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(d70, d71);
-        //     Clock.yield();
+        // {
+        //     var A = rc.getRoundNum() >= 63;
+        //     var B = rc.getID() == 10950;
+        //     if(A && B) {
+        //         indicatorString = "";
+        //         CellTracker.printLocalMask(d70, d71);
+        //         Clock.yield();
+        //     }
         // }
         if((d70 & 0x807000000000000l) != 0 || (d71 & 0xe01) != 0) {
             // Profiler.begin();
@@ -4027,8 +4103,12 @@ public class Pathfinder {
         d71 |= d71 >> 11;
         d70 &= localPassableExceptAllies0;
         d71 &= localPassableExceptAllies1;
-        long d90 = d70;
-        long d91 = d71;
+        long d90 = 0l;
+        long d91 = 0l;
+        if(dirtAllowed) {
+            d90 = d70;
+            d91 = d71;
+        }
         d70 &= ~CellTracker.localDirt0;
         d71 &= ~CellTracker.localDirt1;
         d80 |= d70;
@@ -4054,10 +4134,14 @@ public class Pathfinder {
 
             }
         }
-        // if(rc.getRoundNum() >= 731 && rc.getID() == 10281) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(d80, d81);
-        //     Clock.yield();
+        // {
+        //     var A = rc.getRoundNum() >= 63;
+        //     var B = rc.getID() == 10950;
+        //     if(A && B) {
+        //         indicatorString = "";
+        //         CellTracker.printLocalMask(d80, d81);
+        //         Clock.yield();
+        //     }
         // }
         if((d80 & 0x807000000000000l) != 0 || (d81 & 0xe01) != 0) {
             // Profiler.begin();
@@ -4355,17 +4439,25 @@ public class Pathfinder {
         d81 |= d81 >> 11;
         d80 &= localPassableExceptAllies0;
         d81 &= localPassableExceptAllies1;
-        long d100 = d80;
-        long d101 = d81;
+        long d100 = 0l;
+        long d101 = 0l;
+        if(dirtAllowed) {
+            d100 = d80;
+            d101 = d81;
+        }
         d80 &= ~CellTracker.localDirt0;
         d81 &= ~CellTracker.localDirt1;
         d90 |= d80;
         d91 |= d81;
         // Profiler.end("bfs iteration");
-        // if(rc.getRoundNum() >= 731 && rc.getID() == 10281) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(d90, d91);
-        //     Clock.yield();
+        // {
+        //     var A = rc.getRoundNum() >= 63;
+        //     var B = rc.getID() == 10950;
+        //     if(A && B) {
+        //         indicatorString = "";
+        //         CellTracker.printLocalMask(d90, d91);
+        //         Clock.yield();
+        //     }
         // }
         if((d90 & 0x807000000000000l) != 0 || (d91 & 0xe01) != 0) {
             // Profiler.begin();
@@ -4663,8 +4755,12 @@ public class Pathfinder {
         d91 |= d91 >> 11;
         d90 &= localPassableExceptAllies0;
         d91 &= localPassableExceptAllies1;
-        long d110 = d90;
-        long d111 = d91;
+        long d110 = 0l;
+        long d111 = 0l;
+        if(dirtAllowed) {
+            d110 = d90;
+            d111 = d91;
+        }
         d90 &= ~CellTracker.localDirt0;
         d91 &= ~CellTracker.localDirt1;
         d100 |= d90;
@@ -4690,10 +4786,14 @@ public class Pathfinder {
 
             }
         }
-        // if(rc.getRoundNum() >= 731 && rc.getID() == 10281) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(d100, d101);
-        //     Clock.yield();
+        // {
+        //     var A = rc.getRoundNum() >= 63;
+        //     var B = rc.getID() == 10950;
+        //     if(A && B) {
+        //         indicatorString = "";
+        //         CellTracker.printLocalMask(d100, d101);
+        //         Clock.yield();
+        //     }
         // }
         if((d100 & 0x807000000000000l) != 0 || (d101 & 0xe01) != 0) {
             // Profiler.begin();
@@ -4991,17 +5091,25 @@ public class Pathfinder {
         d101 |= d101 >> 11;
         d100 &= localPassableExceptAllies0;
         d101 &= localPassableExceptAllies1;
-        long d120 = d100;
-        long d121 = d101;
+        long d120 = 0l;
+        long d121 = 0l;
+        if(dirtAllowed) {
+            d120 = d100;
+            d121 = d101;
+        }
         d100 &= ~CellTracker.localDirt0;
         d101 &= ~CellTracker.localDirt1;
         d110 |= d100;
         d111 |= d101;
         // Profiler.end("bfs iteration");
-        // if(rc.getRoundNum() >= 731 && rc.getID() == 10281) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(d110, d111);
-        //     Clock.yield();
+        // {
+        //     var A = rc.getRoundNum() >= 63;
+        //     var B = rc.getID() == 10950;
+        //     if(A && B) {
+        //         indicatorString = "";
+        //         CellTracker.printLocalMask(d110, d111);
+        //         Clock.yield();
+        //     }
         // }
         if((d110 & 0x807000000000000l) != 0 || (d111 & 0xe01) != 0) {
             // Profiler.begin();
@@ -5299,8 +5407,12 @@ public class Pathfinder {
         d111 |= d111 >> 11;
         d110 &= localPassableExceptAllies0;
         d111 &= localPassableExceptAllies1;
-        long d130 = d110;
-        long d131 = d111;
+        long d130 = 0l;
+        long d131 = 0l;
+        if(dirtAllowed) {
+            d130 = d110;
+            d131 = d111;
+        }
         d110 &= ~CellTracker.localDirt0;
         d111 &= ~CellTracker.localDirt1;
         d120 |= d110;
@@ -5326,10 +5438,14 @@ public class Pathfinder {
 
             }
         }
-        // if(rc.getRoundNum() >= 731 && rc.getID() == 10281) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(d120, d121);
-        //     Clock.yield();
+        // {
+        //     var A = rc.getRoundNum() >= 63;
+        //     var B = rc.getID() == 10950;
+        //     if(A && B) {
+        //         indicatorString = "";
+        //         CellTracker.printLocalMask(d120, d121);
+        //         Clock.yield();
+        //     }
         // }
         if((d120 & 0x807000000000000l) != 0 || (d121 & 0xe01) != 0) {
             // Profiler.begin();
@@ -5627,17 +5743,25 @@ public class Pathfinder {
         d121 |= d121 >> 11;
         d120 &= localPassableExceptAllies0;
         d121 &= localPassableExceptAllies1;
-        long d140 = d120;
-        long d141 = d121;
+        long d140 = 0l;
+        long d141 = 0l;
+        if(dirtAllowed) {
+            d140 = d120;
+            d141 = d121;
+        }
         d120 &= ~CellTracker.localDirt0;
         d121 &= ~CellTracker.localDirt1;
         d130 |= d120;
         d131 |= d121;
         // Profiler.end("bfs iteration");
-        // if(rc.getRoundNum() >= 731 && rc.getID() == 10281) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(d130, d131);
-        //     Clock.yield();
+        // {
+        //     var A = rc.getRoundNum() >= 63;
+        //     var B = rc.getID() == 10950;
+        //     if(A && B) {
+        //         indicatorString = "";
+        //         CellTracker.printLocalMask(d130, d131);
+        //         Clock.yield();
+        //     }
         // }
         if((d130 & 0x807000000000000l) != 0 || (d131 & 0xe01) != 0) {
             // Profiler.begin();
@@ -5935,8 +6059,12 @@ public class Pathfinder {
         d131 |= d131 >> 11;
         d130 &= localPassableExceptAllies0;
         d131 &= localPassableExceptAllies1;
-        long d150 = d130;
-        long d151 = d131;
+        long d150 = 0l;
+        long d151 = 0l;
+        if(dirtAllowed) {
+            d150 = d130;
+            d151 = d131;
+        }
         d130 &= ~CellTracker.localDirt0;
         d131 &= ~CellTracker.localDirt1;
         d140 |= d130;
@@ -5962,10 +6090,14 @@ public class Pathfinder {
 
             }
         }
-        // if(rc.getRoundNum() >= 731 && rc.getID() == 10281) {
-        //     indicatorString = "";
-        //     CellTracker.printLocalMask(d140, d141);
-        //     Clock.yield();
+        // {
+        //     var A = rc.getRoundNum() >= 63;
+        //     var B = rc.getID() == 10950;
+        //     if(A && B) {
+        //         indicatorString = "";
+        //         CellTracker.printLocalMask(d140, d141);
+        //         Clock.yield();
+        //     }
         // }
         if((d140 & 0x807000000000000l) != 0 || (d141 & 0xe01) != 0) {
             // Profiler.begin();
@@ -6263,8 +6395,12 @@ public class Pathfinder {
         d141 |= d141 >> 11;
         d140 &= localPassableExceptAllies0;
         d141 &= localPassableExceptAllies1;
-        long d160 = d140;
-        long d161 = d141;
+        long d160 = 0l;
+        long d161 = 0l;
+        if(dirtAllowed) {
+            d160 = d140;
+            d161 = d141;
+        }
         d140 &= ~CellTracker.localDirt0;
         d141 &= ~CellTracker.localDirt1;
         d150 |= d140;

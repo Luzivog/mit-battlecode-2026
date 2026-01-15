@@ -38,9 +38,30 @@ public class CellTracker {
             {% for i in range(1, MAX_MAP_SIZE - 1) %}
             case {{i}} -> {
                 var adjRowMask = 1l << loc.x;
-                return ((seen{{i}} & ~passable{{i}} & ((7l << loc.x) >>> 1))
-                        | (seen{{i - 1}} & ~passable{{i - 1}} & adjRowMask)
-                        | (seen{{i + 1}} & ~passable{{i + 1}} & adjRowMask)) != 0;
+                return ((seen{{i}} & ~passable{{i}} & (7l << (loc.x - 1)))
+                        | adjRowMask & ((seen{{i - 1}} & ~passable{{i - 1}})
+                                        | (seen{{i + 1}} & ~passable{{i + 1}}))) != 0;
+            }
+            {% endfor %}
+            default -> {
+                return false;
+            }
+        }
+    }
+
+    public static boolean isKingPassable(MapLocation loc) {
+        // 5x5 hitbox to avoid clogging
+        if(loc.y >= mapHeight - 2 || loc.x < 2 || loc.x >= mapWidth - 2) return false;
+        switch(loc.y) {
+            {% for i in range(2, MAX_MAP_SIZE - 2) %}
+            case {{i}} -> {
+                var rowMask = 0x1fl << (loc.x - 2);
+                return (rowMask
+                        & passable{{i}}     & ~dirt{{i}}
+                        & passable{{i - 1}} & ~dirt{{i - 1}}
+                        & passable{{i + 1}} & ~dirt{{i + 1}}
+                        & passable{{i - 2}} & ~dirt{{i - 2}}
+                        & passable{{i + 2}} & ~dirt{{i + 2}}) == rowMask;
             }
             {% endfor %}
             default -> {
@@ -66,8 +87,6 @@ public class CellTracker {
     }
 
     public static void storeVisibleCells() throws GameActionException {
-        assert(myLoc == rc.getLocation());
-        assert(myDir == rc.getDirection());
         Profiler.begin();
         int x = myLoc.x, y = myLoc.y;
         switch(myDir) {
@@ -131,6 +150,15 @@ public class CellTracker {
             {% endfor %}
         }
         Profiler.end("storeVisibleCellsPostMove");
+    }
+
+    public static void storeVisibleCellsKing() throws GameActionException {
+        // IF TLE: tone this down
+        Profiler.begin();
+        for(var info : rc.senseNearbyMapInfos()) {
+            CellTracker.storeCell(info);
+        }
+        Profiler.end("storeVisibleCellsKing");
     }
 
     public static long localPassable0, localPassable1;

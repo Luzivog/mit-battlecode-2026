@@ -2,6 +2,7 @@ package awubot;
 
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
+import battlecode.common.MapInfo;
 import battlecode.common.MapLocation;
 import battlecode.common.RobotController;
 import battlecode.common.Team;
@@ -128,9 +129,30 @@ public class Game {
         indicatorString = "";
     }
 
-    public static void postTick() {
+    public static void postTick() throws GameActionException {
+
+        Profiler.begin();
+        MapInfo info = rc.senseMapInfo(myLoc);
+        Profiler.end_print("sense");
+
+        Profiler.begin();
+        boolean asdf = rc.senseMapInfo(new MapLocation(myLocX, myLocY)).isPassable();
+        Profiler.end_print("passable");
+
+        Profiler.begin();
+        boolean fdas = CellTracker.isPassable(myLocX, myLocY);
+        Profiler.end_print("celltracker");
+
+        StringBuilder sb = new StringBuilder();
+        sb.repeat('1', 1000);
+        Profiler.begin();
+        int ans = sb.charAt(myLocX * 60 + myLocY);
+        Profiler.end_print("thoery");
+
+        rc.resign();
+
         // if (!isRatKing) println("index: " + myIndex);
-        if (time > 100) rc.resign();
+        // if (time > 100) rc.resign();
         // if (time != rc.getRoundNum()) {
         //     println("bytecode exceeded");
         //     rc.resign();

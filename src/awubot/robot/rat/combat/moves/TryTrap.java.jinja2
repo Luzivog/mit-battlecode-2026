@@ -1,4 +1,4 @@
-package awubot.robot.rat.combat;
+package awubot.robot.rat.combat.moves;
 
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
@@ -8,6 +8,9 @@ import battlecode.common.RobotInfo;
 import battlecode.common.TrapType;
 import battlecode.common.UnitType;
 
+import awubot.robot.rat.combat.CombatCommon;
+import awubot.robot.rat.combat.CombatStrategy;
+import awubot.robot.rat.combat.CombatTracker;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 import static awubot.robot.rat.BabyRat.*;
@@ -130,6 +133,7 @@ public final class TryTrap {
         return confirmedCanPlace;
     }
 
+    // has room for optimisation if reallllyyy needed
     private static void computeWeights() throws GameActionException {
         {# Profiler.push(); #}
         {% for dy in range(2, -3, -1) %}
@@ -250,8 +254,8 @@ public final class TryTrap {
 
     {% for facing in related_map[dir_ord_map[move_dir]] %}
     private static void face{{ dir_short_map[facing] }}{{ dir_short_map[move_dir] }}() throws GameActionException {
-        if (!CombatCommon.canPerform{{ dir_short_map[move_dir] }}_{{ dir_short_map[facing] }}) return;
         if (CombatTracker.threat{{ dir_short_map[move_dir] }}{{ dir_short_map[facing] }} != 0L) return;
+        if (!CombatCommon.canPerformMoves({{ move_dir }}, {{ facing }})) return;
         {% for place_dir in related_map[dir_ord_map[facing]] %}
         place{{ dir_short_map[place_dir] }}{{ dir_short_map[facing] }}{{ dir_short_map[move_dir] }}();
         {% endfor %}

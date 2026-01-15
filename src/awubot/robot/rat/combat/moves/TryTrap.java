@@ -1,4 +1,4 @@
-package awubot.robot.rat.combat;
+package awubot.robot.rat.combat.moves;
 
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
@@ -8,6 +8,9 @@ import battlecode.common.RobotInfo;
 import battlecode.common.TrapType;
 import battlecode.common.UnitType;
 
+import awubot.robot.rat.combat.CombatCommon;
+import awubot.robot.rat.combat.CombatStrategy;
+import awubot.robot.rat.combat.CombatTracker;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 import static awubot.robot.rat.BabyRat.*;
@@ -1597,8 +1600,8 @@ w_2_2 += 2;                                }
     }
 
     private static void faceNN() throws GameActionException {
-        if (!CombatCommon.canPerformN_N) return;
         if (CombatTracker.threatNN != 0L) return;
+        if (!CombatCommon.canPerformMoves(Direction.NORTH, Direction.NORTH)) return;
         placeNNN();
         placeNENN();
         placeNWNN();
@@ -1641,8 +1644,8 @@ private static void placeNWNN() {
         }
     }
     private static void faceNEN() throws GameActionException {
-        if (!CombatCommon.canPerformN_NE) return;
         if (CombatTracker.threatNNE != 0L) return;
+        if (!CombatCommon.canPerformMoves(Direction.NORTH, Direction.NORTHEAST)) return;
         placeNENEN();
         placeNNEN();
         placeENEN();
@@ -1685,8 +1688,8 @@ private static void placeENEN() {
         }
     }
     private static void faceNWN() throws GameActionException {
-        if (!CombatCommon.canPerformN_NW) return;
         if (CombatTracker.threatNNW != 0L) return;
+        if (!CombatCommon.canPerformMoves(Direction.NORTH, Direction.NORTHWEST)) return;
         placeNWNWN();
         placeNNWN();
         placeWNWN();
@@ -1737,8 +1740,8 @@ private static void placeWNWN() {
     }
 
     private static void faceNENE() throws GameActionException {
-        if (!CombatCommon.canPerformNE_NE) return;
         if (CombatTracker.threatNENE != 0L) return;
+        if (!CombatCommon.canPerformMoves(Direction.NORTHEAST, Direction.NORTHEAST)) return;
         placeNENENE();
         placeNNENE();
         placeENENE();
@@ -1781,8 +1784,8 @@ private static void placeENENE() {
         }
     }
     private static void faceNNE() throws GameActionException {
-        if (!CombatCommon.canPerformNE_N) return;
         if (CombatTracker.threatNEN != 0L) return;
+        if (!CombatCommon.canPerformMoves(Direction.NORTHEAST, Direction.NORTH)) return;
         placeNNNE();
         placeNENNE();
         placeNWNNE();
@@ -1825,8 +1828,8 @@ private static void placeNWNNE() {
         }
     }
     private static void faceENE() throws GameActionException {
-        if (!CombatCommon.canPerformNE_E) return;
         if (CombatTracker.threatNEE != 0L) return;
+        if (!CombatCommon.canPerformMoves(Direction.NORTHEAST, Direction.EAST)) return;
         placeEENE();
         placeNEENE();
         placeSEENE();
@@ -1877,8 +1880,8 @@ private static void placeSEENE() {
     }
 
     private static void faceEE() throws GameActionException {
-        if (!CombatCommon.canPerformE_E) return;
         if (CombatTracker.threatEE != 0L) return;
+        if (!CombatCommon.canPerformMoves(Direction.EAST, Direction.EAST)) return;
         placeEEE();
         placeNEEE();
         placeSEEE();
@@ -1921,8 +1924,8 @@ private static void placeSEEE() {
         }
     }
     private static void faceNEE() throws GameActionException {
-        if (!CombatCommon.canPerformE_NE) return;
         if (CombatTracker.threatENE != 0L) return;
+        if (!CombatCommon.canPerformMoves(Direction.EAST, Direction.NORTHEAST)) return;
         placeNENEE();
         placeNNEE();
         placeENEE();
@@ -1965,8 +1968,8 @@ private static void placeENEE() {
         }
     }
     private static void faceSEE() throws GameActionException {
-        if (!CombatCommon.canPerformE_SE) return;
         if (CombatTracker.threatESE != 0L) return;
+        if (!CombatCommon.canPerformMoves(Direction.EAST, Direction.SOUTHEAST)) return;
         placeSESEE();
         placeSSEE();
         placeESEE();
@@ -2017,8 +2020,8 @@ private static void placeESEE() {
     }
 
     private static void faceSESE() throws GameActionException {
-        if (!CombatCommon.canPerformSE_SE) return;
         if (CombatTracker.threatSESE != 0L) return;
+        if (!CombatCommon.canPerformMoves(Direction.SOUTHEAST, Direction.SOUTHEAST)) return;
         placeSESESE();
         placeSSESE();
         placeESESE();
@@ -2061,8 +2064,8 @@ private static void placeESESE() {
         }
     }
     private static void faceSSE() throws GameActionException {
-        if (!CombatCommon.canPerformSE_S) return;
         if (CombatTracker.threatSES != 0L) return;
+        if (!CombatCommon.canPerformMoves(Direction.SOUTHEAST, Direction.SOUTH)) return;
         placeSSSE();
         placeSESSE();
         placeSWSSE();
@@ -2105,8 +2108,8 @@ private static void placeSWSSE() {
         }
     }
     private static void faceESE() throws GameActionException {
-        if (!CombatCommon.canPerformSE_E) return;
         if (CombatTracker.threatSEE != 0L) return;
+        if (!CombatCommon.canPerformMoves(Direction.SOUTHEAST, Direction.EAST)) return;
         placeEESE();
         placeNEESE();
         placeSEESE();
@@ -2157,8 +2160,8 @@ private static void placeSEESE() {
     }
 
     private static void faceSS() throws GameActionException {
-        if (!CombatCommon.canPerformS_S) return;
         if (CombatTracker.threatSS != 0L) return;
+        if (!CombatCommon.canPerformMoves(Direction.SOUTH, Direction.SOUTH)) return;
         placeSSS();
         placeSESS();
         placeSWSS();
@@ -2201,8 +2204,8 @@ private static void placeSWSS() {
         }
     }
     private static void faceSES() throws GameActionException {
-        if (!CombatCommon.canPerformS_SE) return;
         if (CombatTracker.threatSSE != 0L) return;
+        if (!CombatCommon.canPerformMoves(Direction.SOUTH, Direction.SOUTHEAST)) return;
         placeSESES();
         placeSSES();
         placeESES();
@@ -2245,8 +2248,8 @@ private static void placeESES() {
         }
     }
     private static void faceSWS() throws GameActionException {
-        if (!CombatCommon.canPerformS_SW) return;
         if (CombatTracker.threatSSW != 0L) return;
+        if (!CombatCommon.canPerformMoves(Direction.SOUTH, Direction.SOUTHWEST)) return;
         placeSWSWS();
         placeSSWS();
         placeWSWS();
@@ -2297,8 +2300,8 @@ private static void placeWSWS() {
     }
 
     private static void faceSWSW() throws GameActionException {
-        if (!CombatCommon.canPerformSW_SW) return;
         if (CombatTracker.threatSWSW != 0L) return;
+        if (!CombatCommon.canPerformMoves(Direction.SOUTHWEST, Direction.SOUTHWEST)) return;
         placeSWSWSW();
         placeSSWSW();
         placeWSWSW();
@@ -2341,8 +2344,8 @@ private static void placeWSWSW() {
         }
     }
     private static void faceSSW() throws GameActionException {
-        if (!CombatCommon.canPerformSW_S) return;
         if (CombatTracker.threatSWS != 0L) return;
+        if (!CombatCommon.canPerformMoves(Direction.SOUTHWEST, Direction.SOUTH)) return;
         placeSSSW();
         placeSESSW();
         placeSWSSW();
@@ -2385,8 +2388,8 @@ private static void placeSWSSW() {
         }
     }
     private static void faceWSW() throws GameActionException {
-        if (!CombatCommon.canPerformSW_W) return;
         if (CombatTracker.threatSWW != 0L) return;
+        if (!CombatCommon.canPerformMoves(Direction.SOUTHWEST, Direction.WEST)) return;
         placeWWSW();
         placeNWWSW();
         placeSWWSW();
@@ -2437,8 +2440,8 @@ private static void placeSWWSW() {
     }
 
     private static void faceWW() throws GameActionException {
-        if (!CombatCommon.canPerformW_W) return;
         if (CombatTracker.threatWW != 0L) return;
+        if (!CombatCommon.canPerformMoves(Direction.WEST, Direction.WEST)) return;
         placeWWW();
         placeNWWW();
         placeSWWW();
@@ -2481,8 +2484,8 @@ private static void placeSWWW() {
         }
     }
     private static void faceNWW() throws GameActionException {
-        if (!CombatCommon.canPerformW_NW) return;
         if (CombatTracker.threatWNW != 0L) return;
+        if (!CombatCommon.canPerformMoves(Direction.WEST, Direction.NORTHWEST)) return;
         placeNWNWW();
         placeNNWW();
         placeWNWW();
@@ -2525,8 +2528,8 @@ private static void placeWNWW() {
         }
     }
     private static void faceSWW() throws GameActionException {
-        if (!CombatCommon.canPerformW_SW) return;
         if (CombatTracker.threatWSW != 0L) return;
+        if (!CombatCommon.canPerformMoves(Direction.WEST, Direction.SOUTHWEST)) return;
         placeSWSWW();
         placeSSWW();
         placeWSWW();
@@ -2577,8 +2580,8 @@ private static void placeWSWW() {
     }
 
     private static void faceNWNW() throws GameActionException {
-        if (!CombatCommon.canPerformNW_NW) return;
         if (CombatTracker.threatNWNW != 0L) return;
+        if (!CombatCommon.canPerformMoves(Direction.NORTHWEST, Direction.NORTHWEST)) return;
         placeNWNWNW();
         placeNNWNW();
         placeWNWNW();
@@ -2621,8 +2624,8 @@ private static void placeWNWNW() {
         }
     }
     private static void faceNNW() throws GameActionException {
-        if (!CombatCommon.canPerformNW_N) return;
         if (CombatTracker.threatNWN != 0L) return;
+        if (!CombatCommon.canPerformMoves(Direction.NORTHWEST, Direction.NORTH)) return;
         placeNNNW();
         placeNENNW();
         placeNWNNW();
@@ -2665,8 +2668,8 @@ private static void placeNWNNW() {
         }
     }
     private static void faceWNW() throws GameActionException {
-        if (!CombatCommon.canPerformNW_W) return;
         if (CombatTracker.threatNWW != 0L) return;
+        if (!CombatCommon.canPerformMoves(Direction.NORTHWEST, Direction.WEST)) return;
         placeWWNW();
         placeNWWNW();
         placeSWWNW();

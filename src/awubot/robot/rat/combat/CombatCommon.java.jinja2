@@ -5,6 +5,7 @@ import battlecode.common.GameActionException;
 
 import static awubot.Game.*;
 import static awubot.util.Util.*;
+import awubot.util.Profiler;
 
 public final class CombatCommon {
     private CombatCommon() {
@@ -14,24 +15,13 @@ public final class CombatCommon {
     {% set move_short = shortDirections + ['C'] %}
 
     {% for idx in range(move_dirs|length) %}
-    static boolean canMove{{ move_short[idx] }};
-    {% endfor %}
-
-    {% for m in move_short %}
-    {% for f in shortDirections %}
-    static boolean canPerform{{ m }}_{{ f }};
-    {% endfor %}
+    public static boolean canMove{{ move_short[idx] }};
     {% endfor %}
 
     public static void precomp() throws GameActionException {
         {% for idx in range(move_dirs|length) %}
         canMove{{ move_short[idx] }} = canTraverse({{ move_dirs[idx] }});
         {% endfor %}
-    {% for mi in range(move_dirs|length) %}
-    {% for fi in range(directions|length) %}
-    canPerform{{ move_short[mi] }}_{{ shortDirections[fi] }} = computeCanPerform({{ move_dirs[mi] }}, {{ directions[fi] }});
-    {% endfor %}
-    {% endfor %}
     }
 
     public static boolean canMove(Direction dir) {
@@ -44,24 +34,10 @@ public final class CombatCommon {
     }
 
     public static boolean canPerformMoves(Direction moveDir, Direction facing) {
-        switch (moveDir.ordinal()) {
-            {% for mi in range(move_short|length) %}
-            case {{ mi }} -> {
-                switch (facing.ordinal()) {
-                    {% for fi in range(shortDirections|length) %}
-                    case {{ fi }} -> {
-                        return canPerform{{ move_short[mi] }}_{{ shortDirections[fi] }};
-                    }
-                    {% endfor %}
-                    default -> { return false; }
-                }
-            }
-            {% endfor %}
-            default -> { return false; }
-        }
+        return computeCanPerform(moveDir, facing);
     }
 
-    private static boolean computeCanPerform(Direction moveDir, Direction facing) throws GameActionException {
+    private static boolean computeCanPerform(Direction moveDir, Direction facing) {
         if (moveDir != Direction.CENTER && !canMove(moveDir)) return false;
         if (moveDir == Direction.CENTER) {
             return facing == myDir || rc.canTurn();

@@ -1,0 +1,77 @@
+package awubot.robot.rat.combat.moves;
+
+import battlecode.common.Direction;
+import battlecode.common.GameActionException;
+import battlecode.common.MapLocation;
+import battlecode.common.RobotInfo;
+
+import awubot.robot.rat.combat.CombatCommon;
+import awubot.robot.rat.combat.CombatStrategy;
+import static awubot.Game.*;
+import static awubot.util.Util.*;
+import static awubot.robot.rat.BabyRat.*;
+
+public final class TryFight {
+    private TryFight() {
+    }
+
+    static Direction md;
+    static Direction fd;
+    static double best;
+    static RobotInfo target;
+    static Direction moveDir;
+    static Direction facing;
+    static MapLocation newLoc;
+    static double dangerLevel;
+    static boolean facingTarget;
+
+    /*
+    
+    move towards enemy (no strafing)
+
+    
+    */
+    public static boolean run() throws GameActionException {
+        // Profiler.push();
+        md = null;
+        fd = null;
+        best = 1e9;
+        target = CombatStrategy.getNearestTarget();
+        if (target == null) return false;
+        for (Direction dir : allDirections) {
+            moveDir = dir;
+            if (moveDir != Direction.CENTER && !rc.isMovementReady()) continue;
+            if (!CombatCommon.canMove(moveDir)) continue;
+            newLoc = myLoc.add(moveDir);
+            for (Direction f : directions) { // maybe shrink search space if TLE
+                facing = f;
+                if (rc.canTurn()) {
+                    if (moveDir != facing) continue; // ban strafing
+                } else {
+                    if (facing != myDir || (!canStrafe() && moveDir != myDir)) continue; // forced to strafe (no turning)
+                }
+                dangerLevel = CombatStrategy.getDangerFor(moveDir, facing, target);
+                facingTarget = canSense(newLoc, target.getLocation(), facing);
+                if (!facingTarget) {
+                    // penalize not facing target
+                    dangerLevel *= 1.2;
+                }
+                if (facing != myDir && facingTarget) {
+                    // prefer turning 
+                    dangerLevel *= 0.9;
+                }
+                if (dangerLevel < best) {
+                    best = dangerLevel;
+                    md = moveDir;
+                    fd = facing;
+                }
+            }
+        }
+        // Profiler.pop("try fight");
+        if (md == null) return false;
+        CombatStrategy.performMoves(md, fd);
+        // try to squeeze some juice out
+        
+        return true;
+    }
+}

@@ -8,7 +8,7 @@ import static awubot.util.Util.*;
 import static awubot.Game.*;
 
 public class CellTracker {
-    public StringBuilder[] mapData;
+    public static StringBuilder[] mapData;
 
     public static void init() {
         mapData = new StringBuilder[60];
@@ -120,10 +120,10 @@ public class CellTracker {
                     seen{{i}} |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[{{i}}].setCharAt(locX, '\u0002');
                     } else {
                         passable{{i}} |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[{{i}}].setCharAt(locX, '\u0001');
                     }
                 }
             }

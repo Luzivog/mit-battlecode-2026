@@ -8,7 +8,7 @@ import static awubot.util.Util.*;
 import static awubot.Game.*;
 
 public class CellTracker {
-    public StringBuilder[] mapData;
+    public static StringBuilder[] mapData;
 
     public static void init() {
         mapData = new StringBuilder[60];
@@ -2213,10 +2213,10 @@ public class CellTracker {
                     seen0 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[0].setCharAt(locX, '\u0002');
                     } else {
                         passable0 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[0].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2227,10 +2227,10 @@ public class CellTracker {
                     seen1 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[1].setCharAt(locX, '\u0002');
                     } else {
                         passable1 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[1].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2241,10 +2241,10 @@ public class CellTracker {
                     seen2 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[2].setCharAt(locX, '\u0002');
                     } else {
                         passable2 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[2].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2255,10 +2255,10 @@ public class CellTracker {
                     seen3 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[3].setCharAt(locX, '\u0002');
                     } else {
                         passable3 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[3].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2269,10 +2269,10 @@ public class CellTracker {
                     seen4 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[4].setCharAt(locX, '\u0002');
                     } else {
                         passable4 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[4].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2283,10 +2283,10 @@ public class CellTracker {
                     seen5 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[5].setCharAt(locX, '\u0002');
                     } else {
                         passable5 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[5].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2297,10 +2297,10 @@ public class CellTracker {
                     seen6 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[6].setCharAt(locX, '\u0002');
                     } else {
                         passable6 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[6].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2311,10 +2311,10 @@ public class CellTracker {
                     seen7 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[7].setCharAt(locX, '\u0002');
                     } else {
                         passable7 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[7].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2325,10 +2325,10 @@ public class CellTracker {
                     seen8 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[8].setCharAt(locX, '\u0002');
                     } else {
                         passable8 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[8].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2339,10 +2339,10 @@ public class CellTracker {
                     seen9 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[9].setCharAt(locX, '\u0002');
                     } else {
                         passable9 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[9].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2353,10 +2353,10 @@ public class CellTracker {
                     seen10 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[10].setCharAt(locX, '\u0002');
                     } else {
                         passable10 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[10].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2367,10 +2367,10 @@ public class CellTracker {
                     seen11 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[11].setCharAt(locX, '\u0002');
                     } else {
                         passable11 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[11].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2381,10 +2381,10 @@ public class CellTracker {
                     seen12 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[12].setCharAt(locX, '\u0002');
                     } else {
                         passable12 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[12].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2395,10 +2395,10 @@ public class CellTracker {
                     seen13 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[13].setCharAt(locX, '\u0002');
                     } else {
                         passable13 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[13].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2409,10 +2409,10 @@ public class CellTracker {
                     seen14 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[14].setCharAt(locX, '\u0002');
                     } else {
                         passable14 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[14].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2423,10 +2423,10 @@ public class CellTracker {
                     seen15 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[15].setCharAt(locX, '\u0002');
                     } else {
                         passable15 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[15].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2437,10 +2437,10 @@ public class CellTracker {
                     seen16 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[16].setCharAt(locX, '\u0002');
                     } else {
                         passable16 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[16].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2451,10 +2451,10 @@ public class CellTracker {
                     seen17 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[17].setCharAt(locX, '\u0002');
                     } else {
                         passable17 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[17].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2465,10 +2465,10 @@ public class CellTracker {
                     seen18 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[18].setCharAt(locX, '\u0002');
                     } else {
                         passable18 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[18].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2479,10 +2479,10 @@ public class CellTracker {
                     seen19 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[19].setCharAt(locX, '\u0002');
                     } else {
                         passable19 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[19].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2493,10 +2493,10 @@ public class CellTracker {
                     seen20 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[20].setCharAt(locX, '\u0002');
                     } else {
                         passable20 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[20].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2507,10 +2507,10 @@ public class CellTracker {
                     seen21 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[21].setCharAt(locX, '\u0002');
                     } else {
                         passable21 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[21].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2521,10 +2521,10 @@ public class CellTracker {
                     seen22 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[22].setCharAt(locX, '\u0002');
                     } else {
                         passable22 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[22].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2535,10 +2535,10 @@ public class CellTracker {
                     seen23 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[23].setCharAt(locX, '\u0002');
                     } else {
                         passable23 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[23].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2549,10 +2549,10 @@ public class CellTracker {
                     seen24 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[24].setCharAt(locX, '\u0002');
                     } else {
                         passable24 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[24].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2563,10 +2563,10 @@ public class CellTracker {
                     seen25 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[25].setCharAt(locX, '\u0002');
                     } else {
                         passable25 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[25].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2577,10 +2577,10 @@ public class CellTracker {
                     seen26 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[26].setCharAt(locX, '\u0002');
                     } else {
                         passable26 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[26].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2591,10 +2591,10 @@ public class CellTracker {
                     seen27 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[27].setCharAt(locX, '\u0002');
                     } else {
                         passable27 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[27].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2605,10 +2605,10 @@ public class CellTracker {
                     seen28 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[28].setCharAt(locX, '\u0002');
                     } else {
                         passable28 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[28].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2619,10 +2619,10 @@ public class CellTracker {
                     seen29 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[29].setCharAt(locX, '\u0002');
                     } else {
                         passable29 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[29].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2633,10 +2633,10 @@ public class CellTracker {
                     seen30 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[30].setCharAt(locX, '\u0002');
                     } else {
                         passable30 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[30].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2647,10 +2647,10 @@ public class CellTracker {
                     seen31 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[31].setCharAt(locX, '\u0002');
                     } else {
                         passable31 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[31].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2661,10 +2661,10 @@ public class CellTracker {
                     seen32 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[32].setCharAt(locX, '\u0002');
                     } else {
                         passable32 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[32].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2675,10 +2675,10 @@ public class CellTracker {
                     seen33 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[33].setCharAt(locX, '\u0002');
                     } else {
                         passable33 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[33].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2689,10 +2689,10 @@ public class CellTracker {
                     seen34 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[34].setCharAt(locX, '\u0002');
                     } else {
                         passable34 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[34].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2703,10 +2703,10 @@ public class CellTracker {
                     seen35 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[35].setCharAt(locX, '\u0002');
                     } else {
                         passable35 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[35].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2717,10 +2717,10 @@ public class CellTracker {
                     seen36 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[36].setCharAt(locX, '\u0002');
                     } else {
                         passable36 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[36].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2731,10 +2731,10 @@ public class CellTracker {
                     seen37 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[37].setCharAt(locX, '\u0002');
                     } else {
                         passable37 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[37].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2745,10 +2745,10 @@ public class CellTracker {
                     seen38 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[38].setCharAt(locX, '\u0002');
                     } else {
                         passable38 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[38].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2759,10 +2759,10 @@ public class CellTracker {
                     seen39 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[39].setCharAt(locX, '\u0002');
                     } else {
                         passable39 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[39].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2773,10 +2773,10 @@ public class CellTracker {
                     seen40 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[40].setCharAt(locX, '\u0002');
                     } else {
                         passable40 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[40].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2787,10 +2787,10 @@ public class CellTracker {
                     seen41 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[41].setCharAt(locX, '\u0002');
                     } else {
                         passable41 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[41].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2801,10 +2801,10 @@ public class CellTracker {
                     seen42 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[42].setCharAt(locX, '\u0002');
                     } else {
                         passable42 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[42].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2815,10 +2815,10 @@ public class CellTracker {
                     seen43 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[43].setCharAt(locX, '\u0002');
                     } else {
                         passable43 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[43].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2829,10 +2829,10 @@ public class CellTracker {
                     seen44 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[44].setCharAt(locX, '\u0002');
                     } else {
                         passable44 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[44].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2843,10 +2843,10 @@ public class CellTracker {
                     seen45 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[45].setCharAt(locX, '\u0002');
                     } else {
                         passable45 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[45].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2857,10 +2857,10 @@ public class CellTracker {
                     seen46 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[46].setCharAt(locX, '\u0002');
                     } else {
                         passable46 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[46].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2871,10 +2871,10 @@ public class CellTracker {
                     seen47 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[47].setCharAt(locX, '\u0002');
                     } else {
                         passable47 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[47].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2885,10 +2885,10 @@ public class CellTracker {
                     seen48 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[48].setCharAt(locX, '\u0002');
                     } else {
                         passable48 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[48].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2899,10 +2899,10 @@ public class CellTracker {
                     seen49 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[49].setCharAt(locX, '\u0002');
                     } else {
                         passable49 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[49].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2913,10 +2913,10 @@ public class CellTracker {
                     seen50 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[50].setCharAt(locX, '\u0002');
                     } else {
                         passable50 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[50].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2927,10 +2927,10 @@ public class CellTracker {
                     seen51 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[51].setCharAt(locX, '\u0002');
                     } else {
                         passable51 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[51].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2941,10 +2941,10 @@ public class CellTracker {
                     seen52 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[52].setCharAt(locX, '\u0002');
                     } else {
                         passable52 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[52].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2955,10 +2955,10 @@ public class CellTracker {
                     seen53 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[53].setCharAt(locX, '\u0002');
                     } else {
                         passable53 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[53].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2969,10 +2969,10 @@ public class CellTracker {
                     seen54 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[54].setCharAt(locX, '\u0002');
                     } else {
                         passable54 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[54].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2983,10 +2983,10 @@ public class CellTracker {
                     seen55 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[55].setCharAt(locX, '\u0002');
                     } else {
                         passable55 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[55].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -2997,10 +2997,10 @@ public class CellTracker {
                     seen56 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[56].setCharAt(locX, '\u0002');
                     } else {
                         passable56 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[56].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -3011,10 +3011,10 @@ public class CellTracker {
                     seen57 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[57].setCharAt(locX, '\u0002');
                     } else {
                         passable57 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[57].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -3025,10 +3025,10 @@ public class CellTracker {
                     seen58 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[58].setCharAt(locX, '\u0002');
                     } else {
                         passable58 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[58].setCharAt(locX, '\u0001');
                     }
                 }
             }
@@ -3039,10 +3039,10 @@ public class CellTracker {
                     seen59 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
                     if(info.isWall()) {
-                        mapData[i].setCharAt(locX, '\u0002');
+                        mapData[59].setCharAt(locX, '\u0002');
                     } else {
                         passable59 |= 1l << locX;
-                        mapData[i].setCharAt(locX, '\u0001');
+                        mapData[59].setCharAt(locX, '\u0001');
                     }
                 }
             }

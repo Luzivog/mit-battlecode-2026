@@ -19,7 +19,7 @@ public class RobotPlayer {
         Game.init(rc);
         Rng.seed();
         GlobalArray.initGlobalArray();
-
+        CellTracker.init();
 
         boolean hasInitialisedRobot = false;
         while (true) {

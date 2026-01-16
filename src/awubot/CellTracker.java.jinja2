@@ -8,6 +8,16 @@ import static awubot.util.Util.*;
 import static awubot.Game.*;
 
 public class CellTracker {
+    public StringBuilder[] mapData;
+
+    public static void init() {
+        mapData = new StringBuilder[60];
+        for(int i = 0; i < 60; i++) {
+            mapData[i] = new StringBuilder();
+            mapData[i].repeat('\0', 60);
+        }
+    }
+
     {% for mask in ["seen", "passable", "dirt"] %}
     {% for i in range(MAX_MAP_SIZE) %}
     static long {{mask}}{{i}};
@@ -99,15 +109,23 @@ public class CellTracker {
 
     public static void storeCell(MapInfo info) throws GameActionException {
         var loc = info.getMapLocation();
+        var locX = loc.x;
         // rc.setIndicatorDot(loc, 255, 255, 0);
         switch(loc.y) {
             {% for i in range(MAX_MAP_SIZE) %}
             case {{i}} -> {
-                if ((seen{{i}} & 1l << loc.x) == 0l && info.hasCheeseMine()) Squeaker.registerMine(info.getMapLocation());
-                seen{{i}} |= 1l << loc.x;
-                if(!info.isWall()) passable{{i}} |= 1l << loc.x;
-                if(info.isDirt()) dirt{{i}} |= 1l << loc.x;
-                else dirt{{i}} &= ~(1l << loc.x);
+                if(info.isDirt()) dirt{{i}} |= 1l << locX;
+                else dirt{{i}} &= ~(1l << locX);
+                if((seen{{i}} & 1l << locX) == 0l) {
+                    seen{{i}} |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(info.isWall()) {
+                        mapData[i].setCharAt(locX, '\u0002');
+                    } else {
+                        passable{{i}} |= 1l << locX;
+                        mapData[i].setCharAt(locX, '\u0001');
+                    }
+                }
             }
             {% endfor %}
         }

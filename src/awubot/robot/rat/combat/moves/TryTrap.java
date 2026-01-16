@@ -55,6 +55,7 @@ public final class TryTrap {
     static double best;
     static MapLocation curMoveLoc;
 
+
     public static boolean miniRun() throws GameActionException {
         if (!rc.isActionReady()) return false;
         int x = myLocX;
@@ -92,15 +93,15 @@ public final class TryTrap {
                 }
                 int bestScore = -1;
                 MapLocation bestLoc = null;
-                if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
+                if (rc.canPlaceRatTrap(loc0) && !hasAdjacentTrap(loc0) && s0 > bestScore) {
                     bestScore = s0;
                     bestLoc = loc0;
                 }
-                if (rc.canPlaceRatTrap(loc1) && s1 > bestScore) {
+                if (rc.canPlaceRatTrap(loc1) && !hasAdjacentTrap(loc1) && s1 > bestScore) {
                     bestScore = s1;
                     bestLoc = loc1;
                 }
-                if (rc.canPlaceRatTrap(loc2) && s2 > bestScore) {
+                if (rc.canPlaceRatTrap(loc2) && !hasAdjacentTrap(loc2) && s2 > bestScore) {
                     bestScore = s2;
                     bestLoc = loc2;
                 }
@@ -142,15 +143,15 @@ public final class TryTrap {
                 }
                 int bestScore = -1;
                 MapLocation bestLoc = null;
-                if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
+                if (rc.canPlaceRatTrap(loc0) && !hasAdjacentTrap(loc0) && s0 > bestScore) {
                     bestScore = s0;
                     bestLoc = loc0;
                 }
-                if (rc.canPlaceRatTrap(loc1) && s1 > bestScore) {
+                if (rc.canPlaceRatTrap(loc1) && !hasAdjacentTrap(loc1) && s1 > bestScore) {
                     bestScore = s1;
                     bestLoc = loc1;
                 }
-                if (rc.canPlaceRatTrap(loc2) && s2 > bestScore) {
+                if (rc.canPlaceRatTrap(loc2) && !hasAdjacentTrap(loc2) && s2 > bestScore) {
                     bestScore = s2;
                     bestLoc = loc2;
                 }
@@ -192,15 +193,15 @@ public final class TryTrap {
                 }
                 int bestScore = -1;
                 MapLocation bestLoc = null;
-                if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
+                if (rc.canPlaceRatTrap(loc0) && !hasAdjacentTrap(loc0) && s0 > bestScore) {
                     bestScore = s0;
                     bestLoc = loc0;
                 }
-                if (rc.canPlaceRatTrap(loc1) && s1 > bestScore) {
+                if (rc.canPlaceRatTrap(loc1) && !hasAdjacentTrap(loc1) && s1 > bestScore) {
                     bestScore = s1;
                     bestLoc = loc1;
                 }
-                if (rc.canPlaceRatTrap(loc2) && s2 > bestScore) {
+                if (rc.canPlaceRatTrap(loc2) && !hasAdjacentTrap(loc2) && s2 > bestScore) {
                     bestScore = s2;
                     bestLoc = loc2;
                 }
@@ -242,15 +243,15 @@ public final class TryTrap {
                 }
                 int bestScore = -1;
                 MapLocation bestLoc = null;
-                if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
+                if (rc.canPlaceRatTrap(loc0) && !hasAdjacentTrap(loc0) && s0 > bestScore) {
                     bestScore = s0;
                     bestLoc = loc0;
                 }
-                if (rc.canPlaceRatTrap(loc1) && s1 > bestScore) {
+                if (rc.canPlaceRatTrap(loc1) && !hasAdjacentTrap(loc1) && s1 > bestScore) {
                     bestScore = s1;
                     bestLoc = loc1;
                 }
-                if (rc.canPlaceRatTrap(loc2) && s2 > bestScore) {
+                if (rc.canPlaceRatTrap(loc2) && !hasAdjacentTrap(loc2) && s2 > bestScore) {
                     bestScore = s2;
                     bestLoc = loc2;
                 }
@@ -292,15 +293,15 @@ public final class TryTrap {
                 }
                 int bestScore = -1;
                 MapLocation bestLoc = null;
-                if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
+                if (rc.canPlaceRatTrap(loc0) && !hasAdjacentTrap(loc0) && s0 > bestScore) {
                     bestScore = s0;
                     bestLoc = loc0;
                 }
-                if (rc.canPlaceRatTrap(loc1) && s1 > bestScore) {
+                if (rc.canPlaceRatTrap(loc1) && !hasAdjacentTrap(loc1) && s1 > bestScore) {
                     bestScore = s1;
                     bestLoc = loc1;
                 }
-                if (rc.canPlaceRatTrap(loc2) && s2 > bestScore) {
+                if (rc.canPlaceRatTrap(loc2) && !hasAdjacentTrap(loc2) && s2 > bestScore) {
                     bestScore = s2;
                     bestLoc = loc2;
                 }
@@ -342,15 +343,15 @@ public final class TryTrap {
                 }
                 int bestScore = -1;
                 MapLocation bestLoc = null;
-                if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
+                if (rc.canPlaceRatTrap(loc0) && !hasAdjacentTrap(loc0) && s0 > bestScore) {
                     bestScore = s0;
                     bestLoc = loc0;
                 }
-                if (rc.canPlaceRatTrap(loc1) && s1 > bestScore) {
+                if (rc.canPlaceRatTrap(loc1) && !hasAdjacentTrap(loc1) && s1 > bestScore) {
                     bestScore = s1;
                     bestLoc = loc1;
                 }
-                if (rc.canPlaceRatTrap(loc2) && s2 > bestScore) {
+                if (rc.canPlaceRatTrap(loc2) && !hasAdjacentTrap(loc2) && s2 > bestScore) {
                     bestScore = s2;
                     bestLoc = loc2;
                 }
@@ -392,15 +393,15 @@ public final class TryTrap {
                 }
                 int bestScore = -1;
                 MapLocation bestLoc = null;
-                if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
+                if (rc.canPlaceRatTrap(loc0) && !hasAdjacentTrap(loc0) && s0 > bestScore) {
                     bestScore = s0;
                     bestLoc = loc0;
                 }
-                if (rc.canPlaceRatTrap(loc1) && s1 > bestScore) {
+                if (rc.canPlaceRatTrap(loc1) && !hasAdjacentTrap(loc1) && s1 > bestScore) {
                     bestScore = s1;
                     bestLoc = loc1;
                 }
-                if (rc.canPlaceRatTrap(loc2) && s2 > bestScore) {
+                if (rc.canPlaceRatTrap(loc2) && !hasAdjacentTrap(loc2) && s2 > bestScore) {
                     bestScore = s2;
                     bestLoc = loc2;
                 }
@@ -442,15 +443,15 @@ public final class TryTrap {
                 }
                 int bestScore = -1;
                 MapLocation bestLoc = null;
-                if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
+                if (rc.canPlaceRatTrap(loc0) && !hasAdjacentTrap(loc0) && s0 > bestScore) {
                     bestScore = s0;
                     bestLoc = loc0;
                 }
-                if (rc.canPlaceRatTrap(loc1) && s1 > bestScore) {
+                if (rc.canPlaceRatTrap(loc1) && !hasAdjacentTrap(loc1) && s1 > bestScore) {
                     bestScore = s1;
                     bestLoc = loc1;
                 }
-                if (rc.canPlaceRatTrap(loc2) && s2 > bestScore) {
+                if (rc.canPlaceRatTrap(loc2) && !hasAdjacentTrap(loc2) && s2 > bestScore) {
                     bestScore = s2;
                     bestLoc = loc2;
                 }
@@ -466,6 +467,7 @@ public final class TryTrap {
     }
 
     public static boolean run() throws GameActionException {
+
         if (!confirmCanPlace()) return false;
         computeWeights();
         resetBest();
@@ -522,7 +524,7 @@ public final class TryTrap {
                 w_m2_2 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
                     w_m2_2 = -1000;
                 } else {
                     w_m2_2 = 0;
@@ -535,7 +537,7 @@ public final class TryTrap {
                 w_m1_2 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
                     w_m1_2 = -1000;
                 } else {
                     w_m1_2 = 0;
@@ -548,7 +550,7 @@ public final class TryTrap {
                 w_0_2 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
                     w_0_2 = -1000;
                 } else {
                     w_0_2 = 0;
@@ -561,7 +563,7 @@ public final class TryTrap {
                 w_1_2 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
                     w_1_2 = -1000;
                 } else {
                     w_1_2 = 0;
@@ -574,7 +576,7 @@ public final class TryTrap {
                 w_2_2 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
                     w_2_2 = -1000;
                 } else {
                     w_2_2 = 0;
@@ -587,7 +589,7 @@ public final class TryTrap {
                 w_m2_1 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
                     w_m2_1 = -1000;
                 } else {
                     w_m2_1 = 0;
@@ -600,7 +602,7 @@ public final class TryTrap {
                 w_m1_1 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
                     w_m1_1 = -1000;
                 } else {
                     w_m1_1 = 0;
@@ -613,7 +615,7 @@ public final class TryTrap {
                 w_0_1 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
                     w_0_1 = -1000;
                 } else {
                     w_0_1 = 0;
@@ -626,7 +628,7 @@ public final class TryTrap {
                 w_1_1 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
                     w_1_1 = -1000;
                 } else {
                     w_1_1 = 0;
@@ -639,7 +641,7 @@ public final class TryTrap {
                 w_2_1 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
                     w_2_1 = -1000;
                 } else {
                     w_2_1 = 0;
@@ -652,7 +654,7 @@ public final class TryTrap {
                 w_m2_0 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
                     w_m2_0 = -1000;
                 } else {
                     w_m2_0 = 0;
@@ -665,7 +667,7 @@ public final class TryTrap {
                 w_m1_0 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
                     w_m1_0 = -1000;
                 } else {
                     w_m1_0 = 0;
@@ -691,7 +693,7 @@ public final class TryTrap {
                 w_1_0 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
                     w_1_0 = -1000;
                 } else {
                     w_1_0 = 0;
@@ -704,7 +706,7 @@ public final class TryTrap {
                 w_2_0 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
                     w_2_0 = -1000;
                 } else {
                     w_2_0 = 0;
@@ -717,7 +719,7 @@ public final class TryTrap {
                 w_m2_m1 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
                     w_m2_m1 = -1000;
                 } else {
                     w_m2_m1 = 0;
@@ -730,7 +732,7 @@ public final class TryTrap {
                 w_m1_m1 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
                     w_m1_m1 = -1000;
                 } else {
                     w_m1_m1 = 0;
@@ -743,7 +745,7 @@ public final class TryTrap {
                 w_0_m1 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
                     w_0_m1 = -1000;
                 } else {
                     w_0_m1 = 0;
@@ -756,7 +758,7 @@ public final class TryTrap {
                 w_1_m1 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
                     w_1_m1 = -1000;
                 } else {
                     w_1_m1 = 0;
@@ -769,7 +771,7 @@ public final class TryTrap {
                 w_2_m1 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
                     w_2_m1 = -1000;
                 } else {
                     w_2_m1 = 0;
@@ -782,7 +784,7 @@ public final class TryTrap {
                 w_m2_m2 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
                     w_m2_m2 = -1000;
                 } else {
                     w_m2_m2 = 0;
@@ -795,7 +797,7 @@ public final class TryTrap {
                 w_m1_m2 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
                     w_m1_m2 = -1000;
                 } else {
                     w_m1_m2 = 0;
@@ -808,7 +810,7 @@ public final class TryTrap {
                 w_0_m2 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
                     w_0_m2 = -1000;
                 } else {
                     w_0_m2 = 0;
@@ -821,7 +823,7 @@ public final class TryTrap {
                 w_1_m2 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
                     w_1_m2 = -1000;
                 } else {
                     w_1_m2 = 0;
@@ -834,7 +836,7 @@ public final class TryTrap {
                 w_2_m2 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
                     w_2_m2 = -1000;
                 } else {
                     w_2_m2 = 0;
@@ -1932,6 +1934,13 @@ w_2_2 += 2;                                }
                 default -> { }
             }
         }
+    }
+
+    private static boolean hasAdjacentTrap(MapLocation loc) throws GameActionException {
+        for (MapInfo info : rc.senseNearbyMapInfos(loc, 2)) {
+            if (info.getTrap() != TrapType.NONE) return true;
+        }
+        return false;
     }
 
     private static void resetBest() {

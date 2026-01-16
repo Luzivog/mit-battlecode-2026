@@ -77,31 +77,38 @@ public class CombatTracker {
     {%- endif -%}
     {%- endmacro %}
 
-    {% macro enemy_mask(dx_e, dy_e, facing, moveDir) -%}
+    {% macro can_see(facing_idx, dx, dy) -%}
+    {%- set facing = directions[facing_idx] -%}
+    {%- if facing == "Direction.NORTH" -%}
+    {{ "true" if dy >= (dx | abs) else "false" }}
+    {%- elif facing == "Direction.NORTHEAST" -%}
+    {{ "true" if dx >= 0 and dy >= 0 else "false" }}
+    {%- elif facing == "Direction.EAST" -%}
+    {{ "true" if dx >= (dy | abs) else "false" }}
+    {%- elif facing == "Direction.SOUTHEAST" -%}
+    {{ "true" if dx >= 0 and dy <= 0 else "false" }}
+    {%- elif facing == "Direction.SOUTH" -%}
+    {{ "true" if dy <= -(dx | abs) else "false" }}
+    {%- elif facing == "Direction.SOUTHWEST" -%}
+    {{ "true" if dx <= 0 and dy <= 0 else "false" }}
+    {%- elif facing == "Direction.WEST" -%}
+    {{ "true" if dx <= -(dy | abs) else "false" }}
+    {%- elif facing == "Direction.NORTHWEST" -%}
+    {{ "true" if dx <= 0 and dy >= 0 else "false" }}
+    {%- else -%}
+    false
+    {%- endif -%}
+    {%- endmacro %}
+
+    {% macro enemy_mask(dx_e, dy_e, facing_idx, moveDir) -%}
     {%- set dx_m = dir_dx[moveDir] -%}
     {%- set dy_m = dir_dy[moveDir] -%}
     {%- set dx_rel = dx_m - dx_e -%}
     {%- set dy_rel = dy_m - dy_e -%}
     {%- set dist_ok = (dx_rel * dx_rel + dy_rel * dy_rel) <= 20 -%}
-    {%- set ns = namespace(mask=0, visible=false) -%}
-    {%- if facing == "Direction.NORTH" -%}
-    {%- set ns.visible = dy_rel >= (dx_rel | abs) -%}
-    {%- elif facing == "Direction.NORTHEAST" -%}
-    {%- set ns.visible = dx_rel >= 0 and dy_rel >= 0 -%}
-    {%- elif facing == "Direction.EAST" -%}
-    {%- set ns.visible = dx_rel >= (dy_rel | abs) -%}
-    {%- elif facing == "Direction.SOUTHEAST" -%}
-    {%- set ns.visible = dx_rel >= 0 and dy_rel <= 0 -%}
-    {%- elif facing == "Direction.SOUTH" -%}
-    {%- set ns.visible = dy_rel <= -(dx_rel | abs) -%}
-    {%- elif facing == "Direction.SOUTHWEST" -%}
-    {%- set ns.visible = dx_rel <= 0 and dy_rel <= 0 -%}
-    {%- elif facing == "Direction.WEST" -%}
-    {%- set ns.visible = dx_rel <= -(dy_rel | abs) -%}
-    {%- elif facing == "Direction.NORTHWEST" -%}
-    {%- set ns.visible = dx_rel <= 0 and dy_rel >= 0 -%}
-    {%- endif -%}
-    {%- if dist_ok and ns.visible -%}
+    {%- set ns = namespace(mask=0) -%}
+    {%- set visible = (can_see(facing_idx, dx_rel, dy_rel) == "true") -%}
+    {%- if dist_ok and visible -%}
     {%- for i in range(8) -%}
     {%- set ndir = directions[i] -%}
     {%- set nx = dx_m + dir_dx[ndir] -%}
@@ -116,8 +123,8 @@ public class CombatTracker {
     {{ long_hex(ns.mask) }}
     {%- endmacro %}
 
-    {% macro add_mask(var, dx_e, dy_e, facing, moveDir) -%}
-    {%- set mask = enemy_mask(dx_e, dy_e, facing, moveDir) -%}
+    {% macro add_mask(var, dx_e, dy_e, facing_idx, moveDir) -%}
+    {%- set mask = enemy_mask(dx_e, dy_e, facing_idx, moveDir) -%}
     {%- if mask|trim != "0x0000000000000000L" -%}
     {{ var }} += {{ mask }};
     {%- endif -%}
@@ -179,14 +186,14 @@ public class CombatTracker {
         // Profiler.pop("CombatTracker: loading threats");
 
         // Profiler.push();
-        for (MapInfo info : rc.senseNearbyMapInfos(8)) {
+        {# for (MapInfo info : rc.senseNearbyMapInfos(8)) {
             if (info.getTrap() == TrapType.NONE) continue;
             MapLocation loc = info.getMapLocation();
             int dx = loc.x - myLocX;
             int dy = loc.y - myLocY;
             if (dx < -2 || dx > 2 || dy < -2 || dy > 2) continue;
             registerTrap(dx, dy);
-        }
+        } #}
         // Profiler.pop("CombatTracker: registering traps");
         
         // Profiler.push();
@@ -240,18 +247,29 @@ public class CombatTracker {
         {%- if dx == 0 and dy == 0 %}
         {{ cell_var(dx, dy) }} = true;
         {%- else %}
-        if (CellTracker.isSeen(x {% if dx %} + {{dx}}{% endif %}, y {% if dy %} + {{dy}}{% endif %})) {
-            {{ cell_var(dx, dy) }} = CellTracker.isPassable(x {% if dx %} + {{dx}}{% endif %}, y {% if dy %} + {{dy}}{% endif %});
-        } else {
-            {{ cell_var(dx, dy) }} = false;
-        }
+        {%- set ns = namespace(conds=[]) -%}
+        {%- if dx < 0 -%}
+        {%- set ns.conds = ns.conds + ["x >= " ~ (-dx)] -%}
+        {%- elif dx > 0 -%}
+        {%- set ns.conds = ns.conds + ["x < mapWidth - " ~ dx] -%}
+        {%- endif -%}
+        {%- if dy < 0 -%}
+        {%- set ns.conds = ns.conds + ["y >= " ~ (-dy)] -%}
+        {%- elif dy > 0 -%}
+        {%- set ns.conds = ns.conds + ["y < mapHeight - " ~ dy] -%}
+        {%- endif -%}
+        {%- if ns.conds|length > 0 -%}
+        {{ cell_var(dx, dy) }} = ({{ ns.conds | join(" && ") }}) && CellTracker.mapData[x {% if dx %} + {{dx}}{% endif %}].charAt(y {% if dy %} + {{dy}}{% endif %}) != '\2';
+        {%- else -%}
+        {{ cell_var(dx, dy) }} = CellTracker.mapData[x {% if dx %} + {{dx}}{% endif %}].charAt(y {% if dy %} + {{dy}}{% endif %}) != '\2';
+        {%- endif -%}
         {%- endif %}
         {% endfor %}
         {% endfor %}
         for (RobotInfo info : rc.senseNearbyRobots()) {
             if (info.getType() != UnitType.BABY_RAT) continue;
-            int dx = info.getLocation().x - x;
-            int dy = info.getLocation().y - y;
+            int dx = info.location.x - x;
+            int dy = info.location.y - y;
             switch (dx) {
                 {% for dx in range(-2, 3) %}
                 case {{ dx }} -> {
@@ -306,14 +324,14 @@ public class CombatTracker {
     }
 
     public static void registerEnemy(RobotInfo info) {
-        int dx = info.getLocation().x - myLocX;
-        int dy = info.getLocation().y - myLocY;
+        int dx = info.location.x - myLocX;
+        int dy = info.location.y - myLocY;
         if (dx < -2 || dx > 2 || dy < -2 || dy > 2) return;
         boolean highHealth = info.getHealth() > rc.getHealth();
         if (highHealth) {
-            registerEnemyHigh(dx, dy, info.getDirection());
+            registerEnemyHigh(dx, dy, info.direction);
         } else {
-            registerEnemyLow(dx, dy, info.getDirection());
+            registerEnemyLow(dx, dy, info.direction);
         }
     }
 
@@ -328,7 +346,7 @@ public class CombatTracker {
                             {% for fi in range(directions|length) %}
                             case {{ fi }} -> {
                                 {% for i in range(moveDirs|length) %}
-                                {{ add_mask("low" ~ moveShort[i], dx, dy, directions[fi], moveDirs[i]) }}
+                                {{ add_mask("low" ~ moveShort[i], dx, dy, fi, moveDirs[i]) }}
                                 {% endfor %}
                             }
                             {% endfor %}
@@ -355,7 +373,7 @@ public class CombatTracker {
                             {% for fi in range(directions|length) %}
                             case {{ fi }} -> {
                                 {% for i in range(moveDirs|length) %}
-                                {{ add_mask("high" ~ moveShort[i], dx, dy, directions[fi], moveDirs[i]) }}
+                                {{ add_mask("high" ~ moveShort[i], dx, dy, fi, moveDirs[i]) }}
                                 {% endfor %}
                             }
                             {% endfor %}
@@ -405,10 +423,10 @@ public class CombatTracker {
         if (target == null) return base != 0L;
         if (target.getTeam() == rc.getTeam()) return base != 0L;
         if (target.getType() != UnitType.BABY_RAT) return base != 0L;
-        int enemyDx = target.getLocation().x - myLocX;
-        int enemyDy = target.getLocation().y - myLocY;
+        int enemyDx = target.location.x - myLocX;
+        int enemyDy = target.location.y - myLocY;
         if (enemyDx < -2 || enemyDx > 2 || enemyDy < -2 || enemyDy > 2) return base != 0L;
-        long sub = enemyMaskForMove(enemyDx, enemyDy, target.getDirection(), moveDir);
+        long sub = enemyMaskForMove(enemyDx, enemyDy, target.direction, moveDir);
         long threat = getMoveThreatMask(moveDir);
         if (target.getHealth() > rc.getHealth()) {
             base -= (sub & threat);
@@ -450,7 +468,7 @@ public class CombatTracker {
                             case {{ fi }} -> {
                                 switch (moveIdx) {
                                     {% for mi in range(moveDirs|length) %}
-                                    case {{ mi }} -> { return {{ enemy_mask(dx, dy, directions[fi], moveDirs[mi]) }}; }
+                                    case {{ mi }} -> { return {{ enemy_mask(dx, dy, fi, moveDirs[mi]) }}; }
                                     {% endfor %}
                                     default -> { return 0L; }
                                 }

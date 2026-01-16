@@ -26,8 +26,10 @@ public class RobotPlayer {
             try {
                 Game.preTick();
                 Util.preTick();
+                CellTracker.preTick();
                 Rng.init();
                 RobotTracker.reset();
+                RobotTracker.preTick();
 
                 if (!hasInitialisedRobot) {
                     if(isRatKing) {

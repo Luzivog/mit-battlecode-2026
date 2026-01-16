@@ -27,6 +27,7 @@ public final class TryThrow {
     // return false if didnt throw -- some other process can figure out how to move
     // TODO: maybe weight targets based on how close they are to friendly rats? might be too effort
     public static boolean run() throws GameActionException {
+        if (!rc.isActionReady()) return false;
         // Profiler.push();
         md = null;
         td = null;

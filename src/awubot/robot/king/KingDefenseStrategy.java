@@ -91,11 +91,11 @@ public class KingDefenseStrategy extends Strategy {
             MapLocation myThreatCenter = new MapLocation(myLoc.x + theContext.theThreatVectorX, myLoc.y + theContext.theThreatVectorY);
             myAwayDir = myThreatCenter.directionTo(myLoc);
         } else if (theContext.theNearestCat != null) {
-            myAwayDir = theContext.theNearestCat.getLocation().directionTo(myLoc);
+            myAwayDir = theContext.theNearestCat.location.directionTo(myLoc);
         } else if (theContext.theNearestEnemyRatKing != null) {
-            myAwayDir = theContext.theNearestEnemyRatKing.getLocation().directionTo(myLoc);
+            myAwayDir = theContext.theNearestEnemyRatKing.location.directionTo(myLoc);
         } else if (theContext.theNearestEnemyRat != null) {
-            myAwayDir = theContext.theNearestEnemyRat.getLocation().directionTo(myLoc);
+            myAwayDir = theContext.theNearestEnemyRat.location.directionTo(myLoc);
         } else {
             return moveTowardSafety();
         }
@@ -167,7 +167,7 @@ public class KingDefenseStrategy extends Strategy {
         if (rc.getGlobalCheese() < 60) return false;
         if (theContext.theNearestCat == null) return false;
 
-        MapLocation myCatLoc = theContext.theNearestCat.getLocation();
+        MapLocation myCatLoc = theContext.theNearestCat.location;
         Direction myTowardKing = myCatLoc.directionTo(myLoc);
 
         MapLocation myBaseLoc = myLoc.add(myTowardKing.opposite()).add(myTowardKing.opposite());
@@ -246,7 +246,7 @@ public class KingDefenseStrategy extends Strategy {
         if (thePlacedCatTraps >= MAX_CAT_TRAPS) return false;
         if (theContext.theNearestCat == null) return false;
 
-        MapLocation myCatLoc = theContext.theNearestCat.getLocation();
+        MapLocation myCatLoc = theContext.theNearestCat.location;
         Direction myCatToKing = myCatLoc.directionTo(myLoc);
         MapLocation myTrapLoc = myCatLoc.add(myCatToKing).add(myCatToKing);
 
@@ -272,7 +272,7 @@ public class KingDefenseStrategy extends Strategy {
         if (theContext.theNearestCat == null) return;
         if (time - theLastLureSignalRound < LURE_SIGNAL_COOLDOWN) return;
 
-        MapLocation myCatLoc = theContext.theNearestCat.getLocation();
+        MapLocation myCatLoc = theContext.theNearestCat.location;
         boolean myShouldLure = false;
         String myReason = "";
 

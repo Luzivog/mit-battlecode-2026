@@ -15,6 +15,8 @@ import static awubot.Game.*;
 import static awubot.util.Util.*;
 import static awubot.robot.rat.BabyRat.*;
 import awubot.util.Profiler;
+import awubot.CellTracker;
+import awubot.RobotTracker;
 
 
 
@@ -56,423 +58,23 @@ public final class TryTrap {
     static double best;
     static MapLocation curMoveLoc;
 
-    public static boolean miniRun() throws GameActionException {
-        if (!rc.isActionReady()) return false;
-        int x = myLocX;
-        int y = myLocY;
-        switch (myDir.ordinal()) {
-            case 0 -> {
-                MapLocation loc0 = new MapLocation(x , y  + 1);
-                int s0 = 0;
-                MapLocation loc1 = new MapLocation(x  + 1, y  + 1);
-                int s1 = 0;
-                MapLocation loc2 = new MapLocation(x  + -1, y  + 1);
-                int s2 = 0;
-                for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
-                    if (rinfo.getTeam() == team) continue;
-                    if (rinfo.getType() != UnitType.BABY_RAT) continue;
-                    MapLocation eloc = rinfo.getLocation();
-                    {
-                        if (eloc.distanceSquaredTo(loc0) <= 2) {
-                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc0));
-                            if (ang <= 3) s0 += 4 - ang;
-                        }
-                    }
-                    {
-                        if (eloc.distanceSquaredTo(loc1) <= 2) {
-                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc1));
-                            if (ang <= 3) s1 += 4 - ang;
-                        }
-                    }
-                    {
-                        if (eloc.distanceSquaredTo(loc2) <= 2) {
-                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc2));
-                            if (ang <= 3) s2 += 4 - ang;
-                        }
-                    }
-                }
-                int bestScore = -1;
-                MapLocation bestLoc = null;
-                if (rc.canPlaceRatTrap(loc0) && !hasAdjacentTrap_0_1() && s0 > bestScore) {
-                    bestScore = s0;
-                    bestLoc = loc0;
-                }
-                if (rc.canPlaceRatTrap(loc1) && !hasAdjacentTrap_1_1() && s1 > bestScore) {
-                    bestScore = s1;
-                    bestLoc = loc1;
-                }
-                if (rc.canPlaceRatTrap(loc2) && !hasAdjacentTrap_m1_1() && s2 > bestScore) {
-                    bestScore = s2;
-                    bestLoc = loc2;
-                }
-                if (bestScore <= 0) return false;
-                rc.placeRatTrap(bestLoc);
-                println("!!!!!!!!!! placed rat trap MINI");
-                indicate("COMBAT STRAT: MINI TRAP");
-                return true;
-            }
-            case 1 -> {
-                MapLocation loc0 = new MapLocation(x  + 1, y  + 1);
-                int s0 = 0;
-                MapLocation loc1 = new MapLocation(x , y  + 1);
-                int s1 = 0;
-                MapLocation loc2 = new MapLocation(x  + 1, y );
-                int s2 = 0;
-                for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
-                    if (rinfo.getTeam() == team) continue;
-                    if (rinfo.getType() != UnitType.BABY_RAT) continue;
-                    MapLocation eloc = rinfo.getLocation();
-                    {
-                        if (eloc.distanceSquaredTo(loc0) <= 2) {
-                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc0));
-                            if (ang <= 3) s0 += 4 - ang;
-                        }
-                    }
-                    {
-                        if (eloc.distanceSquaredTo(loc1) <= 2) {
-                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc1));
-                            if (ang <= 3) s1 += 4 - ang;
-                        }
-                    }
-                    {
-                        if (eloc.distanceSquaredTo(loc2) <= 2) {
-                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc2));
-                            if (ang <= 3) s2 += 4 - ang;
-                        }
-                    }
-                }
-                int bestScore = -1;
-                MapLocation bestLoc = null;
-                if (rc.canPlaceRatTrap(loc0) && !hasAdjacentTrap_1_1() && s0 > bestScore) {
-                    bestScore = s0;
-                    bestLoc = loc0;
-                }
-                if (rc.canPlaceRatTrap(loc1) && !hasAdjacentTrap_0_1() && s1 > bestScore) {
-                    bestScore = s1;
-                    bestLoc = loc1;
-                }
-                if (rc.canPlaceRatTrap(loc2) && !hasAdjacentTrap_1_0() && s2 > bestScore) {
-                    bestScore = s2;
-                    bestLoc = loc2;
-                }
-                if (bestScore <= 0) return false;
-                rc.placeRatTrap(bestLoc);
-                println("!!!!!!!!!! placed rat trap MINI");
-                indicate("COMBAT STRAT: MINI TRAP");
-                return true;
-            }
-            case 2 -> {
-                MapLocation loc0 = new MapLocation(x  + 1, y );
-                int s0 = 0;
-                MapLocation loc1 = new MapLocation(x  + 1, y  + 1);
-                int s1 = 0;
-                MapLocation loc2 = new MapLocation(x  + 1, y  + -1);
-                int s2 = 0;
-                for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
-                    if (rinfo.getTeam() == team) continue;
-                    if (rinfo.getType() != UnitType.BABY_RAT) continue;
-                    MapLocation eloc = rinfo.getLocation();
-                    {
-                        if (eloc.distanceSquaredTo(loc0) <= 2) {
-                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc0));
-                            if (ang <= 3) s0 += 4 - ang;
-                        }
-                    }
-                    {
-                        if (eloc.distanceSquaredTo(loc1) <= 2) {
-                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc1));
-                            if (ang <= 3) s1 += 4 - ang;
-                        }
-                    }
-                    {
-                        if (eloc.distanceSquaredTo(loc2) <= 2) {
-                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc2));
-                            if (ang <= 3) s2 += 4 - ang;
-                        }
-                    }
-                }
-                int bestScore = -1;
-                MapLocation bestLoc = null;
-                if (rc.canPlaceRatTrap(loc0) && !hasAdjacentTrap_1_0() && s0 > bestScore) {
-                    bestScore = s0;
-                    bestLoc = loc0;
-                }
-                if (rc.canPlaceRatTrap(loc1) && !hasAdjacentTrap_1_1() && s1 > bestScore) {
-                    bestScore = s1;
-                    bestLoc = loc1;
-                }
-                if (rc.canPlaceRatTrap(loc2) && !hasAdjacentTrap_1_m1() && s2 > bestScore) {
-                    bestScore = s2;
-                    bestLoc = loc2;
-                }
-                if (bestScore <= 0) return false;
-                rc.placeRatTrap(bestLoc);
-                println("!!!!!!!!!! placed rat trap MINI");
-                indicate("COMBAT STRAT: MINI TRAP");
-                return true;
-            }
-            case 3 -> {
-                MapLocation loc0 = new MapLocation(x  + 1, y  + -1);
-                int s0 = 0;
-                MapLocation loc1 = new MapLocation(x , y  + -1);
-                int s1 = 0;
-                MapLocation loc2 = new MapLocation(x  + 1, y );
-                int s2 = 0;
-                for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
-                    if (rinfo.getTeam() == team) continue;
-                    if (rinfo.getType() != UnitType.BABY_RAT) continue;
-                    MapLocation eloc = rinfo.getLocation();
-                    {
-                        if (eloc.distanceSquaredTo(loc0) <= 2) {
-                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc0));
-                            if (ang <= 3) s0 += 4 - ang;
-                        }
-                    }
-                    {
-                        if (eloc.distanceSquaredTo(loc1) <= 2) {
-                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc1));
-                            if (ang <= 3) s1 += 4 - ang;
-                        }
-                    }
-                    {
-                        if (eloc.distanceSquaredTo(loc2) <= 2) {
-                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc2));
-                            if (ang <= 3) s2 += 4 - ang;
-                        }
-                    }
-                }
-                int bestScore = -1;
-                MapLocation bestLoc = null;
-                if (rc.canPlaceRatTrap(loc0) && !hasAdjacentTrap_1_m1() && s0 > bestScore) {
-                    bestScore = s0;
-                    bestLoc = loc0;
-                }
-                if (rc.canPlaceRatTrap(loc1) && !hasAdjacentTrap_0_m1() && s1 > bestScore) {
-                    bestScore = s1;
-                    bestLoc = loc1;
-                }
-                if (rc.canPlaceRatTrap(loc2) && !hasAdjacentTrap_1_0() && s2 > bestScore) {
-                    bestScore = s2;
-                    bestLoc = loc2;
-                }
-                if (bestScore <= 0) return false;
-                rc.placeRatTrap(bestLoc);
-                println("!!!!!!!!!! placed rat trap MINI");
-                indicate("COMBAT STRAT: MINI TRAP");
-                return true;
-            }
-            case 4 -> {
-                MapLocation loc0 = new MapLocation(x , y  + -1);
-                int s0 = 0;
-                MapLocation loc1 = new MapLocation(x  + 1, y  + -1);
-                int s1 = 0;
-                MapLocation loc2 = new MapLocation(x  + -1, y  + -1);
-                int s2 = 0;
-                for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
-                    if (rinfo.getTeam() == team) continue;
-                    if (rinfo.getType() != UnitType.BABY_RAT) continue;
-                    MapLocation eloc = rinfo.getLocation();
-                    {
-                        if (eloc.distanceSquaredTo(loc0) <= 2) {
-                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc0));
-                            if (ang <= 3) s0 += 4 - ang;
-                        }
-                    }
-                    {
-                        if (eloc.distanceSquaredTo(loc1) <= 2) {
-                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc1));
-                            if (ang <= 3) s1 += 4 - ang;
-                        }
-                    }
-                    {
-                        if (eloc.distanceSquaredTo(loc2) <= 2) {
-                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc2));
-                            if (ang <= 3) s2 += 4 - ang;
-                        }
-                    }
-                }
-                int bestScore = -1;
-                MapLocation bestLoc = null;
-                if (rc.canPlaceRatTrap(loc0) && !hasAdjacentTrap_0_m1() && s0 > bestScore) {
-                    bestScore = s0;
-                    bestLoc = loc0;
-                }
-                if (rc.canPlaceRatTrap(loc1) && !hasAdjacentTrap_1_m1() && s1 > bestScore) {
-                    bestScore = s1;
-                    bestLoc = loc1;
-                }
-                if (rc.canPlaceRatTrap(loc2) && !hasAdjacentTrap_m1_m1() && s2 > bestScore) {
-                    bestScore = s2;
-                    bestLoc = loc2;
-                }
-                if (bestScore <= 0) return false;
-                rc.placeRatTrap(bestLoc);
-                println("!!!!!!!!!! placed rat trap MINI");
-                indicate("COMBAT STRAT: MINI TRAP");
-                return true;
-            }
-            case 5 -> {
-                MapLocation loc0 = new MapLocation(x  + -1, y  + -1);
-                int s0 = 0;
-                MapLocation loc1 = new MapLocation(x , y  + -1);
-                int s1 = 0;
-                MapLocation loc2 = new MapLocation(x  + -1, y );
-                int s2 = 0;
-                for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
-                    if (rinfo.getTeam() == team) continue;
-                    if (rinfo.getType() != UnitType.BABY_RAT) continue;
-                    MapLocation eloc = rinfo.getLocation();
-                    {
-                        if (eloc.distanceSquaredTo(loc0) <= 2) {
-                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc0));
-                            if (ang <= 3) s0 += 4 - ang;
-                        }
-                    }
-                    {
-                        if (eloc.distanceSquaredTo(loc1) <= 2) {
-                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc1));
-                            if (ang <= 3) s1 += 4 - ang;
-                        }
-                    }
-                    {
-                        if (eloc.distanceSquaredTo(loc2) <= 2) {
-                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc2));
-                            if (ang <= 3) s2 += 4 - ang;
-                        }
-                    }
-                }
-                int bestScore = -1;
-                MapLocation bestLoc = null;
-                if (rc.canPlaceRatTrap(loc0) && !hasAdjacentTrap_m1_m1() && s0 > bestScore) {
-                    bestScore = s0;
-                    bestLoc = loc0;
-                }
-                if (rc.canPlaceRatTrap(loc1) && !hasAdjacentTrap_0_m1() && s1 > bestScore) {
-                    bestScore = s1;
-                    bestLoc = loc1;
-                }
-                if (rc.canPlaceRatTrap(loc2) && !hasAdjacentTrap_m1_0() && s2 > bestScore) {
-                    bestScore = s2;
-                    bestLoc = loc2;
-                }
-                if (bestScore <= 0) return false;
-                rc.placeRatTrap(bestLoc);
-                println("!!!!!!!!!! placed rat trap MINI");
-                indicate("COMBAT STRAT: MINI TRAP");
-                return true;
-            }
-            case 6 -> {
-                MapLocation loc0 = new MapLocation(x  + -1, y );
-                int s0 = 0;
-                MapLocation loc1 = new MapLocation(x  + -1, y  + 1);
-                int s1 = 0;
-                MapLocation loc2 = new MapLocation(x  + -1, y  + -1);
-                int s2 = 0;
-                for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
-                    if (rinfo.getTeam() == team) continue;
-                    if (rinfo.getType() != UnitType.BABY_RAT) continue;
-                    MapLocation eloc = rinfo.getLocation();
-                    {
-                        if (eloc.distanceSquaredTo(loc0) <= 2) {
-                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc0));
-                            if (ang <= 3) s0 += 4 - ang;
-                        }
-                    }
-                    {
-                        if (eloc.distanceSquaredTo(loc1) <= 2) {
-                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc1));
-                            if (ang <= 3) s1 += 4 - ang;
-                        }
-                    }
-                    {
-                        if (eloc.distanceSquaredTo(loc2) <= 2) {
-                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc2));
-                            if (ang <= 3) s2 += 4 - ang;
-                        }
-                    }
-                }
-                int bestScore = -1;
-                MapLocation bestLoc = null;
-                if (rc.canPlaceRatTrap(loc0) && !hasAdjacentTrap_m1_0() && s0 > bestScore) {
-                    bestScore = s0;
-                    bestLoc = loc0;
-                }
-                if (rc.canPlaceRatTrap(loc1) && !hasAdjacentTrap_m1_1() && s1 > bestScore) {
-                    bestScore = s1;
-                    bestLoc = loc1;
-                }
-                if (rc.canPlaceRatTrap(loc2) && !hasAdjacentTrap_m1_m1() && s2 > bestScore) {
-                    bestScore = s2;
-                    bestLoc = loc2;
-                }
-                if (bestScore <= 0) return false;
-                rc.placeRatTrap(bestLoc);
-                println("!!!!!!!!!! placed rat trap MINI");
-                indicate("COMBAT STRAT: MINI TRAP");
-                return true;
-            }
-            case 7 -> {
-                MapLocation loc0 = new MapLocation(x  + -1, y  + 1);
-                int s0 = 0;
-                MapLocation loc1 = new MapLocation(x , y  + 1);
-                int s1 = 0;
-                MapLocation loc2 = new MapLocation(x  + -1, y );
-                int s2 = 0;
-                for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
-                    if (rinfo.getTeam() == team) continue;
-                    if (rinfo.getType() != UnitType.BABY_RAT) continue;
-                    MapLocation eloc = rinfo.getLocation();
-                    {
-                        if (eloc.distanceSquaredTo(loc0) <= 2) {
-                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc0));
-                            if (ang <= 3) s0 += 4 - ang;
-                        }
-                    }
-                    {
-                        if (eloc.distanceSquaredTo(loc1) <= 2) {
-                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc1));
-                            if (ang <= 3) s1 += 4 - ang;
-                        }
-                    }
-                    {
-                        if (eloc.distanceSquaredTo(loc2) <= 2) {
-                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc2));
-                            if (ang <= 3) s2 += 4 - ang;
-                        }
-                    }
-                }
-                int bestScore = -1;
-                MapLocation bestLoc = null;
-                if (rc.canPlaceRatTrap(loc0) && !hasAdjacentTrap_m1_1() && s0 > bestScore) {
-                    bestScore = s0;
-                    bestLoc = loc0;
-                }
-                if (rc.canPlaceRatTrap(loc1) && !hasAdjacentTrap_0_1() && s1 > bestScore) {
-                    bestScore = s1;
-                    bestLoc = loc1;
-                }
-                if (rc.canPlaceRatTrap(loc2) && !hasAdjacentTrap_m1_0() && s2 > bestScore) {
-                    bestScore = s2;
-                    bestLoc = loc2;
-                }
-                if (bestScore <= 0) return false;
-                rc.placeRatTrap(bestLoc);
-                println("!!!!!!!!!! placed rat trap MINI");
-                indicate("COMBAT STRAT: MINI TRAP");
-                return true;
-            }
-    
-            default -> { return false; }
-        }
-    }
 
     public static boolean run() throws GameActionException {
         if (!confirmCanPlace()) return false;
+        Profiler.push();
         computeWeights();
+        Profiler.pop("TryTrap.computeWeights");
         resetBest();
         selectMoves();
         if (best <= 0.5) return false;
         assert(CombatStrategy.performMoves(bestMoveDir, bestFacing));
+        if (!rc.canPlaceRatTrap(bestPlaceLoc)) {
+            println("huh cant place trap here  " + bestPlaceLoc);
+            for (int i = 0; i < CellTracker.numNearbyRatTraps; i++) {
+                println("nearby trap at " + CellTracker.nearbyRatTraps[i]);
+            }
+            rc.resign();
+        }
         rc.placeRatTrap(bestPlaceLoc);
         println("!!!!!!!!!! placed rat trap");
         indicate("COMBAT STRAT: TRAP");
@@ -523,7 +125,7 @@ public final class TryTrap {
                 w_m2_2 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_m2_2()) {
+                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
                     w_m2_2 = -1000;
                 } else {
                     w_m2_2 = 0;
@@ -536,7 +138,7 @@ public final class TryTrap {
                 w_m1_2 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_m1_2()) {
+                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
                     w_m1_2 = -1000;
                 } else {
                     w_m1_2 = 0;
@@ -549,7 +151,7 @@ public final class TryTrap {
                 w_0_2 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_0_2()) {
+                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
                     w_0_2 = -1000;
                 } else {
                     w_0_2 = 0;
@@ -562,7 +164,7 @@ public final class TryTrap {
                 w_1_2 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_1_2()) {
+                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
                     w_1_2 = -1000;
                 } else {
                     w_1_2 = 0;
@@ -575,7 +177,7 @@ public final class TryTrap {
                 w_2_2 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_2_2()) {
+                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
                     w_2_2 = -1000;
                 } else {
                     w_2_2 = 0;
@@ -588,7 +190,7 @@ public final class TryTrap {
                 w_m2_1 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_m2_1()) {
+                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
                     w_m2_1 = -1000;
                 } else {
                     w_m2_1 = 0;
@@ -601,7 +203,7 @@ public final class TryTrap {
                 w_m1_1 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_m1_1()) {
+                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
                     w_m1_1 = -1000;
                 } else {
                     w_m1_1 = 0;
@@ -614,7 +216,7 @@ public final class TryTrap {
                 w_0_1 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_0_1()) {
+                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
                     w_0_1 = -1000;
                 } else {
                     w_0_1 = 0;
@@ -627,7 +229,7 @@ public final class TryTrap {
                 w_1_1 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_1_1()) {
+                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
                     w_1_1 = -1000;
                 } else {
                     w_1_1 = 0;
@@ -640,7 +242,7 @@ public final class TryTrap {
                 w_2_1 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_2_1()) {
+                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
                     w_2_1 = -1000;
                 } else {
                     w_2_1 = 0;
@@ -653,7 +255,7 @@ public final class TryTrap {
                 w_m2_0 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_m2_0()) {
+                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
                     w_m2_0 = -1000;
                 } else {
                     w_m2_0 = 0;
@@ -666,7 +268,7 @@ public final class TryTrap {
                 w_m1_0 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_m1_0()) {
+                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
                     w_m1_0 = -1000;
                 } else {
                     w_m1_0 = 0;
@@ -679,7 +281,7 @@ public final class TryTrap {
                 w_0_0 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || hasAdjacentTrap_0_0()) {
+                if (!info.isPassable() || info.hasCheeseMine()) {
                     w_0_0 = -1000;
                 } else {
                     w_0_0 = 0;
@@ -692,7 +294,7 @@ public final class TryTrap {
                 w_1_0 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_1_0()) {
+                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
                     w_1_0 = -1000;
                 } else {
                     w_1_0 = 0;
@@ -705,7 +307,7 @@ public final class TryTrap {
                 w_2_0 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_2_0()) {
+                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
                     w_2_0 = -1000;
                 } else {
                     w_2_0 = 0;
@@ -718,7 +320,7 @@ public final class TryTrap {
                 w_m2_m1 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_m2_m1()) {
+                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
                     w_m2_m1 = -1000;
                 } else {
                     w_m2_m1 = 0;
@@ -731,7 +333,7 @@ public final class TryTrap {
                 w_m1_m1 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_m1_m1()) {
+                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
                     w_m1_m1 = -1000;
                 } else {
                     w_m1_m1 = 0;
@@ -744,7 +346,7 @@ public final class TryTrap {
                 w_0_m1 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_0_m1()) {
+                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
                     w_0_m1 = -1000;
                 } else {
                     w_0_m1 = 0;
@@ -757,7 +359,7 @@ public final class TryTrap {
                 w_1_m1 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_1_m1()) {
+                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
                     w_1_m1 = -1000;
                 } else {
                     w_1_m1 = 0;
@@ -770,7 +372,7 @@ public final class TryTrap {
                 w_2_m1 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_2_m1()) {
+                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
                     w_2_m1 = -1000;
                 } else {
                     w_2_m1 = 0;
@@ -783,7 +385,7 @@ public final class TryTrap {
                 w_m2_m2 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_m2_m2()) {
+                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
                     w_m2_m2 = -1000;
                 } else {
                     w_m2_m2 = 0;
@@ -796,7 +398,7 @@ public final class TryTrap {
                 w_m1_m2 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_m1_m2()) {
+                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
                     w_m1_m2 = -1000;
                 } else {
                     w_m1_m2 = 0;
@@ -809,7 +411,7 @@ public final class TryTrap {
                 w_0_m2 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_0_m2()) {
+                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
                     w_0_m2 = -1000;
                 } else {
                     w_0_m2 = 0;
@@ -822,7 +424,7 @@ public final class TryTrap {
                 w_1_m2 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_1_m2()) {
+                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
                     w_1_m2 = -1000;
                 } else {
                     w_1_m2 = 0;
@@ -835,1103 +437,2058 @@ public final class TryTrap {
                 w_2_m2 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_2_m2()) {
+                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
                     w_2_m2 = -1000;
                 } else {
                     w_2_m2 = 0;
                 }
             }
         }
-        for (RobotInfo rinfo : rc.senseNearbyRobots()) {
-            if (rinfo.getTeam() == rc.getTeam()) continue;
-            if (rinfo.getType() != UnitType.BABY_RAT) continue;
-            int dx = rinfo.getLocation().x - myLocX;
-            int dy = rinfo.getLocation().y - myLocY;
-            if (dx < -3 || dx > 3 || dy < -3 || dy > 3) continue;
-            switch (dx) {
-                case -3 -> {
-                    switch (dy) {
-                        case -3 -> {
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_m2_m2 += 3;                                }
-                                case 1 -> {
-w_m2_m2 += 4;                                }
-                                case 2 -> {
-w_m2_m2 += 3;                                }
-                                case 3 -> {
-w_m2_m2 += 2;                                }
-                                case 4 -> {
-w_m2_m2 += 1;                                }
-                                case 6 -> {
-w_m2_m2 += 1;                                }
-                                case 7 -> {
-w_m2_m2 += 2;                                }
-                                default -> { }
-                            }
+
+        applyTrapWeights();
+        applyEnemyWeights();
+
+    }
+
+    private static void applyEnemyWeights() {
+        for (int i = 0; i < RobotTracker.numEnemies && i < 5; i++) {
+            RobotInfo info = RobotTracker.sortedEnemies[i];
+            if (info.getType() != UnitType.BABY_RAT) continue;
+            applyEnemyWeight(info);
+        }
+    }
+
+    private static void applyEnemyWeight(RobotInfo rinfo) {
+        int x = rinfo.location.x - myLocX;
+        int y = rinfo.location.y - myLocY;
+        switch (x) {
+            case -3 -> {
+                switch (y) {
+                    case -3 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+
+w_m2_m2 += 2;}
+
+                            case 1 -> {
+}
+
+                            case 2 -> {
+}
+
+                            case 3 -> {
+}
+
+                            case 4 -> {
+}
+
+                            case 5 -> {
+}
+
+                            case 6 -> {
+}
+
+                            case 7 -> {
+}
+                            default -> { }
                         }
-                        case -2 -> {
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_m2_m2 += 2;w_m2_m1 += 3;                                }
-                                case 1 -> {
-w_m2_m2 += 3;w_m2_m1 += 4;                                }
-                                case 2 -> {
-w_m2_m2 += 4;w_m2_m1 += 3;                                }
-                                case 3 -> {
-w_m2_m2 += 3;w_m2_m1 += 2;                                }
-                                case 4 -> {
-w_m2_m2 += 2;w_m2_m1 += 1;                                }
-                                case 5 -> {
-w_m2_m2 += 1;                                }
-                                case 6 -> {
-w_m2_m1 += 1;                                }
-                                case 7 -> {
-w_m2_m2 += 1;w_m2_m1 += 2;                                }
-                                default -> { }
-                            }
-                        }
-                        case -1 -> {
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_m2_m2 += 1;w_m2_m1 += 2;w_m2_0 += 3;                                }
-                                case 1 -> {
-w_m2_m2 += 2;w_m2_m1 += 3;w_m2_0 += 4;                                }
-                                case 2 -> {
-w_m2_m2 += 3;w_m2_m1 += 4;w_m2_0 += 3;                                }
-                                case 3 -> {
-w_m2_m2 += 4;w_m2_m1 += 3;w_m2_0 += 2;                                }
-                                case 4 -> {
-w_m2_m2 += 3;w_m2_m1 += 2;w_m2_0 += 1;                                }
-                                case 5 -> {
-w_m2_m2 += 2;w_m2_m1 += 1;                                }
-                                case 6 -> {
-w_m2_m2 += 1;w_m2_0 += 1;                                }
-                                case 7 -> {
-w_m2_m1 += 1;w_m2_0 += 2;                                }
-                                default -> { }
-                            }
-                        }
-                        case 0 -> {
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_m2_m1 += 1;w_m2_0 += 2;w_m2_1 += 3;                                }
-                                case 1 -> {
-w_m2_m1 += 2;w_m2_0 += 3;w_m2_1 += 4;                                }
-                                case 2 -> {
-w_m2_m1 += 3;w_m2_0 += 4;w_m2_1 += 3;                                }
-                                case 3 -> {
-w_m2_m1 += 4;w_m2_0 += 3;w_m2_1 += 2;                                }
-                                case 4 -> {
-w_m2_m1 += 3;w_m2_0 += 2;w_m2_1 += 1;                                }
-                                case 5 -> {
-w_m2_m1 += 2;w_m2_0 += 1;                                }
-                                case 6 -> {
-w_m2_m1 += 1;w_m2_1 += 1;                                }
-                                case 7 -> {
-w_m2_0 += 1;w_m2_1 += 2;                                }
-                                default -> { }
-                            }
-                        }
-                        case 1 -> {
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_m2_0 += 1;w_m2_1 += 2;w_m2_2 += 3;                                }
-                                case 1 -> {
-w_m2_0 += 2;w_m2_1 += 3;w_m2_2 += 4;                                }
-                                case 2 -> {
-w_m2_0 += 3;w_m2_1 += 4;w_m2_2 += 3;                                }
-                                case 3 -> {
-w_m2_0 += 4;w_m2_1 += 3;w_m2_2 += 2;                                }
-                                case 4 -> {
-w_m2_0 += 3;w_m2_1 += 2;w_m2_2 += 1;                                }
-                                case 5 -> {
-w_m2_0 += 2;w_m2_1 += 1;                                }
-                                case 6 -> {
-w_m2_0 += 1;w_m2_2 += 1;                                }
-                                case 7 -> {
-w_m2_1 += 1;w_m2_2 += 2;                                }
-                                default -> { }
-                            }
-                        }
-                        case 2 -> {
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_m2_1 += 1;w_m2_2 += 2;                                }
-                                case 1 -> {
-w_m2_1 += 2;w_m2_2 += 3;                                }
-                                case 2 -> {
-w_m2_1 += 3;w_m2_2 += 4;                                }
-                                case 3 -> {
-w_m2_1 += 4;w_m2_2 += 3;                                }
-                                case 4 -> {
-w_m2_1 += 3;w_m2_2 += 2;                                }
-                                case 5 -> {
-w_m2_1 += 2;w_m2_2 += 1;                                }
-                                case 6 -> {
-w_m2_1 += 1;                                }
-                                case 7 -> {
-w_m2_2 += 1;                                }
-                                default -> { }
-                            }
-                        }
-                        case 3 -> {
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_m2_2 += 1;                                }
-                                case 1 -> {
-w_m2_2 += 2;                                }
-                                case 2 -> {
-w_m2_2 += 3;                                }
-                                case 3 -> {
-w_m2_2 += 4;                                }
-                                case 4 -> {
-w_m2_2 += 3;                                }
-                                case 5 -> {
-w_m2_2 += 2;                                }
-                                case 6 -> {
-w_m2_2 += 1;                                }
-                                default -> { }
-                            }
-                        }
-                        default -> { }
                     }
-                }
-                case -2 -> {
-                    switch (dy) {
-                        case -3 -> {
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_m2_m2 += 4;w_m1_m2 += 3;                                }
-                                case 1 -> {
-w_m2_m2 += 3;w_m1_m2 += 4;                                }
-                                case 2 -> {
-w_m2_m2 += 2;w_m1_m2 += 3;                                }
-                                case 3 -> {
-w_m2_m2 += 1;w_m1_m2 += 2;                                }
-                                case 4 -> {
-w_m1_m2 += 1;                                }
-                                case 5 -> {
-w_m2_m2 += 1;                                }
-                                case 6 -> {
-w_m2_m2 += 2;w_m1_m2 += 1;                                }
-                                case 7 -> {
-w_m2_m2 += 3;w_m1_m2 += 2;                                }
-                                default -> { }
-                            }
+                    case -2 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+
+w_m2_m1 += 2;}
+
+                            case 1 -> {
+}
+
+                            case 2 -> {
+}
+
+                            case 3 -> {
+}
+
+                            case 4 -> {
+}
+
+                            case 5 -> {
+}
+
+                            case 6 -> {
+}
+
+                            case 7 -> {
+}
+                            default -> { }
                         }
-                        case -2 -> {
-                            w_m2_m2 += 10;
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_m2_m1 += 4;w_m1_m2 += 2;w_m1_m1 += 3;                                }
-                                case 1 -> {
-w_m2_m1 += 3;w_m1_m2 += 3;w_m1_m1 += 4;                                }
-                                case 2 -> {
-w_m2_m1 += 2;w_m1_m2 += 4;w_m1_m1 += 3;                                }
-                                case 3 -> {
-w_m2_m1 += 1;w_m1_m2 += 3;w_m1_m1 += 2;                                }
-                                case 4 -> {
-w_m1_m2 += 2;w_m1_m1 += 1;                                }
-                                case 5 -> {
-w_m2_m1 += 1;w_m1_m2 += 1;                                }
-                                case 6 -> {
-w_m2_m1 += 2;w_m1_m1 += 1;                                }
-                                case 7 -> {
-w_m2_m1 += 3;w_m1_m2 += 1;w_m1_m1 += 2;                                }
-                                default -> { }
-                            }
-                        }
-                        case -1 -> {
-                            w_m2_m1 += 10;
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_m2_0 += 4;w_m1_m2 += 1;w_m1_m1 += 2;w_m1_0 += 3;                                }
-                                case 1 -> {
-w_m2_m2 += 1;w_m2_0 += 3;w_m1_m2 += 2;w_m1_m1 += 3;w_m1_0 += 4;                                }
-                                case 2 -> {
-w_m2_m2 += 2;w_m2_0 += 2;w_m1_m2 += 3;w_m1_m1 += 4;w_m1_0 += 3;                                }
-                                case 3 -> {
-w_m2_m2 += 3;w_m2_0 += 1;w_m1_m2 += 4;w_m1_m1 += 3;w_m1_0 += 2;                                }
-                                case 4 -> {
-w_m2_m2 += 4;w_m1_m2 += 3;w_m1_m1 += 2;w_m1_0 += 1;                                }
-                                case 5 -> {
-w_m2_m2 += 3;w_m2_0 += 1;w_m1_m2 += 2;w_m1_m1 += 1;                                }
-                                case 6 -> {
-w_m2_m2 += 2;w_m2_0 += 2;w_m1_m2 += 1;w_m1_0 += 1;                                }
-                                case 7 -> {
-w_m2_m2 += 1;w_m2_0 += 3;w_m1_m1 += 1;w_m1_0 += 2;                                }
-                                default -> { }
-                            }
-                        }
-                        case 0 -> {
-                            w_m2_0 += 10;
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_m2_1 += 4;w_m1_m1 += 1;w_m1_0 += 2;w_m1_1 += 3;                                }
-                                case 1 -> {
-w_m2_m1 += 1;w_m2_1 += 3;w_m1_m1 += 2;w_m1_0 += 3;w_m1_1 += 4;                                }
-                                case 2 -> {
-w_m2_m1 += 2;w_m2_1 += 2;w_m1_m1 += 3;w_m1_0 += 4;w_m1_1 += 3;                                }
-                                case 3 -> {
-w_m2_m1 += 3;w_m2_1 += 1;w_m1_m1 += 4;w_m1_0 += 3;w_m1_1 += 2;                                }
-                                case 4 -> {
-w_m2_m1 += 4;w_m1_m1 += 3;w_m1_0 += 2;w_m1_1 += 1;                                }
-                                case 5 -> {
-w_m2_m1 += 3;w_m2_1 += 1;w_m1_m1 += 2;w_m1_0 += 1;                                }
-                                case 6 -> {
-w_m2_m1 += 2;w_m2_1 += 2;w_m1_m1 += 1;w_m1_1 += 1;                                }
-                                case 7 -> {
-w_m2_m1 += 1;w_m2_1 += 3;w_m1_0 += 1;w_m1_1 += 2;                                }
-                                default -> { }
-                            }
-                        }
-                        case 1 -> {
-                            w_m2_1 += 10;
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_m2_2 += 4;w_m1_0 += 1;w_m1_1 += 2;w_m1_2 += 3;                                }
-                                case 1 -> {
-w_m2_0 += 1;w_m2_2 += 3;w_m1_0 += 2;w_m1_1 += 3;w_m1_2 += 4;                                }
-                                case 2 -> {
-w_m2_0 += 2;w_m2_2 += 2;w_m1_0 += 3;w_m1_1 += 4;w_m1_2 += 3;                                }
-                                case 3 -> {
-w_m2_0 += 3;w_m2_2 += 1;w_m1_0 += 4;w_m1_1 += 3;w_m1_2 += 2;                                }
-                                case 4 -> {
-w_m2_0 += 4;w_m1_0 += 3;w_m1_1 += 2;w_m1_2 += 1;                                }
-                                case 5 -> {
-w_m2_0 += 3;w_m2_2 += 1;w_m1_0 += 2;w_m1_1 += 1;                                }
-                                case 6 -> {
-w_m2_0 += 2;w_m2_2 += 2;w_m1_0 += 1;w_m1_2 += 1;                                }
-                                case 7 -> {
-w_m2_0 += 1;w_m2_2 += 3;w_m1_1 += 1;w_m1_2 += 2;                                }
-                                default -> { }
-                            }
-                        }
-                        case 2 -> {
-                            w_m2_2 += 10;
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_m1_1 += 1;w_m1_2 += 2;                                }
-                                case 1 -> {
-w_m2_1 += 1;w_m1_1 += 2;w_m1_2 += 3;                                }
-                                case 2 -> {
-w_m2_1 += 2;w_m1_1 += 3;w_m1_2 += 4;                                }
-                                case 3 -> {
-w_m2_1 += 3;w_m1_1 += 4;w_m1_2 += 3;                                }
-                                case 4 -> {
-w_m2_1 += 4;w_m1_1 += 3;w_m1_2 += 2;                                }
-                                case 5 -> {
-w_m2_1 += 3;w_m1_1 += 2;w_m1_2 += 1;                                }
-                                case 6 -> {
-w_m2_1 += 2;w_m1_1 += 1;                                }
-                                case 7 -> {
-w_m2_1 += 1;w_m1_2 += 1;                                }
-                                default -> { }
-                            }
-                        }
-                        case 3 -> {
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_m1_2 += 1;                                }
-                                case 1 -> {
-w_m2_2 += 1;w_m1_2 += 2;                                }
-                                case 2 -> {
-w_m2_2 += 2;w_m1_2 += 3;                                }
-                                case 3 -> {
-w_m2_2 += 3;w_m1_2 += 4;                                }
-                                case 4 -> {
-w_m2_2 += 4;w_m1_2 += 3;                                }
-                                case 5 -> {
-w_m2_2 += 3;w_m1_2 += 2;                                }
-                                case 6 -> {
-w_m2_2 += 2;w_m1_2 += 1;                                }
-                                case 7 -> {
-w_m2_2 += 1;                                }
-                                default -> { }
-                            }
-                        }
-                        default -> { }
                     }
-                }
-                case -1 -> {
-                    switch (dy) {
-                        case -3 -> {
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_m2_m2 += 3;w_m1_m2 += 4;w_0_m2 += 3;                                }
-                                case 1 -> {
-w_m2_m2 += 2;w_m1_m2 += 3;w_0_m2 += 4;                                }
-                                case 2 -> {
-w_m2_m2 += 1;w_m1_m2 += 2;w_0_m2 += 3;                                }
-                                case 3 -> {
-w_m1_m2 += 1;w_0_m2 += 2;                                }
-                                case 4 -> {
-w_m2_m2 += 1;w_0_m2 += 1;                                }
-                                case 5 -> {
-w_m2_m2 += 2;w_m1_m2 += 1;                                }
-                                case 6 -> {
-w_m2_m2 += 3;w_m1_m2 += 2;w_0_m2 += 1;                                }
-                                case 7 -> {
-w_m2_m2 += 4;w_m1_m2 += 3;w_0_m2 += 2;                                }
-                                default -> { }
-                            }
+                    case -1 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+
+w_m2_0 += 2;}
+
+                            case 1 -> {
+}
+
+                            case 2 -> {
+}
+
+                            case 3 -> {
+}
+
+                            case 4 -> {
+}
+
+                            case 5 -> {
+}
+
+                            case 6 -> {
+}
+
+                            case 7 -> {
+}
+                            default -> { }
                         }
-                        case -2 -> {
-                            w_m1_m2 += 10;
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_m2_m2 += 2;w_m2_m1 += 3;w_m1_m1 += 4;w_0_m2 += 2;w_0_m1 += 3;                                }
-                                case 1 -> {
-w_m2_m2 += 1;w_m2_m1 += 2;w_m1_m1 += 3;w_0_m2 += 3;w_0_m1 += 4;                                }
-                                case 2 -> {
-w_m2_m1 += 1;w_m1_m1 += 2;w_0_m2 += 4;w_0_m1 += 3;                                }
-                                case 3 -> {
-w_m2_m2 += 1;w_m1_m1 += 1;w_0_m2 += 3;w_0_m1 += 2;                                }
-                                case 4 -> {
-w_m2_m2 += 2;w_m2_m1 += 1;w_0_m2 += 2;w_0_m1 += 1;                                }
-                                case 5 -> {
-w_m2_m2 += 3;w_m2_m1 += 2;w_m1_m1 += 1;w_0_m2 += 1;                                }
-                                case 6 -> {
-w_m2_m2 += 4;w_m2_m1 += 3;w_m1_m1 += 2;w_0_m1 += 1;                                }
-                                case 7 -> {
-w_m2_m2 += 3;w_m2_m1 += 4;w_m1_m1 += 3;w_0_m2 += 1;w_0_m1 += 2;                                }
-                                default -> { }
-                            }
-                        }
-                        case -1 -> {
-                            w_m1_m1 += 10;
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_m2_m2 += 1;w_m2_m1 += 2;w_m2_0 += 3;w_m1_0 += 4;w_0_m2 += 1;w_0_m1 += 2;w_0_0 += 3;                                }
-                                case 1 -> {
-w_m2_m1 += 1;w_m2_0 += 2;w_m1_m2 += 1;w_m1_0 += 3;w_0_m2 += 2;w_0_m1 += 3;w_0_0 += 4;                                }
-                                case 2 -> {
-w_m2_m2 += 1;w_m2_0 += 1;w_m1_m2 += 2;w_m1_0 += 2;w_0_m2 += 3;w_0_m1 += 4;w_0_0 += 3;                                }
-                                case 3 -> {
-w_m2_m2 += 2;w_m2_m1 += 1;w_m1_m2 += 3;w_m1_0 += 1;w_0_m2 += 4;w_0_m1 += 3;w_0_0 += 2;                                }
-                                case 4 -> {
-w_m2_m2 += 3;w_m2_m1 += 2;w_m2_0 += 1;w_m1_m2 += 4;w_0_m2 += 3;w_0_m1 += 2;w_0_0 += 1;                                }
-                                case 5 -> {
-w_m2_m2 += 4;w_m2_m1 += 3;w_m2_0 += 2;w_m1_m2 += 3;w_m1_0 += 1;w_0_m2 += 2;w_0_m1 += 1;                                }
-                                case 6 -> {
-w_m2_m2 += 3;w_m2_m1 += 4;w_m2_0 += 3;w_m1_m2 += 2;w_m1_0 += 2;w_0_m2 += 1;w_0_0 += 1;                                }
-                                case 7 -> {
-w_m2_m2 += 2;w_m2_m1 += 3;w_m2_0 += 4;w_m1_m2 += 1;w_m1_0 += 3;w_0_m1 += 1;w_0_0 += 2;                                }
-                                default -> { }
-                            }
-                        }
-                        case 0 -> {
-                            w_m1_0 += 10;
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_m2_m1 += 1;w_m2_0 += 2;w_m2_1 += 3;w_m1_1 += 4;w_0_m1 += 1;w_0_0 += 2;w_0_1 += 3;                                }
-                                case 1 -> {
-w_m2_0 += 1;w_m2_1 += 2;w_m1_m1 += 1;w_m1_1 += 3;w_0_m1 += 2;w_0_0 += 3;w_0_1 += 4;                                }
-                                case 2 -> {
-w_m2_m1 += 1;w_m2_1 += 1;w_m1_m1 += 2;w_m1_1 += 2;w_0_m1 += 3;w_0_0 += 4;w_0_1 += 3;                                }
-                                case 3 -> {
-w_m2_m1 += 2;w_m2_0 += 1;w_m1_m1 += 3;w_m1_1 += 1;w_0_m1 += 4;w_0_0 += 3;w_0_1 += 2;                                }
-                                case 4 -> {
-w_m2_m1 += 3;w_m2_0 += 2;w_m2_1 += 1;w_m1_m1 += 4;w_0_m1 += 3;w_0_0 += 2;w_0_1 += 1;                                }
-                                case 5 -> {
-w_m2_m1 += 4;w_m2_0 += 3;w_m2_1 += 2;w_m1_m1 += 3;w_m1_1 += 1;w_0_m1 += 2;w_0_0 += 1;                                }
-                                case 6 -> {
-w_m2_m1 += 3;w_m2_0 += 4;w_m2_1 += 3;w_m1_m1 += 2;w_m1_1 += 2;w_0_m1 += 1;w_0_1 += 1;                                }
-                                case 7 -> {
-w_m2_m1 += 2;w_m2_0 += 3;w_m2_1 += 4;w_m1_m1 += 1;w_m1_1 += 3;w_0_0 += 1;w_0_1 += 2;                                }
-                                default -> { }
-                            }
-                        }
-                        case 1 -> {
-                            w_m1_1 += 10;
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_m2_0 += 1;w_m2_1 += 2;w_m2_2 += 3;w_m1_2 += 4;w_0_0 += 1;w_0_1 += 2;w_0_2 += 3;                                }
-                                case 1 -> {
-w_m2_1 += 1;w_m2_2 += 2;w_m1_0 += 1;w_m1_2 += 3;w_0_0 += 2;w_0_1 += 3;w_0_2 += 4;                                }
-                                case 2 -> {
-w_m2_0 += 1;w_m2_2 += 1;w_m1_0 += 2;w_m1_2 += 2;w_0_0 += 3;w_0_1 += 4;w_0_2 += 3;                                }
-                                case 3 -> {
-w_m2_0 += 2;w_m2_1 += 1;w_m1_0 += 3;w_m1_2 += 1;w_0_0 += 4;w_0_1 += 3;w_0_2 += 2;                                }
-                                case 4 -> {
-w_m2_0 += 3;w_m2_1 += 2;w_m2_2 += 1;w_m1_0 += 4;w_0_0 += 3;w_0_1 += 2;w_0_2 += 1;                                }
-                                case 5 -> {
-w_m2_0 += 4;w_m2_1 += 3;w_m2_2 += 2;w_m1_0 += 3;w_m1_2 += 1;w_0_0 += 2;w_0_1 += 1;                                }
-                                case 6 -> {
-w_m2_0 += 3;w_m2_1 += 4;w_m2_2 += 3;w_m1_0 += 2;w_m1_2 += 2;w_0_0 += 1;w_0_2 += 1;                                }
-                                case 7 -> {
-w_m2_0 += 2;w_m2_1 += 3;w_m2_2 += 4;w_m1_0 += 1;w_m1_2 += 3;w_0_1 += 1;w_0_2 += 2;                                }
-                                default -> { }
-                            }
-                        }
-                        case 2 -> {
-                            w_m1_2 += 10;
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_m2_1 += 1;w_m2_2 += 2;w_0_1 += 1;w_0_2 += 2;                                }
-                                case 1 -> {
-w_m2_2 += 1;w_m1_1 += 1;w_0_1 += 2;w_0_2 += 3;                                }
-                                case 2 -> {
-w_m2_1 += 1;w_m1_1 += 2;w_0_1 += 3;w_0_2 += 4;                                }
-                                case 3 -> {
-w_m2_1 += 2;w_m2_2 += 1;w_m1_1 += 3;w_0_1 += 4;w_0_2 += 3;                                }
-                                case 4 -> {
-w_m2_1 += 3;w_m2_2 += 2;w_m1_1 += 4;w_0_1 += 3;w_0_2 += 2;                                }
-                                case 5 -> {
-w_m2_1 += 4;w_m2_2 += 3;w_m1_1 += 3;w_0_1 += 2;w_0_2 += 1;                                }
-                                case 6 -> {
-w_m2_1 += 3;w_m2_2 += 4;w_m1_1 += 2;w_0_1 += 1;                                }
-                                case 7 -> {
-w_m2_1 += 2;w_m2_2 += 3;w_m1_1 += 1;w_0_2 += 1;                                }
-                                default -> { }
-                            }
-                        }
-                        case 3 -> {
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_m2_2 += 1;w_0_2 += 1;                                }
-                                case 1 -> {
-w_m1_2 += 1;w_0_2 += 2;                                }
-                                case 2 -> {
-w_m2_2 += 1;w_m1_2 += 2;w_0_2 += 3;                                }
-                                case 3 -> {
-w_m2_2 += 2;w_m1_2 += 3;w_0_2 += 4;                                }
-                                case 4 -> {
-w_m2_2 += 3;w_m1_2 += 4;w_0_2 += 3;                                }
-                                case 5 -> {
-w_m2_2 += 4;w_m1_2 += 3;w_0_2 += 2;                                }
-                                case 6 -> {
-w_m2_2 += 3;w_m1_2 += 2;w_0_2 += 1;                                }
-                                case 7 -> {
-w_m2_2 += 2;w_m1_2 += 1;                                }
-                                default -> { }
-                            }
-                        }
-                        default -> { }
                     }
-                }
-                case 0 -> {
-                    switch (dy) {
-                        case -3 -> {
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_m1_m2 += 3;w_0_m2 += 4;w_1_m2 += 3;                                }
-                                case 1 -> {
-w_m1_m2 += 2;w_0_m2 += 3;w_1_m2 += 4;                                }
-                                case 2 -> {
-w_m1_m2 += 1;w_0_m2 += 2;w_1_m2 += 3;                                }
-                                case 3 -> {
-w_0_m2 += 1;w_1_m2 += 2;                                }
-                                case 4 -> {
-w_m1_m2 += 1;w_1_m2 += 1;                                }
-                                case 5 -> {
-w_m1_m2 += 2;w_0_m2 += 1;                                }
-                                case 6 -> {
-w_m1_m2 += 3;w_0_m2 += 2;w_1_m2 += 1;                                }
-                                case 7 -> {
-w_m1_m2 += 4;w_0_m2 += 3;w_1_m2 += 2;                                }
-                                default -> { }
-                            }
+                    case 0 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+
+w_m2_1 += 2;}
+
+                            case 1 -> {
+}
+
+                            case 2 -> {
+}
+
+                            case 3 -> {
+}
+
+                            case 4 -> {
+}
+
+                            case 5 -> {
+}
+
+                            case 6 -> {
+}
+
+                            case 7 -> {
+}
+                            default -> { }
                         }
-                        case -2 -> {
-                            w_0_m2 += 10;
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_m1_m2 += 2;w_m1_m1 += 3;w_0_m1 += 4;w_1_m2 += 2;w_1_m1 += 3;                                }
-                                case 1 -> {
-w_m1_m2 += 1;w_m1_m1 += 2;w_0_m1 += 3;w_1_m2 += 3;w_1_m1 += 4;                                }
-                                case 2 -> {
-w_m1_m1 += 1;w_0_m1 += 2;w_1_m2 += 4;w_1_m1 += 3;                                }
-                                case 3 -> {
-w_m1_m2 += 1;w_0_m1 += 1;w_1_m2 += 3;w_1_m1 += 2;                                }
-                                case 4 -> {
-w_m1_m2 += 2;w_m1_m1 += 1;w_1_m2 += 2;w_1_m1 += 1;                                }
-                                case 5 -> {
-w_m1_m2 += 3;w_m1_m1 += 2;w_0_m1 += 1;w_1_m2 += 1;                                }
-                                case 6 -> {
-w_m1_m2 += 4;w_m1_m1 += 3;w_0_m1 += 2;w_1_m1 += 1;                                }
-                                case 7 -> {
-w_m1_m2 += 3;w_m1_m1 += 4;w_0_m1 += 3;w_1_m2 += 1;w_1_m1 += 2;                                }
-                                default -> { }
-                            }
-                        }
-                        case -1 -> {
-                            w_0_m1 += 10;
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_m1_m2 += 1;w_m1_m1 += 2;w_m1_0 += 3;w_0_0 += 4;w_1_m2 += 1;w_1_m1 += 2;w_1_0 += 3;                                }
-                                case 1 -> {
-w_m1_m1 += 1;w_m1_0 += 2;w_0_m2 += 1;w_0_0 += 3;w_1_m2 += 2;w_1_m1 += 3;w_1_0 += 4;                                }
-                                case 2 -> {
-w_m1_m2 += 1;w_m1_0 += 1;w_0_m2 += 2;w_0_0 += 2;w_1_m2 += 3;w_1_m1 += 4;w_1_0 += 3;                                }
-                                case 3 -> {
-w_m1_m2 += 2;w_m1_m1 += 1;w_0_m2 += 3;w_0_0 += 1;w_1_m2 += 4;w_1_m1 += 3;w_1_0 += 2;                                }
-                                case 4 -> {
-w_m1_m2 += 3;w_m1_m1 += 2;w_m1_0 += 1;w_0_m2 += 4;w_1_m2 += 3;w_1_m1 += 2;w_1_0 += 1;                                }
-                                case 5 -> {
-w_m1_m2 += 4;w_m1_m1 += 3;w_m1_0 += 2;w_0_m2 += 3;w_0_0 += 1;w_1_m2 += 2;w_1_m1 += 1;                                }
-                                case 6 -> {
-w_m1_m2 += 3;w_m1_m1 += 4;w_m1_0 += 3;w_0_m2 += 2;w_0_0 += 2;w_1_m2 += 1;w_1_0 += 1;                                }
-                                case 7 -> {
-w_m1_m2 += 2;w_m1_m1 += 3;w_m1_0 += 4;w_0_m2 += 1;w_0_0 += 3;w_1_m1 += 1;w_1_0 += 2;                                }
-                                default -> { }
-                            }
-                        }
-                        case 0 -> {
-                            w_0_0 += 10;
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_m1_m1 += 1;w_m1_0 += 2;w_m1_1 += 3;w_0_1 += 4;w_1_m1 += 1;w_1_0 += 2;w_1_1 += 3;                                }
-                                case 1 -> {
-w_m1_0 += 1;w_m1_1 += 2;w_0_m1 += 1;w_0_1 += 3;w_1_m1 += 2;w_1_0 += 3;w_1_1 += 4;                                }
-                                case 2 -> {
-w_m1_m1 += 1;w_m1_1 += 1;w_0_m1 += 2;w_0_1 += 2;w_1_m1 += 3;w_1_0 += 4;w_1_1 += 3;                                }
-                                case 3 -> {
-w_m1_m1 += 2;w_m1_0 += 1;w_0_m1 += 3;w_0_1 += 1;w_1_m1 += 4;w_1_0 += 3;w_1_1 += 2;                                }
-                                case 4 -> {
-w_m1_m1 += 3;w_m1_0 += 2;w_m1_1 += 1;w_0_m1 += 4;w_1_m1 += 3;w_1_0 += 2;w_1_1 += 1;                                }
-                                case 5 -> {
-w_m1_m1 += 4;w_m1_0 += 3;w_m1_1 += 2;w_0_m1 += 3;w_0_1 += 1;w_1_m1 += 2;w_1_0 += 1;                                }
-                                case 6 -> {
-w_m1_m1 += 3;w_m1_0 += 4;w_m1_1 += 3;w_0_m1 += 2;w_0_1 += 2;w_1_m1 += 1;w_1_1 += 1;                                }
-                                case 7 -> {
-w_m1_m1 += 2;w_m1_0 += 3;w_m1_1 += 4;w_0_m1 += 1;w_0_1 += 3;w_1_0 += 1;w_1_1 += 2;                                }
-                                default -> { }
-                            }
-                        }
-                        case 1 -> {
-                            w_0_1 += 10;
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_m1_0 += 1;w_m1_1 += 2;w_m1_2 += 3;w_0_2 += 4;w_1_0 += 1;w_1_1 += 2;w_1_2 += 3;                                }
-                                case 1 -> {
-w_m1_1 += 1;w_m1_2 += 2;w_0_0 += 1;w_0_2 += 3;w_1_0 += 2;w_1_1 += 3;w_1_2 += 4;                                }
-                                case 2 -> {
-w_m1_0 += 1;w_m1_2 += 1;w_0_0 += 2;w_0_2 += 2;w_1_0 += 3;w_1_1 += 4;w_1_2 += 3;                                }
-                                case 3 -> {
-w_m1_0 += 2;w_m1_1 += 1;w_0_0 += 3;w_0_2 += 1;w_1_0 += 4;w_1_1 += 3;w_1_2 += 2;                                }
-                                case 4 -> {
-w_m1_0 += 3;w_m1_1 += 2;w_m1_2 += 1;w_0_0 += 4;w_1_0 += 3;w_1_1 += 2;w_1_2 += 1;                                }
-                                case 5 -> {
-w_m1_0 += 4;w_m1_1 += 3;w_m1_2 += 2;w_0_0 += 3;w_0_2 += 1;w_1_0 += 2;w_1_1 += 1;                                }
-                                case 6 -> {
-w_m1_0 += 3;w_m1_1 += 4;w_m1_2 += 3;w_0_0 += 2;w_0_2 += 2;w_1_0 += 1;w_1_2 += 1;                                }
-                                case 7 -> {
-w_m1_0 += 2;w_m1_1 += 3;w_m1_2 += 4;w_0_0 += 1;w_0_2 += 3;w_1_1 += 1;w_1_2 += 2;                                }
-                                default -> { }
-                            }
-                        }
-                        case 2 -> {
-                            w_0_2 += 10;
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_m1_1 += 1;w_m1_2 += 2;w_1_1 += 1;w_1_2 += 2;                                }
-                                case 1 -> {
-w_m1_2 += 1;w_0_1 += 1;w_1_1 += 2;w_1_2 += 3;                                }
-                                case 2 -> {
-w_m1_1 += 1;w_0_1 += 2;w_1_1 += 3;w_1_2 += 4;                                }
-                                case 3 -> {
-w_m1_1 += 2;w_m1_2 += 1;w_0_1 += 3;w_1_1 += 4;w_1_2 += 3;                                }
-                                case 4 -> {
-w_m1_1 += 3;w_m1_2 += 2;w_0_1 += 4;w_1_1 += 3;w_1_2 += 2;                                }
-                                case 5 -> {
-w_m1_1 += 4;w_m1_2 += 3;w_0_1 += 3;w_1_1 += 2;w_1_2 += 1;                                }
-                                case 6 -> {
-w_m1_1 += 3;w_m1_2 += 4;w_0_1 += 2;w_1_1 += 1;                                }
-                                case 7 -> {
-w_m1_1 += 2;w_m1_2 += 3;w_0_1 += 1;w_1_2 += 1;                                }
-                                default -> { }
-                            }
-                        }
-                        case 3 -> {
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_m1_2 += 1;w_1_2 += 1;                                }
-                                case 1 -> {
-w_0_2 += 1;w_1_2 += 2;                                }
-                                case 2 -> {
-w_m1_2 += 1;w_0_2 += 2;w_1_2 += 3;                                }
-                                case 3 -> {
-w_m1_2 += 2;w_0_2 += 3;w_1_2 += 4;                                }
-                                case 4 -> {
-w_m1_2 += 3;w_0_2 += 4;w_1_2 += 3;                                }
-                                case 5 -> {
-w_m1_2 += 4;w_0_2 += 3;w_1_2 += 2;                                }
-                                case 6 -> {
-w_m1_2 += 3;w_0_2 += 2;w_1_2 += 1;                                }
-                                case 7 -> {
-w_m1_2 += 2;w_0_2 += 1;                                }
-                                default -> { }
-                            }
-                        }
-                        default -> { }
                     }
-                }
-                case 1 -> {
-                    switch (dy) {
-                        case -3 -> {
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_0_m2 += 3;w_1_m2 += 4;w_2_m2 += 3;                                }
-                                case 1 -> {
-w_0_m2 += 2;w_1_m2 += 3;w_2_m2 += 4;                                }
-                                case 2 -> {
-w_0_m2 += 1;w_1_m2 += 2;w_2_m2 += 3;                                }
-                                case 3 -> {
-w_1_m2 += 1;w_2_m2 += 2;                                }
-                                case 4 -> {
-w_0_m2 += 1;w_2_m2 += 1;                                }
-                                case 5 -> {
-w_0_m2 += 2;w_1_m2 += 1;                                }
-                                case 6 -> {
-w_0_m2 += 3;w_1_m2 += 2;w_2_m2 += 1;                                }
-                                case 7 -> {
-w_0_m2 += 4;w_1_m2 += 3;w_2_m2 += 2;                                }
-                                default -> { }
-                            }
+                    case 1 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+}
+
+                            case 1 -> {
+}
+
+                            case 2 -> {
+}
+
+                            case 3 -> {
+}
+
+                            case 4 -> {
+}
+
+                            case 5 -> {
+}
+
+                            case 6 -> {
+}
+
+                            case 7 -> {
+}
+                            default -> { }
                         }
-                        case -2 -> {
-                            w_1_m2 += 10;
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_0_m2 += 2;w_0_m1 += 3;w_1_m1 += 4;w_2_m2 += 2;w_2_m1 += 3;                                }
-                                case 1 -> {
-w_0_m2 += 1;w_0_m1 += 2;w_1_m1 += 3;w_2_m2 += 3;w_2_m1 += 4;                                }
-                                case 2 -> {
-w_0_m1 += 1;w_1_m1 += 2;w_2_m2 += 4;w_2_m1 += 3;                                }
-                                case 3 -> {
-w_0_m2 += 1;w_1_m1 += 1;w_2_m2 += 3;w_2_m1 += 2;                                }
-                                case 4 -> {
-w_0_m2 += 2;w_0_m1 += 1;w_2_m2 += 2;w_2_m1 += 1;                                }
-                                case 5 -> {
-w_0_m2 += 3;w_0_m1 += 2;w_1_m1 += 1;w_2_m2 += 1;                                }
-                                case 6 -> {
-w_0_m2 += 4;w_0_m1 += 3;w_1_m1 += 2;w_2_m1 += 1;                                }
-                                case 7 -> {
-w_0_m2 += 3;w_0_m1 += 4;w_1_m1 += 3;w_2_m2 += 1;w_2_m1 += 2;                                }
-                                default -> { }
-                            }
-                        }
-                        case -1 -> {
-                            w_1_m1 += 10;
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_0_m2 += 1;w_0_m1 += 2;w_0_0 += 3;w_1_0 += 4;w_2_m2 += 1;w_2_m1 += 2;w_2_0 += 3;                                }
-                                case 1 -> {
-w_0_m1 += 1;w_0_0 += 2;w_1_m2 += 1;w_1_0 += 3;w_2_m2 += 2;w_2_m1 += 3;w_2_0 += 4;                                }
-                                case 2 -> {
-w_0_m2 += 1;w_0_0 += 1;w_1_m2 += 2;w_1_0 += 2;w_2_m2 += 3;w_2_m1 += 4;w_2_0 += 3;                                }
-                                case 3 -> {
-w_0_m2 += 2;w_0_m1 += 1;w_1_m2 += 3;w_1_0 += 1;w_2_m2 += 4;w_2_m1 += 3;w_2_0 += 2;                                }
-                                case 4 -> {
-w_0_m2 += 3;w_0_m1 += 2;w_0_0 += 1;w_1_m2 += 4;w_2_m2 += 3;w_2_m1 += 2;w_2_0 += 1;                                }
-                                case 5 -> {
-w_0_m2 += 4;w_0_m1 += 3;w_0_0 += 2;w_1_m2 += 3;w_1_0 += 1;w_2_m2 += 2;w_2_m1 += 1;                                }
-                                case 6 -> {
-w_0_m2 += 3;w_0_m1 += 4;w_0_0 += 3;w_1_m2 += 2;w_1_0 += 2;w_2_m2 += 1;w_2_0 += 1;                                }
-                                case 7 -> {
-w_0_m2 += 2;w_0_m1 += 3;w_0_0 += 4;w_1_m2 += 1;w_1_0 += 3;w_2_m1 += 1;w_2_0 += 2;                                }
-                                default -> { }
-                            }
-                        }
-                        case 0 -> {
-                            w_1_0 += 10;
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_0_m1 += 1;w_0_0 += 2;w_0_1 += 3;w_1_1 += 4;w_2_m1 += 1;w_2_0 += 2;w_2_1 += 3;                                }
-                                case 1 -> {
-w_0_0 += 1;w_0_1 += 2;w_1_m1 += 1;w_1_1 += 3;w_2_m1 += 2;w_2_0 += 3;w_2_1 += 4;                                }
-                                case 2 -> {
-w_0_m1 += 1;w_0_1 += 1;w_1_m1 += 2;w_1_1 += 2;w_2_m1 += 3;w_2_0 += 4;w_2_1 += 3;                                }
-                                case 3 -> {
-w_0_m1 += 2;w_0_0 += 1;w_1_m1 += 3;w_1_1 += 1;w_2_m1 += 4;w_2_0 += 3;w_2_1 += 2;                                }
-                                case 4 -> {
-w_0_m1 += 3;w_0_0 += 2;w_0_1 += 1;w_1_m1 += 4;w_2_m1 += 3;w_2_0 += 2;w_2_1 += 1;                                }
-                                case 5 -> {
-w_0_m1 += 4;w_0_0 += 3;w_0_1 += 2;w_1_m1 += 3;w_1_1 += 1;w_2_m1 += 2;w_2_0 += 1;                                }
-                                case 6 -> {
-w_0_m1 += 3;w_0_0 += 4;w_0_1 += 3;w_1_m1 += 2;w_1_1 += 2;w_2_m1 += 1;w_2_1 += 1;                                }
-                                case 7 -> {
-w_0_m1 += 2;w_0_0 += 3;w_0_1 += 4;w_1_m1 += 1;w_1_1 += 3;w_2_0 += 1;w_2_1 += 2;                                }
-                                default -> { }
-                            }
-                        }
-                        case 1 -> {
-                            w_1_1 += 10;
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_0_0 += 1;w_0_1 += 2;w_0_2 += 3;w_1_2 += 4;w_2_0 += 1;w_2_1 += 2;w_2_2 += 3;                                }
-                                case 1 -> {
-w_0_1 += 1;w_0_2 += 2;w_1_0 += 1;w_1_2 += 3;w_2_0 += 2;w_2_1 += 3;w_2_2 += 4;                                }
-                                case 2 -> {
-w_0_0 += 1;w_0_2 += 1;w_1_0 += 2;w_1_2 += 2;w_2_0 += 3;w_2_1 += 4;w_2_2 += 3;                                }
-                                case 3 -> {
-w_0_0 += 2;w_0_1 += 1;w_1_0 += 3;w_1_2 += 1;w_2_0 += 4;w_2_1 += 3;w_2_2 += 2;                                }
-                                case 4 -> {
-w_0_0 += 3;w_0_1 += 2;w_0_2 += 1;w_1_0 += 4;w_2_0 += 3;w_2_1 += 2;w_2_2 += 1;                                }
-                                case 5 -> {
-w_0_0 += 4;w_0_1 += 3;w_0_2 += 2;w_1_0 += 3;w_1_2 += 1;w_2_0 += 2;w_2_1 += 1;                                }
-                                case 6 -> {
-w_0_0 += 3;w_0_1 += 4;w_0_2 += 3;w_1_0 += 2;w_1_2 += 2;w_2_0 += 1;w_2_2 += 1;                                }
-                                case 7 -> {
-w_0_0 += 2;w_0_1 += 3;w_0_2 += 4;w_1_0 += 1;w_1_2 += 3;w_2_1 += 1;w_2_2 += 2;                                }
-                                default -> { }
-                            }
-                        }
-                        case 2 -> {
-                            w_1_2 += 10;
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_0_1 += 1;w_0_2 += 2;w_2_1 += 1;w_2_2 += 2;                                }
-                                case 1 -> {
-w_0_2 += 1;w_1_1 += 1;w_2_1 += 2;w_2_2 += 3;                                }
-                                case 2 -> {
-w_0_1 += 1;w_1_1 += 2;w_2_1 += 3;w_2_2 += 4;                                }
-                                case 3 -> {
-w_0_1 += 2;w_0_2 += 1;w_1_1 += 3;w_2_1 += 4;w_2_2 += 3;                                }
-                                case 4 -> {
-w_0_1 += 3;w_0_2 += 2;w_1_1 += 4;w_2_1 += 3;w_2_2 += 2;                                }
-                                case 5 -> {
-w_0_1 += 4;w_0_2 += 3;w_1_1 += 3;w_2_1 += 2;w_2_2 += 1;                                }
-                                case 6 -> {
-w_0_1 += 3;w_0_2 += 4;w_1_1 += 2;w_2_1 += 1;                                }
-                                case 7 -> {
-w_0_1 += 2;w_0_2 += 3;w_1_1 += 1;w_2_2 += 1;                                }
-                                default -> { }
-                            }
-                        }
-                        case 3 -> {
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_0_2 += 1;w_2_2 += 1;                                }
-                                case 1 -> {
-w_1_2 += 1;w_2_2 += 2;                                }
-                                case 2 -> {
-w_0_2 += 1;w_1_2 += 2;w_2_2 += 3;                                }
-                                case 3 -> {
-w_0_2 += 2;w_1_2 += 3;w_2_2 += 4;                                }
-                                case 4 -> {
-w_0_2 += 3;w_1_2 += 4;w_2_2 += 3;                                }
-                                case 5 -> {
-w_0_2 += 4;w_1_2 += 3;w_2_2 += 2;                                }
-                                case 6 -> {
-w_0_2 += 3;w_1_2 += 2;w_2_2 += 1;                                }
-                                case 7 -> {
-w_0_2 += 2;w_1_2 += 1;                                }
-                                default -> { }
-                            }
-                        }
-                        default -> { }
                     }
-                }
-                case 2 -> {
-                    switch (dy) {
-                        case -3 -> {
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_1_m2 += 3;w_2_m2 += 4;                                }
-                                case 1 -> {
-w_1_m2 += 2;w_2_m2 += 3;                                }
-                                case 2 -> {
-w_1_m2 += 1;w_2_m2 += 2;                                }
-                                case 3 -> {
-w_2_m2 += 1;                                }
-                                case 4 -> {
-w_1_m2 += 1;                                }
-                                case 5 -> {
-w_1_m2 += 2;w_2_m2 += 1;                                }
-                                case 6 -> {
-w_1_m2 += 3;w_2_m2 += 2;                                }
-                                case 7 -> {
-w_1_m2 += 4;w_2_m2 += 3;                                }
-                                default -> { }
-                            }
+                    case 2 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+}
+
+                            case 1 -> {
+}
+
+                            case 2 -> {
+}
+
+                            case 3 -> {
+}
+
+                            case 4 -> {
+}
+
+                            case 5 -> {
+}
+
+                            case 6 -> {
+}
+
+                            case 7 -> {
+}
+                            default -> { }
                         }
-                        case -2 -> {
-                            w_2_m2 += 10;
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_1_m2 += 2;w_1_m1 += 3;w_2_m1 += 4;                                }
-                                case 1 -> {
-w_1_m2 += 1;w_1_m1 += 2;w_2_m1 += 3;                                }
-                                case 2 -> {
-w_1_m1 += 1;w_2_m1 += 2;                                }
-                                case 3 -> {
-w_1_m2 += 1;w_2_m1 += 1;                                }
-                                case 4 -> {
-w_1_m2 += 2;w_1_m1 += 1;                                }
-                                case 5 -> {
-w_1_m2 += 3;w_1_m1 += 2;w_2_m1 += 1;                                }
-                                case 6 -> {
-w_1_m2 += 4;w_1_m1 += 3;w_2_m1 += 2;                                }
-                                case 7 -> {
-w_1_m2 += 3;w_1_m1 += 4;w_2_m1 += 3;                                }
-                                default -> { }
-                            }
-                        }
-                        case -1 -> {
-                            w_2_m1 += 10;
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_1_m2 += 1;w_1_m1 += 2;w_1_0 += 3;w_2_0 += 4;                                }
-                                case 1 -> {
-w_1_m1 += 1;w_1_0 += 2;w_2_m2 += 1;w_2_0 += 3;                                }
-                                case 2 -> {
-w_1_m2 += 1;w_1_0 += 1;w_2_m2 += 2;w_2_0 += 2;                                }
-                                case 3 -> {
-w_1_m2 += 2;w_1_m1 += 1;w_2_m2 += 3;w_2_0 += 1;                                }
-                                case 4 -> {
-w_1_m2 += 3;w_1_m1 += 2;w_1_0 += 1;w_2_m2 += 4;                                }
-                                case 5 -> {
-w_1_m2 += 4;w_1_m1 += 3;w_1_0 += 2;w_2_m2 += 3;w_2_0 += 1;                                }
-                                case 6 -> {
-w_1_m2 += 3;w_1_m1 += 4;w_1_0 += 3;w_2_m2 += 2;w_2_0 += 2;                                }
-                                case 7 -> {
-w_1_m2 += 2;w_1_m1 += 3;w_1_0 += 4;w_2_m2 += 1;w_2_0 += 3;                                }
-                                default -> { }
-                            }
-                        }
-                        case 0 -> {
-                            w_2_0 += 10;
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_1_m1 += 1;w_1_0 += 2;w_1_1 += 3;w_2_1 += 4;                                }
-                                case 1 -> {
-w_1_0 += 1;w_1_1 += 2;w_2_m1 += 1;w_2_1 += 3;                                }
-                                case 2 -> {
-w_1_m1 += 1;w_1_1 += 1;w_2_m1 += 2;w_2_1 += 2;                                }
-                                case 3 -> {
-w_1_m1 += 2;w_1_0 += 1;w_2_m1 += 3;w_2_1 += 1;                                }
-                                case 4 -> {
-w_1_m1 += 3;w_1_0 += 2;w_1_1 += 1;w_2_m1 += 4;                                }
-                                case 5 -> {
-w_1_m1 += 4;w_1_0 += 3;w_1_1 += 2;w_2_m1 += 3;w_2_1 += 1;                                }
-                                case 6 -> {
-w_1_m1 += 3;w_1_0 += 4;w_1_1 += 3;w_2_m1 += 2;w_2_1 += 2;                                }
-                                case 7 -> {
-w_1_m1 += 2;w_1_0 += 3;w_1_1 += 4;w_2_m1 += 1;w_2_1 += 3;                                }
-                                default -> { }
-                            }
-                        }
-                        case 1 -> {
-                            w_2_1 += 10;
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_1_0 += 1;w_1_1 += 2;w_1_2 += 3;w_2_2 += 4;                                }
-                                case 1 -> {
-w_1_1 += 1;w_1_2 += 2;w_2_0 += 1;w_2_2 += 3;                                }
-                                case 2 -> {
-w_1_0 += 1;w_1_2 += 1;w_2_0 += 2;w_2_2 += 2;                                }
-                                case 3 -> {
-w_1_0 += 2;w_1_1 += 1;w_2_0 += 3;w_2_2 += 1;                                }
-                                case 4 -> {
-w_1_0 += 3;w_1_1 += 2;w_1_2 += 1;w_2_0 += 4;                                }
-                                case 5 -> {
-w_1_0 += 4;w_1_1 += 3;w_1_2 += 2;w_2_0 += 3;w_2_2 += 1;                                }
-                                case 6 -> {
-w_1_0 += 3;w_1_1 += 4;w_1_2 += 3;w_2_0 += 2;w_2_2 += 2;                                }
-                                case 7 -> {
-w_1_0 += 2;w_1_1 += 3;w_1_2 += 4;w_2_0 += 1;w_2_2 += 3;                                }
-                                default -> { }
-                            }
-                        }
-                        case 2 -> {
-                            w_2_2 += 10;
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_1_1 += 1;w_1_2 += 2;                                }
-                                case 1 -> {
-w_1_2 += 1;w_2_1 += 1;                                }
-                                case 2 -> {
-w_1_1 += 1;w_2_1 += 2;                                }
-                                case 3 -> {
-w_1_1 += 2;w_1_2 += 1;w_2_1 += 3;                                }
-                                case 4 -> {
-w_1_1 += 3;w_1_2 += 2;w_2_1 += 4;                                }
-                                case 5 -> {
-w_1_1 += 4;w_1_2 += 3;w_2_1 += 3;                                }
-                                case 6 -> {
-w_1_1 += 3;w_1_2 += 4;w_2_1 += 2;                                }
-                                case 7 -> {
-w_1_1 += 2;w_1_2 += 3;w_2_1 += 1;                                }
-                                default -> { }
-                            }
-                        }
-                        case 3 -> {
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_1_2 += 1;                                }
-                                case 1 -> {
-w_2_2 += 1;                                }
-                                case 2 -> {
-w_1_2 += 1;w_2_2 += 2;                                }
-                                case 3 -> {
-w_1_2 += 2;w_2_2 += 3;                                }
-                                case 4 -> {
-w_1_2 += 3;w_2_2 += 4;                                }
-                                case 5 -> {
-w_1_2 += 4;w_2_2 += 3;                                }
-                                case 6 -> {
-w_1_2 += 3;w_2_2 += 2;                                }
-                                case 7 -> {
-w_1_2 += 2;w_2_2 += 1;                                }
-                                default -> { }
-                            }
-                        }
-                        default -> { }
                     }
-                }
-                case 3 -> {
-                    switch (dy) {
-                        case -3 -> {
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_2_m2 += 3;                                }
-                                case 1 -> {
-w_2_m2 += 2;                                }
-                                case 2 -> {
-w_2_m2 += 1;                                }
-                                case 4 -> {
-w_2_m2 += 1;                                }
-                                case 5 -> {
-w_2_m2 += 2;                                }
-                                case 6 -> {
-w_2_m2 += 3;                                }
-                                case 7 -> {
-w_2_m2 += 4;                                }
-                                default -> { }
-                            }
+                    case 3 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+}
+
+                            case 1 -> {
+}
+
+                            case 2 -> {
+}
+
+                            case 3 -> {
+}
+
+                            case 4 -> {
+}
+
+                            case 5 -> {
+}
+
+                            case 6 -> {
+}
+
+                            case 7 -> {
+}
+                            default -> { }
                         }
-                        case -2 -> {
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_2_m2 += 2;w_2_m1 += 3;                                }
-                                case 1 -> {
-w_2_m2 += 1;w_2_m1 += 2;                                }
-                                case 2 -> {
-w_2_m1 += 1;                                }
-                                case 3 -> {
-w_2_m2 += 1;                                }
-                                case 4 -> {
-w_2_m2 += 2;w_2_m1 += 1;                                }
-                                case 5 -> {
-w_2_m2 += 3;w_2_m1 += 2;                                }
-                                case 6 -> {
-w_2_m2 += 4;w_2_m1 += 3;                                }
-                                case 7 -> {
-w_2_m2 += 3;w_2_m1 += 4;                                }
-                                default -> { }
-                            }
-                        }
-                        case -1 -> {
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_2_m2 += 1;w_2_m1 += 2;w_2_0 += 3;                                }
-                                case 1 -> {
-w_2_m1 += 1;w_2_0 += 2;                                }
-                                case 2 -> {
-w_2_m2 += 1;w_2_0 += 1;                                }
-                                case 3 -> {
-w_2_m2 += 2;w_2_m1 += 1;                                }
-                                case 4 -> {
-w_2_m2 += 3;w_2_m1 += 2;w_2_0 += 1;                                }
-                                case 5 -> {
-w_2_m2 += 4;w_2_m1 += 3;w_2_0 += 2;                                }
-                                case 6 -> {
-w_2_m2 += 3;w_2_m1 += 4;w_2_0 += 3;                                }
-                                case 7 -> {
-w_2_m2 += 2;w_2_m1 += 3;w_2_0 += 4;                                }
-                                default -> { }
-                            }
-                        }
-                        case 0 -> {
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_2_m1 += 1;w_2_0 += 2;w_2_1 += 3;                                }
-                                case 1 -> {
-w_2_0 += 1;w_2_1 += 2;                                }
-                                case 2 -> {
-w_2_m1 += 1;w_2_1 += 1;                                }
-                                case 3 -> {
-w_2_m1 += 2;w_2_0 += 1;                                }
-                                case 4 -> {
-w_2_m1 += 3;w_2_0 += 2;w_2_1 += 1;                                }
-                                case 5 -> {
-w_2_m1 += 4;w_2_0 += 3;w_2_1 += 2;                                }
-                                case 6 -> {
-w_2_m1 += 3;w_2_0 += 4;w_2_1 += 3;                                }
-                                case 7 -> {
-w_2_m1 += 2;w_2_0 += 3;w_2_1 += 4;                                }
-                                default -> { }
-                            }
-                        }
-                        case 1 -> {
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_2_0 += 1;w_2_1 += 2;w_2_2 += 3;                                }
-                                case 1 -> {
-w_2_1 += 1;w_2_2 += 2;                                }
-                                case 2 -> {
-w_2_0 += 1;w_2_2 += 1;                                }
-                                case 3 -> {
-w_2_0 += 2;w_2_1 += 1;                                }
-                                case 4 -> {
-w_2_0 += 3;w_2_1 += 2;w_2_2 += 1;                                }
-                                case 5 -> {
-w_2_0 += 4;w_2_1 += 3;w_2_2 += 2;                                }
-                                case 6 -> {
-w_2_0 += 3;w_2_1 += 4;w_2_2 += 3;                                }
-                                case 7 -> {
-w_2_0 += 2;w_2_1 += 3;w_2_2 += 4;                                }
-                                default -> { }
-                            }
-                        }
-                        case 2 -> {
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_2_1 += 1;w_2_2 += 2;                                }
-                                case 1 -> {
-w_2_2 += 1;                                }
-                                case 2 -> {
-w_2_1 += 1;                                }
-                                case 3 -> {
-w_2_1 += 2;w_2_2 += 1;                                }
-                                case 4 -> {
-w_2_1 += 3;w_2_2 += 2;                                }
-                                case 5 -> {
-w_2_1 += 4;w_2_2 += 3;                                }
-                                case 6 -> {
-w_2_1 += 3;w_2_2 += 4;                                }
-                                case 7 -> {
-w_2_1 += 2;w_2_2 += 3;                                }
-                                default -> { }
-                            }
-                        }
-                        case 3 -> {
-                            switch (rinfo.getDirection().ordinal()) {
-                                case 0 -> {
-w_2_2 += 1;                                }
-                                case 2 -> {
-w_2_2 += 1;                                }
-                                case 3 -> {
-w_2_2 += 2;                                }
-                                case 4 -> {
-w_2_2 += 3;                                }
-                                case 5 -> {
-w_2_2 += 4;                                }
-                                case 6 -> {
-w_2_2 += 3;                                }
-                                case 7 -> {
-w_2_2 += 2;                                }
-                                default -> { }
-                            }
-                        }
-                        default -> { }
                     }
+                    default -> { }
                 }
-                default -> { }
             }
+            case -2 -> {
+                switch (y) {
+                    case -3 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+
+w_m2_m2 += 3;w_m1_m2 += 2;}
+
+                            case 1 -> {
+
+w_m2_m2 += 2;w_m1_m2 += 3;}
+
+                            case 2 -> {
+
+w_m1_m2 += 2;}
+
+                            case 3 -> {
+
+}
+
+                            case 4 -> {
+}
+
+                            case 5 -> {
+}
+
+                            case 6 -> {
+}
+
+                            case 7 -> {
+}
+                            default -> { }
+                        }
+                    }
+                    case -2 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+
+w_m2_m1 += 3;w_m1_m1 += 2;}
+
+                            case 1 -> {
+
+w_m2_m1 += 2;w_m1_m2 += 2;w_m1_m1 += 3;}
+
+                            case 2 -> {
+
+w_m1_m2 += 3;w_m1_m1 += 2;}
+
+                            case 3 -> {
+}
+
+                            case 4 -> {
+}
+
+                            case 5 -> {
+}
+
+                            case 6 -> {
+}
+
+                            case 7 -> {
+}
+                            default -> { }
+                        }
+                    }
+                    case -1 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+
+w_m2_0 += 3;w_m1_0 += 2;}
+
+                            case 1 -> {
+
+w_m2_0 += 2;w_m1_m1 += 2;w_m1_0 += 3;}
+
+                            case 2 -> {
+}
+
+                            case 3 -> {
+}
+
+                            case 4 -> {
+}
+
+                            case 5 -> {
+}
+
+                            case 6 -> {
+}
+
+                            case 7 -> {
+}
+                            default -> { }
+                        }
+                    }
+                    case 0 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+
+w_m2_1 += 3;w_m1_1 += 2;}
+
+                            case 1 -> {
+}
+
+                            case 2 -> {
+}
+
+                            case 3 -> {
+}
+
+                            case 4 -> {
+}
+
+                            case 5 -> {
+}
+
+                            case 6 -> {
+}
+
+                            case 7 -> {
+}
+                            default -> { }
+                        }
+                    }
+                    case 1 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+}
+
+                            case 1 -> {
+}
+
+                            case 2 -> {
+}
+
+                            case 3 -> {
+}
+
+                            case 4 -> {
+}
+
+                            case 5 -> {
+}
+
+                            case 6 -> {
+}
+
+                            case 7 -> {
+}
+                            default -> { }
+                        }
+                    }
+                    case 2 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+}
+
+                            case 1 -> {
+}
+
+                            case 2 -> {
+}
+
+                            case 3 -> {
+}
+
+                            case 4 -> {
+}
+
+                            case 5 -> {
+}
+
+                            case 6 -> {
+}
+
+                            case 7 -> {
+}
+                            default -> { }
+                        }
+                    }
+                    case 3 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+}
+
+                            case 1 -> {
+}
+
+                            case 2 -> {
+}
+
+                            case 3 -> {
+}
+
+                            case 4 -> {
+}
+
+                            case 5 -> {
+}
+
+                            case 6 -> {
+}
+
+                            case 7 -> {
+}
+                            default -> { }
+                        }
+                    }
+                    default -> { }
+                }
+            }
+            case -1 -> {
+                switch (y) {
+                    case -3 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+
+w_m2_m2 += 2;w_m1_m2 += 3;w_0_m2 += 2;}
+
+                            case 1 -> {
+
+w_m1_m2 += 2;w_0_m2 += 3;}
+
+                            case 2 -> {
+
+w_0_m2 += 2;}
+
+                            case 3 -> {
+
+}
+
+                            case 4 -> {
+
+}
+
+                            case 5 -> {
+
+}
+
+                            case 6 -> {
+
+w_m2_m2 += 2;}
+
+                            case 7 -> {
+
+w_m2_m2 += 3;w_m1_m2 += 2;}
+                            default -> { }
+                        }
+                    }
+                    case -2 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+
+w_m2_m1 += 2;w_m1_m1 += 3;w_0_m1 += 2;}
+
+                            case 1 -> {
+
+w_m1_m1 += 2;w_0_m2 += 2;w_0_m1 += 3;}
+
+                            case 2 -> {
+
+w_0_m2 += 3;w_0_m1 += 2;}
+
+                            case 3 -> {
+
+w_0_m2 += 2;}
+
+                            case 4 -> {
+
+}
+
+                            case 5 -> {
+
+w_m2_m2 += 2;}
+
+                            case 6 -> {
+
+w_m2_m2 += 3;w_m2_m1 += 2;}
+
+                            case 7 -> {
+
+w_m2_m2 += 2;w_m2_m1 += 3;w_m1_m1 += 2;}
+                            default -> { }
+                        }
+                    }
+                    case -1 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+
+w_m2_0 += 2;w_m1_0 += 3;w_0_0 += 2;}
+
+                            case 1 -> {
+
+w_m1_0 += 2;w_0_m1 += 2;w_0_0 += 3;}
+
+                            case 2 -> {
+
+w_0_m2 += 2;w_0_m1 += 3;w_0_0 += 2;}
+
+                            case 3 -> {
+
+w_m1_m2 += 2;w_0_m2 += 3;w_0_m1 += 2;}
+
+                            case 4 -> {
+
+w_m2_m2 += 2;w_m1_m2 += 3;w_0_m2 += 2;}
+
+                            case 5 -> {
+
+w_m2_m2 += 3;w_m2_m1 += 2;w_m1_m2 += 2;}
+
+                            case 6 -> {
+
+w_m2_m2 += 2;w_m2_m1 += 3;w_m2_0 += 2;}
+
+                            case 7 -> {
+
+w_m2_m1 += 2;w_m2_0 += 3;w_m1_0 += 2;}
+                            default -> { }
+                        }
+                    }
+                    case 0 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+
+w_m2_1 += 2;w_m1_1 += 3;w_0_1 += 2;}
+
+                            case 1 -> {
+
+w_m1_1 += 2;w_0_0 += 2;w_0_1 += 3;}
+
+                            case 2 -> {
+
+w_0_m1 += 2;w_0_0 += 3;w_0_1 += 2;}
+
+                            case 3 -> {
+
+w_m1_m1 += 2;w_0_m1 += 3;w_0_0 += 2;}
+
+                            case 4 -> {
+
+w_m2_m1 += 2;w_m1_m1 += 3;w_0_m1 += 2;}
+
+                            case 5 -> {
+
+w_m2_m1 += 3;w_m2_0 += 2;w_m1_m1 += 2;}
+
+                            case 6 -> {
+
+w_m2_m1 += 2;w_m2_0 += 3;w_m2_1 += 2;}
+
+                            case 7 -> {
+
+w_m2_0 += 2;w_m2_1 += 3;w_m1_1 += 2;}
+                            default -> { }
+                        }
+                    }
+                    case 1 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+}
+
+                            case 1 -> {
+}
+
+                            case 2 -> {
+}
+
+                            case 3 -> {
+}
+
+                            case 4 -> {
+}
+
+                            case 5 -> {
+}
+
+                            case 6 -> {
+}
+
+                            case 7 -> {
+}
+                            default -> { }
+                        }
+                    }
+                    case 2 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+}
+
+                            case 1 -> {
+}
+
+                            case 2 -> {
+}
+
+                            case 3 -> {
+}
+
+                            case 4 -> {
+}
+
+                            case 5 -> {
+}
+
+                            case 6 -> {
+}
+
+                            case 7 -> {
+}
+                            default -> { }
+                        }
+                    }
+                    case 3 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+}
+
+                            case 1 -> {
+}
+
+                            case 2 -> {
+}
+
+                            case 3 -> {
+}
+
+                            case 4 -> {
+}
+
+                            case 5 -> {
+}
+
+                            case 6 -> {
+}
+
+                            case 7 -> {
+}
+                            default -> { }
+                        }
+                    }
+                    default -> { }
+                }
+            }
+            case 0 -> {
+                switch (y) {
+                    case -3 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+}
+
+                            case 1 -> {
+}
+
+                            case 2 -> {
+}
+
+                            case 3 -> {
+
+}
+
+                            case 4 -> {
+
+}
+
+                            case 5 -> {
+
+}
+
+                            case 6 -> {
+
+w_m1_m2 += 2;}
+
+                            case 7 -> {
+
+w_m1_m2 += 3;w_0_m2 += 2;}
+                            default -> { }
+                        }
+                    }
+                    case -2 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+}
+
+                            case 1 -> {
+}
+
+                            case 2 -> {
+
+w_1_m2 += 3;w_1_m1 += 2;}
+
+                            case 3 -> {
+
+w_1_m2 += 2;}
+
+                            case 4 -> {
+
+}
+
+                            case 5 -> {
+
+w_m1_m2 += 2;}
+
+                            case 6 -> {
+
+w_m1_m2 += 3;w_m1_m1 += 2;}
+
+                            case 7 -> {
+
+w_m1_m2 += 2;w_m1_m1 += 3;w_0_m1 += 2;}
+                            default -> { }
+                        }
+                    }
+                    case -1 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+}
+
+                            case 1 -> {
+
+w_0_0 += 2;w_1_m1 += 2;w_1_0 += 3;}
+
+                            case 2 -> {
+
+w_1_m2 += 2;w_1_m1 += 3;w_1_0 += 2;}
+
+                            case 3 -> {
+
+w_0_m2 += 2;w_1_m2 += 3;w_1_m1 += 2;}
+
+                            case 4 -> {
+
+w_m1_m2 += 2;w_0_m2 += 3;w_1_m2 += 2;}
+
+                            case 5 -> {
+
+w_m1_m2 += 3;w_m1_m1 += 2;w_0_m2 += 2;}
+
+                            case 6 -> {
+
+w_m1_m2 += 2;w_m1_m1 += 3;w_m1_0 += 2;}
+
+                            case 7 -> {
+
+w_m1_m1 += 2;w_m1_0 += 3;w_0_0 += 2;}
+                            default -> { }
+                        }
+                    }
+                    case 0 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+
+w_m1_1 += 2;w_0_1 += 3;w_1_1 += 2;}
+
+                            case 1 -> {
+
+w_0_1 += 2;w_1_0 += 2;w_1_1 += 3;}
+
+                            case 2 -> {
+
+w_1_m1 += 2;w_1_0 += 3;w_1_1 += 2;}
+
+                            case 3 -> {
+
+w_0_m1 += 2;w_1_m1 += 3;w_1_0 += 2;}
+
+                            case 4 -> {
+
+w_m1_m1 += 2;w_0_m1 += 3;w_1_m1 += 2;}
+
+                            case 5 -> {
+
+w_m1_m1 += 3;w_m1_0 += 2;w_0_m1 += 2;}
+
+                            case 6 -> {
+
+w_m1_m1 += 2;w_m1_0 += 3;w_m1_1 += 2;}
+
+                            case 7 -> {
+
+w_m1_0 += 2;w_m1_1 += 3;w_0_1 += 2;}
+                            default -> { }
+                        }
+                    }
+                    case 1 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+}
+
+                            case 1 -> {
+
+w_0_2 += 2;w_1_1 += 2;w_1_2 += 3;}
+
+                            case 2 -> {
+
+w_1_0 += 2;w_1_1 += 3;w_1_2 += 2;}
+
+                            case 3 -> {
+
+w_0_0 += 2;w_1_0 += 3;w_1_1 += 2;}
+
+                            case 4 -> {
+
+w_m1_0 += 2;w_0_0 += 3;w_1_0 += 2;}
+
+                            case 5 -> {
+
+w_m1_0 += 3;w_m1_1 += 2;w_0_0 += 2;}
+
+                            case 6 -> {
+
+w_m1_0 += 2;w_m1_1 += 3;w_m1_2 += 2;}
+
+                            case 7 -> {
+
+w_m1_1 += 2;w_m1_2 += 3;w_0_2 += 2;}
+                            default -> { }
+                        }
+                    }
+                    case 2 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+}
+
+                            case 1 -> {
+}
+
+                            case 2 -> {
+
+w_1_1 += 2;w_1_2 += 3;}
+
+                            case 3 -> {
+
+w_0_1 += 2;w_1_1 += 3;w_1_2 += 2;}
+
+                            case 4 -> {
+
+w_m1_1 += 2;w_0_1 += 3;w_1_1 += 2;}
+
+                            case 5 -> {
+
+w_m1_1 += 3;w_m1_2 += 2;w_0_1 += 2;}
+
+                            case 6 -> {
+
+w_m1_1 += 2;w_m1_2 += 3;}
+
+                            case 7 -> {
+
+w_m1_2 += 2;}
+                            default -> { }
+                        }
+                    }
+                    case 3 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+}
+
+                            case 1 -> {
+}
+
+                            case 2 -> {
+}
+
+                            case 3 -> {
+
+w_0_2 += 2;w_1_2 += 3;}
+
+                            case 4 -> {
+
+w_m1_2 += 2;w_0_2 += 3;w_1_2 += 2;}
+
+                            case 5 -> {
+
+w_m1_2 += 3;w_0_2 += 2;}
+
+                            case 6 -> {
+
+w_m1_2 += 2;}
+
+                            case 7 -> {
+
+}
+                            default -> { }
+                        }
+                    }
+                    default -> { }
+                }
+            }
+            case 1 -> {
+                switch (y) {
+                    case -3 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+}
+
+                            case 1 -> {
+}
+
+                            case 2 -> {
+}
+
+                            case 3 -> {
+}
+
+                            case 4 -> {
+}
+
+                            case 5 -> {
+}
+
+                            case 6 -> {
+}
+
+                            case 7 -> {
+}
+                            default -> { }
+                        }
+                    }
+                    case -2 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+}
+
+                            case 1 -> {
+}
+
+                            case 2 -> {
+}
+
+                            case 3 -> {
+}
+
+                            case 4 -> {
+}
+
+                            case 5 -> {
+}
+
+                            case 6 -> {
+}
+
+                            case 7 -> {
+}
+                            default -> { }
+                        }
+                    }
+                    case -1 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+}
+
+                            case 1 -> {
+}
+
+                            case 2 -> {
+}
+
+                            case 3 -> {
+}
+
+                            case 4 -> {
+}
+
+                            case 5 -> {
+}
+
+                            case 6 -> {
+}
+
+                            case 7 -> {
+}
+                            default -> { }
+                        }
+                    }
+                    case 0 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+
+w_0_1 += 2;w_1_1 += 3;w_2_1 += 2;}
+
+                            case 1 -> {
+
+w_1_1 += 2;w_2_0 += 2;w_2_1 += 3;}
+
+                            case 2 -> {
+
+w_2_m1 += 2;w_2_0 += 3;w_2_1 += 2;}
+
+                            case 3 -> {
+
+w_1_m1 += 2;w_2_m1 += 3;w_2_0 += 2;}
+
+                            case 4 -> {
+
+w_0_m1 += 2;w_1_m1 += 3;w_2_m1 += 2;}
+
+                            case 5 -> {
+
+w_0_m1 += 3;w_0_0 += 2;w_1_m1 += 2;}
+
+                            case 6 -> {
+
+w_0_m1 += 2;w_0_0 += 3;w_0_1 += 2;}
+
+                            case 7 -> {
+
+w_0_0 += 2;w_0_1 += 3;w_1_1 += 2;}
+                            default -> { }
+                        }
+                    }
+                    case 1 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+
+w_0_2 += 2;w_1_2 += 3;w_2_2 += 2;}
+
+                            case 1 -> {
+
+w_1_2 += 2;w_2_1 += 2;w_2_2 += 3;}
+
+                            case 2 -> {
+
+w_2_0 += 2;w_2_1 += 3;w_2_2 += 2;}
+
+                            case 3 -> {
+
+w_1_0 += 2;w_2_0 += 3;w_2_1 += 2;}
+
+                            case 4 -> {
+
+w_0_0 += 2;w_1_0 += 3;w_2_0 += 2;}
+
+                            case 5 -> {
+
+w_0_0 += 3;w_0_1 += 2;w_1_0 += 2;}
+
+                            case 6 -> {
+
+w_0_0 += 2;w_0_1 += 3;w_0_2 += 2;}
+
+                            case 7 -> {
+
+w_0_1 += 2;w_0_2 += 3;w_1_2 += 2;}
+                            default -> { }
+                        }
+                    }
+                    case 2 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+
+}
+
+                            case 1 -> {
+
+w_2_2 += 2;}
+
+                            case 2 -> {
+
+w_2_1 += 2;w_2_2 += 3;}
+
+                            case 3 -> {
+
+w_1_1 += 2;w_2_1 += 3;w_2_2 += 2;}
+
+                            case 4 -> {
+
+w_0_1 += 2;w_1_1 += 3;w_2_1 += 2;}
+
+                            case 5 -> {
+
+w_0_1 += 3;w_0_2 += 2;w_1_1 += 2;}
+
+                            case 6 -> {
+
+w_0_1 += 2;w_0_2 += 3;}
+
+                            case 7 -> {
+
+w_0_2 += 2;}
+                            default -> { }
+                        }
+                    }
+                    case 3 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+
+}
+
+                            case 1 -> {
+
+}
+
+                            case 2 -> {
+
+w_2_2 += 2;}
+
+                            case 3 -> {
+
+w_1_2 += 2;w_2_2 += 3;}
+
+                            case 4 -> {
+
+w_0_2 += 2;w_1_2 += 3;w_2_2 += 2;}
+
+                            case 5 -> {
+
+w_0_2 += 3;w_1_2 += 2;}
+
+                            case 6 -> {
+
+w_0_2 += 2;}
+
+                            case 7 -> {
+
+}
+                            default -> { }
+                        }
+                    }
+                    default -> { }
+                }
+            }
+            case 2 -> {
+                switch (y) {
+                    case -3 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+}
+
+                            case 1 -> {
+}
+
+                            case 2 -> {
+}
+
+                            case 3 -> {
+}
+
+                            case 4 -> {
+}
+
+                            case 5 -> {
+}
+
+                            case 6 -> {
+}
+
+                            case 7 -> {
+}
+                            default -> { }
+                        }
+                    }
+                    case -2 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+}
+
+                            case 1 -> {
+}
+
+                            case 2 -> {
+}
+
+                            case 3 -> {
+}
+
+                            case 4 -> {
+}
+
+                            case 5 -> {
+}
+
+                            case 6 -> {
+}
+
+                            case 7 -> {
+}
+                            default -> { }
+                        }
+                    }
+                    case -1 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+}
+
+                            case 1 -> {
+}
+
+                            case 2 -> {
+}
+
+                            case 3 -> {
+}
+
+                            case 4 -> {
+}
+
+                            case 5 -> {
+}
+
+                            case 6 -> {
+}
+
+                            case 7 -> {
+}
+                            default -> { }
+                        }
+                    }
+                    case 0 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+
+w_1_1 += 2;w_2_1 += 3;}
+
+                            case 1 -> {
+}
+
+                            case 2 -> {
+}
+
+                            case 3 -> {
+}
+
+                            case 4 -> {
+}
+
+                            case 5 -> {
+}
+
+                            case 6 -> {
+}
+
+                            case 7 -> {
+}
+                            default -> { }
+                        }
+                    }
+                    case 1 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+
+w_1_2 += 2;w_2_2 += 3;}
+
+                            case 1 -> {
+
+w_2_2 += 2;}
+
+                            case 2 -> {
+}
+
+                            case 3 -> {
+}
+
+                            case 4 -> {
+}
+
+                            case 5 -> {
+}
+
+                            case 6 -> {
+}
+
+                            case 7 -> {
+}
+                            default -> { }
+                        }
+                    }
+                    case 2 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+
+}
+
+                            case 1 -> {
+
+}
+
+                            case 2 -> {
+
+}
+
+                            case 3 -> {
+}
+
+                            case 4 -> {
+}
+
+                            case 5 -> {
+}
+
+                            case 6 -> {
+}
+
+                            case 7 -> {
+}
+                            default -> { }
+                        }
+                    }
+                    case 3 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+
+}
+
+                            case 1 -> {
+
+}
+
+                            case 2 -> {
+
+}
+
+                            case 3 -> {
+
+w_2_2 += 2;}
+
+                            case 4 -> {
+}
+
+                            case 5 -> {
+}
+
+                            case 6 -> {
+}
+
+                            case 7 -> {
+}
+                            default -> { }
+                        }
+                    }
+                    default -> { }
+                }
+            }
+            case 3 -> {
+                switch (y) {
+                    case -3 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+}
+
+                            case 1 -> {
+}
+
+                            case 2 -> {
+}
+
+                            case 3 -> {
+}
+
+                            case 4 -> {
+}
+
+                            case 5 -> {
+}
+
+                            case 6 -> {
+}
+
+                            case 7 -> {
+}
+                            default -> { }
+                        }
+                    }
+                    case -2 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+}
+
+                            case 1 -> {
+}
+
+                            case 2 -> {
+}
+
+                            case 3 -> {
+}
+
+                            case 4 -> {
+}
+
+                            case 5 -> {
+}
+
+                            case 6 -> {
+}
+
+                            case 7 -> {
+}
+                            default -> { }
+                        }
+                    }
+                    case -1 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+}
+
+                            case 1 -> {
+}
+
+                            case 2 -> {
+}
+
+                            case 3 -> {
+}
+
+                            case 4 -> {
+}
+
+                            case 5 -> {
+}
+
+                            case 6 -> {
+}
+
+                            case 7 -> {
+}
+                            default -> { }
+                        }
+                    }
+                    case 0 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+
+w_2_1 += 2;}
+
+                            case 1 -> {
+}
+
+                            case 2 -> {
+}
+
+                            case 3 -> {
+}
+
+                            case 4 -> {
+}
+
+                            case 5 -> {
+}
+
+                            case 6 -> {
+}
+
+                            case 7 -> {
+}
+                            default -> { }
+                        }
+                    }
+                    case 1 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+
+w_2_2 += 2;}
+
+                            case 1 -> {
+}
+
+                            case 2 -> {
+}
+
+                            case 3 -> {
+}
+
+                            case 4 -> {
+}
+
+                            case 5 -> {
+}
+
+                            case 6 -> {
+}
+
+                            case 7 -> {
+}
+                            default -> { }
+                        }
+                    }
+                    case 2 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+
+}
+
+                            case 1 -> {
+}
+
+                            case 2 -> {
+}
+
+                            case 3 -> {
+}
+
+                            case 4 -> {
+}
+
+                            case 5 -> {
+}
+
+                            case 6 -> {
+}
+
+                            case 7 -> {
+}
+                            default -> { }
+                        }
+                    }
+                    case 3 -> {
+                        switch (rinfo.direction.ordinal()) {
+
+                            case 0 -> {
+
+}
+
+                            case 1 -> {
+}
+
+                            case 2 -> {
+}
+
+                            case 3 -> {
+}
+
+                            case 4 -> {
+}
+
+                            case 5 -> {
+}
+
+                            case 6 -> {
+}
+
+                            case 7 -> {
+}
+                            default -> { }
+                        }
+                    }
+                    default -> { }
+                }
+            }
+            default -> { }
+        }
+    }
+
+    private static void applyTrapWeights() {
+        switch (CellTracker.numNearbyRatTraps) {
+            case 29: {
+                MapLocation trapLoc = CellTracker.nearbyRatTraps[28];
+                int x = trapLoc.x - myLocX;
+                int y = trapLoc.y - myLocY;
+                applyTrapWeight(x, y);
+            } 
+            case 28: {
+                MapLocation trapLoc = CellTracker.nearbyRatTraps[27];
+                int x = trapLoc.x - myLocX;
+                int y = trapLoc.y - myLocY;
+                applyTrapWeight(x, y);
+            } 
+            case 27: {
+                MapLocation trapLoc = CellTracker.nearbyRatTraps[26];
+                int x = trapLoc.x - myLocX;
+                int y = trapLoc.y - myLocY;
+                applyTrapWeight(x, y);
+            } 
+            case 26: {
+                MapLocation trapLoc = CellTracker.nearbyRatTraps[25];
+                int x = trapLoc.x - myLocX;
+                int y = trapLoc.y - myLocY;
+                applyTrapWeight(x, y);
+            } 
+            case 25: {
+                MapLocation trapLoc = CellTracker.nearbyRatTraps[24];
+                int x = trapLoc.x - myLocX;
+                int y = trapLoc.y - myLocY;
+                applyTrapWeight(x, y);
+            } 
+            case 24: {
+                MapLocation trapLoc = CellTracker.nearbyRatTraps[23];
+                int x = trapLoc.x - myLocX;
+                int y = trapLoc.y - myLocY;
+                applyTrapWeight(x, y);
+            } 
+            case 23: {
+                MapLocation trapLoc = CellTracker.nearbyRatTraps[22];
+                int x = trapLoc.x - myLocX;
+                int y = trapLoc.y - myLocY;
+                applyTrapWeight(x, y);
+            } 
+            case 22: {
+                MapLocation trapLoc = CellTracker.nearbyRatTraps[21];
+                int x = trapLoc.x - myLocX;
+                int y = trapLoc.y - myLocY;
+                applyTrapWeight(x, y);
+            } 
+            case 21: {
+                MapLocation trapLoc = CellTracker.nearbyRatTraps[20];
+                int x = trapLoc.x - myLocX;
+                int y = trapLoc.y - myLocY;
+                applyTrapWeight(x, y);
+            } 
+            case 20: {
+                MapLocation trapLoc = CellTracker.nearbyRatTraps[19];
+                int x = trapLoc.x - myLocX;
+                int y = trapLoc.y - myLocY;
+                applyTrapWeight(x, y);
+            } 
+            case 19: {
+                MapLocation trapLoc = CellTracker.nearbyRatTraps[18];
+                int x = trapLoc.x - myLocX;
+                int y = trapLoc.y - myLocY;
+                applyTrapWeight(x, y);
+            } 
+            case 18: {
+                MapLocation trapLoc = CellTracker.nearbyRatTraps[17];
+                int x = trapLoc.x - myLocX;
+                int y = trapLoc.y - myLocY;
+                applyTrapWeight(x, y);
+            } 
+            case 17: {
+                MapLocation trapLoc = CellTracker.nearbyRatTraps[16];
+                int x = trapLoc.x - myLocX;
+                int y = trapLoc.y - myLocY;
+                applyTrapWeight(x, y);
+            } 
+            case 16: {
+                MapLocation trapLoc = CellTracker.nearbyRatTraps[15];
+                int x = trapLoc.x - myLocX;
+                int y = trapLoc.y - myLocY;
+                applyTrapWeight(x, y);
+            } 
+            case 15: {
+                MapLocation trapLoc = CellTracker.nearbyRatTraps[14];
+                int x = trapLoc.x - myLocX;
+                int y = trapLoc.y - myLocY;
+                applyTrapWeight(x, y);
+            } 
+            case 14: {
+                MapLocation trapLoc = CellTracker.nearbyRatTraps[13];
+                int x = trapLoc.x - myLocX;
+                int y = trapLoc.y - myLocY;
+                applyTrapWeight(x, y);
+            } 
+            case 13: {
+                MapLocation trapLoc = CellTracker.nearbyRatTraps[12];
+                int x = trapLoc.x - myLocX;
+                int y = trapLoc.y - myLocY;
+                applyTrapWeight(x, y);
+            } 
+            case 12: {
+                MapLocation trapLoc = CellTracker.nearbyRatTraps[11];
+                int x = trapLoc.x - myLocX;
+                int y = trapLoc.y - myLocY;
+                applyTrapWeight(x, y);
+            } 
+            case 11: {
+                MapLocation trapLoc = CellTracker.nearbyRatTraps[10];
+                int x = trapLoc.x - myLocX;
+                int y = trapLoc.y - myLocY;
+                applyTrapWeight(x, y);
+            } 
+            case 10: {
+                MapLocation trapLoc = CellTracker.nearbyRatTraps[9];
+                int x = trapLoc.x - myLocX;
+                int y = trapLoc.y - myLocY;
+                applyTrapWeight(x, y);
+            } 
+            case 9: {
+                MapLocation trapLoc = CellTracker.nearbyRatTraps[8];
+                int x = trapLoc.x - myLocX;
+                int y = trapLoc.y - myLocY;
+                applyTrapWeight(x, y);
+            } 
+            case 8: {
+                MapLocation trapLoc = CellTracker.nearbyRatTraps[7];
+                int x = trapLoc.x - myLocX;
+                int y = trapLoc.y - myLocY;
+                applyTrapWeight(x, y);
+            } 
+            case 7: {
+                MapLocation trapLoc = CellTracker.nearbyRatTraps[6];
+                int x = trapLoc.x - myLocX;
+                int y = trapLoc.y - myLocY;
+                applyTrapWeight(x, y);
+            } 
+            case 6: {
+                MapLocation trapLoc = CellTracker.nearbyRatTraps[5];
+                int x = trapLoc.x - myLocX;
+                int y = trapLoc.y - myLocY;
+                applyTrapWeight(x, y);
+            } 
+            case 5: {
+                MapLocation trapLoc = CellTracker.nearbyRatTraps[4];
+                int x = trapLoc.x - myLocX;
+                int y = trapLoc.y - myLocY;
+                applyTrapWeight(x, y);
+            } 
+            case 4: {
+                MapLocation trapLoc = CellTracker.nearbyRatTraps[3];
+                int x = trapLoc.x - myLocX;
+                int y = trapLoc.y - myLocY;
+                applyTrapWeight(x, y);
+            } 
+            case 3: {
+                MapLocation trapLoc = CellTracker.nearbyRatTraps[2];
+                int x = trapLoc.x - myLocX;
+                int y = trapLoc.y - myLocY;
+                applyTrapWeight(x, y);
+            } 
+            case 2: {
+                MapLocation trapLoc = CellTracker.nearbyRatTraps[1];
+                int x = trapLoc.x - myLocX;
+                int y = trapLoc.y - myLocY;
+                applyTrapWeight(x, y);
+            } 
+            case 1: {
+                MapLocation trapLoc = CellTracker.nearbyRatTraps[0];
+                int x = trapLoc.x - myLocX;
+                int y = trapLoc.y - myLocY;
+                applyTrapWeight(x, y);
+            } 
+            case 0:
+                break;
+            default:
+                assert(false);
+                break;
+        }
+    }
+
+    private static void applyTrapWeight(int x, int y) {
+        switch (x) {
+            case -2 -> {
+                switch (y) {
+                    case -2 -> {
+println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m2_m2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m2_m1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_m2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_m1 -= 100;                    }
+                    case -1 -> {
+println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m2_m2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m2_m1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m2_0 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_m2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_m1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_0 -= 100;                    }
+                    case 0 -> {
+println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m2_m1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m2_0 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m2_1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_m1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_0 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_1 -= 100;                    }
+                    case 1 -> {
+println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m2_0 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m2_1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m2_2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_0 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_2 -= 100;                    }
+                    case 2 -> {
+println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m2_1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m2_2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_2 -= 100;                    }
+                    default -> { }
+                }
+            }
+            case -1 -> {
+                switch (y) {
+                    case -2 -> {
+println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m2_m2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m2_m1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_m2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_m1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_m2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_m1 -= 100;                    }
+                    case -1 -> {
+println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m2_m2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m2_m1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m2_0 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_m2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_m1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_0 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_m2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_m1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_0 -= 100;                    }
+                    case 0 -> {
+println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m2_m1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m2_0 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m2_1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_m1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_0 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_m1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_0 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_1 -= 100;                    }
+                    case 1 -> {
+println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m2_0 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m2_1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m2_2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_0 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_0 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_2 -= 100;                    }
+                    case 2 -> {
+println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m2_1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m2_2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_2 -= 100;                    }
+                    default -> { }
+                }
+            }
+            case 0 -> {
+                switch (y) {
+                    case -2 -> {
+println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_m2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_m1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_m2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_m1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_m2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_m1 -= 100;                    }
+                    case -1 -> {
+println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_m2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_m1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_0 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_m2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_m1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_0 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_m2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_m1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_0 -= 100;                    }
+                    case 0 -> {
+println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_m1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_0 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_m1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_0 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_m1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_0 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_1 -= 100;                    }
+                    case 1 -> {
+println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_0 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_0 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_0 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_2 -= 100;                    }
+                    case 2 -> {
+println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_m1_2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_2 -= 100;                    }
+                    default -> { }
+                }
+            }
+            case 1 -> {
+                switch (y) {
+                    case -2 -> {
+println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_m2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_m1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_m2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_m1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_2_m2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_2_m1 -= 100;                    }
+                    case -1 -> {
+println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_m2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_m1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_0 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_m2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_m1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_0 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_2_m2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_2_m1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_2_0 -= 100;                    }
+                    case 0 -> {
+println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_m1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_0 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_m1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_0 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_2_m1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_2_0 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_2_1 -= 100;                    }
+                    case 1 -> {
+println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_0 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_0 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_2_0 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_2_1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_2_2 -= 100;                    }
+                    case 2 -> {
+println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_0_2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_2_1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_2_2 -= 100;                    }
+                    default -> { }
+                }
+            }
+            case 2 -> {
+                switch (y) {
+                    case -2 -> {
+println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_m2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_m1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_2_m2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_2_m1 -= 100;                    }
+                    case -1 -> {
+println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_m2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_m1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_0 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_2_m2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_2_m1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_2_0 -= 100;                    }
+                    case 0 -> {
+println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_m1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_0 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_2_m1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_2_0 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_2_1 -= 100;                    }
+                    case 1 -> {
+println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_0 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_2_0 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_2_1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_2_2 -= 100;                    }
+                    case 2 -> {
+println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_1_2 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_2_1 -= 100;println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        w_2_2 -= 100;                    }
+                    default -> { }
+                }
+            }
+            default -> { }
         }
     }
 
@@ -3125,554 +3682,414 @@ private static void placeSWWNW() {
         }
     }
 
-    private static boolean hasAdjacentTrap_m2_2() throws GameActionException {
-        MapLocation adj;
-        adj = new MapLocation(myLocX  + -3, myLocY  + 3);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -2, myLocY  + 3);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY  + 3);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -3, myLocY  + 2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -2, myLocY  + 2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY  + 2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -3, myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -2, myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        return false;
-    }
-    private static boolean hasAdjacentTrap_m1_2() throws GameActionException {
-        MapLocation adj;
-        adj = new MapLocation(myLocX  + -2, myLocY  + 3);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY  + 3);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY  + 3);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -2, myLocY  + 2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY  + 2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY  + 2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -2, myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        return false;
-    }
-    private static boolean hasAdjacentTrap_0_2() throws GameActionException {
-        MapLocation adj;
-        adj = new MapLocation(myLocX  + -1, myLocY  + 3);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY  + 3);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY  + 3);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY  + 2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY  + 2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY  + 2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        return false;
-    }
-    private static boolean hasAdjacentTrap_1_2() throws GameActionException {
-        MapLocation adj;
-        adj = new MapLocation(myLocX , myLocY  + 3);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY  + 3);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 2, myLocY  + 3);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY  + 2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY  + 2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 2, myLocY  + 2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 2, myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        return false;
-    }
-    private static boolean hasAdjacentTrap_2_2() throws GameActionException {
-        MapLocation adj;
-        adj = new MapLocation(myLocX  + 1, myLocY  + 3);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 2, myLocY  + 3);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 3, myLocY  + 3);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY  + 2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 2, myLocY  + 2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 3, myLocY  + 2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 2, myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 3, myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        return false;
-    }
-    private static boolean hasAdjacentTrap_m2_1() throws GameActionException {
-        MapLocation adj;
-        adj = new MapLocation(myLocX  + -3, myLocY  + 2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -2, myLocY  + 2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY  + 2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -3, myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -2, myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -3, myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -2, myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        return false;
-    }
-    private static boolean hasAdjacentTrap_m1_1() throws GameActionException {
-        MapLocation adj;
-        adj = new MapLocation(myLocX  + -2, myLocY  + 2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY  + 2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY  + 2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -2, myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -2, myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        return false;
-    }
-    private static boolean hasAdjacentTrap_0_1() throws GameActionException {
-        MapLocation adj;
-        adj = new MapLocation(myLocX  + -1, myLocY  + 2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY  + 2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY  + 2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        return false;
-    }
-    private static boolean hasAdjacentTrap_1_1() throws GameActionException {
-        MapLocation adj;
-        adj = new MapLocation(myLocX , myLocY  + 2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY  + 2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 2, myLocY  + 2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 2, myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 2, myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        return false;
-    }
-    private static boolean hasAdjacentTrap_2_1() throws GameActionException {
-        MapLocation adj;
-        adj = new MapLocation(myLocX  + 1, myLocY  + 2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 2, myLocY  + 2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 3, myLocY  + 2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 2, myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 3, myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 2, myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 3, myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        return false;
-    }
-    private static boolean hasAdjacentTrap_m2_0() throws GameActionException {
-        MapLocation adj;
-        adj = new MapLocation(myLocX  + -3, myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -2, myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -3, myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -2, myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -3, myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -2, myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        return false;
-    }
-    private static boolean hasAdjacentTrap_m1_0() throws GameActionException {
-        MapLocation adj;
-        adj = new MapLocation(myLocX  + -2, myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -2, myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -2, myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        return false;
-    }
-    private static boolean hasAdjacentTrap_0_0() throws GameActionException {
-        MapLocation adj;
-        adj = new MapLocation(myLocX  + -1, myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        return false;
-    }
-    private static boolean hasAdjacentTrap_1_0() throws GameActionException {
-        MapLocation adj;
-        adj = new MapLocation(myLocX , myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 2, myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 2, myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 2, myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        return false;
-    }
-    private static boolean hasAdjacentTrap_2_0() throws GameActionException {
-        MapLocation adj;
-        adj = new MapLocation(myLocX  + 1, myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 2, myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 3, myLocY  + 1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 2, myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 3, myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 2, myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 3, myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        return false;
-    }
-    private static boolean hasAdjacentTrap_m2_m1() throws GameActionException {
-        MapLocation adj;
-        adj = new MapLocation(myLocX  + -3, myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -2, myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -3, myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -2, myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -3, myLocY  + -2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -2, myLocY  + -2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY  + -2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        return false;
-    }
-    private static boolean hasAdjacentTrap_m1_m1() throws GameActionException {
-        MapLocation adj;
-        adj = new MapLocation(myLocX  + -2, myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -2, myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -2, myLocY  + -2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY  + -2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY  + -2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        return false;
-    }
-    private static boolean hasAdjacentTrap_0_m1() throws GameActionException {
-        MapLocation adj;
-        adj = new MapLocation(myLocX  + -1, myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY  + -2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY  + -2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY  + -2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        return false;
-    }
-    private static boolean hasAdjacentTrap_1_m1() throws GameActionException {
-        MapLocation adj;
-        adj = new MapLocation(myLocX , myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 2, myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 2, myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY  + -2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY  + -2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 2, myLocY  + -2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        return false;
-    }
-    private static boolean hasAdjacentTrap_2_m1() throws GameActionException {
-        MapLocation adj;
-        adj = new MapLocation(myLocX  + 1, myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 2, myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 3, myLocY );
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 2, myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 3, myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY  + -2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 2, myLocY  + -2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 3, myLocY  + -2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        return false;
-    }
-    private static boolean hasAdjacentTrap_m2_m2() throws GameActionException {
-        MapLocation adj;
-        adj = new MapLocation(myLocX  + -3, myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -2, myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -3, myLocY  + -2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -2, myLocY  + -2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY  + -2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -3, myLocY  + -3);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -2, myLocY  + -3);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY  + -3);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        return false;
-    }
-    private static boolean hasAdjacentTrap_m1_m2() throws GameActionException {
-        MapLocation adj;
-        adj = new MapLocation(myLocX  + -2, myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -2, myLocY  + -2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY  + -2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY  + -2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -2, myLocY  + -3);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY  + -3);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY  + -3);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        return false;
-    }
-    private static boolean hasAdjacentTrap_0_m2() throws GameActionException {
-        MapLocation adj;
-        adj = new MapLocation(myLocX  + -1, myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY  + -2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY  + -2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY  + -2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + -1, myLocY  + -3);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY  + -3);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY  + -3);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        return false;
-    }
-    private static boolean hasAdjacentTrap_1_m2() throws GameActionException {
-        MapLocation adj;
-        adj = new MapLocation(myLocX , myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 2, myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY  + -2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY  + -2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 2, myLocY  + -2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX , myLocY  + -3);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY  + -3);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 2, myLocY  + -3);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        return false;
-    }
-    private static boolean hasAdjacentTrap_2_m2() throws GameActionException {
-        MapLocation adj;
-        adj = new MapLocation(myLocX  + 1, myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 2, myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 3, myLocY  + -1);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY  + -2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 2, myLocY  + -2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 3, myLocY  + -2);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 1, myLocY  + -3);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 2, myLocY  + -3);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        adj = new MapLocation(myLocX  + 3, myLocY  + -3);
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        return false;
+    
+    public static boolean miniRun() throws GameActionException {
+        if (!rc.isActionReady()) return false;
+        int x = myLocX;
+        int y = myLocY;
+        switch (myDir.ordinal()) {
+            case 0 -> {
+                MapLocation loc0 = new MapLocation(x , y  + 1);
+                int s0 = 0;
+                MapLocation loc1 = new MapLocation(x  + 1, y  + 1);
+                int s1 = 0;
+                MapLocation loc2 = new MapLocation(x  + -1, y  + 1);
+                int s2 = 0;
+                for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
+                    if (rinfo.getTeam() == team) continue;
+                    if (rinfo.getType() != UnitType.BABY_RAT) continue;
+                    MapLocation eloc = rinfo.location;
+                    {
+                        if (eloc.distanceSquaredTo(loc0) <= 2) {
+                            int ang = angleDistance(rinfo.direction, eloc.directionTo(loc0));
+                            if (ang <= 3) s0 += 4 - ang;
+                        }
+                    }
+                    {
+                        if (eloc.distanceSquaredTo(loc1) <= 2) {
+                            int ang = angleDistance(rinfo.direction, eloc.directionTo(loc1));
+                            if (ang <= 3) s1 += 4 - ang;
+                        }
+                    }
+                    {
+                        if (eloc.distanceSquaredTo(loc2) <= 2) {
+                            int ang = angleDistance(rinfo.direction, eloc.directionTo(loc2));
+                            if (ang <= 3) s2 += 4 - ang;
+                        }
+                    }
+                }
+                int bestScore = -1;
+                MapLocation bestLoc = null;
+                if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
+                    bestScore = s0;
+                    bestLoc = loc0;
+                }
+                if (rc.canPlaceRatTrap(loc1) && s1 > bestScore) {
+                    bestScore = s1;
+                    bestLoc = loc1;
+                }
+                if (rc.canPlaceRatTrap(loc2) && s2 > bestScore) {
+                    bestScore = s2;
+                    bestLoc = loc2;
+                }
+                if (bestScore <= 0) return false;
+                rc.placeRatTrap(bestLoc);
+                println("!!!!!!!!!! placed rat trap MINI");
+                indicate("COMBAT STRAT: MINI TRAP");
+                return true;
+            }
+            case 1 -> {
+                MapLocation loc0 = new MapLocation(x  + 1, y  + 1);
+                int s0 = 0;
+                MapLocation loc1 = new MapLocation(x , y  + 1);
+                int s1 = 0;
+                MapLocation loc2 = new MapLocation(x  + 1, y );
+                int s2 = 0;
+                for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
+                    if (rinfo.getTeam() == team) continue;
+                    if (rinfo.getType() != UnitType.BABY_RAT) continue;
+                    MapLocation eloc = rinfo.location;
+                    {
+                        if (eloc.distanceSquaredTo(loc0) <= 2) {
+                            int ang = angleDistance(rinfo.direction, eloc.directionTo(loc0));
+                            if (ang <= 3) s0 += 4 - ang;
+                        }
+                    }
+                    {
+                        if (eloc.distanceSquaredTo(loc1) <= 2) {
+                            int ang = angleDistance(rinfo.direction, eloc.directionTo(loc1));
+                            if (ang <= 3) s1 += 4 - ang;
+                        }
+                    }
+                    {
+                        if (eloc.distanceSquaredTo(loc2) <= 2) {
+                            int ang = angleDistance(rinfo.direction, eloc.directionTo(loc2));
+                            if (ang <= 3) s2 += 4 - ang;
+                        }
+                    }
+                }
+                int bestScore = -1;
+                MapLocation bestLoc = null;
+                if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
+                    bestScore = s0;
+                    bestLoc = loc0;
+                }
+                if (rc.canPlaceRatTrap(loc1) && s1 > bestScore) {
+                    bestScore = s1;
+                    bestLoc = loc1;
+                }
+                if (rc.canPlaceRatTrap(loc2) && s2 > bestScore) {
+                    bestScore = s2;
+                    bestLoc = loc2;
+                }
+                if (bestScore <= 0) return false;
+                rc.placeRatTrap(bestLoc);
+                println("!!!!!!!!!! placed rat trap MINI");
+                indicate("COMBAT STRAT: MINI TRAP");
+                return true;
+            }
+            case 2 -> {
+                MapLocation loc0 = new MapLocation(x  + 1, y );
+                int s0 = 0;
+                MapLocation loc1 = new MapLocation(x  + 1, y  + 1);
+                int s1 = 0;
+                MapLocation loc2 = new MapLocation(x  + 1, y  + -1);
+                int s2 = 0;
+                for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
+                    if (rinfo.getTeam() == team) continue;
+                    if (rinfo.getType() != UnitType.BABY_RAT) continue;
+                    MapLocation eloc = rinfo.location;
+                    {
+                        if (eloc.distanceSquaredTo(loc0) <= 2) {
+                            int ang = angleDistance(rinfo.direction, eloc.directionTo(loc0));
+                            if (ang <= 3) s0 += 4 - ang;
+                        }
+                    }
+                    {
+                        if (eloc.distanceSquaredTo(loc1) <= 2) {
+                            int ang = angleDistance(rinfo.direction, eloc.directionTo(loc1));
+                            if (ang <= 3) s1 += 4 - ang;
+                        }
+                    }
+                    {
+                        if (eloc.distanceSquaredTo(loc2) <= 2) {
+                            int ang = angleDistance(rinfo.direction, eloc.directionTo(loc2));
+                            if (ang <= 3) s2 += 4 - ang;
+                        }
+                    }
+                }
+                int bestScore = -1;
+                MapLocation bestLoc = null;
+                if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
+                    bestScore = s0;
+                    bestLoc = loc0;
+                }
+                if (rc.canPlaceRatTrap(loc1) && s1 > bestScore) {
+                    bestScore = s1;
+                    bestLoc = loc1;
+                }
+                if (rc.canPlaceRatTrap(loc2) && s2 > bestScore) {
+                    bestScore = s2;
+                    bestLoc = loc2;
+                }
+                if (bestScore <= 0) return false;
+                rc.placeRatTrap(bestLoc);
+                println("!!!!!!!!!! placed rat trap MINI");
+                indicate("COMBAT STRAT: MINI TRAP");
+                return true;
+            }
+            case 3 -> {
+                MapLocation loc0 = new MapLocation(x  + 1, y  + -1);
+                int s0 = 0;
+                MapLocation loc1 = new MapLocation(x , y  + -1);
+                int s1 = 0;
+                MapLocation loc2 = new MapLocation(x  + 1, y );
+                int s2 = 0;
+                for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
+                    if (rinfo.getTeam() == team) continue;
+                    if (rinfo.getType() != UnitType.BABY_RAT) continue;
+                    MapLocation eloc = rinfo.location;
+                    {
+                        if (eloc.distanceSquaredTo(loc0) <= 2) {
+                            int ang = angleDistance(rinfo.direction, eloc.directionTo(loc0));
+                            if (ang <= 3) s0 += 4 - ang;
+                        }
+                    }
+                    {
+                        if (eloc.distanceSquaredTo(loc1) <= 2) {
+                            int ang = angleDistance(rinfo.direction, eloc.directionTo(loc1));
+                            if (ang <= 3) s1 += 4 - ang;
+                        }
+                    }
+                    {
+                        if (eloc.distanceSquaredTo(loc2) <= 2) {
+                            int ang = angleDistance(rinfo.direction, eloc.directionTo(loc2));
+                            if (ang <= 3) s2 += 4 - ang;
+                        }
+                    }
+                }
+                int bestScore = -1;
+                MapLocation bestLoc = null;
+                if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
+                    bestScore = s0;
+                    bestLoc = loc0;
+                }
+                if (rc.canPlaceRatTrap(loc1) && s1 > bestScore) {
+                    bestScore = s1;
+                    bestLoc = loc1;
+                }
+                if (rc.canPlaceRatTrap(loc2) && s2 > bestScore) {
+                    bestScore = s2;
+                    bestLoc = loc2;
+                }
+                if (bestScore <= 0) return false;
+                rc.placeRatTrap(bestLoc);
+                println("!!!!!!!!!! placed rat trap MINI");
+                indicate("COMBAT STRAT: MINI TRAP");
+                return true;
+            }
+            case 4 -> {
+                MapLocation loc0 = new MapLocation(x , y  + -1);
+                int s0 = 0;
+                MapLocation loc1 = new MapLocation(x  + 1, y  + -1);
+                int s1 = 0;
+                MapLocation loc2 = new MapLocation(x  + -1, y  + -1);
+                int s2 = 0;
+                for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
+                    if (rinfo.getTeam() == team) continue;
+                    if (rinfo.getType() != UnitType.BABY_RAT) continue;
+                    MapLocation eloc = rinfo.location;
+                    {
+                        if (eloc.distanceSquaredTo(loc0) <= 2) {
+                            int ang = angleDistance(rinfo.direction, eloc.directionTo(loc0));
+                            if (ang <= 3) s0 += 4 - ang;
+                        }
+                    }
+                    {
+                        if (eloc.distanceSquaredTo(loc1) <= 2) {
+                            int ang = angleDistance(rinfo.direction, eloc.directionTo(loc1));
+                            if (ang <= 3) s1 += 4 - ang;
+                        }
+                    }
+                    {
+                        if (eloc.distanceSquaredTo(loc2) <= 2) {
+                            int ang = angleDistance(rinfo.direction, eloc.directionTo(loc2));
+                            if (ang <= 3) s2 += 4 - ang;
+                        }
+                    }
+                }
+                int bestScore = -1;
+                MapLocation bestLoc = null;
+                if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
+                    bestScore = s0;
+                    bestLoc = loc0;
+                }
+                if (rc.canPlaceRatTrap(loc1) && s1 > bestScore) {
+                    bestScore = s1;
+                    bestLoc = loc1;
+                }
+                if (rc.canPlaceRatTrap(loc2) && s2 > bestScore) {
+                    bestScore = s2;
+                    bestLoc = loc2;
+                }
+                if (bestScore <= 0) return false;
+                rc.placeRatTrap(bestLoc);
+                println("!!!!!!!!!! placed rat trap MINI");
+                indicate("COMBAT STRAT: MINI TRAP");
+                return true;
+            }
+            case 5 -> {
+                MapLocation loc0 = new MapLocation(x  + -1, y  + -1);
+                int s0 = 0;
+                MapLocation loc1 = new MapLocation(x , y  + -1);
+                int s1 = 0;
+                MapLocation loc2 = new MapLocation(x  + -1, y );
+                int s2 = 0;
+                for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
+                    if (rinfo.getTeam() == team) continue;
+                    if (rinfo.getType() != UnitType.BABY_RAT) continue;
+                    MapLocation eloc = rinfo.location;
+                    {
+                        if (eloc.distanceSquaredTo(loc0) <= 2) {
+                            int ang = angleDistance(rinfo.direction, eloc.directionTo(loc0));
+                            if (ang <= 3) s0 += 4 - ang;
+                        }
+                    }
+                    {
+                        if (eloc.distanceSquaredTo(loc1) <= 2) {
+                            int ang = angleDistance(rinfo.direction, eloc.directionTo(loc1));
+                            if (ang <= 3) s1 += 4 - ang;
+                        }
+                    }
+                    {
+                        if (eloc.distanceSquaredTo(loc2) <= 2) {
+                            int ang = angleDistance(rinfo.direction, eloc.directionTo(loc2));
+                            if (ang <= 3) s2 += 4 - ang;
+                        }
+                    }
+                }
+                int bestScore = -1;
+                MapLocation bestLoc = null;
+                if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
+                    bestScore = s0;
+                    bestLoc = loc0;
+                }
+                if (rc.canPlaceRatTrap(loc1) && s1 > bestScore) {
+                    bestScore = s1;
+                    bestLoc = loc1;
+                }
+                if (rc.canPlaceRatTrap(loc2) && s2 > bestScore) {
+                    bestScore = s2;
+                    bestLoc = loc2;
+                }
+                if (bestScore <= 0) return false;
+                rc.placeRatTrap(bestLoc);
+                println("!!!!!!!!!! placed rat trap MINI");
+                indicate("COMBAT STRAT: MINI TRAP");
+                return true;
+            }
+            case 6 -> {
+                MapLocation loc0 = new MapLocation(x  + -1, y );
+                int s0 = 0;
+                MapLocation loc1 = new MapLocation(x  + -1, y  + 1);
+                int s1 = 0;
+                MapLocation loc2 = new MapLocation(x  + -1, y  + -1);
+                int s2 = 0;
+                for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
+                    if (rinfo.getTeam() == team) continue;
+                    if (rinfo.getType() != UnitType.BABY_RAT) continue;
+                    MapLocation eloc = rinfo.location;
+                    {
+                        if (eloc.distanceSquaredTo(loc0) <= 2) {
+                            int ang = angleDistance(rinfo.direction, eloc.directionTo(loc0));
+                            if (ang <= 3) s0 += 4 - ang;
+                        }
+                    }
+                    {
+                        if (eloc.distanceSquaredTo(loc1) <= 2) {
+                            int ang = angleDistance(rinfo.direction, eloc.directionTo(loc1));
+                            if (ang <= 3) s1 += 4 - ang;
+                        }
+                    }
+                    {
+                        if (eloc.distanceSquaredTo(loc2) <= 2) {
+                            int ang = angleDistance(rinfo.direction, eloc.directionTo(loc2));
+                            if (ang <= 3) s2 += 4 - ang;
+                        }
+                    }
+                }
+                int bestScore = -1;
+                MapLocation bestLoc = null;
+                if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
+                    bestScore = s0;
+                    bestLoc = loc0;
+                }
+                if (rc.canPlaceRatTrap(loc1) && s1 > bestScore) {
+                    bestScore = s1;
+                    bestLoc = loc1;
+                }
+                if (rc.canPlaceRatTrap(loc2) && s2 > bestScore) {
+                    bestScore = s2;
+                    bestLoc = loc2;
+                }
+                if (bestScore <= 0) return false;
+                rc.placeRatTrap(bestLoc);
+                println("!!!!!!!!!! placed rat trap MINI");
+                indicate("COMBAT STRAT: MINI TRAP");
+                return true;
+            }
+            case 7 -> {
+                MapLocation loc0 = new MapLocation(x  + -1, y  + 1);
+                int s0 = 0;
+                MapLocation loc1 = new MapLocation(x , y  + 1);
+                int s1 = 0;
+                MapLocation loc2 = new MapLocation(x  + -1, y );
+                int s2 = 0;
+                for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
+                    if (rinfo.getTeam() == team) continue;
+                    if (rinfo.getType() != UnitType.BABY_RAT) continue;
+                    MapLocation eloc = rinfo.location;
+                    {
+                        if (eloc.distanceSquaredTo(loc0) <= 2) {
+                            int ang = angleDistance(rinfo.direction, eloc.directionTo(loc0));
+                            if (ang <= 3) s0 += 4 - ang;
+                        }
+                    }
+                    {
+                        if (eloc.distanceSquaredTo(loc1) <= 2) {
+                            int ang = angleDistance(rinfo.direction, eloc.directionTo(loc1));
+                            if (ang <= 3) s1 += 4 - ang;
+                        }
+                    }
+                    {
+                        if (eloc.distanceSquaredTo(loc2) <= 2) {
+                            int ang = angleDistance(rinfo.direction, eloc.directionTo(loc2));
+                            if (ang <= 3) s2 += 4 - ang;
+                        }
+                    }
+                }
+                int bestScore = -1;
+                MapLocation bestLoc = null;
+                if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
+                    bestScore = s0;
+                    bestLoc = loc0;
+                }
+                if (rc.canPlaceRatTrap(loc1) && s1 > bestScore) {
+                    bestScore = s1;
+                    bestLoc = loc1;
+                }
+                if (rc.canPlaceRatTrap(loc2) && s2 > bestScore) {
+                    bestScore = s2;
+                    bestLoc = loc2;
+                }
+                if (bestScore <= 0) return false;
+                rc.placeRatTrap(bestLoc);
+                println("!!!!!!!!!! placed rat trap MINI");
+                indicate("COMBAT STRAT: MINI TRAP");
+                return true;
+            }
+    
+            default -> { return false; }
+        }
     }
 }

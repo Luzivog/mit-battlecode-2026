@@ -43,7 +43,7 @@ public class CatLuringStrategy extends Strategy {
         MapLocation myCatLoc = null;
         for (RobotInfo myRobot : rc.senseNearbyRobots()) {
             if (myRobot.getType() == UnitType.CAT) {
-                myCatLoc = myRobot.getLocation();
+                myCatLoc = myRobot.location;
                 break;
             }
         }
@@ -90,7 +90,7 @@ public class CatLuringStrategy extends Strategy {
     private boolean updateCatTracking() {
         for (RobotInfo myRobot : rc.senseNearbyRobots()) {
             if (myRobot.getType() == UnitType.CAT) {
-                theCatLoc = myRobot.getLocation();
+                theCatLoc = myRobot.location;
                 theLastCatSeenRound = time;
                 return true;
             }

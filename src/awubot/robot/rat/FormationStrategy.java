@@ -92,7 +92,7 @@ public class FormationStrategy extends Strategy {
 
         for (RobotInfo robot : rc.senseNearbyRobots(2, rc.getTeam())) {
             if(robot.getType() == UnitType.BABY_RAT && robot.getID() < rc.getID()
-               && robot.getLocation().distanceSquaredTo(formationTarget) <= 2) {
+               && robot.location.distanceSquaredTo(formationTarget) <= 2) {
                 return false;
             }
         }

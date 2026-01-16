@@ -35,7 +35,7 @@ public class Profiler {
         stk.add(Clock.getBytecodeNum());
     }
     public static void pop(Object obj) {
-        int res = Clock.getBytecodeNum() - stk.remove(stk.size() - 1);
+        int res = Clock.getBytecodeNum() - stk.remove(stk.size() - 1) - 32;
         if (res < 0) {
             if (isRatKing) res += 20000;
             else res += 17500;
@@ -44,7 +44,7 @@ public class Profiler {
     }
 
     public static void pop(Object obj, int lwb) {
-        int res = Clock.getBytecodeNum() - stk.remove(stk.size() - 1);
+        int res = Clock.getBytecodeNum() - stk.remove(stk.size() - 1) - 32;
         if (res < 0) {
             if (isRatKing) res += 20000;
             else res += 17500;
@@ -53,7 +53,7 @@ public class Profiler {
     }
 
     public static void pop_ind(Object obj) {
-        int res = Clock.getBytecodeNum() - stk.remove(stk.size() - 1);
+        int res = Clock.getBytecodeNum() - stk.remove(stk.size() - 1) - 32;
         if (res < 0) {
             if (isRatKing) res += 20000;
             else res += 17500;
@@ -62,7 +62,7 @@ public class Profiler {
     }
 
     public static void pop_ind(Object obj, int lwb) {
-        int res = Clock.getBytecodeNum() - stk.remove(stk.size() - 1);
+        int res = Clock.getBytecodeNum() - stk.remove(stk.size() - 1) - 32;
         if (res < 0) {
             if (isRatKing) res += 20000;
             else res += 17500;

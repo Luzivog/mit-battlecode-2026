@@ -12,12 +12,14 @@ import awubot.robot.rat.combat.CombatStrategy;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 import static awubot.robot.rat.BabyRat.*;
+import awubot.RobotTracker;
 
 public final class TryRatNap {
     private TryRatNap() {
     }
 
     static RobotInfo target;
+    static RobotInfo info;
     static Direction bestMove;
     static Direction bestFacing;
     static double bestScore;
@@ -34,12 +36,13 @@ public final class TryRatNap {
         bestMove = null;
         bestFacing = null;
         bestScore = -1;
-        for (RobotInfo info : rc.senseNearbyRobots()) {
+        for (int i = 0; i < RobotTracker.numEnemies && i < 3; i++) {
+            info = RobotTracker.sortedEnemies[i];
             if (info.getTeam() == team) continue;
-            if (chebyshevDistance(myLoc, info.getLocation()) > 2) continue;
+            if (chebyshevDistance(myLoc, info.location) > 2) continue;
             if (info.getHealth() <= GameConstants.RAT_BITE_DAMAGE) continue; // just kill
             if (info.getType() != UnitType.BABY_RAT) continue;
-            t = info.getLocation();
+            t = info.location;
             // double weight = scoreEnemy(info);
             weight = 30;
 
@@ -47,7 +50,7 @@ public final class TryRatNap {
                 MapLocation newLoc = myLoc.add(moveDir);
                 if (newLoc.distanceSquaredTo(t) > 2) continue;
                 if (!CombatCommon.canMove(moveDir)) continue;
-                if (canSense(t, newLoc, info.getDirection()) && info.getHealth() >= rc.getHealth()) continue; // can i ratnap this guy
+                if (canSense(t, newLoc, info.direction) && info.getHealth() >= rc.getHealth()) continue; // can i ratnap this guy
                 // for (Direction facing : relatedDirections(newLoc.directionTo(t))) {
                 for (Direction facing : directions) {
                     if (!canSense(newLoc, t, facing)) continue;
@@ -73,10 +76,10 @@ public final class TryRatNap {
         }
         if (bestScore < 0.5) return false;
         assert(CombatStrategy.performMoves(bestMove, bestFacing));
-        if (rc.canCarryRat(target.getLocation())) {
-            rc.carryRat(target.getLocation());
+        if (rc.canCarryRat(target.location)) {
+            rc.carryRat(target.location);
         } else {
-            rc.attack(target.getLocation());
+            rc.attack(target.location);
             println("was just shoved against a wall");
         }
         println("!!!!!!!!!!!!!!!!!!!!!!! napped rat");
@@ -86,13 +89,15 @@ public final class TryRatNap {
 
     public static boolean miniRun() throws GameActionException {
         // first try to nap a rat looking at us
-        for (RobotInfo info : rc.senseNearbyRobots(2)) {
+        for (int i = 0; i < RobotTracker.numEnemies && i < 3; i++) {
+            info = RobotTracker.sortedEnemies[i];
             if (info.getTeam() == team) continue;
+            if (info.location.distanceSquaredTo(myLoc) > 2) continue;
             if (info.getHealth() <= GameConstants.RAT_BITE_DAMAGE) continue; // just kill
             if (info.getType() != UnitType.BABY_RAT) continue;
-            if (canSense(myLoc, info.getLocation(), info.getDirection())) {
-                if (rc.canCarryRat(info.getLocation())) {
-                    rc.carryRat(info.getLocation());
+            if (canSense(myLoc, info.location, info.direction)) {
+                if (rc.canCarryRat(info.location)) {
+                    rc.carryRat(info.location);
                     println("!!!!!!!!!!!!!!!!!!!!!!! mini napped rat");
                     return true;
                 }
@@ -103,8 +108,8 @@ public final class TryRatNap {
             if (info.getTeam() == team) continue;
             if (info.getHealth() <= GameConstants.RAT_BITE_DAMAGE) continue; // just kill
             if (info.getType() != UnitType.BABY_RAT) continue;
-            if (rc.canCarryRat(info.getLocation())) {
-                rc.carryRat(info.getLocation());
+            if (rc.canCarryRat(info.location)) {
+                rc.carryRat(info.location);
                 println("!!!!!!!!!!!!!!!!!!!!!!! mini napped rat");
                 indicate("COMBAT STRAT: MINI NAP");
                 return true;

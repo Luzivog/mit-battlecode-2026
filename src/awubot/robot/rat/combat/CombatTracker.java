@@ -22,6 +22,7 @@ public class CombatTracker {
 
 
 
+
     // isThreat flags for the 5x5 around the player.
     private static boolean t_m2_2;
     private static boolean t_m1_2;
@@ -181,14 +182,6 @@ private static final long hiddenNW = 0x0000ffffffffff00L;
         // Profiler.pop("CombatTracker: loading threats");
 
         // Profiler.push();
-        for (MapInfo info : rc.senseNearbyMapInfos(8)) {
-            if (info.getTrap() == TrapType.NONE) continue;
-            MapLocation loc = info.getMapLocation();
-            int dx = loc.x - myLocX;
-            int dy = loc.y - myLocY;
-            if (dx < -2 || dx > 2 || dy < -2 || dy > 2) continue;
-            registerTrap(dx, dy);
-        }
         // Profiler.pop("CombatTracker: registering traps");
         
         // Profiler.push();
@@ -435,106 +428,10 @@ private static final long hiddenNW = 0x0000ffffffffff00L;
     public static void loadThreatFromMap() throws GameActionException {
         int x = myLoc.x;
         int y = myLoc.y;
-        if (CellTracker.isSeen(x  + -2, y  + 2)) {
-            t_m2_2 = CellTracker.isPassable(x  + -2, y  + 2);
-        } else {
-            t_m2_2 = false;
-        }        if (CellTracker.isSeen(x  + -1, y  + 2)) {
-            t_m1_2 = CellTracker.isPassable(x  + -1, y  + 2);
-        } else {
-            t_m1_2 = false;
-        }        if (CellTracker.isSeen(x , y  + 2)) {
-            t_0_2 = CellTracker.isPassable(x , y  + 2);
-        } else {
-            t_0_2 = false;
-        }        if (CellTracker.isSeen(x  + 1, y  + 2)) {
-            t_1_2 = CellTracker.isPassable(x  + 1, y  + 2);
-        } else {
-            t_1_2 = false;
-        }        if (CellTracker.isSeen(x  + 2, y  + 2)) {
-            t_2_2 = CellTracker.isPassable(x  + 2, y  + 2);
-        } else {
-            t_2_2 = false;
-        }        if (CellTracker.isSeen(x  + -2, y  + 1)) {
-            t_m2_1 = CellTracker.isPassable(x  + -2, y  + 1);
-        } else {
-            t_m2_1 = false;
-        }        if (CellTracker.isSeen(x  + -1, y  + 1)) {
-            t_m1_1 = CellTracker.isPassable(x  + -1, y  + 1);
-        } else {
-            t_m1_1 = false;
-        }        if (CellTracker.isSeen(x , y  + 1)) {
-            t_0_1 = CellTracker.isPassable(x , y  + 1);
-        } else {
-            t_0_1 = false;
-        }        if (CellTracker.isSeen(x  + 1, y  + 1)) {
-            t_1_1 = CellTracker.isPassable(x  + 1, y  + 1);
-        } else {
-            t_1_1 = false;
-        }        if (CellTracker.isSeen(x  + 2, y  + 1)) {
-            t_2_1 = CellTracker.isPassable(x  + 2, y  + 1);
-        } else {
-            t_2_1 = false;
-        }        if (CellTracker.isSeen(x  + -2, y )) {
-            t_m2_0 = CellTracker.isPassable(x  + -2, y );
-        } else {
-            t_m2_0 = false;
-        }        if (CellTracker.isSeen(x  + -1, y )) {
-            t_m1_0 = CellTracker.isPassable(x  + -1, y );
-        } else {
-            t_m1_0 = false;
-        }        t_0_0 = true;        if (CellTracker.isSeen(x  + 1, y )) {
-            t_1_0 = CellTracker.isPassable(x  + 1, y );
-        } else {
-            t_1_0 = false;
-        }        if (CellTracker.isSeen(x  + 2, y )) {
-            t_2_0 = CellTracker.isPassable(x  + 2, y );
-        } else {
-            t_2_0 = false;
-        }        if (CellTracker.isSeen(x  + -2, y  + -1)) {
-            t_m2_m1 = CellTracker.isPassable(x  + -2, y  + -1);
-        } else {
-            t_m2_m1 = false;
-        }        if (CellTracker.isSeen(x  + -1, y  + -1)) {
-            t_m1_m1 = CellTracker.isPassable(x  + -1, y  + -1);
-        } else {
-            t_m1_m1 = false;
-        }        if (CellTracker.isSeen(x , y  + -1)) {
-            t_0_m1 = CellTracker.isPassable(x , y  + -1);
-        } else {
-            t_0_m1 = false;
-        }        if (CellTracker.isSeen(x  + 1, y  + -1)) {
-            t_1_m1 = CellTracker.isPassable(x  + 1, y  + -1);
-        } else {
-            t_1_m1 = false;
-        }        if (CellTracker.isSeen(x  + 2, y  + -1)) {
-            t_2_m1 = CellTracker.isPassable(x  + 2, y  + -1);
-        } else {
-            t_2_m1 = false;
-        }        if (CellTracker.isSeen(x  + -2, y  + -2)) {
-            t_m2_m2 = CellTracker.isPassable(x  + -2, y  + -2);
-        } else {
-            t_m2_m2 = false;
-        }        if (CellTracker.isSeen(x  + -1, y  + -2)) {
-            t_m1_m2 = CellTracker.isPassable(x  + -1, y  + -2);
-        } else {
-            t_m1_m2 = false;
-        }        if (CellTracker.isSeen(x , y  + -2)) {
-            t_0_m2 = CellTracker.isPassable(x , y  + -2);
-        } else {
-            t_0_m2 = false;
-        }        if (CellTracker.isSeen(x  + 1, y  + -2)) {
-            t_1_m2 = CellTracker.isPassable(x  + 1, y  + -2);
-        } else {
-            t_1_m2 = false;
-        }        if (CellTracker.isSeen(x  + 2, y  + -2)) {
-            t_2_m2 = CellTracker.isPassable(x  + 2, y  + -2);
-        } else {
-            t_2_m2 = false;
-        }        for (RobotInfo info : rc.senseNearbyRobots()) {
+t_m2_2 = (x >= 2 && y < mapHeight - 2) && CellTracker.mapData[x  + -2].charAt(y  + 2) != '\2';t_m1_2 = (x >= 1 && y < mapHeight - 2) && CellTracker.mapData[x  + -1].charAt(y  + 2) != '\2';t_0_2 = (y < mapHeight - 2) && CellTracker.mapData[x ].charAt(y  + 2) != '\2';t_1_2 = (x < mapWidth - 1 && y < mapHeight - 2) && CellTracker.mapData[x  + 1].charAt(y  + 2) != '\2';t_2_2 = (x < mapWidth - 2 && y < mapHeight - 2) && CellTracker.mapData[x  + 2].charAt(y  + 2) != '\2';t_m2_1 = (x >= 2 && y < mapHeight - 1) && CellTracker.mapData[x  + -2].charAt(y  + 1) != '\2';t_m1_1 = (x >= 1 && y < mapHeight - 1) && CellTracker.mapData[x  + -1].charAt(y  + 1) != '\2';t_0_1 = (y < mapHeight - 1) && CellTracker.mapData[x ].charAt(y  + 1) != '\2';t_1_1 = (x < mapWidth - 1 && y < mapHeight - 1) && CellTracker.mapData[x  + 1].charAt(y  + 1) != '\2';t_2_1 = (x < mapWidth - 2 && y < mapHeight - 1) && CellTracker.mapData[x  + 2].charAt(y  + 1) != '\2';t_m2_0 = (x >= 2) && CellTracker.mapData[x  + -2].charAt(y ) != '\2';t_m1_0 = (x >= 1) && CellTracker.mapData[x  + -1].charAt(y ) != '\2';        t_0_0 = true;t_1_0 = (x < mapWidth - 1) && CellTracker.mapData[x  + 1].charAt(y ) != '\2';t_2_0 = (x < mapWidth - 2) && CellTracker.mapData[x  + 2].charAt(y ) != '\2';t_m2_m1 = (x >= 2 && y >= 1) && CellTracker.mapData[x  + -2].charAt(y  + -1) != '\2';t_m1_m1 = (x >= 1 && y >= 1) && CellTracker.mapData[x  + -1].charAt(y  + -1) != '\2';t_0_m1 = (y >= 1) && CellTracker.mapData[x ].charAt(y  + -1) != '\2';t_1_m1 = (x < mapWidth - 1 && y >= 1) && CellTracker.mapData[x  + 1].charAt(y  + -1) != '\2';t_2_m1 = (x < mapWidth - 2 && y >= 1) && CellTracker.mapData[x  + 2].charAt(y  + -1) != '\2';t_m2_m2 = (x >= 2 && y >= 2) && CellTracker.mapData[x  + -2].charAt(y  + -2) != '\2';t_m1_m2 = (x >= 1 && y >= 2) && CellTracker.mapData[x  + -1].charAt(y  + -2) != '\2';t_0_m2 = (y >= 2) && CellTracker.mapData[x ].charAt(y  + -2) != '\2';t_1_m2 = (x < mapWidth - 1 && y >= 2) && CellTracker.mapData[x  + 1].charAt(y  + -2) != '\2';t_2_m2 = (x < mapWidth - 2 && y >= 2) && CellTracker.mapData[x  + 2].charAt(y  + -2) != '\2';        for (RobotInfo info : rc.senseNearbyRobots()) {
             if (info.getType() != UnitType.BABY_RAT) continue;
-            int dx = info.getLocation().x - x;
-            int dy = info.getLocation().y - y;
+            int dx = info.location.x - x;
+            int dy = info.location.y - y;
             switch (dx) {
                 case -2 -> {
                     switch (dy) {
@@ -854,14 +751,14 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
     }
 
     public static void registerEnemy(RobotInfo info) {
-        int dx = info.getLocation().x - myLocX;
-        int dy = info.getLocation().y - myLocY;
+        int dx = info.location.x - myLocX;
+        int dy = info.location.y - myLocY;
         if (dx < -2 || dx > 2 || dy < -2 || dy > 2) return;
         boolean highHealth = info.getHealth() > rc.getHealth();
         if (highHealth) {
-            registerEnemyHigh(dx, dy, info.getDirection());
+            registerEnemyHigh(dx, dy, info.direction);
         } else {
-            registerEnemyLow(dx, dy, info.getDirection());
+            registerEnemyLow(dx, dy, info.direction);
         }
     }
 
@@ -5825,10 +5722,10 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
         if (target == null) return base != 0L;
         if (target.getTeam() == rc.getTeam()) return base != 0L;
         if (target.getType() != UnitType.BABY_RAT) return base != 0L;
-        int enemyDx = target.getLocation().x - myLocX;
-        int enemyDy = target.getLocation().y - myLocY;
+        int enemyDx = target.location.x - myLocX;
+        int enemyDy = target.location.y - myLocY;
         if (enemyDx < -2 || enemyDx > 2 || enemyDy < -2 || enemyDy > 2) return base != 0L;
-        long sub = enemyMaskForMove(enemyDx, enemyDy, target.getDirection(), moveDir);
+        long sub = enemyMaskForMove(enemyDx, enemyDy, target.direction, moveDir);
         long threat = getMoveThreatMask(moveDir);
         if (target.getHealth() > rc.getHealth()) {
             base -= (sub & threat);

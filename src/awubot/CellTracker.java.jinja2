@@ -8,13 +8,31 @@ import static awubot.util.Util.*;
 import static awubot.Game.*;
 
 public class CellTracker {
+    /*
+
+    '\0' - unknown
+    '\1' - passable
+    '\2' - wall
+
+    */
     public static StringBuilder[] mapData;
+    public static MapLocation nearbyRatTraps[] = new MapLocation[30];
+    public static int numNearbyRatTraps = 0;
 
     public static void init() {
         mapData = new StringBuilder[60];
         for(int i = 0; i < 60; i++) {
             mapData[i] = new StringBuilder();
             mapData[i].repeat('\0', 60);
+        }
+    }
+
+    public static void preTick() {
+        numNearbyRatTraps = 0;
+        for (MapInfo info : rc.senseNearbyMapInfos()) {
+            if (info.getTrap() == TrapType.RAT_TRAP) {
+                nearbyRatTraps[numNearbyRatTraps++] = info.getMapLocation();
+            }
         }
     }
 

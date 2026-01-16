@@ -46,7 +46,7 @@ public class ThreatContext {
 
         RobotInfo[] myRobots = rc.senseNearbyRobots();
         for (RobotInfo myRobot : myRobots) {
-            int myDistSq = myLoc.distanceSquaredTo(myRobot.getLocation());
+            int myDistSq = myLoc.distanceSquaredTo(myRobot.location);
 
             if (myRobot.getType() == UnitType.CAT) {
                 if (theTrackedCatCount < MAX_TRACKED_CATS) {
@@ -83,7 +83,7 @@ public class ThreatContext {
         int myTotalWeight = 0;
 
         for (int i = 0; i < theTrackedCatCount; i++) {
-            MapLocation myCatLoc = theTrackedCats[i].getLocation();
+            MapLocation myCatLoc = theTrackedCats[i].location;
             int myDistSq = myLoc.distanceSquaredTo(myCatLoc);
             int myWeight = 10000 / (myDistSq + 1);
 

@@ -37,12 +37,12 @@ public final class TryFight {
             if (moveDir != Direction.CENTER && !rc.isMovementReady()) continue;
             if (!CombatCommon.canMove(moveDir)) continue;
             newLoc = myLoc.add(moveDir);
-            for (Direction facing : directions) { // maybe shrink search space if TLE
+            for (Direction facing : relatedDirections(myLoc.add(dir).directionTo(target.location))) { // maybe shrink search space if TLE
                 int moveCost = CombatCommon.movementCost(moveDir, facing);
                 if (moveCost == -1) continue;
                 score = CombatStrategy.getCellScoreFor(moveDir, facing, target);
                 if (moveCost == 1) score += 10; 
-                facingTarget = canSense(newLoc, target.getLocation(), facing);
+                facingTarget = canSense(newLoc, target.location, facing);
                 if (!facingTarget) {
                     score -= 15;
                 }
@@ -59,7 +59,7 @@ public final class TryFight {
         }
         // Profiler.pop("try fight");
         // force this strategy
-        // if (best < 0.5) return false;
+        if (best < 0.5) return false;
         CombatStrategy.performMoves(md, fd);
         indicate("COMBAT STRAT: FIGHT");
         // try to squeeze some juice out

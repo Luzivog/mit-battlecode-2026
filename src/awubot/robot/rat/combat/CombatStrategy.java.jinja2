@@ -26,6 +26,7 @@ import awubot.util.Util;
 import static awubot.robot.rat.BabyRat.*;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
+import awubot.RobotTracker;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -89,6 +90,9 @@ TODO:
 */
 
 public class CombatStrategy extends Strategy {
+    public static boolean ENABLE_PROFILE = true;
+
+
     private static final double INF = 1e9;
     private static final int RAT_TRAP_COST = 30;
     private static final int RAT_TRAP_CAP = 25;
@@ -112,29 +116,22 @@ public class CombatStrategy extends Strategy {
     public static double[] cellScore; // [movement direction]
 
     private void precomp() throws GameActionException {
-        {# Profiler.push(); #}
+        Profiler.push();
         CombatCommon.precomp();
-        {# Profiler.pop("common"); #}
-        {# Profiler.push(); #}
+        Profiler.pop("common");
+        Profiler.push();
         CombatTracker.tick();
-        {# Profiler.pop("combat tracker"); #}
+        Profiler.pop("combat tracker");
 
-        StringBuilder sb = new StringBuilder();
-        indicate(sb.toString());
+        {# StringBuilder sb = new StringBuilder(); #}
+        {# indicate(sb.toString()); #}
 
         // Profiler.push();
         computeCellScores();
         // Profiler.pop("compute danger");
-        allies = Squeaker.squeaksSinceLastTurn;
-        enemies = 0;
-        for (RobotInfo info : rc.senseNearbyRobots()) {
-            if (info.getType() == UnitType.CAT) continue;
-            if (info.getTeam() != rc.getTeam()) {
-                enemies++;
-                continue;
-            }
-            if (info.getLocation().distanceSquaredTo(myLoc) > 2) allies++;
-        }
+        {# Profiler.push(); #}
+        countNearbyRobots();
+        {# Profiler.pop("count allies/enemies"); #}
     }
 
     public boolean runTick() throws GameActionException {
@@ -152,91 +149,66 @@ public class CombatStrategy extends Strategy {
         Profiler.pop("precomp", 3500);
 
         if (rc.getCarrying() != null) {
-            return tryThrow();
+            return TryThrow.run();
         }
 
         Profiler.push();
-        boolean tryRatNapRes = tryRatNap();
+        boolean tryRatNapRes = TryRatNap.run();
         Profiler.pop("try ratnap", 1000);
         if (tryRatNapRes) return true;
 
         Profiler.push();
-        boolean tryTrapRes = tryTrap();
+        boolean tryTrapRes = TryTrap.run();
         Profiler.pop("try trap", 3000);
         if (tryTrapRes) return true;
 
         Profiler.push();
-        boolean tryAttackRes = tryAttack();
+        boolean tryAttackRes = TryAttack.run();
         Profiler.pop("try attack", 1000);
         if (tryAttackRes) return true;
 
         Profiler.push();
-        boolean tryFightRes = tryFight();
+        boolean tryFightRes = TryFight.run();
         Profiler.pop("try fight", 1000);
         if (tryFightRes) {
             miniTick();
             return true;
         }
         indicate("COMBAT STRAT: NONE");
+        if (RobotTracker.numEnemies > 0) {
+            println("ROBOT DIDNT MAKE A MOVE");
+        }
         // TODO: deal with cats (maybe naman's job?)
         return false;
     }
 
     public boolean miniTick() throws GameActionException {
         Profiler.push();
-        boolean tryRatNapRes = miniRatNap();
+        boolean tryRatNapRes = TryRatNap.miniRun();
         Profiler.pop("mini ratnap", 300);
         if (tryRatNapRes) return true;
         
         Profiler.push();
-        boolean tryTrapRes = miniTrap();
+        boolean tryTrapRes = TryTrap.miniRun();
         Profiler.pop("mini trap", 300);
         if (tryTrapRes) return true;
         
-        boolean tryAttackRes = miniAttack();
+        boolean tryAttackRes = TryAttack.miniRun();
         if (tryAttackRes) return true;
         return false;
     }
 
-    public boolean tryFight() throws GameActionException {
-        return TryFight.run();
-    }
-
-    {# public boolean miniFight() throws GameActionException {
-        return TryFight.miniRun();
-    } #}
-
-    public boolean tryThrow() throws GameActionException {
-        return TryThrow.run();
-    }
-
-    {# public boolean miniThrow() throws GameActionException {
-        return TryThrow.miniRun();
-    } #}
-
-    // TODO: do danger levels and verify you dont die on the next turn
-    public boolean tryRatNap() throws GameActionException {
-        return TryRatNap.run();
-    }
-
-    public boolean miniRatNap() throws GameActionException {
-        return TryRatNap.miniRun();
-    }
-
-    public boolean tryTrap() throws GameActionException {
-        return TryTrap.run();
-    }
-
-    public boolean miniTrap() throws GameActionException {
-        return TryTrap.miniRun();
-    }
-
-    public boolean tryAttack() throws GameActionException {
-        return TryAttack.run();
-    }
-
-    public boolean miniAttack() throws GameActionException {
-        return TryAttack.miniRun();
+    private static void countNearbyRobots() throws GameActionException {
+        allies = Squeaker.squeaksSinceLastTurn;
+        enemies = 0;
+        for (RobotInfo info : rc.senseNearbyRobots()) {
+            if (info.getType() == UnitType.CAT) continue;
+            if (info.getTeam() != rc.getTeam()) {
+                enemies++;
+                continue;
+            }
+            if (info.location.distanceSquaredTo(myLoc) > 2) allies++;
+        }
     }
 
     static boolean canPerformMoves(Direction moveDir, Direction facing) throws GameActionException {
@@ -290,7 +262,7 @@ public class CombatStrategy extends Strategy {
     }
 
     public static void computeCellScores() throws GameActionException {
-        {# Profiler.push(); #}
+        Profiler.push();
         sb = new StringBuilder();
         cellScore = new double[9];
         for (RobotInfo info : rc.senseNearbyRobots(9)) { // shrink radius to optimise
@@ -305,7 +277,7 @@ public class CombatStrategy extends Strategy {
             cellScore[7] += getCellScoreForEnemy(info, Direction.NORTHWEST);
             cellScore[8] += getCellScoreForEnemy(info, Direction.CENTER);
         }
-        {# Profiler.pop("compute cell scores"); #}
+        Profiler.pop("compute cell scores", 1000);
     }
 
     public static double getCellScoreFor(Direction moveDir, Direction facing, RobotInfo target) throws GameActionException {
@@ -322,25 +294,26 @@ public class CombatStrategy extends Strategy {
     public static double getCellScoreForEnemy(RobotInfo info, Direction moveDir) {
         MapLocation to = myLoc.add(moveDir);
         if (!rc.onTheMap(to)) return 0;
+        int dist = chebyshevDistance(to, info.location); 
         if (info.getType() == UnitType.CAT) {
             // TODO: implement vision check
-            int dist = chebyshevDistance(to, info.getLocation()); 
             if (dist >= 4) return 0;
             else return cacheCellScore(info, moveDir, -5);
         }
-        MapLocation enemyLoc = info.getLocation();
-        int dist = chebyshevDistance(to, info.getLocation());
+        MapLocation enemyLoc = info.location;
         if (dist > 3) return 0; // ignore
         if (info.getType() == UnitType.RAT_KING) {
             if (dist > 2) return 0; // is this correct?
             else return cacheCellScore(info, moveDir, 1);
         } else {
             double base = 0;
-            // TODO: optimise with switch table
-            Profiler.begin();
-            boolean canCurrentlySense = canSense(enemyLoc, myLoc, info.getDirection());
-            boolean canSenseAfterMove = canSense(enemyLoc, to, info.getDirection());
-            Profiler.end_print("can see");
+            Direction enemyDir = info.direction;
+            int dx = enemyLoc.x - myLocX;
+            int dy = enemyLoc.y - myLocY;
+            boolean canCurrentlySense = canSense(dx, dy, enemyDir);
+            dx -= moveDir.dx;
+            dy -= moveDir.dy;
+            boolean canSenseAfterMove = canSense(dx, dy, enemyDir);
 
             if (canCurrentlySense) {
                 if (!canSenseAfterMove) {
@@ -385,7 +358,7 @@ public class CombatStrategy extends Strategy {
         if (enemy.getType() == UnitType.CAT) return false; // TODO
         if (enemy.getType() == UnitType.RAT_KING) return true;
         if (enemy.getHealth() <= rc.getHealth()) return true;
-        if (!canSense(enemy.getLocation(), myLoc, enemy.getDirection())) return true;
+        if (!canSense(enemy.location, myLoc, enemy.direction)) return true;
         if (GlobalArray.nearestRatKing.distanceSquaredTo(myLoc) <= 36) return true;
         if (allies > enemies) return true;
         return false;
@@ -417,24 +390,18 @@ public class CombatStrategy extends Strategy {
 
     public static int canEnemyReach(RobotInfo info, Direction moveDir) throws GameActionException {
         MapLocation to = myLoc.add(moveDir);
-        int dist = chebyshevDistance(to, info.getLocation());
+        int dist = chebyshevDistance(to, info.location);
         if (dist > 2) return 0;
         if (!isCellMaybePassable(to)) return 0;;
         return 1;
     }
 
     public static RobotInfo getNearestTarget() {
-        RobotInfo best = null;
-        int bestDist = Integer.MAX_VALUE;
-        for (RobotInfo info : rc.senseNearbyRobots()) {
+        for (int i = 0; i < RobotTracker.numEnemies; i++) {
+            RobotInfo info = RobotTracker.sortedEnemies[i];
             if (info.getTeam() == rc.getTeam()) continue;
-            if (!shouldFight(info)) continue;
-            int dist = chebyshevDistance(myLoc, info.getLocation());
-            if (dist < bestDist) {
-                bestDist = dist;
-                best = info;
-            }
+            if (shouldFight(info)) return info;
         }
-        return best;
+        return null;
     }   
 }

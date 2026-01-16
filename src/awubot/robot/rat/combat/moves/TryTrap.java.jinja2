@@ -15,6 +15,8 @@ import static awubot.Game.*;
 import static awubot.util.Util.*;
 import static awubot.robot.rat.BabyRat.*;
 import awubot.util.Profiler;
+import awubot.CellTracker;
+import awubot.RobotTracker;
 
 {% set related_map = {
     0: ["Direction.NORTH", "Direction.NORTHEAST", "Direction.NORTHWEST"],
@@ -77,6 +79,29 @@ import awubot.util.Profiler;
     "Direction.NORTHWEST": 1,
 } %}
 
+{% macro can_see(facing_idx, dx, dy) -%}
+{%- set facing = directions[facing_idx] -%}
+{%- if facing == "Direction.NORTH" -%}
+{{ "true" if dy >= (dx | abs) else "false" }}
+{%- elif facing == "Direction.NORTHEAST" -%}
+{{ "true" if dx >= 0 and dy >= 0 else "false" }}
+{%- elif facing == "Direction.EAST" -%}
+{{ "true" if dx >= (dy | abs) else "false" }}
+{%- elif facing == "Direction.SOUTHEAST" -%}
+{{ "true" if dx >= 0 and dy <= 0 else "false" }}
+{%- elif facing == "Direction.SOUTH" -%}
+{{ "true" if dy <= -(dx | abs) else "false" }}
+{%- elif facing == "Direction.SOUTHWEST" -%}
+{{ "true" if dx <= 0 and dy <= 0 else "false" }}
+{%- elif facing == "Direction.WEST" -%}
+{{ "true" if dx <= -(dy | abs) else "false" }}
+{%- elif facing == "Direction.NORTHWEST" -%}
+{{ "true" if dx <= 0 and dy >= 0 else "false" }}
+{%- else -%}
+false
+{%- endif -%}
+{%- endmacro %}
+
 {% macro wvar(dx, dy) -%}
 w_{{ "m" if dx < 0 else "" }}{{ dx|abs }}_{{ "m" if dy < 0 else "" }}{{ dy|abs }}
 {%- endmacro %}
@@ -92,11 +117,6 @@ w_{{ "m" if dx < 0 else "" }}{{ dx|abs }}_{{ "m" if dy < 0 else "" }}{{ dy|abs }
 {%- elif dx == -1 and dy == 1 -%}7
 {%- else -%}-1
 {%- endif -%}
-{%- endmacro %}
-
-{}
-{% macro adjacentTrapCheck(cx, cy) -%}
-hasAdjacentTrap_{{ "m" if cx < 0 else "" }}{{ cx|abs }}_{{ "m" if cy < 0 else "" }}{{ cy|abs }}()
 {%- endmacro %}
 
 public final class TryTrap {
@@ -115,73 +135,23 @@ public final class TryTrap {
     static double best;
     static MapLocation curMoveLoc;
 
-    public static boolean miniRun() throws GameActionException {
-        if (!rc.isActionReady()) return false;
-        int x = myLocX;
-        int y = myLocY;
-        switch (myDir.ordinal()) {
-            {% for ord in range(8) %}
-            case {{ ord }} -> {
-                {% set cand = related_map[ord] %}
-                {% for d in cand %}
-                MapLocation loc{{ loop.index0 }} = new MapLocation(x {% if dir_dx[d] %} + {{ dir_dx[d] }}{% endif %}, y {% if dir_dy[d] %} + {{ dir_dy[d] }}{% endif %});
-                int s{{ loop.index0 }} = 0;
-                {% endfor %}
-                for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
-                    if (rinfo.getTeam() == team) continue;
-                    if (rinfo.getType() != UnitType.BABY_RAT) continue;
-                    MapLocation eloc = rinfo.getLocation();
-                    {
-                        if (eloc.distanceSquaredTo(loc0) <= 2) {
-                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc0));
-                            if (ang <= 3) s0 += 4 - ang;
-                        }
-                    }
-                    {
-                        if (eloc.distanceSquaredTo(loc1) <= 2) {
-                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc1));
-                            if (ang <= 3) s1 += 4 - ang;
-                        }
-                    }
-                    {
-                        if (eloc.distanceSquaredTo(loc2) <= 2) {
-                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc2));
-                            if (ang <= 3) s2 += 4 - ang;
-                        }
-                    }
-                }
-                int bestScore = -1;
-                MapLocation bestLoc = null;
-                if (rc.canPlaceRatTrap(loc0) && !{{ adjacentTrapCheck(dir_dx[cand[0]], dir_dy[cand[0]]) }} && s0 > bestScore) {
-                    bestScore = s0;
-                    bestLoc = loc0;
-                }
-                if (rc.canPlaceRatTrap(loc1) && !{{ adjacentTrapCheck(dir_dx[cand[1]], dir_dy[cand[1]]) }} && s1 > bestScore) {
-                    bestScore = s1;
-                    bestLoc = loc1;
-                }
-                if (rc.canPlaceRatTrap(loc2) && !{{ adjacentTrapCheck(dir_dx[cand[2]], dir_dy[cand[2]]) }} && s2 > bestScore) {
-                    bestScore = s2;
-                    bestLoc = loc2;
-                }
-                if (bestScore <= 0) return false;
-                rc.placeRatTrap(bestLoc);
-                println("!!!!!!!!!! placed rat trap MINI");
-                indicate("COMBAT STRAT: MINI TRAP");
-                return true;
-            }
-            {% endfor %}    
-            default -> { return false; }
-        }
-    }
 
     public static boolean run() throws GameActionException {
         if (!confirmCanPlace()) return false;
+        Profiler.push();
         computeWeights();
+        Profiler.pop("TryTrap.computeWeights");
         resetBest();
         selectMoves();
         if (best <= 0.5) return false;
         assert(CombatStrategy.performMoves(bestMoveDir, bestFacing));
+        if (!rc.canPlaceRatTrap(bestPlaceLoc)) {
+            println("huh cant place trap here  " + bestPlaceLoc);
+            for (int i = 0; i < CellTracker.numNearbyRatTraps; i++) {
+                println("nearby trap at " + CellTracker.nearbyRatTraps[i]);
+            }
+            rc.resign();
+        }
         rc.placeRatTrap(bestPlaceLoc);
         println("!!!!!!!!!! placed rat trap");
         indicate("COMBAT STRAT: TRAP");
@@ -215,7 +185,7 @@ public final class TryTrap {
                 {{ wvar(dx, dy) }} = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE{% if dx != 0 or dy != 0 %} || rc.senseRobotAtLocation(loc) != null{% endif %} || {{ adjacentTrapCheck(dx, dy) }}) {
+                if (!info.isPassable() || info.hasCheeseMine(){% if dx != 0 or dy != 0 %} || rc.senseRobotAtLocation(loc) != null{% endif %}) {
                     {{ wvar(dx, dy) }} = -1000;
                 } else {
                     {{ wvar(dx, dy) }} = 0;
@@ -224,69 +194,107 @@ public final class TryTrap {
         }
         {% endfor %}
         {% endfor %}
-        for (RobotInfo rinfo : rc.senseNearbyRobots()) {
-            if (rinfo.getTeam() == rc.getTeam()) continue;
-            if (rinfo.getType() != UnitType.BABY_RAT) continue;
-            int dx = rinfo.getLocation().x - myLocX;
-            int dy = rinfo.getLocation().y - myLocY;
-            if (dx < -3 || dx > 3 || dy < -3 || dy > 3) continue;
-            switch (dx) {
-                {% for rx in range(-3, 4) %}
-                case {{ rx }} -> {
-                    switch (dy) {
-                        {% for ry in range(-3, 4) %}
-                        case {{ ry }} -> {
-                            {% if rx >= -2 and rx <= 2 and ry >= -2 and ry <= 2 %}
-                            {{ wvar(rx, ry) }} += 10;
-                            {% endif %}
-                            switch (rinfo.getDirection().ordinal()) {
-                                {% for f in range(8) %}
-                                {% set ns = namespace(has=false) %}
+
+        applyTrapWeights();
+        applyEnemyWeights();
+
+        {# Profiler.pop("TryTrap.computeWeights"); #}
+    }
+
+    private static void applyEnemyWeights() {
+        for (int i = 0; i < RobotTracker.numEnemies && i < 5; i++) {
+            RobotInfo info = RobotTracker.sortedEnemies[i];
+            if (info.getType() != UnitType.BABY_RAT) continue;
+            applyEnemyWeight(info);
+        }
+    }
+
+    private static void applyEnemyWeight(RobotInfo rinfo) {
+        int x = rinfo.location.x - myLocX;
+        int y = rinfo.location.y - myLocY;
+        switch (x) {
+            {% for dx in range(-3, 4) %}
+            case {{ dx }} -> {
+                switch (y) {
+                    {% for dy in range(-3, 4) %}
+                    case {{ dy }} -> {
+                        switch (rinfo.direction.ordinal()) {
+                            {% for f in range(8) %}
+
+                            case {{ f }} -> {
+                                {% if can_see(-dx, -dy, f) == "true" %}
+
                                 {% for cx in range(-2, 3) %}
                                 {% for cy in range(-2, 3) %}
-                                {%- set dxo = cx - rx -%}
-                                {%- set dyo = cy - ry -%}
+                                {%- set dxo = cx - dx -%}
+                                {%- set dyo = cy - dy -%}
                                 {%- if dxo*dxo + dyo*dyo <= 2 and not (dxo == 0 and dyo == 0) -%}
                                 {%- set dord = delta_dir_ord(dxo, dyo) | int -%}
                                 {%- set diff = (f - dord) | abs -%}
                                 {%- set ang = diff if diff < 8 - diff else 8 - diff -%}
-                                {%- if ang <= 3 -%}
-                                {%- set ns.has = true -%}
+                                {%- if ang <= 1 -%}
+                                {{ wvar(cx, cy) }} += {{ 3 - ang }};
                                 {%- endif -%}
                                 {%- endif -%}
                                 {% endfor %}
                                 {% endfor %}
-                                {% if ns.has %}
-                                case {{ f }} -> {
-                                    {% for cx in range(-2, 3) %}
-                                    {% for cy in range(-2, 3) %}
-                                    {%- set dxo = cx - rx -%}
-                                    {%- set dyo = cy - ry -%}
-                                    {%- if dxo*dxo + dyo*dyo <= 2 and not (dxo == 0 and dyo == 0) -%}
-                                    {%- set dord = delta_dir_ord(dxo, dyo) | int -%}
-                                    {%- set diff = (f - dord) | abs -%}
-                                    {%- set ang = diff if diff < 8 - diff else 8 - diff -%}
-                                    {%- if ang <= 3 -%}
-                                    {{ wvar(cx, cy) }} += {{ 4 - ang }};
-                                    {%- endif -%}
-                                    {%- endif -%}
-                                    {% endfor %}
-                                    {% endfor %}
-                                }
-                                {% endif %}
-                                {% endfor %}
-                                default -> { }
+
+                                {%- endif -%}
                             }
+                            {% endfor %}
+                            default -> { }
                         }
-                        {% endfor %}
-                        default -> { }
                     }
+                    {% endfor %}
+                    default -> { }
                 }
-                {% endfor %}
-                default -> { }
             }
+            {% endfor %}
+            default -> { }
         }
-        {# Profiler.pop("TryTrap.computeWeights"); #}
+    }
+
+    private static void applyTrapWeights() {
+        switch (CellTracker.numNearbyRatTraps) {
+            {% for i in range(29, 0, -1) %}
+            case {{ i }}: {
+                MapLocation trapLoc = CellTracker.nearbyRatTraps[{{ i - 1 }}];
+                int x = trapLoc.x - myLocX;
+                int y = trapLoc.y - myLocY;
+                applyTrapWeight(x, y);
+            } 
+            {% endfor %}
+            case 0:
+                break;
+            default:
+                assert(false);
+                break;
+        }
+    }
+
+    private static void applyTrapWeight(int x, int y) {
+        switch (x) {
+            {% for dx in range(-2, 3) %}
+            case {{ dx }} -> {
+                switch (y) {
+                    {% for dy in range(-2, 3) %}
+                    case {{ dy }} -> {
+                        {% for nx in range(dx - 1, dx + 2) %}
+                        {% for ny in range(dy - 1, dy + 2) %}
+                        {%- if nx >= -2 and nx <= 2 and ny >= -2 and ny <= 2 -%}
+                        println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        {{ wvar(nx, ny) }} -= 100;
+                        {%- endif -%}
+                        {% endfor %}
+                        {% endfor %}
+                    }
+                    {% endfor %}
+                    default -> { }
+                }
+            }
+            {% endfor %}
+            default -> { }
+        }
     }
 
     private static void resetBest() {
@@ -346,21 +354,64 @@ public final class TryTrap {
     {% endfor %}
     {% endfor %}
 
-    {# unrolled hasAdjacentTrap #}
-    {% for cy in range(2, -3, -1) %}
-    {% for cx in range(-2, 3) %}
-    private static boolean hasAdjacentTrap_{{ "m" if cx < 0 else "" }}{{ cx|abs }}_{{ "m" if cy < 0 else "" }}{{ cy|abs }}() throws GameActionException {
-        MapLocation adj;
-        {% for oy in range(1, -2, -1) %}
-        {% for ox in range(-1, 2) %}
-        {% set ax = cx + ox %}
-        {% set ay = cy + oy %}
-        adj = new MapLocation(myLocX {% if ax %} + {{ ax }}{% endif %}, myLocY {% if ay %} + {{ ay }}{% endif %});
-        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
-        {% endfor %}
-        {% endfor %}
-        return false;
+    
+    public static boolean miniRun() throws GameActionException {
+        if (!rc.isActionReady()) return false;
+        int x = myLocX;
+        int y = myLocY;
+        switch (myDir.ordinal()) {
+            {% for ord in range(8) %}
+            case {{ ord }} -> {
+                {% set cand = related_map[ord] %}
+                {% for d in cand %}
+                MapLocation loc{{ loop.index0 }} = new MapLocation(x {% if dir_dx[d] %} + {{ dir_dx[d] }}{% endif %}, y {% if dir_dy[d] %} + {{ dir_dy[d] }}{% endif %});
+                int s{{ loop.index0 }} = 0;
+                {% endfor %}
+                for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
+                    if (rinfo.getTeam() == team) continue;
+                    if (rinfo.getType() != UnitType.BABY_RAT) continue;
+                    MapLocation eloc = rinfo.location;
+                    {
+                        if (eloc.distanceSquaredTo(loc0) <= 2) {
+                            int ang = angleDistance(rinfo.direction, eloc.directionTo(loc0));
+                            if (ang <= 3) s0 += 4 - ang;
+                        }
+                    }
+                    {
+                        if (eloc.distanceSquaredTo(loc1) <= 2) {
+                            int ang = angleDistance(rinfo.direction, eloc.directionTo(loc1));
+                            if (ang <= 3) s1 += 4 - ang;
+                        }
+                    }
+                    {
+                        if (eloc.distanceSquaredTo(loc2) <= 2) {
+                            int ang = angleDistance(rinfo.direction, eloc.directionTo(loc2));
+                            if (ang <= 3) s2 += 4 - ang;
+                        }
+                    }
+                }
+                int bestScore = -1;
+                MapLocation bestLoc = null;
+                if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
+                    bestScore = s0;
+                    bestLoc = loc0;
+                }
+                if (rc.canPlaceRatTrap(loc1) && s1 > bestScore) {
+                    bestScore = s1;
+                    bestLoc = loc1;
+                }
+                if (rc.canPlaceRatTrap(loc2) && s2 > bestScore) {
+                    bestScore = s2;
+                    bestLoc = loc2;
+                }
+                if (bestScore <= 0) return false;
+                rc.placeRatTrap(bestLoc);
+                println("!!!!!!!!!! placed rat trap MINI");
+                indicate("COMBAT STRAT: MINI TRAP");
+                return true;
+            }
+            {% endfor %}    
+            default -> { return false; }
+        }
     }
-    {% endfor %}
-    {% endfor %}
 }

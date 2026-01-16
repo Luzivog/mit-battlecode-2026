@@ -39,7 +39,7 @@ public class MicroTestStrategy extends Strategy {
             if (info.getTeam() == rc.getTeam()) continue;
             if (info.getType() != UnitType.BABY_RAT) continue;
             if (info.getHealth() - GameConstants.RAT_BITE_DAMAGE >= rc.getHealth()) continue;
-            MapLocation target = info.getLocation();
+            MapLocation target = info.location;
             for (Direction dir : Direction.values()) {
                 if (dir == Direction.CENTER || rc.canMove(dir)) {
                     MapLocation newLoc = myLoc.add(dir);
@@ -67,7 +67,7 @@ public class MicroTestStrategy extends Strategy {
             if (info.getTeam() == rc.getTeam()) continue;
             if (info.getType() != UnitType.BABY_RAT) continue;
             if (info.getHealth() >= rc.getHealth()) continue;
-            MapLocation target = info.getLocation();
+            MapLocation target = info.location;
             for (Direction dir : Direction.values()) {
                 if (dir == Direction.CENTER || rc.canMove(dir)) {
                     MapLocation newLoc = myLoc.add(dir);
@@ -128,14 +128,14 @@ public class MicroTestStrategy extends Strategy {
                 }
                 turn(_best);
                 id = rc.getCarrying().ID;
-                println("carrying " + id + " at " + rc.getCarrying().getLocation());
+                println("carrying " + id + " at " + rc.getCarrying().location);
                 rc.throwRat();
                 println("threw guy with id " + id);
                 println("now carrying " + rc.getCarrying());
                 for (RobotInfo ri : rc.senseNearbyRobots()) {
-                    println("neighbour at " + ri.getLocation());
+                    println("neighbour at " + ri.location);
                     if (ri.ID == id) {
-                        println("found thrown guy at " + myLoc.distanceSquaredTo(ri.getLocation()));
+                        println("found thrown guy at " + myLoc.distanceSquaredTo(ri.location));
                     }
                 }
 

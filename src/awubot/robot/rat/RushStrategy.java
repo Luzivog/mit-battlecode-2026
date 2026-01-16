@@ -55,7 +55,7 @@ public class RushStrategy extends Strategy {
     private static MapLocation findNearbyCat() {
         for (RobotInfo robot : rc.senseNearbyRobots()) {
             if (robot.getType() == UnitType.CAT) {
-                return robot.getLocation();
+                return robot.location;
             }
         }
         return null;

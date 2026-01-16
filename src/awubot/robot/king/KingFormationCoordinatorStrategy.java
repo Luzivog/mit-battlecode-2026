@@ -215,7 +215,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
 
         if (theContext.theNearestCat != null &&
             theFormationTarget != null &&
-            theContext.theNearestCat.getLocation().distanceSquaredTo(theFormationTarget) < 625) {
+            theContext.theNearestCat.location.distanceSquaredTo(theFormationTarget) < 625) {
             abortFormation();
             return;
         }

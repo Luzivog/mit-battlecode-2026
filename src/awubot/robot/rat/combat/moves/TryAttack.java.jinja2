@@ -11,6 +11,7 @@ import awubot.robot.rat.combat.CombatStrategy;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 import static awubot.robot.rat.BabyRat.*;
+import awubot.RobotTracker;
 
 {% set related_map = {
     0: ["NORTH", "NORTHEAST", "NORTHWEST"],
@@ -59,13 +60,13 @@ public final class TryAttack {
         bestMove = null;
         bestFacing = null;
         bestScore = -1;
-        for (RobotInfo ri : rc.senseNearbyRobots()) {
-            info = ri;
+        for (int i = 0; i < RobotTracker.numEnemies && i < 3; i++) {
+            info = RobotTracker.sortedEnemies[i];
             if (info.getTeam() == team) continue;
             if (!CombatStrategy.shouldFight(info)) continue;
-            if (chebyshevDistance(myLoc, info.getLocation()) > 2) continue;
+            if (chebyshevDistance(myLoc, info.location) > 2) continue;
 
-            t = info.getLocation();
+            t = info.location;
             weight = 10;
             if (info.getHealth() <= GameConstants.RAT_BITE_DAMAGE) {
                 weight += 30; // prefer one tapping
@@ -96,7 +97,7 @@ public final class TryAttack {
         // Profiler.pop("try attack");
         if (bestScore < 0.5) return false;
         assert(CombatStrategy.performMoves(bestMove, bestFacing));
-        rc.attack(target.getLocation());
+        rc.attack(target.location);
         println("!!!!!!!!!!!!!!!!!!!!!!! attacked rat");
         indicate("COMBAT STRAT: ATTACK");
         return true;
@@ -106,7 +107,7 @@ public final class TryAttack {
         if (!rc.isActionReady()) return false;
         for (RobotInfo ri : rc.senseNearbyRobots(2)) {
             if (ri.getTeam() == team) continue;
-            rc.attack(ri.getLocation());
+            rc.attack(ri.location);
             println("!!!!!!!!!!!!!!mini attacked!!");
             return true;
         }

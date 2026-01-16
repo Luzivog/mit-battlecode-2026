@@ -12,6 +12,7 @@ import static awubot.util.Util.*;
 
 import awubot.comms.GlobalArray;
 import awubot.util.Profiler;
+import awubot.util.Util;
 
 public class Game {
     public static RobotController rc;
@@ -57,75 +58,45 @@ public class Game {
         team = rc.getTeam();
         spawn = myLoc;
 
-        StringBuilder sb = new StringBuilder();
-        Direction moveDir = Direction.NORTH;
-        RobotInfo target = rc.senseRobotAtLocation(myLoc);
-
-        // Profiler.begin();
-        // String key = "=" + target.getID() + "+" + moveDir.ordinal() + "|";
-        // int i = sb.indexOf(key);
-        // double res;
-        // if (i == -1) res = 0;
-        // else res = ((int) sb.charAt(i - 1)) / 100.0;
-        // Profiler.end_print("test");
-        // rc.resign();
-        // Profiler.begin();
-        // if (a || b);
-        // Profiler.end_print("combined");
-        
-        // MapLocation a = new MapLocation(10, 20);
-        // MapLocation b = new MapLocation(20, 30);
-        // Profiler.begin();
-        // Direction d = a.directionTo(b);
-        // Profiler.end_print("test");
-        // rc.resign();
-
-        // Profiler.begin();
-        // int x = arr[dir.ordinal()];
-        // Profiler.end_print("c1");
-
-        // Profiler.begin();
-        // int y;
-        // switch (dir) {
-        //     case NORTH:
-        //         y = 0;
-        //         break;
-        //     case NORTHEAST:
-        //         y = 1;
-        //         break;
-        //     case EAST:
-        //         y = 2;
-        //         break;
-        //     default:
-        //         y = -1;
-        //         break;
-        // };
-        // Profiler.end_print("c2");
-
-        // int z;
-        // int i = 2;
-        // Profiler.begin();
-        // switch (i) {
-        //     case 0:
-        //         z = 0;
-        //         break;
-        //     case 1:
-        //         z = 1;
-        //         break;
-        //     case 2:
-        //         z = 2;
-        //         break;
-        //     case 3:
-        //         z = 3;
-        //         break;
-        //     case 4:
-        //         z = 4;
-        //         break;
-        //     default:
-        //         z = -1;
-        //         break;
+        // Profiler.begin();   
+        // for (int i = 0; i < Direction.values().length; i++) {
+        //     Direction dir = Direction.values()[i];
         // }
-        // Profiler.end_print("c3");
+        // Profiler.end_print("index based for loop");
+        // rc.resign();
+
+        // StringBuilder sb = new StringBuilder();
+        // Direction moveDir = Direction.NORTH;
+        // RobotInfo target = rc.senseRobotAtLocation(myLoc);
+
+        // int x = 1, y = 2;
+        // StringBuilder[] arr = new StringBuilder[2];
+        // arr[0] = new StringBuilder();
+        // arr[0].repeat('\0', 100);
+        // arr[1] = new StringBuilder();
+        // arr[1].repeat('\0', 100);
+        // Profiler.begin();
+        // char c0 = arr[x].charAt(y); 
+        // Profiler.end_print("arr");
+
+        // StringBuilder sb = new StringBuilder();
+        // sb.repeat('0', 3600);
+        // Profiler.begin();
+        // char c1 = sb.charAt(myLocX * 60 + myLocY);
+        // Profiler.end_print("indx");
+
+
+        // x = myLocX;
+        // y = myLocY;
+        // Profiler.begin();
+        // boolean b0 = rc.senseMapInfo(new MapLocation(x, y)).isPassable();
+        // Profiler.end_print("sense new maploc");
+
+        // MapLocation loc = new MapLocation(x, y);
+        // Profiler.begin();
+        // boolean b1 = rc.senseMapInfo(loc).isPassable();
+        // Profiler.end_print("sense existing maploc");
+
         // rc.resign();
     }
 
@@ -137,6 +108,15 @@ public class Game {
         myDir = rc.getDirection();
         // Clear indicator string at the start of each turn
         indicatorString = "";
+        StringBuilder sb = new StringBuilder();
+
+
+        // Profiler.begin();   
+        // for (int i = nearbyRobots.length - 1; i >= 0; i--) {
+        //     RobotInfo ri = nearbyRobots[i];
+        // }
+        // Profiler.end_print("                  index based for loop " + nearbyRobots.length);
+        // rc.resign();
     }
 
     public static void postTick() throws GameActionException {

@@ -1,0 +1,2 @@
+info.getLocation() uses 1 more bytecode than info.location
+switch on enum is slow -- use switch on enum.ordinal() instead

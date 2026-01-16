@@ -106,12 +106,14 @@ public class BabyRat {
         CellTracker.storeVisibleCells();
         tryPickUpCheese();
         tryTransferCheese();
+        RobotTracker.updateRobots();
     }
 
     public static void turn(Direction dir) throws GameActionException {
         _turn(dir);
         tryPickUpCheese();
         tryTransferCheese();
+        RobotTracker.updateRobots();
     }
 
     public static void rawMove() throws GameActionException {
@@ -119,5 +121,7 @@ public class BabyRat {
         CellTracker.storeVisibleCellsPostMoveForward();
         tryPickUpCheese();
         tryTransferCheese();
+        RobotTracker.updateRobots();
     }
+
 }

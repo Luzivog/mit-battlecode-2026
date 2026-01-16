@@ -122,11 +122,11 @@ public class BetterCombatTracker {
     }
 
     public static void registerEnemy(RobotInfo info) {
-        int dx = info.getLocation().x - myLocX;
-        int dy = info.getLocation().y - myLocY;
+        int dx = info.location.x - myLocX;
+        int dy = info.location.y - myLocY;
         if (!inGrid(dx, dy)) return;
         boolean highHealth = info.getHealth() > rc.getHealth();
-        registerEnemy(dx, dy, info.getDirection(), highHealth);
+        registerEnemy(dx, dy, info.direction, highHealth);
     }
 
     public static void registerEnemyLow(int dx, int dy, Direction facing) {
@@ -167,8 +167,8 @@ public class BetterCombatTracker {
         if (target == null) return hasThreat(moveDir, facing);
         if (target.getTeam() == rc.getTeam()) return hasThreat(moveDir, facing);
         if (target.getType() != UnitType.BABY_RAT) return hasThreat(moveDir, facing);
-        int dx = target.getLocation().x - myLocX;
-        int dy = target.getLocation().y - myLocY;
+        int dx = target.location.x - myLocX;
+        int dy = target.location.y - myLocY;
         if (!inGrid(dx, dy)) return hasThreat(moveDir, facing);
         int moveIdx = moveDir.ordinal();
         int faceIdx = facing.ordinal();
@@ -176,9 +176,9 @@ public class BetterCombatTracker {
         long low = lowMask[moveIdx];
         long high = highMask[moveIdx];
         boolean highHealth = target.getHealth() > rc.getHealth();
-        MapLocation enemyLoc = target.getLocation();
+        MapLocation enemyLoc = target.location;
         MapLocation moveLoc = myLoc.add(moveDir);
-        if (rc.onTheMap(moveLoc) && canSense(enemyLoc, moveLoc, target.getDirection())) {
+        if (rc.onTheMap(moveLoc) && canSense(enemyLoc, moveLoc, target.direction)) {
             long sub = enemyAddMaskForMove(enemyLoc, moveLoc);
             if (highHealth) {
                 high -= sub;

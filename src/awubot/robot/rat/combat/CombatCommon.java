@@ -70,4 +70,33 @@ public final class CombatCommon {
         }
         return false;
     }
+
+    
+    // -1 = impossible, 0 = strafe, 1 = no strafe
+    public static int movementCost(Direction moveDir, Direction facing) {
+        if (moveDir != Direction.CENTER && !canMove(moveDir)) return -1;
+        if (moveDir == Direction.CENTER) {
+            if (facing == myDir || rc.canTurn()) {
+                return 1;
+            } else {
+                return -1;
+            }
+        }
+        if (!rc.isMovementReady() || !canMove(moveDir)) {
+            return -1;
+        }
+        if (moveDir == myDir && facing == myDir) return 1;
+        if (moveDir == myDir) {
+            if (myDir == facing || rc.canTurn()) {
+                return 1;
+            } else {
+                return -1;
+            }
+        }
+        if (moveDir == facing && rc.canTurn()) return 1;
+        if (canStrafe()) {
+            if (facing == myDir || rc.canTurn()) return 0;
+        }
+        return -1;
+    }
 }

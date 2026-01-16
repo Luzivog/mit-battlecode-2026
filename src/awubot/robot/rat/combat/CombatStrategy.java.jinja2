@@ -79,25 +79,12 @@ switch ({{dir_expr}}.ordinal()) {
 
 /*
 
-TODO: add code for detecting enemies out of vision
-
-
-i am writing combat micro for this bot, and but i need to efficiently check if certain states are vulnerable to ratnapping. currently, each robot can see in a 90 degree vision cone of radius sqrt(20), so in other words among the 8 neighbnouring cells exactly 3 of them can be seen. if an enemy rat is able to move into a neighbouring cell (one of the 8) that you cant see, then they can "ratnap" or pick you up, which is very bad.
-
-since this depends on the direction you move and also the direction you end up facing, i want to be able to quickly answer queries about which ending states are vulnerable to ratnapping. my plan for this is to precompute, for each of the 9 cells i could be in during the next turn, and for each of the 8 direcitons i might be facing (so 72 cases), i want each enemy in a 5x5 square centered on the player (that we can see) to contribute to the state whether or not a) it can see the player and b) it can go into a spot where it can be ratnapped. 
-
-since i need all this to be done efficiently with minimal bytecode usage (since java bytecode is what is counted for "runtime"), i want some extremely efficient unrolled code
-
-here is the plan:
-first, make a variable for each of the cells in 5x5 square around the player, and then load into them whether or not they are passable
-then, for each of the 9 possible movement directions, i will track the # of enemies that can move into each of the 8 neighbouring cells compressed inside a single long long. the ith byte will correspond to the ith direction, by doing unsigned addition using these longs, it effectively results in 8 counters for each direction.
-to use this, i want a function such that given the displacement of an enemy and the direction they are facing from the player, for each of the 9 movement cells that they can see (90 degree vision cone), increment the corresponding long by a "bitmask" of which has a 1 in a byte if they can move to a cell that can ratnap the player given where they moved and where they are facing after the move
-the calculation of the bitmask for enemy location, enemy facing -> bitmask for location should be given as a function, since when judginug safety of moves during combat micro the risk of the targetted enemy needs to be subtracted. 
-since we need efficiency, everything here should be unrolled - each variable is its own, and the bitmasks should all be precomputed and put in two nested switch statements based on enemy displacement and enemy facing direction. 
-to keep code simple and readable, we will use jinja to write macros that will generate the unrolled code for us. this will be done in CombatTracker.java.jinja2, and CombatStrategy will use this class.
-before making any changes, outline what you will write, and i will approve and suggest changes if needed to make sure we are on the same page
-
-
+TODO: 
+    - add code for detecting enemies out of vision
+    - consider avoiding cells within cheb dist of 1/2 of enemy rats
+    - prefer cells that walk out of enemy vision
+    - strongly prefer looking at enemies
+    - offence squeak signals
 
 */
 
@@ -122,7 +109,7 @@ public class CombatStrategy extends Strategy {
         return RAT_TRAP_COST; // tf i cant see how many rat traps i have placed?
     }
 
-    public static double[] basicDanger; // [movement direction]
+    public static double[] cellScore; // [movement direction]
 
     private void precomp() throws GameActionException {
         {# Profiler.push(); #}
@@ -133,49 +120,36 @@ public class CombatStrategy extends Strategy {
         {# Profiler.pop("combat tracker"); #}
 
         StringBuilder sb = new StringBuilder();
-        // for (Direction moveDir : directions) {
-        //     sb.append(moveDir);
-        //     sb.append(": ");
-        //     for (Direction facing : directions) {
-        //         // boolean q = CombatTracker.hasThreat(moveDir, facing);
-        //         boolean q = false;
-        //         sb.append(q ? 1 : 0);
-        //     }
-        //     sb.append('\n');
-        // }
-        // // CombatTracker.debug();        
-        // for (int y = 4; y >= 0; y--) {
-            // for (int x = 0; x < 5; x++) {
-                // sb.append(String.format("%.1f ", weight[x][y]));
-            // }
-            // sb.append('\n');
-        // }
         indicate(sb.toString());
 
         // Profiler.push();
-        computeDanger();
+        computeCellScores();
         // Profiler.pop("compute danger");
+        allies = Squeaker.squeaksSinceLastTurn;
+        enemies = 0;
+        for (RobotInfo info : rc.senseNearbyRobots()) {
+            if (info.getType() == UnitType.CAT) continue;
+            if (info.getTeam() != rc.getTeam()) {
+                enemies++;
+                continue;
+            }
+            if (info.getLocation().distanceSquaredTo(myLoc) > 2) allies++;
+        }
     }
 
-    // TODO: bring this back in the future
-    public static void computeDanger() throws GameActionException {
-        // Profiler.begin();
-        basicDanger = new double[9];
-        // for (RobotInfo info : rc.senseNearbyRobots(9)) { // shrink radius to optimise
-        //     if (info.getTeam() == rc.getTeam()) continue;
-        //     for (Direction moveDir : allDirections) {
-        //         basicDanger[moveDir.ordinal()] += computeDangerFrom(info, moveDir);
-        //     }
-        // }
-        // Profiler.end("compute danger");
+    public boolean runTick() throws GameActionException {
+        Profiler.push();
+        boolean res = _runTick();
+        Profiler.pop_ind("combat strategy");
+        return res;
     }
 
     // idek why this is returning. check if can move anyways after to squeeze out some juice
-    public boolean runTick() throws GameActionException {
+    private boolean _runTick() throws GameActionException {
         if (rc.isBeingCarried()) return false;
         Profiler.push();
         precomp();
-        Profiler.pop("precomp", 2000);
+        Profiler.pop("precomp", 3500);
 
         if (rc.getCarrying() != null) {
             return tryThrow();
@@ -188,7 +162,7 @@ public class CombatStrategy extends Strategy {
 
         Profiler.push();
         boolean tryTrapRes = tryTrap();
-        Profiler.pop("try trap", 2000);
+        Profiler.pop("try trap", 3000);
         if (tryTrapRes) return true;
 
         Profiler.push();
@@ -199,37 +173,73 @@ public class CombatStrategy extends Strategy {
         Profiler.push();
         boolean tryFightRes = tryFight();
         Profiler.pop("try fight", 1000);
-        if (tryFightRes) return true;
+        assert(tryFightRes);
+        {# if (tryFightRes) return true; #}
+        {# indicate("COMBAT STRAT: NONE"); #}
         // TODO: deal with cats (maybe naman's job?)
         // TODO: after moving, quickly run through possible attacks in case you see a new enemy
+        boolean miniRes = miniTick();
+        {# if (miniRes) return true; #}
+        return true;
+        {# return false; #}
+    }
+
+    public boolean miniTick() throws GameActionException {
+        Profiler.push();
+        boolean tryRatNapRes = miniRatNap();
+        Profiler.pop("mini ratnap", 300);
+        if (tryRatNapRes) return true;
+        
+        Profiler.push();
+        boolean tryTrapRes = miniTrap();
+        Profiler.pop("mini trap", 300);
+        if (tryTrapRes) return true;
+        
+        boolean tryAttackRes = miniAttack();
+        if (tryAttackRes) return true;
         return false;
     }
 
-    /*
-    
-    move towards enemy (no strafing)
-
-    
-    */
     public boolean tryFight() throws GameActionException {
         return TryFight.run();
     }
 
-    // return false if didnt throw -- some other process can figure out how to move
-    // TODO: maybe weight targets based on how close they are to friendly rats? might be too effort
+    {# public boolean miniFight() throws GameActionException {
+        return TryFight.miniRun();
+    } #}
+
     public boolean tryThrow() throws GameActionException {
         return TryThrow.run();
     }
 
-    /*
-    
-    move 
-    move turn
-    turn move
-    strafe 
-    strafe turn
-    
-    */
+    {# public boolean miniThrow() throws GameActionException {
+        return TryThrow.miniRun();
+    } #}
+
+    // TODO: do danger levels and verify you dont die on the next turn
+    public boolean tryRatNap() throws GameActionException {
+        return TryRatNap.run();
+    }
+
+    public boolean miniRatNap() throws GameActionException {
+        return TryRatNap.miniRun();
+    }
+
+    public boolean tryTrap() throws GameActionException {
+        return TryTrap.run();
+    }
+
+    public boolean miniTrap() throws GameActionException {
+        return TryTrap.miniRun();
+    }
+
+    public boolean tryAttack() throws GameActionException {
+        return TryAttack.run();
+    }
+
+    public boolean miniAttack() throws GameActionException {
+        return TryAttack.miniRun();
+    }
 
     static boolean canPerformMoves(Direction moveDir, Direction facing) throws GameActionException {
         return CombatCommon.canPerformMoves(moveDir, facing);
@@ -268,60 +278,94 @@ public class CombatStrategy extends Strategy {
         return false;
     }
 
-    public static double getDangerFor(Direction moveDir, Direction facing, RobotInfo target) throws GameActionException {
-        if (CombatTracker.hasThreat(moveDir, facing, target)) return 100;
-        return basicDanger[moveDir.ordinal()];
+    private static StringBuilder sb;
+    private static double readCellScore(RobotInfo target, Direction moveDir) {
+        String key = "=" + target.getID() + "+" + moveDir.ordinal() + "|";
+        int i = sb.indexOf(key);
+        if (i == -1) return 0;
+        else return ((int) sb.charAt(i - 1)) / 100.0;
+    }
+    private static double cacheCellScore(RobotInfo target, Direction moveDir, double value) {
+        String key = ((char) ((int) value * 100)) + "=" + target.getID() + "+" + moveDir.ordinal() + "|";
+        sb.append(key);
+        return value;
     }
 
-    public static double getDangerFor(Direction moveDir, Direction facing) throws GameActionException {
-        if (CombatTracker.hasThreat(moveDir, facing)) return 100;
-        return basicDanger[moveDir.ordinal()];
+    public static void computeCellScores() throws GameActionException {
+        Profiler.push();
+        sb = new StringBuilder();
+        cellScore = new double[9];
+        for (RobotInfo info : rc.senseNearbyRobots(9)) { // shrink radius to optimise
+            if (info.getTeam() == rc.getTeam()) continue;
+            for (Direction moveDir : allDirections) {
+                cellScore[moveDir.ordinal()] += getCellScoreForEnemy(info, moveDir);
+            }
+        }
+        Profiler.pop("compute cell scores");
     }
 
-    public static double computeDangerFrom(RobotInfo info, Direction moveDir) {
+    public static double getCellScoreFor(Direction moveDir, Direction facing, RobotInfo target) throws GameActionException {
+        if (CombatTracker.hasThreat(moveDir, facing, target)) return -100;
+        return cellScore[moveDir.ordinal()] - readCellScore(target, moveDir);
+    }
+
+    public static double getCellScoreFor(Direction moveDir, Direction facing) throws GameActionException {
+        if (CombatTracker.hasThreat(moveDir, facing)) return -100;
+        return cellScore[moveDir.ordinal()];
+    }
+
+    // TODO: cache this function 
+    public static double getCellScoreForEnemy(RobotInfo info, Direction moveDir) {
         MapLocation to = myLoc.add(moveDir);
         if (!rc.onTheMap(to)) return 0;
-        if (info.getTeam() == rc.getTeam()) return 0; // ignore teammates
         if (info.getType() == UnitType.CAT) {
             // TODO: implement vision check
             int dist = chebyshevDistance(to, info.getLocation()); 
             if (dist >= 4) return 0;
-            else return 5;
+            else return cacheCellScore(info, moveDir, -5);
         }
         MapLocation enemyLoc = info.getLocation();
         int dist = chebyshevDistance(to, info.getLocation());
         if (dist > 3) return 0; // ignore
-        double base = 1;
         if (info.getType() == UnitType.RAT_KING) {
-            base *= 0.5;
             if (dist > 2) return 0; // is this correct?
-            else return base;
+            else return cacheCellScore(info, moveDir, 1);
         } else {
-            if (!canSense(enemyLoc, to, info.getDirection())) { // cant even see u
-                return 0;
+            double base = 0;
+            // TODO: optimise with switch table
+            boolean canCurrentlySense = canSense(enemyLoc, myLoc, info.getDirection());
+            boolean canSenseAfterMove = canSense(enemyLoc, to, info.getDirection());
+
+            if (canCurrentlySense) {
+                if (!canSenseAfterMove) {
+                    base += 3; // escaping vision
+                } else {
+                    base -= 1; // staying in vision
+                }
+            } else {
+                if (canSenseAfterMove) {
+                    base -= 3; // entering vision
+                } else {
+                    base = 0; // they dont see u
+                }
             }
-            if (info.getHealth() > rc.getHealth() && dist <= 1) {
-                return 3; // high danger
+
+            if (canSenseAfterMove) {
+                int dangerDistance;
+                if (allies > enemies) dangerDistance = 0;
+                else if (time % 4 == 0) dangerDistance = 1;
+                else dangerDistance = 2;
+                if (dist <= dangerDistance) base -= 10;
             }
-            if (rc.getHealth() > 1.5 * info.getHealth()) {
-                base *= 0.7;
-                // u can beat them
+
+            if (rc.getHealth() > 1.5 * info.getHealth() && rc.getHealth() > 20) {
+                base *= 0.5;
+                // weak
             }
-            base *= (1.0 / Math.sqrt(dist + 1)); // incredible formula
-            return base;
+            {# base *= (1.0 / Math.sqrt(dist + 1)); // incredible formula #}
+            return cacheCellScore(info, moveDir, base);
         }
     }
-
-    // return true if successfully ratnapped someone
-    // TODO: do danger levels and verify you dont die on the next turn
-    public boolean tryRatNap() throws GameActionException {
-        return TryRatNap.run();
-    }
-
-    public boolean tryTrap() throws GameActionException {
-        return TryTrap.run();
-    }
-
     /*
 
       attacking another solo rat is safe as if:
@@ -330,27 +374,15 @@ public class CombatStrategy extends Strategy {
       if you are in a horde, it should be safe to run at them
 
     */
+    public static int allies, enemies;
     public static boolean shouldFight(RobotInfo enemy) {
         if (enemy.getType() == UnitType.CAT) return false; // TODO
+        if (enemy.getType() == UnitType.RAT_KING) return true;
         if (enemy.getHealth() <= rc.getHealth()) return true;
         if (!canSense(enemy.getLocation(), myLoc, enemy.getDirection())) return true;
         if (GlobalArray.nearestRatKing.distanceSquaredTo(myLoc) <= 36) return true;
-        int allies = Squeaker.squeaksSinceLastTurn, enemies = 0;
-        for (RobotInfo info : rc.senseNearbyRobots()) {
-            if (info.getType() == UnitType.CAT) continue;
-            if (info.getTeam() != rc.getTeam()) {
-                enemies++;
-                continue;
-            }
-            if (info.getLocation().distanceSquaredTo(myLoc) > 2) allies++;
-        }
         if (allies > enemies) return true;
         return false;
-    }
-
-
-    public boolean tryAttack() throws GameActionException {
-        return TryAttack.run();
     }
 
     // currently given arbitrary weights

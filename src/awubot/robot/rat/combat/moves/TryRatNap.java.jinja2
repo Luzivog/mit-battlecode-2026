@@ -41,10 +41,8 @@ public final class TryRatNap {
             if (info.getType() != UnitType.BABY_RAT) continue;
             t = info.getLocation();
             // double weight = scoreEnemy(info);
-            weight = 1;
-            md = null;
+            weight = 30;
 
-            best = -1;
             for (Direction moveDir : allDirections) {
                 MapLocation newLoc = myLoc.add(moveDir);
                 if (newLoc.distanceSquaredTo(t) > 2) continue;
@@ -56,28 +54,24 @@ public final class TryRatNap {
                     if (!CombatCommon.canPerformMoves(moveDir, facing)) continue;
                     double score = weight;
                     if (moveDir == Direction.CENTER) {
-                        score *= 3; // prefer standing still
+                        score += 10; // prefer standing still
                     }
-                    score -= CombatStrategy.getDangerFor(moveDir, facing, info) / 5;
+                    score += CombatStrategy.getCellScoreFor(moveDir, facing, info);
                     // println("danger: " + getDangerFor(moveDir, facing, info));
-                    if (score <= 0) continue;
+                    if (score <= 0.5) continue;
                     if (facing != myDir) {
                         score *= 1.2; // prefer turning
                     }
-                    if (score > best) {
-                        best = score;
-                        md = moveDir;
+                    if (score > bestScore) {
+                        bestScore = score;
+                        target = info;
+                        bestMove = moveDir;
                         bestFacing = facing;
                     }
                 }
             }
-            if (best > bestScore) {
-                bestScore = best;
-                target = info;
-                bestMove = md;
-            }
         }
-        if (bestScore < 0) return false;
+        if (bestScore < 0.5) return false;
         assert(CombatStrategy.performMoves(bestMove, bestFacing));
         if (rc.canCarryRat(target.getLocation())) {
             rc.carryRat(target.getLocation());
@@ -86,6 +80,36 @@ public final class TryRatNap {
             println("was just shoved against a wall");
         }
         println("!!!!!!!!!!!!!!!!!!!!!!! napped rat");
+        indicate("COMBAT STRAT: NAP");
         return true;
+    }
+
+    public static boolean miniRun() throws GameActionException {
+        // first try to nap a rat looking at us
+        for (RobotInfo info : rc.senseNearbyRobots(2)) {
+            if (info.getTeam() == team) continue;
+            if (info.getHealth() <= GameConstants.RAT_BITE_DAMAGE) continue; // just kill
+            if (info.getType() != UnitType.BABY_RAT) continue;
+            if (canSense(myLoc, info.getLocation(), info.getDirection())) {
+                if (rc.canCarryRat(info.getLocation())) {
+                    rc.carryRat(info.getLocation());
+                    println("!!!!!!!!!!!!!!!!!!!!!!! mini napped rat");
+                    return true;
+                }
+            }
+        }
+        // nap anyone
+        for (RobotInfo info : rc.senseNearbyRobots(2)) {
+            if (info.getTeam() == team) continue;
+            if (info.getHealth() <= GameConstants.RAT_BITE_DAMAGE) continue; // just kill
+            if (info.getType() != UnitType.BABY_RAT) continue;
+            if (rc.canCarryRat(info.getLocation())) {
+                rc.carryRat(info.getLocation());
+                println("!!!!!!!!!!!!!!!!!!!!!!! mini napped rat");
+                indicate("COMBAT STRAT: MINI NAP");
+                return true;
+            }
+        }
+        return false;
     }
 }

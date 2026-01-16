@@ -55,6 +55,416 @@ public final class TryTrap {
     static double best;
     static MapLocation curMoveLoc;
 
+    public static boolean miniRun() throws GameActionException {
+        if (!rc.isActionReady()) return false;
+        int x = myLocX;
+        int y = myLocY;
+        switch (myDir.ordinal()) {
+            case 0 -> {
+                MapLocation loc0 = new MapLocation(x , y  + 1);
+                int s0 = 0;
+                MapLocation loc1 = new MapLocation(x  + 1, y  + 1);
+                int s1 = 0;
+                MapLocation loc2 = new MapLocation(x  + -1, y  + 1);
+                int s2 = 0;
+                for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
+                    if (rinfo.getTeam() == team) continue;
+                    if (rinfo.getType() != UnitType.BABY_RAT) continue;
+                    MapLocation eloc = rinfo.getLocation();
+                    {
+                        if (eloc.distanceSquaredTo(loc0) <= 2) {
+                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc0));
+                            if (ang <= 3) s0 += 4 - ang;
+                        }
+                    }
+                    {
+                        if (eloc.distanceSquaredTo(loc1) <= 2) {
+                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc1));
+                            if (ang <= 3) s1 += 4 - ang;
+                        }
+                    }
+                    {
+                        if (eloc.distanceSquaredTo(loc2) <= 2) {
+                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc2));
+                            if (ang <= 3) s2 += 4 - ang;
+                        }
+                    }
+                }
+                int bestScore = -1;
+                MapLocation bestLoc = null;
+                if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
+                    bestScore = s0;
+                    bestLoc = loc0;
+                }
+                if (rc.canPlaceRatTrap(loc1) && s1 > bestScore) {
+                    bestScore = s1;
+                    bestLoc = loc1;
+                }
+                if (rc.canPlaceRatTrap(loc2) && s2 > bestScore) {
+                    bestScore = s2;
+                    bestLoc = loc2;
+                }
+                if (bestScore <= 0) return false;
+                rc.placeRatTrap(bestLoc);
+                println("!!!!!!!!!! placed rat trap MINI");
+                indicate("COMBAT STRAT: MINI TRAP");
+                return true;
+            }
+            case 1 -> {
+                MapLocation loc0 = new MapLocation(x  + 1, y  + 1);
+                int s0 = 0;
+                MapLocation loc1 = new MapLocation(x , y  + 1);
+                int s1 = 0;
+                MapLocation loc2 = new MapLocation(x  + 1, y );
+                int s2 = 0;
+                for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
+                    if (rinfo.getTeam() == team) continue;
+                    if (rinfo.getType() != UnitType.BABY_RAT) continue;
+                    MapLocation eloc = rinfo.getLocation();
+                    {
+                        if (eloc.distanceSquaredTo(loc0) <= 2) {
+                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc0));
+                            if (ang <= 3) s0 += 4 - ang;
+                        }
+                    }
+                    {
+                        if (eloc.distanceSquaredTo(loc1) <= 2) {
+                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc1));
+                            if (ang <= 3) s1 += 4 - ang;
+                        }
+                    }
+                    {
+                        if (eloc.distanceSquaredTo(loc2) <= 2) {
+                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc2));
+                            if (ang <= 3) s2 += 4 - ang;
+                        }
+                    }
+                }
+                int bestScore = -1;
+                MapLocation bestLoc = null;
+                if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
+                    bestScore = s0;
+                    bestLoc = loc0;
+                }
+                if (rc.canPlaceRatTrap(loc1) && s1 > bestScore) {
+                    bestScore = s1;
+                    bestLoc = loc1;
+                }
+                if (rc.canPlaceRatTrap(loc2) && s2 > bestScore) {
+                    bestScore = s2;
+                    bestLoc = loc2;
+                }
+                if (bestScore <= 0) return false;
+                rc.placeRatTrap(bestLoc);
+                println("!!!!!!!!!! placed rat trap MINI");
+                indicate("COMBAT STRAT: MINI TRAP");
+                return true;
+            }
+            case 2 -> {
+                MapLocation loc0 = new MapLocation(x  + 1, y );
+                int s0 = 0;
+                MapLocation loc1 = new MapLocation(x  + 1, y  + 1);
+                int s1 = 0;
+                MapLocation loc2 = new MapLocation(x  + 1, y  + -1);
+                int s2 = 0;
+                for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
+                    if (rinfo.getTeam() == team) continue;
+                    if (rinfo.getType() != UnitType.BABY_RAT) continue;
+                    MapLocation eloc = rinfo.getLocation();
+                    {
+                        if (eloc.distanceSquaredTo(loc0) <= 2) {
+                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc0));
+                            if (ang <= 3) s0 += 4 - ang;
+                        }
+                    }
+                    {
+                        if (eloc.distanceSquaredTo(loc1) <= 2) {
+                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc1));
+                            if (ang <= 3) s1 += 4 - ang;
+                        }
+                    }
+                    {
+                        if (eloc.distanceSquaredTo(loc2) <= 2) {
+                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc2));
+                            if (ang <= 3) s2 += 4 - ang;
+                        }
+                    }
+                }
+                int bestScore = -1;
+                MapLocation bestLoc = null;
+                if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
+                    bestScore = s0;
+                    bestLoc = loc0;
+                }
+                if (rc.canPlaceRatTrap(loc1) && s1 > bestScore) {
+                    bestScore = s1;
+                    bestLoc = loc1;
+                }
+                if (rc.canPlaceRatTrap(loc2) && s2 > bestScore) {
+                    bestScore = s2;
+                    bestLoc = loc2;
+                }
+                if (bestScore <= 0) return false;
+                rc.placeRatTrap(bestLoc);
+                println("!!!!!!!!!! placed rat trap MINI");
+                indicate("COMBAT STRAT: MINI TRAP");
+                return true;
+            }
+            case 3 -> {
+                MapLocation loc0 = new MapLocation(x  + 1, y  + -1);
+                int s0 = 0;
+                MapLocation loc1 = new MapLocation(x , y  + -1);
+                int s1 = 0;
+                MapLocation loc2 = new MapLocation(x  + 1, y );
+                int s2 = 0;
+                for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
+                    if (rinfo.getTeam() == team) continue;
+                    if (rinfo.getType() != UnitType.BABY_RAT) continue;
+                    MapLocation eloc = rinfo.getLocation();
+                    {
+                        if (eloc.distanceSquaredTo(loc0) <= 2) {
+                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc0));
+                            if (ang <= 3) s0 += 4 - ang;
+                        }
+                    }
+                    {
+                        if (eloc.distanceSquaredTo(loc1) <= 2) {
+                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc1));
+                            if (ang <= 3) s1 += 4 - ang;
+                        }
+                    }
+                    {
+                        if (eloc.distanceSquaredTo(loc2) <= 2) {
+                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc2));
+                            if (ang <= 3) s2 += 4 - ang;
+                        }
+                    }
+                }
+                int bestScore = -1;
+                MapLocation bestLoc = null;
+                if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
+                    bestScore = s0;
+                    bestLoc = loc0;
+                }
+                if (rc.canPlaceRatTrap(loc1) && s1 > bestScore) {
+                    bestScore = s1;
+                    bestLoc = loc1;
+                }
+                if (rc.canPlaceRatTrap(loc2) && s2 > bestScore) {
+                    bestScore = s2;
+                    bestLoc = loc2;
+                }
+                if (bestScore <= 0) return false;
+                rc.placeRatTrap(bestLoc);
+                println("!!!!!!!!!! placed rat trap MINI");
+                indicate("COMBAT STRAT: MINI TRAP");
+                return true;
+            }
+            case 4 -> {
+                MapLocation loc0 = new MapLocation(x , y  + -1);
+                int s0 = 0;
+                MapLocation loc1 = new MapLocation(x  + 1, y  + -1);
+                int s1 = 0;
+                MapLocation loc2 = new MapLocation(x  + -1, y  + -1);
+                int s2 = 0;
+                for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
+                    if (rinfo.getTeam() == team) continue;
+                    if (rinfo.getType() != UnitType.BABY_RAT) continue;
+                    MapLocation eloc = rinfo.getLocation();
+                    {
+                        if (eloc.distanceSquaredTo(loc0) <= 2) {
+                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc0));
+                            if (ang <= 3) s0 += 4 - ang;
+                        }
+                    }
+                    {
+                        if (eloc.distanceSquaredTo(loc1) <= 2) {
+                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc1));
+                            if (ang <= 3) s1 += 4 - ang;
+                        }
+                    }
+                    {
+                        if (eloc.distanceSquaredTo(loc2) <= 2) {
+                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc2));
+                            if (ang <= 3) s2 += 4 - ang;
+                        }
+                    }
+                }
+                int bestScore = -1;
+                MapLocation bestLoc = null;
+                if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
+                    bestScore = s0;
+                    bestLoc = loc0;
+                }
+                if (rc.canPlaceRatTrap(loc1) && s1 > bestScore) {
+                    bestScore = s1;
+                    bestLoc = loc1;
+                }
+                if (rc.canPlaceRatTrap(loc2) && s2 > bestScore) {
+                    bestScore = s2;
+                    bestLoc = loc2;
+                }
+                if (bestScore <= 0) return false;
+                rc.placeRatTrap(bestLoc);
+                println("!!!!!!!!!! placed rat trap MINI");
+                indicate("COMBAT STRAT: MINI TRAP");
+                return true;
+            }
+            case 5 -> {
+                MapLocation loc0 = new MapLocation(x  + -1, y  + -1);
+                int s0 = 0;
+                MapLocation loc1 = new MapLocation(x , y  + -1);
+                int s1 = 0;
+                MapLocation loc2 = new MapLocation(x  + -1, y );
+                int s2 = 0;
+                for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
+                    if (rinfo.getTeam() == team) continue;
+                    if (rinfo.getType() != UnitType.BABY_RAT) continue;
+                    MapLocation eloc = rinfo.getLocation();
+                    {
+                        if (eloc.distanceSquaredTo(loc0) <= 2) {
+                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc0));
+                            if (ang <= 3) s0 += 4 - ang;
+                        }
+                    }
+                    {
+                        if (eloc.distanceSquaredTo(loc1) <= 2) {
+                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc1));
+                            if (ang <= 3) s1 += 4 - ang;
+                        }
+                    }
+                    {
+                        if (eloc.distanceSquaredTo(loc2) <= 2) {
+                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc2));
+                            if (ang <= 3) s2 += 4 - ang;
+                        }
+                    }
+                }
+                int bestScore = -1;
+                MapLocation bestLoc = null;
+                if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
+                    bestScore = s0;
+                    bestLoc = loc0;
+                }
+                if (rc.canPlaceRatTrap(loc1) && s1 > bestScore) {
+                    bestScore = s1;
+                    bestLoc = loc1;
+                }
+                if (rc.canPlaceRatTrap(loc2) && s2 > bestScore) {
+                    bestScore = s2;
+                    bestLoc = loc2;
+                }
+                if (bestScore <= 0) return false;
+                rc.placeRatTrap(bestLoc);
+                println("!!!!!!!!!! placed rat trap MINI");
+                indicate("COMBAT STRAT: MINI TRAP");
+                return true;
+            }
+            case 6 -> {
+                MapLocation loc0 = new MapLocation(x  + -1, y );
+                int s0 = 0;
+                MapLocation loc1 = new MapLocation(x  + -1, y  + 1);
+                int s1 = 0;
+                MapLocation loc2 = new MapLocation(x  + -1, y  + -1);
+                int s2 = 0;
+                for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
+                    if (rinfo.getTeam() == team) continue;
+                    if (rinfo.getType() != UnitType.BABY_RAT) continue;
+                    MapLocation eloc = rinfo.getLocation();
+                    {
+                        if (eloc.distanceSquaredTo(loc0) <= 2) {
+                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc0));
+                            if (ang <= 3) s0 += 4 - ang;
+                        }
+                    }
+                    {
+                        if (eloc.distanceSquaredTo(loc1) <= 2) {
+                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc1));
+                            if (ang <= 3) s1 += 4 - ang;
+                        }
+                    }
+                    {
+                        if (eloc.distanceSquaredTo(loc2) <= 2) {
+                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc2));
+                            if (ang <= 3) s2 += 4 - ang;
+                        }
+                    }
+                }
+                int bestScore = -1;
+                MapLocation bestLoc = null;
+                if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
+                    bestScore = s0;
+                    bestLoc = loc0;
+                }
+                if (rc.canPlaceRatTrap(loc1) && s1 > bestScore) {
+                    bestScore = s1;
+                    bestLoc = loc1;
+                }
+                if (rc.canPlaceRatTrap(loc2) && s2 > bestScore) {
+                    bestScore = s2;
+                    bestLoc = loc2;
+                }
+                if (bestScore <= 0) return false;
+                rc.placeRatTrap(bestLoc);
+                println("!!!!!!!!!! placed rat trap MINI");
+                indicate("COMBAT STRAT: MINI TRAP");
+                return true;
+            }
+            case 7 -> {
+                MapLocation loc0 = new MapLocation(x  + -1, y  + 1);
+                int s0 = 0;
+                MapLocation loc1 = new MapLocation(x , y  + 1);
+                int s1 = 0;
+                MapLocation loc2 = new MapLocation(x  + -1, y );
+                int s2 = 0;
+                for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
+                    if (rinfo.getTeam() == team) continue;
+                    if (rinfo.getType() != UnitType.BABY_RAT) continue;
+                    MapLocation eloc = rinfo.getLocation();
+                    {
+                        if (eloc.distanceSquaredTo(loc0) <= 2) {
+                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc0));
+                            if (ang <= 3) s0 += 4 - ang;
+                        }
+                    }
+                    {
+                        if (eloc.distanceSquaredTo(loc1) <= 2) {
+                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc1));
+                            if (ang <= 3) s1 += 4 - ang;
+                        }
+                    }
+                    {
+                        if (eloc.distanceSquaredTo(loc2) <= 2) {
+                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc2));
+                            if (ang <= 3) s2 += 4 - ang;
+                        }
+                    }
+                }
+                int bestScore = -1;
+                MapLocation bestLoc = null;
+                if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
+                    bestScore = s0;
+                    bestLoc = loc0;
+                }
+                if (rc.canPlaceRatTrap(loc1) && s1 > bestScore) {
+                    bestScore = s1;
+                    bestLoc = loc1;
+                }
+                if (rc.canPlaceRatTrap(loc2) && s2 > bestScore) {
+                    bestScore = s2;
+                    bestLoc = loc2;
+                }
+                if (bestScore <= 0) return false;
+                rc.placeRatTrap(bestLoc);
+                println("!!!!!!!!!! placed rat trap MINI");
+                indicate("COMBAT STRAT: MINI TRAP");
+                return true;
+            }
+    
+            default -> { return false; }
+        }
+    }
+
     public static boolean run() throws GameActionException {
         if (!confirmCanPlace()) return false;
         computeWeights();
@@ -64,6 +474,7 @@ public final class TryTrap {
         assert(CombatStrategy.performMoves(bestMoveDir, bestFacing));
         rc.placeRatTrap(bestPlaceLoc);
         println("!!!!!!!!!! placed rat trap");
+        indicate("COMBAT STRAT: TRAP");
         return true;
     }
 
@@ -78,6 +489,7 @@ public final class TryTrap {
         return confirmedCanPlace;
     }
 
+    // has room for optimisation if reallllyyy needed
     private static void computeWeights() throws GameActionException {
         w_m2_2 = 0;
         w_m1_2 = 0;

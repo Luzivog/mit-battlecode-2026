@@ -21,7 +21,7 @@ public final class TryThrow {
     static Direction throwDir;
     static MapLocation newLoc;
     static MapLocation throwTarget;
-    static double damage;
+    static double score;
     static int rem;
 
     // return false if didnt throw -- some other process can figure out how to move
@@ -42,28 +42,26 @@ public final class TryThrow {
                 if (!rc.canSenseLocation(throwTarget)) continue; // make sure u know whats happening there
                 if (!rc.senseMapInfo(throwTarget).isPassable()) continue; // need empty
                 if (throwTarget != myLoc && rc.senseRobotAtLocation(throwTarget) != null) continue; // need empty
-                damage = -CombatStrategy.getDangerFor(moveDir, throwDir) / 5;
+                score = CombatStrategy.getCellScoreFor(moveDir, throwDir) + 10;
                 // for now, allow the throw path to go through friendly rats
                 for (rem = 7; rem >= 0; rem--) {
                     throwTarget = throwTarget.add(throwDir);
                     if (!rc.onTheMap(throwTarget)) {
-                        damage += rem;
+                        score += rem * 4;
                         break;
                     }
                     if (rc.canSenseLocation(throwTarget)) {
                         if (!rc.senseMapInfo(throwTarget).isPassable()) {
-                            damage += rem;
+                            score += rem * 4;
                             break;
                         }
                     } else {
                         break;
                     }
                 }
-                if (damage <= 0.1) continue;
-                // account for cell danger levels
-                damage -= CombatStrategy.basicDanger[moveDir.ordinal()] / 7;
-                if (damage > best) {
-                    best = damage;
+                if (score <= 0.1) continue;
+                if (score > best) {
+                    best = score;
                     md = moveDir;
                     td = throwDir;
                 }
@@ -74,6 +72,7 @@ public final class TryThrow {
         assert(CombatStrategy.performMoves(md, td));
         rc.throwRat();
         println("tried throwing rat");
+        indicate("COMBAT STRAT: THROW");
         return true;
     }
 }

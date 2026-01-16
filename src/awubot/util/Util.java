@@ -214,10 +214,8 @@ public class Util {
     }
 
     public static int angleDistance(Direction a, Direction b) {
-        int da = a.ordinal();
-        int db = b.ordinal();
-        int diff = abs(da - db);
-        println("dist " + a + " " + b + " " + min(diff, 8 - diff));
+        int diff = abs(a.ordinal() - b.ordinal());
+        // println("dist " + a + " " + b + " " + min(diff, 8 - diff));
         return min(diff, 8 - diff);
     }
 

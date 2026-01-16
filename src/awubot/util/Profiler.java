@@ -52,6 +52,24 @@ public class Profiler {
         if (res >= lwb) println(obj.toString() + ": " + res + (res >= 17500 ? " EXCEEDED" : ""));
     }
 
+    public static void pop_ind(Object obj) {
+        int res = Clock.getBytecodeNum() - stk.remove(stk.size() - 1);
+        if (res < 0) {
+            if (isRatKing) res += 20000;
+            else res += 17500;
+        }
+        indicate(obj.toString() + ": " + res + (res >= 17500 ? " EXCEEDED" : ""));
+    }
+
+    public static void pop_ind(Object obj, int lwb) {
+        int res = Clock.getBytecodeNum() - stk.remove(stk.size() - 1);
+        if (res < 0) {
+            if (isRatKing) res += 20000;
+            else res += 17500;
+        }
+        if (res >= lwb) indicate(obj.toString() + ": " + res + (res >= 17500 ? " EXCEEDED" : ""));
+    }
+
     public static void pause() {
         if(!running) return;
         int res = cnt - Clock.getBytecodesLeft() + (rc.getRoundNum() - turnNum) * 17500;
@@ -67,7 +85,7 @@ public class Profiler {
 
     public static void report_print(Object obj) {
         println(obj.toString() + ": " + (acc - 12) + (acc >= 17500 ? " EXCEEDED" : ""));
-        indicate(obj.toString() + ": " + (acc - 12) + (acc >= 17500 ? " EXCEEDED" : ""));
+        // indicate(obj.toString() + ": " + (acc - 12) + (acc >= 17500 ? " EXCEEDED" : ""));
         acc = 0;
     }
 }

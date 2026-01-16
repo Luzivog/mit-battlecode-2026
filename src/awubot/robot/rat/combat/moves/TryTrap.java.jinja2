@@ -110,6 +110,66 @@ public final class TryTrap {
     static double best;
     static MapLocation curMoveLoc;
 
+    public static boolean miniRun() throws GameActionException {
+        if (!rc.isActionReady()) return false;
+        int x = myLocX;
+        int y = myLocY;
+        switch (myDir.ordinal()) {
+            {% for ord in range(8) %}
+            case {{ ord }} -> {
+                {% set cand = related_map[ord] %}
+                {% for d in cand %}
+                MapLocation loc{{ loop.index0 }} = new MapLocation(x {% if dir_dx[d] %} + {{ dir_dx[d] }}{% endif %}, y {% if dir_dy[d] %} + {{ dir_dy[d] }}{% endif %});
+                int s{{ loop.index0 }} = 0;
+                {% endfor %}
+                for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
+                    if (rinfo.getTeam() == team) continue;
+                    if (rinfo.getType() != UnitType.BABY_RAT) continue;
+                    MapLocation eloc = rinfo.getLocation();
+                    {
+                        if (eloc.distanceSquaredTo(loc0) <= 2) {
+                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc0));
+                            if (ang <= 3) s0 += 4 - ang;
+                        }
+                    }
+                    {
+                        if (eloc.distanceSquaredTo(loc1) <= 2) {
+                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc1));
+                            if (ang <= 3) s1 += 4 - ang;
+                        }
+                    }
+                    {
+                        if (eloc.distanceSquaredTo(loc2) <= 2) {
+                            int ang = angleDistance(rinfo.getDirection(), eloc.directionTo(loc2));
+                            if (ang <= 3) s2 += 4 - ang;
+                        }
+                    }
+                }
+                int bestScore = -1;
+                MapLocation bestLoc = null;
+                if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
+                    bestScore = s0;
+                    bestLoc = loc0;
+                }
+                if (rc.canPlaceRatTrap(loc1) && s1 > bestScore) {
+                    bestScore = s1;
+                    bestLoc = loc1;
+                }
+                if (rc.canPlaceRatTrap(loc2) && s2 > bestScore) {
+                    bestScore = s2;
+                    bestLoc = loc2;
+                }
+                if (bestScore <= 0) return false;
+                rc.placeRatTrap(bestLoc);
+                println("!!!!!!!!!! placed rat trap MINI");
+                indicate("COMBAT STRAT: MINI TRAP");
+                return true;
+            }
+            {% endfor %}    
+            default -> { return false; }
+        }
+    }
+
     public static boolean run() throws GameActionException {
         if (!confirmCanPlace()) return false;
         computeWeights();
@@ -119,6 +179,7 @@ public final class TryTrap {
         assert(CombatStrategy.performMoves(bestMoveDir, bestFacing));
         rc.placeRatTrap(bestPlaceLoc);
         println("!!!!!!!!!! placed rat trap");
+        indicate("COMBAT STRAT: TRAP");
         return true;
     }
 

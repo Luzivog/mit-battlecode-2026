@@ -5,6 +5,7 @@ import battlecode.common.GameActionException;
 import battlecode.common.MapInfo;
 import battlecode.common.MapLocation;
 import battlecode.common.RobotController;
+import battlecode.common.RobotInfo;
 import battlecode.common.Team;
 import battlecode.common.UnitType;
 import static awubot.util.Util.*;
@@ -43,7 +44,7 @@ public class Game {
     public static boolean isRatKing;
     public static int kingId;
 
-    public static void init(RobotController rc) {
+    public static void init(RobotController rc) throws GameActionException {
         Game.rc = rc;
         mapWidth = rc.getMapWidth();
         mapHeight = rc.getMapHeight();
@@ -56,20 +57,29 @@ public class Game {
         team = rc.getTeam();
         spawn = myLoc;
 
-        // Direction dir = Direction.NORTHEAST;
-        // int[] arr = new int[2];
+        StringBuilder sb = new StringBuilder();
+        Direction moveDir = Direction.NORTH;
+        RobotInfo target = rc.senseRobotAtLocation(myLoc);
 
-        // boolean a = false, b = false;
+        // Profiler.begin();
+        // String key = "=" + target.getID() + "+" + moveDir.ordinal() + "|";
+        // int i = sb.indexOf(key);
+        // double res;
+        // if (i == -1) res = 0;
+        // else res = ((int) sb.charAt(i - 1)) / 100.0;
+        // Profiler.end_print("test");
+        // rc.resign();
         // Profiler.begin();
         // if (a || b);
         // Profiler.end_print("combined");
         
+        // MapLocation a = new MapLocation(10, 20);
+        // MapLocation b = new MapLocation(20, 30);
         // Profiler.begin();
-        // if (a);
-        // if (b);
-        // Profiler.end_print("separate");
-
+        // Direction d = a.directionTo(b);
+        // Profiler.end_print("test");
         // rc.resign();
+
         // Profiler.begin();
         // int x = arr[dir.ordinal()];
         // Profiler.end_print("c1");
@@ -131,25 +141,25 @@ public class Game {
 
     public static void postTick() throws GameActionException {
 
-        Profiler.begin();
-        MapInfo info = rc.senseMapInfo(myLoc);
-        Profiler.end_print("sense");
+        // Profiler.begin();
+        // MapInfo info = rc.senseMapInfo(myLoc);
+        // Profiler.end_print("sense");
 
-        Profiler.begin();
-        boolean asdf = rc.senseMapInfo(new MapLocation(myLocX, myLocY)).isPassable();
-        Profiler.end_print("passable");
+        // Profiler.begin();
+        // boolean asdf = rc.senseMapInfo(new MapLocation(myLocX, myLocY)).isPassable();
+        // Profiler.end_print("passable");
 
-        Profiler.begin();
-        boolean fdas = CellTracker.isPassable(myLocX, myLocY);
-        Profiler.end_print("celltracker");
+        // Profiler.begin();
+        // boolean fdas = CellTracker.isPassable(myLocX, myLocY);
+        // Profiler.end_print("celltracker");
 
-        StringBuilder sb = new StringBuilder();
-        sb.repeat('1', 1000);
-        Profiler.begin();
-        int ans = sb.charAt(myLocX * 60 + myLocY);
-        Profiler.end_print("thoery");
+        // StringBuilder sb = new StringBuilder();
+        // sb.repeat('1', 1000);
+        // Profiler.begin();
+        // int ans = sb.charAt(myLocX * 60 + myLocY);
+        // Profiler.end_print("thoery");
 
-        rc.resign();
+        // rc.resign();
 
         // if (!isRatKing) println("index: " + myIndex);
         // if (time > 100) rc.resign();

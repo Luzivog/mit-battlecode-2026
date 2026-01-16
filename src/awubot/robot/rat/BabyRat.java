@@ -2,23 +2,29 @@ package awubot.robot.rat;
 
 import battlecode.common.*;
 import awubot.CellTracker;
+import awubot.RobotTracker;
 import awubot.comms.GlobalArray;
+import awubot.comms.Squeaker;
 import awubot.robot.Strategy;
 import awubot.robot.rat.CatLureStrategy2;
 import awubot.robot.rat.MinerStrategy;
+import awubot.robot.rat.combat.CombatStrategy;
 import awubot.util.Rng;
 import awubot.util.Util;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
+import awubot.util.Profiler;
 
 public class BabyRat {
     private static Direction lastGlance;
     public static boolean shouldGlance;
     public static Strategy primaryStrategy;
+    public static CombatStrategy combatStrategy;
 
     public static void init() throws GameActionException {
         // GlobalArray.readSpawnStrategy();
         primaryStrategy = new MinerStrategy();
+        combatStrategy = new CombatStrategy();
     }
 
     public static void run() throws GameActionException {
@@ -28,6 +34,13 @@ public class BabyRat {
         tryPickUpCheese();
         tryTransferCheese();
 
+        indicate("before combat strat: " + Clock.getBytecodeNum());
+        if(combatStrategy.runTick()) return;
+
+        // all nonessential systems go here, only run if we are not in combat
+        RobotTracker.writeHistoricalKingLocs();
+        GlobalArray.preTick();
+        Squeaker.preTick();
         CellTracker.storeVisibleCells();
         CellTracker.checkSymmetry();
 
@@ -56,6 +69,7 @@ public class BabyRat {
         }
     }
 
+    // IF TLE: unroll
     public static void tryPickUpCheese() throws GameActionException {
         var dirs = relatedDirections(myDir);
         for(var dir : dirs) {

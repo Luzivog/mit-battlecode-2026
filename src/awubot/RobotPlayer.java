@@ -28,8 +28,6 @@ public class RobotPlayer {
                 Util.preTick();
                 Rng.init();
                 RobotTracker.reset();
-                GlobalArray.preTick();
-                Squeaker.preTick();
 
                 if (!hasInitialisedRobot) {
                     if(isRatKing) {

@@ -3,7 +3,6 @@ package awubot.robot.rat;
 import battlecode.common.*;
 import awubot.CellTracker;
 import awubot.robot.Strategy;
-import awubot.robot.rat.combat.CombatStrategy;
 import awubot.comms.GlobalArray;
 import awubot.util.Rng;
 import static awubot.Game.*;
@@ -14,16 +13,13 @@ import java.util.List;
 
 public class MinerStrategy extends Strategy {
     private static final int CRITICAL_HP = 20;
-    private static final int SCALE = 10;
 
-    private CombatStrategy combatStrategy;
     private FormationStrategy formationStrategy;
     private GoHomeStrategy goHomeStrategy;
     private CheeseStrategy cheeseStrategy;
     private TraverseStrategy goSomewhereStrategy; // either go to a mine or explore; TODO: make the mine strategy smarter
 
     public MinerStrategy() {
-        combatStrategy = new CombatStrategy();
         formationStrategy = new FormationStrategy();
         goHomeStrategy = new GoHomeStrategy();
         cheeseStrategy = new CheeseStrategy();
@@ -32,14 +28,13 @@ public class MinerStrategy extends Strategy {
     @Override
     public boolean runTick() throws GameActionException {
         indicate("sym " + CellTracker.hsym + " " + CellTracker.vsym + " " + CellTracker.rsym);
-        if (rc.getRawCheese() == 0) {
+        if(tryStrategy(formationStrategy)) return true;
+        if(rc.getRawCheese() == 0) {
             goHomeStrategy = null;
         } else if(goHomeStrategy == null && shouldGoHome()) {
             goHomeStrategy = new GoHomeStrategy();
             cheeseStrategy.cheeseTarget = null;
         }
-        if(tryStrategy(combatStrategy)) return true;
-        if(tryStrategy(formationStrategy)) return true;
         if(tryStrategy(goHomeStrategy)) return true;
         if(tryStrategy(cheeseStrategy)) return true;
 

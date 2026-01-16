@@ -90,17 +90,12 @@ public class GlobalArray {
                     writeSharedArray(i, 1023);
                 }
             }
-        }
-        if (isRatKing) {
             for (int x : strategyQueue) _writeSpawnStrategy(x);
             strategyQueue.clear();
         }
         checkSymmetry();
         readCheeseMines();
         findNearestRatKing();
-        if (!isRatKing) {
-
-        }
     }
 
     public static void postTick() throws GameActionException {

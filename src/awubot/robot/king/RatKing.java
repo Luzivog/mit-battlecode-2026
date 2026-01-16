@@ -3,6 +3,10 @@ package awubot.robot.king;
 import battlecode.common.*;
 import awubot.robot.Strategy;
 import awubot.CellTracker;
+import awubot.RobotTracker;
+import awubot.comms.GlobalArray;
+import awubot.comms.Squeaker;
+
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 
@@ -15,6 +19,10 @@ public class RatKing {
 
     public static void run() throws GameActionException {
         indicate(rc.getGlobalCheese() + " cheese, " + rc.getHealth() + " HP");
+
+        RobotTracker.writeHistoricalKingLocs();
+        GlobalArray.preTick();
+        Squeaker.preTick();
         CellTracker.storeVisibleCellsKing();
 
         tryPickUpCheese();

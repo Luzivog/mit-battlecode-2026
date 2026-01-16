@@ -18,10 +18,10 @@ public class RobotTracker {
         }
     }
 
+    // IF TLE: optimise this
     public static void reset() throws GameActionException {
         allyCount = 0;
         allySet = new FastMapLocationSet();
-        kingSet = new FastMapLocationSet();
         pastKingCounts[time % 5] = 0;
         for(var robot : rc.senseNearbyRobots(-1, team)) {
             var loc = robot.location;
@@ -31,7 +31,10 @@ public class RobotTracker {
                 pastKingLocs[time % 5][pastKingCounts[time % 5]++] = loc;
             }
         }
+    }
+    public static void writeHistoricalKingLocs() {
         // hack to remember where kings are
+        kingSet = new FastMapLocationSet();
         for(int i = 0; i < 5; i++) {
             for(int j = 0; j < pastKingCounts[i]; j++) {
                 var loc = pastKingLocs[i][j];
@@ -84,6 +87,5 @@ public class RobotTracker {
                 }
             }
         }
-        indicate("allyCount " + allyCount);
     }
 }

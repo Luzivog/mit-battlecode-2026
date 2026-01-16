@@ -173,15 +173,13 @@ public class CombatStrategy extends Strategy {
         Profiler.push();
         boolean tryFightRes = tryFight();
         Profiler.pop("try fight", 1000);
-        assert(tryFightRes);
-        {# if (tryFightRes) return true; #}
-        {# indicate("COMBAT STRAT: NONE"); #}
+        if (tryFightRes) {
+            miniTick();
+            return true;
+        }
+        indicate("COMBAT STRAT: NONE");
         // TODO: deal with cats (maybe naman's job?)
-        // TODO: after moving, quickly run through possible attacks in case you see a new enemy
-        boolean miniRes = miniTick();
-        {# if (miniRes) return true; #}
-        return true;
-        {# return false; #}
+        return false;
     }
 
     public boolean miniTick() throws GameActionException {
@@ -292,16 +290,22 @@ public class CombatStrategy extends Strategy {
     }
 
     public static void computeCellScores() throws GameActionException {
-        Profiler.push();
+        {# Profiler.push(); #}
         sb = new StringBuilder();
         cellScore = new double[9];
         for (RobotInfo info : rc.senseNearbyRobots(9)) { // shrink radius to optimise
             if (info.getTeam() == rc.getTeam()) continue;
-            for (Direction moveDir : allDirections) {
-                cellScore[moveDir.ordinal()] += getCellScoreForEnemy(info, moveDir);
-            }
+            cellScore[0] += getCellScoreForEnemy(info, Direction.NORTH);
+            cellScore[1] += getCellScoreForEnemy(info, Direction.NORTHEAST);
+            cellScore[2] += getCellScoreForEnemy(info, Direction.EAST);
+            cellScore[3] += getCellScoreForEnemy(info, Direction.SOUTHEAST);
+            cellScore[4] += getCellScoreForEnemy(info, Direction.SOUTH);
+            cellScore[5] += getCellScoreForEnemy(info, Direction.SOUTHWEST);
+            cellScore[6] += getCellScoreForEnemy(info, Direction.WEST);
+            cellScore[7] += getCellScoreForEnemy(info, Direction.NORTHWEST);
+            cellScore[8] += getCellScoreForEnemy(info, Direction.CENTER);
         }
-        Profiler.pop("compute cell scores");
+        {# Profiler.pop("compute cell scores"); #}
     }
 
     public static double getCellScoreFor(Direction moveDir, Direction facing, RobotInfo target) throws GameActionException {
@@ -333,8 +337,10 @@ public class CombatStrategy extends Strategy {
         } else {
             double base = 0;
             // TODO: optimise with switch table
+            Profiler.begin();
             boolean canCurrentlySense = canSense(enemyLoc, myLoc, info.getDirection());
             boolean canSenseAfterMove = canSense(enemyLoc, to, info.getDirection());
+            Profiler.end_print("can see");
 
             if (canCurrentlySense) {
                 if (!canSenseAfterMove) {

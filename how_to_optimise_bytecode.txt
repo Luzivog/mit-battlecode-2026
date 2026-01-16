@@ -1,0 +1,22 @@
+top 10 six tips for optimising bytecode for ChatGPT to read and not screw everything up
+
+1. compute as MUCH as you can STATICALLY
+    eg. looping through a list of directions -> copy the body 8 times, and replace the loop variable with a direction literal
+
+2. for expressions with variables that cover a small range of possible inputs, statically precompute all inputs and create a large switch
+    eg. checking if a robot at some location and facing direction can see you. you can switch on dx, dy and facing to answer this quickly
+
+3. switch statements on enums is bad -- use .ordinal() and switch on ints instead
+
+4. creating temporary variables for expressions used once is a waste of bytecode -- just inline it
+
+5. expresisons that appear a lot can be factored into a variable to save bytecode
+
+6. functions cant get too long -- breaking up a large unrolled function into smaller functions might incur overhead of passing parameters. hence, put all the "locals" as globals to reduce cost of function calls
+    eg. make switch statements calls a unique function instead, and each function contains the body of what should have been in the switch
+
+7. using jinja to write unrolled code, and inside jinja code write natural code to precompute -- dont get fancy and "unroll" the "unrolling" code
+
+8. again, EVERYTHING that can be figured out 
+
+9. EVERY EXPRESSION THAT CAN BE EVALUATED STATICALLY, DO SO

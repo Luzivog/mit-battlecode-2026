@@ -53,6 +53,8 @@ public class Util {
         indicatorString = "";
     }
 
+    
+
     public static boolean canSense(MapLocation s, MapLocation t, Direction dir) {
         int dx = t.x - s.x;
         int dy = t.y - s.y;

@@ -19,6 +19,7 @@ import awubot.util.Profiler;
 
 
 
+
 public final class TryTrap {
     private TryTrap() {
     }
@@ -54,7 +55,6 @@ public final class TryTrap {
     static Direction bestFacing;
     static double best;
     static MapLocation curMoveLoc;
-
 
     public static boolean miniRun() throws GameActionException {
         if (!rc.isActionReady()) return false;
@@ -93,15 +93,15 @@ public final class TryTrap {
                 }
                 int bestScore = -1;
                 MapLocation bestLoc = null;
-                if (rc.canPlaceRatTrap(loc0) && !hasAdjacentTrap(loc0) && s0 > bestScore) {
+                if (rc.canPlaceRatTrap(loc0) && !hasAdjacentTrap_0_1() && s0 > bestScore) {
                     bestScore = s0;
                     bestLoc = loc0;
                 }
-                if (rc.canPlaceRatTrap(loc1) && !hasAdjacentTrap(loc1) && s1 > bestScore) {
+                if (rc.canPlaceRatTrap(loc1) && !hasAdjacentTrap_1_1() && s1 > bestScore) {
                     bestScore = s1;
                     bestLoc = loc1;
                 }
-                if (rc.canPlaceRatTrap(loc2) && !hasAdjacentTrap(loc2) && s2 > bestScore) {
+                if (rc.canPlaceRatTrap(loc2) && !hasAdjacentTrap_m1_1() && s2 > bestScore) {
                     bestScore = s2;
                     bestLoc = loc2;
                 }
@@ -143,15 +143,15 @@ public final class TryTrap {
                 }
                 int bestScore = -1;
                 MapLocation bestLoc = null;
-                if (rc.canPlaceRatTrap(loc0) && !hasAdjacentTrap(loc0) && s0 > bestScore) {
+                if (rc.canPlaceRatTrap(loc0) && !hasAdjacentTrap_1_1() && s0 > bestScore) {
                     bestScore = s0;
                     bestLoc = loc0;
                 }
-                if (rc.canPlaceRatTrap(loc1) && !hasAdjacentTrap(loc1) && s1 > bestScore) {
+                if (rc.canPlaceRatTrap(loc1) && !hasAdjacentTrap_0_1() && s1 > bestScore) {
                     bestScore = s1;
                     bestLoc = loc1;
                 }
-                if (rc.canPlaceRatTrap(loc2) && !hasAdjacentTrap(loc2) && s2 > bestScore) {
+                if (rc.canPlaceRatTrap(loc2) && !hasAdjacentTrap_1_0() && s2 > bestScore) {
                     bestScore = s2;
                     bestLoc = loc2;
                 }
@@ -193,15 +193,15 @@ public final class TryTrap {
                 }
                 int bestScore = -1;
                 MapLocation bestLoc = null;
-                if (rc.canPlaceRatTrap(loc0) && !hasAdjacentTrap(loc0) && s0 > bestScore) {
+                if (rc.canPlaceRatTrap(loc0) && !hasAdjacentTrap_1_0() && s0 > bestScore) {
                     bestScore = s0;
                     bestLoc = loc0;
                 }
-                if (rc.canPlaceRatTrap(loc1) && !hasAdjacentTrap(loc1) && s1 > bestScore) {
+                if (rc.canPlaceRatTrap(loc1) && !hasAdjacentTrap_1_1() && s1 > bestScore) {
                     bestScore = s1;
                     bestLoc = loc1;
                 }
-                if (rc.canPlaceRatTrap(loc2) && !hasAdjacentTrap(loc2) && s2 > bestScore) {
+                if (rc.canPlaceRatTrap(loc2) && !hasAdjacentTrap_1_m1() && s2 > bestScore) {
                     bestScore = s2;
                     bestLoc = loc2;
                 }
@@ -243,15 +243,15 @@ public final class TryTrap {
                 }
                 int bestScore = -1;
                 MapLocation bestLoc = null;
-                if (rc.canPlaceRatTrap(loc0) && !hasAdjacentTrap(loc0) && s0 > bestScore) {
+                if (rc.canPlaceRatTrap(loc0) && !hasAdjacentTrap_1_m1() && s0 > bestScore) {
                     bestScore = s0;
                     bestLoc = loc0;
                 }
-                if (rc.canPlaceRatTrap(loc1) && !hasAdjacentTrap(loc1) && s1 > bestScore) {
+                if (rc.canPlaceRatTrap(loc1) && !hasAdjacentTrap_0_m1() && s1 > bestScore) {
                     bestScore = s1;
                     bestLoc = loc1;
                 }
-                if (rc.canPlaceRatTrap(loc2) && !hasAdjacentTrap(loc2) && s2 > bestScore) {
+                if (rc.canPlaceRatTrap(loc2) && !hasAdjacentTrap_1_0() && s2 > bestScore) {
                     bestScore = s2;
                     bestLoc = loc2;
                 }
@@ -293,15 +293,15 @@ public final class TryTrap {
                 }
                 int bestScore = -1;
                 MapLocation bestLoc = null;
-                if (rc.canPlaceRatTrap(loc0) && !hasAdjacentTrap(loc0) && s0 > bestScore) {
+                if (rc.canPlaceRatTrap(loc0) && !hasAdjacentTrap_0_m1() && s0 > bestScore) {
                     bestScore = s0;
                     bestLoc = loc0;
                 }
-                if (rc.canPlaceRatTrap(loc1) && !hasAdjacentTrap(loc1) && s1 > bestScore) {
+                if (rc.canPlaceRatTrap(loc1) && !hasAdjacentTrap_1_m1() && s1 > bestScore) {
                     bestScore = s1;
                     bestLoc = loc1;
                 }
-                if (rc.canPlaceRatTrap(loc2) && !hasAdjacentTrap(loc2) && s2 > bestScore) {
+                if (rc.canPlaceRatTrap(loc2) && !hasAdjacentTrap_m1_m1() && s2 > bestScore) {
                     bestScore = s2;
                     bestLoc = loc2;
                 }
@@ -343,15 +343,15 @@ public final class TryTrap {
                 }
                 int bestScore = -1;
                 MapLocation bestLoc = null;
-                if (rc.canPlaceRatTrap(loc0) && !hasAdjacentTrap(loc0) && s0 > bestScore) {
+                if (rc.canPlaceRatTrap(loc0) && !hasAdjacentTrap_m1_m1() && s0 > bestScore) {
                     bestScore = s0;
                     bestLoc = loc0;
                 }
-                if (rc.canPlaceRatTrap(loc1) && !hasAdjacentTrap(loc1) && s1 > bestScore) {
+                if (rc.canPlaceRatTrap(loc1) && !hasAdjacentTrap_0_m1() && s1 > bestScore) {
                     bestScore = s1;
                     bestLoc = loc1;
                 }
-                if (rc.canPlaceRatTrap(loc2) && !hasAdjacentTrap(loc2) && s2 > bestScore) {
+                if (rc.canPlaceRatTrap(loc2) && !hasAdjacentTrap_m1_0() && s2 > bestScore) {
                     bestScore = s2;
                     bestLoc = loc2;
                 }
@@ -393,15 +393,15 @@ public final class TryTrap {
                 }
                 int bestScore = -1;
                 MapLocation bestLoc = null;
-                if (rc.canPlaceRatTrap(loc0) && !hasAdjacentTrap(loc0) && s0 > bestScore) {
+                if (rc.canPlaceRatTrap(loc0) && !hasAdjacentTrap_m1_0() && s0 > bestScore) {
                     bestScore = s0;
                     bestLoc = loc0;
                 }
-                if (rc.canPlaceRatTrap(loc1) && !hasAdjacentTrap(loc1) && s1 > bestScore) {
+                if (rc.canPlaceRatTrap(loc1) && !hasAdjacentTrap_m1_1() && s1 > bestScore) {
                     bestScore = s1;
                     bestLoc = loc1;
                 }
-                if (rc.canPlaceRatTrap(loc2) && !hasAdjacentTrap(loc2) && s2 > bestScore) {
+                if (rc.canPlaceRatTrap(loc2) && !hasAdjacentTrap_m1_m1() && s2 > bestScore) {
                     bestScore = s2;
                     bestLoc = loc2;
                 }
@@ -443,15 +443,15 @@ public final class TryTrap {
                 }
                 int bestScore = -1;
                 MapLocation bestLoc = null;
-                if (rc.canPlaceRatTrap(loc0) && !hasAdjacentTrap(loc0) && s0 > bestScore) {
+                if (rc.canPlaceRatTrap(loc0) && !hasAdjacentTrap_m1_1() && s0 > bestScore) {
                     bestScore = s0;
                     bestLoc = loc0;
                 }
-                if (rc.canPlaceRatTrap(loc1) && !hasAdjacentTrap(loc1) && s1 > bestScore) {
+                if (rc.canPlaceRatTrap(loc1) && !hasAdjacentTrap_0_1() && s1 > bestScore) {
                     bestScore = s1;
                     bestLoc = loc1;
                 }
-                if (rc.canPlaceRatTrap(loc2) && !hasAdjacentTrap(loc2) && s2 > bestScore) {
+                if (rc.canPlaceRatTrap(loc2) && !hasAdjacentTrap_m1_0() && s2 > bestScore) {
                     bestScore = s2;
                     bestLoc = loc2;
                 }
@@ -467,7 +467,6 @@ public final class TryTrap {
     }
 
     public static boolean run() throws GameActionException {
-
         if (!confirmCanPlace()) return false;
         computeWeights();
         resetBest();
@@ -524,7 +523,7 @@ public final class TryTrap {
                 w_m2_2 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_m2_2()) {
                     w_m2_2 = -1000;
                 } else {
                     w_m2_2 = 0;
@@ -537,7 +536,7 @@ public final class TryTrap {
                 w_m1_2 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_m1_2()) {
                     w_m1_2 = -1000;
                 } else {
                     w_m1_2 = 0;
@@ -550,7 +549,7 @@ public final class TryTrap {
                 w_0_2 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_0_2()) {
                     w_0_2 = -1000;
                 } else {
                     w_0_2 = 0;
@@ -563,7 +562,7 @@ public final class TryTrap {
                 w_1_2 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_1_2()) {
                     w_1_2 = -1000;
                 } else {
                     w_1_2 = 0;
@@ -576,7 +575,7 @@ public final class TryTrap {
                 w_2_2 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_2_2()) {
                     w_2_2 = -1000;
                 } else {
                     w_2_2 = 0;
@@ -589,7 +588,7 @@ public final class TryTrap {
                 w_m2_1 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_m2_1()) {
                     w_m2_1 = -1000;
                 } else {
                     w_m2_1 = 0;
@@ -602,7 +601,7 @@ public final class TryTrap {
                 w_m1_1 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_m1_1()) {
                     w_m1_1 = -1000;
                 } else {
                     w_m1_1 = 0;
@@ -615,7 +614,7 @@ public final class TryTrap {
                 w_0_1 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_0_1()) {
                     w_0_1 = -1000;
                 } else {
                     w_0_1 = 0;
@@ -628,7 +627,7 @@ public final class TryTrap {
                 w_1_1 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_1_1()) {
                     w_1_1 = -1000;
                 } else {
                     w_1_1 = 0;
@@ -641,7 +640,7 @@ public final class TryTrap {
                 w_2_1 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_2_1()) {
                     w_2_1 = -1000;
                 } else {
                     w_2_1 = 0;
@@ -654,7 +653,7 @@ public final class TryTrap {
                 w_m2_0 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_m2_0()) {
                     w_m2_0 = -1000;
                 } else {
                     w_m2_0 = 0;
@@ -667,7 +666,7 @@ public final class TryTrap {
                 w_m1_0 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_m1_0()) {
                     w_m1_0 = -1000;
                 } else {
                     w_m1_0 = 0;
@@ -680,7 +679,7 @@ public final class TryTrap {
                 w_0_0 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || hasAdjacentTrap_0_0()) {
                     w_0_0 = -1000;
                 } else {
                     w_0_0 = 0;
@@ -693,7 +692,7 @@ public final class TryTrap {
                 w_1_0 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_1_0()) {
                     w_1_0 = -1000;
                 } else {
                     w_1_0 = 0;
@@ -706,7 +705,7 @@ public final class TryTrap {
                 w_2_0 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_2_0()) {
                     w_2_0 = -1000;
                 } else {
                     w_2_0 = 0;
@@ -719,7 +718,7 @@ public final class TryTrap {
                 w_m2_m1 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_m2_m1()) {
                     w_m2_m1 = -1000;
                 } else {
                     w_m2_m1 = 0;
@@ -732,7 +731,7 @@ public final class TryTrap {
                 w_m1_m1 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_m1_m1()) {
                     w_m1_m1 = -1000;
                 } else {
                     w_m1_m1 = 0;
@@ -745,7 +744,7 @@ public final class TryTrap {
                 w_0_m1 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_0_m1()) {
                     w_0_m1 = -1000;
                 } else {
                     w_0_m1 = 0;
@@ -758,7 +757,7 @@ public final class TryTrap {
                 w_1_m1 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_1_m1()) {
                     w_1_m1 = -1000;
                 } else {
                     w_1_m1 = 0;
@@ -771,7 +770,7 @@ public final class TryTrap {
                 w_2_m1 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_2_m1()) {
                     w_2_m1 = -1000;
                 } else {
                     w_2_m1 = 0;
@@ -784,7 +783,7 @@ public final class TryTrap {
                 w_m2_m2 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_m2_m2()) {
                     w_m2_m2 = -1000;
                 } else {
                     w_m2_m2 = 0;
@@ -797,7 +796,7 @@ public final class TryTrap {
                 w_m1_m2 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_m1_m2()) {
                     w_m1_m2 = -1000;
                 } else {
                     w_m1_m2 = 0;
@@ -810,7 +809,7 @@ public final class TryTrap {
                 w_0_m2 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_0_m2()) {
                     w_0_m2 = -1000;
                 } else {
                     w_0_m2 = 0;
@@ -823,7 +822,7 @@ public final class TryTrap {
                 w_1_m2 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_1_m2()) {
                     w_1_m2 = -1000;
                 } else {
                     w_1_m2 = 0;
@@ -836,7 +835,7 @@ public final class TryTrap {
                 w_2_m2 = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap(loc)) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null || hasAdjacentTrap_2_m2()) {
                     w_2_m2 = -1000;
                 } else {
                     w_2_m2 = 0;
@@ -1934,13 +1933,6 @@ w_2_2 += 2;                                }
                 default -> { }
             }
         }
-    }
-
-    private static boolean hasAdjacentTrap(MapLocation loc) throws GameActionException {
-        for (MapInfo info : rc.senseNearbyMapInfos(loc, 2)) {
-            if (info.getTrap() != TrapType.NONE) return true;
-        }
-        return false;
     }
 
     private static void resetBest() {
@@ -3131,5 +3123,556 @@ private static void placeSWWNW() {
                 bestFacing = Direction.WEST;
             }
         }
+    }
+
+    private static boolean hasAdjacentTrap_m2_2() throws GameActionException {
+        MapLocation adj;
+        adj = new MapLocation(myLocX  + -3, myLocY  + 3);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -2, myLocY  + 3);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY  + 3);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -3, myLocY  + 2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -2, myLocY  + 2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY  + 2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -3, myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -2, myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        return false;
+    }
+    private static boolean hasAdjacentTrap_m1_2() throws GameActionException {
+        MapLocation adj;
+        adj = new MapLocation(myLocX  + -2, myLocY  + 3);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY  + 3);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY  + 3);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -2, myLocY  + 2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY  + 2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY  + 2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -2, myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        return false;
+    }
+    private static boolean hasAdjacentTrap_0_2() throws GameActionException {
+        MapLocation adj;
+        adj = new MapLocation(myLocX  + -1, myLocY  + 3);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY  + 3);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY  + 3);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY  + 2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY  + 2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY  + 2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        return false;
+    }
+    private static boolean hasAdjacentTrap_1_2() throws GameActionException {
+        MapLocation adj;
+        adj = new MapLocation(myLocX , myLocY  + 3);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY  + 3);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 2, myLocY  + 3);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY  + 2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY  + 2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 2, myLocY  + 2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 2, myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        return false;
+    }
+    private static boolean hasAdjacentTrap_2_2() throws GameActionException {
+        MapLocation adj;
+        adj = new MapLocation(myLocX  + 1, myLocY  + 3);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 2, myLocY  + 3);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 3, myLocY  + 3);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY  + 2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 2, myLocY  + 2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 3, myLocY  + 2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 2, myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 3, myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        return false;
+    }
+    private static boolean hasAdjacentTrap_m2_1() throws GameActionException {
+        MapLocation adj;
+        adj = new MapLocation(myLocX  + -3, myLocY  + 2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -2, myLocY  + 2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY  + 2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -3, myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -2, myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -3, myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -2, myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        return false;
+    }
+    private static boolean hasAdjacentTrap_m1_1() throws GameActionException {
+        MapLocation adj;
+        adj = new MapLocation(myLocX  + -2, myLocY  + 2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY  + 2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY  + 2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -2, myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -2, myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        return false;
+    }
+    private static boolean hasAdjacentTrap_0_1() throws GameActionException {
+        MapLocation adj;
+        adj = new MapLocation(myLocX  + -1, myLocY  + 2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY  + 2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY  + 2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        return false;
+    }
+    private static boolean hasAdjacentTrap_1_1() throws GameActionException {
+        MapLocation adj;
+        adj = new MapLocation(myLocX , myLocY  + 2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY  + 2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 2, myLocY  + 2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 2, myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 2, myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        return false;
+    }
+    private static boolean hasAdjacentTrap_2_1() throws GameActionException {
+        MapLocation adj;
+        adj = new MapLocation(myLocX  + 1, myLocY  + 2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 2, myLocY  + 2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 3, myLocY  + 2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 2, myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 3, myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 2, myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 3, myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        return false;
+    }
+    private static boolean hasAdjacentTrap_m2_0() throws GameActionException {
+        MapLocation adj;
+        adj = new MapLocation(myLocX  + -3, myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -2, myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -3, myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -2, myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -3, myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -2, myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        return false;
+    }
+    private static boolean hasAdjacentTrap_m1_0() throws GameActionException {
+        MapLocation adj;
+        adj = new MapLocation(myLocX  + -2, myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -2, myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -2, myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        return false;
+    }
+    private static boolean hasAdjacentTrap_0_0() throws GameActionException {
+        MapLocation adj;
+        adj = new MapLocation(myLocX  + -1, myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        return false;
+    }
+    private static boolean hasAdjacentTrap_1_0() throws GameActionException {
+        MapLocation adj;
+        adj = new MapLocation(myLocX , myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 2, myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 2, myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 2, myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        return false;
+    }
+    private static boolean hasAdjacentTrap_2_0() throws GameActionException {
+        MapLocation adj;
+        adj = new MapLocation(myLocX  + 1, myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 2, myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 3, myLocY  + 1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 2, myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 3, myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 2, myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 3, myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        return false;
+    }
+    private static boolean hasAdjacentTrap_m2_m1() throws GameActionException {
+        MapLocation adj;
+        adj = new MapLocation(myLocX  + -3, myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -2, myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -3, myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -2, myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -3, myLocY  + -2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -2, myLocY  + -2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY  + -2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        return false;
+    }
+    private static boolean hasAdjacentTrap_m1_m1() throws GameActionException {
+        MapLocation adj;
+        adj = new MapLocation(myLocX  + -2, myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -2, myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -2, myLocY  + -2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY  + -2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY  + -2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        return false;
+    }
+    private static boolean hasAdjacentTrap_0_m1() throws GameActionException {
+        MapLocation adj;
+        adj = new MapLocation(myLocX  + -1, myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY  + -2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY  + -2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY  + -2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        return false;
+    }
+    private static boolean hasAdjacentTrap_1_m1() throws GameActionException {
+        MapLocation adj;
+        adj = new MapLocation(myLocX , myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 2, myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 2, myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY  + -2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY  + -2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 2, myLocY  + -2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        return false;
+    }
+    private static boolean hasAdjacentTrap_2_m1() throws GameActionException {
+        MapLocation adj;
+        adj = new MapLocation(myLocX  + 1, myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 2, myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 3, myLocY );
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 2, myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 3, myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY  + -2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 2, myLocY  + -2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 3, myLocY  + -2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        return false;
+    }
+    private static boolean hasAdjacentTrap_m2_m2() throws GameActionException {
+        MapLocation adj;
+        adj = new MapLocation(myLocX  + -3, myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -2, myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -3, myLocY  + -2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -2, myLocY  + -2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY  + -2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -3, myLocY  + -3);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -2, myLocY  + -3);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY  + -3);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        return false;
+    }
+    private static boolean hasAdjacentTrap_m1_m2() throws GameActionException {
+        MapLocation adj;
+        adj = new MapLocation(myLocX  + -2, myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -2, myLocY  + -2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY  + -2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY  + -2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -2, myLocY  + -3);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY  + -3);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY  + -3);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        return false;
+    }
+    private static boolean hasAdjacentTrap_0_m2() throws GameActionException {
+        MapLocation adj;
+        adj = new MapLocation(myLocX  + -1, myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY  + -2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY  + -2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY  + -2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + -1, myLocY  + -3);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY  + -3);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY  + -3);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        return false;
+    }
+    private static boolean hasAdjacentTrap_1_m2() throws GameActionException {
+        MapLocation adj;
+        adj = new MapLocation(myLocX , myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 2, myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY  + -2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY  + -2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 2, myLocY  + -2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX , myLocY  + -3);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY  + -3);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 2, myLocY  + -3);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        return false;
+    }
+    private static boolean hasAdjacentTrap_2_m2() throws GameActionException {
+        MapLocation adj;
+        adj = new MapLocation(myLocX  + 1, myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 2, myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 3, myLocY  + -1);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY  + -2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 2, myLocY  + -2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 3, myLocY  + -2);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 1, myLocY  + -3);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 2, myLocY  + -3);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        adj = new MapLocation(myLocX  + 3, myLocY  + -3);
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        return false;
     }
 }

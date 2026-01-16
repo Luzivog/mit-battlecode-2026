@@ -94,6 +94,11 @@ w_{{ "m" if dx < 0 else "" }}{{ dx|abs }}_{{ "m" if dy < 0 else "" }}{{ dy|abs }
 {%- endif -%}
 {%- endmacro %}
 
+{}
+{% macro adjacentTrapCheck(cx, cy) -%}
+hasAdjacentTrap_{{ "m" if cx < 0 else "" }}{{ cx|abs }}_{{ "m" if cy < 0 else "" }}{{ cy|abs }}()
+{%- endmacro %}
+
 public final class TryTrap {
     private TryTrap() {
     }
@@ -147,15 +152,15 @@ public final class TryTrap {
                 }
                 int bestScore = -1;
                 MapLocation bestLoc = null;
-                if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
+                if (rc.canPlaceRatTrap(loc0) && !{{ adjacentTrapCheck(dir_dx[cand[0]], dir_dy[cand[0]]) }} && s0 > bestScore) {
                     bestScore = s0;
                     bestLoc = loc0;
                 }
-                if (rc.canPlaceRatTrap(loc1) && s1 > bestScore) {
+                if (rc.canPlaceRatTrap(loc1) && !{{ adjacentTrapCheck(dir_dx[cand[1]], dir_dy[cand[1]]) }} && s1 > bestScore) {
                     bestScore = s1;
                     bestLoc = loc1;
                 }
-                if (rc.canPlaceRatTrap(loc2) && s2 > bestScore) {
+                if (rc.canPlaceRatTrap(loc2) && !{{ adjacentTrapCheck(dir_dx[cand[2]], dir_dy[cand[2]]) }} && s2 > bestScore) {
                     bestScore = s2;
                     bestLoc = loc2;
                 }
@@ -210,7 +215,7 @@ public final class TryTrap {
                 {{ wvar(dx, dy) }} = -1000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE{% if dx != 0 or dy != 0 %} || rc.senseRobotAtLocation(loc) != null{% endif %}) {
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE{% if dx != 0 or dy != 0 %} || rc.senseRobotAtLocation(loc) != null{% endif %} || {{ adjacentTrapCheck(dx, dy) }}) {
                     {{ wvar(dx, dy) }} = -1000;
                 } else {
                     {{ wvar(dx, dy) }} = 0;
@@ -338,6 +343,24 @@ public final class TryTrap {
         }
     }
     {% endfor %}
+    {% endfor %}
+    {% endfor %}
+
+    {# unrolled hasAdjacentTrap #}
+    {% for cy in range(2, -3, -1) %}
+    {% for cx in range(-2, 3) %}
+    private static boolean hasAdjacentTrap_{{ "m" if cx < 0 else "" }}{{ cx|abs }}_{{ "m" if cy < 0 else "" }}{{ cy|abs }}() throws GameActionException {
+        MapLocation adj;
+        {% for oy in range(1, -2, -1) %}
+        {% for ox in range(-1, 2) %}
+        {% set ax = cx + ox %}
+        {% set ay = cy + oy %}
+        adj = new MapLocation(myLocX {% if ax %} + {{ ax }}{% endif %}, myLocY {% if ay %} + {{ ay }}{% endif %});
+        if (rc.canSenseLocation(adj) && rc.senseMapInfo(adj).getTrap() != TrapType.NONE) return true;
+        {% endfor %}
+        {% endfor %}
+        return false;
+    }
     {% endfor %}
     {% endfor %}
 }

@@ -8,16 +8,18 @@ import static awubot.Game.*;
 import static awubot.util.Util.*;
 
 public class GoHomeStrategy extends Strategy {
-    private MapLocation kingLoc;
+    private int king;
+
+    public GoHomeStrategy() {
+        king = GlobalArray.nearestRatKingId;
+    }
 
     @Override
     public boolean runTick() throws GameActionException {
         if(rc.getRawCheese() == 0) return false;
         indicate("going home");
-        if(kingLoc == null) {
-            kingLoc = GlobalArray.nearestRatKing;
-        }
         // TODO: handle when king dies
+        var kingLoc = GlobalArray.getRatKing(king);
 
         rc.setIndicatorLine(myLoc, kingLoc, 0, 255, 0);
         Pathfinder.makeMove(kingLoc);

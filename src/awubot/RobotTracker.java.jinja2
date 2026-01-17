@@ -38,7 +38,7 @@ import awubot.util.Profiler;
 {%- set MAX_DIST = 34 -%}
 
 public class RobotTracker {
-    
+
     private static StringBuilder baseString = new StringBuilder("{% for c in range(0, MAX_DIST + 1) %}{{ java_string_char(OFF + c) }}{% endfor %}");
     public static RobotInfo[] sortedRobots = new RobotInfo[25];
     public static RobotInfo[] sortedEnemies = new RobotInfo[25];
@@ -91,7 +91,7 @@ public class RobotTracker {
                         break;
                 }
             }
-            {% endfor %}
+                {% endfor %}
             case 0:
                 break;
             default:
@@ -108,7 +108,7 @@ public class RobotTracker {
         int nextCat = numCats;
         switch (numRobots) {
             {% for count in range(MAX_DIST, -1, -1) %}
-            case {{count + 1}}: { 
+            case {{count + 1}}: {
                 sortedRobots[{{count}}] =  nearbyRobots[(int) sb.charAt({{count}})];
                 switch (sortedRobots[{{count}}].team.ordinal()) {
                     case {{get_team_ordinal('NEUTRAL')}}:
@@ -122,7 +122,7 @@ public class RobotTracker {
                         break;
                 }
             }
-            {% endfor %}
+                {% endfor %}
             case 0:
                 break;
             default:
@@ -142,33 +142,32 @@ public class RobotTracker {
             allySet.add(loc);
         }
     }
- 
+
     // IF TLE: optimise this
     public static void reset() throws GameActionException {
         allyCount = 0;
         allySet = new FastMapLocationSet();
+        kingSet = new FastMapLocationSet();
         for(var robot : rc.senseNearbyRobots(-1, team)) {
             if(robot.type == UnitType.BABY_RAT) {
                 addAlly(robot.location);
             }
         }
-    }
-    public static void writeHistoricalKingLocs() {
-        kingSet = new FastMapLocationSet();
-        for (int i = 0; i < 5; i++) {
-            MapLocation loc = GlobalArray.getRatKing(i);
-            if (loc == null) continue;
-            int locX = loc.x;
-            int locY = loc.y;
-            {% for dx in range(-1, 2) %}
-            {% for dy in range(-1, 2) %}
-            {
-                var kloc = new MapLocation(locX + {{dx}}, locY + {{dy}});
-                addAlly(kloc);
-                kingSet.add(kloc);
+        {% for i in range(5) %}
+        {
+            var kingPos = GlobalArray.getRatKing({{i}});
+            if(kingPos != null) {
+                addAlly(kingPos);
+                kingSet.add(kingPos);
+                {% for dir in directions %}
+                {
+                    var adj = kingPos.add({{dir}});
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
+                {% endfor %}
             }
-            {% endfor %}
-            {% endfor %}
         }
+        {% endfor %}
     }
 }

@@ -20,7 +20,6 @@ public class RatKing {
     public static void run() throws GameActionException {
         indicate(rc.getGlobalCheese() + " cheese, " + rc.getHealth() + " HP");
 
-        RobotTracker.writeHistoricalKingLocs();
         GlobalArray.preTick();
         Squeaker.preTick();
         CellTracker.storeVisibleCellsKing();

@@ -2269,68 +2269,255 @@ import awubot.util.Profiler;public class RobotTracker {
             allySet.add(loc);
         }
     }
- 
+
     // IF TLE: optimise this
     public static void reset() throws GameActionException {
         allyCount = 0;
         allySet = new FastMapLocationSet();
+        kingSet = new FastMapLocationSet();
         for(var robot : rc.senseNearbyRobots(-1, team)) {
             if(robot.type == UnitType.BABY_RAT) {
                 addAlly(robot.location);
             }
         }
-    }
-    public static void writeHistoricalKingLocs() {
-        kingSet = new FastMapLocationSet();
-        for (int i = 0; i < 5; i++) {
-            MapLocation loc = GlobalArray.getRatKing(i);
-            if (loc == null) continue;
-            int locX = loc.x;
-            int locY = loc.y;
-            {
-                var kloc = new MapLocation(locX + -1, locY + -1);
-                addAlly(kloc);
-                kingSet.add(kloc);
+        {
+            var kingPos = GlobalArray.getRatKing(0);
+            if(kingPos != null) {
+                rc.setIndicatorLine(myLoc, kingPos, 0, 255, 255);
+                addAlly(kingPos);
+                kingSet.add(kingPos);
+                {
+                    var adj = kingPos.add(Direction.NORTH);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
+                {
+                    var adj = kingPos.add(Direction.NORTHEAST);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
+                {
+                    var adj = kingPos.add(Direction.EAST);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
+                {
+                    var adj = kingPos.add(Direction.SOUTHEAST);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
+                {
+                    var adj = kingPos.add(Direction.SOUTH);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
+                {
+                    var adj = kingPos.add(Direction.SOUTHWEST);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
+                {
+                    var adj = kingPos.add(Direction.WEST);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
+                {
+                    var adj = kingPos.add(Direction.NORTHWEST);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
             }
-            {
-                var kloc = new MapLocation(locX + -1, locY + 0);
-                addAlly(kloc);
-                kingSet.add(kloc);
+        }
+        {
+            var kingPos = GlobalArray.getRatKing(1);
+            if(kingPos != null) {
+                rc.setIndicatorLine(myLoc, kingPos, 0, 255, 255);
+                addAlly(kingPos);
+                kingSet.add(kingPos);
+                {
+                    var adj = kingPos.add(Direction.NORTH);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
+                {
+                    var adj = kingPos.add(Direction.NORTHEAST);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
+                {
+                    var adj = kingPos.add(Direction.EAST);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
+                {
+                    var adj = kingPos.add(Direction.SOUTHEAST);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
+                {
+                    var adj = kingPos.add(Direction.SOUTH);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
+                {
+                    var adj = kingPos.add(Direction.SOUTHWEST);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
+                {
+                    var adj = kingPos.add(Direction.WEST);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
+                {
+                    var adj = kingPos.add(Direction.NORTHWEST);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
             }
-            {
-                var kloc = new MapLocation(locX + -1, locY + 1);
-                addAlly(kloc);
-                kingSet.add(kloc);
+        }
+        {
+            var kingPos = GlobalArray.getRatKing(2);
+            if(kingPos != null) {
+                rc.setIndicatorLine(myLoc, kingPos, 0, 255, 255);
+                addAlly(kingPos);
+                kingSet.add(kingPos);
+                {
+                    var adj = kingPos.add(Direction.NORTH);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
+                {
+                    var adj = kingPos.add(Direction.NORTHEAST);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
+                {
+                    var adj = kingPos.add(Direction.EAST);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
+                {
+                    var adj = kingPos.add(Direction.SOUTHEAST);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
+                {
+                    var adj = kingPos.add(Direction.SOUTH);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
+                {
+                    var adj = kingPos.add(Direction.SOUTHWEST);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
+                {
+                    var adj = kingPos.add(Direction.WEST);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
+                {
+                    var adj = kingPos.add(Direction.NORTHWEST);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
             }
-            {
-                var kloc = new MapLocation(locX + 0, locY + -1);
-                addAlly(kloc);
-                kingSet.add(kloc);
+        }
+        {
+            var kingPos = GlobalArray.getRatKing(3);
+            if(kingPos != null) {
+                rc.setIndicatorLine(myLoc, kingPos, 0, 255, 255);
+                addAlly(kingPos);
+                kingSet.add(kingPos);
+                {
+                    var adj = kingPos.add(Direction.NORTH);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
+                {
+                    var adj = kingPos.add(Direction.NORTHEAST);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
+                {
+                    var adj = kingPos.add(Direction.EAST);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
+                {
+                    var adj = kingPos.add(Direction.SOUTHEAST);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
+                {
+                    var adj = kingPos.add(Direction.SOUTH);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
+                {
+                    var adj = kingPos.add(Direction.SOUTHWEST);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
+                {
+                    var adj = kingPos.add(Direction.WEST);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
+                {
+                    var adj = kingPos.add(Direction.NORTHWEST);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
             }
-            {
-                var kloc = new MapLocation(locX + 0, locY + 0);
-                addAlly(kloc);
-                kingSet.add(kloc);
-            }
-            {
-                var kloc = new MapLocation(locX + 0, locY + 1);
-                addAlly(kloc);
-                kingSet.add(kloc);
-            }
-            {
-                var kloc = new MapLocation(locX + 1, locY + -1);
-                addAlly(kloc);
-                kingSet.add(kloc);
-            }
-            {
-                var kloc = new MapLocation(locX + 1, locY + 0);
-                addAlly(kloc);
-                kingSet.add(kloc);
-            }
-            {
-                var kloc = new MapLocation(locX + 1, locY + 1);
-                addAlly(kloc);
-                kingSet.add(kloc);
+        }
+        {
+            var kingPos = GlobalArray.getRatKing(4);
+            if(kingPos != null) {
+                rc.setIndicatorLine(myLoc, kingPos, 0, 255, 255);
+                addAlly(kingPos);
+                kingSet.add(kingPos);
+                {
+                    var adj = kingPos.add(Direction.NORTH);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
+                {
+                    var adj = kingPos.add(Direction.NORTHEAST);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
+                {
+                    var adj = kingPos.add(Direction.EAST);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
+                {
+                    var adj = kingPos.add(Direction.SOUTHEAST);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
+                {
+                    var adj = kingPos.add(Direction.SOUTH);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
+                {
+                    var adj = kingPos.add(Direction.SOUTHWEST);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
+                {
+                    var adj = kingPos.add(Direction.WEST);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
+                {
+                    var adj = kingPos.add(Direction.NORTHWEST);
+                    addAlly(adj);
+                    kingSet.add(adj);
+                }
             }
         }
     }

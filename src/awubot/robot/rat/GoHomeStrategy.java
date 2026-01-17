@@ -16,15 +16,8 @@ public class GoHomeStrategy extends Strategy {
         indicate("going home");
         if(kingLoc == null) {
             kingLoc = GlobalArray.nearestRatKing;
-        } else if(!GlobalArray.nearestRatKing.equals(kingLoc)) {
-            if(GlobalArray.nearestRatKing.distanceSquaredTo(kingLoc) <= 8) {
-                // the king moved
-                kingLoc = kingLoc.add(kingLoc.directionTo(GlobalArray.nearestRatKing));
-            } else {
-                // different king
-                kingLoc = GlobalArray.nearestRatKing;
-            }
         }
+        // TODO: handle when king dies
 
         rc.setIndicatorLine(myLoc, kingLoc, 0, 255, 0);
         Pathfinder.makeMove(kingLoc);

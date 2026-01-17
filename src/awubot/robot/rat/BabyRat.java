@@ -46,7 +46,6 @@ public class BabyRat {
         }
 
         // all nonessential systems go here, only run if we are not in combat
-        RobotTracker.writeHistoricalKingLocs();
         CellTracker.checkSymmetry();
 
         indicate("sym " + CellTracker.hsym + " " + CellTracker.vsym + " " + CellTracker.rsym);

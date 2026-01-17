@@ -40,7 +40,7 @@ class BugnavInstance {
     // extra "return variables" for lookahead instances
     boolean hitEdge = false, outOfSight = false, arrived = false;
 
-    FastMapLocationSet vis;
+    FastMapLocationSet vis = new FastMapLocationSet();
     boolean givenUp = false;
 
     Direction bottomDir, topDir;

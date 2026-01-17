@@ -37,7 +37,7 @@ public class KingMiningStrategy extends Strategy {
         indicate("scan for cheese mines: " + scanForCheeseMines());
         if (!theFoundCheeseMine) {
             if (!scanForCheeseMines()) {
-                //moveTowardCenter();
+                moveTowardCenter();
             }
         }
 

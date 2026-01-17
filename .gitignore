@@ -1,5 +1,7 @@
 *.DS_Store
 
+src/awu_old
+
 ###### BATTLECODE ######
 
 **/matches

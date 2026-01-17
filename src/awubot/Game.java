@@ -44,6 +44,12 @@ public class Game {
     public static boolean isRatKing;
     public static int kingId;
 
+    public static void convertKing() throws GameActionException {
+        isRatKing = true;
+        kingId = GlobalArray.countRatKings();
+        indicate("als;dkjflk;sadjfjasldf: " + kingId);
+    }
+
     public static void init(RobotController rc) throws GameActionException {
         Game.rc = rc;
         mapWidth = rc.getMapWidth();
@@ -54,6 +60,7 @@ public class Game {
         myDir = rc.getDirection();
         time = rc.getRoundNum();
         isRatKing = (rc.getType() == UnitType.RAT_KING);
+        indicate("type: " + isRatKing);
         team = rc.getTeam();
         spawn = myLoc;
 

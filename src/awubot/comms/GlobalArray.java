@@ -141,6 +141,26 @@ public class GlobalArray {
             }
         }
     }
+
+    public static void writeRatKing() throws GameActionException {
+        for (int i = 0; i < 5; i++) {
+            MapLocation king = getRatKing(i);
+            if (king == null) {
+                writeSharedArray(i + RAT_KING_LOC, encode2x2());
+                return;
+            }
+        }
+    }
+
+    public static int countRatKings() {
+        int ret = 0;
+        for (int i = 0; i < 5; i++) {
+            MapLocation king = getRatKing(i);
+            if (king == null) continue;
+            ret++;
+        }
+        return ret;
+    }
     
     public static void readCheeseMines() throws GameActionException {
         int i = N - 1;
@@ -301,7 +321,7 @@ public class GlobalArray {
     public static void clearFormation() throws GameActionException {
         writeSharedArray(FORMATION_TARGET, 0);
         writeSharedArray(FORMATION_MINE, 0);
-        writeSharedArray(FORMATION_COORDINATOR, 0);
+        writeSharedArray(FORMATION_COORDINATOR, -1);
     }
 
     public static void writeKingMineAssignment(int aKingId, MapLocation aMine) throws GameActionException {
@@ -330,15 +350,15 @@ public class GlobalArray {
         return false;
     }
 
-    public static int countActiveKings() throws GameActionException {
-        int myCount = 0;
-        int myTurnCounter = rc.readSharedArray(RAT_KING_TURN_COUNTER);
-        for (int i = 0; i < 5; i++) {
-            if ((myTurnCounter & 0b11) != 0b11) {
-                myCount++;
-            }
-            myTurnCounter >>= 2;
-        }
-        return myCount;
-    }
+    // public static int countActiveKings() throws GameActionException {
+    //     int myCount = 0;
+    //     int myTurnCounter = rc.readSharedArray(RAT_KING_TURN_COUNTER);
+    //     for (int i = 0; i < 5; i++) {
+    //         if ((myTurnCounter & 0b11) != 0b11) {
+    //             myCount++;
+    //         }
+    //         myTurnCounter >>= 2;
+    //     }
+    //     return myCount;
+    // }
 }

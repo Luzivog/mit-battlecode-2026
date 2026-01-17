@@ -13,10 +13,11 @@ public class GoHomeStrategy extends Strategy {
     @Override
     public boolean runTick() throws GameActionException {
         if(rc.getRawCheese() == 0) return false;
-        indicate("going home");
+        indicate("going home + " + kingLoc);
         if(kingLoc == null) {
             kingLoc = GlobalArray.nearestRatKing;
         } else if(!GlobalArray.nearestRatKing.equals(kingLoc)) {
+            indicate("bruh: " + GlobalArray.nearestRatKing.distanceSquaredTo(myLoc));
             if(GlobalArray.nearestRatKing.distanceSquaredTo(kingLoc) <= 8) {
                 // the king moved
                 kingLoc = kingLoc.add(kingLoc.directionTo(GlobalArray.nearestRatKing));

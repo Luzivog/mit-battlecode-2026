@@ -27,6 +27,8 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     private int theCoordinationStartTurn = 0;
     private int theLastFormationTurn = -FORMATION_COOLDOWN;
 
+    private int kingCount = 1;
+
     private enum FormationState {
         IDLE,
         COORDINATING,
@@ -40,6 +42,12 @@ public class KingFormationCoordinatorStrategy extends Strategy {
 
     @Override
     public boolean runTick() throws GameActionException {
+        if (GlobalArray.countRatKings() > kingCount) {
+            abortFormation();
+            kingCount = GlobalArray.countRatKings();
+            return true;
+        }
+
         if (theContext.theDefenseState != ThreatContext.DefenseState.NORMAL) {
             if (theState == FormationState.COORDINATING) {
                 abortFormation();
@@ -64,8 +72,8 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         int myGlobalCheese = rc.getGlobalCheese();
         if (time - theLastFormationTurn < FORMATION_COOLDOWN) return;
         if (myGlobalCheese < CHEESE_THRESHOLD + UPGRADE_COST) return;
-        int myKingCount = GlobalArray.countActiveKings();
-        if (myKingCount >= 3) return;
+        int myKingCount = GlobalArray.countRatKings();
+        if (myKingCount >= 2) return;
         if (GlobalArray.getFormationTarget() != null) return;
 
         MapLocation myBestMine = selectBestMineForFormation();
@@ -80,7 +88,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         theState = FormationState.COORDINATING;
 
         GlobalArray.writeFormationTarget(theFormationTarget, theTargetMine, kingId);
-        GlobalArray.writeKingMineAssignment(kingId, theMiningStrategy.getMineTarget());
+        GlobalArray.writeKingMineAssignment(kingId + 1, theMiningStrategy.getMineTarget());
 
         indicate("FORMATION: coordinating at " + theFormationTarget);
     }

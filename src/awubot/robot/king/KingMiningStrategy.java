@@ -34,6 +34,7 @@ public class KingMiningStrategy extends Strategy {
 
     @Override
     public boolean runTick() throws GameActionException {
+        indicate("scan for cheese mines: " + scanForCheeseMines());
         if (!theFoundCheeseMine) {
             if (!scanForCheeseMines()) {
                 moveTowardCenter();
@@ -44,6 +45,7 @@ public class KingMiningStrategy extends Strategy {
             scanForCheeseMines();
             moveTowardMine();
         }
+        indicate("a;sldkfja;lkjfakl;sdjfal;dksjfa;lsdjfa;sldkjf mining");
         return true;
     }
 

@@ -15,13 +15,17 @@ import awubot.util.Util;
 public class RobotPlayer {
     static int maxBytecode = 0;
 
+    static boolean hasInitialisedRobot = false;
+
+    public static void resetHasInitialisedRobot() {
+        hasInitialisedRobot = false;
+    }
+
     public static void run(RobotController rc) throws GameActionException {
         Game.init(rc);
         Rng.seed();
         GlobalArray.initGlobalArray();
 
-
-        boolean hasInitialisedRobot = false;
         while (true) {
             try {
                 Game.preTick();

@@ -15,8 +15,10 @@ public class RatKing {
 
     public static void run() throws GameActionException {
         indicate(rc.getGlobalCheese() + " cheese, " + rc.getHealth() + " HP");
+        indicate(kingId);
         CellTracker.storeVisibleCellsKing();
 
+        indicate("trying to pick up cheese");
         tryPickUpCheese();
 
         primaryStrategy.runTick();

@@ -5,17 +5,22 @@ import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
 import battlecode.common.RobotInfo;
 import battlecode.common.UnitType;
+import awubot.Game;
 import awubot.Pathfinder;
+import awubot.RobotPlayer;
 import awubot.RobotTracker;
 import awubot.comms.GlobalArray;
 import awubot.robot.Strategy;
 import static awubot.Game.*;
+import static awubot.util.Util.indicate;
+
+import java.time.Clock;
 
 // TODO: refactor this (AI slop)
 
 public class FormationStrategy extends Strategy {
     private static final int FORMATION_TIMEOUT = 45;
-    private static final int MIN_ALLIES_FOR_FORMATION = 6;
+    private static final int MIN_ALLIES_FOR_FORMATION = 7;
     private static final int MAX_DIST_TO_JOIN = 144;
 
     private MapLocation formationTarget = null;
@@ -35,10 +40,15 @@ public class FormationStrategy extends Strategy {
 
     @Override
     public boolean runTick() throws GameActionException {
-        if(isComplete()) return false;
         tryActivate();
+        if(isComplete()) return false;
         if (rc.canBecomeRatKing()) {
+            indicate("became rat king!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             rc.becomeRatKing();
+            Game.convertKing();
+            GlobalArray.writeRatKing();
+            RobotPlayer.resetHasInitialisedRobot();
+            // we want to get rid of this thing
             return true;
         }
         if (RobotTracker.allyCount >= MIN_ALLIES_FOR_FORMATION) {

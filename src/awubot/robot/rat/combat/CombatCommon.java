@@ -35,7 +35,7 @@ public final class CombatCommon {
     }
 
     public static boolean canMove(Direction dir) {
-        if (dir == null) return false;
+        // if (dir == null) return false;
         return switch (dir.ordinal()) {
             case 0 -> canMoveN;
             case 1 -> canMoveNE;

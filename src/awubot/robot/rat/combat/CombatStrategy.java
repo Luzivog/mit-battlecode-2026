@@ -36,12 +36,12 @@ import java.util.function.Consumer;
 
 /*
 
-TODO: 
-    - add code for detecting enemies out of vision
-    - consider avoiding cells within cheb dist of 1/2 of enemy rats
-    - prefer cells that walk out of enemy vision
-    - strongly prefer looking at enemies
-    - offence squeak signals
+  TODO:
+  - add code for detecting enemies out of vision
+  - consider avoiding cells within cheb dist of 1/2 of enemy rats
+  - prefer cells that walk out of enemy vision
+  - strongly prefer looking at enemies
+  - offence squeak signals
 
 */
 
@@ -110,14 +110,14 @@ public class CombatStrategy extends Strategy {
         if (tryRatNapRes) return true;
 
         Profiler.push();
-        boolean tryTrapRes = TryTrap.run();
-        Profiler.pop("try trap", 3000);
-        if (tryTrapRes) return true;
-
-        Profiler.push();
         boolean tryAttackRes = TryAttack.run();
         Profiler.pop("try attack", 1000);
         if (tryAttackRes) return true;
+
+        Profiler.push();
+        boolean tryTrapRes = TryTrap.run();
+        Profiler.pop("try trap", 3000);
+        if (tryTrapRes) return true;
 
         Profiler.push();
         boolean tryFightRes = TryFight.run();
@@ -139,14 +139,14 @@ public class CombatStrategy extends Strategy {
         boolean tryRatNapRes = TryRatNap.miniRun();
         Profiler.pop("mini ratnap", 300);
         if (tryRatNapRes) return true;
-        
+
+        boolean tryAttackRes = TryAttack.miniRun();
+        if (tryAttackRes) return true;
+
         Profiler.push();
         boolean tryTrapRes = TryTrap.miniRun();
         Profiler.pop("mini trap", 300);
         if (tryTrapRes) return true;
-        
-        boolean tryAttackRes = TryAttack.miniRun();
-        if (tryAttackRes) return true;
         return false;
     }
 
@@ -241,11 +241,11 @@ public class CombatStrategy extends Strategy {
         return cellScore[moveDir.ordinal()];
     }
 
-    // TODO: cache this function 
+    // TODO: cache this function
     public static double getCellScoreForEnemy(RobotInfo info, Direction moveDir) {
         MapLocation to = myLoc.add(moveDir);
         if (!rc.onTheMap(to)) return 0;
-        int dist = chebyshevDistance(to, info.location); 
+        int dist = chebyshevDistance(to, info.location);
         if (info.getType() == UnitType.CAT) {
             // TODO: implement vision check
             if (dist >= 4 || shouldFight(info)) return 0;
@@ -292,71 +292,71 @@ public class CombatStrategy extends Strategy {
                 base *= 0.5;
                 // weak
             }
-            return cacheCellScore(info, moveDir, base);
+                return cacheCellScore(info, moveDir, base);
+            }
+        }
+        /*
+
+          attacking another solo rat is safe as if:
+          - you end the turn with at least as much health (no ratnap)
+          - they can't see you
+          if you are in a horde, it should be safe to run at them
+
+        */
+        public static boolean shouldFight(RobotInfo enemy) {
+            if (enemy.getType() == UnitType.CAT) {
+                return time > 1000 && rc.getAllCheese() > 300 && RobotTracker.numEnemies == 0 && rc.getHealth() > 50 && rc.getRawCheese() == 0;
+            }
+            if (enemy.getType() == UnitType.RAT_KING) return true;
+            if (enemy.getHealth() <= rc.getHealth()) return true;
+            if (!canSense(enemy.location, myLoc, enemy.direction)) return true;
+            if (GlobalArray.nearestRatKing != null && GlobalArray.nearestRatKing.distanceSquaredTo(myLoc) <= 36) return true;
+            if (RobotTracker.numAllies > RobotTracker.numEnemies) return true;
+            return false;
+        }
+
+        // currently given arbitrary weights
+        public double scoreEnemy(RobotInfo info) {
+            if (info.getType() == UnitType.RAT_KING) return 5;
+            // one tap this guy
+            if (info.getHealth() - GameConstants.RAT_BITE_DAMAGE <= 0) {
+                return 3.0;
+            }
+            if (info.getHealth() <= 30) {
+                // try to get rid of low hp rats
+                return 1.3;
+            }
+            if (info.getHealth() >= rc.getHealth()) {
+                // try to bring enemy rats into napping distance
+                return 1.2;
+            }
+            return 1;
+        }
+
+        public static int getCheeseNeeded(int damageBuff) {
+            if (damageBuff == 0) return 0;
+            int base = damageBuff - 1;
+            return base * base + 1;
+        }
+
+        public static int canEnemyReach(RobotInfo info, Direction moveDir) throws GameActionException {
+            MapLocation to = myLoc.add(moveDir);
+            int dist = chebyshevDistance(to, info.location);
+            if (dist > 2) return 0;
+            if (!isCellMaybePassable(to)) return 0;;
+            return 1;
+        }
+
+        public static RobotInfo getNearestTarget() {
+            for (int i = 0; i < RobotTracker.numEnemies; i++) {
+                RobotInfo info = RobotTracker.sortedEnemies[i];
+                if (info.getTeam() == rc.getTeam()) continue;
+                if (shouldFight(info)) return info;
+            }
+            for  (int i = 0; i < RobotTracker.numCats; i++) {
+                RobotInfo info = RobotTracker.sortedCats[i];
+                if (shouldFight(info)) return info;
+            }
+            return null;
         }
     }
-    /*
-
-      attacking another solo rat is safe as if:
-      - you end the turn with at least as much health (no ratnap)
-      - they can't see you
-      if you are in a horde, it should be safe to run at them
-
-    */
-    public static boolean shouldFight(RobotInfo enemy) {
-        if (enemy.getType() == UnitType.CAT) {
-            return time > 1000 && rc.getAllCheese() > 300 && RobotTracker.numEnemies == 0 && rc.getHealth() > 50 && rc.getRawCheese() == 0;
-        }
-        if (enemy.getType() == UnitType.RAT_KING) return true;
-        if (enemy.getHealth() <= rc.getHealth()) return true;
-        if (!canSense(enemy.location, myLoc, enemy.direction)) return true;
-        if (GlobalArray.nearestRatKing != null && GlobalArray.nearestRatKing.distanceSquaredTo(myLoc) <= 36) return true;
-        if (RobotTracker.numAllies > RobotTracker.numEnemies) return true;
-        return false;
-    }
-
-    // currently given arbitrary weights
-    public double scoreEnemy(RobotInfo info) {
-        if (info.getType() == UnitType.RAT_KING) return 5;
-        // one tap this guy
-        if (info.getHealth() - GameConstants.RAT_BITE_DAMAGE <= 0) {
-            return 3.0;
-        }
-        if (info.getHealth() <= 30) {
-            // try to get rid of low hp rats
-            return 1.3;
-        }
-        if (info.getHealth() >= rc.getHealth()) {
-            // try to bring enemy rats into napping distance
-            return 1.2;
-        }
-        return 1;
-    }
-
-    public static int getCheeseNeeded(int damageBuff) {
-        if (damageBuff == 0) return 0;
-        int base = damageBuff - 1;
-        return base * base + 1;
-    }
-
-    public static int canEnemyReach(RobotInfo info, Direction moveDir) throws GameActionException {
-        MapLocation to = myLoc.add(moveDir);
-        int dist = chebyshevDistance(to, info.location);
-        if (dist > 2) return 0;
-        if (!isCellMaybePassable(to)) return 0;;
-        return 1;
-    }
-
-    public static RobotInfo getNearestTarget() {
-        for (int i = 0; i < RobotTracker.numEnemies; i++) {
-            RobotInfo info = RobotTracker.sortedEnemies[i];
-            if (info.getTeam() == rc.getTeam()) continue;
-            if (shouldFight(info)) return info;
-        }
-        for  (int i = 0; i < RobotTracker.numCats; i++) {
-            RobotInfo info = RobotTracker.sortedCats[i];
-            if (shouldFight(info)) return info;
-        }
-        return null;
-    }   
-}

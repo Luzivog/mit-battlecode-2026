@@ -15,24 +15,46 @@ public class KingSpawningStrategy extends Strategy {
         if (RobotTracker.numCats > 0 && RobotTracker.numAllies == 0) {
             thresh = 50;
         }
-        if(rc.getCurrentRatCost() <= thresh && (rc.getGlobalCheese() >= 100 || rc.getCurrentRatCost() == 10)) {
-            MapLocation best = null;
-            Direction bestDir = null;
-            MapLocation centre = new MapLocation(mapWidth / 2, mapHeight / 2);
-            for(var dir : directions) {
-                MapLocation spawnLoc = myLoc.add(dir).add(dir);
-                if(rc.canBuildRat(spawnLoc)) {
-                    if(best == null || spawnLoc.distanceSquaredTo(centre) < best.distanceSquaredTo(centre)) {
-                        best = spawnLoc;
-                        bestDir = dir;
+
+        // defensive spawning if enemies outnumber allies
+        MapLocation target = null;
+        var cnt = 0;
+        for(var robot : rc.senseNearbyRobots()) {
+            if(robot.getType() == UnitType.BABY_RAT) {
+                if(robot.getTeam() != team) {
+                    cnt++;
+                    var loc = robot.getLocation();
+                    if(target == null || loc.distanceSquaredTo(myLoc) < target.distanceSquaredTo(myLoc)) {
+                        target = loc;
                     }
+                } else {
+                    cnt--;
                 }
             }
-            if(best != null) {
-                turn(bestDir);
-                rc.buildRat(best);
-            }
+        }
+        if(cnt > 0) thresh += 20;
+        if(target == null) target = new MapLocation(mapWidth / 2, mapHeight / 2);
+
+        if(rc.getCurrentRatCost() <= thresh && (rc.getGlobalCheese() >= 100 || rc.getCurrentRatCost() == 10)) {
+            trySpawn(target);
         }
         return true;
+    }
+
+    // TODO: consider all 16 spawning locations instead of just 8
+    void trySpawn(MapLocation target) throws GameActionException {
+        MapLocation best = null;
+        for(var dir : directions) {
+            MapLocation spawnLoc = myLoc.add(dir).add(dir);
+            if(rc.canBuildRat(spawnLoc)) {
+                if(best == null || spawnLoc.distanceSquaredTo(target) < best.distanceSquaredTo(target)) {
+                    best = spawnLoc;
+                }
+            }
+        }
+        if(best != null) {
+            turn(best.directionTo(target));
+            rc.buildRat(best);
+        }
     }
 }

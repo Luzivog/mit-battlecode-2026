@@ -298,7 +298,7 @@ public class CombatStrategy extends Strategy {
         if (enemy.getType() == UnitType.RAT_KING) return true;
         if (enemy.getHealth() <= rc.getHealth()) return true;
         if (!canSense(enemy.location, myLoc, enemy.direction)) return true;
-        if (GlobalArray.nearestRatKing.distanceSquaredTo(myLoc) <= 36) return true;
+        if (GlobalArray.nearestRatKing != null && GlobalArray.nearestRatKing.distanceSquaredTo(myLoc) <= 36) return true;
         if (RobotTracker.numAllies > RobotTracker.numEnemies) return true;
         return false;
     }

@@ -161,6 +161,7 @@ public final class TryAttack {
         if (!rc.isActionReady()) return false;
         for (RobotInfo ri : rc.senseNearbyRobots(2)) {
             if (ri.getTeam() == team) continue;
+            if (!myLoc.isAdjacentTo(ri.location)) continue;
             attack(ri);
             println("!!!!!!!!!!!!!!mini attacked!!");
             return true;

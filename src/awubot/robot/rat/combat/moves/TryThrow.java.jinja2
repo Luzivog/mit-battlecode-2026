@@ -91,6 +91,7 @@ public final class TryThrow {
         // Profiler.pop("try throw");
         if (best < 0) return false;
         assert(CombatStrategy.performMoves(md, td));
+        if (!rc.isActionReady()) return false;
         rc.throwRat();
         println("tried throwing rat");
         indicate("COMBAT STRAT: THROW");

@@ -1726,10 +1726,10 @@ public class Pathfinder {
         }
         // TODO: what if location == bug.pos?
 
-        doBfs(target);
+        doBugnavBfs(target);
     }
 
-    private static void doBfs(MapLocation target) throws GameActionException {
+    private static void doBugnavBfs(MapLocation target) throws GameActionException {
         Profiler.begin();
         CellTracker.computeLocalBfsMasks();
         boolean dirtAllowed = Config.allowDirt();
@@ -6428,4 +6428,7 @@ public class Pathfinder {
         lastBugPos = lastLoc = secondLastBugPos = secondLastLoc = new MapLocation(-1, -1);
         bug.clearPath();
     }
+
+    // returns a mask of good directions according to the default order
+    // public static int multisourceBfs
 }

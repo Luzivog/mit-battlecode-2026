@@ -542,10 +542,10 @@ public class Pathfinder {
         }
         // TODO: what if location == bug.pos?
 
-        doBfs(target);
+        doBugnavBfs(target);
     }
 
-    private static void doBfs(MapLocation target) throws GameActionException {
+    private static void doBugnavBfs(MapLocation target) throws GameActionException {
         Profiler.begin();
         CellTracker.computeLocalBfsMasks();
         boolean dirtAllowed = Config.allowDirt();
@@ -699,18 +699,21 @@ public class Pathfinder {
 
         // Profiler.begin();
 
+        {% macro bfsIteration(mask, localPassable) %}
         // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d{{i}}0 |= (d{{i}}0 & 0xfbff7feffdffbffl) << 1;
-        d{{i}}1 |= (d{{i}}1 & 0x7feffdffbff7fefl) << 1;
-        d{{i}}0 |= (d{{i}}0 & 0x1f7feffdffbff7fel) >> 1;
-        d{{i}}1 |= (d{{i}}1 & 0xffdffbff7feffdel) >> 1;
+        {{mask}}0 |= ({{mask}}0 & 0xfbff7feffdffbffl) << 1;
+        {{mask}}1 |= ({{mask}}1 & 0x7feffdffbff7fefl) << 1;
+        {{mask}}0 |= ({{mask}}0 & 0x1f7feffdffbff7fel) >> 1;
+        {{mask}}1 |= ({{mask}}1 & 0xffdffbff7feffdel) >> 1;
 
-        d{{i}}1 |= ((d{{i}}1 & 0x1ffffffffffffl) << 11) | (d{{i}}0 >> 50);
-        d{{i}}0 |= (d{{i}}0 & 0x3ffffffffffffl) << 11;
-        d{{i}}0 |= (d{{i}}0 >> 11) | ((d{{i}}1 & 0x7ffl) << 50);
-        d{{i}}1 |= d{{i}}1 >> 11;
-        d{{i}}0 &= localPassableExceptAllies0;
-        d{{i}}1 &= localPassableExceptAllies1;
+        {{mask}}1 |= (({{mask}}1 & 0x1ffffffffffffl) << 11) | ({{mask}}0 >> 50);
+        {{mask}}0 |= ({{mask}}0 & 0x3ffffffffffffl) << 11;
+        {{mask}}0 |= ({{mask}}0 >> 11) | (({{mask}}1 & 0x7ffl) << 50);
+        {{mask}}1 |= {{mask}}1 >> 11;
+        {{mask}}0 &= {{localPassable}}0;
+        {{mask}}1 &= {{localPassable}}1;
+        {% endmacro %}
+        {{ bfsIteration("d%s" % i, "localPassableExceptAllies") }}
         long d{{i + 2}}0 = 0l;
         long d{{i + 2}}1 = 0l;
         if(dirtAllowed) {
@@ -739,5 +742,46 @@ public class Pathfinder {
         lastDist = 0;
         lastBugPos = lastLoc = secondLastBugPos = secondLastLoc = new MapLocation(-1, -1);
         bug.clearPath();
+    }
+
+    // returns a mask of good directions according to the default order
+    public static int multisourceBfs(MapLocation[] sources) {
+        CellTracker.computeLocalBfsMasks();
+        long reach0 = 0, reach1 = 0;
+        for(var source : sources) {
+            {{ writePos("source", "reach", 1, False) }}
+        }
+        var localPassable0 = CellTracker.localPassable0 & ~CellTracker.localDirt0;
+        var localPassable1 = CellTracker.localPassable1 & ~CellTracker.localDirt1;
+        {% for i in range(6) %}
+        {{ bfsIteration("reach", "CellTracker.localPassable") }}
+        if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
+            int res = 0;
+            {% for b, dir, off in [
+                                   (1, "Direction.NORTH", 71),
+                                   (2, "Direction.NORTHEAST", 72),
+                                   (4, "Direction.EAST", 61),
+                                   (8, "Direction.SOUTHEAST", 50),
+                                   (16, "Direction.SOUTH", 49),
+                                   (32, "Direction.SOUTHWEST", 48),
+                                   (64, "Direction.WEST", 59),
+                                   (128, "Direction.NORTHWEST", 70),
+                                ] %}
+            if(
+               {% if off < 61 %}
+               (reach0 & (1l << {{off}}))
+               {% else %}
+               (reach1 & (1l << {{off - 61}}))
+               {% endif %}
+               != 0) {
+                var nextLoc = myLoc.add({{dir}});
+                if(rc.canMove({{dir}})) {
+                    res |= {{b}};
+                }
+            }
+            {% endfor %}
+            return res;
+        }
+        {% endfor %}
     }
 }

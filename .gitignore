@@ -199,7 +199,3 @@ gradle-app.setting
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
 
-/src/awu_old
-/src/awubot_old
-/src/awubot_old2
-/src/awubot_old3

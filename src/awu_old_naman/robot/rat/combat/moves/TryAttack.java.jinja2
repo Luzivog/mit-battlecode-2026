@@ -1,0 +1,115 @@
+package awu_old_naman.robot.rat.combat.moves;
+
+import battlecode.common.Direction;
+import battlecode.common.GameActionException;
+import battlecode.common.GameConstants;
+import battlecode.common.MapLocation;
+import battlecode.common.RobotInfo;
+
+import awu_old_naman.robot.rat.combat.CombatCommon;
+import awu_old_naman.robot.rat.combat.CombatStrategy;
+import static awu_old_naman.Game.*;
+import static awu_old_naman.util.Util.*;
+import static awu_old_naman.robot.rat.BabyRat.*;
+
+{% set related_map = {
+    0: ["NORTH", "NORTHEAST", "NORTHWEST"],
+    1: ["NORTHEAST", "NORTH", "EAST"],
+    2: ["EAST", "NORTHEAST", "SOUTHEAST"],
+    3: ["SOUTHEAST", "SOUTH", "EAST"],
+    4: ["SOUTH", "SOUTHEAST", "SOUTHWEST"],
+    5: ["SOUTHWEST", "SOUTH", "WEST"],
+    6: ["WEST", "NORTHWEST", "SOUTHWEST"],
+    7: ["NORTHWEST", "NORTH", "WEST"],
+} %}
+
+{% macro for_related(dir_expr) -%}
+switch ({{dir_expr}}.ordinal()) {
+    {% for ord in range(8) %}
+    case {{ord}} -> {
+        {% for d in related_map[ord] %}
+        {{ caller("Direction." + d) }}
+        {% endfor %}
+    }
+    {% endfor %}
+    default -> { }
+}
+{%- endmacro %}
+
+public final class TryAttack {
+    private TryAttack() {
+    }
+
+    static RobotInfo target;
+    static Direction bestMove;
+    static Direction bestFacing;
+    static double bestScore;
+    static RobotInfo info;
+    static MapLocation t;
+    static double weight;
+    static Direction moveDir;
+    static MapLocation newLoc;
+    static Direction facing;
+    static double score;
+
+    public static boolean run() throws GameActionException {
+        if (!rc.isActionReady()) return false;
+        // Profiler.push();
+        target = null;
+        bestMove = null;
+        bestFacing = null;
+        bestScore = -1;
+        for (RobotInfo ri : rc.senseNearbyRobots()) {
+            info = ri;
+            if (info.getTeam() == team) continue;
+            if (!CombatStrategy.shouldFight(info)) continue;
+            if (chebyshevDistance(myLoc, info.getLocation()) > 2) continue;
+
+            t = info.getLocation();
+            weight = 10;
+            if (info.getHealth() <= GameConstants.RAT_BITE_DAMAGE) {
+                weight += 30; // prefer one tapping
+            }
+
+            for (Direction dir : allDirections) {
+                moveDir = dir;
+                if (!CombatCommon.canMove(moveDir)) continue;
+                newLoc = myLoc.add(moveDir);
+                if (newLoc.distanceSquaredTo(t) > 2) continue;
+                for (Direction facing : relatedDirections(newLoc.directionTo(t))) {
+                    if (!canSense(newLoc, t, facing)) continue;
+                    if (!CombatCommon.canPerformMoves(moveDir, facing)) continue;
+                    double score = weight;
+                    score += CombatStrategy.getCellScoreFor(moveDir, facing, info);
+                    if (facing != myDir) {
+                        score *= 1.1; // prefer turning
+                    }
+                    if (score > bestScore) {
+                        bestScore = score;
+                        target = info;
+                        bestMove = moveDir;
+                        bestFacing = facing;
+                    }
+                }
+            }
+        }
+        // Profiler.pop("try attack");
+        if (bestScore < 0.5) return false;
+        assert(CombatStrategy.performMoves(bestMove, bestFacing));
+        rc.attack(target.getLocation());
+        println("!!!!!!!!!!!!!!!!!!!!!!! attacked rat");
+        indicate("COMBAT STRAT: ATTACK");
+        return true;
+    }
+
+    public static boolean miniRun() throws GameActionException {
+        if (!rc.isActionReady()) return false;
+        for (RobotInfo ri : rc.senseNearbyRobots(2)) {
+            if (ri.getTeam() == team) continue;
+            rc.attack(ri.getLocation());
+            println("!!!!!!!!!!!!!!mini attacked!!");
+            return true;
+        }
+        return false;
+    }
+}

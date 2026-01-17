@@ -616,8 +616,6 @@ public class Pathfinder {
         var localPassableExceptAllies1 = CellTracker.localPassable1;
         // can't dig dirt if we don't have enough cheese or are a rat king
         if(rc.getAllCheese() < GameConstants.DIG_DIRT_CHEESE_COST || isRatKing) {
-            localPassableExceptAllies0 &= ~CellTracker.localDirt0;
-            localPassableExceptAllies1 &= ~CellTracker.localDirt1;
             // minkowski sum the walls for the rat king
             {% macro kingMinkowski() %}
             if(isRatKing) {
@@ -633,12 +631,15 @@ public class Pathfinder {
             }
             {% endmacro %}
             {{ kingMinkowski() }}
+
+            localPassableExceptAllies0 &= ~CellTracker.localDirt0;
+            localPassableExceptAllies1 &= ~CellTracker.localDirt1;
         }
         // IF TLE: unroll this
         for(int i = RobotTracker.allyCount - 1; i >= 0; i--) {
             {{ writePos("RobotTracker.allies[i]", "localPassableExceptAllies", 0, False) }}
         }
-        // minkowski sum the walls for the rat king again (5x5 hitbox for walls, 3x3 hitbox for allies)
+        // minkowski sum the walls for the rat king again (5x5 hitbox for walls, 3x3 hitbox for allies and dirt)
         {{ kingMinkowski() }}
         // d{i}0 + d{i}1 is the mask of reachable within i steps
         long d00 = 0, d01 = 0;

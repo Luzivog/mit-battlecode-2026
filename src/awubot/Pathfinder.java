@@ -122,6 +122,7 @@ class BugnavInstance {
                         System.out.println("loop detected");
                         givenUp = true;
                     }
+                    vis.add(loc);
                     path0 = loc;
                     nextPathIndex = 1;
                 }
@@ -133,6 +134,7 @@ class BugnavInstance {
                         System.out.println("loop detected");
                         givenUp = true;
                     }
+                    vis.add(loc);
                     path1 = loc;
                     nextPathIndex = 2;
                 }
@@ -144,6 +146,7 @@ class BugnavInstance {
                         System.out.println("loop detected");
                         givenUp = true;
                     }
+                    vis.add(loc);
                     path2 = loc;
                     nextPathIndex = 3;
                 }
@@ -155,6 +158,7 @@ class BugnavInstance {
                         System.out.println("loop detected");
                         givenUp = true;
                     }
+                    vis.add(loc);
                     path3 = loc;
                     nextPathIndex = 4;
                 }
@@ -166,6 +170,7 @@ class BugnavInstance {
                         System.out.println("loop detected");
                         givenUp = true;
                     }
+                    vis.add(loc);
                     path4 = loc;
                     nextPathIndex = 5;
                 }
@@ -177,6 +182,7 @@ class BugnavInstance {
                         System.out.println("loop detected");
                         givenUp = true;
                     }
+                    vis.add(loc);
                     path5 = loc;
                     nextPathIndex = 6;
                 }
@@ -188,6 +194,7 @@ class BugnavInstance {
                         System.out.println("loop detected");
                         givenUp = true;
                     }
+                    vis.add(loc);
                     path6 = loc;
                     nextPathIndex = 7;
                 }
@@ -199,6 +206,7 @@ class BugnavInstance {
                         System.out.println("loop detected");
                         givenUp = true;
                     }
+                    vis.add(loc);
                     path7 = loc;
                     nextPathIndex = 8;
                 }
@@ -210,6 +218,7 @@ class BugnavInstance {
                         System.out.println("loop detected");
                         givenUp = true;
                     }
+                    vis.add(loc);
                     path8 = loc;
                     nextPathIndex = 9;
                 }
@@ -221,6 +230,7 @@ class BugnavInstance {
                         System.out.println("loop detected");
                         givenUp = true;
                     }
+                    vis.add(loc);
                     path9 = loc;
                     nextPathIndex = 10;
                 }
@@ -232,6 +242,7 @@ class BugnavInstance {
                         System.out.println("loop detected");
                         givenUp = true;
                     }
+                    vis.add(loc);
                     path10 = loc;
                     nextPathIndex = 11;
                 }
@@ -243,6 +254,7 @@ class BugnavInstance {
                         System.out.println("loop detected");
                         givenUp = true;
                     }
+                    vis.add(loc);
                     path11 = loc;
                     nextPathIndex = 12;
                 }
@@ -254,6 +266,7 @@ class BugnavInstance {
                         System.out.println("loop detected");
                         givenUp = true;
                     }
+                    vis.add(loc);
                     path12 = loc;
                     nextPathIndex = 13;
                 }
@@ -265,6 +278,7 @@ class BugnavInstance {
                         System.out.println("loop detected");
                         givenUp = true;
                     }
+                    vis.add(loc);
                     path13 = loc;
                     nextPathIndex = 14;
                 }
@@ -276,6 +290,7 @@ class BugnavInstance {
                         System.out.println("loop detected");
                         givenUp = true;
                     }
+                    vis.add(loc);
                     path14 = loc;
                     nextPathIndex = 0;
                 }
@@ -693,6 +708,14 @@ class BugnavInstance {
         if(dirToTarget != bottomDir) {
             // indicate("changing bottomDir from " + bottomDir + " to " + dirToTarget);
             if(dirToTarget == Direction.CENTER) return false;
+            // indicate("NEW DIR " + dirToTarget);
+            if(dirToTarget == bottomDir.rotateLeft()) {
+                windingNumber++;
+                // indicate("INCREMENT");
+            } else if(dirToTarget == bottomDir.rotateRight()) {
+                windingNumber--;
+                // indicate("DECREMENT");
+            }
             if(stackSize == 0) {
                 bottomDir = topDir = dirToTarget;
             } else {
@@ -700,7 +723,6 @@ class BugnavInstance {
                                     if(dirToTarget == bottomDir.rotateRight()) {
                     bottomDir = dirToTarget;
                     stackSize++;
-                    windingNumber++;
                 } else {
                     if(dirToTarget != bottomDir.rotateLeft()) {
                         System.out.println("unexpected direction change from " + bottomDir + " to " + dirToTarget);
@@ -708,7 +730,6 @@ class BugnavInstance {
                     } else {
                         bottomDir = dirToTarget;
                         stackSize--;
-                        windingNumber--;
                         if(stackSize < 0) {
                             stackSize = 0;
                             topDir = bottomDir;
@@ -720,7 +741,6 @@ class BugnavInstance {
                                     if(dirToTarget == bottomDir.rotateLeft()) {
                     bottomDir = dirToTarget;
                     stackSize++;
-                    windingNumber++;
                 } else {
                     if(dirToTarget != bottomDir.rotateRight()) {
                         System.out.println("unexpected direction change from " + bottomDir + " to " + dirToTarget);
@@ -728,7 +748,6 @@ class BugnavInstance {
                     } else {
                         bottomDir = dirToTarget;
                         stackSize--;
-                        windingNumber--;
                         if(stackSize < 0) {
                             stackSize = 0;
                             topDir = bottomDir;
@@ -739,6 +758,7 @@ class BugnavInstance {
                 }
             }
         }
+        // indicate("winding number " + windingNumber);
         // indicate("direction " + pos + " " + topDir + " " + bottomDir + " " + leftTurn);
 
         MapLocation greedyLoc = pos.add(bottomDir);
@@ -856,12 +876,19 @@ class BugnavInstance {
            && Math.abs(topDir.dx + topDir.dy) != 1
            )
         {
-            // indicate("trying " + tryDir);
+            // System.out.println("T " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
                     // avoid following the edge of the map (TODO: 1-thick borders)
                     indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + -2);
+                    if(vis.contains(nextPos)) {
+                        indicate("gave up at edge");
+                        System.out.println("gave up at edge");
+                        givenUp = true;
+                        return false;
+                    }
+                    vis.add(nextPos);
                     leftTurn = !leftTurn;
                     clearPath();
                     // don't guess turn direction, we know that one direction is bad already
@@ -872,17 +899,18 @@ class BugnavInstance {
                     hitEdge = true;
                 }
                 // Profiler.end("bugnav " + -2 + " " + isMaster);
-                // indicate("bugnav " + -2 + " " + isMaster);
+                indicate("bugnav " + -2 + " " + isMaster);
                 return false;
             }
-            if(possiblyPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+            var isPassable = isPassable(nextPos);
+            if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 // Profiler.end("bugnav " + -2 + " " + isMaster);
-                // indicate("bugnav " + -2 + " " + isMaster);
+                indicate("bugnav " + -2 + " " + isMaster);
                 return false;
             }
-            if(isPassable(nextPos)) {
+            if(isPassable) {
                 pos = nextPos;
                 topDir = tryDir;
                 stackSize += -2;
@@ -902,12 +930,19 @@ class BugnavInstance {
            // only try -2 for diagonals
            )
         {
-            // indicate("trying " + tryDir);
+            // System.out.println("T " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
                     // avoid following the edge of the map (TODO: 1-thick borders)
                     indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + -1);
+                    if(vis.contains(nextPos)) {
+                        indicate("gave up at edge");
+                        System.out.println("gave up at edge");
+                        givenUp = true;
+                        return false;
+                    }
+                    vis.add(nextPos);
                     leftTurn = !leftTurn;
                     clearPath();
                     // don't guess turn direction, we know that one direction is bad already
@@ -918,17 +953,18 @@ class BugnavInstance {
                     hitEdge = true;
                 }
                 // Profiler.end("bugnav " + -1 + " " + isMaster);
-                // indicate("bugnav " + -1 + " " + isMaster);
+                indicate("bugnav " + -1 + " " + isMaster);
                 return false;
             }
-            if(possiblyPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+            var isPassable = isPassable(nextPos);
+            if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 // Profiler.end("bugnav " + -1 + " " + isMaster);
-                // indicate("bugnav " + -1 + " " + isMaster);
+                indicate("bugnav " + -1 + " " + isMaster);
                 return false;
             }
-            if(isPassable(nextPos)) {
+            if(isPassable) {
                 pos = nextPos;
                 topDir = tryDir;
                 stackSize += -1;
@@ -945,12 +981,19 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotateLeft();
         {
-            // indicate("trying " + tryDir);
+            // System.out.println("T " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
                     // avoid following the edge of the map (TODO: 1-thick borders)
                     indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 0);
+                    if(vis.contains(nextPos)) {
+                        indicate("gave up at edge");
+                        System.out.println("gave up at edge");
+                        givenUp = true;
+                        return false;
+                    }
+                    vis.add(nextPos);
                     leftTurn = !leftTurn;
                     clearPath();
                     // don't guess turn direction, we know that one direction is bad already
@@ -961,17 +1004,18 @@ class BugnavInstance {
                     hitEdge = true;
                 }
                 // Profiler.end("bugnav " + 0 + " " + isMaster);
-                // indicate("bugnav " + 0 + " " + isMaster);
+                indicate("bugnav " + 0 + " " + isMaster);
                 return false;
             }
-            if(possiblyPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+            var isPassable = isPassable(nextPos);
+            if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 // Profiler.end("bugnav " + 0 + " " + isMaster);
-                // indicate("bugnav " + 0 + " " + isMaster);
+                indicate("bugnav " + 0 + " " + isMaster);
                 return false;
             }
-            if(isPassable(nextPos)) {
+            if(isPassable) {
                 pos = nextPos;
                 topDir = tryDir;
                 if(stackSize == 0) {
@@ -987,12 +1031,19 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotateLeft();
         {
-            // indicate("trying " + tryDir);
+            // System.out.println("T " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
                     // avoid following the edge of the map (TODO: 1-thick borders)
                     indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 1);
+                    if(vis.contains(nextPos)) {
+                        indicate("gave up at edge");
+                        System.out.println("gave up at edge");
+                        givenUp = true;
+                        return false;
+                    }
+                    vis.add(nextPos);
                     leftTurn = !leftTurn;
                     clearPath();
                     // don't guess turn direction, we know that one direction is bad already
@@ -1003,17 +1054,18 @@ class BugnavInstance {
                     hitEdge = true;
                 }
                 // Profiler.end("bugnav " + 1 + " " + isMaster);
-                // indicate("bugnav " + 1 + " " + isMaster);
+                indicate("bugnav " + 1 + " " + isMaster);
                 return false;
             }
-            if(possiblyPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+            var isPassable = isPassable(nextPos);
+            if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 // Profiler.end("bugnav " + 1 + " " + isMaster);
-                // indicate("bugnav " + 1 + " " + isMaster);
+                indicate("bugnav " + 1 + " " + isMaster);
                 return false;
             }
-            if(isPassable(nextPos)) {
+            if(isPassable) {
                 pos = nextPos;
                 topDir = tryDir;
                 stackSize += 1;
@@ -1030,12 +1082,19 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotateLeft();
         {
-            // indicate("trying " + tryDir);
+            // System.out.println("T " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
                     // avoid following the edge of the map (TODO: 1-thick borders)
                     indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 2);
+                    if(vis.contains(nextPos)) {
+                        indicate("gave up at edge");
+                        System.out.println("gave up at edge");
+                        givenUp = true;
+                        return false;
+                    }
+                    vis.add(nextPos);
                     leftTurn = !leftTurn;
                     clearPath();
                     // don't guess turn direction, we know that one direction is bad already
@@ -1046,17 +1105,18 @@ class BugnavInstance {
                     hitEdge = true;
                 }
                 // Profiler.end("bugnav " + 2 + " " + isMaster);
-                // indicate("bugnav " + 2 + " " + isMaster);
+                indicate("bugnav " + 2 + " " + isMaster);
                 return false;
             }
-            if(possiblyPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+            var isPassable = isPassable(nextPos);
+            if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 // Profiler.end("bugnav " + 2 + " " + isMaster);
-                // indicate("bugnav " + 2 + " " + isMaster);
+                indicate("bugnav " + 2 + " " + isMaster);
                 return false;
             }
-            if(isPassable(nextPos)) {
+            if(isPassable) {
                 pos = nextPos;
                 topDir = tryDir;
                 stackSize += 2;
@@ -1073,12 +1133,19 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotateLeft();
         {
-            // indicate("trying " + tryDir);
+            // System.out.println("T " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
                     // avoid following the edge of the map (TODO: 1-thick borders)
                     indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 3);
+                    if(vis.contains(nextPos)) {
+                        indicate("gave up at edge");
+                        System.out.println("gave up at edge");
+                        givenUp = true;
+                        return false;
+                    }
+                    vis.add(nextPos);
                     leftTurn = !leftTurn;
                     clearPath();
                     // don't guess turn direction, we know that one direction is bad already
@@ -1089,17 +1156,18 @@ class BugnavInstance {
                     hitEdge = true;
                 }
                 // Profiler.end("bugnav " + 3 + " " + isMaster);
-                // indicate("bugnav " + 3 + " " + isMaster);
+                indicate("bugnav " + 3 + " " + isMaster);
                 return false;
             }
-            if(possiblyPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+            var isPassable = isPassable(nextPos);
+            if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 // Profiler.end("bugnav " + 3 + " " + isMaster);
-                // indicate("bugnav " + 3 + " " + isMaster);
+                indicate("bugnav " + 3 + " " + isMaster);
                 return false;
             }
-            if(isPassable(nextPos)) {
+            if(isPassable) {
                 pos = nextPos;
                 topDir = tryDir;
                 stackSize += 3;
@@ -1116,12 +1184,19 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotateLeft();
         {
-            // indicate("trying " + tryDir);
+            // System.out.println("T " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
                     // avoid following the edge of the map (TODO: 1-thick borders)
                     indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 4);
+                    if(vis.contains(nextPos)) {
+                        indicate("gave up at edge");
+                        System.out.println("gave up at edge");
+                        givenUp = true;
+                        return false;
+                    }
+                    vis.add(nextPos);
                     leftTurn = !leftTurn;
                     clearPath();
                     // don't guess turn direction, we know that one direction is bad already
@@ -1132,17 +1207,18 @@ class BugnavInstance {
                     hitEdge = true;
                 }
                 // Profiler.end("bugnav " + 4 + " " + isMaster);
-                // indicate("bugnav " + 4 + " " + isMaster);
+                indicate("bugnav " + 4 + " " + isMaster);
                 return false;
             }
-            if(possiblyPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+            var isPassable = isPassable(nextPos);
+            if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 // Profiler.end("bugnav " + 4 + " " + isMaster);
-                // indicate("bugnav " + 4 + " " + isMaster);
+                indicate("bugnav " + 4 + " " + isMaster);
                 return false;
             }
-            if(isPassable(nextPos)) {
+            if(isPassable) {
                 pos = nextPos;
                 topDir = tryDir;
                 stackSize += 4;
@@ -1159,12 +1235,19 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotateLeft();
         {
-            // indicate("trying " + tryDir);
+            // System.out.println("T " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
                     // avoid following the edge of the map (TODO: 1-thick borders)
                     indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 5);
+                    if(vis.contains(nextPos)) {
+                        indicate("gave up at edge");
+                        System.out.println("gave up at edge");
+                        givenUp = true;
+                        return false;
+                    }
+                    vis.add(nextPos);
                     leftTurn = !leftTurn;
                     clearPath();
                     // don't guess turn direction, we know that one direction is bad already
@@ -1175,17 +1258,18 @@ class BugnavInstance {
                     hitEdge = true;
                 }
                 // Profiler.end("bugnav " + 5 + " " + isMaster);
-                // indicate("bugnav " + 5 + " " + isMaster);
+                indicate("bugnav " + 5 + " " + isMaster);
                 return false;
             }
-            if(possiblyPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+            var isPassable = isPassable(nextPos);
+            if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 // Profiler.end("bugnav " + 5 + " " + isMaster);
-                // indicate("bugnav " + 5 + " " + isMaster);
+                indicate("bugnav " + 5 + " " + isMaster);
                 return false;
             }
-            if(isPassable(nextPos)) {
+            if(isPassable) {
                 pos = nextPos;
                 topDir = tryDir;
                 stackSize += 5;
@@ -1212,12 +1296,19 @@ class BugnavInstance {
            && Math.abs(topDir.dx + topDir.dy) != 1
            )
         {
-            // indicate("trying " + tryDir);
+            // System.out.println("T " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
                     // avoid following the edge of the map (TODO: 1-thick borders)
                     indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + -2);
+                    if(vis.contains(nextPos)) {
+                        indicate("gave up at edge");
+                        System.out.println("gave up at edge");
+                        givenUp = true;
+                        return false;
+                    }
+                    vis.add(nextPos);
                     leftTurn = !leftTurn;
                     clearPath();
                     // don't guess turn direction, we know that one direction is bad already
@@ -1228,17 +1319,18 @@ class BugnavInstance {
                     hitEdge = true;
                 }
                 // Profiler.end("bugnav " + -2 + " " + isMaster);
-                // indicate("bugnav " + -2 + " " + isMaster);
+                indicate("bugnav " + -2 + " " + isMaster);
                 return false;
             }
-            if(possiblyPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+            var isPassable = isPassable(nextPos);
+            if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 // Profiler.end("bugnav " + -2 + " " + isMaster);
-                // indicate("bugnav " + -2 + " " + isMaster);
+                indicate("bugnav " + -2 + " " + isMaster);
                 return false;
             }
-            if(isPassable(nextPos)) {
+            if(isPassable) {
                 pos = nextPos;
                 topDir = tryDir;
                 stackSize += -2;
@@ -1258,12 +1350,19 @@ class BugnavInstance {
            // only try -2 for diagonals
            )
         {
-            // indicate("trying " + tryDir);
+            // System.out.println("T " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
                     // avoid following the edge of the map (TODO: 1-thick borders)
                     indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + -1);
+                    if(vis.contains(nextPos)) {
+                        indicate("gave up at edge");
+                        System.out.println("gave up at edge");
+                        givenUp = true;
+                        return false;
+                    }
+                    vis.add(nextPos);
                     leftTurn = !leftTurn;
                     clearPath();
                     // don't guess turn direction, we know that one direction is bad already
@@ -1274,17 +1373,18 @@ class BugnavInstance {
                     hitEdge = true;
                 }
                 // Profiler.end("bugnav " + -1 + " " + isMaster);
-                // indicate("bugnav " + -1 + " " + isMaster);
+                indicate("bugnav " + -1 + " " + isMaster);
                 return false;
             }
-            if(possiblyPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+            var isPassable = isPassable(nextPos);
+            if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 // Profiler.end("bugnav " + -1 + " " + isMaster);
-                // indicate("bugnav " + -1 + " " + isMaster);
+                indicate("bugnav " + -1 + " " + isMaster);
                 return false;
             }
-            if(isPassable(nextPos)) {
+            if(isPassable) {
                 pos = nextPos;
                 topDir = tryDir;
                 stackSize += -1;
@@ -1301,12 +1401,19 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotateRight();
         {
-            // indicate("trying " + tryDir);
+            // System.out.println("T " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
                     // avoid following the edge of the map (TODO: 1-thick borders)
                     indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 0);
+                    if(vis.contains(nextPos)) {
+                        indicate("gave up at edge");
+                        System.out.println("gave up at edge");
+                        givenUp = true;
+                        return false;
+                    }
+                    vis.add(nextPos);
                     leftTurn = !leftTurn;
                     clearPath();
                     // don't guess turn direction, we know that one direction is bad already
@@ -1317,17 +1424,18 @@ class BugnavInstance {
                     hitEdge = true;
                 }
                 // Profiler.end("bugnav " + 0 + " " + isMaster);
-                // indicate("bugnav " + 0 + " " + isMaster);
+                indicate("bugnav " + 0 + " " + isMaster);
                 return false;
             }
-            if(possiblyPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+            var isPassable = isPassable(nextPos);
+            if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 // Profiler.end("bugnav " + 0 + " " + isMaster);
-                // indicate("bugnav " + 0 + " " + isMaster);
+                indicate("bugnav " + 0 + " " + isMaster);
                 return false;
             }
-            if(isPassable(nextPos)) {
+            if(isPassable) {
                 pos = nextPos;
                 topDir = tryDir;
                 if(stackSize == 0) {
@@ -1343,12 +1451,19 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotateRight();
         {
-            // indicate("trying " + tryDir);
+            // System.out.println("T " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
                     // avoid following the edge of the map (TODO: 1-thick borders)
                     indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 1);
+                    if(vis.contains(nextPos)) {
+                        indicate("gave up at edge");
+                        System.out.println("gave up at edge");
+                        givenUp = true;
+                        return false;
+                    }
+                    vis.add(nextPos);
                     leftTurn = !leftTurn;
                     clearPath();
                     // don't guess turn direction, we know that one direction is bad already
@@ -1359,17 +1474,18 @@ class BugnavInstance {
                     hitEdge = true;
                 }
                 // Profiler.end("bugnav " + 1 + " " + isMaster);
-                // indicate("bugnav " + 1 + " " + isMaster);
+                indicate("bugnav " + 1 + " " + isMaster);
                 return false;
             }
-            if(possiblyPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+            var isPassable = isPassable(nextPos);
+            if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 // Profiler.end("bugnav " + 1 + " " + isMaster);
-                // indicate("bugnav " + 1 + " " + isMaster);
+                indicate("bugnav " + 1 + " " + isMaster);
                 return false;
             }
-            if(isPassable(nextPos)) {
+            if(isPassable) {
                 pos = nextPos;
                 topDir = tryDir;
                 stackSize += 1;
@@ -1386,12 +1502,19 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotateRight();
         {
-            // indicate("trying " + tryDir);
+            // System.out.println("T " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
                     // avoid following the edge of the map (TODO: 1-thick borders)
                     indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 2);
+                    if(vis.contains(nextPos)) {
+                        indicate("gave up at edge");
+                        System.out.println("gave up at edge");
+                        givenUp = true;
+                        return false;
+                    }
+                    vis.add(nextPos);
                     leftTurn = !leftTurn;
                     clearPath();
                     // don't guess turn direction, we know that one direction is bad already
@@ -1402,17 +1525,18 @@ class BugnavInstance {
                     hitEdge = true;
                 }
                 // Profiler.end("bugnav " + 2 + " " + isMaster);
-                // indicate("bugnav " + 2 + " " + isMaster);
+                indicate("bugnav " + 2 + " " + isMaster);
                 return false;
             }
-            if(possiblyPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+            var isPassable = isPassable(nextPos);
+            if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 // Profiler.end("bugnav " + 2 + " " + isMaster);
-                // indicate("bugnav " + 2 + " " + isMaster);
+                indicate("bugnav " + 2 + " " + isMaster);
                 return false;
             }
-            if(isPassable(nextPos)) {
+            if(isPassable) {
                 pos = nextPos;
                 topDir = tryDir;
                 stackSize += 2;
@@ -1429,12 +1553,19 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotateRight();
         {
-            // indicate("trying " + tryDir);
+            // System.out.println("T " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
                     // avoid following the edge of the map (TODO: 1-thick borders)
                     indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 3);
+                    if(vis.contains(nextPos)) {
+                        indicate("gave up at edge");
+                        System.out.println("gave up at edge");
+                        givenUp = true;
+                        return false;
+                    }
+                    vis.add(nextPos);
                     leftTurn = !leftTurn;
                     clearPath();
                     // don't guess turn direction, we know that one direction is bad already
@@ -1445,17 +1576,18 @@ class BugnavInstance {
                     hitEdge = true;
                 }
                 // Profiler.end("bugnav " + 3 + " " + isMaster);
-                // indicate("bugnav " + 3 + " " + isMaster);
+                indicate("bugnav " + 3 + " " + isMaster);
                 return false;
             }
-            if(possiblyPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+            var isPassable = isPassable(nextPos);
+            if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 // Profiler.end("bugnav " + 3 + " " + isMaster);
-                // indicate("bugnav " + 3 + " " + isMaster);
+                indicate("bugnav " + 3 + " " + isMaster);
                 return false;
             }
-            if(isPassable(nextPos)) {
+            if(isPassable) {
                 pos = nextPos;
                 topDir = tryDir;
                 stackSize += 3;
@@ -1472,12 +1604,19 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotateRight();
         {
-            // indicate("trying " + tryDir);
+            // System.out.println("T " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
                     // avoid following the edge of the map (TODO: 1-thick borders)
                     indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 4);
+                    if(vis.contains(nextPos)) {
+                        indicate("gave up at edge");
+                        System.out.println("gave up at edge");
+                        givenUp = true;
+                        return false;
+                    }
+                    vis.add(nextPos);
                     leftTurn = !leftTurn;
                     clearPath();
                     // don't guess turn direction, we know that one direction is bad already
@@ -1488,17 +1627,18 @@ class BugnavInstance {
                     hitEdge = true;
                 }
                 // Profiler.end("bugnav " + 4 + " " + isMaster);
-                // indicate("bugnav " + 4 + " " + isMaster);
+                indicate("bugnav " + 4 + " " + isMaster);
                 return false;
             }
-            if(possiblyPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+            var isPassable = isPassable(nextPos);
+            if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 // Profiler.end("bugnav " + 4 + " " + isMaster);
-                // indicate("bugnav " + 4 + " " + isMaster);
+                indicate("bugnav " + 4 + " " + isMaster);
                 return false;
             }
-            if(isPassable(nextPos)) {
+            if(isPassable) {
                 pos = nextPos;
                 topDir = tryDir;
                 stackSize += 4;
@@ -1515,12 +1655,19 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotateRight();
         {
-            // indicate("trying " + tryDir);
+            // System.out.println("T " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
                     // avoid following the edge of the map (TODO: 1-thick borders)
                     indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 5);
+                    if(vis.contains(nextPos)) {
+                        indicate("gave up at edge");
+                        System.out.println("gave up at edge");
+                        givenUp = true;
+                        return false;
+                    }
+                    vis.add(nextPos);
                     leftTurn = !leftTurn;
                     clearPath();
                     // don't guess turn direction, we know that one direction is bad already
@@ -1531,17 +1678,18 @@ class BugnavInstance {
                     hitEdge = true;
                 }
                 // Profiler.end("bugnav " + 5 + " " + isMaster);
-                // indicate("bugnav " + 5 + " " + isMaster);
+                indicate("bugnav " + 5 + " " + isMaster);
                 return false;
             }
-            if(possiblyPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+            var isPassable = isPassable(nextPos);
+            if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 // Profiler.end("bugnav " + 5 + " " + isMaster);
-                // indicate("bugnav " + 5 + " " + isMaster);
+                indicate("bugnav " + 5 + " " + isMaster);
                 return false;
             }
-            if(isPassable(nextPos)) {
+            if(isPassable) {
                 pos = nextPos;
                 topDir = tryDir;
                 stackSize += 5;
@@ -1704,10 +1852,6 @@ public class Pathfinder {
         }
     }
 
-    public static void moveForward() throws GameActionException {
-        rawMove();
-    }
-
     public static void makeMove(Direction dir) throws GameActionException {
         if(rc.canTurn()) turn(dir);
         var nextLoc = myLoc.add(dir);
@@ -1716,12 +1860,15 @@ public class Pathfinder {
             else return;
         }
         if(dir == myDir) {
-            if(rc.canMoveForward()) moveForward();
+            if(rc.canMoveForward()) rawMove();
         } else {
             // if we can't turn, then strafe
             if(rc.canMove(dir)) rawMove(dir);
-            // assuming that moving is the last thing we are doing this turn, so no need to update CellTracker here
         }
+    }
+
+    public static boolean givenUp() {
+        return bug != null && bug.givenUp;
     }
 
     static MapLocation lastBugPos, lastLoc, secondLastBugPos, secondLastLoc;

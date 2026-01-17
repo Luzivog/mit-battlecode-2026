@@ -9,7 +9,7 @@ import battlecode.common.*;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 import awubot.util.Profiler;public class RobotTracker {
-    
+
     private static StringBuilder baseString = new StringBuilder("\u0FFF\u1000\u1001\u1002\u1003\u1004\u1005\u1006\u1007\u1008\u1009\u100A\u100B\u100C\u100D\u100E\u100F\u1010\u1011\u1012\u1013\u1014\u1015\u1016\u1017\u1018\u1019\u101A\u101B\u101C\u101D\u101E\u101F\u1020\u1021");
     public static RobotInfo[] sortedRobots = new RobotInfo[25];
     public static RobotInfo[] sortedEnemies = new RobotInfo[25];
@@ -649,7 +649,7 @@ import awubot.util.Profiler;public class RobotTracker {
         int nextEnemy = numEnemies;
         int nextCat = numCats;
         switch (numRobots) {
-            case 35: { 
+            case 35: {
                 sortedRobots[34] =  nearbyRobots[(int) sb.charAt(34)];
                 switch (sortedRobots[34].team.ordinal()) {
                     case 2:
@@ -663,7 +663,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 34: { 
+            case 34: {
                 sortedRobots[33] =  nearbyRobots[(int) sb.charAt(33)];
                 switch (sortedRobots[33].team.ordinal()) {
                     case 2:
@@ -677,7 +677,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 33: { 
+            case 33: {
                 sortedRobots[32] =  nearbyRobots[(int) sb.charAt(32)];
                 switch (sortedRobots[32].team.ordinal()) {
                     case 2:
@@ -691,7 +691,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 32: { 
+            case 32: {
                 sortedRobots[31] =  nearbyRobots[(int) sb.charAt(31)];
                 switch (sortedRobots[31].team.ordinal()) {
                     case 2:
@@ -705,7 +705,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 31: { 
+            case 31: {
                 sortedRobots[30] =  nearbyRobots[(int) sb.charAt(30)];
                 switch (sortedRobots[30].team.ordinal()) {
                     case 2:
@@ -719,7 +719,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 30: { 
+            case 30: {
                 sortedRobots[29] =  nearbyRobots[(int) sb.charAt(29)];
                 switch (sortedRobots[29].team.ordinal()) {
                     case 2:
@@ -733,7 +733,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 29: { 
+            case 29: {
                 sortedRobots[28] =  nearbyRobots[(int) sb.charAt(28)];
                 switch (sortedRobots[28].team.ordinal()) {
                     case 2:
@@ -747,7 +747,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 28: { 
+            case 28: {
                 sortedRobots[27] =  nearbyRobots[(int) sb.charAt(27)];
                 switch (sortedRobots[27].team.ordinal()) {
                     case 2:
@@ -761,7 +761,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 27: { 
+            case 27: {
                 sortedRobots[26] =  nearbyRobots[(int) sb.charAt(26)];
                 switch (sortedRobots[26].team.ordinal()) {
                     case 2:
@@ -775,7 +775,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 26: { 
+            case 26: {
                 sortedRobots[25] =  nearbyRobots[(int) sb.charAt(25)];
                 switch (sortedRobots[25].team.ordinal()) {
                     case 2:
@@ -789,7 +789,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 25: { 
+            case 25: {
                 sortedRobots[24] =  nearbyRobots[(int) sb.charAt(24)];
                 switch (sortedRobots[24].team.ordinal()) {
                     case 2:
@@ -803,7 +803,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 24: { 
+            case 24: {
                 sortedRobots[23] =  nearbyRobots[(int) sb.charAt(23)];
                 switch (sortedRobots[23].team.ordinal()) {
                     case 2:
@@ -817,7 +817,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 23: { 
+            case 23: {
                 sortedRobots[22] =  nearbyRobots[(int) sb.charAt(22)];
                 switch (sortedRobots[22].team.ordinal()) {
                     case 2:
@@ -831,7 +831,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 22: { 
+            case 22: {
                 sortedRobots[21] =  nearbyRobots[(int) sb.charAt(21)];
                 switch (sortedRobots[21].team.ordinal()) {
                     case 2:
@@ -845,7 +845,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 21: { 
+            case 21: {
                 sortedRobots[20] =  nearbyRobots[(int) sb.charAt(20)];
                 switch (sortedRobots[20].team.ordinal()) {
                     case 2:
@@ -859,7 +859,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 20: { 
+            case 20: {
                 sortedRobots[19] =  nearbyRobots[(int) sb.charAt(19)];
                 switch (sortedRobots[19].team.ordinal()) {
                     case 2:
@@ -873,7 +873,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 19: { 
+            case 19: {
                 sortedRobots[18] =  nearbyRobots[(int) sb.charAt(18)];
                 switch (sortedRobots[18].team.ordinal()) {
                     case 2:
@@ -887,7 +887,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 18: { 
+            case 18: {
                 sortedRobots[17] =  nearbyRobots[(int) sb.charAt(17)];
                 switch (sortedRobots[17].team.ordinal()) {
                     case 2:
@@ -901,7 +901,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 17: { 
+            case 17: {
                 sortedRobots[16] =  nearbyRobots[(int) sb.charAt(16)];
                 switch (sortedRobots[16].team.ordinal()) {
                     case 2:
@@ -915,7 +915,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 16: { 
+            case 16: {
                 sortedRobots[15] =  nearbyRobots[(int) sb.charAt(15)];
                 switch (sortedRobots[15].team.ordinal()) {
                     case 2:
@@ -929,7 +929,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 15: { 
+            case 15: {
                 sortedRobots[14] =  nearbyRobots[(int) sb.charAt(14)];
                 switch (sortedRobots[14].team.ordinal()) {
                     case 2:
@@ -943,7 +943,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 14: { 
+            case 14: {
                 sortedRobots[13] =  nearbyRobots[(int) sb.charAt(13)];
                 switch (sortedRobots[13].team.ordinal()) {
                     case 2:
@@ -957,7 +957,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 13: { 
+            case 13: {
                 sortedRobots[12] =  nearbyRobots[(int) sb.charAt(12)];
                 switch (sortedRobots[12].team.ordinal()) {
                     case 2:
@@ -971,7 +971,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 12: { 
+            case 12: {
                 sortedRobots[11] =  nearbyRobots[(int) sb.charAt(11)];
                 switch (sortedRobots[11].team.ordinal()) {
                     case 2:
@@ -985,7 +985,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 11: { 
+            case 11: {
                 sortedRobots[10] =  nearbyRobots[(int) sb.charAt(10)];
                 switch (sortedRobots[10].team.ordinal()) {
                     case 2:
@@ -999,7 +999,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 10: { 
+            case 10: {
                 sortedRobots[9] =  nearbyRobots[(int) sb.charAt(9)];
                 switch (sortedRobots[9].team.ordinal()) {
                     case 2:
@@ -1013,7 +1013,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 9: { 
+            case 9: {
                 sortedRobots[8] =  nearbyRobots[(int) sb.charAt(8)];
                 switch (sortedRobots[8].team.ordinal()) {
                     case 2:
@@ -1027,7 +1027,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 8: { 
+            case 8: {
                 sortedRobots[7] =  nearbyRobots[(int) sb.charAt(7)];
                 switch (sortedRobots[7].team.ordinal()) {
                     case 2:
@@ -1041,7 +1041,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 7: { 
+            case 7: {
                 sortedRobots[6] =  nearbyRobots[(int) sb.charAt(6)];
                 switch (sortedRobots[6].team.ordinal()) {
                     case 2:
@@ -1055,7 +1055,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 6: { 
+            case 6: {
                 sortedRobots[5] =  nearbyRobots[(int) sb.charAt(5)];
                 switch (sortedRobots[5].team.ordinal()) {
                     case 2:
@@ -1069,7 +1069,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 5: { 
+            case 5: {
                 sortedRobots[4] =  nearbyRobots[(int) sb.charAt(4)];
                 switch (sortedRobots[4].team.ordinal()) {
                     case 2:
@@ -1083,7 +1083,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 4: { 
+            case 4: {
                 sortedRobots[3] =  nearbyRobots[(int) sb.charAt(3)];
                 switch (sortedRobots[3].team.ordinal()) {
                     case 2:
@@ -1097,7 +1097,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 3: { 
+            case 3: {
                 sortedRobots[2] =  nearbyRobots[(int) sb.charAt(2)];
                 switch (sortedRobots[2].team.ordinal()) {
                     case 2:
@@ -1111,7 +1111,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 2: { 
+            case 2: {
                 sortedRobots[1] =  nearbyRobots[(int) sb.charAt(1)];
                 switch (sortedRobots[1].team.ordinal()) {
                     case 2:
@@ -1125,7 +1125,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 1: { 
+            case 1: {
                 sortedRobots[0] =  nearbyRobots[(int) sb.charAt(0)];
                 switch (sortedRobots[0].team.ordinal()) {
                     case 2:
@@ -1761,7 +1761,7 @@ import awubot.util.Profiler;public class RobotTracker {
         int nextEnemy = numEnemies;
         int nextCat = numCats;
         switch (numRobots) {
-            case 35: { 
+            case 35: {
                 sortedRobots[34] =  nearbyRobots[(int) sb.charAt(34)];
                 switch (sortedRobots[34].team.ordinal()) {
                     case 2:
@@ -1775,7 +1775,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 34: { 
+            case 34: {
                 sortedRobots[33] =  nearbyRobots[(int) sb.charAt(33)];
                 switch (sortedRobots[33].team.ordinal()) {
                     case 2:
@@ -1789,7 +1789,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 33: { 
+            case 33: {
                 sortedRobots[32] =  nearbyRobots[(int) sb.charAt(32)];
                 switch (sortedRobots[32].team.ordinal()) {
                     case 2:
@@ -1803,7 +1803,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 32: { 
+            case 32: {
                 sortedRobots[31] =  nearbyRobots[(int) sb.charAt(31)];
                 switch (sortedRobots[31].team.ordinal()) {
                     case 2:
@@ -1817,7 +1817,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 31: { 
+            case 31: {
                 sortedRobots[30] =  nearbyRobots[(int) sb.charAt(30)];
                 switch (sortedRobots[30].team.ordinal()) {
                     case 2:
@@ -1831,7 +1831,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 30: { 
+            case 30: {
                 sortedRobots[29] =  nearbyRobots[(int) sb.charAt(29)];
                 switch (sortedRobots[29].team.ordinal()) {
                     case 2:
@@ -1845,7 +1845,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 29: { 
+            case 29: {
                 sortedRobots[28] =  nearbyRobots[(int) sb.charAt(28)];
                 switch (sortedRobots[28].team.ordinal()) {
                     case 2:
@@ -1859,7 +1859,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 28: { 
+            case 28: {
                 sortedRobots[27] =  nearbyRobots[(int) sb.charAt(27)];
                 switch (sortedRobots[27].team.ordinal()) {
                     case 2:
@@ -1873,7 +1873,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 27: { 
+            case 27: {
                 sortedRobots[26] =  nearbyRobots[(int) sb.charAt(26)];
                 switch (sortedRobots[26].team.ordinal()) {
                     case 2:
@@ -1887,7 +1887,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 26: { 
+            case 26: {
                 sortedRobots[25] =  nearbyRobots[(int) sb.charAt(25)];
                 switch (sortedRobots[25].team.ordinal()) {
                     case 2:
@@ -1901,7 +1901,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 25: { 
+            case 25: {
                 sortedRobots[24] =  nearbyRobots[(int) sb.charAt(24)];
                 switch (sortedRobots[24].team.ordinal()) {
                     case 2:
@@ -1915,7 +1915,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 24: { 
+            case 24: {
                 sortedRobots[23] =  nearbyRobots[(int) sb.charAt(23)];
                 switch (sortedRobots[23].team.ordinal()) {
                     case 2:
@@ -1929,7 +1929,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 23: { 
+            case 23: {
                 sortedRobots[22] =  nearbyRobots[(int) sb.charAt(22)];
                 switch (sortedRobots[22].team.ordinal()) {
                     case 2:
@@ -1943,7 +1943,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 22: { 
+            case 22: {
                 sortedRobots[21] =  nearbyRobots[(int) sb.charAt(21)];
                 switch (sortedRobots[21].team.ordinal()) {
                     case 2:
@@ -1957,7 +1957,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 21: { 
+            case 21: {
                 sortedRobots[20] =  nearbyRobots[(int) sb.charAt(20)];
                 switch (sortedRobots[20].team.ordinal()) {
                     case 2:
@@ -1971,7 +1971,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 20: { 
+            case 20: {
                 sortedRobots[19] =  nearbyRobots[(int) sb.charAt(19)];
                 switch (sortedRobots[19].team.ordinal()) {
                     case 2:
@@ -1985,7 +1985,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 19: { 
+            case 19: {
                 sortedRobots[18] =  nearbyRobots[(int) sb.charAt(18)];
                 switch (sortedRobots[18].team.ordinal()) {
                     case 2:
@@ -1999,7 +1999,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 18: { 
+            case 18: {
                 sortedRobots[17] =  nearbyRobots[(int) sb.charAt(17)];
                 switch (sortedRobots[17].team.ordinal()) {
                     case 2:
@@ -2013,7 +2013,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 17: { 
+            case 17: {
                 sortedRobots[16] =  nearbyRobots[(int) sb.charAt(16)];
                 switch (sortedRobots[16].team.ordinal()) {
                     case 2:
@@ -2027,7 +2027,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 16: { 
+            case 16: {
                 sortedRobots[15] =  nearbyRobots[(int) sb.charAt(15)];
                 switch (sortedRobots[15].team.ordinal()) {
                     case 2:
@@ -2041,7 +2041,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 15: { 
+            case 15: {
                 sortedRobots[14] =  nearbyRobots[(int) sb.charAt(14)];
                 switch (sortedRobots[14].team.ordinal()) {
                     case 2:
@@ -2055,7 +2055,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 14: { 
+            case 14: {
                 sortedRobots[13] =  nearbyRobots[(int) sb.charAt(13)];
                 switch (sortedRobots[13].team.ordinal()) {
                     case 2:
@@ -2069,7 +2069,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 13: { 
+            case 13: {
                 sortedRobots[12] =  nearbyRobots[(int) sb.charAt(12)];
                 switch (sortedRobots[12].team.ordinal()) {
                     case 2:
@@ -2083,7 +2083,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 12: { 
+            case 12: {
                 sortedRobots[11] =  nearbyRobots[(int) sb.charAt(11)];
                 switch (sortedRobots[11].team.ordinal()) {
                     case 2:
@@ -2097,7 +2097,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 11: { 
+            case 11: {
                 sortedRobots[10] =  nearbyRobots[(int) sb.charAt(10)];
                 switch (sortedRobots[10].team.ordinal()) {
                     case 2:
@@ -2111,7 +2111,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 10: { 
+            case 10: {
                 sortedRobots[9] =  nearbyRobots[(int) sb.charAt(9)];
                 switch (sortedRobots[9].team.ordinal()) {
                     case 2:
@@ -2125,7 +2125,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 9: { 
+            case 9: {
                 sortedRobots[8] =  nearbyRobots[(int) sb.charAt(8)];
                 switch (sortedRobots[8].team.ordinal()) {
                     case 2:
@@ -2139,7 +2139,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 8: { 
+            case 8: {
                 sortedRobots[7] =  nearbyRobots[(int) sb.charAt(7)];
                 switch (sortedRobots[7].team.ordinal()) {
                     case 2:
@@ -2153,7 +2153,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 7: { 
+            case 7: {
                 sortedRobots[6] =  nearbyRobots[(int) sb.charAt(6)];
                 switch (sortedRobots[6].team.ordinal()) {
                     case 2:
@@ -2167,7 +2167,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 6: { 
+            case 6: {
                 sortedRobots[5] =  nearbyRobots[(int) sb.charAt(5)];
                 switch (sortedRobots[5].team.ordinal()) {
                     case 2:
@@ -2181,7 +2181,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 5: { 
+            case 5: {
                 sortedRobots[4] =  nearbyRobots[(int) sb.charAt(4)];
                 switch (sortedRobots[4].team.ordinal()) {
                     case 2:
@@ -2195,7 +2195,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 4: { 
+            case 4: {
                 sortedRobots[3] =  nearbyRobots[(int) sb.charAt(3)];
                 switch (sortedRobots[3].team.ordinal()) {
                     case 2:
@@ -2209,7 +2209,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 3: { 
+            case 3: {
                 sortedRobots[2] =  nearbyRobots[(int) sb.charAt(2)];
                 switch (sortedRobots[2].team.ordinal()) {
                     case 2:
@@ -2223,7 +2223,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 2: { 
+            case 2: {
                 sortedRobots[1] =  nearbyRobots[(int) sb.charAt(1)];
                 switch (sortedRobots[1].team.ordinal()) {
                     case 2:
@@ -2237,7 +2237,7 @@ import awubot.util.Profiler;public class RobotTracker {
                         break;
                 }
             }
-            case 1: { 
+            case 1: {
                 sortedRobots[0] =  nearbyRobots[(int) sb.charAt(0)];
                 switch (sortedRobots[0].team.ordinal()) {
                     case 2:
@@ -2283,7 +2283,6 @@ import awubot.util.Profiler;public class RobotTracker {
         {
             var kingPos = GlobalArray.getRatKing(0);
             if(kingPos != null) {
-                rc.setIndicatorLine(myLoc, kingPos, 0, 255, 255);
                 addAlly(kingPos);
                 kingSet.add(kingPos);
                 {
@@ -2331,7 +2330,6 @@ import awubot.util.Profiler;public class RobotTracker {
         {
             var kingPos = GlobalArray.getRatKing(1);
             if(kingPos != null) {
-                rc.setIndicatorLine(myLoc, kingPos, 0, 255, 255);
                 addAlly(kingPos);
                 kingSet.add(kingPos);
                 {
@@ -2379,7 +2377,6 @@ import awubot.util.Profiler;public class RobotTracker {
         {
             var kingPos = GlobalArray.getRatKing(2);
             if(kingPos != null) {
-                rc.setIndicatorLine(myLoc, kingPos, 0, 255, 255);
                 addAlly(kingPos);
                 kingSet.add(kingPos);
                 {
@@ -2427,7 +2424,6 @@ import awubot.util.Profiler;public class RobotTracker {
         {
             var kingPos = GlobalArray.getRatKing(3);
             if(kingPos != null) {
-                rc.setIndicatorLine(myLoc, kingPos, 0, 255, 255);
                 addAlly(kingPos);
                 kingSet.add(kingPos);
                 {
@@ -2475,7 +2471,6 @@ import awubot.util.Profiler;public class RobotTracker {
         {
             var kingPos = GlobalArray.getRatKing(4);
             if(kingPos != null) {
-                rc.setIndicatorLine(myLoc, kingPos, 0, 255, 255);
                 addAlly(kingPos);
                 kingSet.add(kingPos);
                 {

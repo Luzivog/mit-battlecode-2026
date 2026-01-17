@@ -10,16 +10,19 @@ import static awubot.util.Util.*;
 // this strategy doesn't pick up cheese (that's handled in BabyRat
 // since we want to pick up in any circumstances since it doesn't cost action cd)
 public class CheeseStrategy extends Strategy {
-    public MapLocation cheeseTarget;
     public int lastSeenCheese;
+    public MapLocation cheeseTarget;
+    TraverseStrategy traverseStrategy;
 
     @Override
     public boolean runTick() throws GameActionException {
         refreshCheeseTarget();
         if(cheeseTarget == null) return false;
         lastSeenCheese = rc.getRoundNum();
-        rc.setIndicatorLine(myLoc, cheeseTarget, 255, 0, 0);
-        Pathfinder.makeMove(cheeseTarget);
+        if(!traverseStrategy.runTick()) {
+            traverseStrategy = null;
+            cheeseTarget = null;
+        }
         return true;
     }
 
@@ -35,6 +38,10 @@ public class CheeseStrategy extends Strategy {
                 cheeseTarget = info.getMapLocation();
                 bestAmount = info.getCheeseAmount();
             }
+        }
+        if(cheeseTarget != null && (traverseStrategy == null ||
+            !traverseStrategy.target.equals(cheeseTarget))) {
+            traverseStrategy = new TraverseStrategy(cheeseTarget, 1);
         }
     }
 }

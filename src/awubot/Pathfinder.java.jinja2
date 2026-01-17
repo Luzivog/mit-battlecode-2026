@@ -101,6 +101,7 @@ class BugnavInstance {
                         System.out.println("loop detected");
                         givenUp = true;
                     }
+                    vis.add(loc);
                     path{{i}} = loc;
                     nextPathIndex = {{(i + 1) % MAX_PATH}};
                 }
@@ -263,6 +264,14 @@ class BugnavInstance {
         if(dirToTarget != bottomDir) {
             // indicate("changing bottomDir from " + bottomDir + " to " + dirToTarget);
             if(dirToTarget == Direction.CENTER) return false;
+            // indicate("NEW DIR " + dirToTarget);
+            if(dirToTarget == bottomDir.rotateLeft()) {
+                windingNumber++;
+                // indicate("INCREMENT");
+            } else if(dirToTarget == bottomDir.rotateRight()) {
+                windingNumber--;
+                // indicate("DECREMENT");
+            }
             if(stackSize == 0) {
                 bottomDir = topDir = dirToTarget;
             } else {
@@ -270,7 +279,6 @@ class BugnavInstance {
                 if(dirToTarget == bottomDir.rotate{{reverseDir}}()) {
                     bottomDir = dirToTarget;
                     stackSize++;
-                    windingNumber++;
                 } else {
                     if(dirToTarget != bottomDir.rotate{{turnDir}}()) {
                         System.out.println("unexpected direction change from " + bottomDir + " to " + dirToTarget);
@@ -278,7 +286,6 @@ class BugnavInstance {
                     } else {
                         bottomDir = dirToTarget;
                         stackSize--;
-                        windingNumber--;
                         if(stackSize < 0) {
                             stackSize = 0;
                             topDir = bottomDir;
@@ -293,6 +300,7 @@ class BugnavInstance {
                 }
             }
         }
+        // indicate("winding number " + windingNumber);
         // indicate("direction " + pos + " " + topDir + " " + bottomDir + " " + leftTurn);
 
         MapLocation greedyLoc = pos.add(bottomDir);
@@ -378,12 +386,19 @@ class BugnavInstance {
            )
         {% endif %}
         {
-            // indicate("trying " + tryDir);
+            // System.out.println("T " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
                     // avoid following the edge of the map (TODO: 1-thick borders)
                     indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + {{turns}});
+                    if(vis.contains(nextPos)) {
+                        indicate("gave up at edge");
+                        System.out.println("gave up at edge");
+                        givenUp = true;
+                        return false;
+                    }
+                    vis.add(nextPos);
                     leftTurn = !leftTurn;
                     clearPath();
                     // don't guess turn direction, we know that one direction is bad already
@@ -394,17 +409,18 @@ class BugnavInstance {
                     hitEdge = true;
                 }
                 // Profiler.end("bugnav " + {{turns}} + " " + isMaster);
-                // indicate("bugnav " + {{turns}} + " " + isMaster);
+                indicate("bugnav " + {{turns}} + " " + isMaster);
                 return false;
             }
-            if(possiblyPassable(nextPos) && chebyshevDistance(myLoc, nextPos) > 5) {
+            var isPassable = isPassable(nextPos);
+            if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 // Profiler.end("bugnav " + {{turns}} + " " + isMaster);
-                // indicate("bugnav " + {{turns}} + " " + isMaster);
+                indicate("bugnav " + {{turns}} + " " + isMaster);
                 return false;
             }
-            if(isPassable(nextPos)) {
+            if(isPassable) {
                 pos = nextPos;
                 topDir = tryDir;
                 {% if turns %}
@@ -466,10 +482,6 @@ public class Pathfinder {
         }
     }
 
-    public static void moveForward() throws GameActionException {
-        rawMove();
-    }
-
     public static void makeMove(Direction dir) throws GameActionException {
         if(rc.canTurn()) turn(dir);
         var nextLoc = myLoc.add(dir);
@@ -478,12 +490,15 @@ public class Pathfinder {
             else return;
         }
         if(dir == myDir) {
-            if(rc.canMoveForward()) moveForward();
+            if(rc.canMoveForward()) rawMove();
         } else {
             // if we can't turn, then strafe
             if(rc.canMove(dir)) rawMove(dir);
-            // assuming that moving is the last thing we are doing this turn, so no need to update CellTracker here
         }
+    }
+
+    public static boolean givenUp() {
+        return bug != null && bug.givenUp;
     }
 
     static MapLocation lastBugPos, lastLoc, secondLastBugPos, secondLastLoc;

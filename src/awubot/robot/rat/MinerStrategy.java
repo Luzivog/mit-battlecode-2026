@@ -27,7 +27,6 @@ public class MinerStrategy extends Strategy {
 
     @Override
     public boolean runTick() throws GameActionException {
-        indicate("sym " + CellTracker.hsym + " " + CellTracker.vsym + " " + CellTracker.rsym);
         if(tryStrategy(formationStrategy)) return true;
         if(rc.getRawCheese() == 0) {
             goHomeStrategy = null;

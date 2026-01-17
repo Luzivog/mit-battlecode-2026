@@ -23,6 +23,10 @@ public class TraverseStrategy extends Strategy {
         if(rc.getLocation().distanceSquaredTo(target) <= distSquared) return false;
         indicate("TRAVELLING TO " + target);
         Pathfinder.makeMove(target);
+        if(Pathfinder.givenUp()) {
+            indicate("GIVEN UP ON " + target);
+            return false;
+        }
         rc.setIndicatorLine(myLoc, target, 255, 0, 0);
         return true;
     }

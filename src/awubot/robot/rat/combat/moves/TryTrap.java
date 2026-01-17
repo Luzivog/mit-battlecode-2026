@@ -69,11 +69,6 @@ public final class TryTrap {
         if (best <= 0.5) return false;
         assert(CombatStrategy.performMoves(bestMoveDir, bestFacing));
         if (!rc.canPlaceRatTrap(bestPlaceLoc)) {
-            println("huh cant place trap here  " + bestPlaceLoc);
-            for (int i = 0; i < CellTracker.numNearbyRatTraps; i++) {
-                println("nearby trap at " + CellTracker.nearbyRatTraps[i]);
-            }
-            rc.resign();
         }
         rc.placeRatTrap(bestPlaceLoc);
         println("!!!!!!!!!! placed rat trap");

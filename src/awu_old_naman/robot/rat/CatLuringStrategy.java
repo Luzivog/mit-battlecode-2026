@@ -72,11 +72,6 @@ public class CatLuringStrategy extends Strategy {
 
         boolean myCatNearby = updateCatTracking();
 
-        // System.out.println("[LURE] R" + rc.getID() + " t=" + time +
-            " active=" + theIsActive + " ttl=" + theLureTTL +
-            " cat=" + theCatLoc + " catNear=" + myCatNearby +
-            " target=" + theEnemyKingLoc + " missions=" + theMissionsCompleted);
-
         if (shouldTerminateLure(myCatNearby)) {
             terminateLure(myCatNearby);
             return true;

@@ -33,13 +33,6 @@ public class KingDefenseStrategy extends Strategy {
 
     @Override
     public boolean runTick() throws GameActionException {
-        if (time % 50 == 0) {
-            // System.out.println("[KING] K" + kingId + " t=" + time +
-                " hp=" + rc.getHealth() + " cheese=" + rc.getGlobalCheese() +
-                " nearestCat=" + theContext.theCatDistSq +
-                " state=" + theContext.theDefenseState);
-        }
-
         switch (theContext.theDefenseState) {
             case CRITICAL:
                 executeCritical();
@@ -299,10 +292,6 @@ public class KingDefenseStrategy extends Strategy {
 
         theLastLureSignalRound = time;
         theTotalLureSignals++;
-        // System.out.println("[KING] K" + kingId + " t=" + time +
-            " LURE_SIGNAL reason=" + myReason +
-            " hp=" + rc.getHealth() + " cheese=" + rc.getGlobalCheese() +
-            " catDist=" + theContext.theCatDistSq + " total=" + theTotalLureSignals);
     }
 
     private MapLocation getEnemyKingLocation() {

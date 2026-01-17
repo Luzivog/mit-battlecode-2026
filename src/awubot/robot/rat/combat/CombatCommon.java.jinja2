@@ -25,7 +25,7 @@ public final class CombatCommon {
     }
 
     public static boolean canMove(Direction dir) {
-        if (dir == null) return false;
+        // if (dir == null) return false;
         return switch (dir.ordinal()) {
             {% for idx in range(move_dirs|length) %}
             case {{ idx }} -> canMove{{ move_short[idx] }};

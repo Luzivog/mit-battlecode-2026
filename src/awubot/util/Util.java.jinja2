@@ -49,6 +49,84 @@ public class Util {
         System.out.println(sb.toString());
     }
 
+    public static int dist(RobotInfo info) {
+        switch (info.getType().ordinal()) {
+            case 0:
+                return myLoc.distanceSquaredTo(info.location);
+            case 1:
+                return myLoc.add(myLoc.directionTo(info.location)).distanceSquaredTo(info.location);
+            case 2:
+                int dist = myLoc.distanceSquaredTo(info.location);
+                int dist1 = myLoc.distanceSquaredTo(info.location.add(Direction.NORTH));
+                if (dist1 < dist) dist = dist1;
+                dist1 = myLoc.distanceSquaredTo(info.location.add(Direction.EAST));
+                if (dist1 < dist) dist = dist1;
+                dist1 = myLoc.distanceSquaredTo(info.location.add(Direction.NORTHEAST));
+                if (dist1 < dist) dist = dist1;
+                return dist;
+            default:
+                assert false : "Unknown robot type " + info.getType();
+                return -1;
+        }
+    }
+
+    public static int dist(MapLocation loc, RobotInfo info) {
+        switch (info.getType().ordinal()) {
+            case 0:
+                return loc.distanceSquaredTo(info.location);
+            case 1:
+                return loc.add(loc.directionTo(info.location)).distanceSquaredTo(info.location);
+            case 2:
+                int dist = loc.distanceSquaredTo(info.location);
+                int dist1 = loc.distanceSquaredTo(info.location.add(Direction.NORTH));
+                if (dist1 < dist) dist = dist1;
+                dist1 = loc.distanceSquaredTo(info.location.add(Direction.EAST));
+                if (dist1 < dist) dist = dist1;
+                dist1 = loc.distanceSquaredTo(info.location.add(Direction.NORTHEAST));
+                if (dist1 < dist) dist = dist1;
+                return dist;
+            default:
+                assert false : "Unknown robot type " + info.getType();
+                return -1;
+        }
+    }
+
+    public static int chebyshevDistance(RobotInfo info) {
+        int dx = myLoc.x - info.location.x;
+        int dy = myLoc.y - info.location.y;
+        switch (info.getType().ordinal()) {
+            case 0:
+                return max(abs(dx), abs(dy));
+            case 1:
+                return max(abs(dx), abs(dy)) -  1;
+            case 2:
+                if (dx < 0) dx = -dx - 1;
+                if (dy < 0) dy = -dy - 1;
+                return max(dx, dy);
+            default:
+                assert false : "Unknown robot type " + info.getType();
+                return -1;
+        }
+    }
+
+    public static int chebyshevDistance(MapLocation loc, RobotInfo info) {
+        int dx = loc.x - info.location.x;
+        int dy = loc.y - info.location.y;
+        switch (info.getType().ordinal()) {
+            case 0:
+                return max(abs(dx), abs(dy));
+            case 1:
+                return max(abs(dx), abs(dy)) -  1;
+            case 2:
+                if (dx < 0) dx = -dx - 1;
+                if (dy < 0) dy = -dy - 1;
+                return max(dx, dy);
+            default:
+                assert false : "Unknown robot type " + info.getType();
+                return -1;
+        }
+    }
+
     public static void preTick() {
         indicatorString = "";
     }
@@ -94,8 +172,6 @@ public class Util {
             }
         }
     }
-
-    
 
     public static boolean canSense(MapLocation s, MapLocation t, Direction dir) {
         int dx = t.x - s.x;

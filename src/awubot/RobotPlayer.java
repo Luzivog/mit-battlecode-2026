@@ -18,6 +18,7 @@ public class RobotPlayer {
     public static void run(RobotController rc) throws GameActionException {
         Game.init(rc);
         Rng.seed();
+        Rng.init();
         GlobalArray.initGlobalArray();
         CellTracker.init();
 
@@ -27,9 +28,11 @@ public class RobotPlayer {
                 Game.preTick();
                 Util.preTick();
                 CellTracker.preTick();
-                Rng.init();
+                GlobalArray.preTick();
                 RobotTracker.reset();
                 RobotTracker.preTick();
+                Squeaker.preTick();
+                CellTracker.storeVisibleCells();
 
                 if (!hasInitialisedRobot) {
                     if(isRatKing) {

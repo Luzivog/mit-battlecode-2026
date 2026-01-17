@@ -5,6 +5,7 @@ import battlecode.common.GameActionException;
 import battlecode.common.GameConstants;
 import battlecode.common.MapLocation;
 import battlecode.common.RobotInfo;
+import battlecode.common.UnitType;
 
 import awubot.robot.rat.combat.CombatCommon;
 import awubot.robot.rat.combat.CombatStrategy;
@@ -45,9 +46,12 @@ public final class TryAttack {
             considerEnemy();
         }
         // Profiler.pop("try attack");
-        if (bestScore < 0.5) return false;
+        if (bestScore < 0.5) {
+            indicate("didnt find good attack");
+            return false;
+        }
         assert(CombatStrategy.performMoves(bestMove, bestFacing));
-        rc.attack(target.location);
+        attack(target);
         println("!!!!!!!!!!!!!!!!!!!!!!! attacked rat");
         indicate("COMBAT STRAT: ATTACK");
         return true;
@@ -55,7 +59,10 @@ public final class TryAttack {
 
     private static void considerEnemy() throws GameActionException {
         if (!CombatStrategy.shouldFight(info)) return;
-        if (chebyshevDistance(myLoc, info.location) > 2) return;
+        if (info.getType() == UnitType.RAT_KING) {
+            indicate("saw rat king");
+        }
+        if (chebyshevDistance(myLoc, info) > 2) return;
 
         t = info.location;
         weight = 10;
@@ -69,6 +76,7 @@ public final class TryAttack {
     private static boolean selectMoves() throws GameActionException {
         switch (myLoc.directionTo(t).ordinal()) {
             case 0 -> {
+                if (moveC()) return true;
                 if (moveN()) return true;
                 if (moveNE()) return true;
                 if (moveNW()) return true;
@@ -76,6 +84,7 @@ public final class TryAttack {
                 if (moveW()) return true;
             }
             case 1 -> {
+                if (moveC()) return true;
                 if (moveNE()) return true;
                 if (moveN()) return true;
                 if (moveE()) return true;
@@ -83,6 +92,7 @@ public final class TryAttack {
                 if (moveSE()) return true;
             }
             case 2 -> {
+                if (moveC()) return true;
                 if (moveE()) return true;
                 if (moveNE()) return true;
                 if (moveSE()) return true;
@@ -90,6 +100,7 @@ public final class TryAttack {
                 if (moveS()) return true;
             }
             case 3 -> {
+                if (moveC()) return true;
                 if (moveSE()) return true;
                 if (moveS()) return true;
                 if (moveE()) return true;
@@ -97,6 +108,7 @@ public final class TryAttack {
                 if (moveSW()) return true;
             }
             case 4 -> {
+                if (moveC()) return true;
                 if (moveS()) return true;
                 if (moveSE()) return true;
                 if (moveSW()) return true;
@@ -104,6 +116,7 @@ public final class TryAttack {
                 if (moveW()) return true;
             }
             case 5 -> {
+                if (moveC()) return true;
                 if (moveSW()) return true;
                 if (moveS()) return true;
                 if (moveW()) return true;
@@ -111,6 +124,7 @@ public final class TryAttack {
                 if (moveSE()) return true;
             }
             case 6 -> {
+                if (moveC()) return true;
                 if (moveW()) return true;
                 if (moveNW()) return true;
                 if (moveSW()) return true;
@@ -118,6 +132,7 @@ public final class TryAttack {
                 if (moveS()) return true;
             }
             case 7 -> {
+                if (moveC()) return true;
                 if (moveNW()) return true;
                 if (moveN()) return true;
                 if (moveW()) return true;
@@ -133,7 +148,7 @@ public final class TryAttack {
         moveDir = Direction.NORTH;
         if (!CombatCommon.canMoveN) return true;
         newLoc = myLoc.add(moveDir);
-        if (newLoc.distanceSquaredTo(t) > 2) return true;
+        if (chebyshevDistance(newLoc, info) > 1) return true;
         switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
                 if (faceN()) return true;
@@ -183,7 +198,7 @@ public final class TryAttack {
         moveDir = Direction.NORTHEAST;
         if (!CombatCommon.canMoveNE) return true;
         newLoc = myLoc.add(moveDir);
-        if (newLoc.distanceSquaredTo(t) > 2) return true;
+        if (chebyshevDistance(newLoc, info) > 1) return true;
         switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
                 if (faceN()) return true;
@@ -233,7 +248,7 @@ public final class TryAttack {
         moveDir = Direction.EAST;
         if (!CombatCommon.canMoveE) return true;
         newLoc = myLoc.add(moveDir);
-        if (newLoc.distanceSquaredTo(t) > 2) return true;
+        if (chebyshevDistance(newLoc, info) > 1) return true;
         switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
                 if (faceN()) return true;
@@ -283,7 +298,7 @@ public final class TryAttack {
         moveDir = Direction.SOUTHEAST;
         if (!CombatCommon.canMoveSE) return true;
         newLoc = myLoc.add(moveDir);
-        if (newLoc.distanceSquaredTo(t) > 2) return true;
+        if (chebyshevDistance(newLoc, info) > 1) return true;
         switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
                 if (faceN()) return true;
@@ -333,7 +348,7 @@ public final class TryAttack {
         moveDir = Direction.SOUTH;
         if (!CombatCommon.canMoveS) return true;
         newLoc = myLoc.add(moveDir);
-        if (newLoc.distanceSquaredTo(t) > 2) return true;
+        if (chebyshevDistance(newLoc, info) > 1) return true;
         switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
                 if (faceN()) return true;
@@ -383,7 +398,7 @@ public final class TryAttack {
         moveDir = Direction.SOUTHWEST;
         if (!CombatCommon.canMoveSW) return true;
         newLoc = myLoc.add(moveDir);
-        if (newLoc.distanceSquaredTo(t) > 2) return true;
+        if (chebyshevDistance(newLoc, info) > 1) return true;
         switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
                 if (faceN()) return true;
@@ -433,7 +448,7 @@ public final class TryAttack {
         moveDir = Direction.WEST;
         if (!CombatCommon.canMoveW) return true;
         newLoc = myLoc.add(moveDir);
-        if (newLoc.distanceSquaredTo(t) > 2) return true;
+        if (chebyshevDistance(newLoc, info) > 1) return true;
         switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
                 if (faceN()) return true;
@@ -483,7 +498,57 @@ public final class TryAttack {
         moveDir = Direction.NORTHWEST;
         if (!CombatCommon.canMoveNW) return true;
         newLoc = myLoc.add(moveDir);
-        if (newLoc.distanceSquaredTo(t) > 2) return true;
+        if (chebyshevDistance(newLoc, info) > 1) return true;
+        switch (newLoc.directionTo(t).ordinal()) {
+            case 0 -> {
+                if (faceN()) return true;
+                if (faceNE()) return true;
+                if (faceNW()) return true;
+            }
+            case 1 -> {
+                if (faceNE()) return true;
+                if (faceN()) return true;
+                if (faceE()) return true;
+            }
+            case 2 -> {
+                if (faceE()) return true;
+                if (faceNE()) return true;
+                if (faceSE()) return true;
+            }
+            case 3 -> {
+                if (faceSE()) return true;
+                if (faceS()) return true;
+                if (faceE()) return true;
+            }
+            case 4 -> {
+                if (faceS()) return true;
+                if (faceSE()) return true;
+                if (faceSW()) return true;
+            }
+            case 5 -> {
+                if (faceSW()) return true;
+                if (faceS()) return true;
+                if (faceW()) return true;
+            }
+            case 6 -> {
+                if (faceW()) return true;
+                if (faceNW()) return true;
+                if (faceSW()) return true;
+            }
+            case 7 -> {
+                if (faceNW()) return true;
+                if (faceN()) return true;
+                if (faceW()) return true;
+            }
+            default -> { }
+        }
+        return false;
+    }
+    private static boolean moveC() throws GameActionException {
+        moveDir = Direction.CENTER;
+        if (!CombatCommon.canMoveC) return true;
+        newLoc = myLoc.add(moveDir);
+        if (chebyshevDistance(newLoc, info) > 1) return true;
         switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
                 if (faceN()) return true;
@@ -663,7 +728,7 @@ public final class TryAttack {
         if (!rc.isActionReady()) return false;
         for (RobotInfo ri : rc.senseNearbyRobots(2)) {
             if (ri.getTeam() == team) continue;
-            rc.attack(ri.location);
+            attack(ri);
             println("!!!!!!!!!!!!!!mini attacked!!");
             return true;
         }

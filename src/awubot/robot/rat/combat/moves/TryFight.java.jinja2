@@ -37,7 +37,7 @@ public final class TryFight {
             if (moveDir != Direction.CENTER && !rc.isMovementReady()) continue;
             if (!CombatCommon.canMove(moveDir)) continue;
             newLoc = myLoc.add(moveDir);
-            for (Direction facing : relatedDirections(myLoc.add(dir).directionTo(target.location))) { // maybe shrink search space if TLE
+            for (Direction facing : relatedDirections(newLoc.directionTo(target.location))) { // maybe shrink search space if TLE
                 int moveCost = CombatCommon.movementCost(moveDir, facing);
                 if (moveCost == -1) continue;
                 score = CombatStrategy.getCellScoreFor(moveDir, facing, target);

@@ -12,6 +12,7 @@ import static awubot.Game.*;
 import static awubot.util.Util.*;
 import awubot.util.Profiler;
 import awubot.CellTracker;
+import awubot.RobotTracker;
 
 public class CombatTracker {
     private static final int GRID_RADIUS = 2;
@@ -182,18 +183,14 @@ private static final long hiddenNW = 0x0000ffffffffff00L;
         // Profiler.pop("CombatTracker: loading threats");
 
         // Profiler.push();
-        // Profiler.pop("CombatTracker: registering traps");
-        
-        // Profiler.push();
         recomputeThreatMasks();
         // Profiler.pop("CombatTracker: recomputing threat masks");
 
         resetEnemyCounts();
         
         // Profiler.push();
-        for (RobotInfo info : rc.senseNearbyRobots()) {
-            if (info.getTeam() == rc.getTeam()) continue;
-            if (info.getType() != UnitType.BABY_RAT) continue;
+        for (int i = 0; i < RobotTracker.numEnemies; i++) {
+            RobotInfo info = RobotTracker.sortedEnemies[i];
             registerEnemy(info);
         }
         // Profiler.pop("CombatTracker: registering enemies");

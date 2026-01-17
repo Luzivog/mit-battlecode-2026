@@ -222,7 +222,7 @@ public final class TryTrap {
                             {% for f in range(8) %}
 
                             case {{ f }} -> {
-                                {% if can_see(-dx, -dy, f) == "true" %}
+                                {% if can_see(f, -dx, -dy) == "true" %}
 
                                 {% for cx in range(-2, 3) %}
                                 {% for cy in range(-2, 3) %}
@@ -234,6 +234,7 @@ public final class TryTrap {
                                 {%- set ang = diff if diff < 8 - diff else 8 - diff -%}
                                 {%- if ang <= 1 -%}
                                 {{ wvar(cx, cy) }} += {{ 3 - ang }};
+                                {# println("incremented weight at " + (myLocX + {{cx}}) + ", " + (myLocY + {{cy}})); #}
                                 {%- endif -%}
                                 {%- endif -%}
                                 {% endfor %}
@@ -273,6 +274,7 @@ public final class TryTrap {
     }
 
     private static void applyTrapWeight(int x, int y) {
+        // println("\napplying trap weight for trap at " + x + ", " + y + "\n");
         switch (x) {
             {% for dx in range(-2, 3) %}
             case {{ dx }} -> {
@@ -282,7 +284,7 @@ public final class TryTrap {
                         {% for nx in range(dx - 1, dx + 2) %}
                         {% for ny in range(dy - 1, dy + 2) %}
                         {%- if nx >= -2 and nx <= 2 and ny >= -2 and ny <= 2 -%}
-                        println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y);
+                        {# println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y); #}
                         {{ wvar(nx, ny) }} -= 100;
                         {%- endif -%}
                         {% endfor %}

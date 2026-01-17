@@ -31,6 +31,7 @@ public class CellTracker {
         numNearbyRatTraps = 0;
         for (MapInfo info : rc.senseNearbyMapInfos()) {
             if (info.getTrap() == TrapType.RAT_TRAP) {
+                // println("found rat trap at " + info.getMapLocation());
                 nearbyRatTraps[numNearbyRatTraps++] = info.getMapLocation();
             }
         }

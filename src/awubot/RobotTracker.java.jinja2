@@ -38,7 +38,7 @@ import awubot.util.Profiler;
 
 public class RobotTracker {
     
-    private static StringBuilder baseString = new StringBuilder("{% for c in range(0, MAX_DIST) %}{{ java_string_char(OFF + c) }}{% endfor %}");
+    private static StringBuilder baseString = new StringBuilder("{% for c in range(0, MAX_DIST + 1) %}{{ java_string_char(OFF + c) }}{% endfor %}");
     public static RobotInfo[] sortedRobots = new RobotInfo[25];
     public static RobotInfo[] sortedEnemies = new RobotInfo[25];
     public static RobotInfo[] sortedAllies = new RobotInfo[25];
@@ -51,7 +51,7 @@ public class RobotTracker {
     }
 
     public static void preTick() {
-        println("preTick");
+        // println("preTick");
         updateRobots();
     }
 
@@ -72,10 +72,10 @@ public class RobotTracker {
         numRobots = nearbyRobots.length;
         numEnemies = numAllies = numCats = 0;
         switch (numRobots) {
-            {% for count in range(MAX_DIST - 1, -1, -1) %}
+            {% for count in range(MAX_DIST, -1, -1) %}
             case {{count + 1}}: {
                 int d = nearbyRobots[{{count}}].location.distanceSquaredTo(myLoc);
-                {# assert(d <= {{MAX_DIST}}) : "Robot at distance " + d + " > MAX_DIST {{MAX_DIST}}" + " location " + nearbyRobots[{{count}}].location + " my loc " + myLoc; #}
+                {# assert(d <= {{MAX_DIST}}) : "Robot at distance " + d + " >= MAX_DIST {{MAX_DIST}}" + " location " + nearbyRobots[{{count}}].location + " my loc " + myLoc; #}
                 int j = sb.indexOf(String.valueOf((char) ({{OFF}} + d)));
                 sb.insert(j, {{ java_char_literal(count) }});
                 switch (nearbyRobots[{{count}}].team.ordinal()) {
@@ -98,7 +98,7 @@ public class RobotTracker {
                 break;
         }
         int i;
-        {% for i in range(0, MAX_DIST) %}
+        {% for i in range(0, MAX_DIST + 1) %}
         sb.deleteCharAt(sb.indexOf("{{ java_string_char(OFF + i) }}"));
         {% endfor %}
 
@@ -106,7 +106,7 @@ public class RobotTracker {
         int nextEnemy = numEnemies;
         int nextCat = numCats;
         switch (numRobots) {
-            {% for count in range(MAX_DIST - 1, -1, -1) %}
+            {% for count in range(MAX_DIST, -1, -1) %}
             case {{count + 1}}: { 
                 sortedRobots[{{count}}] =  nearbyRobots[(int) sb.charAt({{count}})];
                 switch (sortedRobots[{{count}}].team.ordinal()) {

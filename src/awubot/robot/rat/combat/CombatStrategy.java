@@ -72,18 +72,18 @@ public class CombatStrategy extends Strategy {
     public static double[] cellScore; // [movement direction]
 
     private void precomp() throws GameActionException {
-        Profiler.push();
+        // negligable bytecode
         CombatCommon.precomp();
-        Profiler.pop("common");
+
+        // expensive
         Profiler.push();
         CombatTracker.tick();
         Profiler.pop("combat tracker");
 
 
-        // Profiler.push();
+        Profiler.push();
         computeCellScores();
-        // Profiler.pop("compute danger");
-        countNearbyRobots();
+        Profiler.pop("compute cell scores");
     }
 
     public boolean runTick() throws GameActionException {
@@ -150,19 +150,6 @@ public class CombatStrategy extends Strategy {
         return false;
     }
 
-    private static void countNearbyRobots() throws GameActionException {
-        allies = Squeaker.squeaksSinceLastTurn;
-        enemies = 0;
-        for (RobotInfo info : rc.senseNearbyRobots()) {
-            if (info.getType() == UnitType.CAT) continue;
-            if (info.getTeam() != rc.getTeam()) {
-                enemies++;
-                continue;
-            }
-            if (info.location.distanceSquaredTo(myLoc) > 2) allies++;
-        }
-    }
-
     static boolean canPerformMoves(Direction moveDir, Direction facing) throws GameActionException {
         return CombatCommon.canPerformMoves(moveDir, facing);
     }
@@ -217,8 +204,8 @@ public class CombatStrategy extends Strategy {
         Profiler.push();
         sb = new StringBuilder();
         cellScore = new double[9];
-        for (RobotInfo info : rc.senseNearbyRobots(9)) { // shrink radius to optimise
-            if (info.getTeam() == rc.getTeam()) continue;
+        for (int i = 0; i < RobotTracker.numEnemies && i < 3; i++) {
+            RobotInfo info = RobotTracker.sortedEnemies[i];
             cellScore[0] += getCellScoreForEnemy(info, Direction.NORTH);
             cellScore[1] += getCellScoreForEnemy(info, Direction.NORTHEAST);
             cellScore[2] += getCellScoreForEnemy(info, Direction.EAST);
@@ -249,7 +236,7 @@ public class CombatStrategy extends Strategy {
         int dist = chebyshevDistance(to, info.location); 
         if (info.getType() == UnitType.CAT) {
             // TODO: implement vision check
-            if (dist >= 4) return 0;
+            if (dist >= 4 || shouldFight(info)) return 0;
             else return cacheCellScore(info, moveDir, -5);
         }
         MapLocation enemyLoc = info.location;
@@ -283,7 +270,7 @@ public class CombatStrategy extends Strategy {
 
             if (canSenseAfterMove) {
                 int dangerDistance;
-                if (allies > enemies) dangerDistance = 0;
+                if (RobotTracker.numAllies > RobotTracker.numEnemies) dangerDistance = 0;
                 else if (time % 4 == 0) dangerDistance = 1;
                 else dangerDistance = 2;
                 if (dist <= dangerDistance) base -= 10;
@@ -304,14 +291,15 @@ public class CombatStrategy extends Strategy {
       if you are in a horde, it should be safe to run at them
 
     */
-    public static int allies, enemies;
     public static boolean shouldFight(RobotInfo enemy) {
-        if (enemy.getType() == UnitType.CAT) return false; // TODO
+        if (enemy.getType() == UnitType.CAT) {
+            return time > 200 && RobotTracker.numEnemies == 0 && rc.getHealth() > 50 && rc.getRawCheese() == 0;
+        }
         if (enemy.getType() == UnitType.RAT_KING) return true;
         if (enemy.getHealth() <= rc.getHealth()) return true;
         if (!canSense(enemy.location, myLoc, enemy.direction)) return true;
         if (GlobalArray.nearestRatKing.distanceSquaredTo(myLoc) <= 36) return true;
-        if (allies > enemies) return true;
+        if (RobotTracker.numAllies > RobotTracker.numEnemies) return true;
         return false;
     }
 
@@ -351,6 +339,10 @@ public class CombatStrategy extends Strategy {
         for (int i = 0; i < RobotTracker.numEnemies; i++) {
             RobotInfo info = RobotTracker.sortedEnemies[i];
             if (info.getTeam() == rc.getTeam()) continue;
+            if (shouldFight(info)) return info;
+        }
+        for  (int i = 0; i < RobotTracker.numCats; i++) {
+            RobotInfo info = RobotTracker.sortedCats[i];
             if (shouldFight(info)) return info;
         }
         return null;

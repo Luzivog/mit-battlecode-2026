@@ -57,6 +57,7 @@ public final class TryTrap {
     static Direction bestFacing;
     static double best;
     static MapLocation curMoveLoc;
+    static MapLocation weightSource;
 
 
     public static boolean run() throws GameActionException {
@@ -89,6 +90,7 @@ public final class TryTrap {
 
     // has room for optimisation if reallllyyy needed
     private static void computeWeights() throws GameActionException {
+        weightSource = myLoc;
         w_m2_2 = 0;
         w_m1_2 = 0;
         w_0_2 = 0;
@@ -450,6 +452,112 @@ public final class TryTrap {
             RobotInfo info = RobotTracker.sortedEnemies[i];
             if (info.getType() != UnitType.BABY_RAT) continue;
             applyEnemyWeight(info);
+        }
+    }
+
+    private static double getWeight(int dx, int dy) {
+        switch (dx) {
+            case -2 -> {
+                switch (dy) {
+                    case -2 -> {
+                        return w_m2_m2;
+                    }
+                    case -1 -> {
+                        return w_m2_m1;
+                    }
+                    case 0 -> {
+                        return w_m2_0;
+                    }
+                    case 1 -> {
+                        return w_m2_1;
+                    }
+                    case 2 -> {
+                        return w_m2_2;
+                    }
+                    default -> { return -1000; }
+                }
+            }
+            case -1 -> {
+                switch (dy) {
+                    case -2 -> {
+                        return w_m1_m2;
+                    }
+                    case -1 -> {
+                        return w_m1_m1;
+                    }
+                    case 0 -> {
+                        return w_m1_0;
+                    }
+                    case 1 -> {
+                        return w_m1_1;
+                    }
+                    case 2 -> {
+                        return w_m1_2;
+                    }
+                    default -> { return -1000; }
+                }
+            }
+            case 0 -> {
+                switch (dy) {
+                    case -2 -> {
+                        return w_0_m2;
+                    }
+                    case -1 -> {
+                        return w_0_m1;
+                    }
+                    case 0 -> {
+                        return w_0_0;
+                    }
+                    case 1 -> {
+                        return w_0_1;
+                    }
+                    case 2 -> {
+                        return w_0_2;
+                    }
+                    default -> { return -1000; }
+                }
+            }
+            case 1 -> {
+                switch (dy) {
+                    case -2 -> {
+                        return w_1_m2;
+                    }
+                    case -1 -> {
+                        return w_1_m1;
+                    }
+                    case 0 -> {
+                        return w_1_0;
+                    }
+                    case 1 -> {
+                        return w_1_1;
+                    }
+                    case 2 -> {
+                        return w_1_2;
+                    }
+                    default -> { return -1000; }
+                }
+            }
+            case 2 -> {
+                switch (dy) {
+                    case -2 -> {
+                        return w_2_m2;
+                    }
+                    case -1 -> {
+                        return w_2_m1;
+                    }
+                    case 0 -> {
+                        return w_2_0;
+                    }
+                    case 1 -> {
+                        return w_2_1;
+                    }
+                    case 2 -> {
+                        return w_2_2;
+                    }
+                    default -> { return -1000; }
+                }
+            }
+            default -> { return -1000; }
         }
     }
 
@@ -3830,11 +3938,11 @@ private static void placeSWWNW() {
         switch (myDir.ordinal()) {
             case 0 -> {
                 MapLocation loc0 = new MapLocation(x , y  + 1);
-                int s0 = 0;
+                double s0 = getWeight(loc0.x - weightSource.x, loc0.y - weightSource.y);
                 MapLocation loc1 = new MapLocation(x  + 1, y  + 1);
-                int s1 = 0;
+                double s1 = getWeight(loc1.x - weightSource.x, loc1.y - weightSource.y);
                 MapLocation loc2 = new MapLocation(x  + -1, y  + 1);
-                int s2 = 0;
+                double s2 = getWeight(loc2.x - weightSource.x, loc2.y - weightSource.y);
                 for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
                     if (rinfo.getTeam() == team) continue;
                     if (rinfo.getType() != UnitType.BABY_RAT) continue;
@@ -3858,7 +3966,7 @@ private static void placeSWWNW() {
                         }
                     }
                 }
-                int bestScore = -1;
+                double bestScore = -1;
                 MapLocation bestLoc = null;
                 if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
                     bestScore = s0;
@@ -3880,11 +3988,11 @@ private static void placeSWWNW() {
             }
             case 1 -> {
                 MapLocation loc0 = new MapLocation(x  + 1, y  + 1);
-                int s0 = 0;
+                double s0 = getWeight(loc0.x - weightSource.x, loc0.y - weightSource.y);
                 MapLocation loc1 = new MapLocation(x , y  + 1);
-                int s1 = 0;
+                double s1 = getWeight(loc1.x - weightSource.x, loc1.y - weightSource.y);
                 MapLocation loc2 = new MapLocation(x  + 1, y );
-                int s2 = 0;
+                double s2 = getWeight(loc2.x - weightSource.x, loc2.y - weightSource.y);
                 for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
                     if (rinfo.getTeam() == team) continue;
                     if (rinfo.getType() != UnitType.BABY_RAT) continue;
@@ -3908,7 +4016,7 @@ private static void placeSWWNW() {
                         }
                     }
                 }
-                int bestScore = -1;
+                double bestScore = -1;
                 MapLocation bestLoc = null;
                 if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
                     bestScore = s0;
@@ -3930,11 +4038,11 @@ private static void placeSWWNW() {
             }
             case 2 -> {
                 MapLocation loc0 = new MapLocation(x  + 1, y );
-                int s0 = 0;
+                double s0 = getWeight(loc0.x - weightSource.x, loc0.y - weightSource.y);
                 MapLocation loc1 = new MapLocation(x  + 1, y  + 1);
-                int s1 = 0;
+                double s1 = getWeight(loc1.x - weightSource.x, loc1.y - weightSource.y);
                 MapLocation loc2 = new MapLocation(x  + 1, y  + -1);
-                int s2 = 0;
+                double s2 = getWeight(loc2.x - weightSource.x, loc2.y - weightSource.y);
                 for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
                     if (rinfo.getTeam() == team) continue;
                     if (rinfo.getType() != UnitType.BABY_RAT) continue;
@@ -3958,7 +4066,7 @@ private static void placeSWWNW() {
                         }
                     }
                 }
-                int bestScore = -1;
+                double bestScore = -1;
                 MapLocation bestLoc = null;
                 if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
                     bestScore = s0;
@@ -3980,11 +4088,11 @@ private static void placeSWWNW() {
             }
             case 3 -> {
                 MapLocation loc0 = new MapLocation(x  + 1, y  + -1);
-                int s0 = 0;
+                double s0 = getWeight(loc0.x - weightSource.x, loc0.y - weightSource.y);
                 MapLocation loc1 = new MapLocation(x , y  + -1);
-                int s1 = 0;
+                double s1 = getWeight(loc1.x - weightSource.x, loc1.y - weightSource.y);
                 MapLocation loc2 = new MapLocation(x  + 1, y );
-                int s2 = 0;
+                double s2 = getWeight(loc2.x - weightSource.x, loc2.y - weightSource.y);
                 for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
                     if (rinfo.getTeam() == team) continue;
                     if (rinfo.getType() != UnitType.BABY_RAT) continue;
@@ -4008,7 +4116,7 @@ private static void placeSWWNW() {
                         }
                     }
                 }
-                int bestScore = -1;
+                double bestScore = -1;
                 MapLocation bestLoc = null;
                 if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
                     bestScore = s0;
@@ -4030,11 +4138,11 @@ private static void placeSWWNW() {
             }
             case 4 -> {
                 MapLocation loc0 = new MapLocation(x , y  + -1);
-                int s0 = 0;
+                double s0 = getWeight(loc0.x - weightSource.x, loc0.y - weightSource.y);
                 MapLocation loc1 = new MapLocation(x  + 1, y  + -1);
-                int s1 = 0;
+                double s1 = getWeight(loc1.x - weightSource.x, loc1.y - weightSource.y);
                 MapLocation loc2 = new MapLocation(x  + -1, y  + -1);
-                int s2 = 0;
+                double s2 = getWeight(loc2.x - weightSource.x, loc2.y - weightSource.y);
                 for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
                     if (rinfo.getTeam() == team) continue;
                     if (rinfo.getType() != UnitType.BABY_RAT) continue;
@@ -4058,7 +4166,7 @@ private static void placeSWWNW() {
                         }
                     }
                 }
-                int bestScore = -1;
+                double bestScore = -1;
                 MapLocation bestLoc = null;
                 if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
                     bestScore = s0;
@@ -4080,11 +4188,11 @@ private static void placeSWWNW() {
             }
             case 5 -> {
                 MapLocation loc0 = new MapLocation(x  + -1, y  + -1);
-                int s0 = 0;
+                double s0 = getWeight(loc0.x - weightSource.x, loc0.y - weightSource.y);
                 MapLocation loc1 = new MapLocation(x , y  + -1);
-                int s1 = 0;
+                double s1 = getWeight(loc1.x - weightSource.x, loc1.y - weightSource.y);
                 MapLocation loc2 = new MapLocation(x  + -1, y );
-                int s2 = 0;
+                double s2 = getWeight(loc2.x - weightSource.x, loc2.y - weightSource.y);
                 for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
                     if (rinfo.getTeam() == team) continue;
                     if (rinfo.getType() != UnitType.BABY_RAT) continue;
@@ -4108,7 +4216,7 @@ private static void placeSWWNW() {
                         }
                     }
                 }
-                int bestScore = -1;
+                double bestScore = -1;
                 MapLocation bestLoc = null;
                 if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
                     bestScore = s0;
@@ -4130,11 +4238,11 @@ private static void placeSWWNW() {
             }
             case 6 -> {
                 MapLocation loc0 = new MapLocation(x  + -1, y );
-                int s0 = 0;
+                double s0 = getWeight(loc0.x - weightSource.x, loc0.y - weightSource.y);
                 MapLocation loc1 = new MapLocation(x  + -1, y  + 1);
-                int s1 = 0;
+                double s1 = getWeight(loc1.x - weightSource.x, loc1.y - weightSource.y);
                 MapLocation loc2 = new MapLocation(x  + -1, y  + -1);
-                int s2 = 0;
+                double s2 = getWeight(loc2.x - weightSource.x, loc2.y - weightSource.y);
                 for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
                     if (rinfo.getTeam() == team) continue;
                     if (rinfo.getType() != UnitType.BABY_RAT) continue;
@@ -4158,7 +4266,7 @@ private static void placeSWWNW() {
                         }
                     }
                 }
-                int bestScore = -1;
+                double bestScore = -1;
                 MapLocation bestLoc = null;
                 if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
                     bestScore = s0;
@@ -4180,11 +4288,11 @@ private static void placeSWWNW() {
             }
             case 7 -> {
                 MapLocation loc0 = new MapLocation(x  + -1, y  + 1);
-                int s0 = 0;
+                double s0 = getWeight(loc0.x - weightSource.x, loc0.y - weightSource.y);
                 MapLocation loc1 = new MapLocation(x , y  + 1);
-                int s1 = 0;
+                double s1 = getWeight(loc1.x - weightSource.x, loc1.y - weightSource.y);
                 MapLocation loc2 = new MapLocation(x  + -1, y );
-                int s2 = 0;
+                double s2 = getWeight(loc2.x - weightSource.x, loc2.y - weightSource.y);
                 for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
                     if (rinfo.getTeam() == team) continue;
                     if (rinfo.getType() != UnitType.BABY_RAT) continue;
@@ -4208,7 +4316,7 @@ private static void placeSWWNW() {
                         }
                     }
                 }
-                int bestScore = -1;
+                double bestScore = -1;
                 MapLocation bestLoc = null;
                 if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
                     bestScore = s0;

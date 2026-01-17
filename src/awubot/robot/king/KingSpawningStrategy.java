@@ -6,10 +6,15 @@ import static awubot.robot.king.RatKing.*;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 
+import awubot.RobotTracker;
+
 public class KingSpawningStrategy extends Strategy {
     @Override
     public boolean runTick() throws GameActionException {
-        var thresh = Math.min(rc.getGlobalCheese() / 18 + 10, 40);
+        var thresh = Math.min(rc.getGlobalCheese() / 10 + 10, 40);
+        if (RobotTracker.numCats > 0 && RobotTracker.numAllies == 0) {
+            thresh = 50;
+        }
         if(rc.getCurrentRatCost() <= thresh && (rc.getGlobalCheese() >= 100 || rc.getCurrentRatCost() == 10)) {
             MapLocation best = null;
             Direction bestDir = null;

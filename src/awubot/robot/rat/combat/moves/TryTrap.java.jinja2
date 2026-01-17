@@ -134,6 +134,7 @@ public final class TryTrap {
     static Direction bestFacing;
     static double best;
     static MapLocation curMoveLoc;
+    static MapLocation weightSource;
 
 
     public static boolean run() throws GameActionException {
@@ -172,6 +173,7 @@ public final class TryTrap {
     // has room for optimisation if reallllyyy needed
     private static void computeWeights() throws GameActionException {
         {# Profiler.push(); #}
+        weightSource = myLoc;
         {% for dy in range(2, -3, -1) %}
         {% for dx in range(-2, 3) %}
         {{ wvar(dx, dy) }} = 0;
@@ -206,6 +208,24 @@ public final class TryTrap {
             RobotInfo info = RobotTracker.sortedEnemies[i];
             if (info.getType() != UnitType.BABY_RAT) continue;
             applyEnemyWeight(info);
+        }
+    }
+
+    private static double getWeight(int dx, int dy) {
+        switch (dx) {
+            {% for dx_case in range(-2, 3) %}
+            case {{ dx_case }} -> {
+                switch (dy) {
+                    {% for dy_case in range(-2, 3) %}
+                    case {{ dy_case }} -> {
+                        return {{ wvar(dx_case, dy_case) }};
+                    }
+                    {% endfor %}
+                    default -> { return -1000; }
+                }
+            }
+            {% endfor %}
+            default -> { return -1000; }
         }
     }
 
@@ -368,7 +388,7 @@ public final class TryTrap {
                 {% set cand = related_map[ord] %}
                 {% for d in cand %}
                 MapLocation loc{{ loop.index0 }} = new MapLocation(x {% if dir_dx[d] %} + {{ dir_dx[d] }}{% endif %}, y {% if dir_dy[d] %} + {{ dir_dy[d] }}{% endif %});
-                int s{{ loop.index0 }} = 0;
+                double s{{ loop.index0 }} = getWeight(loc{{ loop.index0 }}.x - weightSource.x, loc{{ loop.index0 }}.y - weightSource.y);
                 {% endfor %}
                 for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
                     if (rinfo.getTeam() == team) continue;
@@ -393,7 +413,7 @@ public final class TryTrap {
                         }
                     }
                 }
-                int bestScore = -1;
+                double bestScore = -1;
                 MapLocation bestLoc = null;
                 if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
                     bestScore = s0;

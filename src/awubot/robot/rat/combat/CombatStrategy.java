@@ -216,6 +216,18 @@ public class CombatStrategy extends Strategy {
             cellScore[7] += getCellScoreForEnemy(info, Direction.NORTHWEST);
             cellScore[8] += getCellScoreForEnemy(info, Direction.CENTER);
         }
+        for (int i = 0; i < RobotTracker.numCats && i < 3; i++) {
+            RobotInfo info = RobotTracker.sortedCats[i];
+            cellScore[0] += getCellScoreForEnemy(info, Direction.NORTH);
+            cellScore[1] += getCellScoreForEnemy(info, Direction.NORTHEAST);
+            cellScore[2] += getCellScoreForEnemy(info, Direction.EAST);
+            cellScore[3] += getCellScoreForEnemy(info, Direction.SOUTHEAST);
+            cellScore[4] += getCellScoreForEnemy(info, Direction.SOUTH);
+            cellScore[5] += getCellScoreForEnemy(info, Direction.SOUTHWEST);
+            cellScore[6] += getCellScoreForEnemy(info, Direction.WEST);
+            cellScore[7] += getCellScoreForEnemy(info, Direction.NORTHWEST);
+            cellScore[8] += getCellScoreForEnemy(info, Direction.CENTER);
+        }
         Profiler.pop("compute cell scores", 1000);
     }
 
@@ -237,7 +249,7 @@ public class CombatStrategy extends Strategy {
         if (info.getType() == UnitType.CAT) {
             // TODO: implement vision check
             if (dist >= 4 || shouldFight(info)) return 0;
-            else return cacheCellScore(info, moveDir, -5);
+            else return cacheCellScore(info, moveDir, -40);
         }
         MapLocation enemyLoc = info.location;
         if (dist > 3) return 0; // ignore
@@ -256,13 +268,13 @@ public class CombatStrategy extends Strategy {
 
             if (canCurrentlySense) {
                 if (!canSenseAfterMove) {
-                    base += 3; // escaping vision
+                    base += 4; // escaping vision
                 } else {
                     base -= 1; // staying in vision
                 }
             } else {
                 if (canSenseAfterMove) {
-                    base -= 3; // entering vision
+                    base -= 4; // entering vision
                 } else {
                     base = 0; // they dont see u
                 }
@@ -293,7 +305,7 @@ public class CombatStrategy extends Strategy {
     */
     public static boolean shouldFight(RobotInfo enemy) {
         if (enemy.getType() == UnitType.CAT) {
-            return time > 200 && RobotTracker.numEnemies == 0 && rc.getHealth() > 50 && rc.getRawCheese() == 0;
+            return time > 1000 && rc.getAllCheese() > 300 && RobotTracker.numEnemies == 0 && rc.getHealth() > 50 && rc.getRawCheese() == 0;
         }
         if (enemy.getType() == UnitType.RAT_KING) return true;
         if (enemy.getHealth() <= rc.getHealth()) return true;

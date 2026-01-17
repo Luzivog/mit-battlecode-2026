@@ -22,23 +22,25 @@ public class GlobalArray {
 
     /*
       LAYOUT:
-      0: global rat counter 
+      0: global rat counter
       1: symmetry
-      2-6: rat king locations (rounded to 2x2)
-      7: rat king turn counter (00, 01, 10 for alive) and (11) for dead
-      8-12: rat spawn roles (5 slots for 5 kings)
+      2-6: rat king locations (upper 5 bits of x and y, rounded to 2x2)
+      7: rat king LSBs (2 bits per king: bit0=x LSB, bit1=y LSB)
+      8: rat king turn counter (00, 01, 10 for alive) and (11) for dead
+      9-12: unused
       13: formation target location (encoded 2x2)
       14: formation mine location (encoded 2x2)
       15: formation coordinator king ID
       16-20: king mine assignments (5 slots for 5 kings)
+      21-31: rat spawn roles
       32-63: cheese mines (count upwards from 32)
     */
 
     private static final int COUNTER = 0;
     private static final int SYMMETRY = 1;
     private static final int RAT_KING_LOC = 2;
-    private static final int RAT_KING_TURN_COUNTER = 7;
-    // empty space 8 - 12 for now
+    private static final int RAT_KING_LSBS = 7;
+    private static final int RAT_KING_TURN_COUNTER = 8;
     private static final int FORMATION_TARGET = 13;
     private static final int FORMATION_MINE = 14;
     private static final int FORMATION_COORDINATOR = 15;
@@ -67,6 +69,7 @@ public class GlobalArray {
     public static void initGlobalArray() throws GameActionException {
         if (isRatKing && time == 1) {
             writeSharedArray(RAT_KING_TURN_COUNTER, 1023);
+            writeSharedArray(RAT_KING_LSBS, 0);
             writeSharedArray(N - 1, 1023);
             for (int i = 0; i < 5; i++) {
                 writeSharedArray(i + RAT_KING_LOC, 1023);
@@ -178,7 +181,11 @@ public class GlobalArray {
         try {
             int pos = rc.readSharedArray(i + RAT_KING_LOC);
             if (pos == 1023) return null;
-            return decode2x2(pos);
+            int lsbs = rc.readSharedArray(RAT_KING_LSBS);
+            int myLsb = (lsbs >>> (2 * i)) & 0b11;
+            int x = ((pos & 0b11111) << 1) | (myLsb & 1);
+            int y = ((pos >>> 5) << 1) | ((myLsb >>> 1) & 1);
+            return new MapLocation(x, y);
         } catch (GameActionException e) {
             e.printStackTrace();
             return null;
@@ -241,13 +248,17 @@ public class GlobalArray {
     public static void writeRatLoc(int i) {
         try {
             writeSharedArray(i + RAT_KING_LOC, encode2x2());
+            // write LSBs for exact position
+            int lsbs = rc.readSharedArray(RAT_KING_LSBS);
+            int myLsb = (myLocX & 1) | ((myLocY & 1) << 1);
+            lsbs &= ~(0b11 << (2 * i));
+            lsbs |= myLsb << (2 * i);
+            writeSharedArray(RAT_KING_LSBS, lsbs);
             // cycle counter
             int x = rc.readSharedArray(RAT_KING_TURN_COUNTER);
             int t = time % 3;
             x &= ~(0b11 << (2 * i));
             x |= t << (2 * i);
-            // println("update time for rat " + i);
-            // can be optimised to xor'ing lmao
         } catch (GameActionException e) {
             e.printStackTrace();
         }

@@ -28,6 +28,7 @@
 package awubot;
 
 import awubot.util.string.FastMapLocationSet;
+import awubot.comms.GlobalArray;
 import battlecode.common.*;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
@@ -135,8 +136,6 @@ public class RobotTracker {
     public static int allyCount = 0;
     public static MapLocation[] allies = new MapLocation[55];
     public static FastMapLocationSet allySet, kingSet;
-    private static MapLocation[][] pastKingLocs = new MapLocation[5][5];
-    private static int[] pastKingCounts = new int[5];
     public static void addAlly(MapLocation loc) {
         if(!allySet.contains(loc)) {
             allies[allyCount++] = loc;
@@ -148,103 +147,28 @@ public class RobotTracker {
     public static void reset() throws GameActionException {
         allyCount = 0;
         allySet = new FastMapLocationSet();
-        pastKingCounts[time % 5] = 0;
         for(var robot : rc.senseNearbyRobots(-1, team)) {
-            var loc = robot.location;
             if(robot.type == UnitType.BABY_RAT) {
-                addAlly(loc);
-            } else {
-                pastKingLocs[time % 5][pastKingCounts[time % 5]++] = loc;
+                addAlly(robot.location);
             }
         }
     }
     public static void writeHistoricalKingLocs() {
-        // hack to remember where kings are
         kingSet = new FastMapLocationSet();
-        {% for i in range(0, 5) %}
-        {
-            int count = pastKingCounts[{{i}}];
-            switch (count) {
-                case 5: {
-                    int j = 4;
-                    var loc = pastKingLocs[{{i}}][j];
-                    var locX = loc.x;
-                    var locY = loc.y;
-                    {% for dx in range(-1, 2) %}
-                    {% for dy in range(-1, 2) %}
-                    {
-                        var kloc = new MapLocation(locX + {{dx}}, locY + {{dy}});
-                        addAlly(kloc);
-                        kingSet.add(kloc);
-                    }
-                    {% endfor %}
-                    {% endfor %}
-                }
-                case 4: {
-                    int j = 3;
-                    var loc = pastKingLocs[{{i}}][j];
-                    var locX = loc.x;
-                    var locY = loc.y;
-                    {% for dx in range(-1, 2) %}
-                    {% for dy in range(-1, 2) %}
-                    {
-                        var kloc = new MapLocation(locX + {{dx}}, locY + {{dy}});
-                        addAlly(kloc);
-                        kingSet.add(kloc);
-                    }
-                    {% endfor %}
-                    {% endfor %}
-                }
-                case 3: {
-                    int j = 2;
-                    var loc = pastKingLocs[{{i}}][j];
-                    var locX = loc.x;
-                    var locY = loc.y;
-                    {% for dx in range(-1, 2) %}
-                    {% for dy in range(-1, 2) %}
-                    {
-                        var kloc = new MapLocation(locX + {{dx}}, locY + {{dy}});
-                        addAlly(kloc);
-                        kingSet.add(kloc);
-                    }
-                    {% endfor %}
-                    {% endfor %}
-                }
-                case 2: {
-                    int j = 1;
-                    var loc = pastKingLocs[{{i}}][j];
-                    var locX = loc.x;
-                    var locY = loc.y;
-                    {% for dx in range(-1, 2) %}
-                    {% for dy in range(-1, 2) %}
-                    {
-                        var kloc = new MapLocation(locX + {{dx}}, locY + {{dy}});
-                        addAlly(kloc);
-                        kingSet.add(kloc);
-                    }
-                    {% endfor %}
-                    {% endfor %}
-                }
-                case 1: {
-                    int j = 0;
-                    var loc = pastKingLocs[{{i}}][j];
-                    var locX = loc.x;
-                    var locY = loc.y;
-                    {% for dx in range(-1, 2) %}
-                    {% for dy in range(-1, 2) %}
-                    {
-                        var kloc = new MapLocation(locX + {{dx}}, locY + {{dy}});
-                        addAlly(kloc);
-                        kingSet.add(kloc);
-                    }
-                    {% endfor %}
-                    {% endfor %}
-                }
-                case 0:
-                default:
-                    break;
+        for (int i = 0; i < 5; i++) {
+            MapLocation loc = GlobalArray.getRatKing(i);
+            if (loc == null) continue;
+            int locX = loc.x;
+            int locY = loc.y;
+            {% for dx in range(-1, 2) %}
+            {% for dy in range(-1, 2) %}
+            {
+                var kloc = new MapLocation(locX + {{dx}}, locY + {{dy}});
+                addAlly(kloc);
+                kingSet.add(kloc);
             }
+            {% endfor %}
+            {% endfor %}
         }
-        {% endfor %}
     }
 }

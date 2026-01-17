@@ -25,12 +25,14 @@ public class Game {
     public static Direction myDir;
     public static Team team;
     public static int myIndex; // estimate of rat index
+    public static MapLocation myPreviousLoc;
 
     public static MapLocation spawn;
 
     public static void _rawMove(Direction dir) throws GameActionException {
         rc.move(dir);
         myLoc = rc.getLocation();
+        myPreviousLoc = myLoc;
         myLocX = myLoc.x;
         myLocY = myLoc.y;
     }
@@ -120,7 +122,7 @@ public class Game {
     }
 
     public static void postTick() throws GameActionException {
-
+        myPreviousLoc = myLoc;
         // Profiler.begin();
         // MapInfo info = rc.senseMapInfo(myLoc);
         // Profiler.end_print("sense");

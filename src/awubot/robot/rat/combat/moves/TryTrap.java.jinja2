@@ -137,7 +137,7 @@ public final class TryTrap {
 
 
     public static boolean run() throws GameActionException {
-        if (!confirmCanPlace()) return false;
+        if (rc.getAllCheese() < 100 || !confirmCanPlace()) return false;
         Profiler.push();
         computeWeights();
         Profiler.pop("TryTrap.computeWeights");
@@ -210,6 +210,7 @@ public final class TryTrap {
     }
 
     private static void applyEnemyWeight(RobotInfo rinfo) {
+        if (rinfo.getHealth() <= 30) return;
         int x = rinfo.location.x - myLocX;
         int y = rinfo.location.y - myLocY;
         switch (x) {

@@ -79,7 +79,7 @@ public final class TryRatNap {
         if (rc.canCarryRat(target.location)) {
             rc.carryRat(target.location);
         } else {
-            rc.attack(target.location);
+            attack(target);
             println("was just shoved against a wall");
         }
         println("!!!!!!!!!!!!!!!!!!!!!!! napped rat");

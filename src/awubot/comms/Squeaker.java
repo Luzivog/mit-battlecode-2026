@@ -51,7 +51,6 @@ public class Squeaker {
     }
 
     private static void processMessage(Message msg) {
-        if (msg.getSenderID() == rc.getID()) return;
         squeaksSinceLastTurn++;
         RobotTracker.addAlly(msg.getSource());
         // println(rc.getID() + " received from " + msg.getSenderID() + " content " + msg.getBytes());

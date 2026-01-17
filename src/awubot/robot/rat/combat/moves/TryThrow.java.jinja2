@@ -3,6 +3,8 @@ package awubot.robot.rat.combat.moves;
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
+import battlecode.common.RobotInfo;
+import battlecode.common.UnitType;
 
 import awubot.robot.rat.combat.CombatCommon;
 import awubot.robot.rat.combat.CombatStrategy;
@@ -43,7 +45,7 @@ public final class TryThrow {
                 if (!rc.canSenseLocation(throwTarget)) continue; // make sure u know whats happening there
                 if (!rc.senseMapInfo(throwTarget).isPassable()) continue; // need empty
                 if (throwTarget != myLoc && rc.senseRobotAtLocation(throwTarget) != null) continue; // need empty
-                score = CombatStrategy.getCellScoreFor(moveDir, throwDir) + 10;
+                score = CombatStrategy.getCellScoreFor(moveDir, throwDir) / 3 + 5;
                 // for now, allow the throw path to go through friendly rats
                 for (rem = 7; rem >= 0; rem--) {
                     throwTarget = throwTarget.add(throwDir);
@@ -52,6 +54,24 @@ public final class TryThrow {
                         break;
                     }
                     if (rc.canSenseLocation(throwTarget)) {
+                        RobotInfo info = rc.senseRobotAtLocation(throwTarget);
+                        if (info != null) {
+                            if (info.getTeam() == team) {
+                                if (info.getType() == UnitType.RAT_KING) {
+                                    score = -100;
+                                    break;
+                                } else {
+                                    if (rem == 6) score -= (rem * 4) / 2;
+                                }
+                            } else {
+                                if (info.getType() == UnitType.RAT_KING) {
+                                    score += 100;
+                                    break;
+                                } else {
+                                    score += (rem * 4) / 2;
+                                }
+                            }
+                        }
                         if (!rc.senseMapInfo(throwTarget).isPassable()) {
                             score += rem * 4;
                             break;

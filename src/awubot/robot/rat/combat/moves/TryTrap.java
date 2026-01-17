@@ -60,7 +60,7 @@ public final class TryTrap {
 
 
     public static boolean run() throws GameActionException {
-        if (!confirmCanPlace()) return false;
+        if (rc.getAllCheese() < 100 || !confirmCanPlace()) return false;
         Profiler.push();
         computeWeights();
         Profiler.pop("TryTrap.computeWeights");
@@ -459,6 +459,7 @@ public final class TryTrap {
     }
 
     private static void applyEnemyWeight(RobotInfo rinfo) {
+        if (rinfo.getHealth() <= 30) return;
         int x = rinfo.location.x - myLocX;
         int y = rinfo.location.y - myLocY;
         switch (x) {
@@ -470,17 +471,17 @@ public final class TryTrap {
                             case 0 -> {
 
 w_m2_m2 += 2;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + -2));}
+}
 
                             case 1 -> {
 
 w_m2_m2 += 3;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + -2));}
+}
 
                             case 2 -> {
 
 w_m2_m2 += 2;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + -2));}
+}
 
                             case 3 -> {
 }
@@ -508,14 +509,14 @@ w_m2_m2 += 2;
                             case 1 -> {
 
 w_m2_m2 += 2;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + -2));w_m2_m1 += 3;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + -1));}
+w_m2_m1 += 3;
+}
 
                             case 2 -> {
 
 w_m2_m2 += 3;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + -2));w_m2_m1 += 2;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + -1));}
+w_m2_m1 += 2;
+}
 
                             case 3 -> {
 }
@@ -543,15 +544,15 @@ w_m2_m2 += 3;
                             case 1 -> {
 
 w_m2_m1 += 2;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + -1));w_m2_0 += 3;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + 0));}
+w_m2_0 += 3;
+}
 
                             case 2 -> {
 
 w_m2_m2 += 2;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + -2));w_m2_m1 += 3;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + -1));w_m2_0 += 2;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + 0));}
+w_m2_m1 += 3;
+w_m2_0 += 2;
+}
 
                             case 3 -> {
 }
@@ -579,21 +580,21 @@ w_m2_m2 += 2;
                             case 1 -> {
 
 w_m2_0 += 2;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + 0));w_m2_1 += 3;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + 1));}
+w_m2_1 += 3;
+}
 
                             case 2 -> {
 
 w_m2_m1 += 2;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + -1));w_m2_0 += 3;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + 0));w_m2_1 += 2;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + 1));}
+w_m2_0 += 3;
+w_m2_1 += 2;
+}
 
                             case 3 -> {
 
 w_m2_m1 += 3;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + -1));w_m2_0 += 2;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + 0));}
+w_m2_0 += 2;
+}
 
                             case 4 -> {
 }
@@ -621,15 +622,15 @@ w_m2_m1 += 3;
                             case 2 -> {
 
 w_m2_0 += 2;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + 0));w_m2_1 += 3;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + 1));w_m2_2 += 2;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + 2));}
+w_m2_1 += 3;
+w_m2_2 += 2;
+}
 
                             case 3 -> {
 
 w_m2_0 += 3;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + 0));w_m2_1 += 2;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + 1));}
+w_m2_1 += 2;
+}
 
                             case 4 -> {
 }
@@ -657,14 +658,14 @@ w_m2_0 += 3;
                             case 2 -> {
 
 w_m2_1 += 2;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + 1));w_m2_2 += 3;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + 2));}
+w_m2_2 += 3;
+}
 
                             case 3 -> {
 
 w_m2_1 += 3;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + 1));w_m2_2 += 2;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + 2));}
+w_m2_2 += 2;
+}
 
                             case 4 -> {
 }
@@ -692,17 +693,17 @@ w_m2_1 += 3;
                             case 2 -> {
 
 w_m2_2 += 2;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + 2));}
+}
 
                             case 3 -> {
 
 w_m2_2 += 3;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + 2));}
+}
 
                             case 4 -> {
 
 w_m2_2 += 2;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + 2));}
+}
 
                             case 5 -> {
 }
@@ -726,14 +727,14 @@ w_m2_2 += 2;
                             case 0 -> {
 
 w_m2_m2 += 3;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + -2));w_m1_m2 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + -2));}
+w_m1_m2 += 2;
+}
 
                             case 1 -> {
 
 w_m2_m2 += 2;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + -2));w_m1_m2 += 3;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + -2));}
+w_m1_m2 += 3;
+}
 
                             case 2 -> {
 }
@@ -761,21 +762,21 @@ w_m2_m2 += 2;
                             case 0 -> {
 
 w_m2_m1 += 3;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + -1));w_m1_m1 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + -1));}
+w_m1_m1 += 2;
+}
 
                             case 1 -> {
 
 w_m2_m1 += 2;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + -1));w_m1_m2 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + -2));w_m1_m1 += 3;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + -1));}
+w_m1_m2 += 2;
+w_m1_m1 += 3;
+}
 
                             case 2 -> {
 
 w_m1_m2 += 3;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + -2));w_m1_m1 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + -1));}
+w_m1_m1 += 2;
+}
 
                             case 3 -> {
 }
@@ -803,16 +804,16 @@ w_m1_m2 += 3;
                             case 1 -> {
 
 w_m2_0 += 2;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + 0));w_m1_m1 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + -1));w_m1_0 += 3;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 0));}
+w_m1_m1 += 2;
+w_m1_0 += 3;
+}
 
                             case 2 -> {
 
 w_m1_m2 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + -2));w_m1_m1 += 3;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + -1));w_m1_0 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 0));}
+w_m1_m1 += 3;
+w_m1_0 += 2;
+}
 
                             case 3 -> {
 }
@@ -840,23 +841,23 @@ w_m1_m2 += 2;
                             case 1 -> {
 
 w_m2_1 += 2;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + 1));w_m1_0 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 0));w_m1_1 += 3;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 1));}
+w_m1_0 += 2;
+w_m1_1 += 3;
+}
 
                             case 2 -> {
 
 w_m1_m1 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + -1));w_m1_0 += 3;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 0));w_m1_1 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 1));}
+w_m1_0 += 3;
+w_m1_1 += 2;
+}
 
                             case 3 -> {
 
 w_m2_m1 += 2;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + -1));w_m1_m1 += 3;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + -1));w_m1_0 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 0));}
+w_m1_m1 += 3;
+w_m1_0 += 2;
+}
 
                             case 4 -> {
 }
@@ -884,16 +885,16 @@ w_m2_m1 += 2;
                             case 2 -> {
 
 w_m1_0 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 0));w_m1_1 += 3;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 1));w_m1_2 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 2));}
+w_m1_1 += 3;
+w_m1_2 += 2;
+}
 
                             case 3 -> {
 
 w_m2_0 += 2;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + 0));w_m1_0 += 3;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 0));w_m1_1 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 1));}
+w_m1_0 += 3;
+w_m1_1 += 2;
+}
 
                             case 4 -> {
 }
@@ -921,21 +922,21 @@ w_m2_0 += 2;
                             case 2 -> {
 
 w_m1_1 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 1));w_m1_2 += 3;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 2));}
+w_m1_2 += 3;
+}
 
                             case 3 -> {
 
 w_m2_1 += 2;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + 1));w_m1_1 += 3;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 1));w_m1_2 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 2));}
+w_m1_1 += 3;
+w_m1_2 += 2;
+}
 
                             case 4 -> {
 
 w_m2_1 += 3;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + 1));w_m1_1 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 1));}
+w_m1_1 += 2;
+}
 
                             case 5 -> {
 }
@@ -963,14 +964,14 @@ w_m2_1 += 3;
                             case 3 -> {
 
 w_m2_2 += 2;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + 2));w_m1_2 += 3;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 2));}
+w_m1_2 += 3;
+}
 
                             case 4 -> {
 
 w_m2_2 += 3;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + 2));w_m1_2 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 2));}
+w_m1_2 += 2;
+}
 
                             case 5 -> {
 }
@@ -994,15 +995,15 @@ w_m2_2 += 3;
                             case 0 -> {
 
 w_m2_m2 += 2;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + -2));w_m1_m2 += 3;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + -2));w_0_m2 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + -2));}
+w_m1_m2 += 3;
+w_0_m2 += 2;
+}
 
                             case 1 -> {
 
 w_m1_m2 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + -2));w_0_m2 += 3;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + -2));}
+w_0_m2 += 3;
+}
 
                             case 2 -> {
 }
@@ -1030,16 +1031,16 @@ w_m1_m2 += 2;
                             case 0 -> {
 
 w_m2_m1 += 2;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + -1));w_m1_m1 += 3;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + -1));w_0_m1 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + -1));}
+w_m1_m1 += 3;
+w_0_m1 += 2;
+}
 
                             case 1 -> {
 
 w_m1_m1 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + -1));w_0_m2 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + -2));w_0_m1 += 3;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + -1));}
+w_0_m2 += 2;
+w_0_m1 += 3;
+}
 
                             case 2 -> {
 }
@@ -1067,23 +1068,23 @@ w_m1_m1 += 2;
                             case 0 -> {
 
 w_m2_0 += 2;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + 0));w_m1_0 += 3;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 0));w_0_0 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 0));}
+w_m1_0 += 3;
+w_0_0 += 2;
+}
 
                             case 1 -> {
 
 w_m1_0 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 0));w_0_m1 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + -1));w_0_0 += 3;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 0));}
+w_0_m1 += 2;
+w_0_0 += 3;
+}
 
                             case 2 -> {
 
 w_0_m2 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + -2));w_0_m1 += 3;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + -1));w_0_0 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 0));}
+w_0_m1 += 3;
+w_0_0 += 2;
+}
 
                             case 3 -> {
 }
@@ -1111,23 +1112,23 @@ w_0_m2 += 2;
                             case 1 -> {
 
 w_m1_1 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 1));w_0_0 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 0));w_0_1 += 3;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 1));}
+w_0_0 += 2;
+w_0_1 += 3;
+}
 
                             case 2 -> {
 
 w_0_m1 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + -1));w_0_0 += 3;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 0));w_0_1 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 1));}
+w_0_0 += 3;
+w_0_1 += 2;
+}
 
                             case 3 -> {
 
 w_m1_m1 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + -1));w_0_m1 += 3;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + -1));w_0_0 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 0));}
+w_0_m1 += 3;
+w_0_0 += 2;
+}
 
                             case 4 -> {
 }
@@ -1155,23 +1156,23 @@ w_m1_m1 += 2;
                             case 2 -> {
 
 w_0_0 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 0));w_0_1 += 3;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 1));w_0_2 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 2));}
+w_0_1 += 3;
+w_0_2 += 2;
+}
 
                             case 3 -> {
 
 w_m1_0 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 0));w_0_0 += 3;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 0));w_0_1 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 1));}
+w_0_0 += 3;
+w_0_1 += 2;
+}
 
                             case 4 -> {
 
 w_m2_0 += 2;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + 0));w_m1_0 += 3;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 0));w_0_0 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 0));}
+w_m1_0 += 3;
+w_0_0 += 2;
+}
 
                             case 5 -> {
 }
@@ -1199,16 +1200,16 @@ w_m2_0 += 2;
                             case 3 -> {
 
 w_m1_1 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 1));w_0_1 += 3;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 1));w_0_2 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 2));}
+w_0_1 += 3;
+w_0_2 += 2;
+}
 
                             case 4 -> {
 
 w_m2_1 += 2;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + 1));w_m1_1 += 3;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 1));w_0_1 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 1));}
+w_m1_1 += 3;
+w_0_1 += 2;
+}
 
                             case 5 -> {
 }
@@ -1236,15 +1237,15 @@ w_m2_1 += 2;
                             case 3 -> {
 
 w_m1_2 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 2));w_0_2 += 3;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 2));}
+w_0_2 += 3;
+}
 
                             case 4 -> {
 
 w_m2_2 += 2;
-                                println("incremented weight at " + (myLocX + -2) + ", " + (myLocY + 2));w_m1_2 += 3;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 2));w_0_2 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 2));}
+w_m1_2 += 3;
+w_0_2 += 2;
+}
 
                             case 5 -> {
 }
@@ -1268,15 +1269,15 @@ w_m2_2 += 2;
                             case 0 -> {
 
 w_m1_m2 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + -2));w_0_m2 += 3;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + -2));w_1_m2 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + -2));}
+w_0_m2 += 3;
+w_1_m2 += 2;
+}
 
                             case 1 -> {
 
 w_0_m2 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + -2));w_1_m2 += 3;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + -2));}
+w_1_m2 += 3;
+}
 
                             case 2 -> {
 }
@@ -1296,8 +1297,8 @@ w_0_m2 += 2;
                             case 7 -> {
 
 w_m1_m2 += 3;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + -2));w_0_m2 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + -2));}
+w_0_m2 += 2;
+}
                             default -> { }
                         }
                     }
@@ -1307,16 +1308,16 @@ w_m1_m2 += 3;
                             case 0 -> {
 
 w_m1_m1 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + -1));w_0_m1 += 3;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + -1));w_1_m1 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + -1));}
+w_0_m1 += 3;
+w_1_m1 += 2;
+}
 
                             case 1 -> {
 
 w_0_m1 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + -1));w_1_m2 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + -2));w_1_m1 += 3;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + -1));}
+w_1_m2 += 2;
+w_1_m1 += 3;
+}
 
                             case 2 -> {
 }
@@ -1336,9 +1337,9 @@ w_0_m1 += 2;
                             case 7 -> {
 
 w_m1_m2 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + -2));w_m1_m1 += 3;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + -1));w_0_m1 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + -1));}
+w_m1_m1 += 3;
+w_0_m1 += 2;
+}
                             default -> { }
                         }
                     }
@@ -1348,16 +1349,16 @@ w_m1_m2 += 2;
                             case 0 -> {
 
 w_m1_0 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 0));w_0_0 += 3;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 0));w_1_0 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 0));}
+w_0_0 += 3;
+w_1_0 += 2;
+}
 
                             case 1 -> {
 
 w_0_0 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 0));w_1_m1 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + -1));w_1_0 += 3;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 0));}
+w_1_m1 += 2;
+w_1_0 += 3;
+}
 
                             case 2 -> {
 }
@@ -1377,9 +1378,9 @@ w_0_0 += 2;
                             case 7 -> {
 
 w_m1_m1 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + -1));w_m1_0 += 3;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 0));w_0_0 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 0));}
+w_m1_0 += 3;
+w_0_0 += 2;
+}
                             default -> { }
                         }
                     }
@@ -1389,58 +1390,58 @@ w_m1_m1 += 2;
                             case 0 -> {
 
 w_m1_1 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 1));w_0_1 += 3;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 1));w_1_1 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 1));}
+w_0_1 += 3;
+w_1_1 += 2;
+}
 
                             case 1 -> {
 
 w_0_1 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 1));w_1_0 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 0));w_1_1 += 3;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 1));}
+w_1_0 += 2;
+w_1_1 += 3;
+}
 
                             case 2 -> {
 
 w_1_m1 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + -1));w_1_0 += 3;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 0));w_1_1 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 1));}
+w_1_0 += 3;
+w_1_1 += 2;
+}
 
                             case 3 -> {
 
 w_0_m1 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + -1));w_1_m1 += 3;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + -1));w_1_0 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 0));}
+w_1_m1 += 3;
+w_1_0 += 2;
+}
 
                             case 4 -> {
 
 w_m1_m1 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + -1));w_0_m1 += 3;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + -1));w_1_m1 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + -1));}
+w_0_m1 += 3;
+w_1_m1 += 2;
+}
 
                             case 5 -> {
 
 w_m1_m1 += 3;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + -1));w_m1_0 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 0));w_0_m1 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + -1));}
+w_m1_0 += 2;
+w_0_m1 += 2;
+}
 
                             case 6 -> {
 
 w_m1_m1 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + -1));w_m1_0 += 3;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 0));w_m1_1 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 1));}
+w_m1_0 += 3;
+w_m1_1 += 2;
+}
 
                             case 7 -> {
 
 w_m1_0 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 0));w_m1_1 += 3;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 1));w_0_1 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 1));}
+w_m1_1 += 3;
+w_0_1 += 2;
+}
                             default -> { }
                         }
                     }
@@ -1459,23 +1460,23 @@ w_m1_0 += 2;
                             case 3 -> {
 
 w_0_0 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 0));w_1_0 += 3;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 0));w_1_1 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 1));}
+w_1_0 += 3;
+w_1_1 += 2;
+}
 
                             case 4 -> {
 
 w_m1_0 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 0));w_0_0 += 3;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 0));w_1_0 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 0));}
+w_0_0 += 3;
+w_1_0 += 2;
+}
 
                             case 5 -> {
 
 w_m1_0 += 3;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 0));w_m1_1 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 1));w_0_0 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 0));}
+w_m1_1 += 2;
+w_0_0 += 2;
+}
 
                             case 6 -> {
 }
@@ -1500,23 +1501,23 @@ w_m1_0 += 3;
                             case 3 -> {
 
 w_0_1 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 1));w_1_1 += 3;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 1));w_1_2 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 2));}
+w_1_1 += 3;
+w_1_2 += 2;
+}
 
                             case 4 -> {
 
 w_m1_1 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 1));w_0_1 += 3;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 1));w_1_1 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 1));}
+w_0_1 += 3;
+w_1_1 += 2;
+}
 
                             case 5 -> {
 
 w_m1_1 += 3;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 1));w_m1_2 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 2));w_0_1 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 1));}
+w_m1_2 += 2;
+w_0_1 += 2;
+}
 
                             case 6 -> {
 }
@@ -1541,21 +1542,21 @@ w_m1_1 += 3;
                             case 3 -> {
 
 w_0_2 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 2));w_1_2 += 3;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 2));}
+w_1_2 += 3;
+}
 
                             case 4 -> {
 
 w_m1_2 += 2;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 2));w_0_2 += 3;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 2));w_1_2 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 2));}
+w_0_2 += 3;
+w_1_2 += 2;
+}
 
                             case 5 -> {
 
 w_m1_2 += 3;
-                                println("incremented weight at " + (myLocX + -1) + ", " + (myLocY + 2));w_0_2 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 2));}
+w_0_2 += 2;
+}
 
                             case 6 -> {
 }
@@ -1576,9 +1577,9 @@ w_m1_2 += 3;
                             case 0 -> {
 
 w_0_m2 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + -2));w_1_m2 += 3;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + -2));w_2_m2 += 2;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + -2));}
+w_1_m2 += 3;
+w_2_m2 += 2;
+}
 
                             case 1 -> {
 }
@@ -1601,8 +1602,8 @@ w_0_m2 += 2;
                             case 7 -> {
 
 w_0_m2 += 3;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + -2));w_1_m2 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + -2));}
+w_1_m2 += 2;
+}
                             default -> { }
                         }
                     }
@@ -1612,9 +1613,9 @@ w_0_m2 += 3;
                             case 0 -> {
 
 w_0_m1 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + -1));w_1_m1 += 3;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + -1));w_2_m1 += 2;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + -1));}
+w_1_m1 += 3;
+w_2_m1 += 2;
+}
 
                             case 1 -> {
 }
@@ -1637,9 +1638,9 @@ w_0_m1 += 2;
                             case 7 -> {
 
 w_0_m2 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + -2));w_0_m1 += 3;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + -1));w_1_m1 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + -1));}
+w_0_m1 += 3;
+w_1_m1 += 2;
+}
                             default -> { }
                         }
                     }
@@ -1649,9 +1650,9 @@ w_0_m2 += 2;
                             case 0 -> {
 
 w_0_0 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 0));w_1_0 += 3;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 0));w_2_0 += 2;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + 0));}
+w_1_0 += 3;
+w_2_0 += 2;
+}
 
                             case 1 -> {
 }
@@ -1671,16 +1672,16 @@ w_0_0 += 2;
                             case 6 -> {
 
 w_0_m2 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + -2));w_0_m1 += 3;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + -1));w_0_0 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 0));}
+w_0_m1 += 3;
+w_0_0 += 2;
+}
 
                             case 7 -> {
 
 w_0_m1 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + -1));w_0_0 += 3;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 0));w_1_0 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 0));}
+w_0_0 += 3;
+w_1_0 += 2;
+}
                             default -> { }
                         }
                     }
@@ -1705,23 +1706,23 @@ w_0_m1 += 2;
                             case 5 -> {
 
 w_0_m1 += 3;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + -1));w_0_0 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 0));w_1_m1 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + -1));}
+w_0_0 += 2;
+w_1_m1 += 2;
+}
 
                             case 6 -> {
 
 w_0_m1 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + -1));w_0_0 += 3;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 0));w_0_1 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 1));}
+w_0_0 += 3;
+w_0_1 += 2;
+}
 
                             case 7 -> {
 
 w_0_0 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 0));w_0_1 += 3;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 1));w_1_1 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 1));}
+w_0_1 += 3;
+w_1_1 += 2;
+}
                             default -> { }
                         }
                     }
@@ -1743,23 +1744,23 @@ w_0_0 += 2;
                             case 4 -> {
 
 w_0_0 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 0));w_1_0 += 3;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 0));w_2_0 += 2;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + 0));}
+w_1_0 += 3;
+w_2_0 += 2;
+}
 
                             case 5 -> {
 
 w_0_0 += 3;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 0));w_0_1 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 1));w_1_0 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 0));}
+w_0_1 += 2;
+w_1_0 += 2;
+}
 
                             case 6 -> {
 
 w_0_0 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 0));w_0_1 += 3;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 1));w_0_2 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 2));}
+w_0_1 += 3;
+w_0_2 += 2;
+}
 
                             case 7 -> {
 }
@@ -1784,16 +1785,16 @@ w_0_0 += 2;
                             case 4 -> {
 
 w_0_1 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 1));w_1_1 += 3;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 1));w_2_1 += 2;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + 1));}
+w_1_1 += 3;
+w_2_1 += 2;
+}
 
                             case 5 -> {
 
 w_0_1 += 3;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 1));w_0_2 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 2));w_1_1 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 1));}
+w_0_2 += 2;
+w_1_1 += 2;
+}
 
                             case 6 -> {
 }
@@ -1821,15 +1822,15 @@ w_0_1 += 3;
                             case 4 -> {
 
 w_0_2 += 2;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 2));w_1_2 += 3;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 2));w_2_2 += 2;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + 2));}
+w_1_2 += 3;
+w_2_2 += 2;
+}
 
                             case 5 -> {
 
 w_0_2 += 3;
-                                println("incremented weight at " + (myLocX + 0) + ", " + (myLocY + 2));w_1_2 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 2));}
+w_1_2 += 2;
+}
 
                             case 6 -> {
 }
@@ -1850,8 +1851,8 @@ w_0_2 += 3;
                             case 0 -> {
 
 w_1_m2 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + -2));w_2_m2 += 3;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + -2));}
+w_2_m2 += 3;
+}
 
                             case 1 -> {
 }
@@ -1874,8 +1875,8 @@ w_1_m2 += 2;
                             case 7 -> {
 
 w_1_m2 += 3;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + -2));w_2_m2 += 2;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + -2));}
+w_2_m2 += 2;
+}
                             default -> { }
                         }
                     }
@@ -1885,8 +1886,8 @@ w_1_m2 += 3;
                             case 0 -> {
 
 w_1_m1 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + -1));w_2_m1 += 3;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + -1));}
+w_2_m1 += 3;
+}
 
                             case 1 -> {
 }
@@ -1906,15 +1907,15 @@ w_1_m1 += 2;
                             case 6 -> {
 
 w_1_m2 += 3;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + -2));w_1_m1 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + -1));}
+w_1_m1 += 2;
+}
 
                             case 7 -> {
 
 w_1_m2 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + -2));w_1_m1 += 3;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + -1));w_2_m1 += 2;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + -1));}
+w_1_m1 += 3;
+w_2_m1 += 2;
+}
                             default -> { }
                         }
                     }
@@ -1942,16 +1943,16 @@ w_1_m2 += 2;
                             case 6 -> {
 
 w_1_m2 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + -2));w_1_m1 += 3;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + -1));w_1_0 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 0));}
+w_1_m1 += 3;
+w_1_0 += 2;
+}
 
                             case 7 -> {
 
 w_1_m1 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + -1));w_1_0 += 3;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 0));w_2_0 += 2;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + 0));}
+w_1_0 += 3;
+w_2_0 += 2;
+}
                             default -> { }
                         }
                     }
@@ -1976,23 +1977,23 @@ w_1_m1 += 2;
                             case 5 -> {
 
 w_1_m1 += 3;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + -1));w_1_0 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 0));w_2_m1 += 2;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + -1));}
+w_1_0 += 2;
+w_2_m1 += 2;
+}
 
                             case 6 -> {
 
 w_1_m1 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + -1));w_1_0 += 3;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 0));w_1_1 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 1));}
+w_1_0 += 3;
+w_1_1 += 2;
+}
 
                             case 7 -> {
 
 w_1_0 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 0));w_1_1 += 3;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 1));w_2_1 += 2;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + 1));}
+w_1_1 += 3;
+w_2_1 += 2;
+}
                             default -> { }
                         }
                     }
@@ -2017,16 +2018,16 @@ w_1_0 += 2;
                             case 5 -> {
 
 w_1_0 += 3;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 0));w_1_1 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 1));w_2_0 += 2;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + 0));}
+w_1_1 += 2;
+w_2_0 += 2;
+}
 
                             case 6 -> {
 
 w_1_0 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 0));w_1_1 += 3;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 1));w_1_2 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 2));}
+w_1_1 += 3;
+w_1_2 += 2;
+}
 
                             case 7 -> {
 }
@@ -2051,21 +2052,21 @@ w_1_0 += 2;
                             case 4 -> {
 
 w_1_1 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 1));w_2_1 += 3;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + 1));}
+w_2_1 += 3;
+}
 
                             case 5 -> {
 
 w_1_1 += 3;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 1));w_1_2 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 2));w_2_1 += 2;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + 1));}
+w_1_2 += 2;
+w_2_1 += 2;
+}
 
                             case 6 -> {
 
 w_1_1 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 1));w_1_2 += 3;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 2));}
+w_1_2 += 3;
+}
 
                             case 7 -> {
 }
@@ -2090,14 +2091,14 @@ w_1_1 += 2;
                             case 4 -> {
 
 w_1_2 += 2;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 2));w_2_2 += 3;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + 2));}
+w_2_2 += 3;
+}
 
                             case 5 -> {
 
 w_1_2 += 3;
-                                println("incremented weight at " + (myLocX + 1) + ", " + (myLocY + 2));w_2_2 += 2;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + 2));}
+w_2_2 += 2;
+}
 
                             case 6 -> {
 }
@@ -2118,7 +2119,7 @@ w_1_2 += 3;
                             case 0 -> {
 
 w_2_m2 += 2;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + -2));}
+}
 
                             case 1 -> {
 }
@@ -2138,12 +2139,12 @@ w_2_m2 += 2;
                             case 6 -> {
 
 w_2_m2 += 2;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + -2));}
+}
 
                             case 7 -> {
 
 w_2_m2 += 3;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + -2));}
+}
                             default -> { }
                         }
                     }
@@ -2171,14 +2172,14 @@ w_2_m2 += 3;
                             case 6 -> {
 
 w_2_m2 += 3;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + -2));w_2_m1 += 2;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + -1));}
+w_2_m1 += 2;
+}
 
                             case 7 -> {
 
 w_2_m2 += 2;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + -2));w_2_m1 += 3;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + -1));}
+w_2_m1 += 3;
+}
                             default -> { }
                         }
                     }
@@ -2206,15 +2207,15 @@ w_2_m2 += 2;
                             case 6 -> {
 
 w_2_m2 += 2;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + -2));w_2_m1 += 3;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + -1));w_2_0 += 2;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + 0));}
+w_2_m1 += 3;
+w_2_0 += 2;
+}
 
                             case 7 -> {
 
 w_2_m1 += 2;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + -1));w_2_0 += 3;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + 0));}
+w_2_0 += 3;
+}
                             default -> { }
                         }
                     }
@@ -2239,21 +2240,21 @@ w_2_m1 += 2;
                             case 5 -> {
 
 w_2_m1 += 3;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + -1));w_2_0 += 2;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + 0));}
+w_2_0 += 2;
+}
 
                             case 6 -> {
 
 w_2_m1 += 2;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + -1));w_2_0 += 3;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + 0));w_2_1 += 2;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + 1));}
+w_2_0 += 3;
+w_2_1 += 2;
+}
 
                             case 7 -> {
 
 w_2_0 += 2;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + 0));w_2_1 += 3;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + 1));}
+w_2_1 += 3;
+}
                             default -> { }
                         }
                     }
@@ -2278,15 +2279,15 @@ w_2_0 += 2;
                             case 5 -> {
 
 w_2_0 += 3;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + 0));w_2_1 += 2;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + 1));}
+w_2_1 += 2;
+}
 
                             case 6 -> {
 
 w_2_0 += 2;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + 0));w_2_1 += 3;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + 1));w_2_2 += 2;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + 2));}
+w_2_1 += 3;
+w_2_2 += 2;
+}
 
                             case 7 -> {
 }
@@ -2314,14 +2315,14 @@ w_2_0 += 2;
                             case 5 -> {
 
 w_2_1 += 3;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + 1));w_2_2 += 2;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + 2));}
+w_2_2 += 2;
+}
 
                             case 6 -> {
 
 w_2_1 += 2;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + 1));w_2_2 += 3;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + 2));}
+w_2_2 += 3;
+}
 
                             case 7 -> {
 }
@@ -2346,17 +2347,17 @@ w_2_1 += 2;
                             case 4 -> {
 
 w_2_2 += 2;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + 2));}
+}
 
                             case 5 -> {
 
 w_2_2 += 3;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + 2));}
+}
 
                             case 6 -> {
 
 w_2_2 += 2;
-                                println("incremented weight at " + (myLocX + 2) + ", " + (myLocY + 2));}
+}
 
                             case 7 -> {
 }

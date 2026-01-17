@@ -85,6 +85,15 @@ def make_env():
 
 
 ENV = make_env()
+ALLOWED_ROOT = Path("src/awubot").resolve()
+
+
+def _in_allowed_root(path: Path) -> bool:
+    try:
+        path.resolve().relative_to(ALLOWED_ROOT)
+    except ValueError:
+        return False
+    return True
 
 
 def _template_name(path: Path) -> str:
@@ -101,6 +110,8 @@ def compile_template(path: Path, debug: bool):
         return
     if path.name.startswith("."):
         return
+    if not _in_allowed_root(path):
+        return  # skip other directories
     template_name = _template_name(path)
     if not template_name:
         return
@@ -143,7 +154,7 @@ def compile_template(path: Path, debug: bool):
 
 
 def compile_all(debug: bool):
-    for path in Path(".").rglob("*.jinja2"):
+    for path in ALLOWED_ROOT.rglob("*.jinja2"):
         compile_template(path, debug)
 
 

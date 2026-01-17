@@ -34,14 +34,19 @@ public class BabyRat {
         tryPickUpCheese();
         tryTransferCheese();
 
-        indicate("before combat strat: " + Clock.getBytecodeNum());
-        if(combatStrategy.runTick()) return;
+        if (rc.isBeingThrown()) {
+            if (rc.canTurn()) {
+                rc.turn(myLoc.directionTo(myPreviousLoc));
+            }
+        }
+
+        // indicate("before combat strat: " + Clock.getBytecodeNum());
+        if (combatStrategy.runTick()) {
+            return;
+        }
 
         // all nonessential systems go here, only run if we are not in combat
         RobotTracker.writeHistoricalKingLocs();
-        GlobalArray.preTick();
-        Squeaker.preTick();
-        CellTracker.storeVisibleCells();
         CellTracker.checkSymmetry();
 
         indicate("sym " + CellTracker.hsym + " " + CellTracker.vsym + " " + CellTracker.rsym);
@@ -122,6 +127,10 @@ public class BabyRat {
         tryPickUpCheese();
         tryTransferCheese();
         RobotTracker.updateRobots();
+    }
+
+    public static void attack(RobotInfo info) throws GameActionException {
+        rc.attack(myLoc.add(myLoc.directionTo(info.location)));
     }
 
 }

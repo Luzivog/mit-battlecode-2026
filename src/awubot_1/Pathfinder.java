@@ -620,7 +620,7 @@ class BugnavInstance {
                     stackSize++;
                 } else {
                     if(dirToTarget != bottomDir.rotateLeft()) {
-                        System.out.println("unexpected direction change from " + bottomDir + " to " + dirToTarget);
+                        // System.out.println("unexpected direction change from " + bottomDir + " to " + dirToTarget);
                         clearPath();
                     } else {
                         bottomDir = dirToTarget;
@@ -638,7 +638,7 @@ class BugnavInstance {
                     stackSize++;
                 } else {
                     if(dirToTarget != bottomDir.rotateRight()) {
-                        System.out.println("unexpected direction change from " + bottomDir + " to " + dirToTarget);
+                        // System.out.println("unexpected direction change from " + bottomDir + " to " + dirToTarget);
                         clearPath();
                     } else {
                         bottomDir = dirToTarget;
@@ -1115,7 +1115,7 @@ class BugnavInstance {
             }
         }
         tryDir = tryDir.rotateLeft();
-        System.out.println("no valid move found from " + pos);
+        // System.out.println("no valid move found from " + pos);
         return false;
     }
 
@@ -1471,7 +1471,7 @@ class BugnavInstance {
             }
         }
         tryDir = tryDir.rotateRight();
-        System.out.println("no valid move found from " + pos);
+        // System.out.println("no valid move found from " + pos);
         return false;
     }
 
@@ -1694,7 +1694,7 @@ public class Pathfinder {
             reps++;
             if(reps >= 5) {
                 indicate("stuck, resetting bug");
-                System.out.println("stuck, resetting bug");
+                // System.out.println("stuck, resetting bug");
                 bug.clearPath();
                 bug.advance();
                 lastBugPos = lastLoc = new MapLocation(-1, -1);
@@ -6408,7 +6408,7 @@ public class Pathfinder {
         // Profiler.end("bfs iteration");
         Profiler.end("bfs");
 
-        System.out.println("fallback when bfs can't find path");
+        // System.out.println("fallback when bfs can't find path");
         indicate("fallback when bfs can't find path");
 
         // move in a random direction (to make way for any allies blocking us)

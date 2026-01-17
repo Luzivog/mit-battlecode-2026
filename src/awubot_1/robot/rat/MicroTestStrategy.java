@@ -51,7 +51,7 @@ public class MicroTestStrategy extends Strategy {
                                 turn(newLoc.directionTo(target));
                                 rc.attack(target);
                             } catch (GameActionException e) {
-                                e.printStackTrace();
+                                // e.printStackTrace();
                             }
                         };
                     }
@@ -79,7 +79,7 @@ public class MicroTestStrategy extends Strategy {
                                 turn(newLoc.directionTo(target));
                                 rc.carryRat(target);
                             } catch (GameActionException e) {
-                                e.printStackTrace();
+                                // e.printStackTrace();
                             }
                         };
                     }
@@ -141,7 +141,7 @@ public class MicroTestStrategy extends Strategy {
 
             } catch (GameActionException e) {
                 // TODO Auto-generated catch block
-                e.printStackTrace();
+                // e.printStackTrace();
             }
         };
     }

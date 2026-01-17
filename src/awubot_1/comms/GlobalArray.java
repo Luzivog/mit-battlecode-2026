@@ -187,7 +187,7 @@ public class GlobalArray {
             int y = ((pos >>> 5) << 1) | ((myLsb >>> 1) & 1);
             return new MapLocation(x, y);
         } catch (GameActionException e) {
-            e.printStackTrace();
+            // e.printStackTrace();
             return null;
         }
     }
@@ -260,7 +260,7 @@ public class GlobalArray {
             x &= ~(0b11 << (2 * i));
             x |= t << (2 * i);
         } catch (GameActionException e) {
-            e.printStackTrace();
+            // e.printStackTrace();
         }
     }
 
@@ -277,7 +277,7 @@ public class GlobalArray {
             }
             return i;
         } catch (GameActionException e) {
-            e.printStackTrace();
+            // e.printStackTrace();
             return -1;
         }
     }

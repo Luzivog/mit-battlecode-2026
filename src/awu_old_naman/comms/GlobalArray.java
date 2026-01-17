@@ -185,7 +185,7 @@ public class GlobalArray {
             if (pos == 1023) return null;
             return decode2x2(pos);
         } catch (GameActionException e) {
-            e.printStackTrace();
+            // e.printStackTrace();
             return null;
         }
     }
@@ -254,7 +254,7 @@ public class GlobalArray {
             // println("update time for rat " + i);
             // can be optimised to xor'ing lmao
         } catch (GameActionException e) {
-            e.printStackTrace();
+            // e.printStackTrace();
         }
     }
 
@@ -271,7 +271,7 @@ public class GlobalArray {
             }
             return i;
         } catch (GameActionException e) {
-            e.printStackTrace();
+            // e.printStackTrace();
             return -1;
         }
     }

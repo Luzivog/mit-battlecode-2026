@@ -46,7 +46,7 @@ public class Util {
             sb.append(obj.toString());
             sb.append(' ');
         }
-        System.out.println(sb.toString());
+        // System.out.println(sb.toString());
     }
 
     public static int dist(RobotInfo info) {

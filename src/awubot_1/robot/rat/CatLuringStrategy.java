@@ -33,7 +33,7 @@ public class CatLuringStrategy extends Strategy {
         theLureTTL = LURE_TTL;
         theIsActive = true;
         theLastCatSeenRound = time;
-        System.out.println("[LURE] R" + rc.getID() + " t=" + time + " ACTIVATED cat=" + aCatLoc + " target=" + aEnemyKingLoc);
+        // System.out.println("[LURE] R" + rc.getID() + " t=" + time + " ACTIVATED cat=" + aCatLoc + " target=" + aEnemyKingLoc);
     }
 
     public boolean tryAutoActivate() throws GameActionException {
@@ -72,7 +72,7 @@ public class CatLuringStrategy extends Strategy {
 
         boolean myCatNearby = updateCatTracking();
 
-        System.out.println("[LURE] R" + rc.getID() + " t=" + time +
+        // System.out.println("[LURE] R" + rc.getID() + " t=" + time +
             " active=" + theIsActive + " ttl=" + theLureTTL +
             " cat=" + theCatLoc + " catNear=" + myCatNearby +
             " target=" + theEnemyKingLoc + " missions=" + theMissionsCompleted);
@@ -100,23 +100,23 @@ public class CatLuringStrategy extends Strategy {
 
     private boolean shouldTerminateLure(boolean aCatNearby) {
         if (theLureTTL <= 0) {
-            System.out.println("[LURE] R" + rc.getID() + " t=" + time + " TTL expired");
+            // System.out.println("[LURE] R" + rc.getID() + " t=" + time + " TTL expired");
             return true;
         }
 
         if (theEnemyKingLoc != null &&
             myLoc.distanceSquaredTo(theEnemyKingLoc) <= MISSION_COMPLETE_DIST_SQ) {
-            System.out.println("[LURE] R" + rc.getID() + " t=" + time + " MISSION COMPLETE - reached enemy!");
+            // System.out.println("[LURE] R" + rc.getID() + " t=" + time + " MISSION COMPLETE - reached enemy!");
             return true;
         }
 
         if (!aCatNearby && (time - theLastCatSeenRound) > CAT_LOST_THRESHOLD) {
-            System.out.println("[LURE] R" + rc.getID() + " t=" + time + " Cat lost");
+            // System.out.println("[LURE] R" + rc.getID() + " t=" + time + " Cat lost");
             return true;
         }
 
         if (rc.getHealth() <= 30) {
-            System.out.println("[LURE] R" + rc.getID() + " t=" + time + " Aborting - low HP");
+            // System.out.println("[LURE] R" + rc.getID() + " t=" + time + " Aborting - low HP");
             return true;
         }
 
@@ -127,7 +127,7 @@ public class CatLuringStrategy extends Strategy {
         if (aWasSuccessful && theEnemyKingLoc != null &&
             myLoc.distanceSquaredTo(theEnemyKingLoc) <= MISSION_COMPLETE_DIST_SQ) {
             theMissionsCompleted++;
-            System.out.println("[LURE] R" + rc.getID() + " t=" + time + " SUCCESS! Total missions: " + theMissionsCompleted);
+            // System.out.println("[LURE] R" + rc.getID() + " t=" + time + " SUCCESS! Total missions: " + theMissionsCompleted);
         }
 
         theIsActive = false;

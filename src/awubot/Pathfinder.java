@@ -4,6 +4,7 @@ import battlecode.common.*;
 import static awubot.util.Util.*;
 import awubot.util.Rng;
 import awubot.util.Profiler;
+import awubot.util.string.FastMapLocationSet;
 import static awubot.Game.*;
 import static awubot.robot.rat.BabyRat.*; // TODO: make pathfinder compatible with rat king
 
@@ -32,12 +33,15 @@ class BugnavInstance {
     boolean leftDone, rightDone;
     // detect movement with this
     MapLocation lastLoc;
-    Direction lastDir;;
+    Direction lastDir;
     // loop detection
     long[] guessedLeft, guessedRight;
 
     // extra "return variables" for lookahead instances
     boolean hitEdge = false, outOfSight = false, arrived = false;
+
+    FastMapLocationSet vis;
+    boolean givenUp = false;
 
     Direction bottomDir, topDir;
 
@@ -46,6 +50,8 @@ class BugnavInstance {
     int stackSize;
     int emptyStackTurns;
     boolean leftTurn;
+
+    int windingNumber = 0;
 
     public int nextPathIndex;
     public MapLocation path0;
@@ -68,6 +74,7 @@ class BugnavInstance {
         pos = myLoc;
         nextPathIndex = 0;
         stackSize = 0;
+        windingNumber = 0;
         emptyStackTurns = 1000;
         bottomDir = topDir = pos.directionTo(target);
         leftBug = rightBug = null;
@@ -110,90 +117,165 @@ class BugnavInstance {
         switch (nextPathIndex) {
             case 0 -> {
                 if (!path14.equals(loc)) {
+                    if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
+                        indicate("loop detected");
+                        System.out.println("loop detected");
+                        givenUp = true;
+                    }
                     path0 = loc;
                     nextPathIndex = 1;
                 }
             }
             case 1 -> {
                 if (!path0.equals(loc)) {
+                    if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
+                        indicate("loop detected");
+                        System.out.println("loop detected");
+                        givenUp = true;
+                    }
                     path1 = loc;
                     nextPathIndex = 2;
                 }
             }
             case 2 -> {
                 if (!path1.equals(loc)) {
+                    if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
+                        indicate("loop detected");
+                        System.out.println("loop detected");
+                        givenUp = true;
+                    }
                     path2 = loc;
                     nextPathIndex = 3;
                 }
             }
             case 3 -> {
                 if (!path2.equals(loc)) {
+                    if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
+                        indicate("loop detected");
+                        System.out.println("loop detected");
+                        givenUp = true;
+                    }
                     path3 = loc;
                     nextPathIndex = 4;
                 }
             }
             case 4 -> {
                 if (!path3.equals(loc)) {
+                    if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
+                        indicate("loop detected");
+                        System.out.println("loop detected");
+                        givenUp = true;
+                    }
                     path4 = loc;
                     nextPathIndex = 5;
                 }
             }
             case 5 -> {
                 if (!path4.equals(loc)) {
+                    if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
+                        indicate("loop detected");
+                        System.out.println("loop detected");
+                        givenUp = true;
+                    }
                     path5 = loc;
                     nextPathIndex = 6;
                 }
             }
             case 6 -> {
                 if (!path5.equals(loc)) {
+                    if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
+                        indicate("loop detected");
+                        System.out.println("loop detected");
+                        givenUp = true;
+                    }
                     path6 = loc;
                     nextPathIndex = 7;
                 }
             }
             case 7 -> {
                 if (!path6.equals(loc)) {
+                    if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
+                        indicate("loop detected");
+                        System.out.println("loop detected");
+                        givenUp = true;
+                    }
                     path7 = loc;
                     nextPathIndex = 8;
                 }
             }
             case 8 -> {
                 if (!path7.equals(loc)) {
+                    if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
+                        indicate("loop detected");
+                        System.out.println("loop detected");
+                        givenUp = true;
+                    }
                     path8 = loc;
                     nextPathIndex = 9;
                 }
             }
             case 9 -> {
                 if (!path8.equals(loc)) {
+                    if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
+                        indicate("loop detected");
+                        System.out.println("loop detected");
+                        givenUp = true;
+                    }
                     path9 = loc;
                     nextPathIndex = 10;
                 }
             }
             case 10 -> {
                 if (!path9.equals(loc)) {
+                    if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
+                        indicate("loop detected");
+                        System.out.println("loop detected");
+                        givenUp = true;
+                    }
                     path10 = loc;
                     nextPathIndex = 11;
                 }
             }
             case 11 -> {
                 if (!path10.equals(loc)) {
+                    if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
+                        indicate("loop detected");
+                        System.out.println("loop detected");
+                        givenUp = true;
+                    }
                     path11 = loc;
                     nextPathIndex = 12;
                 }
             }
             case 12 -> {
                 if (!path11.equals(loc)) {
+                    if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
+                        indicate("loop detected");
+                        System.out.println("loop detected");
+                        givenUp = true;
+                    }
                     path12 = loc;
                     nextPathIndex = 13;
                 }
             }
             case 13 -> {
                 if (!path12.equals(loc)) {
+                    if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
+                        indicate("loop detected");
+                        System.out.println("loop detected");
+                        givenUp = true;
+                    }
                     path13 = loc;
                     nextPathIndex = 14;
                 }
             }
             case 14 -> {
                 if (!path13.equals(loc)) {
+                    if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
+                        indicate("loop detected");
+                        System.out.println("loop detected");
+                        givenUp = true;
+                    }
                     path14 = loc;
                     nextPathIndex = 0;
                 }
@@ -618,6 +700,7 @@ class BugnavInstance {
                                     if(dirToTarget == bottomDir.rotateRight()) {
                     bottomDir = dirToTarget;
                     stackSize++;
+                    windingNumber++;
                 } else {
                     if(dirToTarget != bottomDir.rotateLeft()) {
                         System.out.println("unexpected direction change from " + bottomDir + " to " + dirToTarget);
@@ -625,6 +708,7 @@ class BugnavInstance {
                     } else {
                         bottomDir = dirToTarget;
                         stackSize--;
+                        windingNumber--;
                         if(stackSize < 0) {
                             stackSize = 0;
                             topDir = bottomDir;
@@ -636,6 +720,7 @@ class BugnavInstance {
                                     if(dirToTarget == bottomDir.rotateLeft()) {
                     bottomDir = dirToTarget;
                     stackSize++;
+                    windingNumber++;
                 } else {
                     if(dirToTarget != bottomDir.rotateRight()) {
                         System.out.println("unexpected direction change from " + bottomDir + " to " + dirToTarget);
@@ -643,6 +728,7 @@ class BugnavInstance {
                     } else {
                         bottomDir = dirToTarget;
                         stackSize--;
+                        windingNumber--;
                         if(stackSize < 0) {
                             stackSize = 0;
                             topDir = bottomDir;
@@ -1729,6 +1815,7 @@ public class Pathfinder {
         doBugnavBfs(target);
     }
 
+
     private static void doBugnavBfs(MapLocation target) throws GameActionException {
         Profiler.begin();
         CellTracker.computeLocalBfsMasks();
@@ -1819,18 +1906,19 @@ public class Pathfinder {
 
         // Profiler.begin();
 
-        // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d00 |= (d00 & 0xfbff7feffdffbffl) << 1;
-        d01 |= (d01 & 0x7feffdffbff7fefl) << 1;
-        d00 |= (d00 & 0x1f7feffdffbff7fel) >> 1;
-        d01 |= (d01 & 0xffdffbff7feffdel) >> 1;
+            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    d00 |= (d00 & 0xfbff7feffdffbffl) << 1;
+    d01 |= (d01 & 0x7feffdffbff7fefl) << 1;
+    d00 |= (d00 & 0x1f7feffdffbff7fel) >> 1;
+    d01 |= (d01 & 0xffdffbff7feffdel) >> 1;
 
-        d01 |= ((d01 & 0x1ffffffffffffl) << 11) | (d00 >> 50);
-        d00 |= (d00 & 0x3ffffffffffffl) << 11;
-        d00 |= (d00 >> 11) | ((d01 & 0x7ffl) << 50);
-        d01 |= d01 >> 11;
-        d00 &= localPassableExceptAllies0;
-        d01 &= localPassableExceptAllies1;
+    d01 |= ((d01 & 0x1ffffffffffffl) << 11) | (d00 >> 50);
+    d00 |= (d00 & 0x3ffffffffffffl) << 11;
+    d00 |= (d00 >> 11) | ((d01 & 0x7ffl) << 50);
+    d01 |= d01 >> 11;
+    d00 &= localPassableExceptAllies0;
+    d01 &= localPassableExceptAllies1;
+
         long d20 = 0l;
         long d21 = 0l;
         if(dirtAllowed) {
@@ -2135,18 +2223,19 @@ public class Pathfinder {
 
         // Profiler.begin();
 
-        // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d10 |= (d10 & 0xfbff7feffdffbffl) << 1;
-        d11 |= (d11 & 0x7feffdffbff7fefl) << 1;
-        d10 |= (d10 & 0x1f7feffdffbff7fel) >> 1;
-        d11 |= (d11 & 0xffdffbff7feffdel) >> 1;
+            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    d10 |= (d10 & 0xfbff7feffdffbffl) << 1;
+    d11 |= (d11 & 0x7feffdffbff7fefl) << 1;
+    d10 |= (d10 & 0x1f7feffdffbff7fel) >> 1;
+    d11 |= (d11 & 0xffdffbff7feffdel) >> 1;
 
-        d11 |= ((d11 & 0x1ffffffffffffl) << 11) | (d10 >> 50);
-        d10 |= (d10 & 0x3ffffffffffffl) << 11;
-        d10 |= (d10 >> 11) | ((d11 & 0x7ffl) << 50);
-        d11 |= d11 >> 11;
-        d10 &= localPassableExceptAllies0;
-        d11 &= localPassableExceptAllies1;
+    d11 |= ((d11 & 0x1ffffffffffffl) << 11) | (d10 >> 50);
+    d10 |= (d10 & 0x3ffffffffffffl) << 11;
+    d10 |= (d10 >> 11) | ((d11 & 0x7ffl) << 50);
+    d11 |= d11 >> 11;
+    d10 &= localPassableExceptAllies0;
+    d11 &= localPassableExceptAllies1;
+
         long d30 = 0l;
         long d31 = 0l;
         if(dirtAllowed) {
@@ -2471,18 +2560,19 @@ public class Pathfinder {
 
         // Profiler.begin();
 
-        // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d20 |= (d20 & 0xfbff7feffdffbffl) << 1;
-        d21 |= (d21 & 0x7feffdffbff7fefl) << 1;
-        d20 |= (d20 & 0x1f7feffdffbff7fel) >> 1;
-        d21 |= (d21 & 0xffdffbff7feffdel) >> 1;
+            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    d20 |= (d20 & 0xfbff7feffdffbffl) << 1;
+    d21 |= (d21 & 0x7feffdffbff7fefl) << 1;
+    d20 |= (d20 & 0x1f7feffdffbff7fel) >> 1;
+    d21 |= (d21 & 0xffdffbff7feffdel) >> 1;
 
-        d21 |= ((d21 & 0x1ffffffffffffl) << 11) | (d20 >> 50);
-        d20 |= (d20 & 0x3ffffffffffffl) << 11;
-        d20 |= (d20 >> 11) | ((d21 & 0x7ffl) << 50);
-        d21 |= d21 >> 11;
-        d20 &= localPassableExceptAllies0;
-        d21 &= localPassableExceptAllies1;
+    d21 |= ((d21 & 0x1ffffffffffffl) << 11) | (d20 >> 50);
+    d20 |= (d20 & 0x3ffffffffffffl) << 11;
+    d20 |= (d20 >> 11) | ((d21 & 0x7ffl) << 50);
+    d21 |= d21 >> 11;
+    d20 &= localPassableExceptAllies0;
+    d21 &= localPassableExceptAllies1;
+
         long d40 = 0l;
         long d41 = 0l;
         if(dirtAllowed) {
@@ -2787,18 +2877,19 @@ public class Pathfinder {
 
         // Profiler.begin();
 
-        // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d30 |= (d30 & 0xfbff7feffdffbffl) << 1;
-        d31 |= (d31 & 0x7feffdffbff7fefl) << 1;
-        d30 |= (d30 & 0x1f7feffdffbff7fel) >> 1;
-        d31 |= (d31 & 0xffdffbff7feffdel) >> 1;
+            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    d30 |= (d30 & 0xfbff7feffdffbffl) << 1;
+    d31 |= (d31 & 0x7feffdffbff7fefl) << 1;
+    d30 |= (d30 & 0x1f7feffdffbff7fel) >> 1;
+    d31 |= (d31 & 0xffdffbff7feffdel) >> 1;
 
-        d31 |= ((d31 & 0x1ffffffffffffl) << 11) | (d30 >> 50);
-        d30 |= (d30 & 0x3ffffffffffffl) << 11;
-        d30 |= (d30 >> 11) | ((d31 & 0x7ffl) << 50);
-        d31 |= d31 >> 11;
-        d30 &= localPassableExceptAllies0;
-        d31 &= localPassableExceptAllies1;
+    d31 |= ((d31 & 0x1ffffffffffffl) << 11) | (d30 >> 50);
+    d30 |= (d30 & 0x3ffffffffffffl) << 11;
+    d30 |= (d30 >> 11) | ((d31 & 0x7ffl) << 50);
+    d31 |= d31 >> 11;
+    d30 &= localPassableExceptAllies0;
+    d31 &= localPassableExceptAllies1;
+
         long d50 = 0l;
         long d51 = 0l;
         if(dirtAllowed) {
@@ -3123,18 +3214,19 @@ public class Pathfinder {
 
         // Profiler.begin();
 
-        // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d40 |= (d40 & 0xfbff7feffdffbffl) << 1;
-        d41 |= (d41 & 0x7feffdffbff7fefl) << 1;
-        d40 |= (d40 & 0x1f7feffdffbff7fel) >> 1;
-        d41 |= (d41 & 0xffdffbff7feffdel) >> 1;
+            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    d40 |= (d40 & 0xfbff7feffdffbffl) << 1;
+    d41 |= (d41 & 0x7feffdffbff7fefl) << 1;
+    d40 |= (d40 & 0x1f7feffdffbff7fel) >> 1;
+    d41 |= (d41 & 0xffdffbff7feffdel) >> 1;
 
-        d41 |= ((d41 & 0x1ffffffffffffl) << 11) | (d40 >> 50);
-        d40 |= (d40 & 0x3ffffffffffffl) << 11;
-        d40 |= (d40 >> 11) | ((d41 & 0x7ffl) << 50);
-        d41 |= d41 >> 11;
-        d40 &= localPassableExceptAllies0;
-        d41 &= localPassableExceptAllies1;
+    d41 |= ((d41 & 0x1ffffffffffffl) << 11) | (d40 >> 50);
+    d40 |= (d40 & 0x3ffffffffffffl) << 11;
+    d40 |= (d40 >> 11) | ((d41 & 0x7ffl) << 50);
+    d41 |= d41 >> 11;
+    d40 &= localPassableExceptAllies0;
+    d41 &= localPassableExceptAllies1;
+
         long d60 = 0l;
         long d61 = 0l;
         if(dirtAllowed) {
@@ -3439,18 +3531,19 @@ public class Pathfinder {
 
         // Profiler.begin();
 
-        // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d50 |= (d50 & 0xfbff7feffdffbffl) << 1;
-        d51 |= (d51 & 0x7feffdffbff7fefl) << 1;
-        d50 |= (d50 & 0x1f7feffdffbff7fel) >> 1;
-        d51 |= (d51 & 0xffdffbff7feffdel) >> 1;
+            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    d50 |= (d50 & 0xfbff7feffdffbffl) << 1;
+    d51 |= (d51 & 0x7feffdffbff7fefl) << 1;
+    d50 |= (d50 & 0x1f7feffdffbff7fel) >> 1;
+    d51 |= (d51 & 0xffdffbff7feffdel) >> 1;
 
-        d51 |= ((d51 & 0x1ffffffffffffl) << 11) | (d50 >> 50);
-        d50 |= (d50 & 0x3ffffffffffffl) << 11;
-        d50 |= (d50 >> 11) | ((d51 & 0x7ffl) << 50);
-        d51 |= d51 >> 11;
-        d50 &= localPassableExceptAllies0;
-        d51 &= localPassableExceptAllies1;
+    d51 |= ((d51 & 0x1ffffffffffffl) << 11) | (d50 >> 50);
+    d50 |= (d50 & 0x3ffffffffffffl) << 11;
+    d50 |= (d50 >> 11) | ((d51 & 0x7ffl) << 50);
+    d51 |= d51 >> 11;
+    d50 &= localPassableExceptAllies0;
+    d51 &= localPassableExceptAllies1;
+
         long d70 = 0l;
         long d71 = 0l;
         if(dirtAllowed) {
@@ -3775,18 +3868,19 @@ public class Pathfinder {
 
         // Profiler.begin();
 
-        // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d60 |= (d60 & 0xfbff7feffdffbffl) << 1;
-        d61 |= (d61 & 0x7feffdffbff7fefl) << 1;
-        d60 |= (d60 & 0x1f7feffdffbff7fel) >> 1;
-        d61 |= (d61 & 0xffdffbff7feffdel) >> 1;
+            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    d60 |= (d60 & 0xfbff7feffdffbffl) << 1;
+    d61 |= (d61 & 0x7feffdffbff7fefl) << 1;
+    d60 |= (d60 & 0x1f7feffdffbff7fel) >> 1;
+    d61 |= (d61 & 0xffdffbff7feffdel) >> 1;
 
-        d61 |= ((d61 & 0x1ffffffffffffl) << 11) | (d60 >> 50);
-        d60 |= (d60 & 0x3ffffffffffffl) << 11;
-        d60 |= (d60 >> 11) | ((d61 & 0x7ffl) << 50);
-        d61 |= d61 >> 11;
-        d60 &= localPassableExceptAllies0;
-        d61 &= localPassableExceptAllies1;
+    d61 |= ((d61 & 0x1ffffffffffffl) << 11) | (d60 >> 50);
+    d60 |= (d60 & 0x3ffffffffffffl) << 11;
+    d60 |= (d60 >> 11) | ((d61 & 0x7ffl) << 50);
+    d61 |= d61 >> 11;
+    d60 &= localPassableExceptAllies0;
+    d61 &= localPassableExceptAllies1;
+
         long d80 = 0l;
         long d81 = 0l;
         if(dirtAllowed) {
@@ -4091,18 +4185,19 @@ public class Pathfinder {
 
         // Profiler.begin();
 
-        // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d70 |= (d70 & 0xfbff7feffdffbffl) << 1;
-        d71 |= (d71 & 0x7feffdffbff7fefl) << 1;
-        d70 |= (d70 & 0x1f7feffdffbff7fel) >> 1;
-        d71 |= (d71 & 0xffdffbff7feffdel) >> 1;
+            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    d70 |= (d70 & 0xfbff7feffdffbffl) << 1;
+    d71 |= (d71 & 0x7feffdffbff7fefl) << 1;
+    d70 |= (d70 & 0x1f7feffdffbff7fel) >> 1;
+    d71 |= (d71 & 0xffdffbff7feffdel) >> 1;
 
-        d71 |= ((d71 & 0x1ffffffffffffl) << 11) | (d70 >> 50);
-        d70 |= (d70 & 0x3ffffffffffffl) << 11;
-        d70 |= (d70 >> 11) | ((d71 & 0x7ffl) << 50);
-        d71 |= d71 >> 11;
-        d70 &= localPassableExceptAllies0;
-        d71 &= localPassableExceptAllies1;
+    d71 |= ((d71 & 0x1ffffffffffffl) << 11) | (d70 >> 50);
+    d70 |= (d70 & 0x3ffffffffffffl) << 11;
+    d70 |= (d70 >> 11) | ((d71 & 0x7ffl) << 50);
+    d71 |= d71 >> 11;
+    d70 &= localPassableExceptAllies0;
+    d71 &= localPassableExceptAllies1;
+
         long d90 = 0l;
         long d91 = 0l;
         if(dirtAllowed) {
@@ -4427,18 +4522,19 @@ public class Pathfinder {
 
         // Profiler.begin();
 
-        // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d80 |= (d80 & 0xfbff7feffdffbffl) << 1;
-        d81 |= (d81 & 0x7feffdffbff7fefl) << 1;
-        d80 |= (d80 & 0x1f7feffdffbff7fel) >> 1;
-        d81 |= (d81 & 0xffdffbff7feffdel) >> 1;
+            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    d80 |= (d80 & 0xfbff7feffdffbffl) << 1;
+    d81 |= (d81 & 0x7feffdffbff7fefl) << 1;
+    d80 |= (d80 & 0x1f7feffdffbff7fel) >> 1;
+    d81 |= (d81 & 0xffdffbff7feffdel) >> 1;
 
-        d81 |= ((d81 & 0x1ffffffffffffl) << 11) | (d80 >> 50);
-        d80 |= (d80 & 0x3ffffffffffffl) << 11;
-        d80 |= (d80 >> 11) | ((d81 & 0x7ffl) << 50);
-        d81 |= d81 >> 11;
-        d80 &= localPassableExceptAllies0;
-        d81 &= localPassableExceptAllies1;
+    d81 |= ((d81 & 0x1ffffffffffffl) << 11) | (d80 >> 50);
+    d80 |= (d80 & 0x3ffffffffffffl) << 11;
+    d80 |= (d80 >> 11) | ((d81 & 0x7ffl) << 50);
+    d81 |= d81 >> 11;
+    d80 &= localPassableExceptAllies0;
+    d81 &= localPassableExceptAllies1;
+
         long d100 = 0l;
         long d101 = 0l;
         if(dirtAllowed) {
@@ -4743,18 +4839,19 @@ public class Pathfinder {
 
         // Profiler.begin();
 
-        // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d90 |= (d90 & 0xfbff7feffdffbffl) << 1;
-        d91 |= (d91 & 0x7feffdffbff7fefl) << 1;
-        d90 |= (d90 & 0x1f7feffdffbff7fel) >> 1;
-        d91 |= (d91 & 0xffdffbff7feffdel) >> 1;
+            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    d90 |= (d90 & 0xfbff7feffdffbffl) << 1;
+    d91 |= (d91 & 0x7feffdffbff7fefl) << 1;
+    d90 |= (d90 & 0x1f7feffdffbff7fel) >> 1;
+    d91 |= (d91 & 0xffdffbff7feffdel) >> 1;
 
-        d91 |= ((d91 & 0x1ffffffffffffl) << 11) | (d90 >> 50);
-        d90 |= (d90 & 0x3ffffffffffffl) << 11;
-        d90 |= (d90 >> 11) | ((d91 & 0x7ffl) << 50);
-        d91 |= d91 >> 11;
-        d90 &= localPassableExceptAllies0;
-        d91 &= localPassableExceptAllies1;
+    d91 |= ((d91 & 0x1ffffffffffffl) << 11) | (d90 >> 50);
+    d90 |= (d90 & 0x3ffffffffffffl) << 11;
+    d90 |= (d90 >> 11) | ((d91 & 0x7ffl) << 50);
+    d91 |= d91 >> 11;
+    d90 &= localPassableExceptAllies0;
+    d91 &= localPassableExceptAllies1;
+
         long d110 = 0l;
         long d111 = 0l;
         if(dirtAllowed) {
@@ -5079,18 +5176,19 @@ public class Pathfinder {
 
         // Profiler.begin();
 
-        // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d100 |= (d100 & 0xfbff7feffdffbffl) << 1;
-        d101 |= (d101 & 0x7feffdffbff7fefl) << 1;
-        d100 |= (d100 & 0x1f7feffdffbff7fel) >> 1;
-        d101 |= (d101 & 0xffdffbff7feffdel) >> 1;
+            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    d100 |= (d100 & 0xfbff7feffdffbffl) << 1;
+    d101 |= (d101 & 0x7feffdffbff7fefl) << 1;
+    d100 |= (d100 & 0x1f7feffdffbff7fel) >> 1;
+    d101 |= (d101 & 0xffdffbff7feffdel) >> 1;
 
-        d101 |= ((d101 & 0x1ffffffffffffl) << 11) | (d100 >> 50);
-        d100 |= (d100 & 0x3ffffffffffffl) << 11;
-        d100 |= (d100 >> 11) | ((d101 & 0x7ffl) << 50);
-        d101 |= d101 >> 11;
-        d100 &= localPassableExceptAllies0;
-        d101 &= localPassableExceptAllies1;
+    d101 |= ((d101 & 0x1ffffffffffffl) << 11) | (d100 >> 50);
+    d100 |= (d100 & 0x3ffffffffffffl) << 11;
+    d100 |= (d100 >> 11) | ((d101 & 0x7ffl) << 50);
+    d101 |= d101 >> 11;
+    d100 &= localPassableExceptAllies0;
+    d101 &= localPassableExceptAllies1;
+
         long d120 = 0l;
         long d121 = 0l;
         if(dirtAllowed) {
@@ -5395,18 +5493,19 @@ public class Pathfinder {
 
         // Profiler.begin();
 
-        // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d110 |= (d110 & 0xfbff7feffdffbffl) << 1;
-        d111 |= (d111 & 0x7feffdffbff7fefl) << 1;
-        d110 |= (d110 & 0x1f7feffdffbff7fel) >> 1;
-        d111 |= (d111 & 0xffdffbff7feffdel) >> 1;
+            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    d110 |= (d110 & 0xfbff7feffdffbffl) << 1;
+    d111 |= (d111 & 0x7feffdffbff7fefl) << 1;
+    d110 |= (d110 & 0x1f7feffdffbff7fel) >> 1;
+    d111 |= (d111 & 0xffdffbff7feffdel) >> 1;
 
-        d111 |= ((d111 & 0x1ffffffffffffl) << 11) | (d110 >> 50);
-        d110 |= (d110 & 0x3ffffffffffffl) << 11;
-        d110 |= (d110 >> 11) | ((d111 & 0x7ffl) << 50);
-        d111 |= d111 >> 11;
-        d110 &= localPassableExceptAllies0;
-        d111 &= localPassableExceptAllies1;
+    d111 |= ((d111 & 0x1ffffffffffffl) << 11) | (d110 >> 50);
+    d110 |= (d110 & 0x3ffffffffffffl) << 11;
+    d110 |= (d110 >> 11) | ((d111 & 0x7ffl) << 50);
+    d111 |= d111 >> 11;
+    d110 &= localPassableExceptAllies0;
+    d111 &= localPassableExceptAllies1;
+
         long d130 = 0l;
         long d131 = 0l;
         if(dirtAllowed) {
@@ -5731,18 +5830,19 @@ public class Pathfinder {
 
         // Profiler.begin();
 
-        // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d120 |= (d120 & 0xfbff7feffdffbffl) << 1;
-        d121 |= (d121 & 0x7feffdffbff7fefl) << 1;
-        d120 |= (d120 & 0x1f7feffdffbff7fel) >> 1;
-        d121 |= (d121 & 0xffdffbff7feffdel) >> 1;
+            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    d120 |= (d120 & 0xfbff7feffdffbffl) << 1;
+    d121 |= (d121 & 0x7feffdffbff7fefl) << 1;
+    d120 |= (d120 & 0x1f7feffdffbff7fel) >> 1;
+    d121 |= (d121 & 0xffdffbff7feffdel) >> 1;
 
-        d121 |= ((d121 & 0x1ffffffffffffl) << 11) | (d120 >> 50);
-        d120 |= (d120 & 0x3ffffffffffffl) << 11;
-        d120 |= (d120 >> 11) | ((d121 & 0x7ffl) << 50);
-        d121 |= d121 >> 11;
-        d120 &= localPassableExceptAllies0;
-        d121 &= localPassableExceptAllies1;
+    d121 |= ((d121 & 0x1ffffffffffffl) << 11) | (d120 >> 50);
+    d120 |= (d120 & 0x3ffffffffffffl) << 11;
+    d120 |= (d120 >> 11) | ((d121 & 0x7ffl) << 50);
+    d121 |= d121 >> 11;
+    d120 &= localPassableExceptAllies0;
+    d121 &= localPassableExceptAllies1;
+
         long d140 = 0l;
         long d141 = 0l;
         if(dirtAllowed) {
@@ -6047,18 +6147,19 @@ public class Pathfinder {
 
         // Profiler.begin();
 
-        // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d130 |= (d130 & 0xfbff7feffdffbffl) << 1;
-        d131 |= (d131 & 0x7feffdffbff7fefl) << 1;
-        d130 |= (d130 & 0x1f7feffdffbff7fel) >> 1;
-        d131 |= (d131 & 0xffdffbff7feffdel) >> 1;
+            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    d130 |= (d130 & 0xfbff7feffdffbffl) << 1;
+    d131 |= (d131 & 0x7feffdffbff7fefl) << 1;
+    d130 |= (d130 & 0x1f7feffdffbff7fel) >> 1;
+    d131 |= (d131 & 0xffdffbff7feffdel) >> 1;
 
-        d131 |= ((d131 & 0x1ffffffffffffl) << 11) | (d130 >> 50);
-        d130 |= (d130 & 0x3ffffffffffffl) << 11;
-        d130 |= (d130 >> 11) | ((d131 & 0x7ffl) << 50);
-        d131 |= d131 >> 11;
-        d130 &= localPassableExceptAllies0;
-        d131 &= localPassableExceptAllies1;
+    d131 |= ((d131 & 0x1ffffffffffffl) << 11) | (d130 >> 50);
+    d130 |= (d130 & 0x3ffffffffffffl) << 11;
+    d130 |= (d130 >> 11) | ((d131 & 0x7ffl) << 50);
+    d131 |= d131 >> 11;
+    d130 &= localPassableExceptAllies0;
+    d131 &= localPassableExceptAllies1;
+
         long d150 = 0l;
         long d151 = 0l;
         if(dirtAllowed) {
@@ -6383,18 +6484,19 @@ public class Pathfinder {
 
         // Profiler.begin();
 
-        // we don't need to worry about the "seam" here because it's at the cell we are standing on
-        d140 |= (d140 & 0xfbff7feffdffbffl) << 1;
-        d141 |= (d141 & 0x7feffdffbff7fefl) << 1;
-        d140 |= (d140 & 0x1f7feffdffbff7fel) >> 1;
-        d141 |= (d141 & 0xffdffbff7feffdel) >> 1;
+            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    d140 |= (d140 & 0xfbff7feffdffbffl) << 1;
+    d141 |= (d141 & 0x7feffdffbff7fefl) << 1;
+    d140 |= (d140 & 0x1f7feffdffbff7fel) >> 1;
+    d141 |= (d141 & 0xffdffbff7feffdel) >> 1;
 
-        d141 |= ((d141 & 0x1ffffffffffffl) << 11) | (d140 >> 50);
-        d140 |= (d140 & 0x3ffffffffffffl) << 11;
-        d140 |= (d140 >> 11) | ((d141 & 0x7ffl) << 50);
-        d141 |= d141 >> 11;
-        d140 &= localPassableExceptAllies0;
-        d141 &= localPassableExceptAllies1;
+    d141 |= ((d141 & 0x1ffffffffffffl) << 11) | (d140 >> 50);
+    d140 |= (d140 & 0x3ffffffffffffl) << 11;
+    d140 |= (d140 >> 11) | ((d141 & 0x7ffl) << 50);
+    d141 |= d141 >> 11;
+    d140 &= localPassableExceptAllies0;
+    d141 &= localPassableExceptAllies1;
+
         long d160 = 0l;
         long d161 = 0l;
         if(dirtAllowed) {
@@ -6430,5 +6532,513 @@ public class Pathfinder {
     }
 
     // returns a mask of good directions according to the default order
-    // public static int multisourceBfs
+    public static int multisourceBfs(MapLocation[] sources) {
+        CellTracker.computeLocalBfsMasks();
+        long reach0 = 0, reach1 = 0;
+        for(var source : sources) {
+                    {
+            var pos = source;
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    reach0 |= (1l << idx);
+                } else {
+                    reach1 |= (1l << (idx - 61));
+                }
+            }
+        }
+
+        }
+        var localPassable0 = CellTracker.localPassable0 & ~CellTracker.localDirt0;
+        var localPassable1 = CellTracker.localPassable1 & ~CellTracker.localDirt1;
+            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
+    reach1 |= (reach1 & 0x7feffdffbff7fefl) << 1;
+    reach0 |= (reach0 & 0x1f7feffdffbff7fel) >> 1;
+    reach1 |= (reach1 & 0xffdffbff7feffdel) >> 1;
+
+    reach1 |= ((reach1 & 0x1ffffffffffffl) << 11) | (reach0 >> 50);
+    reach0 |= (reach0 & 0x3ffffffffffffl) << 11;
+    reach0 |= (reach0 >> 11) | ((reach1 & 0x7ffl) << 50);
+    reach1 |= reach1 >> 11;
+    reach0 &= localPassable0;
+    reach1 &= localPassable1;
+
+        if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
+            int res = 0;
+            if(
+               (reach1 & (1l << 10))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.NORTH);
+                if(rc.canMove(Direction.NORTH)) {
+                    res |= 1;
+                }
+            }
+            if(
+               (reach1 & (1l << 11))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.NORTHEAST);
+                if(rc.canMove(Direction.NORTHEAST)) {
+                    res |= 2;
+                }
+            }
+            if(
+               (reach1 & (1l << 0))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.EAST);
+                if(rc.canMove(Direction.EAST)) {
+                    res |= 4;
+                }
+            }
+            if(
+               (reach0 & (1l << 50))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.SOUTHEAST);
+                if(rc.canMove(Direction.SOUTHEAST)) {
+                    res |= 8;
+                }
+            }
+            if(
+               (reach0 & (1l << 49))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.SOUTH);
+                if(rc.canMove(Direction.SOUTH)) {
+                    res |= 16;
+                }
+            }
+            if(
+               (reach0 & (1l << 48))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.SOUTHWEST);
+                if(rc.canMove(Direction.SOUTHWEST)) {
+                    res |= 32;
+                }
+            }
+            if(
+               (reach0 & (1l << 59))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.WEST);
+                if(rc.canMove(Direction.WEST)) {
+                    res |= 64;
+                }
+            }
+            if(
+               (reach1 & (1l << 9))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.NORTHWEST);
+                if(rc.canMove(Direction.NORTHWEST)) {
+                    res |= 128;
+                }
+            }
+            return res;
+        }
+            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
+    reach1 |= (reach1 & 0x7feffdffbff7fefl) << 1;
+    reach0 |= (reach0 & 0x1f7feffdffbff7fel) >> 1;
+    reach1 |= (reach1 & 0xffdffbff7feffdel) >> 1;
+
+    reach1 |= ((reach1 & 0x1ffffffffffffl) << 11) | (reach0 >> 50);
+    reach0 |= (reach0 & 0x3ffffffffffffl) << 11;
+    reach0 |= (reach0 >> 11) | ((reach1 & 0x7ffl) << 50);
+    reach1 |= reach1 >> 11;
+    reach0 &= localPassable0;
+    reach1 &= localPassable1;
+
+        if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
+            int res = 0;
+            if(
+               (reach1 & (1l << 10))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.NORTH);
+                if(rc.canMove(Direction.NORTH)) {
+                    res |= 1;
+                }
+            }
+            if(
+               (reach1 & (1l << 11))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.NORTHEAST);
+                if(rc.canMove(Direction.NORTHEAST)) {
+                    res |= 2;
+                }
+            }
+            if(
+               (reach1 & (1l << 0))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.EAST);
+                if(rc.canMove(Direction.EAST)) {
+                    res |= 4;
+                }
+            }
+            if(
+               (reach0 & (1l << 50))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.SOUTHEAST);
+                if(rc.canMove(Direction.SOUTHEAST)) {
+                    res |= 8;
+                }
+            }
+            if(
+               (reach0 & (1l << 49))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.SOUTH);
+                if(rc.canMove(Direction.SOUTH)) {
+                    res |= 16;
+                }
+            }
+            if(
+               (reach0 & (1l << 48))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.SOUTHWEST);
+                if(rc.canMove(Direction.SOUTHWEST)) {
+                    res |= 32;
+                }
+            }
+            if(
+               (reach0 & (1l << 59))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.WEST);
+                if(rc.canMove(Direction.WEST)) {
+                    res |= 64;
+                }
+            }
+            if(
+               (reach1 & (1l << 9))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.NORTHWEST);
+                if(rc.canMove(Direction.NORTHWEST)) {
+                    res |= 128;
+                }
+            }
+            return res;
+        }
+            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
+    reach1 |= (reach1 & 0x7feffdffbff7fefl) << 1;
+    reach0 |= (reach0 & 0x1f7feffdffbff7fel) >> 1;
+    reach1 |= (reach1 & 0xffdffbff7feffdel) >> 1;
+
+    reach1 |= ((reach1 & 0x1ffffffffffffl) << 11) | (reach0 >> 50);
+    reach0 |= (reach0 & 0x3ffffffffffffl) << 11;
+    reach0 |= (reach0 >> 11) | ((reach1 & 0x7ffl) << 50);
+    reach1 |= reach1 >> 11;
+    reach0 &= localPassable0;
+    reach1 &= localPassable1;
+
+        if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
+            int res = 0;
+            if(
+               (reach1 & (1l << 10))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.NORTH);
+                if(rc.canMove(Direction.NORTH)) {
+                    res |= 1;
+                }
+            }
+            if(
+               (reach1 & (1l << 11))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.NORTHEAST);
+                if(rc.canMove(Direction.NORTHEAST)) {
+                    res |= 2;
+                }
+            }
+            if(
+               (reach1 & (1l << 0))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.EAST);
+                if(rc.canMove(Direction.EAST)) {
+                    res |= 4;
+                }
+            }
+            if(
+               (reach0 & (1l << 50))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.SOUTHEAST);
+                if(rc.canMove(Direction.SOUTHEAST)) {
+                    res |= 8;
+                }
+            }
+            if(
+               (reach0 & (1l << 49))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.SOUTH);
+                if(rc.canMove(Direction.SOUTH)) {
+                    res |= 16;
+                }
+            }
+            if(
+               (reach0 & (1l << 48))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.SOUTHWEST);
+                if(rc.canMove(Direction.SOUTHWEST)) {
+                    res |= 32;
+                }
+            }
+            if(
+               (reach0 & (1l << 59))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.WEST);
+                if(rc.canMove(Direction.WEST)) {
+                    res |= 64;
+                }
+            }
+            if(
+               (reach1 & (1l << 9))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.NORTHWEST);
+                if(rc.canMove(Direction.NORTHWEST)) {
+                    res |= 128;
+                }
+            }
+            return res;
+        }
+            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
+    reach1 |= (reach1 & 0x7feffdffbff7fefl) << 1;
+    reach0 |= (reach0 & 0x1f7feffdffbff7fel) >> 1;
+    reach1 |= (reach1 & 0xffdffbff7feffdel) >> 1;
+
+    reach1 |= ((reach1 & 0x1ffffffffffffl) << 11) | (reach0 >> 50);
+    reach0 |= (reach0 & 0x3ffffffffffffl) << 11;
+    reach0 |= (reach0 >> 11) | ((reach1 & 0x7ffl) << 50);
+    reach1 |= reach1 >> 11;
+    reach0 &= localPassable0;
+    reach1 &= localPassable1;
+
+        if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
+            int res = 0;
+            if(
+               (reach1 & (1l << 10))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.NORTH);
+                if(rc.canMove(Direction.NORTH)) {
+                    res |= 1;
+                }
+            }
+            if(
+               (reach1 & (1l << 11))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.NORTHEAST);
+                if(rc.canMove(Direction.NORTHEAST)) {
+                    res |= 2;
+                }
+            }
+            if(
+               (reach1 & (1l << 0))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.EAST);
+                if(rc.canMove(Direction.EAST)) {
+                    res |= 4;
+                }
+            }
+            if(
+               (reach0 & (1l << 50))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.SOUTHEAST);
+                if(rc.canMove(Direction.SOUTHEAST)) {
+                    res |= 8;
+                }
+            }
+            if(
+               (reach0 & (1l << 49))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.SOUTH);
+                if(rc.canMove(Direction.SOUTH)) {
+                    res |= 16;
+                }
+            }
+            if(
+               (reach0 & (1l << 48))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.SOUTHWEST);
+                if(rc.canMove(Direction.SOUTHWEST)) {
+                    res |= 32;
+                }
+            }
+            if(
+               (reach0 & (1l << 59))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.WEST);
+                if(rc.canMove(Direction.WEST)) {
+                    res |= 64;
+                }
+            }
+            if(
+               (reach1 & (1l << 9))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.NORTHWEST);
+                if(rc.canMove(Direction.NORTHWEST)) {
+                    res |= 128;
+                }
+            }
+            return res;
+        }
+            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
+    reach1 |= (reach1 & 0x7feffdffbff7fefl) << 1;
+    reach0 |= (reach0 & 0x1f7feffdffbff7fel) >> 1;
+    reach1 |= (reach1 & 0xffdffbff7feffdel) >> 1;
+
+    reach1 |= ((reach1 & 0x1ffffffffffffl) << 11) | (reach0 >> 50);
+    reach0 |= (reach0 & 0x3ffffffffffffl) << 11;
+    reach0 |= (reach0 >> 11) | ((reach1 & 0x7ffl) << 50);
+    reach1 |= reach1 >> 11;
+    reach0 &= localPassable0;
+    reach1 &= localPassable1;
+
+        if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
+            int res = 0;
+            if(
+               (reach1 & (1l << 10))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.NORTH);
+                if(rc.canMove(Direction.NORTH)) {
+                    res |= 1;
+                }
+            }
+            if(
+               (reach1 & (1l << 11))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.NORTHEAST);
+                if(rc.canMove(Direction.NORTHEAST)) {
+                    res |= 2;
+                }
+            }
+            if(
+               (reach1 & (1l << 0))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.EAST);
+                if(rc.canMove(Direction.EAST)) {
+                    res |= 4;
+                }
+            }
+            if(
+               (reach0 & (1l << 50))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.SOUTHEAST);
+                if(rc.canMove(Direction.SOUTHEAST)) {
+                    res |= 8;
+                }
+            }
+            if(
+               (reach0 & (1l << 49))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.SOUTH);
+                if(rc.canMove(Direction.SOUTH)) {
+                    res |= 16;
+                }
+            }
+            if(
+               (reach0 & (1l << 48))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.SOUTHWEST);
+                if(rc.canMove(Direction.SOUTHWEST)) {
+                    res |= 32;
+                }
+            }
+            if(
+               (reach0 & (1l << 59))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.WEST);
+                if(rc.canMove(Direction.WEST)) {
+                    res |= 64;
+                }
+            }
+            if(
+               (reach1 & (1l << 9))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.NORTHWEST);
+                if(rc.canMove(Direction.NORTHWEST)) {
+                    res |= 128;
+                }
+            }
+            return res;
+        }
+            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
+    reach1 |= (reach1 & 0x7feffdffbff7fefl) << 1;
+    reach0 |= (reach0 & 0x1f7feffdffbff7fel) >> 1;
+    reach1 |= (reach1 & 0xffdffbff7feffdel) >> 1;
+
+    reach1 |= ((reach1 & 0x1ffffffffffffl) << 11) | (reach0 >> 50);
+    reach0 |= (reach0 & 0x3ffffffffffffl) << 11;
+    reach0 |= (reach0 >> 11) | ((reach1 & 0x7ffl) << 50);
+    reach1 |= reach1 >> 11;
+    reach0 &= localPassable0;
+    reach1 &= localPassable1;
+
+        if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
+            int res = 0;
+            if(
+               (reach1 & (1l << 10))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.NORTH);
+                if(rc.canMove(Direction.NORTH)) {
+                    res |= 1;
+                }
+            }
+            if(
+               (reach1 & (1l << 11))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.NORTHEAST);
+                if(rc.canMove(Direction.NORTHEAST)) {
+                    res |= 2;
+                }
+            }
+            if(
+               (reach1 & (1l << 0))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.EAST);
+                if(rc.canMove(Direction.EAST)) {
+                    res |= 4;
+                }
+            }
+            if(
+               (reach0 & (1l << 50))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.SOUTHEAST);
+                if(rc.canMove(Direction.SOUTHEAST)) {
+                    res |= 8;
+                }
+            }
+            if(
+               (reach0 & (1l << 49))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.SOUTH);
+                if(rc.canMove(Direction.SOUTH)) {
+                    res |= 16;
+                }
+            }
+            if(
+               (reach0 & (1l << 48))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.SOUTHWEST);
+                if(rc.canMove(Direction.SOUTHWEST)) {
+                    res |= 32;
+                }
+            }
+            if(
+               (reach0 & (1l << 59))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.WEST);
+                if(rc.canMove(Direction.WEST)) {
+                    res |= 64;
+                }
+            }
+            if(
+               (reach1 & (1l << 9))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.NORTHWEST);
+                if(rc.canMove(Direction.NORTHWEST)) {
+                    res |= 128;
+                }
+            }
+            return res;
+        }
+        return 0;
+    }
 }

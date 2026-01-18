@@ -90,13 +90,7 @@ public final class TryAttack {
 
     private static void considerEnemy() throws GameActionException {
         if (!CombatStrategy.shouldFight(info)) return;
-        if (info.getType() == UnitType.RAT_KING) {
-            indicate("saw rat king");
-        }
         if (chebyshevDistance(myLoc, info) > 2) return;
-        if (info.getType() == UnitType.RAT_KING) {
-            indicate("passed rat king");
-        }
 
         t = info.location;
         weight = 10;
@@ -126,9 +120,6 @@ public final class TryAttack {
         moveDir = {{ move_dir }};
         newLoc = myLoc.add({{ move_dir }});
         if (chebyshevDistance(newLoc, info) > 1) return;
-        if (info.getType() == UnitType.RAT_KING) {
-            indicate("passed move");
-        }
         switch (newLoc.directionTo(t).ordinal()) {
             {% for ord in range(8) %}
             case {{ ord }} -> {
@@ -146,9 +137,6 @@ public final class TryAttack {
     private static void face{{ dir_short_map[face_dir] }}() throws GameActionException {
         if (!canSense(newLoc, t, {{ face_dir }})) return;
         if (!CombatCommon.canPerformMoves(moveDir, {{ face_dir }})) return;
-        if (info.getType() == UnitType.RAT_KING) {
-            indicate("passed face");
-        }
         score = weight;
         score += CombatStrategy.getCellScoreFor(moveDir, {{ face_dir }}, info);
         if ({{ face_dir }} != myDir) {
@@ -156,9 +144,6 @@ public final class TryAttack {
         }
         if (score > bestScore) {
             bestScore = score;
-            if (info.getType() == UnitType.RAT_KING) {
-                indicate("chose rat king");
-            }
             target = info;
             bestMove = moveDir;
             bestFacing = {{ face_dir }};

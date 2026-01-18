@@ -191,6 +191,7 @@ private static final long hiddenNW = 0x0000ffffffffff00L;
         // Profiler.push();
         for (int i = 0; i < RobotTracker.numEnemies; i++) {
             RobotInfo info = RobotTracker.sortedEnemies[i];
+            if (info.getType() != UnitType.BABY_RAT) continue;
             registerEnemy(info);
         }
         // Profiler.pop("CombatTracker: registering enemies");

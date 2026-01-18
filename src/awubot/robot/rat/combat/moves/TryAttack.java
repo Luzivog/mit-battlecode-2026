@@ -59,13 +59,7 @@ public final class TryAttack {
 
     private static void considerEnemy() throws GameActionException {
         if (!CombatStrategy.shouldFight(info)) return;
-        if (info.getType() == UnitType.RAT_KING) {
-            indicate("saw rat king");
-        }
         if (chebyshevDistance(myLoc, info) > 2) return;
-        if (info.getType() == UnitType.RAT_KING) {
-            indicate("passed rat king");
-        }
 
         t = info.location;
         weight = 10;
@@ -79,68 +73,68 @@ public final class TryAttack {
     private static void selectMoves() throws GameActionException {
         switch (myLoc.directionTo(t).ordinal()) {
             case 0 -> {
-                moveC();;
-                moveN();;
-                moveNE();;
-                moveNW();;
-                moveE();;
-                moveW();;
+                moveC();
+                moveN();
+                moveNE();
+                moveNW();
+                moveE();
+                moveW();
             }
             case 1 -> {
-                moveC();;
-                moveNE();;
-                moveN();;
-                moveE();;
-                moveNW();;
-                moveSE();;
+                moveC();
+                moveNE();
+                moveN();
+                moveE();
+                moveNW();
+                moveSE();
             }
             case 2 -> {
-                moveC();;
-                moveE();;
-                moveNE();;
-                moveSE();;
-                moveN();;
-                moveS();;
+                moveC();
+                moveE();
+                moveNE();
+                moveSE();
+                moveN();
+                moveS();
             }
             case 3 -> {
-                moveC();;
-                moveSE();;
-                moveS();;
-                moveE();;
-                moveNE();;
-                moveSW();;
+                moveC();
+                moveSE();
+                moveS();
+                moveE();
+                moveNE();
+                moveSW();
             }
             case 4 -> {
-                moveC();;
-                moveS();;
-                moveSE();;
-                moveSW();;
-                moveE();;
-                moveW();;
+                moveC();
+                moveS();
+                moveSE();
+                moveSW();
+                moveE();
+                moveW();
             }
             case 5 -> {
-                moveC();;
-                moveSW();;
-                moveS();;
-                moveW();;
-                moveNW();;
-                moveSE();;
+                moveC();
+                moveSW();
+                moveS();
+                moveW();
+                moveNW();
+                moveSE();
             }
             case 6 -> {
-                moveC();;
-                moveW();;
-                moveNW();;
-                moveSW();;
-                moveN();;
-                moveS();;
+                moveC();
+                moveW();
+                moveNW();
+                moveSW();
+                moveN();
+                moveS();
             }
             case 7 -> {
-                moveC();;
-                moveNW();;
-                moveN();;
-                moveW();;
-                moveNE();;
-                moveSW();;
+                moveC();
+                moveNW();
+                moveN();
+                moveW();
+                moveNE();
+                moveSW();
             }
             default -> { }
         }
@@ -151,9 +145,6 @@ public final class TryAttack {
         moveDir = Direction.NORTH;
         newLoc = myLoc.add(Direction.NORTH);
         if (chebyshevDistance(newLoc, info) > 1) return;
-        if (info.getType() == UnitType.RAT_KING) {
-            indicate("passed move");
-        }
         switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
                 faceN();
@@ -203,9 +194,6 @@ public final class TryAttack {
         moveDir = Direction.NORTHEAST;
         newLoc = myLoc.add(Direction.NORTHEAST);
         if (chebyshevDistance(newLoc, info) > 1) return;
-        if (info.getType() == UnitType.RAT_KING) {
-            indicate("passed move");
-        }
         switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
                 faceN();
@@ -255,9 +243,6 @@ public final class TryAttack {
         moveDir = Direction.EAST;
         newLoc = myLoc.add(Direction.EAST);
         if (chebyshevDistance(newLoc, info) > 1) return;
-        if (info.getType() == UnitType.RAT_KING) {
-            indicate("passed move");
-        }
         switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
                 faceN();
@@ -307,9 +292,6 @@ public final class TryAttack {
         moveDir = Direction.SOUTHEAST;
         newLoc = myLoc.add(Direction.SOUTHEAST);
         if (chebyshevDistance(newLoc, info) > 1) return;
-        if (info.getType() == UnitType.RAT_KING) {
-            indicate("passed move");
-        }
         switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
                 faceN();
@@ -359,9 +341,6 @@ public final class TryAttack {
         moveDir = Direction.SOUTH;
         newLoc = myLoc.add(Direction.SOUTH);
         if (chebyshevDistance(newLoc, info) > 1) return;
-        if (info.getType() == UnitType.RAT_KING) {
-            indicate("passed move");
-        }
         switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
                 faceN();
@@ -411,9 +390,6 @@ public final class TryAttack {
         moveDir = Direction.SOUTHWEST;
         newLoc = myLoc.add(Direction.SOUTHWEST);
         if (chebyshevDistance(newLoc, info) > 1) return;
-        if (info.getType() == UnitType.RAT_KING) {
-            indicate("passed move");
-        }
         switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
                 faceN();
@@ -463,9 +439,6 @@ public final class TryAttack {
         moveDir = Direction.WEST;
         newLoc = myLoc.add(Direction.WEST);
         if (chebyshevDistance(newLoc, info) > 1) return;
-        if (info.getType() == UnitType.RAT_KING) {
-            indicate("passed move");
-        }
         switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
                 faceN();
@@ -515,9 +488,6 @@ public final class TryAttack {
         moveDir = Direction.NORTHWEST;
         newLoc = myLoc.add(Direction.NORTHWEST);
         if (chebyshevDistance(newLoc, info) > 1) return;
-        if (info.getType() == UnitType.RAT_KING) {
-            indicate("passed move");
-        }
         switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
                 faceN();
@@ -567,9 +537,6 @@ public final class TryAttack {
         moveDir = Direction.CENTER;
         newLoc = myLoc.add(Direction.CENTER);
         if (chebyshevDistance(newLoc, info) > 1) return;
-        if (info.getType() == UnitType.RAT_KING) {
-            indicate("passed move");
-        }
         switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
                 faceN();
@@ -618,9 +585,6 @@ public final class TryAttack {
     private static void faceN() throws GameActionException {
         if (!canSense(newLoc, t, Direction.NORTH)) return;
         if (!CombatCommon.canPerformMoves(moveDir, Direction.NORTH)) return;
-        if (info.getType() == UnitType.RAT_KING) {
-            indicate("passed face");
-        }
         score = weight;
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTH, info);
         if (Direction.NORTH != myDir) {
@@ -628,9 +592,6 @@ public final class TryAttack {
         }
         if (score > bestScore) {
             bestScore = score;
-            if (info.getType() == UnitType.RAT_KING) {
-                indicate("chose rat king");
-            }
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.NORTH;
@@ -639,9 +600,6 @@ public final class TryAttack {
     private static void faceNE() throws GameActionException {
         if (!canSense(newLoc, t, Direction.NORTHEAST)) return;
         if (!CombatCommon.canPerformMoves(moveDir, Direction.NORTHEAST)) return;
-        if (info.getType() == UnitType.RAT_KING) {
-            indicate("passed face");
-        }
         score = weight;
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHEAST, info);
         if (Direction.NORTHEAST != myDir) {
@@ -649,9 +607,6 @@ public final class TryAttack {
         }
         if (score > bestScore) {
             bestScore = score;
-            if (info.getType() == UnitType.RAT_KING) {
-                indicate("chose rat king");
-            }
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.NORTHEAST;
@@ -660,9 +615,6 @@ public final class TryAttack {
     private static void faceE() throws GameActionException {
         if (!canSense(newLoc, t, Direction.EAST)) return;
         if (!CombatCommon.canPerformMoves(moveDir, Direction.EAST)) return;
-        if (info.getType() == UnitType.RAT_KING) {
-            indicate("passed face");
-        }
         score = weight;
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.EAST, info);
         if (Direction.EAST != myDir) {
@@ -670,9 +622,6 @@ public final class TryAttack {
         }
         if (score > bestScore) {
             bestScore = score;
-            if (info.getType() == UnitType.RAT_KING) {
-                indicate("chose rat king");
-            }
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.EAST;
@@ -681,9 +630,6 @@ public final class TryAttack {
     private static void faceSE() throws GameActionException {
         if (!canSense(newLoc, t, Direction.SOUTHEAST)) return;
         if (!CombatCommon.canPerformMoves(moveDir, Direction.SOUTHEAST)) return;
-        if (info.getType() == UnitType.RAT_KING) {
-            indicate("passed face");
-        }
         score = weight;
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHEAST, info);
         if (Direction.SOUTHEAST != myDir) {
@@ -691,9 +637,6 @@ public final class TryAttack {
         }
         if (score > bestScore) {
             bestScore = score;
-            if (info.getType() == UnitType.RAT_KING) {
-                indicate("chose rat king");
-            }
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.SOUTHEAST;
@@ -702,9 +645,6 @@ public final class TryAttack {
     private static void faceS() throws GameActionException {
         if (!canSense(newLoc, t, Direction.SOUTH)) return;
         if (!CombatCommon.canPerformMoves(moveDir, Direction.SOUTH)) return;
-        if (info.getType() == UnitType.RAT_KING) {
-            indicate("passed face");
-        }
         score = weight;
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTH, info);
         if (Direction.SOUTH != myDir) {
@@ -712,9 +652,6 @@ public final class TryAttack {
         }
         if (score > bestScore) {
             bestScore = score;
-            if (info.getType() == UnitType.RAT_KING) {
-                indicate("chose rat king");
-            }
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.SOUTH;
@@ -723,9 +660,6 @@ public final class TryAttack {
     private static void faceSW() throws GameActionException {
         if (!canSense(newLoc, t, Direction.SOUTHWEST)) return;
         if (!CombatCommon.canPerformMoves(moveDir, Direction.SOUTHWEST)) return;
-        if (info.getType() == UnitType.RAT_KING) {
-            indicate("passed face");
-        }
         score = weight;
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHWEST, info);
         if (Direction.SOUTHWEST != myDir) {
@@ -733,9 +667,6 @@ public final class TryAttack {
         }
         if (score > bestScore) {
             bestScore = score;
-            if (info.getType() == UnitType.RAT_KING) {
-                indicate("chose rat king");
-            }
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.SOUTHWEST;
@@ -744,9 +675,6 @@ public final class TryAttack {
     private static void faceW() throws GameActionException {
         if (!canSense(newLoc, t, Direction.WEST)) return;
         if (!CombatCommon.canPerformMoves(moveDir, Direction.WEST)) return;
-        if (info.getType() == UnitType.RAT_KING) {
-            indicate("passed face");
-        }
         score = weight;
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.WEST, info);
         if (Direction.WEST != myDir) {
@@ -754,9 +682,6 @@ public final class TryAttack {
         }
         if (score > bestScore) {
             bestScore = score;
-            if (info.getType() == UnitType.RAT_KING) {
-                indicate("chose rat king");
-            }
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.WEST;
@@ -765,9 +690,6 @@ public final class TryAttack {
     private static void faceNW() throws GameActionException {
         if (!canSense(newLoc, t, Direction.NORTHWEST)) return;
         if (!CombatCommon.canPerformMoves(moveDir, Direction.NORTHWEST)) return;
-        if (info.getType() == UnitType.RAT_KING) {
-            indicate("passed face");
-        }
         score = weight;
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHWEST, info);
         if (Direction.NORTHWEST != myDir) {
@@ -775,9 +697,6 @@ public final class TryAttack {
         }
         if (score > bestScore) {
             bestScore = score;
-            if (info.getType() == UnitType.RAT_KING) {
-                indicate("chose rat king");
-            }
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.NORTHWEST;

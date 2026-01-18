@@ -262,10 +262,10 @@ public class CombatStrategy extends Strategy {
         String key = "=" + target.getID() + "+" + moveDir.ordinal() + "|";
         int i = sb.indexOf(key);
         if (i == -1) return 0;
-        else return ((int) sb.charAt(i - 1)) / 100.0;
+        else return (((int) sb.charAt(i - 1)) - 32000) / 100.0;
     }
     private static double cacheCellScore(RobotInfo target, Direction moveDir, double value) {
-        String key = ((char) ((int) value * 100)) + "=" + target.getID() + "+" + moveDir.ordinal() + "|";
+        String key = ((char) ((int) value * 100 + 32000)) + "=" + target.getID() + "+" + moveDir.ordinal() + "|";
         sb.append(key);
         return value;
     }

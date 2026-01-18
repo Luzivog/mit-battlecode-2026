@@ -25,6 +25,12 @@ public class CellTracker {
             mapData[i] = new StringBuilder();
             mapData[i].repeat('\0', 60);
         }
+        switch(mapHeight) {
+            {% for i in range(20, 60) %}
+            case {{i}}:
+                isSeen{{i + 1}} = 0xffffffffffffffffl;
+            {% endfor %}
+        }
     }
 
     public static void preTick() {
@@ -58,7 +64,7 @@ public class CellTracker {
     }
     public static boolean is{{capitalise(mask)}}(int x, int y) {
         {% if mask == "seen" %}
-        if (x < 0 || x >= mapWidth || y >= mapHeight) return true;
+        if (x < 0 || x >= mapWidth) return true;
         {% endif %}
         switch(y) {
             {% for i in range(MAX_MAP_SIZE) %}

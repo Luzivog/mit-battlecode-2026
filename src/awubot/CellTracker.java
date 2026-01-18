@@ -25,6 +25,88 @@ public class CellTracker {
             mapData[i] = new StringBuilder();
             mapData[i].repeat('\0', 60);
         }
+        switch(mapHeight) {
+            case 20:
+                isSeen21 = 0xffffffffffffffffl;
+            case 21:
+                isSeen22 = 0xffffffffffffffffl;
+            case 22:
+                isSeen23 = 0xffffffffffffffffl;
+            case 23:
+                isSeen24 = 0xffffffffffffffffl;
+            case 24:
+                isSeen25 = 0xffffffffffffffffl;
+            case 25:
+                isSeen26 = 0xffffffffffffffffl;
+            case 26:
+                isSeen27 = 0xffffffffffffffffl;
+            case 27:
+                isSeen28 = 0xffffffffffffffffl;
+            case 28:
+                isSeen29 = 0xffffffffffffffffl;
+            case 29:
+                isSeen30 = 0xffffffffffffffffl;
+            case 30:
+                isSeen31 = 0xffffffffffffffffl;
+            case 31:
+                isSeen32 = 0xffffffffffffffffl;
+            case 32:
+                isSeen33 = 0xffffffffffffffffl;
+            case 33:
+                isSeen34 = 0xffffffffffffffffl;
+            case 34:
+                isSeen35 = 0xffffffffffffffffl;
+            case 35:
+                isSeen36 = 0xffffffffffffffffl;
+            case 36:
+                isSeen37 = 0xffffffffffffffffl;
+            case 37:
+                isSeen38 = 0xffffffffffffffffl;
+            case 38:
+                isSeen39 = 0xffffffffffffffffl;
+            case 39:
+                isSeen40 = 0xffffffffffffffffl;
+            case 40:
+                isSeen41 = 0xffffffffffffffffl;
+            case 41:
+                isSeen42 = 0xffffffffffffffffl;
+            case 42:
+                isSeen43 = 0xffffffffffffffffl;
+            case 43:
+                isSeen44 = 0xffffffffffffffffl;
+            case 44:
+                isSeen45 = 0xffffffffffffffffl;
+            case 45:
+                isSeen46 = 0xffffffffffffffffl;
+            case 46:
+                isSeen47 = 0xffffffffffffffffl;
+            case 47:
+                isSeen48 = 0xffffffffffffffffl;
+            case 48:
+                isSeen49 = 0xffffffffffffffffl;
+            case 49:
+                isSeen50 = 0xffffffffffffffffl;
+            case 50:
+                isSeen51 = 0xffffffffffffffffl;
+            case 51:
+                isSeen52 = 0xffffffffffffffffl;
+            case 52:
+                isSeen53 = 0xffffffffffffffffl;
+            case 53:
+                isSeen54 = 0xffffffffffffffffl;
+            case 54:
+                isSeen55 = 0xffffffffffffffffl;
+            case 55:
+                isSeen56 = 0xffffffffffffffffl;
+            case 56:
+                isSeen57 = 0xffffffffffffffffl;
+            case 57:
+                isSeen58 = 0xffffffffffffffffl;
+            case 58:
+                isSeen59 = 0xffffffffffffffffl;
+            case 59:
+                isSeen60 = 0xffffffffffffffffl;
+        }
     }
 
     public static void preTick() {
@@ -286,7 +368,7 @@ public class CellTracker {
         }
     }
     public static boolean isSeen(int x, int y) {
-        if (x < 0 || x >= mapWidth || y >= mapHeight) return true;
+        if (x < 0 || x >= mapWidth) return true;
         switch(y) {
             case 0 -> {
                 return (seen0 & (1l << x)) != 0;

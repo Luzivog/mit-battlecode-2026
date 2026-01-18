@@ -116,7 +116,7 @@ public final class TryRatNap {
             } else {
                 attack(target);
             }
-            assert(CombatStrategy.performMovesDebug(bestSecondaryMove, bestFacing));
+            assert(CombatStrategy.performMoves(bestSecondaryMove, bestFacing));
         }
         println("!!!!!!!!!!!!!!!!!!!!!!! napped rat");
         indicate("COMBAT STRAT: NAP");

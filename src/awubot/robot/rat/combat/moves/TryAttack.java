@@ -63,6 +63,9 @@ public final class TryAttack {
             indicate("saw rat king");
         }
         if (chebyshevDistance(myLoc, info) > 2) return;
+        if (info.getType() == UnitType.RAT_KING) {
+            indicate("passed rat king");
+        }
 
         t = info.location;
         weight = 10;
@@ -70,534 +73,554 @@ public final class TryAttack {
             weight += 30; // prefer one tapping
         }
 
-        if (selectMoves()) return;
+        selectMoves();
     }
 
-    private static boolean selectMoves() throws GameActionException {
+    private static void selectMoves() throws GameActionException {
         switch (myLoc.directionTo(t).ordinal()) {
             case 0 -> {
-                if (moveC()) return true;
-                if (moveN()) return true;
-                if (moveNE()) return true;
-                if (moveNW()) return true;
-                if (moveE()) return true;
-                if (moveW()) return true;
+                moveC();;
+                moveN();;
+                moveNE();;
+                moveNW();;
+                moveE();;
+                moveW();;
             }
             case 1 -> {
-                if (moveC()) return true;
-                if (moveNE()) return true;
-                if (moveN()) return true;
-                if (moveE()) return true;
-                if (moveNW()) return true;
-                if (moveSE()) return true;
+                moveC();;
+                moveNE();;
+                moveN();;
+                moveE();;
+                moveNW();;
+                moveSE();;
             }
             case 2 -> {
-                if (moveC()) return true;
-                if (moveE()) return true;
-                if (moveNE()) return true;
-                if (moveSE()) return true;
-                if (moveN()) return true;
-                if (moveS()) return true;
+                moveC();;
+                moveE();;
+                moveNE();;
+                moveSE();;
+                moveN();;
+                moveS();;
             }
             case 3 -> {
-                if (moveC()) return true;
-                if (moveSE()) return true;
-                if (moveS()) return true;
-                if (moveE()) return true;
-                if (moveNE()) return true;
-                if (moveSW()) return true;
+                moveC();;
+                moveSE();;
+                moveS();;
+                moveE();;
+                moveNE();;
+                moveSW();;
             }
             case 4 -> {
-                if (moveC()) return true;
-                if (moveS()) return true;
-                if (moveSE()) return true;
-                if (moveSW()) return true;
-                if (moveE()) return true;
-                if (moveW()) return true;
+                moveC();;
+                moveS();;
+                moveSE();;
+                moveSW();;
+                moveE();;
+                moveW();;
             }
             case 5 -> {
-                if (moveC()) return true;
-                if (moveSW()) return true;
-                if (moveS()) return true;
-                if (moveW()) return true;
-                if (moveNW()) return true;
-                if (moveSE()) return true;
+                moveC();;
+                moveSW();;
+                moveS();;
+                moveW();;
+                moveNW();;
+                moveSE();;
             }
             case 6 -> {
-                if (moveC()) return true;
-                if (moveW()) return true;
-                if (moveNW()) return true;
-                if (moveSW()) return true;
-                if (moveN()) return true;
-                if (moveS()) return true;
+                moveC();;
+                moveW();;
+                moveNW();;
+                moveSW();;
+                moveN();;
+                moveS();;
             }
             case 7 -> {
-                if (moveC()) return true;
-                if (moveNW()) return true;
-                if (moveN()) return true;
-                if (moveW()) return true;
-                if (moveNE()) return true;
-                if (moveSW()) return true;
+                moveC();;
+                moveNW();;
+                moveN();;
+                moveW();;
+                moveNE();;
+                moveSW();;
             }
             default -> { }
         }
-        return false;
     }
 
-    private static boolean moveN() throws GameActionException {
+    private static void moveN() throws GameActionException {
+        if (!CombatCommon.canMoveN) return;
         moveDir = Direction.NORTH;
-        if (!CombatCommon.canMoveN) return true;
-        newLoc = myLoc.add(moveDir);
-        if (chebyshevDistance(newLoc, info) > 1) return true;
+        newLoc = myLoc.add(Direction.NORTH);
+        if (chebyshevDistance(newLoc, info) > 1) return;
+        if (info.getType() == UnitType.RAT_KING) {
+            indicate("passed move");
+        }
         switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
-                if (faceN()) return true;
-                if (faceNE()) return true;
-                if (faceNW()) return true;
+                faceN();
+                faceNE();
+                faceNW();
             }
             case 1 -> {
-                if (faceNE()) return true;
-                if (faceN()) return true;
-                if (faceE()) return true;
+                faceNE();
+                faceN();
+                faceE();
             }
             case 2 -> {
-                if (faceE()) return true;
-                if (faceNE()) return true;
-                if (faceSE()) return true;
+                faceE();
+                faceNE();
+                faceSE();
             }
             case 3 -> {
-                if (faceSE()) return true;
-                if (faceS()) return true;
-                if (faceE()) return true;
+                faceSE();
+                faceS();
+                faceE();
             }
             case 4 -> {
-                if (faceS()) return true;
-                if (faceSE()) return true;
-                if (faceSW()) return true;
+                faceS();
+                faceSE();
+                faceSW();
             }
             case 5 -> {
-                if (faceSW()) return true;
-                if (faceS()) return true;
-                if (faceW()) return true;
+                faceSW();
+                faceS();
+                faceW();
             }
             case 6 -> {
-                if (faceW()) return true;
-                if (faceNW()) return true;
-                if (faceSW()) return true;
+                faceW();
+                faceNW();
+                faceSW();
             }
             case 7 -> {
-                if (faceNW()) return true;
-                if (faceN()) return true;
-                if (faceW()) return true;
+                faceNW();
+                faceN();
+                faceW();
             }
             default -> { }
         }
-        return false;
     }
-    private static boolean moveNE() throws GameActionException {
+    private static void moveNE() throws GameActionException {
+        if (!CombatCommon.canMoveNE) return;
         moveDir = Direction.NORTHEAST;
-        if (!CombatCommon.canMoveNE) return true;
-        newLoc = myLoc.add(moveDir);
-        if (chebyshevDistance(newLoc, info) > 1) return true;
+        newLoc = myLoc.add(Direction.NORTHEAST);
+        if (chebyshevDistance(newLoc, info) > 1) return;
+        if (info.getType() == UnitType.RAT_KING) {
+            indicate("passed move");
+        }
         switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
-                if (faceN()) return true;
-                if (faceNE()) return true;
-                if (faceNW()) return true;
+                faceN();
+                faceNE();
+                faceNW();
             }
             case 1 -> {
-                if (faceNE()) return true;
-                if (faceN()) return true;
-                if (faceE()) return true;
+                faceNE();
+                faceN();
+                faceE();
             }
             case 2 -> {
-                if (faceE()) return true;
-                if (faceNE()) return true;
-                if (faceSE()) return true;
+                faceE();
+                faceNE();
+                faceSE();
             }
             case 3 -> {
-                if (faceSE()) return true;
-                if (faceS()) return true;
-                if (faceE()) return true;
+                faceSE();
+                faceS();
+                faceE();
             }
             case 4 -> {
-                if (faceS()) return true;
-                if (faceSE()) return true;
-                if (faceSW()) return true;
+                faceS();
+                faceSE();
+                faceSW();
             }
             case 5 -> {
-                if (faceSW()) return true;
-                if (faceS()) return true;
-                if (faceW()) return true;
+                faceSW();
+                faceS();
+                faceW();
             }
             case 6 -> {
-                if (faceW()) return true;
-                if (faceNW()) return true;
-                if (faceSW()) return true;
+                faceW();
+                faceNW();
+                faceSW();
             }
             case 7 -> {
-                if (faceNW()) return true;
-                if (faceN()) return true;
-                if (faceW()) return true;
+                faceNW();
+                faceN();
+                faceW();
             }
             default -> { }
         }
-        return false;
     }
-    private static boolean moveE() throws GameActionException {
+    private static void moveE() throws GameActionException {
+        if (!CombatCommon.canMoveE) return;
         moveDir = Direction.EAST;
-        if (!CombatCommon.canMoveE) return true;
-        newLoc = myLoc.add(moveDir);
-        if (chebyshevDistance(newLoc, info) > 1) return true;
+        newLoc = myLoc.add(Direction.EAST);
+        if (chebyshevDistance(newLoc, info) > 1) return;
+        if (info.getType() == UnitType.RAT_KING) {
+            indicate("passed move");
+        }
         switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
-                if (faceN()) return true;
-                if (faceNE()) return true;
-                if (faceNW()) return true;
+                faceN();
+                faceNE();
+                faceNW();
             }
             case 1 -> {
-                if (faceNE()) return true;
-                if (faceN()) return true;
-                if (faceE()) return true;
+                faceNE();
+                faceN();
+                faceE();
             }
             case 2 -> {
-                if (faceE()) return true;
-                if (faceNE()) return true;
-                if (faceSE()) return true;
+                faceE();
+                faceNE();
+                faceSE();
             }
             case 3 -> {
-                if (faceSE()) return true;
-                if (faceS()) return true;
-                if (faceE()) return true;
+                faceSE();
+                faceS();
+                faceE();
             }
             case 4 -> {
-                if (faceS()) return true;
-                if (faceSE()) return true;
-                if (faceSW()) return true;
+                faceS();
+                faceSE();
+                faceSW();
             }
             case 5 -> {
-                if (faceSW()) return true;
-                if (faceS()) return true;
-                if (faceW()) return true;
+                faceSW();
+                faceS();
+                faceW();
             }
             case 6 -> {
-                if (faceW()) return true;
-                if (faceNW()) return true;
-                if (faceSW()) return true;
+                faceW();
+                faceNW();
+                faceSW();
             }
             case 7 -> {
-                if (faceNW()) return true;
-                if (faceN()) return true;
-                if (faceW()) return true;
+                faceNW();
+                faceN();
+                faceW();
             }
             default -> { }
         }
-        return false;
     }
-    private static boolean moveSE() throws GameActionException {
+    private static void moveSE() throws GameActionException {
+        if (!CombatCommon.canMoveSE) return;
         moveDir = Direction.SOUTHEAST;
-        if (!CombatCommon.canMoveSE) return true;
-        newLoc = myLoc.add(moveDir);
-        if (chebyshevDistance(newLoc, info) > 1) return true;
+        newLoc = myLoc.add(Direction.SOUTHEAST);
+        if (chebyshevDistance(newLoc, info) > 1) return;
+        if (info.getType() == UnitType.RAT_KING) {
+            indicate("passed move");
+        }
         switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
-                if (faceN()) return true;
-                if (faceNE()) return true;
-                if (faceNW()) return true;
+                faceN();
+                faceNE();
+                faceNW();
             }
             case 1 -> {
-                if (faceNE()) return true;
-                if (faceN()) return true;
-                if (faceE()) return true;
+                faceNE();
+                faceN();
+                faceE();
             }
             case 2 -> {
-                if (faceE()) return true;
-                if (faceNE()) return true;
-                if (faceSE()) return true;
+                faceE();
+                faceNE();
+                faceSE();
             }
             case 3 -> {
-                if (faceSE()) return true;
-                if (faceS()) return true;
-                if (faceE()) return true;
+                faceSE();
+                faceS();
+                faceE();
             }
             case 4 -> {
-                if (faceS()) return true;
-                if (faceSE()) return true;
-                if (faceSW()) return true;
+                faceS();
+                faceSE();
+                faceSW();
             }
             case 5 -> {
-                if (faceSW()) return true;
-                if (faceS()) return true;
-                if (faceW()) return true;
+                faceSW();
+                faceS();
+                faceW();
             }
             case 6 -> {
-                if (faceW()) return true;
-                if (faceNW()) return true;
-                if (faceSW()) return true;
+                faceW();
+                faceNW();
+                faceSW();
             }
             case 7 -> {
-                if (faceNW()) return true;
-                if (faceN()) return true;
-                if (faceW()) return true;
+                faceNW();
+                faceN();
+                faceW();
             }
             default -> { }
         }
-        return false;
     }
-    private static boolean moveS() throws GameActionException {
+    private static void moveS() throws GameActionException {
+        if (!CombatCommon.canMoveS) return;
         moveDir = Direction.SOUTH;
-        if (!CombatCommon.canMoveS) return true;
-        newLoc = myLoc.add(moveDir);
-        if (chebyshevDistance(newLoc, info) > 1) return true;
+        newLoc = myLoc.add(Direction.SOUTH);
+        if (chebyshevDistance(newLoc, info) > 1) return;
+        if (info.getType() == UnitType.RAT_KING) {
+            indicate("passed move");
+        }
         switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
-                if (faceN()) return true;
-                if (faceNE()) return true;
-                if (faceNW()) return true;
+                faceN();
+                faceNE();
+                faceNW();
             }
             case 1 -> {
-                if (faceNE()) return true;
-                if (faceN()) return true;
-                if (faceE()) return true;
+                faceNE();
+                faceN();
+                faceE();
             }
             case 2 -> {
-                if (faceE()) return true;
-                if (faceNE()) return true;
-                if (faceSE()) return true;
+                faceE();
+                faceNE();
+                faceSE();
             }
             case 3 -> {
-                if (faceSE()) return true;
-                if (faceS()) return true;
-                if (faceE()) return true;
+                faceSE();
+                faceS();
+                faceE();
             }
             case 4 -> {
-                if (faceS()) return true;
-                if (faceSE()) return true;
-                if (faceSW()) return true;
+                faceS();
+                faceSE();
+                faceSW();
             }
             case 5 -> {
-                if (faceSW()) return true;
-                if (faceS()) return true;
-                if (faceW()) return true;
+                faceSW();
+                faceS();
+                faceW();
             }
             case 6 -> {
-                if (faceW()) return true;
-                if (faceNW()) return true;
-                if (faceSW()) return true;
+                faceW();
+                faceNW();
+                faceSW();
             }
             case 7 -> {
-                if (faceNW()) return true;
-                if (faceN()) return true;
-                if (faceW()) return true;
+                faceNW();
+                faceN();
+                faceW();
             }
             default -> { }
         }
-        return false;
     }
-    private static boolean moveSW() throws GameActionException {
+    private static void moveSW() throws GameActionException {
+        if (!CombatCommon.canMoveSW) return;
         moveDir = Direction.SOUTHWEST;
-        if (!CombatCommon.canMoveSW) return true;
-        newLoc = myLoc.add(moveDir);
-        if (chebyshevDistance(newLoc, info) > 1) return true;
+        newLoc = myLoc.add(Direction.SOUTHWEST);
+        if (chebyshevDistance(newLoc, info) > 1) return;
+        if (info.getType() == UnitType.RAT_KING) {
+            indicate("passed move");
+        }
         switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
-                if (faceN()) return true;
-                if (faceNE()) return true;
-                if (faceNW()) return true;
+                faceN();
+                faceNE();
+                faceNW();
             }
             case 1 -> {
-                if (faceNE()) return true;
-                if (faceN()) return true;
-                if (faceE()) return true;
+                faceNE();
+                faceN();
+                faceE();
             }
             case 2 -> {
-                if (faceE()) return true;
-                if (faceNE()) return true;
-                if (faceSE()) return true;
+                faceE();
+                faceNE();
+                faceSE();
             }
             case 3 -> {
-                if (faceSE()) return true;
-                if (faceS()) return true;
-                if (faceE()) return true;
+                faceSE();
+                faceS();
+                faceE();
             }
             case 4 -> {
-                if (faceS()) return true;
-                if (faceSE()) return true;
-                if (faceSW()) return true;
+                faceS();
+                faceSE();
+                faceSW();
             }
             case 5 -> {
-                if (faceSW()) return true;
-                if (faceS()) return true;
-                if (faceW()) return true;
+                faceSW();
+                faceS();
+                faceW();
             }
             case 6 -> {
-                if (faceW()) return true;
-                if (faceNW()) return true;
-                if (faceSW()) return true;
+                faceW();
+                faceNW();
+                faceSW();
             }
             case 7 -> {
-                if (faceNW()) return true;
-                if (faceN()) return true;
-                if (faceW()) return true;
+                faceNW();
+                faceN();
+                faceW();
             }
             default -> { }
         }
-        return false;
     }
-    private static boolean moveW() throws GameActionException {
+    private static void moveW() throws GameActionException {
+        if (!CombatCommon.canMoveW) return;
         moveDir = Direction.WEST;
-        if (!CombatCommon.canMoveW) return true;
-        newLoc = myLoc.add(moveDir);
-        if (chebyshevDistance(newLoc, info) > 1) return true;
+        newLoc = myLoc.add(Direction.WEST);
+        if (chebyshevDistance(newLoc, info) > 1) return;
+        if (info.getType() == UnitType.RAT_KING) {
+            indicate("passed move");
+        }
         switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
-                if (faceN()) return true;
-                if (faceNE()) return true;
-                if (faceNW()) return true;
+                faceN();
+                faceNE();
+                faceNW();
             }
             case 1 -> {
-                if (faceNE()) return true;
-                if (faceN()) return true;
-                if (faceE()) return true;
+                faceNE();
+                faceN();
+                faceE();
             }
             case 2 -> {
-                if (faceE()) return true;
-                if (faceNE()) return true;
-                if (faceSE()) return true;
+                faceE();
+                faceNE();
+                faceSE();
             }
             case 3 -> {
-                if (faceSE()) return true;
-                if (faceS()) return true;
-                if (faceE()) return true;
+                faceSE();
+                faceS();
+                faceE();
             }
             case 4 -> {
-                if (faceS()) return true;
-                if (faceSE()) return true;
-                if (faceSW()) return true;
+                faceS();
+                faceSE();
+                faceSW();
             }
             case 5 -> {
-                if (faceSW()) return true;
-                if (faceS()) return true;
-                if (faceW()) return true;
+                faceSW();
+                faceS();
+                faceW();
             }
             case 6 -> {
-                if (faceW()) return true;
-                if (faceNW()) return true;
-                if (faceSW()) return true;
+                faceW();
+                faceNW();
+                faceSW();
             }
             case 7 -> {
-                if (faceNW()) return true;
-                if (faceN()) return true;
-                if (faceW()) return true;
+                faceNW();
+                faceN();
+                faceW();
             }
             default -> { }
         }
-        return false;
     }
-    private static boolean moveNW() throws GameActionException {
+    private static void moveNW() throws GameActionException {
+        if (!CombatCommon.canMoveNW) return;
         moveDir = Direction.NORTHWEST;
-        if (!CombatCommon.canMoveNW) return true;
-        newLoc = myLoc.add(moveDir);
-        if (chebyshevDistance(newLoc, info) > 1) return true;
+        newLoc = myLoc.add(Direction.NORTHWEST);
+        if (chebyshevDistance(newLoc, info) > 1) return;
+        if (info.getType() == UnitType.RAT_KING) {
+            indicate("passed move");
+        }
         switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
-                if (faceN()) return true;
-                if (faceNE()) return true;
-                if (faceNW()) return true;
+                faceN();
+                faceNE();
+                faceNW();
             }
             case 1 -> {
-                if (faceNE()) return true;
-                if (faceN()) return true;
-                if (faceE()) return true;
+                faceNE();
+                faceN();
+                faceE();
             }
             case 2 -> {
-                if (faceE()) return true;
-                if (faceNE()) return true;
-                if (faceSE()) return true;
+                faceE();
+                faceNE();
+                faceSE();
             }
             case 3 -> {
-                if (faceSE()) return true;
-                if (faceS()) return true;
-                if (faceE()) return true;
+                faceSE();
+                faceS();
+                faceE();
             }
             case 4 -> {
-                if (faceS()) return true;
-                if (faceSE()) return true;
-                if (faceSW()) return true;
+                faceS();
+                faceSE();
+                faceSW();
             }
             case 5 -> {
-                if (faceSW()) return true;
-                if (faceS()) return true;
-                if (faceW()) return true;
+                faceSW();
+                faceS();
+                faceW();
             }
             case 6 -> {
-                if (faceW()) return true;
-                if (faceNW()) return true;
-                if (faceSW()) return true;
+                faceW();
+                faceNW();
+                faceSW();
             }
             case 7 -> {
-                if (faceNW()) return true;
-                if (faceN()) return true;
-                if (faceW()) return true;
+                faceNW();
+                faceN();
+                faceW();
             }
             default -> { }
         }
-        return false;
     }
-    private static boolean moveC() throws GameActionException {
+    private static void moveC() throws GameActionException {
+        if (!CombatCommon.canMoveC) return;
         moveDir = Direction.CENTER;
-        if (!CombatCommon.canMoveC) return true;
-        newLoc = myLoc.add(moveDir);
-        if (chebyshevDistance(newLoc, info) > 1) return true;
+        newLoc = myLoc.add(Direction.CENTER);
+        if (chebyshevDistance(newLoc, info) > 1) return;
+        if (info.getType() == UnitType.RAT_KING) {
+            indicate("passed move");
+        }
         switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
-                if (faceN()) return true;
-                if (faceNE()) return true;
-                if (faceNW()) return true;
+                faceN();
+                faceNE();
+                faceNW();
             }
             case 1 -> {
-                if (faceNE()) return true;
-                if (faceN()) return true;
-                if (faceE()) return true;
+                faceNE();
+                faceN();
+                faceE();
             }
             case 2 -> {
-                if (faceE()) return true;
-                if (faceNE()) return true;
-                if (faceSE()) return true;
+                faceE();
+                faceNE();
+                faceSE();
             }
             case 3 -> {
-                if (faceSE()) return true;
-                if (faceS()) return true;
-                if (faceE()) return true;
+                faceSE();
+                faceS();
+                faceE();
             }
             case 4 -> {
-                if (faceS()) return true;
-                if (faceSE()) return true;
-                if (faceSW()) return true;
+                faceS();
+                faceSE();
+                faceSW();
             }
             case 5 -> {
-                if (faceSW()) return true;
-                if (faceS()) return true;
-                if (faceW()) return true;
+                faceSW();
+                faceS();
+                faceW();
             }
             case 6 -> {
-                if (faceW()) return true;
-                if (faceNW()) return true;
-                if (faceSW()) return true;
+                faceW();
+                faceNW();
+                faceSW();
             }
             case 7 -> {
-                if (faceNW()) return true;
-                if (faceN()) return true;
-                if (faceW()) return true;
+                faceNW();
+                faceN();
+                faceW();
             }
             default -> { }
         }
-        return false;
     }
 
-    private static boolean faceN() throws GameActionException {
-        if (!canSense(newLoc, t, Direction.NORTH)) return true;
-        if (!CombatCommon.canPerformMoves(moveDir, Direction.NORTH)) return true;
+    private static void faceN() throws GameActionException {
+        if (!canSense(newLoc, t, Direction.NORTH)) return;
+        if (!CombatCommon.canPerformMoves(moveDir, Direction.NORTH)) return;
+        if (info.getType() == UnitType.RAT_KING) {
+            indicate("passed face");
+        }
         score = weight;
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTH, info);
         if (Direction.NORTH != myDir) {
@@ -605,15 +628,20 @@ public final class TryAttack {
         }
         if (score > bestScore) {
             bestScore = score;
+            if (info.getType() == UnitType.RAT_KING) {
+                indicate("chose rat king");
+            }
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.NORTH;
         }
-        return false;
     }
-    private static boolean faceNE() throws GameActionException {
-        if (!canSense(newLoc, t, Direction.NORTHEAST)) return true;
-        if (!CombatCommon.canPerformMoves(moveDir, Direction.NORTHEAST)) return true;
+    private static void faceNE() throws GameActionException {
+        if (!canSense(newLoc, t, Direction.NORTHEAST)) return;
+        if (!CombatCommon.canPerformMoves(moveDir, Direction.NORTHEAST)) return;
+        if (info.getType() == UnitType.RAT_KING) {
+            indicate("passed face");
+        }
         score = weight;
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHEAST, info);
         if (Direction.NORTHEAST != myDir) {
@@ -621,15 +649,20 @@ public final class TryAttack {
         }
         if (score > bestScore) {
             bestScore = score;
+            if (info.getType() == UnitType.RAT_KING) {
+                indicate("chose rat king");
+            }
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.NORTHEAST;
         }
-        return false;
     }
-    private static boolean faceE() throws GameActionException {
-        if (!canSense(newLoc, t, Direction.EAST)) return true;
-        if (!CombatCommon.canPerformMoves(moveDir, Direction.EAST)) return true;
+    private static void faceE() throws GameActionException {
+        if (!canSense(newLoc, t, Direction.EAST)) return;
+        if (!CombatCommon.canPerformMoves(moveDir, Direction.EAST)) return;
+        if (info.getType() == UnitType.RAT_KING) {
+            indicate("passed face");
+        }
         score = weight;
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.EAST, info);
         if (Direction.EAST != myDir) {
@@ -637,15 +670,20 @@ public final class TryAttack {
         }
         if (score > bestScore) {
             bestScore = score;
+            if (info.getType() == UnitType.RAT_KING) {
+                indicate("chose rat king");
+            }
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.EAST;
         }
-        return false;
     }
-    private static boolean faceSE() throws GameActionException {
-        if (!canSense(newLoc, t, Direction.SOUTHEAST)) return true;
-        if (!CombatCommon.canPerformMoves(moveDir, Direction.SOUTHEAST)) return true;
+    private static void faceSE() throws GameActionException {
+        if (!canSense(newLoc, t, Direction.SOUTHEAST)) return;
+        if (!CombatCommon.canPerformMoves(moveDir, Direction.SOUTHEAST)) return;
+        if (info.getType() == UnitType.RAT_KING) {
+            indicate("passed face");
+        }
         score = weight;
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHEAST, info);
         if (Direction.SOUTHEAST != myDir) {
@@ -653,15 +691,20 @@ public final class TryAttack {
         }
         if (score > bestScore) {
             bestScore = score;
+            if (info.getType() == UnitType.RAT_KING) {
+                indicate("chose rat king");
+            }
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.SOUTHEAST;
         }
-        return false;
     }
-    private static boolean faceS() throws GameActionException {
-        if (!canSense(newLoc, t, Direction.SOUTH)) return true;
-        if (!CombatCommon.canPerformMoves(moveDir, Direction.SOUTH)) return true;
+    private static void faceS() throws GameActionException {
+        if (!canSense(newLoc, t, Direction.SOUTH)) return;
+        if (!CombatCommon.canPerformMoves(moveDir, Direction.SOUTH)) return;
+        if (info.getType() == UnitType.RAT_KING) {
+            indicate("passed face");
+        }
         score = weight;
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTH, info);
         if (Direction.SOUTH != myDir) {
@@ -669,15 +712,20 @@ public final class TryAttack {
         }
         if (score > bestScore) {
             bestScore = score;
+            if (info.getType() == UnitType.RAT_KING) {
+                indicate("chose rat king");
+            }
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.SOUTH;
         }
-        return false;
     }
-    private static boolean faceSW() throws GameActionException {
-        if (!canSense(newLoc, t, Direction.SOUTHWEST)) return true;
-        if (!CombatCommon.canPerformMoves(moveDir, Direction.SOUTHWEST)) return true;
+    private static void faceSW() throws GameActionException {
+        if (!canSense(newLoc, t, Direction.SOUTHWEST)) return;
+        if (!CombatCommon.canPerformMoves(moveDir, Direction.SOUTHWEST)) return;
+        if (info.getType() == UnitType.RAT_KING) {
+            indicate("passed face");
+        }
         score = weight;
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHWEST, info);
         if (Direction.SOUTHWEST != myDir) {
@@ -685,15 +733,20 @@ public final class TryAttack {
         }
         if (score > bestScore) {
             bestScore = score;
+            if (info.getType() == UnitType.RAT_KING) {
+                indicate("chose rat king");
+            }
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.SOUTHWEST;
         }
-        return false;
     }
-    private static boolean faceW() throws GameActionException {
-        if (!canSense(newLoc, t, Direction.WEST)) return true;
-        if (!CombatCommon.canPerformMoves(moveDir, Direction.WEST)) return true;
+    private static void faceW() throws GameActionException {
+        if (!canSense(newLoc, t, Direction.WEST)) return;
+        if (!CombatCommon.canPerformMoves(moveDir, Direction.WEST)) return;
+        if (info.getType() == UnitType.RAT_KING) {
+            indicate("passed face");
+        }
         score = weight;
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.WEST, info);
         if (Direction.WEST != myDir) {
@@ -701,15 +754,20 @@ public final class TryAttack {
         }
         if (score > bestScore) {
             bestScore = score;
+            if (info.getType() == UnitType.RAT_KING) {
+                indicate("chose rat king");
+            }
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.WEST;
         }
-        return false;
     }
-    private static boolean faceNW() throws GameActionException {
-        if (!canSense(newLoc, t, Direction.NORTHWEST)) return true;
-        if (!CombatCommon.canPerformMoves(moveDir, Direction.NORTHWEST)) return true;
+    private static void faceNW() throws GameActionException {
+        if (!canSense(newLoc, t, Direction.NORTHWEST)) return;
+        if (!CombatCommon.canPerformMoves(moveDir, Direction.NORTHWEST)) return;
+        if (info.getType() == UnitType.RAT_KING) {
+            indicate("passed face");
+        }
         score = weight;
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHWEST, info);
         if (Direction.NORTHWEST != myDir) {
@@ -717,11 +775,13 @@ public final class TryAttack {
         }
         if (score > bestScore) {
             bestScore = score;
+            if (info.getType() == UnitType.RAT_KING) {
+                indicate("chose rat king");
+            }
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.NORTHWEST;
         }
-        return false;
     }
 
     public static boolean miniRun() throws GameActionException {

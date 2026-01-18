@@ -94,6 +94,9 @@ public final class TryAttack {
             indicate("saw rat king");
         }
         if (chebyshevDistance(myLoc, info) > 2) return;
+        if (info.getType() == UnitType.RAT_KING) {
+            indicate("passed rat king");
+        }
 
         t = info.location;
         weight = 10;
@@ -101,47 +104,51 @@ public final class TryAttack {
             weight += 30; // prefer one tapping
         }
 
-        if (selectMoves()) return;
+        selectMoves();
     }
 
-    private static boolean selectMoves() throws GameActionException {
+    private static void selectMoves() throws GameActionException {
         switch (myLoc.directionTo(t).ordinal()) {
             {% for ord in range(8) %}
             case {{ ord }} -> {
                 {% for d in wide_related_map[ord] %}
-                if (move{{ dir_short_map[d] }}()) return true;
+                move{{ dir_short_map[d] }}();
                 {% endfor %}
             }
             {% endfor %}
             default -> { }
         }
-        return false;
     }
 
     {% for move_dir in directions + ['Direction.CENTER'] %}
-    private static boolean move{{ dir_short_map[move_dir] }}() throws GameActionException {
+    private static void move{{ dir_short_map[move_dir] }}() throws GameActionException {
+        if (!CombatCommon.canMove{{dir_short_map[move_dir] }}) return;
         moveDir = {{ move_dir }};
-        if (!CombatCommon.canMove{{ dir_short_map[move_dir] }}) return true;
-        newLoc = myLoc.add(moveDir);
-        if (chebyshevDistance(newLoc, info) > 1) return true;
+        newLoc = myLoc.add({{ move_dir }});
+        if (chebyshevDistance(newLoc, info) > 1) return;
+        if (info.getType() == UnitType.RAT_KING) {
+            indicate("passed move");
+        }
         switch (newLoc.directionTo(t).ordinal()) {
             {% for ord in range(8) %}
             case {{ ord }} -> {
                 {% for f in related_map[ord] %}
-                if (face{{ dir_short_map[f] }}()) return true;
+                face{{ dir_short_map[f] }}();
                 {% endfor %}
             }
             {% endfor %}
             default -> { }
         }
-        return false;
     }
     {% endfor %}
 
     {% for face_dir in directions %}
-    private static boolean face{{ dir_short_map[face_dir] }}() throws GameActionException {
-        if (!canSense(newLoc, t, {{ face_dir }})) return true;
-        if (!CombatCommon.canPerformMoves(moveDir, {{ face_dir }})) return true;
+    private static void face{{ dir_short_map[face_dir] }}() throws GameActionException {
+        if (!canSense(newLoc, t, {{ face_dir }})) return;
+        if (!CombatCommon.canPerformMoves(moveDir, {{ face_dir }})) return;
+        if (info.getType() == UnitType.RAT_KING) {
+            indicate("passed face");
+        }
         score = weight;
         score += CombatStrategy.getCellScoreFor(moveDir, {{ face_dir }}, info);
         if ({{ face_dir }} != myDir) {
@@ -149,11 +156,13 @@ public final class TryAttack {
         }
         if (score > bestScore) {
             bestScore = score;
+            if (info.getType() == UnitType.RAT_KING) {
+                indicate("chose rat king");
+            }
             target = info;
             bestMove = moveDir;
             bestFacing = {{ face_dir }};
         }
-        return false;
     }
     {% endfor %}
 

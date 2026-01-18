@@ -3,31 +3,36 @@ import re
 import concurrent.futures
 import random
 import time
+import os
 
 DIRT_TESTS = "cheesefarm,rift,ZeroDay,pipes,Nofreecheese,sittingducks"
 DEFAULT = ["DefaultSmall", "DefaultMedium", "DefaultLarge", "evileye", "cheeseguardians"]
 SPRINT_1 = ["cheesefarm", "rift", "ZeroDay", "pipes", "Nofreecheese", "wallsofparadis", "dirtpassageway", "trapped", "Meow", "arrows", "starvation", "keepout", "dirtfulcat", "popthecork", "sittingducks", "thunderdome"]
-teamA = "lactosetolerantalexa"
-teamB = "copy"
+DEBUG_MAPS = ["pvparena"]
+teamA = "awubot"
+teamB = "afk"
 # maps = "8cats_big,bigface,breakthewall,Cage,cheesemining_big,cheeseorcat,dangerous,debug_cat_right,diagonalmap,dirt_around_mine,dirtroad"
 # maps = "isolated_cat,isolated_cheese,killcat,killcatormine,maybedonothing,melbournetrain,minewithcat,mixedmaze,nowall_bigbattle_big,nowallnocat"
 # maps = "oneexit_small,realiseuarecooked,roundabout,rush_big,rush_small,segtree,sixseven,small1v1,small_dirtmaze,tunnelbattle_big,tunnelbattle_big_dirtless,veryverysmall"
 # maps = "CheeseMines,CheeseMinesMedium,colony,FootballField,Ruins,Snails,Towers"
 # maps = "DefaultSmall,DefaultMedium,DefaultLarge,evileye,cheeseguardians"
-maps = DEFAULT + SPRINT_1
+# maps = DEFAULT + SPRINT_1
+maps = DEBUG_MAPS
 # maps = ["Cage,colony,FootballField,Islands,PickYourSpawn,Ruins,Sawtooth,Snails,TestTube,Towers,WheresYourShovel"]
 # maps = ["CombatTest2"]
 seeds = [""] * 5
 
 debug = len(maps) == 1 and len(seeds) == 1
+GRADLEW = "gradlew.bat" if os.name == "nt" else "./gradlew"
 
 
 def run_game(params):
     teamA, teamB, map, seed = params
+    cpu_start = time.process_time()
     print(f"Run {teamA} vs {teamB} on {map} {seed}")
     result = subprocess.run(
         [
-            './gradlew',
+            GRADLEW,
             'runWithoutBuild',
             f'-PteamA={teamA}',
             f'-PteamB={teamB}',
@@ -48,12 +53,14 @@ def run_game(params):
         print(f"{winner} wins on {map}")
     else:
         print(f"Tie on {map}")
+    cpu_elapsed = time.process_time() - cpu_start
+    print(f"CPU time {teamA} vs {teamB} on {map}: {cpu_elapsed:.3f}s")
     return winner
 
 
 if __name__ == "__main__":
     # Build first
-    subprocess.run(["./gradlew", "build"])
+    subprocess.run([GRADLEW, "build"])
 
     score = {teamA: 0, teamB: 0}
     debug = len(maps) == 1 and len(seeds) == 1

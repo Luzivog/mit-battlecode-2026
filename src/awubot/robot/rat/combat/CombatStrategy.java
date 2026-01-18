@@ -112,6 +112,9 @@ public class CombatStrategy extends Strategy {
                 sources[sourceCnt++] = RobotTracker.sortedCats[i].location;
             }
         }
+        for (int i = 0; i < sourceCnt; i++) {
+            indicate("combat source prep: " + sources[i]);
+        }
         moveMask = Pathfinder.multisourceBfs(sources, sourceCnt);
         Profiler.pop("combat bfs");
         indicate("MOVEMASK: " + Integer.toBinaryString(moveMask));

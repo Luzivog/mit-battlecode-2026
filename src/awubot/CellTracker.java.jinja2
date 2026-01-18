@@ -28,7 +28,7 @@ public class CellTracker {
         switch(mapHeight) {
             {% for i in range(20, 60) %}
             case {{i}}:
-                isSeen{{i + 1}} = 0xffffffffffffffffl;
+                seen{{i}} = 0xffffffffffffffffl;
             {% endfor %}
         }
     }

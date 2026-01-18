@@ -27,85 +27,85 @@ public class CellTracker {
         }
         switch(mapHeight) {
             case 20:
-                isSeen21 = 0xffffffffffffffffl;
+                seen20 = 0xffffffffffffffffl;
             case 21:
-                isSeen22 = 0xffffffffffffffffl;
+                seen21 = 0xffffffffffffffffl;
             case 22:
-                isSeen23 = 0xffffffffffffffffl;
+                seen22 = 0xffffffffffffffffl;
             case 23:
-                isSeen24 = 0xffffffffffffffffl;
+                seen23 = 0xffffffffffffffffl;
             case 24:
-                isSeen25 = 0xffffffffffffffffl;
+                seen24 = 0xffffffffffffffffl;
             case 25:
-                isSeen26 = 0xffffffffffffffffl;
+                seen25 = 0xffffffffffffffffl;
             case 26:
-                isSeen27 = 0xffffffffffffffffl;
+                seen26 = 0xffffffffffffffffl;
             case 27:
-                isSeen28 = 0xffffffffffffffffl;
+                seen27 = 0xffffffffffffffffl;
             case 28:
-                isSeen29 = 0xffffffffffffffffl;
+                seen28 = 0xffffffffffffffffl;
             case 29:
-                isSeen30 = 0xffffffffffffffffl;
+                seen29 = 0xffffffffffffffffl;
             case 30:
-                isSeen31 = 0xffffffffffffffffl;
+                seen30 = 0xffffffffffffffffl;
             case 31:
-                isSeen32 = 0xffffffffffffffffl;
+                seen31 = 0xffffffffffffffffl;
             case 32:
-                isSeen33 = 0xffffffffffffffffl;
+                seen32 = 0xffffffffffffffffl;
             case 33:
-                isSeen34 = 0xffffffffffffffffl;
+                seen33 = 0xffffffffffffffffl;
             case 34:
-                isSeen35 = 0xffffffffffffffffl;
+                seen34 = 0xffffffffffffffffl;
             case 35:
-                isSeen36 = 0xffffffffffffffffl;
+                seen35 = 0xffffffffffffffffl;
             case 36:
-                isSeen37 = 0xffffffffffffffffl;
+                seen36 = 0xffffffffffffffffl;
             case 37:
-                isSeen38 = 0xffffffffffffffffl;
+                seen37 = 0xffffffffffffffffl;
             case 38:
-                isSeen39 = 0xffffffffffffffffl;
+                seen38 = 0xffffffffffffffffl;
             case 39:
-                isSeen40 = 0xffffffffffffffffl;
+                seen39 = 0xffffffffffffffffl;
             case 40:
-                isSeen41 = 0xffffffffffffffffl;
+                seen40 = 0xffffffffffffffffl;
             case 41:
-                isSeen42 = 0xffffffffffffffffl;
+                seen41 = 0xffffffffffffffffl;
             case 42:
-                isSeen43 = 0xffffffffffffffffl;
+                seen42 = 0xffffffffffffffffl;
             case 43:
-                isSeen44 = 0xffffffffffffffffl;
+                seen43 = 0xffffffffffffffffl;
             case 44:
-                isSeen45 = 0xffffffffffffffffl;
+                seen44 = 0xffffffffffffffffl;
             case 45:
-                isSeen46 = 0xffffffffffffffffl;
+                seen45 = 0xffffffffffffffffl;
             case 46:
-                isSeen47 = 0xffffffffffffffffl;
+                seen46 = 0xffffffffffffffffl;
             case 47:
-                isSeen48 = 0xffffffffffffffffl;
+                seen47 = 0xffffffffffffffffl;
             case 48:
-                isSeen49 = 0xffffffffffffffffl;
+                seen48 = 0xffffffffffffffffl;
             case 49:
-                isSeen50 = 0xffffffffffffffffl;
+                seen49 = 0xffffffffffffffffl;
             case 50:
-                isSeen51 = 0xffffffffffffffffl;
+                seen50 = 0xffffffffffffffffl;
             case 51:
-                isSeen52 = 0xffffffffffffffffl;
+                seen51 = 0xffffffffffffffffl;
             case 52:
-                isSeen53 = 0xffffffffffffffffl;
+                seen52 = 0xffffffffffffffffl;
             case 53:
-                isSeen54 = 0xffffffffffffffffl;
+                seen53 = 0xffffffffffffffffl;
             case 54:
-                isSeen55 = 0xffffffffffffffffl;
+                seen54 = 0xffffffffffffffffl;
             case 55:
-                isSeen56 = 0xffffffffffffffffl;
+                seen55 = 0xffffffffffffffffl;
             case 56:
-                isSeen57 = 0xffffffffffffffffl;
+                seen56 = 0xffffffffffffffffl;
             case 57:
-                isSeen58 = 0xffffffffffffffffl;
+                seen57 = 0xffffffffffffffffl;
             case 58:
-                isSeen59 = 0xffffffffffffffffl;
+                seen58 = 0xffffffffffffffffl;
             case 59:
-                isSeen60 = 0xffffffffffffffffl;
+                seen59 = 0xffffffffffffffffl;
         }
     }
 

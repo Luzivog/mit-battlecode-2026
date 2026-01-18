@@ -33,6 +33,7 @@ public final class TryFight {
         target = CombatStrategy.getNearestTarget();
         if (target == null) return false;
         for (Direction dir : allDirections) {
+            if ((CombatStrategy.moveMask & (1 << dir.ordinal())) == 0) continue;
             moveDir = dir;
             if (moveDir != Direction.CENTER && !rc.isMovementReady()) continue;
             if (!CombatCommon.canMove(moveDir)) continue;

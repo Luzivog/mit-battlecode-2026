@@ -10,6 +10,7 @@ import battlecode.common.Team;
 import battlecode.common.UnitType;
 import static awubot.util.Util.*;
 
+import awu_old_naman.util.string.FastIndexedIntSet;
 import awubot.comms.GlobalArray;
 import awubot.util.Profiler;
 import awubot.util.Util;
@@ -26,7 +27,7 @@ public class Game {
     public static Team team;
     public static int myIndex; // estimate of rat index
     public static MapLocation myPreviousLoc;
-
+    public static FastIndexedIntSet knownCheeseMines;
     public static MapLocation spawn;
 
     public static void _rawMove(Direction dir) throws GameActionException {
@@ -59,13 +60,32 @@ public class Game {
         isRatKing = (rc.getType() == UnitType.RAT_KING);
         team = rc.getTeam();
         spawn = myLoc;
+        knownCheeseMines = new FastIndexedIntSet();
 
-        // Profiler.begin();   
-        // for (int i = 0; i < Direction.values().length; i++) {
-        //     Direction dir = Direction.values()[i];
-        // }
-        // Profiler.end_print("index based for loop");
-        // rc.resign();
+        for (int asdef = 0; asdef < 2; asdef++) {
+            boolean a = true, b = false;
+
+            Profiler.begin();   
+            
+            for (int i = 0; i < 5; i++) {
+                if (!b) continue;
+                println("buh");
+            }
+
+            Profiler.end_print("if");
+
+            Profiler.begin();   
+            for (int i = 0; i < 5; i++) {
+                if (b) {
+                    println("buh");
+                }
+            }
+            Profiler.end_print("break");
+
+            b = !b;
+        }
+
+        rc.resign();
 
         // StringBuilder sb = new StringBuilder();
         // Direction moveDir = Direction.NORTH;

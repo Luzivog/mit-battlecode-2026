@@ -53,7 +53,7 @@ public class KingMiningStrategy extends Strategy {
         for (MapInfo myInfo : rc.senseNearbyMapInfos()) {
             if (myInfo.hasCheeseMine()) {
                 theMineTarget = myInfo.getMapLocation();
-                GlobalArray.cheeseMines.add(encode2x2(theMineTarget));
+                GlobalArray.globalCheeseMines.add(encode2x2(theMineTarget));
                 theFoundCheeseMine = true;
                 return true;
             }

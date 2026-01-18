@@ -93,9 +93,27 @@ public class CombatStrategy extends Strategy {
         return res;
     }
 
+    public static int moveMask, sourceCnt;
+    public MapLocation[] sources = new MapLocation[9];
+
     // idek why this is returning. check if can move anyways after to squeeze out some juice
     private boolean _runTick() throws GameActionException {
-        if (rc.isBeingCarried()) return false;
+        if (rc.isBeingCarried() || rc.isBeingThrown()) return false;
+
+        sourceCnt = 0;
+        for (int i = 0; i < RobotTracker.numEnemies; i++) {
+            if (shouldFight(RobotTracker.sortedEnemies[i])) {
+                sources[sourceCnt++] = RobotTracker.sortedEnemies[i].location;
+            }
+        }
+        for (int i = 0; i < RobotTracker.numCats; i++) {
+            if (shouldFight(RobotTracker.sortedCats[i])) {
+                sources[sourceCnt++] = RobotTracker.sortedCats[i].location;
+            }
+        }
+        moveMask = Pathfinder.multisourceBfs(sources, sourceCnt);
+        if (moveMask == 0) return false; // no enemies nearby
+
         Profiler.push();
         precomp();
         Profiler.pop("precomp", 3500);

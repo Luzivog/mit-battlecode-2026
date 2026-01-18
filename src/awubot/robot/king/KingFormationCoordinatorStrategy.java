@@ -10,6 +10,8 @@ import awubot.robot.Strategy;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 
+import awubot.Game;
+
 public class KingFormationCoordinatorStrategy extends Strategy {
     private static final int CHEESE_THRESHOLD = 150;
     private static final int UPGRADE_COST = 50;
@@ -89,9 +91,9 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         MapLocation myBestMine = null;
         int myBestScore = Integer.MIN_VALUE;
 
-        int myMineCount = GlobalArray.cheeseMines.set.length();
+        int myMineCount = Game.knownCheeseMines.set.length();
         for (int i = 0; i < myMineCount && i < 10; i++) {
-            MapLocation myMine = decode2x2(GlobalArray.cheeseMines.at(i));
+            MapLocation myMine = decode2x2(Game.knownCheeseMines.at(i));
             if (myMine == null) continue;
 
             if (GlobalArray.isMineAssignedToAnyKing(myMine)) continue;

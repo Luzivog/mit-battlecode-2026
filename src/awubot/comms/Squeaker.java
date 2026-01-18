@@ -4,6 +4,7 @@ import battlecode.common.*;
 import static awubot.util.Util.*;
 
 import awubot.CellTracker;
+import awubot.Game;
 import awubot.util.string.FastIndexedIntSet;
 
 import static awubot.Game.*;
@@ -34,6 +35,7 @@ public class Squeaker {
 
     public static void registerMine(MapLocation loc) {
         minesToSend.add(encode2x2(loc));
+        Game.knownCheeseMines.add(encode2x2(loc));
     }
 
     // im lazy so im only squeaking one for now
@@ -60,7 +62,10 @@ public class Squeaker {
                 case 0:
                     // again, only processing one
                     int loc = bytes & 1023;
-                    GlobalArray.cheeseMines.add(loc);
+                    if (isRatKing) {
+                        GlobalArray.globalCheeseMines.add(loc);
+                    }
+                    Game.knownCheeseMines.add(loc);
                     if (!isRatKing) {
                         minesToSend.add(loc);
                     }

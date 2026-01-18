@@ -61,7 +61,7 @@ public final class TryTrap {
 
 
     public static boolean run() throws GameActionException {
-        if (rc.getAllCheese() < 100 || !confirmCanPlace()) return false;
+        if (rc.getAllCheese() < 300 || !confirmCanPlace()) return false;
         // Profiler.push();
         computeWeights();
         // Profiler.pop("TryTrap.computeWeights");

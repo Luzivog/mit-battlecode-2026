@@ -51,7 +51,7 @@ public class GlobalArray {
     // upper bits: strategy index (0 to 3)
     private static final int RAT_SPAWN_ROLE = 21;  // spam until MIN_CHEESE is hit
     private static final int MIN_CHEESE = 32;
-    public static FastIndexedIntSet cheeseMines = new FastIndexedIntSet();
+    public static FastIndexedIntSet globalCheeseMines = new FastIndexedIntSet();
     public static MapLocation nearestRatKing;
     public static int nearestRatKingId;
     public static int ratCounter;
@@ -145,18 +145,19 @@ public class GlobalArray {
         while (i >= MIN_CHEESE) {
             int x  = rc.readSharedArray(i);
             if (x == 1023) break;
-            cheeseMines.add(x);
+            globalCheeseMines.add(x);
+            Game.knownCheeseMines.add(x);
             i--;
         }
     }
 
     public static void writeCheeseMines() throws GameActionException {
-        int n = cheeseMines.set.length();
+        int n = globalCheeseMines.set.length();
         if (n > 0) {
             int i = (time * (N - MIN_CHEESE)) % n;
             for (int j = 0; j < Math.min(n, N - MIN_CHEESE); j++) {
                 int k = (i + j) % n;
-                writeSharedArray(N - k - 1, cheeseMines.at(k));
+                writeSharedArray(N - k - 1, globalCheeseMines.at(k));
             }
         }
         if (n < N - MIN_CHEESE) {
@@ -165,7 +166,7 @@ public class GlobalArray {
     }
 
     public static boolean seenCheeseMine(int loc) {
-        return cheeseMines.contains(loc);
+        return globalCheeseMines.contains(loc);
     }
 
     private static int cur_sym = 0;

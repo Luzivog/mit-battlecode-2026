@@ -776,11 +776,11 @@ public class Pathfinder {
     }
 
     // returns a mask of good directions according to the default order
-    public static int multisourceBfs(MapLocation[] sources) throws GameActionException {
+    public static int multisourceBfs(MapLocation[] sources, int sourceCnt) throws GameActionException {
         CellTracker.computeLocalBfsMasks();
         long reach0 = 0, reach1 = 0;
-        for(var source : sources) {
-            {{ writePos("source", "reach", 1, False) }}
+        for (int i = 0; i < sourceCnt; i++) {
+            {{ writePos("sources[i]", "reach", 1, False) }}
         }
         var localPassable0 = CellTracker.localPassable0 & ~CellTracker.localDirt0;
         var localPassable1 = CellTracker.localPassable1 & ~CellTracker.localDirt1;

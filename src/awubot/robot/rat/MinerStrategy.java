@@ -2,6 +2,7 @@ package awubot.robot.rat;
 
 import battlecode.common.*;
 import awubot.CellTracker;
+import awubot.Game;
 import awubot.robot.Strategy;
 import awubot.comms.GlobalArray;
 import awubot.util.Rng;
@@ -40,7 +41,7 @@ public class MinerStrategy extends Strategy {
         while(goSomewhereStrategy == null || !goSomewhereStrategy.runTick()) {
             MapLocation target;
 
-            if (GlobalArray.cheeseMines.set.length() < 3 || Rng.mcg() % 5 == 0) {
+            if (Game.knownCheeseMines.set.length() < 3 || Rng.mcg() % 5 == 0) {
                 target = new MapLocation(
                     Math.abs(Rng.mcg()) % mapWidth,
                     Math.abs(Rng.mcg()) % mapHeight
@@ -57,17 +58,17 @@ public class MinerStrategy extends Strategy {
     private MapLocation pickSeenMine() {
         List<Double> weights = new ArrayList<>();
         double totalWeight = 0;
-        for (int i = 0; i < GlobalArray.cheeseMines.set.length(); i++) {
-            weights.add(1.0 / (double) myLoc.distanceSquaredTo(decode2x2(GlobalArray.cheeseMines.at(i))));
+        for (int i = 0; i < Game.knownCheeseMines.set.length(); i++) {
+            weights.add(1.0 / (double) myLoc.distanceSquaredTo(decode2x2(Game.knownCheeseMines.at(i))));
             totalWeight += weights.get(weights.size() - 1);
         }
         double rnd = (((double) Rng.mcg() / ((1 << 31) - 1)) * totalWeight);
         double pref = 0;
-        for (int i = 0; i < GlobalArray.cheeseMines.set.length(); i++) {
+        for (int i = 0; i < Game.knownCheeseMines.set.length(); i++) {
             pref += weights.get(i);
-            if (rnd <= pref) return decode2x2(GlobalArray.cheeseMines.at(i));
+            if (rnd <= pref) return decode2x2(Game.knownCheeseMines.at(i));
         }
-        return decode2x2(GlobalArray.cheeseMines.at(GlobalArray.cheeseMines.set.length() - 1));
+        return decode2x2(Game.knownCheeseMines.at(Game.knownCheeseMines.set.length() - 1));
     }
 
     private boolean shouldGoHome() {

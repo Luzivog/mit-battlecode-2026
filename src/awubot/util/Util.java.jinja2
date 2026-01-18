@@ -489,11 +489,6 @@ public class Util {
         return loc.x * SIZE + loc.y;
     }
 
-    public static void dead(Object msg) {
-        println("Robot " + rc.getID() + " hit a dead end: " + msg);
-        rc.disintegrate();
-    }
-
     // public static Pair<Double, Double> relativeDistsToCentre(MapLocation loc) {
     //     double relX = (double) loc.x / (double) mapWidth;
     //     double relY = (double) loc.y / (double) mapHeight;

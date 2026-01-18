@@ -6701,11 +6701,6 @@ public class Pathfinder {
         }
         var localPassable0 = CellTracker.localPassable0 & ~CellTracker.localDirt0;
         var localPassable1 = CellTracker.localPassable1 & ~CellTracker.localDirt1;
-        if(time >= 20 && rc.getID() == 10790) {
-            indicatorString = "";
-            CellTracker.printLocalMask(reach0, reach1);
-            Clock.yield();
-        }
         if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
             int res = 0;
             if(
@@ -6763,11 +6758,6 @@ public class Pathfinder {
     reach0 &= localPassable0;
     reach1 &= localPassable1;
 
-        if(time >= 20 && rc.getID() == 10790) {
-            indicatorString = "";
-            CellTracker.printLocalMask(reach0, reach1);
-            Clock.yield();
-        }
         if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
             int res = 0;
             if(
@@ -6825,11 +6815,6 @@ public class Pathfinder {
     reach0 &= localPassable0;
     reach1 &= localPassable1;
 
-        if(time >= 20 && rc.getID() == 10790) {
-            indicatorString = "";
-            CellTracker.printLocalMask(reach0, reach1);
-            Clock.yield();
-        }
         if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
             int res = 0;
             if(
@@ -6887,11 +6872,6 @@ public class Pathfinder {
     reach0 &= localPassable0;
     reach1 &= localPassable1;
 
-        if(time >= 20 && rc.getID() == 10790) {
-            indicatorString = "";
-            CellTracker.printLocalMask(reach0, reach1);
-            Clock.yield();
-        }
         if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
             int res = 0;
             if(
@@ -6949,11 +6929,6 @@ public class Pathfinder {
     reach0 &= localPassable0;
     reach1 &= localPassable1;
 
-        if(time >= 20 && rc.getID() == 10790) {
-            indicatorString = "";
-            CellTracker.printLocalMask(reach0, reach1);
-            Clock.yield();
-        }
         if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
             int res = 0;
             if(
@@ -7011,11 +6986,6 @@ public class Pathfinder {
     reach0 &= localPassable0;
     reach1 &= localPassable1;
 
-        if(time >= 20 && rc.getID() == 10790) {
-            indicatorString = "";
-            CellTracker.printLocalMask(reach0, reach1);
-            Clock.yield();
-        }
         if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
             int res = 0;
             if(
@@ -7073,11 +7043,6 @@ public class Pathfinder {
     reach0 &= localPassable0;
     reach1 &= localPassable1;
 
-        if(time >= 20 && rc.getID() == 10790) {
-            indicatorString = "";
-            CellTracker.printLocalMask(reach0, reach1);
-            Clock.yield();
-        }
         if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
             int res = 0;
             if(

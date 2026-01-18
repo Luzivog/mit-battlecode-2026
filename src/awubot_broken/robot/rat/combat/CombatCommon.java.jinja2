@@ -1,0 +1,86 @@
+package awubot_broken.robot.rat.combat;
+
+import battlecode.common.Direction;
+import battlecode.common.GameActionException;
+
+import static awubot_broken.Game.*;
+import static awubot_broken.util.Util.*;
+import awubot_broken.util.Profiler;
+
+public final class CombatCommon {
+    private CombatCommon() {
+    }
+
+    {% set move_dirs = directions + ['Direction.CENTER'] %}
+    {% set move_short = shortDirections + ['C'] %}
+
+    {% for idx in range(move_dirs|length) %}
+    public static boolean canMove{{ move_short[idx] }};
+    {% endfor %}
+
+    public static void precomp() throws GameActionException {
+        {% for idx in range(move_dirs|length) %}
+        canMove{{ move_short[idx] }} = canTraverse({{ move_dirs[idx] }});
+        {% endfor %}
+    }
+
+    public static boolean canMove(Direction dir) {
+        return switch (dir.ordinal()) {
+            {% for idx in range(move_dirs|length) %}
+            case {{ idx }} -> canMove{{ move_short[idx] }};
+            {% endfor %}
+            default -> false;
+        };
+    }
+
+    public static boolean canPerformMoves(Direction moveDir, Direction facing) {
+        return computeCanPerform(moveDir, facing);
+    }
+
+    private static boolean computeCanPerform(Direction moveDir, Direction facing) {
+        if (moveDir != Direction.CENTER && !canMove(moveDir)) return false;
+        if (moveDir == Direction.CENTER) {
+            return facing == myDir || rc.canTurn();
+        }
+        if (!rc.isMovementReady() || !canMove(moveDir)) return false;
+        if (moveDir == myDir && facing == myDir) return true;
+        if (moveDir == myDir) {
+            return myDir == facing || rc.canTurn();
+        }
+        if (moveDir == facing && rc.canTurn()) return true;
+        if (canStrafe()) {
+            if (facing == myDir) return true;
+            return rc.canTurn();
+        }
+        return false;
+    }
+
+    
+    // -1 = impossible, 0 = strafe, 1 = no strafe
+    public static int movementCost(Direction moveDir, Direction facing) {
+        if (moveDir != Direction.CENTER && !canMove(moveDir)) return -1;
+        if (moveDir == Direction.CENTER) {
+            if (facing == myDir || rc.canTurn()) {
+                return 1;
+            } else {
+                return -1;
+            }
+        }
+        if (!rc.isMovementReady() || !canMove(moveDir)) {
+            return -1;
+        }
+        if (moveDir == myDir && facing == myDir) return 1;
+        if (moveDir == myDir) {
+            if (myDir == facing || rc.canTurn()) {
+                return 1;
+            } else {
+                return -1;
+            }
+        }
+        if (moveDir == facing && rc.canTurn()) return 1;
+        if (canStrafe()) {
+            if (facing == myDir || rc.canTurn()) return 0;
+        }
+        return -1;
+    }
+}

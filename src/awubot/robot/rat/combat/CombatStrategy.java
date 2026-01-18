@@ -100,6 +100,7 @@ public class CombatStrategy extends Strategy {
     private boolean _runTick() throws GameActionException {
         if (rc.isBeingCarried() || rc.isBeingThrown()) return false;
 
+        Profiler.push();
         sourceCnt = 0;
         for (int i = 0; i < RobotTracker.numEnemies; i++) {
             if (shouldFight(RobotTracker.sortedEnemies[i])) {
@@ -112,6 +113,8 @@ public class CombatStrategy extends Strategy {
             }
         }
         moveMask = Pathfinder.multisourceBfs(sources, sourceCnt);
+        Profiler.pop("combat bfs");
+        indicate("MOVEMASK: " + Integer.toBinaryString(moveMask));
         if (moveMask == 0) return false; // no enemies nearby
 
         Profiler.push();

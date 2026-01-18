@@ -45,8 +45,7 @@ public final class TryThrow {
                 if (!rc.canSenseLocation(throwTarget)) continue; // make sure u know whats happening there
                 if (!rc.senseMapInfo(throwTarget).isPassable()) continue; // need empty
                 if (throwTarget != myLoc && rc.senseRobotAtLocation(throwTarget) != null) continue; // need empty
-                score = CombatStrategy.getCellScoreFor(moveDir, throwDir) / 3 + 5;
-                // for now, allow the throw path to go through friendly rats
+                score = CombatStrategy.getCellScoreFor(moveDir, throwDir) / 3;
                 for (rem = 7; rem >= 0; rem--) {
                     throwTarget = throwTarget.add(throwDir);
                     if (!rc.onTheMap(throwTarget)) {
@@ -61,14 +60,15 @@ public final class TryThrow {
                                     score = -100;
                                     break;
                                 } else {
-                                    if (rem == 6) score -= (rem * 4) / 2;
+                                    if (rem == 7) score -= (rem * 4) / 2;
                                 }
                             } else {
                                 if (info.getType() == UnitType.RAT_KING) {
                                     score += 100;
                                     break;
                                 } else {
-                                    score += (rem * 4) / 2;
+                                    if (rem == 7) score += (rem * 4);
+                                    else score += ((double) (rem * 4)) / (8 - rem);
                                 }
                             }
                         }

@@ -62,31 +62,6 @@ public class Game {
         spawn = myLoc;
         knownCheeseMines = new FastIndexedIntSet();
 
-        for (int asdef = 0; asdef < 2; asdef++) {
-            boolean a = true, b = false;
-
-            Profiler.begin();   
-            
-            for (int i = 0; i < 5; i++) {
-                if (!b) continue;
-                println("buh");
-            }
-
-            Profiler.end_print("if");
-
-            Profiler.begin();   
-            for (int i = 0; i < 5; i++) {
-                if (b) {
-                    println("buh");
-                }
-            }
-            Profiler.end_print("break");
-
-            b = !b;
-        }
-
-        rc.resign();
-
         // StringBuilder sb = new StringBuilder();
         // Direction moveDir = Direction.NORTH;
         // RobotInfo target = rc.senseRobotAtLocation(myLoc);

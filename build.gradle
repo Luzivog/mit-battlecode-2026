@@ -213,8 +213,8 @@ dependencies {
   client group: 'org.battlecode', name: clientName + clientType, version: versions.battlecodeClient
 
   // Scala
-  implementation group: 'org.scala-lang', name: 'scala-library', version: '2.13.11'
-  testImplementation group: 'org.scalatest', name: 'scalatest_2.13', version: '3.2.9'
+  implementation group: 'org.scala-lang', name: 'scala-library', version: '2.11.7'
+  testImplementation group: 'org.scalatest', name: 'scalatest_2.11', version: '3.0.0'
 }
 
 
@@ -306,6 +306,45 @@ task run(type: JavaExec) {
     '-Dbc.game.team-a.package=' + (project.findProperty('packageNameA') ?: project.property('teamA')),
     '-Dbc.game.team-b.package=' + (project.findProperty('packageNameB') ?: project.property('teamB')),
     '-Dbc.game.maps=' + project.property('maps'),
+    '-Dbc.game.seed=' + (project.findProperty('seed') ?: 0),
+    '-Dbc.server.validate-maps=' + project.property('validateMaps'),
+    '-Dbc.server.alternate-order=' + project.property('alternateOrder'),
+    '-Dbc.server.save-file=' + (project.findProperty('replay') ?: defaultReplayFile),
+  ]
+}
+
+task runWithoutBuild(type: JavaExec) {
+  description 'Hehe'
+  group 'battlecode'
+
+  mainClass = 'battlecode.server.Main'
+  classpath = sourceSets.main.runtimeClasspath
+  args = ['-c=-']
+  jvmArgs = [
+    '-Xmx350m',
+    '-XX:+UseSerialGC',
+    '--add-opens=java.base/jdk.internal.misc=ALL-UNNAMED',
+    '--add-opens=java.base/jdk.internal.math=ALL-UNNAMED',
+    '--add-opens=java.base/jdk.internal.util=ALL-UNNAMED',
+    '--add-opens=java.base/jdk.internal.access=ALL-UNNAMED',
+    '--add-opens=java.base/sun.security.action=ALL-UNNAMED',
+    '-Dbc.server.websocket=false',
+    '-Dbc.server.wait-for-client=' + (project.findProperty('waitForClient') ?: 'false'),
+    '-Dbc.server.mode=headless',
+    '-Dbc.server.map-path=maps',
+    '-Dbc.server.robot-player-to-system-out=' + (project.findProperty('outputVerbose') ?: 'true'),
+    '-Dbc.server.debug=false',
+    '-Dbc.engine.debug-methods=' + (project.findProperty('debug') ?: 'false'),
+    '-Dbc.engine.enable-profiler=' + (project.findProperty('enableProfiler') ?: 'false'),
+    '-Dbc.engine.show-indicators=' + (project.findProperty('showIndicators') ?: 'true'),
+    '-Dbc.game.team-a=' + project.property('teamA'),
+    '-Dbc.game.team-b=' + project.property('teamB'),
+    '-Dbc.game.team-a.url=' + (project.findProperty('classLocationA') ?: defaultClassLocation),
+    '-Dbc.game.team-b.url=' + (project.findProperty('classLocationB') ?: defaultClassLocation),
+    '-Dbc.game.team-a.package=' + (project.findProperty('packageNameA') ?: project.property('teamA')),
+    '-Dbc.game.team-b.package=' + (project.findProperty('packageNameB') ?: project.property('teamB')),
+    '-Dbc.game.maps=' + project.property('maps'),
+    '-Dbc.game.seed=' + (project.findProperty('seed') ?: 0),
     '-Dbc.server.validate-maps=' + project.property('validateMaps'),
     '-Dbc.server.alternate-order=' + project.property('alternateOrder'),
     '-Dbc.server.save-file=' + (project.findProperty('replay') ?: defaultReplayFile),

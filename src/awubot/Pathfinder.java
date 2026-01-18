@@ -6701,6 +6701,74 @@ public class Pathfinder {
         }
         var localPassable0 = CellTracker.localPassable0 & ~CellTracker.localDirt0;
         var localPassable1 = CellTracker.localPassable1 & ~CellTracker.localDirt1;
+        if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
+            int res = 0;
+            if(
+               (reach1 & (1l << 10))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.NORTH);
+                if(rc.canMove(Direction.NORTH)) {
+                    res |= 1;
+                }
+            }
+            if(
+               (reach1 & (1l << 11))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.NORTHEAST);
+                if(rc.canMove(Direction.NORTHEAST)) {
+                    res |= 2;
+                }
+            }
+            if(
+               (reach1 & (1l << 0))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.EAST);
+                if(rc.canMove(Direction.EAST)) {
+                    res |= 4;
+                }
+            }
+            if(
+               (reach0 & (1l << 50))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.SOUTHEAST);
+                if(rc.canMove(Direction.SOUTHEAST)) {
+                    res |= 8;
+                }
+            }
+            if(
+               (reach0 & (1l << 49))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.SOUTH);
+                if(rc.canMove(Direction.SOUTH)) {
+                    res |= 16;
+                }
+            }
+            if(
+               (reach0 & (1l << 48))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.SOUTHWEST);
+                if(rc.canMove(Direction.SOUTHWEST)) {
+                    res |= 32;
+                }
+            }
+            if(
+               (reach0 & (1l << 59))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.WEST);
+                if(rc.canMove(Direction.WEST)) {
+                    res |= 64;
+                }
+            }
+            if(
+               (reach1 & (1l << 9))
+               != 0) {
+                var nextLoc = myLoc.add(Direction.NORTHWEST);
+                if(rc.canMove(Direction.NORTHWEST)) {
+                    res |= 128;
+                }
+            }
+            return res;
+        }
             // we don't need to worry about the "seam" here because it's at the cell we are standing on
     reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
     reach1 |= (reach1 & 0x7feffdffbff7fefl) << 1;

@@ -784,8 +784,7 @@ public class Pathfinder {
         }
         var localPassable0 = CellTracker.localPassable0 & ~CellTracker.localDirt0;
         var localPassable1 = CellTracker.localPassable1 & ~CellTracker.localDirt1;
-        {% for i in range(6) %}
-        {{ bfsIteration("reach", "localPassable") }}
+        {% for i in range(7) %}
         if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
             int res = 0;
             {% for b, dir, off in [
@@ -813,6 +812,9 @@ public class Pathfinder {
             {% endfor %}
             return res;
         }
+        {% if i != 6 %}
+        {{ bfsIteration("reach", "localPassable") }}
+        {% endif %}
         {% endfor %}
         return 0;
     }

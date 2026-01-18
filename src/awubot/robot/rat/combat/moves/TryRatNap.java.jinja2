@@ -14,6 +14,17 @@ import static awubot.util.Util.*;
 import static awubot.robot.rat.BabyRat.*;
 import awubot.RobotTracker;
 
+{% set related_map = {
+    0: ["Direction.NORTH", "Direction.NORTHEAST", "Direction.NORTHWEST"],
+    1: ["Direction.NORTHEAST", "Direction.NORTH", "Direction.EAST"],
+    2: ["Direction.EAST", "Direction.NORTHEAST", "Direction.SOUTHEAST"],
+    3: ["Direction.SOUTHEAST", "Direction.SOUTH", "Direction.EAST"],
+    4: ["Direction.SOUTH", "Direction.SOUTHEAST", "Direction.SOUTHWEST"],
+    5: ["Direction.SOUTHWEST", "Direction.SOUTH", "Direction.WEST"],
+    6: ["Direction.WEST", "Direction.NORTHWEST", "Direction.SOUTHWEST"],
+    7: ["Direction.NORTHWEST", "Direction.NORTH", "Direction.WEST"],
+} %}
+
 public final class TryRatNap {
     private TryRatNap() {
     }
@@ -22,6 +33,7 @@ public final class TryRatNap {
     static RobotInfo info;
     static Direction bestMove;
     static Direction bestFacing;
+    static Direction bestSecondaryMove;
     static double bestScore;
     static Direction md;
     static double best;
@@ -35,6 +47,7 @@ public final class TryRatNap {
         target = null;
         bestMove = null;
         bestFacing = null;
+        bestSecondaryMove = null;
         bestScore = -1;
         for (int i = 0; i < RobotTracker.numEnemies && i < 3; i++) {
             info = RobotTracker.sortedEnemies[i];
@@ -46,7 +59,7 @@ public final class TryRatNap {
             // double weight = scoreEnemy(info);
             weight = 30;
 
-            for (Direction moveDir : allDirections) {
+            for (Direction moveDir : directions) {
                 MapLocation newLoc = myLoc.add(moveDir);
                 if (newLoc.distanceSquaredTo(t) > 2) continue;
                 if (!CombatCommon.canMove(moveDir)) continue;
@@ -70,17 +83,50 @@ public final class TryRatNap {
                         target = info;
                         bestMove = moveDir;
                         bestFacing = facing;
+                        bestSecondaryMove = null;
+                    }
+                }
+            }
+            {
+                MapLocation newLoc = myLoc;
+                if (newLoc.distanceSquaredTo(t) > 2) continue;
+                if (info.getHealth() >= rc.getHealth()) continue; // can i ratnap this guy
+                for (Direction facing : relatedDirections(myDir)) {
+                    for (Direction _moveDir : relatedDirections(myDir)) {
+                        Direction moveDir = _moveDir.opposite();
+                        if (!CombatCommon.canPerformMoves(moveDir, facing)) continue;
+                        double score = weight + 5;
+                        score += CombatStrategy.getCellScoreFor(moveDir, facing, info);
+                        if (score <= 0.5) continue;
+                        if (facing != myDir) {
+                            score *= 1.2; // prefer turning
+                        }
+                        if (score > bestScore) {
+                            bestScore = score;
+                            target = info;
+                            bestMove = null;
+                            bestFacing = facing;
+                            bestSecondaryMove = moveDir;
+                        }
                     }
                 }
             }
         }
         if (bestScore < 0.5) return false;
-        assert(CombatStrategy.performMoves(bestMove, bestFacing));
-        if (rc.canCarryRat(target.location)) {
-            rc.carryRat(target.location);
+        if (bestMove != null) {
+            assert(CombatStrategy.performMoves(bestMove, bestFacing));
+            if (rc.canCarryRat(target.location)) {
+                rc.carryRat(target.location);
+            } else {
+                attack(target);
+            }
         } else {
-            attack(target);
-            println("was just shoved against a wall");
+            if (rc.canCarryRat(target.location)) {
+                rc.carryRat(target.location);
+            } else {
+                attack(target);
+            }
+            assert(CombatStrategy.performMovesDebug(bestSecondaryMove, bestFacing));
         }
         println("!!!!!!!!!!!!!!!!!!!!!!! napped rat");
         indicate("COMBAT STRAT: NAP");

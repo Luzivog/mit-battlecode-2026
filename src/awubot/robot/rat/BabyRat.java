@@ -50,6 +50,7 @@ public class BabyRat {
 
         indicate("sym " + CellTracker.hsym + " " + CellTracker.vsym + " " + CellTracker.rsym);
         primaryStrategy.runTick();
+        combatStrategy.miniTick();
 
         executeGlance();
     }

@@ -7,7 +7,6 @@ import java.util.*;
 
 import awubot.CellTracker;
 import awubot.Game;
-
 import static java.lang.Math.*;
 
 public class Util {
@@ -646,7 +645,7 @@ public class Util {
     }
 
     public static boolean canStrafe() {
-        return rc.getActionCooldownTurns() <= 18;
+        return rc.getMovementCooldownTurns() <= 18;
     }
 
     public static int angleDistance(Direction a, Direction b) {

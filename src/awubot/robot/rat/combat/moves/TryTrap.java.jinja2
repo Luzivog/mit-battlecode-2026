@@ -135,6 +135,7 @@ public final class TryTrap {
     static double best;
     static MapLocation curMoveLoc;
     static MapLocation weightSource;
+    static int weightCompTime;
 
 
     public static boolean run() throws GameActionException {
@@ -173,12 +174,8 @@ public final class TryTrap {
     // has room for optimisation if reallllyyy needed
     private static void computeWeights() throws GameActionException {
         {# Profiler.push(); #}
+        weightCompTime = time;
         weightSource = myLoc;
-        {% for dy in range(2, -3, -1) %}
-        {% for dx in range(-2, 3) %}
-        {{ wvar(dx, dy) }} = 0;
-        {% endfor %}
-        {% endfor %}
         {% for dy in range(2, -3, -1) %}
         {% for dx in range(-2, 3) %}
         {
@@ -201,6 +198,14 @@ public final class TryTrap {
         applyEnemyWeights();
 
         {# Profiler.pop("TryTrap.computeWeights"); #}
+    }
+
+    private static void clearWeights() {
+        {% for dy in range(2, -3, -1) %}
+        {% for dx in range(-2, 3) %}
+        {{ wvar(dx, dy) }} = 0;
+        {% endfor %}
+        {% endfor %}
     }
 
     private static void applyEnemyWeights() {
@@ -380,6 +385,10 @@ public final class TryTrap {
     
     public static boolean miniRun() throws GameActionException {
         if (!rc.isActionReady()) return false;
+        if (weightCompTime != time) {
+            clearWeights();
+            weightSource = myLoc;
+        }
         int x = myLocX;
         int y = myLocY;
         switch (myDir.ordinal()) {
@@ -390,9 +399,9 @@ public final class TryTrap {
                 MapLocation loc{{ loop.index0 }} = new MapLocation(x {% if dir_dx[d] %} + {{ dir_dx[d] }}{% endif %}, y {% if dir_dy[d] %} + {{ dir_dy[d] }}{% endif %});
                 double s{{ loop.index0 }} = getWeight(loc{{ loop.index0 }}.x - weightSource.x, loc{{ loop.index0 }}.y - weightSource.y);
                 {% endfor %}
-                for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
-                    if (rinfo.getTeam() == team) continue;
-                    if (rinfo.getType() != UnitType.BABY_RAT) continue;
+                for (int i = 0; i < RobotTracker.numEnemies && i < 2; i++) {
+                    RobotInfo rinfo = RobotTracker.sortedEnemies[i];
+                    if (rinfo.location.distanceSquaredTo(myLoc) > 2) break;
                     MapLocation eloc = rinfo.location;
                     {
                         if (eloc.distanceSquaredTo(loc0) <= 2) {

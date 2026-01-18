@@ -36,6 +36,10 @@ seeds = [""]
 debug = len(maps) == 1 and len(seeds) == 1
 GRADLEW = "gradlew.bat" if os.name == "nt" else "./gradlew"
 SAMPLE_INTERVAL = 0.25
+REPO_DIR = os.path.dirname(os.path.abspath(__file__))
+OUTPUT_DIR = os.path.join(REPO_DIR, "match_stdout")
+JAVA_MATCH_KEYWORDS = ("battlecode", "bc26")
+LOG_LINE_LIMIT = 120
 
 
 def _child_cpu_total():
@@ -45,9 +49,72 @@ def _child_cpu_total():
     return usage.ru_utime + usage.ru_stime
 
 
-def _drain_stream(stream, sink):
+def _slug(value, max_len=40):
+    cleaned = re.sub(r"[^A-Za-z0-9._-]+", "_", str(value))
+    cleaned = cleaned.strip("_") or "item"
+    return cleaned[:max_len]
+
+
+def _short_line(line, limit=LOG_LINE_LIMIT):
+    text = line.strip()
+    if len(text) > limit:
+        return text[: limit - 3] + "..."
+    return text
+
+
+def _write_stdout_file(teamA, teamB, map, seed, stdout):
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    filename = (
+        f"{_slug(map)}__{_slug(teamA)}_vs_{_slug(teamB)}__seed{_slug(seed, 20)}__"
+        f"{os.getpid()}_{time.time_ns()}.log"
+    )
+    path = os.path.join(OUTPUT_DIR, filename)
+    with open(path, "w", encoding="utf-8", newline="") as handle:
+        handle.write(stdout)
+    return path
+
+
+def _summarize_stdout_timing(stdout_timed, start_ts):
+    if not stdout_timed or start_ts is None:
+        return None
+    line_count = len(stdout_timed)
+    match_start = None
+    match_end = None
+    max_gap = None
+    gap_before = None
+    gap_after = None
+    if line_count >= 2:
+        prev_t, prev_line = stdout_timed[0]
+        for t, line in stdout_timed[1:]:
+            gap = t - prev_t
+            if max_gap is None or gap > max_gap:
+                max_gap = gap
+                gap_before = prev_line
+                gap_after = line
+            prev_t, prev_line = t, line
+    for t, line in stdout_timed:
+        if match_start is None and "Match Starting" in line:
+            match_start = t
+        if match_end is None and "Match Finished" in line:
+            match_end = t
+    return {
+        "line_count": line_count,
+        "match_start": (match_start - start_ts) if match_start else None,
+        "match_end": (match_end - start_ts) if match_end else None,
+        "match_duration": (match_end - match_start)
+        if match_start is not None and match_end is not None
+        else None,
+        "max_gap": max_gap,
+        "gap_before": gap_before,
+        "gap_after": gap_after,
+    }
+
+
+def _drain_stream(stream, sink, timed_sink=None):
     for line in iter(stream.readline, ""):
         sink.append(line)
+        if timed_sink is not None:
+            timed_sink.append((time.perf_counter(), line))
     stream.close()
 
 
@@ -94,11 +161,40 @@ def _gradle_daemon_cpu_total():
     return total, count
 
 
+def _java_cpu_total():
+    if psutil is None:
+        return None, 0
+    total = 0.0
+    count = 0
+    for proc in psutil.process_iter(["name", "cmdline"]):
+        try:
+            name = (proc.info.get("name") or "").lower()
+            if "java" not in name:
+                continue
+            cmdline = proc.info.get("cmdline") or []
+        except (psutil.Error, OSError):
+            continue
+        cmdline_text = " ".join(cmdline).lower()
+        if not any(keyword in cmdline_text for keyword in JAVA_MATCH_KEYWORDS):
+            continue
+        try:
+            times = proc.cpu_times()
+            total += times.user + times.system
+            count += 1
+        except (psutil.Error, OSError):
+            continue
+    return total, count
+
+
 def _run_with_psutil(cmd):
+    start_ts = time.perf_counter()
     proc = psutil.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     stdout_lines = []
     stderr_lines = []
-    out_thread = threading.Thread(target=_drain_stream, args=(proc.stdout, stdout_lines))
+    stdout_timed = []
+    out_thread = threading.Thread(
+        target=_drain_stream, args=(proc.stdout, stdout_lines, stdout_timed)
+    )
     err_thread = threading.Thread(target=_drain_stream, args=(proc.stderr, stderr_lines))
     out_thread.start()
     err_thread.start()
@@ -114,6 +210,11 @@ def _run_with_psutil(cmd):
     daemon_active_samples = 0
     daemon_samples = 0
     daemon_max_procs = 0
+    java_cpu_accum = 0.0
+    java_last_total = None
+    java_active_samples = 0
+    java_samples = 0
+    java_max_procs = 0
 
     while proc.poll() is None:
         total, count = _process_tree_cpu_total(proc.pid)
@@ -134,6 +235,16 @@ def _run_with_psutil(cmd):
             daemon_last_total = daemon_total
             daemon_samples += 1
             daemon_max_procs = max(daemon_max_procs, daemon_count)
+        java_total, java_count = _java_cpu_total()
+        if java_total is not None:
+            if java_last_total is not None:
+                delta = java_total - java_last_total
+                if delta > 0:
+                    java_cpu_accum += delta
+                    java_active_samples += 1
+            java_last_total = java_total
+            java_samples += 1
+            java_max_procs = max(java_max_procs, java_count)
         samples += 1
         time.sleep(SAMPLE_INTERVAL)
 
@@ -155,6 +266,16 @@ def _run_with_psutil(cmd):
         daemon_last_total = daemon_total
         daemon_samples += 1
         daemon_max_procs = max(daemon_max_procs, daemon_count)
+    java_total, java_count = _java_cpu_total()
+    if java_total is not None:
+        if java_last_total is not None:
+            delta = java_total - java_last_total
+            if delta > 0:
+                java_cpu_accum += delta
+                java_active_samples += 1
+        java_last_total = java_total
+        java_samples += 1
+        java_max_procs = max(java_max_procs, java_count)
     proc.wait()
     out_thread.join()
     err_thread.join()
@@ -162,19 +283,25 @@ def _run_with_psutil(cmd):
     stdout = "".join(stdout_lines)
     stderr = "".join(stderr_lines)
     tree_cpu = cpu_max if cpu_seen else None
-    return (
-        proc.returncode,
-        stdout,
-        stderr,
-        tree_cpu,
-        active_samples,
-        samples,
-        children_max,
-        daemon_cpu_accum,
-        daemon_active_samples,
-        daemon_samples,
-        daemon_max_procs,
-    )
+    return {
+        "returncode": proc.returncode,
+        "stdout": stdout,
+        "stderr": stderr,
+        "tree_cpu": tree_cpu,
+        "tree_active_samples": active_samples,
+        "tree_samples": samples,
+        "tree_max_procs": children_max,
+        "daemon_cpu": daemon_cpu_accum,
+        "daemon_active_samples": daemon_active_samples,
+        "daemon_samples": daemon_samples,
+        "daemon_max_procs": daemon_max_procs,
+        "java_cpu": java_cpu_accum,
+        "java_active_samples": java_active_samples,
+        "java_samples": java_samples,
+        "java_max_procs": java_max_procs,
+        "stdout_timed": stdout_timed,
+        "stdout_start_ts": start_ts,
+    }
 
 
 def run_game(params):
@@ -184,7 +311,7 @@ def run_game(params):
     child_cpu_before = _child_cpu_total()
     print(GRADLEW)
     print(f"Run {teamA} vs {teamB} on {map} {seed}")
-    use_psutil = psutil is not None and resource is None
+    use_psutil = psutil is not None
     cmd = [
         GRADLEW,
         'runWithoutBuild',
@@ -201,26 +328,38 @@ def run_game(params):
     daemon_active_samples = None
     daemon_samples = None
     daemon_max_procs = None
+    java_cpu = None
+    java_active_samples = None
+    java_samples = None
+    java_max_procs = None
+    stdout_timed = None
+    stdout_start_ts = None
     if use_psutil:
-        (
-            returncode,
-            stdout,
-            stderr,
-            gradle_cpu,
-            active_samples,
-            samples,
-            children_max,
-            daemon_cpu,
-            daemon_active_samples,
-            daemon_samples,
-            daemon_max_procs,
-        ) = _run_with_psutil(cmd)
+        result_info = _run_with_psutil(cmd)
+        returncode = result_info["returncode"]
+        stdout = result_info["stdout"]
+        stderr = result_info["stderr"]
+        gradle_cpu = result_info["tree_cpu"]
+        active_samples = result_info["tree_active_samples"]
+        samples = result_info["tree_samples"]
+        children_max = result_info["tree_max_procs"]
+        daemon_cpu = result_info["daemon_cpu"]
+        daemon_active_samples = result_info["daemon_active_samples"]
+        daemon_samples = result_info["daemon_samples"]
+        daemon_max_procs = result_info["daemon_max_procs"]
+        java_cpu = result_info["java_cpu"]
+        java_active_samples = result_info["java_active_samples"]
+        java_samples = result_info["java_samples"]
+        java_max_procs = result_info["java_max_procs"]
+        stdout_timed = result_info["stdout_timed"]
+        stdout_start_ts = result_info["stdout_start_ts"]
     else:
         completed = subprocess.run(cmd, capture_output=True, text=True)
         stdout = completed.stdout
         stderr = completed.stderr
         returncode = completed.returncode
     result = stdout
+    _write_stdout_file(teamA, teamB, map, seed, stdout)
     print(result)
     if "resign" in result:
         print(f"\033[0;31mResignation {teamA} vs {teamB} on {map} {seed}\033[0m")
@@ -233,6 +372,24 @@ def run_game(params):
         print(f"{winner} wins on {map}")
     else:
         print(f"Tie on {map}")
+    log_summary = _summarize_stdout_timing(stdout_timed, stdout_start_ts)
+    if log_summary:
+        log_line = (
+            f"Log timing {teamA} vs {teamB} on {map}: lines {log_summary['line_count']}"
+        )
+        if log_summary["match_start"] is not None:
+            log_line += f", match start +{log_summary['match_start']:.1f}s"
+        if log_summary["match_end"] is not None:
+            log_line += f", match finish +{log_summary['match_end']:.1f}s"
+        if log_summary["match_duration"] is not None:
+            log_line += f", match duration {log_summary['match_duration']:.1f}s"
+        if log_summary["max_gap"] is not None:
+            log_line += f", max gap {log_summary['max_gap']:.1f}s"
+        print(log_line)
+        if log_summary["max_gap"] is not None:
+            before = _short_line(log_summary["gap_before"])
+            after = _short_line(log_summary["gap_after"])
+            print(f"Log gap max {log_summary['max_gap']:.1f}s between: {before} -> {after}")
     wall_elapsed = time.perf_counter() - wall_start
     cpu_elapsed = time.process_time() - cpu_start
     child_cpu_after = _child_cpu_total()
@@ -262,6 +419,12 @@ def run_game(params):
         if daemon_active_samples is not None and daemon_samples:
             active_wall = min(daemon_active_samples * SAMPLE_INTERVAL, wall_elapsed)
             timing += f", daemon active ~{active_wall:.1f}s/{daemon_samples} samples, max daemons {daemon_max_procs}"
+    if java_cpu is not None:
+        java_pct = (java_cpu / wall_elapsed * 100.0) if wall_elapsed else 0.0
+        timing += f", java cpu {java_cpu:.3f}s ({java_pct:.1f}%)"
+        if java_active_samples is not None and java_samples:
+            active_wall = min(java_active_samples * SAMPLE_INTERVAL, wall_elapsed)
+            timing += f", java active ~{active_wall:.1f}s/{java_samples} samples, max java procs {java_max_procs}"
     print(timing)
     return winner
 

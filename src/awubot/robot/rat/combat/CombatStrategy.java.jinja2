@@ -147,8 +147,6 @@ public class CombatStrategy extends Strategy {
         if (rc.isBeingCarried() || rc.isBeingThrown()) return false;
 
         if (rc.getCarrying() != null) {
-            return TryThrow.run();
-        } else {
             Profiler.push();
             sourceCnt = 0;
             for (int i = 0; i < RobotTracker.numEnemies; i++) {
@@ -168,10 +166,17 @@ public class CombatStrategy extends Strategy {
             Profiler.pop("combat bfs");
             indicate("MOVEMASK: " + Integer.toBinaryString(moveMask));
             if (moveMask == 0) return false; // no enemies nearby
+        }
 
+        Profiler.push();
+        precomp();
+        Profiler.pop("precomp", 3500);
+
+        if (rc.getCarrying() != null) {
             Profiler.push();
-            precomp();
-            Profiler.pop("precomp", 3500);
+            boolean tryThrowRes = TryThrow.run();
+            Profiler.pop("try throw", 1000);
+            if (tryThrowRes) return true;
         }
 
         Profiler.push();
@@ -219,6 +224,25 @@ public class CombatStrategy extends Strategy {
         if (tryTrapRes) return true;
         return false;
     }
+
+    {# public static boolean backstep() throws GameActionException {
+        {% for moveDir in directions %}
+        if (CombatCommon.canMove({{moveDir}})) {
+            switch (myDir.ordinal()) {
+                {% for currentFacing in related_map[moveDir] %}
+                case {{loop.index}} -> {:
+                    {% for facing in related_map[currentFacing] %}
+                    if (canPerformMoves({{moveDir}}, {{facing}})) {
+                        return true;
+                    }
+                    {% endfor %}
+                    break;
+                {% endfor %}
+                default -> { }
+            }
+        }
+        {% endfor %}
+    } #}
 
     static boolean canPerformMoves(Direction moveDir, Direction facing) throws GameActionException {
         return CombatCommon.canPerformMoves(moveDir, facing);

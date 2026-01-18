@@ -58,6 +58,7 @@ public final class TryTrap {
     static double best;
     static MapLocation curMoveLoc;
     static MapLocation weightSource;
+    static int weightCompTime;
 
 
     public static boolean run() throws GameActionException {
@@ -90,32 +91,8 @@ public final class TryTrap {
 
     // has room for optimisation if reallllyyy needed
     private static void computeWeights() throws GameActionException {
+        weightCompTime = time;
         weightSource = myLoc;
-        w_m2_2 = 0;
-        w_m1_2 = 0;
-        w_0_2 = 0;
-        w_1_2 = 0;
-        w_2_2 = 0;
-        w_m2_1 = 0;
-        w_m1_1 = 0;
-        w_0_1 = 0;
-        w_1_1 = 0;
-        w_2_1 = 0;
-        w_m2_0 = 0;
-        w_m1_0 = 0;
-        w_0_0 = 0;
-        w_1_0 = 0;
-        w_2_0 = 0;
-        w_m2_m1 = 0;
-        w_m1_m1 = 0;
-        w_0_m1 = 0;
-        w_1_m1 = 0;
-        w_2_m1 = 0;
-        w_m2_m2 = 0;
-        w_m1_m2 = 0;
-        w_0_m2 = 0;
-        w_1_m2 = 0;
-        w_2_m2 = 0;
         {
             MapLocation loc = new MapLocation(myLocX  + -2, myLocY  + 2);
             if (!rc.canSenseLocation(loc)) {
@@ -445,6 +422,34 @@ public final class TryTrap {
         applyTrapWeights();
         applyEnemyWeights();
 
+    }
+
+    private static void clearWeights() {
+        w_m2_2 = 0;
+        w_m1_2 = 0;
+        w_0_2 = 0;
+        w_1_2 = 0;
+        w_2_2 = 0;
+        w_m2_1 = 0;
+        w_m1_1 = 0;
+        w_0_1 = 0;
+        w_1_1 = 0;
+        w_2_1 = 0;
+        w_m2_0 = 0;
+        w_m1_0 = 0;
+        w_0_0 = 0;
+        w_1_0 = 0;
+        w_2_0 = 0;
+        w_m2_m1 = 0;
+        w_m1_m1 = 0;
+        w_0_m1 = 0;
+        w_1_m1 = 0;
+        w_2_m1 = 0;
+        w_m2_m2 = 0;
+        w_m1_m2 = 0;
+        w_0_m2 = 0;
+        w_1_m2 = 0;
+        w_2_m2 = 0;
     }
 
     private static void applyEnemyWeights() {
@@ -3933,6 +3938,10 @@ private static void placeSWWNW() {
     
     public static boolean miniRun() throws GameActionException {
         if (!rc.isActionReady()) return false;
+        if (weightCompTime != time) {
+            clearWeights();
+            weightSource = myLoc;
+        }
         int x = myLocX;
         int y = myLocY;
         switch (myDir.ordinal()) {
@@ -3943,9 +3952,9 @@ private static void placeSWWNW() {
                 double s1 = getWeight(loc1.x - weightSource.x, loc1.y - weightSource.y);
                 MapLocation loc2 = new MapLocation(x  + -1, y  + 1);
                 double s2 = getWeight(loc2.x - weightSource.x, loc2.y - weightSource.y);
-                for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
-                    if (rinfo.getTeam() == team) continue;
-                    if (rinfo.getType() != UnitType.BABY_RAT) continue;
+                for (int i = 0; i < RobotTracker.numEnemies && i < 2; i++) {
+                    RobotInfo rinfo = RobotTracker.sortedEnemies[i];
+                    if (rinfo.location.distanceSquaredTo(myLoc) > 2) break;
                     MapLocation eloc = rinfo.location;
                     {
                         if (eloc.distanceSquaredTo(loc0) <= 2) {
@@ -3993,9 +4002,9 @@ private static void placeSWWNW() {
                 double s1 = getWeight(loc1.x - weightSource.x, loc1.y - weightSource.y);
                 MapLocation loc2 = new MapLocation(x  + 1, y );
                 double s2 = getWeight(loc2.x - weightSource.x, loc2.y - weightSource.y);
-                for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
-                    if (rinfo.getTeam() == team) continue;
-                    if (rinfo.getType() != UnitType.BABY_RAT) continue;
+                for (int i = 0; i < RobotTracker.numEnemies && i < 2; i++) {
+                    RobotInfo rinfo = RobotTracker.sortedEnemies[i];
+                    if (rinfo.location.distanceSquaredTo(myLoc) > 2) break;
                     MapLocation eloc = rinfo.location;
                     {
                         if (eloc.distanceSquaredTo(loc0) <= 2) {
@@ -4043,9 +4052,9 @@ private static void placeSWWNW() {
                 double s1 = getWeight(loc1.x - weightSource.x, loc1.y - weightSource.y);
                 MapLocation loc2 = new MapLocation(x  + 1, y  + -1);
                 double s2 = getWeight(loc2.x - weightSource.x, loc2.y - weightSource.y);
-                for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
-                    if (rinfo.getTeam() == team) continue;
-                    if (rinfo.getType() != UnitType.BABY_RAT) continue;
+                for (int i = 0; i < RobotTracker.numEnemies && i < 2; i++) {
+                    RobotInfo rinfo = RobotTracker.sortedEnemies[i];
+                    if (rinfo.location.distanceSquaredTo(myLoc) > 2) break;
                     MapLocation eloc = rinfo.location;
                     {
                         if (eloc.distanceSquaredTo(loc0) <= 2) {
@@ -4093,9 +4102,9 @@ private static void placeSWWNW() {
                 double s1 = getWeight(loc1.x - weightSource.x, loc1.y - weightSource.y);
                 MapLocation loc2 = new MapLocation(x  + 1, y );
                 double s2 = getWeight(loc2.x - weightSource.x, loc2.y - weightSource.y);
-                for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
-                    if (rinfo.getTeam() == team) continue;
-                    if (rinfo.getType() != UnitType.BABY_RAT) continue;
+                for (int i = 0; i < RobotTracker.numEnemies && i < 2; i++) {
+                    RobotInfo rinfo = RobotTracker.sortedEnemies[i];
+                    if (rinfo.location.distanceSquaredTo(myLoc) > 2) break;
                     MapLocation eloc = rinfo.location;
                     {
                         if (eloc.distanceSquaredTo(loc0) <= 2) {
@@ -4143,9 +4152,9 @@ private static void placeSWWNW() {
                 double s1 = getWeight(loc1.x - weightSource.x, loc1.y - weightSource.y);
                 MapLocation loc2 = new MapLocation(x  + -1, y  + -1);
                 double s2 = getWeight(loc2.x - weightSource.x, loc2.y - weightSource.y);
-                for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
-                    if (rinfo.getTeam() == team) continue;
-                    if (rinfo.getType() != UnitType.BABY_RAT) continue;
+                for (int i = 0; i < RobotTracker.numEnemies && i < 2; i++) {
+                    RobotInfo rinfo = RobotTracker.sortedEnemies[i];
+                    if (rinfo.location.distanceSquaredTo(myLoc) > 2) break;
                     MapLocation eloc = rinfo.location;
                     {
                         if (eloc.distanceSquaredTo(loc0) <= 2) {
@@ -4193,9 +4202,9 @@ private static void placeSWWNW() {
                 double s1 = getWeight(loc1.x - weightSource.x, loc1.y - weightSource.y);
                 MapLocation loc2 = new MapLocation(x  + -1, y );
                 double s2 = getWeight(loc2.x - weightSource.x, loc2.y - weightSource.y);
-                for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
-                    if (rinfo.getTeam() == team) continue;
-                    if (rinfo.getType() != UnitType.BABY_RAT) continue;
+                for (int i = 0; i < RobotTracker.numEnemies && i < 2; i++) {
+                    RobotInfo rinfo = RobotTracker.sortedEnemies[i];
+                    if (rinfo.location.distanceSquaredTo(myLoc) > 2) break;
                     MapLocation eloc = rinfo.location;
                     {
                         if (eloc.distanceSquaredTo(loc0) <= 2) {
@@ -4243,9 +4252,9 @@ private static void placeSWWNW() {
                 double s1 = getWeight(loc1.x - weightSource.x, loc1.y - weightSource.y);
                 MapLocation loc2 = new MapLocation(x  + -1, y  + -1);
                 double s2 = getWeight(loc2.x - weightSource.x, loc2.y - weightSource.y);
-                for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
-                    if (rinfo.getTeam() == team) continue;
-                    if (rinfo.getType() != UnitType.BABY_RAT) continue;
+                for (int i = 0; i < RobotTracker.numEnemies && i < 2; i++) {
+                    RobotInfo rinfo = RobotTracker.sortedEnemies[i];
+                    if (rinfo.location.distanceSquaredTo(myLoc) > 2) break;
                     MapLocation eloc = rinfo.location;
                     {
                         if (eloc.distanceSquaredTo(loc0) <= 2) {
@@ -4293,9 +4302,9 @@ private static void placeSWWNW() {
                 double s1 = getWeight(loc1.x - weightSource.x, loc1.y - weightSource.y);
                 MapLocation loc2 = new MapLocation(x  + -1, y );
                 double s2 = getWeight(loc2.x - weightSource.x, loc2.y - weightSource.y);
-                for (RobotInfo rinfo : rc.senseNearbyRobots(8)) {
-                    if (rinfo.getTeam() == team) continue;
-                    if (rinfo.getType() != UnitType.BABY_RAT) continue;
+                for (int i = 0; i < RobotTracker.numEnemies && i < 2; i++) {
+                    RobotInfo rinfo = RobotTracker.sortedEnemies[i];
+                    if (rinfo.location.distanceSquaredTo(myLoc) > 2) break;
                     MapLocation eloc = rinfo.location;
                     {
                         if (eloc.distanceSquaredTo(loc0) <= 2) {

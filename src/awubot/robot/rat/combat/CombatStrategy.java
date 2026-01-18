@@ -101,8 +101,6 @@ public class CombatStrategy extends Strategy {
         if (rc.isBeingCarried() || rc.isBeingThrown()) return false;
 
         if (rc.getCarrying() != null) {
-            return TryThrow.run();
-        } else {
             Profiler.push();
             sourceCnt = 0;
             for (int i = 0; i < RobotTracker.numEnemies; i++) {
@@ -122,10 +120,17 @@ public class CombatStrategy extends Strategy {
             Profiler.pop("combat bfs");
             indicate("MOVEMASK: " + Integer.toBinaryString(moveMask));
             if (moveMask == 0) return false; // no enemies nearby
+        }
 
+        Profiler.push();
+        precomp();
+        Profiler.pop("precomp", 3500);
+
+        if (rc.getCarrying() != null) {
             Profiler.push();
-            precomp();
-            Profiler.pop("precomp", 3500);
+            boolean tryThrowRes = TryThrow.run();
+            Profiler.pop("try throw", 1000);
+            if (tryThrowRes) return true;
         }
 
         Profiler.push();
@@ -173,6 +178,7 @@ public class CombatStrategy extends Strategy {
         if (tryTrapRes) return true;
         return false;
     }
+
 
     static boolean canPerformMoves(Direction moveDir, Direction facing) throws GameActionException {
         return CombatCommon.canPerformMoves(moveDir, facing);

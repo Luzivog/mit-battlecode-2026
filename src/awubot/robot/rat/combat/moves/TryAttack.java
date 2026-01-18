@@ -705,9 +705,9 @@ public final class TryAttack {
 
     public static boolean miniRun() throws GameActionException {
         if (!rc.isActionReady()) return false;
-        for (RobotInfo ri : rc.senseNearbyRobots(2)) {
-            if (ri.getTeam() == team) continue;
-            if (!myLoc.isAdjacentTo(ri.location)) continue;
+        for (int i = 0; i < RobotTracker.numEnemies && i < 2; i++) {
+            RobotInfo ri = RobotTracker.sortedEnemies[i];
+            if (chebyshevDistance(myLoc, ri) > 1) break;
             attack(ri);
             println("!!!!!!!!!!!!!!mini attacked!!");
             return true;

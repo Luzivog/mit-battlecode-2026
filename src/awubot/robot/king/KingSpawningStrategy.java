@@ -11,7 +11,7 @@ import awubot.RobotTracker;
 public class KingSpawningStrategy extends Strategy {
     @Override
     public boolean runTick() throws GameActionException {
-        var thresh = Math.min(rc.getGlobalCheese() / 10 + 10, 40);
+        var thresh = Math.min(rc.getGlobalCheese() / 25 + 10, 40);
         if (RobotTracker.numCats > 0 && RobotTracker.numAllies == 0) {
             thresh = 50;
         }

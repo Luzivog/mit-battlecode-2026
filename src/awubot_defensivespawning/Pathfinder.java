@@ -119,7 +119,7 @@ class BugnavInstance {
                 if (!path14.equals(loc)) {
                     if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
                         indicate("loop detected");
-                        System.out.println("loop detected");
+                        println("loop detected");
                         givenUp = true;
                     }
                     vis.add(loc);
@@ -131,7 +131,7 @@ class BugnavInstance {
                 if (!path0.equals(loc)) {
                     if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
                         indicate("loop detected");
-                        System.out.println("loop detected");
+                        println("loop detected");
                         givenUp = true;
                     }
                     vis.add(loc);
@@ -143,7 +143,7 @@ class BugnavInstance {
                 if (!path1.equals(loc)) {
                     if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
                         indicate("loop detected");
-                        System.out.println("loop detected");
+                        println("loop detected");
                         givenUp = true;
                     }
                     vis.add(loc);
@@ -155,7 +155,7 @@ class BugnavInstance {
                 if (!path2.equals(loc)) {
                     if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
                         indicate("loop detected");
-                        System.out.println("loop detected");
+                        println("loop detected");
                         givenUp = true;
                     }
                     vis.add(loc);
@@ -167,7 +167,7 @@ class BugnavInstance {
                 if (!path3.equals(loc)) {
                     if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
                         indicate("loop detected");
-                        System.out.println("loop detected");
+                        println("loop detected");
                         givenUp = true;
                     }
                     vis.add(loc);
@@ -179,7 +179,7 @@ class BugnavInstance {
                 if (!path4.equals(loc)) {
                     if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
                         indicate("loop detected");
-                        System.out.println("loop detected");
+                        println("loop detected");
                         givenUp = true;
                     }
                     vis.add(loc);
@@ -191,7 +191,7 @@ class BugnavInstance {
                 if (!path5.equals(loc)) {
                     if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
                         indicate("loop detected");
-                        System.out.println("loop detected");
+                        println("loop detected");
                         givenUp = true;
                     }
                     vis.add(loc);
@@ -203,7 +203,7 @@ class BugnavInstance {
                 if (!path6.equals(loc)) {
                     if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
                         indicate("loop detected");
-                        System.out.println("loop detected");
+                        println("loop detected");
                         givenUp = true;
                     }
                     vis.add(loc);
@@ -215,7 +215,7 @@ class BugnavInstance {
                 if (!path7.equals(loc)) {
                     if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
                         indicate("loop detected");
-                        System.out.println("loop detected");
+                        println("loop detected");
                         givenUp = true;
                     }
                     vis.add(loc);
@@ -227,7 +227,7 @@ class BugnavInstance {
                 if (!path8.equals(loc)) {
                     if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
                         indicate("loop detected");
-                        System.out.println("loop detected");
+                        println("loop detected");
                         givenUp = true;
                     }
                     vis.add(loc);
@@ -239,7 +239,7 @@ class BugnavInstance {
                 if (!path9.equals(loc)) {
                     if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
                         indicate("loop detected");
-                        System.out.println("loop detected");
+                        println("loop detected");
                         givenUp = true;
                     }
                     vis.add(loc);
@@ -251,7 +251,7 @@ class BugnavInstance {
                 if (!path10.equals(loc)) {
                     if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
                         indicate("loop detected");
-                        System.out.println("loop detected");
+                        println("loop detected");
                         givenUp = true;
                     }
                     vis.add(loc);
@@ -263,7 +263,7 @@ class BugnavInstance {
                 if (!path11.equals(loc)) {
                     if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
                         indicate("loop detected");
-                        System.out.println("loop detected");
+                        println("loop detected");
                         givenUp = true;
                     }
                     vis.add(loc);
@@ -275,7 +275,7 @@ class BugnavInstance {
                 if (!path12.equals(loc)) {
                     if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
                         indicate("loop detected");
-                        System.out.println("loop detected");
+                        println("loop detected");
                         givenUp = true;
                     }
                     vis.add(loc);
@@ -287,7 +287,7 @@ class BugnavInstance {
                 if (!path13.equals(loc)) {
                     if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
                         indicate("loop detected");
-                        System.out.println("loop detected");
+                        println("loop detected");
                         givenUp = true;
                     }
                     vis.add(loc);
@@ -1285,7 +1285,7 @@ class BugnavInstance {
             }
         }
         tryDir = tryDir.rotateLeft();
-        System.out.println("no valid move found from " + pos);
+        println("no valid move found from " + pos);
         return false;
     }
 
@@ -1705,7 +1705,7 @@ class BugnavInstance {
             }
         }
         tryDir = tryDir.rotateRight();
-        System.out.println("no valid move found from " + pos);
+        println("no valid move found from " + pos);
         return false;
     }
 
@@ -1927,7 +1927,7 @@ public class Pathfinder {
             reps++;
             if(reps >= 5) {
                 indicate("stuck, resetting bug");
-                System.out.println("stuck, resetting bug");
+                println("stuck, resetting bug");
                 bug.clearPath();
                 bug.advance();
                 lastBugPos = lastLoc = new MapLocation(-1, -1);
@@ -6658,7 +6658,7 @@ public class Pathfinder {
         // Profiler.end("bfs iteration");
         Profiler.end("bfs");
 
-        System.out.println("fallback when bfs can't find path");
+        println("fallback when bfs can't find path");
         indicate("fallback when bfs can't find path");
 
         // move in a random direction (to make way for any allies blocking us)

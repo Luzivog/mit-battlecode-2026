@@ -52,7 +52,7 @@ public class RobotPlayer {
                 GlobalArray.postTick();
                 Game.postTick();
             } catch (Exception e) {
-                e.printStackTrace();
+                if (!Game.DISABLE_OUTPUT) e.printStackTrace();
                 // rc.resign();
             } finally {
                 if (time != rc.getRoundNum()) {

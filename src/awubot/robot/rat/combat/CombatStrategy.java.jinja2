@@ -146,32 +146,32 @@ public class CombatStrategy extends Strategy {
     private boolean _runTick() throws GameActionException {
         if (rc.isBeingCarried() || rc.isBeingThrown()) return false;
 
-        Profiler.push();
-        sourceCnt = 0;
-        for (int i = 0; i < RobotTracker.numEnemies; i++) {
-            if (shouldFight(RobotTracker.sortedEnemies[i])) {
-                sources[sourceCnt++] = RobotTracker.sortedEnemies[i].location;
-            }
-        }
-        for (int i = 0; i < RobotTracker.numCats; i++) {
-            if (shouldFight(RobotTracker.sortedCats[i])) {
-                sources[sourceCnt++] = RobotTracker.sortedCats[i].location;
-            }
-        }
-        for (int i = 0; i < sourceCnt; i++) {
-            indicate("combat source prep: " + sources[i]);
-        }
-        moveMask = Pathfinder.multisourceBfs(sources, sourceCnt);
-        Profiler.pop("combat bfs");
-        indicate("MOVEMASK: " + Integer.toBinaryString(moveMask));
-        if (moveMask == 0) return false; // no enemies nearby
-
-        Profiler.push();
-        precomp();
-        Profiler.pop("precomp", 3500);
-
         if (rc.getCarrying() != null) {
             return TryThrow.run();
+        } else {
+            Profiler.push();
+            sourceCnt = 0;
+            for (int i = 0; i < RobotTracker.numEnemies; i++) {
+                if (shouldFight(RobotTracker.sortedEnemies[i])) {
+                    sources[sourceCnt++] = RobotTracker.sortedEnemies[i].location;
+                }
+            }
+            for (int i = 0; i < RobotTracker.numCats; i++) {
+                if (shouldFight(RobotTracker.sortedCats[i])) {
+                    sources[sourceCnt++] = RobotTracker.sortedCats[i].location;
+                }
+            }
+            for (int i = 0; i < sourceCnt; i++) {
+                indicate("combat source prep: " + sources[i]);
+            }
+            moveMask = Pathfinder.multisourceBfs(sources, sourceCnt);
+            Profiler.pop("combat bfs");
+            indicate("MOVEMASK: " + Integer.toBinaryString(moveMask));
+            if (moveMask == 0) return false; // no enemies nearby
+
+            Profiler.push();
+            precomp();
+            Profiler.pop("precomp", 3500);
         }
 
         Profiler.push();

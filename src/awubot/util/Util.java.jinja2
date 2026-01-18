@@ -6,6 +6,7 @@ import static awubot.Game.*;
 import java.util.*;
 
 import awubot.CellTracker;
+import awubot.Game;
 
 import static java.lang.Math.*;
 
@@ -41,6 +42,7 @@ public class Util {
     };
 
     public static void println(Object... os) {
+        if (Game.DISABLE_OUTPUT) return;
         StringBuilder sb = new StringBuilder();
         for (Object obj : os) {
             sb.append(obj.toString());

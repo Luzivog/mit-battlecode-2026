@@ -10,12 +10,14 @@ import battlecode.common.Team;
 import battlecode.common.UnitType;
 import static awubot.util.Util.*;
 
-import awu_old_naman.util.string.FastIndexedIntSet;
+import awubot.util.string.FastIndexedIntSet;
 import awubot.comms.GlobalArray;
 import awubot.util.Profiler;
 import awubot.util.Util;
 
 public class Game {
+    public static boolean DISABLE_OUTPUT = true;
+
     public static RobotController rc;
     public static int mapWidth, mapHeight;
 

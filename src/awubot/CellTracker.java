@@ -98,7 +98,7 @@ public class CellTracker {
     static long seen58;
     static long seen59;
     public static boolean isSeen(MapLocation loc) {
-        if (loc.x < 0 || loc.x >= mapWidth) return true;
+        if(!rc.onTheMap(loc)) return true;
         switch(loc.y) {
             case 0 -> {
                 return (seen0 & (1l << loc.x)) != 0;
@@ -281,12 +281,12 @@ public class CellTracker {
                 return (seen59 & (1l << loc.x)) != 0;
             }
             default -> {
-                return true;
+                return false;
             }
         }
     }
     public static boolean isSeen(int x, int y) {
-        if (x < 0 || x >= mapWidth) return true;
+        if (x < 0 || x >= mapWidth || y >= mapHeight) return true;
         switch(y) {
             case 0 -> {
                 return (seen0 & (1l << x)) != 0;
@@ -534,7 +534,6 @@ public class CellTracker {
     static long passable58;
     static long passable59;
     public static boolean isPassable(MapLocation loc) {
-        if (loc.x < 0 || loc.x >= mapWidth) return false;
         switch(loc.y) {
             case 0 -> {
                 return (passable0 & (1l << loc.x)) != 0;
@@ -722,7 +721,6 @@ public class CellTracker {
         }
     }
     public static boolean isPassable(int x, int y) {
-        if (x < 0 || x >= mapWidth) return false;
         switch(y) {
             case 0 -> {
                 return (passable0 & (1l << x)) != 0;
@@ -970,7 +968,6 @@ public class CellTracker {
     static long dirt58;
     static long dirt59;
     public static boolean isDirt(MapLocation loc) {
-        if (loc.x < 0 || loc.x >= mapWidth) return false;
         switch(loc.y) {
             case 0 -> {
                 return (dirt0 & (1l << loc.x)) != 0;
@@ -1158,7 +1155,6 @@ public class CellTracker {
         }
     }
     public static boolean isDirt(int x, int y) {
-        if (x < 0 || x >= mapWidth) return false;
         switch(y) {
             case 0 -> {
                 return (dirt0 & (1l << x)) != 0;

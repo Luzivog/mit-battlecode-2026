@@ -43,9 +43,7 @@ public class CellTracker {
     {% endfor %}
     public static boolean is{{capitalise(mask)}}(MapLocation loc) {
         {% if mask == "seen" %}
-        if (loc.x < 0 || loc.x >= mapWidth) return true;
-        {% else %}
-        if (loc.x < 0 || loc.x >= mapWidth) return false;
+        if(!rc.onTheMap(loc)) return true;
         {% endif %}
         switch(loc.y) {
             {% for i in range(MAX_MAP_SIZE) %}
@@ -54,19 +52,13 @@ public class CellTracker {
             }
             {% endfor %}
             default -> {
-                {% if mask == "seen" %}
-                return true;
-                {% else %}
                 return false;
-                {% endif %}
             }
         }
     }
     public static boolean is{{capitalise(mask)}}(int x, int y) {
         {% if mask == "seen" %}
-        if (x < 0 || x >= mapWidth) return true;
-        {% else %}
-        if (x < 0 || x >= mapWidth) return false;
+        if (x < 0 || x >= mapWidth || y >= mapHeight) return true;
         {% endif %}
         switch(y) {
             {% for i in range(MAX_MAP_SIZE) %}

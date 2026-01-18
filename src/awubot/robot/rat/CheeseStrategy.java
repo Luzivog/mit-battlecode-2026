@@ -19,6 +19,7 @@ public class CheeseStrategy extends Strategy {
         refreshCheeseTarget();
         if(cheeseTarget == null) return false;
         lastSeenCheese = rc.getRoundNum();
+        // TODO: handle the edge case when we're already on the cheese
         if(!traverseStrategy.runTick()) {
             traverseStrategy = null;
             cheeseTarget = null;

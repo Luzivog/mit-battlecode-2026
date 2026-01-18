@@ -6701,71 +6701,52 @@ public class Pathfinder {
         }
         var localPassable0 = CellTracker.localPassable0 & ~CellTracker.localDirt0;
         var localPassable1 = CellTracker.localPassable1 & ~CellTracker.localDirt1;
+        if(time >= 20 && rc.getID() == 10790) {
+            indicatorString = "";
+            CellTracker.printLocalMask(reach0, reach1);
+            Clock.yield();
+        }
         if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
             int res = 0;
             if(
                (reach1 & (1l << 10))
                != 0) {
-                var nextLoc = myLoc.add(Direction.NORTH);
-                if(rc.canMove(Direction.NORTH)) {
-                    res |= 1;
-                }
+                res |= 1;
             }
             if(
                (reach1 & (1l << 11))
                != 0) {
-                var nextLoc = myLoc.add(Direction.NORTHEAST);
-                if(rc.canMove(Direction.NORTHEAST)) {
-                    res |= 2;
-                }
+                res |= 2;
             }
             if(
                (reach1 & (1l << 0))
                != 0) {
-                var nextLoc = myLoc.add(Direction.EAST);
-                if(rc.canMove(Direction.EAST)) {
-                    res |= 4;
-                }
+                res |= 4;
             }
             if(
                (reach0 & (1l << 50))
                != 0) {
-                var nextLoc = myLoc.add(Direction.SOUTHEAST);
-                if(rc.canMove(Direction.SOUTHEAST)) {
-                    res |= 8;
-                }
+                res |= 8;
             }
             if(
                (reach0 & (1l << 49))
                != 0) {
-                var nextLoc = myLoc.add(Direction.SOUTH);
-                if(rc.canMove(Direction.SOUTH)) {
-                    res |= 16;
-                }
+                res |= 16;
             }
             if(
                (reach0 & (1l << 48))
                != 0) {
-                var nextLoc = myLoc.add(Direction.SOUTHWEST);
-                if(rc.canMove(Direction.SOUTHWEST)) {
-                    res |= 32;
-                }
+                res |= 32;
             }
             if(
                (reach0 & (1l << 59))
                != 0) {
-                var nextLoc = myLoc.add(Direction.WEST);
-                if(rc.canMove(Direction.WEST)) {
-                    res |= 64;
-                }
+                res |= 64;
             }
             if(
                (reach1 & (1l << 9))
                != 0) {
-                var nextLoc = myLoc.add(Direction.NORTHWEST);
-                if(rc.canMove(Direction.NORTHWEST)) {
-                    res |= 128;
-                }
+                res |= 128;
             }
             return res;
         }
@@ -6782,71 +6763,52 @@ public class Pathfinder {
     reach0 &= localPassable0;
     reach1 &= localPassable1;
 
+        if(time >= 20 && rc.getID() == 10790) {
+            indicatorString = "";
+            CellTracker.printLocalMask(reach0, reach1);
+            Clock.yield();
+        }
         if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
             int res = 0;
             if(
                (reach1 & (1l << 10))
                != 0) {
-                var nextLoc = myLoc.add(Direction.NORTH);
-                if(rc.canMove(Direction.NORTH)) {
-                    res |= 1;
-                }
+                res |= 1;
             }
             if(
                (reach1 & (1l << 11))
                != 0) {
-                var nextLoc = myLoc.add(Direction.NORTHEAST);
-                if(rc.canMove(Direction.NORTHEAST)) {
-                    res |= 2;
-                }
+                res |= 2;
             }
             if(
                (reach1 & (1l << 0))
                != 0) {
-                var nextLoc = myLoc.add(Direction.EAST);
-                if(rc.canMove(Direction.EAST)) {
-                    res |= 4;
-                }
+                res |= 4;
             }
             if(
                (reach0 & (1l << 50))
                != 0) {
-                var nextLoc = myLoc.add(Direction.SOUTHEAST);
-                if(rc.canMove(Direction.SOUTHEAST)) {
-                    res |= 8;
-                }
+                res |= 8;
             }
             if(
                (reach0 & (1l << 49))
                != 0) {
-                var nextLoc = myLoc.add(Direction.SOUTH);
-                if(rc.canMove(Direction.SOUTH)) {
-                    res |= 16;
-                }
+                res |= 16;
             }
             if(
                (reach0 & (1l << 48))
                != 0) {
-                var nextLoc = myLoc.add(Direction.SOUTHWEST);
-                if(rc.canMove(Direction.SOUTHWEST)) {
-                    res |= 32;
-                }
+                res |= 32;
             }
             if(
                (reach0 & (1l << 59))
                != 0) {
-                var nextLoc = myLoc.add(Direction.WEST);
-                if(rc.canMove(Direction.WEST)) {
-                    res |= 64;
-                }
+                res |= 64;
             }
             if(
                (reach1 & (1l << 9))
                != 0) {
-                var nextLoc = myLoc.add(Direction.NORTHWEST);
-                if(rc.canMove(Direction.NORTHWEST)) {
-                    res |= 128;
-                }
+                res |= 128;
             }
             return res;
         }
@@ -6863,71 +6825,52 @@ public class Pathfinder {
     reach0 &= localPassable0;
     reach1 &= localPassable1;
 
+        if(time >= 20 && rc.getID() == 10790) {
+            indicatorString = "";
+            CellTracker.printLocalMask(reach0, reach1);
+            Clock.yield();
+        }
         if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
             int res = 0;
             if(
                (reach1 & (1l << 10))
                != 0) {
-                var nextLoc = myLoc.add(Direction.NORTH);
-                if(rc.canMove(Direction.NORTH)) {
-                    res |= 1;
-                }
+                res |= 1;
             }
             if(
                (reach1 & (1l << 11))
                != 0) {
-                var nextLoc = myLoc.add(Direction.NORTHEAST);
-                if(rc.canMove(Direction.NORTHEAST)) {
-                    res |= 2;
-                }
+                res |= 2;
             }
             if(
                (reach1 & (1l << 0))
                != 0) {
-                var nextLoc = myLoc.add(Direction.EAST);
-                if(rc.canMove(Direction.EAST)) {
-                    res |= 4;
-                }
+                res |= 4;
             }
             if(
                (reach0 & (1l << 50))
                != 0) {
-                var nextLoc = myLoc.add(Direction.SOUTHEAST);
-                if(rc.canMove(Direction.SOUTHEAST)) {
-                    res |= 8;
-                }
+                res |= 8;
             }
             if(
                (reach0 & (1l << 49))
                != 0) {
-                var nextLoc = myLoc.add(Direction.SOUTH);
-                if(rc.canMove(Direction.SOUTH)) {
-                    res |= 16;
-                }
+                res |= 16;
             }
             if(
                (reach0 & (1l << 48))
                != 0) {
-                var nextLoc = myLoc.add(Direction.SOUTHWEST);
-                if(rc.canMove(Direction.SOUTHWEST)) {
-                    res |= 32;
-                }
+                res |= 32;
             }
             if(
                (reach0 & (1l << 59))
                != 0) {
-                var nextLoc = myLoc.add(Direction.WEST);
-                if(rc.canMove(Direction.WEST)) {
-                    res |= 64;
-                }
+                res |= 64;
             }
             if(
                (reach1 & (1l << 9))
                != 0) {
-                var nextLoc = myLoc.add(Direction.NORTHWEST);
-                if(rc.canMove(Direction.NORTHWEST)) {
-                    res |= 128;
-                }
+                res |= 128;
             }
             return res;
         }
@@ -6944,71 +6887,52 @@ public class Pathfinder {
     reach0 &= localPassable0;
     reach1 &= localPassable1;
 
+        if(time >= 20 && rc.getID() == 10790) {
+            indicatorString = "";
+            CellTracker.printLocalMask(reach0, reach1);
+            Clock.yield();
+        }
         if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
             int res = 0;
             if(
                (reach1 & (1l << 10))
                != 0) {
-                var nextLoc = myLoc.add(Direction.NORTH);
-                if(rc.canMove(Direction.NORTH)) {
-                    res |= 1;
-                }
+                res |= 1;
             }
             if(
                (reach1 & (1l << 11))
                != 0) {
-                var nextLoc = myLoc.add(Direction.NORTHEAST);
-                if(rc.canMove(Direction.NORTHEAST)) {
-                    res |= 2;
-                }
+                res |= 2;
             }
             if(
                (reach1 & (1l << 0))
                != 0) {
-                var nextLoc = myLoc.add(Direction.EAST);
-                if(rc.canMove(Direction.EAST)) {
-                    res |= 4;
-                }
+                res |= 4;
             }
             if(
                (reach0 & (1l << 50))
                != 0) {
-                var nextLoc = myLoc.add(Direction.SOUTHEAST);
-                if(rc.canMove(Direction.SOUTHEAST)) {
-                    res |= 8;
-                }
+                res |= 8;
             }
             if(
                (reach0 & (1l << 49))
                != 0) {
-                var nextLoc = myLoc.add(Direction.SOUTH);
-                if(rc.canMove(Direction.SOUTH)) {
-                    res |= 16;
-                }
+                res |= 16;
             }
             if(
                (reach0 & (1l << 48))
                != 0) {
-                var nextLoc = myLoc.add(Direction.SOUTHWEST);
-                if(rc.canMove(Direction.SOUTHWEST)) {
-                    res |= 32;
-                }
+                res |= 32;
             }
             if(
                (reach0 & (1l << 59))
                != 0) {
-                var nextLoc = myLoc.add(Direction.WEST);
-                if(rc.canMove(Direction.WEST)) {
-                    res |= 64;
-                }
+                res |= 64;
             }
             if(
                (reach1 & (1l << 9))
                != 0) {
-                var nextLoc = myLoc.add(Direction.NORTHWEST);
-                if(rc.canMove(Direction.NORTHWEST)) {
-                    res |= 128;
-                }
+                res |= 128;
             }
             return res;
         }
@@ -7025,71 +6949,52 @@ public class Pathfinder {
     reach0 &= localPassable0;
     reach1 &= localPassable1;
 
+        if(time >= 20 && rc.getID() == 10790) {
+            indicatorString = "";
+            CellTracker.printLocalMask(reach0, reach1);
+            Clock.yield();
+        }
         if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
             int res = 0;
             if(
                (reach1 & (1l << 10))
                != 0) {
-                var nextLoc = myLoc.add(Direction.NORTH);
-                if(rc.canMove(Direction.NORTH)) {
-                    res |= 1;
-                }
+                res |= 1;
             }
             if(
                (reach1 & (1l << 11))
                != 0) {
-                var nextLoc = myLoc.add(Direction.NORTHEAST);
-                if(rc.canMove(Direction.NORTHEAST)) {
-                    res |= 2;
-                }
+                res |= 2;
             }
             if(
                (reach1 & (1l << 0))
                != 0) {
-                var nextLoc = myLoc.add(Direction.EAST);
-                if(rc.canMove(Direction.EAST)) {
-                    res |= 4;
-                }
+                res |= 4;
             }
             if(
                (reach0 & (1l << 50))
                != 0) {
-                var nextLoc = myLoc.add(Direction.SOUTHEAST);
-                if(rc.canMove(Direction.SOUTHEAST)) {
-                    res |= 8;
-                }
+                res |= 8;
             }
             if(
                (reach0 & (1l << 49))
                != 0) {
-                var nextLoc = myLoc.add(Direction.SOUTH);
-                if(rc.canMove(Direction.SOUTH)) {
-                    res |= 16;
-                }
+                res |= 16;
             }
             if(
                (reach0 & (1l << 48))
                != 0) {
-                var nextLoc = myLoc.add(Direction.SOUTHWEST);
-                if(rc.canMove(Direction.SOUTHWEST)) {
-                    res |= 32;
-                }
+                res |= 32;
             }
             if(
                (reach0 & (1l << 59))
                != 0) {
-                var nextLoc = myLoc.add(Direction.WEST);
-                if(rc.canMove(Direction.WEST)) {
-                    res |= 64;
-                }
+                res |= 64;
             }
             if(
                (reach1 & (1l << 9))
                != 0) {
-                var nextLoc = myLoc.add(Direction.NORTHWEST);
-                if(rc.canMove(Direction.NORTHWEST)) {
-                    res |= 128;
-                }
+                res |= 128;
             }
             return res;
         }
@@ -7106,71 +7011,52 @@ public class Pathfinder {
     reach0 &= localPassable0;
     reach1 &= localPassable1;
 
+        if(time >= 20 && rc.getID() == 10790) {
+            indicatorString = "";
+            CellTracker.printLocalMask(reach0, reach1);
+            Clock.yield();
+        }
         if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
             int res = 0;
             if(
                (reach1 & (1l << 10))
                != 0) {
-                var nextLoc = myLoc.add(Direction.NORTH);
-                if(rc.canMove(Direction.NORTH)) {
-                    res |= 1;
-                }
+                res |= 1;
             }
             if(
                (reach1 & (1l << 11))
                != 0) {
-                var nextLoc = myLoc.add(Direction.NORTHEAST);
-                if(rc.canMove(Direction.NORTHEAST)) {
-                    res |= 2;
-                }
+                res |= 2;
             }
             if(
                (reach1 & (1l << 0))
                != 0) {
-                var nextLoc = myLoc.add(Direction.EAST);
-                if(rc.canMove(Direction.EAST)) {
-                    res |= 4;
-                }
+                res |= 4;
             }
             if(
                (reach0 & (1l << 50))
                != 0) {
-                var nextLoc = myLoc.add(Direction.SOUTHEAST);
-                if(rc.canMove(Direction.SOUTHEAST)) {
-                    res |= 8;
-                }
+                res |= 8;
             }
             if(
                (reach0 & (1l << 49))
                != 0) {
-                var nextLoc = myLoc.add(Direction.SOUTH);
-                if(rc.canMove(Direction.SOUTH)) {
-                    res |= 16;
-                }
+                res |= 16;
             }
             if(
                (reach0 & (1l << 48))
                != 0) {
-                var nextLoc = myLoc.add(Direction.SOUTHWEST);
-                if(rc.canMove(Direction.SOUTHWEST)) {
-                    res |= 32;
-                }
+                res |= 32;
             }
             if(
                (reach0 & (1l << 59))
                != 0) {
-                var nextLoc = myLoc.add(Direction.WEST);
-                if(rc.canMove(Direction.WEST)) {
-                    res |= 64;
-                }
+                res |= 64;
             }
             if(
                (reach1 & (1l << 9))
                != 0) {
-                var nextLoc = myLoc.add(Direction.NORTHWEST);
-                if(rc.canMove(Direction.NORTHWEST)) {
-                    res |= 128;
-                }
+                res |= 128;
             }
             return res;
         }
@@ -7187,71 +7073,52 @@ public class Pathfinder {
     reach0 &= localPassable0;
     reach1 &= localPassable1;
 
+        if(time >= 20 && rc.getID() == 10790) {
+            indicatorString = "";
+            CellTracker.printLocalMask(reach0, reach1);
+            Clock.yield();
+        }
         if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
             int res = 0;
             if(
                (reach1 & (1l << 10))
                != 0) {
-                var nextLoc = myLoc.add(Direction.NORTH);
-                if(rc.canMove(Direction.NORTH)) {
-                    res |= 1;
-                }
+                res |= 1;
             }
             if(
                (reach1 & (1l << 11))
                != 0) {
-                var nextLoc = myLoc.add(Direction.NORTHEAST);
-                if(rc.canMove(Direction.NORTHEAST)) {
-                    res |= 2;
-                }
+                res |= 2;
             }
             if(
                (reach1 & (1l << 0))
                != 0) {
-                var nextLoc = myLoc.add(Direction.EAST);
-                if(rc.canMove(Direction.EAST)) {
-                    res |= 4;
-                }
+                res |= 4;
             }
             if(
                (reach0 & (1l << 50))
                != 0) {
-                var nextLoc = myLoc.add(Direction.SOUTHEAST);
-                if(rc.canMove(Direction.SOUTHEAST)) {
-                    res |= 8;
-                }
+                res |= 8;
             }
             if(
                (reach0 & (1l << 49))
                != 0) {
-                var nextLoc = myLoc.add(Direction.SOUTH);
-                if(rc.canMove(Direction.SOUTH)) {
-                    res |= 16;
-                }
+                res |= 16;
             }
             if(
                (reach0 & (1l << 48))
                != 0) {
-                var nextLoc = myLoc.add(Direction.SOUTHWEST);
-                if(rc.canMove(Direction.SOUTHWEST)) {
-                    res |= 32;
-                }
+                res |= 32;
             }
             if(
                (reach0 & (1l << 59))
                != 0) {
-                var nextLoc = myLoc.add(Direction.WEST);
-                if(rc.canMove(Direction.WEST)) {
-                    res |= 64;
-                }
+                res |= 64;
             }
             if(
                (reach1 & (1l << 9))
                != 0) {
-                var nextLoc = myLoc.add(Direction.NORTHWEST);
-                if(rc.canMove(Direction.NORTHWEST)) {
-                    res |= 128;
-                }
+                res |= 128;
             }
             return res;
         }

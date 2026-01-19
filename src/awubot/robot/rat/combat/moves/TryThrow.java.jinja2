@@ -8,6 +8,7 @@ import battlecode.common.UnitType;
 
 import awubot.robot.rat.combat.CombatCommon;
 import awubot.robot.rat.combat.CombatStrategy;
+import awubot.CellTracker;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 import static awubot.robot.rat.BabyRat.*;
@@ -38,7 +39,7 @@ public final class TryThrow {
             moveDir = dir;
             if (moveDir != Direction.CENTER && !rc.canMove(moveDir)) continue;
             newLoc = myLoc.add(moveDir);
-            for (Direction tdir : directions) {
+            for (Direction tdir : relatedDirections(myDir)) {
                 throwDir = tdir;
                 if (!CombatCommon.canPerformMoves(moveDir, throwDir)) continue;
                 throwTarget = newLoc.add(throwDir);
@@ -52,6 +53,7 @@ public final class TryThrow {
                         score += rem * 4;
                         break;
                     }
+                    if (!CellTracker.isSeen(throwTarget)) break;
                     if (rc.canSenseLocation(throwTarget)) {
                         RobotInfo info = rc.senseRobotAtLocation(throwTarget);
                         if (info != null) {
@@ -72,11 +74,9 @@ public final class TryThrow {
                                 }
                             }
                         }
-                        if (!rc.senseMapInfo(throwTarget).isPassable()) {
-                            score += rem * 4;
-                            break;
-                        }
-                    } else {
+                    }
+                    if (CellTracker.isDirt(throwTarget) || !CellTracker.isPassable(throwTarget)) {
+                        score += rem * 4;
                         break;
                     }
                 }

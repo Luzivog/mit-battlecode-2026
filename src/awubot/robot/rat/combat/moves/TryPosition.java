@@ -34,7 +34,7 @@ public final class TryPosition {
         bestScore = -1;
         selectMoves();
         assert(CombatStrategy.performMoves(bestMove, bestFacing));
-        indicate("COMBAT STRAT: POSITION move " + bestMove + " face " + bestFacing);
+        indicate("COMBAT STRAT: POSITION move " + bestMove + " face " + bestFacing + " score " + bestScore);
         return true;
     }
 

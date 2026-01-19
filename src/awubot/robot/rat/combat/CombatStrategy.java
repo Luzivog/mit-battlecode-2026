@@ -18,6 +18,7 @@ import awubot.robot.Strategy;
 import awubot.robot.rat.combat.moves.TryAttack;
 import awubot.robot.rat.combat.moves.TryFight;
 import awubot.robot.rat.combat.moves.TryRatNap;
+import awubot.robot.rat.combat.moves.TryPosition;
 import awubot.robot.rat.combat.moves.TryThrow;
 import awubot.robot.rat.combat.moves.TryTrap;
 import awubot.util.Profiler;
@@ -100,6 +101,7 @@ public class CombatStrategy extends Strategy {
     // idek why this is returning. check if can move anyways after to squeeze out some juice
     private boolean _runTick() throws GameActionException {
         if (rc.isBeingCarried() || rc.isBeingThrown()) return false;
+        println("-- COMBAT STRAT TICK --- starting bytecode count " + Clock.getBytecodeNum() + "\n");
 
         if (rc.getCarrying() == null) {
             Profiler.push();
@@ -114,9 +116,9 @@ public class CombatStrategy extends Strategy {
                     sources[sourceCnt++] = RobotTracker.sortedCats[i].location;
                 }
             }
-            for (int i = 0; i < sourceCnt; i++) {
-                indicate("combat source prep: " + sources[i]);
-            }
+            // for (int i = 0; i < sourceCnt; i++) {
+            //     indicate("combat source prep: " + sources[i]);
+            // }
             moveMask = Pathfinder.multisourceBfs(sources, sourceCnt);
             Profiler.pop("combat bfs");
             indicate("MOVEMASK: " + Integer.toBinaryString(moveMask));
@@ -125,34 +127,38 @@ public class CombatStrategy extends Strategy {
 
         Profiler.push();
         precomp();
-        Profiler.pop("precomp", 3500);
+        Profiler.pop("precomp");
 
         if (rc.getCarrying() != null) {
             Profiler.push();
             boolean tryThrowRes = TryThrow.run();
-            Profiler.pop("try throw", 1000);
+            Profiler.pop("try throw");
             if (tryThrowRes) return true;
+            Profiler.push();
+            boolean tryPositionRes = TryPosition.run();
+            Profiler.pop("try position");
+            if (tryPositionRes) return true;
             return false;
         }
 
         Profiler.push();
         boolean tryRatNapRes = TryRatNap.run();
-        Profiler.pop("try ratnap", 1000);
+        Profiler.pop("try ratnap");
         if (tryRatNapRes) return true;
 
         Profiler.push();
         boolean tryAttackRes = TryAttack.run();
-        Profiler.pop("try attack", 1000);
+        Profiler.pop("try attack");
         if (tryAttackRes) return true;
 
         Profiler.push();
         boolean tryTrapRes = TryTrap.run();
-        Profiler.pop("try trap", 3000);
+        Profiler.pop("try trap");
         if (tryTrapRes) return true;
 
         Profiler.push();
         boolean tryFightRes = TryFight.run();
-        Profiler.pop("try fight", 1000);
+        Profiler.pop("try fight");
         if (tryFightRes) {
             miniTick();
             return true;
@@ -168,7 +174,7 @@ public class CombatStrategy extends Strategy {
     public boolean miniTick() throws GameActionException {
         Profiler.push();
         boolean tryRatNapRes = TryRatNap.miniRun();
-        Profiler.pop("mini ratnap", 300);
+        Profiler.pop("mini ratnap");
         if (tryRatNapRes) return true;
 
         boolean tryAttackRes = TryAttack.miniRun();
@@ -176,7 +182,7 @@ public class CombatStrategy extends Strategy {
 
         Profiler.push();
         boolean tryTrapRes = TryTrap.miniRun();
-        Profiler.pop("mini trap", 300);
+        Profiler.pop("mini trap");
         if (tryTrapRes) return true;
         return false;
     }
@@ -232,7 +238,6 @@ public class CombatStrategy extends Strategy {
     }
 
     public static void computeCellScores() throws GameActionException {
-        Profiler.push();
         sb = new StringBuilder();
         cellScore = new double[9];
         for (int i = 0; i < RobotTracker.numEnemies && i < 3; i++) {
@@ -259,17 +264,15 @@ public class CombatStrategy extends Strategy {
             cellScore[7] += getCellScoreForEnemy(info, Direction.NORTHWEST);
             cellScore[8] += getCellScoreForEnemy(info, Direction.CENTER);
         }
-        Profiler.pop("compute cell scores", 1000);
 
-        StringBuilder indicateSb = new StringBuilder();
+        StringBuilder indicateSb = new StringBuilder("Cell scores:\n");
         for (int dy = 1; dy >= -1; dy--) {
             for (int dx = -1; dx <= 1; dx++) {
-                indicateSb.append(String.format("%6.2f ", cellScore[Util.dirFromDelta(dx, dy).ordinal()]));
-                indicateSb.append(" ");
+                indicateSb.append(String.format("%5.2f ", cellScore[Util.dirFromDelta(dx, dy).ordinal()]));
             }
             indicateSb.append("\n");
         }
-        indicate(sb.toString());
+        indicate(indicateSb.toString());
     }
 
     public static double getCellScoreFor(Direction moveDir, Direction facing, RobotInfo target) throws GameActionException {
@@ -286,14 +289,14 @@ public class CombatStrategy extends Strategy {
     public static double getCellScoreForEnemy(RobotInfo info, Direction moveDir) {
         MapLocation to = myLoc.add(moveDir);
         if (!rc.onTheMap(to)) return 0;
-        int dist = chebyshevDistance(to, info.location);
+        int dist = chebyshevDistance(to, info);
         if (info.getType() == UnitType.CAT) {
             // TODO: implement vision check
             if (dist >= 4 || shouldFight(info)) return 0;
-            else return cacheCellScore(info, moveDir, -40);
+            else return cacheCellScore(info, moveDir, -100);
         }
+        if (dist > 3) return 0;
         MapLocation enemyLoc = info.location;
-        if (dist > 3) return 0; // ignore
         if (info.getType() == UnitType.RAT_KING) {
             if (dist > 2) return 0; // is this correct?
             else return cacheCellScore(info, moveDir, 1);

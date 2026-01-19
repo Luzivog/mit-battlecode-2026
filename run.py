@@ -20,8 +20,8 @@ DIRT_TESTS = "cheesefarm,rift,ZeroDay,pipes,Nofreecheese,sittingducks"
 DEFAULT = ["DefaultSmall", "DefaultMedium", "DefaultLarge", "evileye", "cheeseguardians"]
 SPRINT_1 = ["cheesefarm", "rift", "ZeroDay", "pipes", "Nofreecheese", "wallsofparadis", "dirtpassageway", "trapped", "Meow", "arrows", "starvation", "keepout", "dirtfulcat", "popthecork", "sittingducks", "thunderdome"]
 DEBUG_MAPS = ["pvparena"]
-teamA = "awubot"
-teamB = "awubot_fixratthrowing"
+teamA = "awubot_fixratthrowing"
+teamB = "awubot_fixratthrowing_old"
 # maps = "8cats_big,bigface,breakthewall,Cage,cheesemining_big,cheeseorcat,dangerous,debug_cat_right,diagonalmap,dirt_around_mine,dirtroad"
 # maps = "isolated_cat,isolated_cheese,killcat,killcatormine,maybedonothing,melbournetrain,minewithcat,mixedmaze,nowall_bigbattle_big,nowallnocat"
 # maps = "oneexit_small,realiseuarecooked,roundabout,rush_big,rush_small,segtree,sixseven,small1v1,small_dirtmaze,tunnelbattle_big,tunnelbattle_big_dirtless,veryverysmall"
@@ -31,7 +31,7 @@ maps = DEFAULT + SPRINT_1
 # maps = DEBUG_MAPS
 # maps = ["Cage,colony,FootballField,Islands,PickYourSpawn,Ruins,Sawtooth,Snails,TestTube,Towers,WheresYourShovel"]
 # maps = ["CombatTest2"]
-seeds = [""]
+seeds = [""] * 3
 
 debug = len(maps) == 1 and len(seeds) == 1
 GRADLEW = "gradlew.bat" if os.name == "nt" else "./gradlew"
@@ -437,7 +437,7 @@ if __name__ == "__main__":
     debug = len(maps) == 1 and len(seeds) == 1
 
     # Change this number so it doesn't kill your computer
-    NUM_WORKERS = 8
+    NUM_WORKERS = 3
     params = []
     for seed in seeds:
         # Assign seeds

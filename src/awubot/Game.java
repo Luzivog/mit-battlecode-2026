@@ -50,6 +50,11 @@ public class Game {
     public static boolean isRatKing;
     public static int kingId;
 
+    public static void convertKing() throws GameActionException {
+        isRatKing = true;
+        kingId = GlobalArray.countRatKings();
+    }
+
     public static void init(RobotController rc) throws GameActionException {
         Game.rc = rc;
         mapWidth = rc.getMapWidth();

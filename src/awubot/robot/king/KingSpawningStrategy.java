@@ -7,13 +7,25 @@ import static awubot.Game.*;
 import static awubot.util.Util.*;
 
 import awubot.RobotTracker;
+import awubot.comms.GlobalArray;
 
 public class KingSpawningStrategy extends Strategy {
     private static int numSpawned = 0;
 
     @Override
     public boolean runTick() throws GameActionException {
-        var thresh = Math.min(rc.getGlobalCheese() / 25 + 10, 40);
+
+        int numKings = GlobalArray.countRatKings();
+        int extraPerKing = (rc.getGlobalCheese() / 1000) * numKings;
+        int maxRatCost = 10 + 40 * numKings + extraPerKing;
+        
+        if (rc.getCurrentRatCost() >= maxRatCost) {
+            indicate("at rat limit (" + (numKings * 16) + " rats for " + numKings + " kings)");
+            return true;
+        }
+
+        var thresh = Math.min(rc.getGlobalCheese() / 20 + 10, maxRatCost);
+
         if (RobotTracker.numCats > 0 && RobotTracker.numAllies == 0) {
             thresh = 50;
         }
@@ -21,18 +33,19 @@ public class KingSpawningStrategy extends Strategy {
         // defensive spawning if enemies outnumber allies
         MapLocation target = null;
         var cnt = 0;
-        for(var robot : rc.senseNearbyRobots()) {
-            if(robot.getType() == UnitType.BABY_RAT) {
-                if(robot.getTeam() != team) {
-                    cnt++;
-                    var loc = robot.getLocation();
-                    if(target == null || loc.distanceSquaredTo(myLoc) < target.distanceSquaredTo(myLoc)) {
-                        target = loc;
-                    }
-                } else {
-                    cnt--;
-                }
+        for (int i = 0; i < RobotTracker.numEnemies; i++) {
+            RobotInfo robot = RobotTracker.sortedEnemies[i];
+            if (robot == null || robot.getType() != UnitType.BABY_RAT) continue;
+            cnt++;
+            MapLocation loc = robot.getLocation();
+            if (target == null || loc.distanceSquaredTo(myLoc) < target.distanceSquaredTo(myLoc)) {
+                target = loc;
             }
+        }
+        for (int i = 0; i < RobotTracker.numAllies; i++) {
+            RobotInfo robot = RobotTracker.sortedAllies[i];
+            if (robot == null || robot.getType() != UnitType.BABY_RAT) continue;
+            cnt--;
         }
         if(cnt > 0) thresh += 20;
         if(target == null) target = new MapLocation(mapWidth / 2, mapHeight / 2);

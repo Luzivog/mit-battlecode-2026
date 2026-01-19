@@ -2,6 +2,8 @@ package awubot.robot.king;
 
 import battlecode.common.*;
 import awubot.robot.Strategy;
+import awubot.RobotTracker;
+import awubot.Pathfinder;
 
 import static awubot.robot.king.RatKing.*;
 import static awubot.Game.*;
@@ -10,14 +12,8 @@ import static awubot.util.Util.*;
 public class KingCombatStrategy extends Strategy {
     @Override
     public boolean runTick() throws GameActionException {
-        var nearbyRobots = rc.senseNearbyRobots();
-        var enemy = false;
-        for(var robot : nearbyRobots) {
-            if(robot.team == team) continue;
-            enemy = true;
-            break;
-        }
-        if(!enemy) return false;
+        boolean hasThreat = (RobotTracker.numEnemies + RobotTracker.numCats) > 0;
+        if(!hasThreat) return false;
         if(rc.isMovementReady()) {
             var score0 = 0;
             var score1 = 0;
@@ -27,13 +23,89 @@ public class KingCombatStrategy extends Strategy {
             var score5 = 0;
             var score6 = 0;
             var score7 = 0;
-            for(var robot : nearbyRobots) {
-                if(robot.team == team) continue;
+            for(int idx = 0; idx < RobotTracker.numEnemies; idx++) {
+                var robot = RobotTracker.sortedEnemies[idx];
+                if(robot == null) continue;
                 var weight = switch(robot.type) {
                     case BABY_RAT -> 1;
                     case RAT_KING -> 3;
                     case CAT -> 5;
                 };
+                var dir = myLoc.directionTo(robot.location);
+                switch(dir.ordinal()) {
+                    case 0 -> {
+                        score0           -= weight * 3;
+                        score7 -= weight * 2;
+                        score1 -= weight * 2;
+                        score3 += weight;
+                        score4 += weight;
+                        score5 += weight;
+                    }
+                    case 1 -> {
+                        score1           -= weight * 3;
+                        score0 -= weight * 2;
+                        score2 -= weight * 2;
+                        score4 += weight;
+                        score5 += weight;
+                        score6 += weight;
+                    }
+                    case 2 -> {
+                        score2           -= weight * 3;
+                        score1 -= weight * 2;
+                        score3 -= weight * 2;
+                        score5 += weight;
+                        score6 += weight;
+                        score7 += weight;
+                    }
+                    case 3 -> {
+                        score3           -= weight * 3;
+                        score2 -= weight * 2;
+                        score4 -= weight * 2;
+                        score6 += weight;
+                        score7 += weight;
+                        score0 += weight;
+                    }
+                    case 4 -> {
+                        score4           -= weight * 3;
+                        score3 -= weight * 2;
+                        score5 -= weight * 2;
+                        score7 += weight;
+                        score0 += weight;
+                        score1 += weight;
+                    }
+                    case 5 -> {
+                        score5           -= weight * 3;
+                        score4 -= weight * 2;
+                        score6 -= weight * 2;
+                        score0 += weight;
+                        score1 += weight;
+                        score2 += weight;
+                    }
+                    case 6 -> {
+                        score6           -= weight * 3;
+                        score5 -= weight * 2;
+                        score7 -= weight * 2;
+                        score1 += weight;
+                        score2 += weight;
+                        score3 += weight;
+                    }
+                    case 7 -> {
+                        score7           -= weight * 3;
+                        score6 -= weight * 2;
+                        score0 -= weight * 2;
+                        score2 += weight;
+                        score3 += weight;
+                        score4 += weight;
+                    }
+                    default -> {
+                        assert false : "unexpected direction";
+                    }
+                }
+            }
+            for(int idx = 0; idx < RobotTracker.numCats; idx++) {
+                var robot = RobotTracker.sortedCats[idx];
+                if(robot == null) continue;
+                var weight = 5;
                 var dir = myLoc.directionTo(robot.location);
                 switch(dir.ordinal()) {
                     case 0 -> {
@@ -140,12 +212,15 @@ public class KingCombatStrategy extends Strategy {
                 move = Direction.NORTHWEST;
             }
             indicate("evading");
-            if(move != Direction.CENTER) rawMove(move);
+            if(move != Direction.CENTER) Pathfinder.makeMove(move);
         }
         if(rc.isActionReady()) {
             RobotInfo best = null;
             int bestHp = 1000000000;
-            for(var robot : rc.senseNearbyRobots(8, team.opponent())) {
+            for(int idx = 0; idx < RobotTracker.numEnemies; idx++) {
+                var robot = RobotTracker.sortedEnemies[idx];
+                if(robot == null) continue;
+                if(robot.location.distanceSquaredTo(myLoc) > 8) continue;
                 if(robot.health < bestHp) {
                     best = robot;
                     bestHp = robot.health;

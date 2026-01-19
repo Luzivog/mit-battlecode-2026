@@ -5,18 +5,21 @@ import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
 import battlecode.common.RobotInfo;
 import battlecode.common.UnitType;
+import awubot.Game;
 import awubot.Pathfinder;
+import awubot.RobotPlayer;
 import awubot.RobotTracker;
 import awubot.comms.GlobalArray;
 import awubot.robot.Strategy;
 import static awubot.Game.*;
+import static awubot.util.Util.indicate;
 
 // TODO: refactor this (AI slop)
 
 public class FormationStrategy extends Strategy {
-    private static final int FORMATION_TIMEOUT = 45;
-    private static final int MIN_ALLIES_FOR_FORMATION = 6;
-    private static final int MAX_DIST_TO_JOIN = 144;
+    private static final int FORMATION_TIMEOUT = 100;
+    private static final int MIN_ALLIES_FOR_FORMATION = 7;
+    private static final int MAX_DIST_TO_JOIN = 625; 
 
     private MapLocation formationTarget = null;
     private int formationStartTurn = 0;
@@ -35,14 +38,23 @@ public class FormationStrategy extends Strategy {
 
     @Override
     public boolean runTick() throws GameActionException {
-        if(isComplete()) return false;
         tryActivate();
+        if(isComplete()) return false;
+
+        indicate("FORM: active, target=" + formationTarget + " allies=" + RobotTracker.allyCount + " dist=" + myLoc.distanceSquaredTo(formationTarget));
+
         if (rc.canBecomeRatKing()) {
+            indicate("FORM: BECOMING KING!");
             rc.becomeRatKing();
+            Game.convertKing();
+            GlobalArray.writeRatKing();
+            GlobalArray.clearFormation();  
+            RobotPlayer.resetHasInitialisedRobot();
             return true;
         }
         if (RobotTracker.allyCount >= MIN_ALLIES_FOR_FORMATION) {
             if (myLoc.distanceSquaredTo(formationTarget) <= 2) {
+                indicate("FORM: trying to move to centre");
                 tryMoveToCentre();
                 return true;
             }
@@ -53,15 +65,30 @@ public class FormationStrategy extends Strategy {
 
     public boolean tryActivate() throws GameActionException {
         MapLocation target = GlobalArray.getFormationTarget();
-        if (target == null) return false;
+        if (target == null) {
+            if (active) {
+                active = false;
+                formationTarget = null;
+            }
+            return false;
+        }
 
         MapLocation mine = GlobalArray.getFormationMine();
-        if (mine == null) return false;
+        if (mine == null) {
+            if (active) {
+                active = false;
+                formationTarget = null;
+            }
+            return false;
+        }
+
+        formationTarget = target;
+
+        if (active) return true;
 
         int distToMine = myLoc.distanceSquaredTo(mine);
         if (distToMine > MAX_DIST_TO_JOIN) return false;
 
-        formationTarget = target;
         formationStartTurn = time;
         active = true;
         return true;

@@ -28,7 +28,8 @@ public class MinerStrategy extends Strategy {
 
     @Override
     public boolean runTick() throws GameActionException {
-        if(tryStrategy(formationStrategy)) return true;
+        // RECOMMENT TO ENABLE
+        //if(tryStrategy(formationStrategy)) return true;
         if(rc.getRawCheese() == 0) {
             goHomeStrategy = null;
         } else if(goHomeStrategy == null && shouldGoHome()) {

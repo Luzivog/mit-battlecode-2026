@@ -4,6 +4,7 @@ import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
 import battlecode.common.RobotInfo;
 import battlecode.common.UnitType;
+import awubot.RobotTracker;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 
@@ -44,30 +45,35 @@ public class ThreatContext {
     public void scanThreats() throws GameActionException {
         reset();
 
-        RobotInfo[] myRobots = rc.senseNearbyRobots();
-        for (RobotInfo myRobot : myRobots) {
-            int myDistSq = myLoc.distanceSquaredTo(myRobot.location);
+        for (int i = 0; i < RobotTracker.numCats && i < RobotTracker.sortedCats.length; i++) {
+            RobotInfo myCat = RobotTracker.sortedCats[i];
+            if (myCat == null) continue;
 
-            if (myRobot.getType() == UnitType.CAT) {
-                if (theTrackedCatCount < MAX_TRACKED_CATS) {
-                    theTrackedCats[theTrackedCatCount] = myRobot;
-                    theTrackedCatCount++;
+            int myDistSq = myLoc.distanceSquaredTo(myCat.location);
+            if (theTrackedCatCount < MAX_TRACKED_CATS) {
+                theTrackedCats[theTrackedCatCount] = myCat;
+                theTrackedCatCount++;
+            }
+            if (myDistSq < theCatDistSq) {
+                theCatDistSq = myDistSq;
+                theNearestCat = myCat;
+            }
+        }
+
+        for (int i = 0; i < RobotTracker.numEnemies && i < RobotTracker.sortedEnemies.length; i++) {
+            RobotInfo myEnemy = RobotTracker.sortedEnemies[i];
+            if (myEnemy == null) continue;
+
+            int myDistSq = myLoc.distanceSquaredTo(myEnemy.location);
+            if (myEnemy.getType() == UnitType.RAT_KING) {
+                if (myDistSq < theEnemyRatKingDistSq) {
+                    theEnemyRatKingDistSq = myDistSq;
+                    theNearestEnemyRatKing = myEnemy;
                 }
-                if (myDistSq < theCatDistSq) {
-                    theCatDistSq = myDistSq;
-                    theNearestCat = myRobot;
-                }
-            } else if (myRobot.getTeam() != rc.getTeam()) {
-                if (myRobot.getType() == UnitType.RAT_KING) {
-                    if (myDistSq < theEnemyRatKingDistSq) {
-                        theEnemyRatKingDistSq = myDistSq;
-                        theNearestEnemyRatKing = myRobot;
-                    }
-                } else if (myRobot.getType() == UnitType.BABY_RAT) {
-                    if (myDistSq < theEnemyRatDistSq) {
-                        theEnemyRatDistSq = myDistSq;
-                        theNearestEnemyRat = myRobot;
-                    }
+            } else if (myEnemy.getType() == UnitType.BABY_RAT) {
+                if (myDistSq < theEnemyRatDistSq) {
+                    theEnemyRatDistSq = myDistSq;
+                    theNearestEnemyRat = myEnemy;
                 }
             }
         }

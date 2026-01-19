@@ -27,10 +27,10 @@ public class GlobalArray {
       2-6: rat king locations (upper 5 bits of x and y, rounded to 2x2)
       7: rat king LSBs (2 bits per king: bit0=x LSB, bit1=y LSB)
       8: rat king turn counter (00, 01, 10 for alive) and (11) for dead
-      9-12: unused
-      13: formation target location (encoded 2x2)
-      14: formation mine location (encoded 2x2)
-      15: formation coordinator king ID
+      9: formation coordinator king ID
+      10-11: formation target location (exact, 2 slots)
+      12-13: formation mine location (exact, 2 slots)
+      14-15: unused
       16-20: king mine assignments (5 slots for 5 kings)
       21-31: rat spawn roles
       32-63: cheese mines (count upwards from 32)
@@ -41,9 +41,9 @@ public class GlobalArray {
     private static final int RAT_KING_LOC = 2;
     private static final int RAT_KING_LSBS = 7;
     private static final int RAT_KING_TURN_COUNTER = 8;
-    private static final int FORMATION_TARGET = 13;
-    private static final int FORMATION_MINE = 14;
-    private static final int FORMATION_COORDINATOR = 15;
+    private static final int FORMATION_COORDINATOR = 9;
+    private static final int FORMATION_TARGET = 10;  // uses 2 slots: 10-11
+    private static final int FORMATION_MINE = 12;    // uses 2 slots: 12-13
     private static final int KING_MINE_ASSIGNMENT = 16;  // 5 slots for 5 kings (indices 16-20)
 
     // layout: 
@@ -139,7 +139,27 @@ public class GlobalArray {
             }
         }
     }
-    
+
+    public static void writeRatKing() throws GameActionException {
+        for (int i = 0; i < 5; i++) {
+            MapLocation king = getRatKing(i);
+            if (king == null) {
+                writeRatLoc(i);
+                return;
+            }
+        }
+    }
+
+    public static int countRatKings() {
+        int ret = 0;
+        for (int i = 0; i < 5; i++) {
+            MapLocation king = getRatKing(i);
+            if (king == null) continue;
+            ret++;
+        }
+        return ret;
+    }
+
     public static void readCheeseMines() throws GameActionException {
         int i = N - 1;
         while (i >= MIN_CHEESE) {
@@ -285,21 +305,25 @@ public class GlobalArray {
     }
 
     public static void writeFormationTarget(MapLocation aTarget, MapLocation aMine, int aCoordinatorKingId) throws GameActionException {
-        writeSharedArray(FORMATION_TARGET, aTarget != null ? encode2x2(aTarget) + 1 : 0);
-        writeSharedArray(FORMATION_MINE, aMine != null ? encode2x2(aMine) + 1 : 0);
+        int[] targetEncoded = encodeExact(aTarget);
+        int[] mineEncoded = encodeExact(aMine);
+        writeSharedArray(FORMATION_TARGET, targetEncoded[0]);
+        writeSharedArray(FORMATION_TARGET + 1, targetEncoded[1]);
+        writeSharedArray(FORMATION_MINE, mineEncoded[0]);
+        writeSharedArray(FORMATION_MINE + 1, mineEncoded[1]);
         writeSharedArray(FORMATION_COORDINATOR, aCoordinatorKingId);
     }
 
     public static MapLocation getFormationTarget() throws GameActionException {
-        int myEncoded = rc.readSharedArray(FORMATION_TARGET);
-        if (myEncoded == 0) return null;
-        return decode2x2(myEncoded - 1);
+        int slot1 = rc.readSharedArray(FORMATION_TARGET);
+        int slot2 = rc.readSharedArray(FORMATION_TARGET + 1);
+        return decodeExact(slot1, slot2);
     }
 
     public static MapLocation getFormationMine() throws GameActionException {
-        int myEncoded = rc.readSharedArray(FORMATION_MINE);
-        if (myEncoded == 0) return null;
-        return decode2x2(myEncoded - 1);
+        int slot1 = rc.readSharedArray(FORMATION_MINE);
+        int slot2 = rc.readSharedArray(FORMATION_MINE + 1);
+        return decodeExact(slot1, slot2);
     }
 
     public static int getFormationCoordinator() throws GameActionException {
@@ -307,9 +331,21 @@ public class GlobalArray {
     }
 
     public static void clearFormation() throws GameActionException {
-        writeSharedArray(FORMATION_TARGET, 0);
-        writeSharedArray(FORMATION_MINE, 0);
         writeSharedArray(FORMATION_COORDINATOR, 0);
+        writeSharedArray(FORMATION_TARGET, 0);
+        writeSharedArray(FORMATION_TARGET + 1, 0);
+        writeSharedArray(FORMATION_MINE, 0);
+        writeSharedArray(FORMATION_MINE + 1, 0);
+    }
+
+    private static int[] encodeExact(MapLocation aLoc) {
+        if (aLoc == null) return new int[] {0, 0};
+        return new int[] {aLoc.x + 1, aLoc.y + 1};
+    }
+
+    private static MapLocation decodeExact(int aSlot1, int aSlot2) {
+        if (aSlot1 == 0 && aSlot2 == 0) return null;
+        return new MapLocation(aSlot1 - 1, aSlot2 - 1);
     }
 
     public static void writeKingMineAssignment(int aKingId, MapLocation aMine) throws GameActionException {

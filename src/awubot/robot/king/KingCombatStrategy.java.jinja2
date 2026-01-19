@@ -2,6 +2,8 @@ package awubot.robot.king;
 
 import battlecode.common.*;
 import awubot.robot.Strategy;
+import awubot.RobotTracker;
+import awubot.Pathfinder;
 
 import static awubot.robot.king.RatKing.*;
 import static awubot.Game.*;
@@ -10,25 +12,41 @@ import static awubot.util.Util.*;
 public class KingCombatStrategy extends Strategy {
     @Override
     public boolean runTick() throws GameActionException {
-        var nearbyRobots = rc.senseNearbyRobots();
-        var enemy = false;
-        for(var robot : nearbyRobots) {
-            if(robot.team == team) continue;
-            enemy = true;
-            break;
-        }
-        if(!enemy) return false;
+        boolean hasThreat = (RobotTracker.numEnemies + RobotTracker.numCats) > 0;
+        if(!hasThreat) return false;
         if(rc.isMovementReady()) {
             {% for i in range(8) %}
             var score{{i}} = 0;
             {% endfor %}
-            for(var robot : nearbyRobots) {
-                if(robot.team == team) continue;
+            for(int idx = 0; idx < RobotTracker.numEnemies; idx++) {
+                var robot = RobotTracker.sortedEnemies[idx];
+                if(robot == null) continue;
                 var weight = switch(robot.type) {
                     case BABY_RAT -> 1;
                     case RAT_KING -> 3;
                     case CAT -> 5;
                 };
+                var dir = myLoc.directionTo(robot.location);
+                switch(dir.ordinal()) {
+                    {% for i in range(8) %}
+                    case {{i}} -> {
+                        score{{i}}           -= weight * 3;
+                        score{{(i + 7) % 8}} -= weight * 2;
+                        score{{(i + 1) % 8}} -= weight * 2;
+                        score{{(i + 3) % 8}} += weight;
+                        score{{(i + 4) % 8}} += weight;
+                        score{{(i + 5) % 8}} += weight;
+                    }
+                    {% endfor %}
+                    default -> {
+                        assert false : "unexpected direction";
+                    }
+                }
+            }
+            for(int idx = 0; idx < RobotTracker.numCats; idx++) {
+                var robot = RobotTracker.sortedCats[idx];
+                if(robot == null) continue;
+                var weight = 5;
                 var dir = myLoc.directionTo(robot.location);
                 switch(dir.ordinal()) {
                     {% for i in range(8) %}
@@ -55,12 +73,15 @@ public class KingCombatStrategy extends Strategy {
             }
             {% endfor %}
             indicate("evading");
-            if(move != Direction.CENTER) rawMove(move);
+            if(move != Direction.CENTER) Pathfinder.makeMove(move);
         }
         if(rc.isActionReady()) {
             RobotInfo best = null;
             int bestHp = 1000000000;
-            for(var robot : rc.senseNearbyRobots(8, team.opponent())) {
+            for(int idx = 0; idx < RobotTracker.numEnemies; idx++) {
+                var robot = RobotTracker.sortedEnemies[idx];
+                if(robot == null) continue;
+                if(robot.location.distanceSquaredTo(myLoc) > 8) continue;
                 if(robot.health < bestHp) {
                     best = robot;
                     bestHp = robot.health;

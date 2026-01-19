@@ -7,16 +7,18 @@ import battlecode.common.RobotInfo;
 import battlecode.common.UnitType;
 import awubot.comms.GlobalArray;
 import awubot.robot.Strategy;
+import awubot.RobotTracker;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 
 import awubot.Game;
 
 public class KingFormationCoordinatorStrategy extends Strategy {
-    private static final int CHEESE_THRESHOLD = 150;
+    private static final int[] CHEESE_THRESHOLDS = {250, 350, 400, 600, 1000000000};
     private static final int UPGRADE_COST = 50;
-    private static final int MIN_DIST_FROM_KINGS_SQ = 225;
-    private static final int COORDINATION_TIMEOUT = 40;
+    private static final int MIN_DIST_FROM_KINGS_SQ = 100;
+    private static final int MAX_FORMATION_DIST_TO_MINE_SQ = 25;
+    private static final int COORDINATION_TIMEOUT = 120;
     private static final int FORMATION_COOLDOWN = 80;
     private static final int MIN_TURN_FOR_FORMATION = 100;
 
@@ -28,6 +30,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     private MapLocation theTargetMine = null;
     private int theCoordinationStartTurn = 0;
     private int theLastFormationTurn = -FORMATION_COOLDOWN;
+    private int kingCount = 1;
 
     private enum FormationState {
         IDLE,
@@ -40,8 +43,29 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         theMiningStrategy = aMiningStrategy;
     }
 
+    private int getCheeseThreshold(int aCurrentKingCount) {
+        int myIndex = Math.max(0, Math.min(aCurrentKingCount - 1, CHEESE_THRESHOLDS.length - 1));
+        return CHEESE_THRESHOLDS[myIndex];
+    }
+
     @Override
     public boolean runTick() throws GameActionException {
+        int myKingCount = GlobalArray.countRatKings();
+        int numRats = (rc.getCurrentRatCost() - 10) * 2 / 5;
+
+        if (myKingCount >= 5 || time >= 1100 || numRats < 15 * myKingCount) {
+            abortFormation();
+            kingCount = myKingCount;
+            return true;
+        }
+
+        if (myKingCount > kingCount) {
+            abortFormation();
+            kingCount = myKingCount;
+            return true;
+        }
+        kingCount = myKingCount;
+
         if (theContext.theDefenseState != ThreatContext.DefenseState.NORMAL) {
             if (theState == FormationState.COORDINATING) {
                 abortFormation();
@@ -65,9 +89,12 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         if (time < MIN_TURN_FOR_FORMATION) return;
         int myGlobalCheese = rc.getGlobalCheese();
         if (time - theLastFormationTurn < FORMATION_COOLDOWN) return;
-        if (myGlobalCheese < CHEESE_THRESHOLD + UPGRADE_COST) return;
-        int myKingCount = GlobalArray.countActiveKings();
-        if (myKingCount >= 3) return;
+        int myKingCount = GlobalArray.countRatKings();
+        if (myKingCount == 5) return;
+        if (myGlobalCheese < getCheeseThreshold(myKingCount) + UPGRADE_COST) return;
+        int numRats = (rc.getCurrentRatCost() - 10) * 2 / 5;
+        if (numRats < 15 * myKingCount) return;
+
         if (GlobalArray.getFormationTarget() != null) return;
 
         MapLocation myBestMine = selectBestMineForFormation();
@@ -82,7 +109,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         theState = FormationState.COORDINATING;
 
         GlobalArray.writeFormationTarget(theFormationTarget, theTargetMine, kingId);
-        GlobalArray.writeKingMineAssignment(kingId, theMiningStrategy.getMineTarget());
+        GlobalArray.writeKingMineAssignment(kingId + 1, theMiningStrategy.getMineTarget());
 
         indicate("FORMATION: coordinating at " + theFormationTarget);
     }
@@ -115,29 +142,47 @@ public class KingFormationCoordinatorStrategy extends Strategy {
             MapLocation myKingLoc = GlobalArray.getRatKing(i);
             if (myKingLoc != null) {
                 int myDist = aMine.distanceSquaredTo(myKingLoc);
-                myScore += Math.min(myDist, 400);
+                if (myDist < MIN_DIST_FROM_KINGS_SQ) {
+                    myScore -= 500;
+                }
             }
         }
 
-        int myDistFromSelf = myLoc.distanceSquaredTo(aMine);
-        if (myDistFromSelf < 100) {
-            myScore -= 200;
+        if (rc.canSenseLocation(aMine)) {
+            int myNearbyRats = scoreNearbyAlliedRats(aMine, 49);  
+
+            int enemyNearbyRats = scoreNearbyEnemyRats(aMine, 49);
         }
 
-        if (rc.canSenseLocation(aMine)) {
-            int myNearbyRats = countNearbyAlliedRats(aMine, 25);
-            myScore += myNearbyRats * 100;
+        int myDistFromSelf = myLoc.distanceSquaredTo(aMine);
+        if (myDistFromSelf > 400) {
+            myScore -= 50;
         }
 
         return myScore;
     }
 
-    private int countNearbyAlliedRats(MapLocation aCenter, int aRadiusSq) throws GameActionException {
+    private int scoreNearbyAlliedRats(MapLocation aCenter, int aRadiusSq) throws GameActionException {
         int myCount = 0;
-        for (RobotInfo myRobot : rc.senseNearbyRobots(aCenter, aRadiusSq, rc.getTeam())) {
-            if (myRobot.getType() == UnitType.BABY_RAT) {
-                myCount++;
-            }
+        for (int i = 0; i < RobotTracker.numAllies; i++) {
+            RobotInfo myRobot = RobotTracker.sortedAllies[i];
+            if (myRobot == null) continue;
+            if (myRobot.getType() != UnitType.BABY_RAT) continue;
+            if (myRobot.location.distanceSquaredTo(aCenter) > aRadiusSq) continue;
+            myCount += 200;
+        }
+        return myCount;
+    }
+
+    private int scoreNearbyEnemyRats(MapLocation aCenter, int aRadiusSq) throws GameActionException {
+        int myCount = 0;
+        for (int i = 0; i < RobotTracker.numEnemies; i++) {
+            RobotInfo myRobot = RobotTracker.sortedEnemies[i];
+            if (myRobot == null) continue;
+            if (myRobot.getType() == UnitType.RAT_KING) myCount -= 5000;
+            if (myRobot.getType() != UnitType.BABY_RAT) continue;
+            if (myRobot.location.distanceSquaredTo(aCenter) > aRadiusSq) continue;
+            // myCount -= 300;
         }
         return myCount;
     }
@@ -146,14 +191,16 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         int myBestDistFromMine = Integer.MAX_VALUE;
         MapLocation myBestSpot = null;
 
-        for (int myDx = -3; myDx <= 3; myDx++) {
-            for (int myDy = -3; myDy <= 3; myDy++) {
+        for (int myDx = -5; myDx <= 5; myDx++) {
+            for (int myDy = -5; myDy <= 5; myDy++) {
+                int myDistToMine = myDx * myDx + myDy * myDy;
+                if (myDistToMine > MAX_FORMATION_DIST_TO_MINE_SQ) continue;
+
                 MapLocation myCandidate = aMine.translate(myDx, myDy);
                 if (!rc.onTheMap(myCandidate)) continue;
 
                 if (!isValidFormationCenter(myCandidate)) continue;
 
-                int myDistToMine = myCandidate.distanceSquaredTo(aMine);
                 if (myDistToMine < myBestDistFromMine) {
                     myBestDistFromMine = myDistToMine;
                     myBestSpot = myCandidate;

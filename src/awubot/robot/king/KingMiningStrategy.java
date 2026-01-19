@@ -45,7 +45,7 @@ public class KingMiningStrategy extends Strategy {
             scanForCheeseMines();
             moveTowardMine();
         }
-        indicate("a;sldkfja;lkjfakl;sdjfal;dksjfa;lsdjfa;sldkjf mining");
+        //indicate("a;sldkfja;lkjfakl;sdjfal;dksjfa;lsdjfa;sldkjf mining");
         return true;
     }
 

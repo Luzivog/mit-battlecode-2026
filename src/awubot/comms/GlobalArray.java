@@ -260,6 +260,7 @@ public class GlobalArray {
             int t = time % 3;
             x &= ~(0b11 << (2 * i));
             x |= t << (2 * i);
+            writeSharedArray(RAT_KING_TURN_COUNTER, x);
         } catch (GameActionException e) {
             e.printStackTrace();
         }

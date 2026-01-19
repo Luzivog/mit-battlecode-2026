@@ -1,6 +1,7 @@
 
 
 
+
 package awubot;
 
 import awubot.util.string.FastMapLocationSet;
@@ -10,7 +11,7 @@ import static awubot.Game.*;
 import static awubot.util.Util.*;
 import awubot.util.Profiler;public class RobotTracker {
 
-    private static StringBuilder baseString = new StringBuilder("\u0FFF\u1000\u1001\u1002\u1003\u1004\u1005\u1006\u1007\u1008\u1009\u100A\u100B\u100C\u100D\u100E\u100F\u1010\u1011\u1012\u1013\u1014\u1015\u1016\u1017\u1018\u1019\u101A\u101B\u101C\u101D\u101E\u101F\u1020\u1021");
+    private static StringBuilder baseString = new StringBuilder("\u0FFF\u1000\u1001\u1002\u1003\u1004\u1005\u1006\u1007\u1008\u1009\u100A\u100B\u100C\u100D\u100E\u100F\u1010\u1011\u1012\u1013\u1014\u1015\u1016\u1017\u1018\u1019\u101A\u101B\u101C\u101D\u101E\u101F\u1020\u1021\u1022\u1023\u1024\u1025\u1026\u1027\u1028\u1029");
     public static RobotInfo[] sortedRobots = new RobotInfo[25];
     public static RobotInfo[] sortedEnemies = new RobotInfo[25];
     public static RobotInfo[] sortedAllies = new RobotInfo[25];
@@ -42,10 +43,138 @@ import awubot.util.Profiler;public class RobotTracker {
         numRobots = nearbyRobots.length;
         numEnemies = numAllies = numCats = 0;
         switch (numRobots) {
+            case 43: {
+                int d = nearbyRobots[42].location.distanceSquaredTo(myLoc);
+                int j = sb.indexOf(String.valueOf((char) (4095 + d)));
+                sb.insert(j, (char)0x002A);
+                switch (nearbyRobots[42].team.ordinal()) {
+                    case 2:
+                        numCats++;
+                        break;
+                    case 0:
+                        numAllies++;
+                        break;
+                    case 1:
+                        numEnemies++;
+                        break;
+                }
+            }
+            case 42: {
+                int d = nearbyRobots[41].location.distanceSquaredTo(myLoc);
+                int j = sb.indexOf(String.valueOf((char) (4095 + d)));
+                sb.insert(j, (char)0x0029);
+                switch (nearbyRobots[41].team.ordinal()) {
+                    case 2:
+                        numCats++;
+                        break;
+                    case 0:
+                        numAllies++;
+                        break;
+                    case 1:
+                        numEnemies++;
+                        break;
+                }
+            }
+            case 41: {
+                int d = nearbyRobots[40].location.distanceSquaredTo(myLoc);
+                int j = sb.indexOf(String.valueOf((char) (4095 + d)));
+                sb.insert(j, (char)0x0028);
+                switch (nearbyRobots[40].team.ordinal()) {
+                    case 2:
+                        numCats++;
+                        break;
+                    case 0:
+                        numAllies++;
+                        break;
+                    case 1:
+                        numEnemies++;
+                        break;
+                }
+            }
+            case 40: {
+                int d = nearbyRobots[39].location.distanceSquaredTo(myLoc);
+                int j = sb.indexOf(String.valueOf((char) (4095 + d)));
+                sb.insert(j, '\''          );
+                switch (nearbyRobots[39].team.ordinal()) {
+                    case 2:
+                        numCats++;
+                        break;
+                    case 0:
+                        numAllies++;
+                        break;
+                    case 1:
+                        numEnemies++;
+                        break;
+                }
+            }
+            case 39: {
+                int d = nearbyRobots[38].location.distanceSquaredTo(myLoc);
+                int j = sb.indexOf(String.valueOf((char) (4095 + d)));
+                sb.insert(j, (char)0x0026);
+                switch (nearbyRobots[38].team.ordinal()) {
+                    case 2:
+                        numCats++;
+                        break;
+                    case 0:
+                        numAllies++;
+                        break;
+                    case 1:
+                        numEnemies++;
+                        break;
+                }
+            }
+            case 38: {
+                int d = nearbyRobots[37].location.distanceSquaredTo(myLoc);
+                int j = sb.indexOf(String.valueOf((char) (4095 + d)));
+                sb.insert(j, (char)0x0025);
+                switch (nearbyRobots[37].team.ordinal()) {
+                    case 2:
+                        numCats++;
+                        break;
+                    case 0:
+                        numAllies++;
+                        break;
+                    case 1:
+                        numEnemies++;
+                        break;
+                }
+            }
+            case 37: {
+                int d = nearbyRobots[36].location.distanceSquaredTo(myLoc);
+                int j = sb.indexOf(String.valueOf((char) (4095 + d)));
+                sb.insert(j, (char)0x0024);
+                switch (nearbyRobots[36].team.ordinal()) {
+                    case 2:
+                        numCats++;
+                        break;
+                    case 0:
+                        numAllies++;
+                        break;
+                    case 1:
+                        numEnemies++;
+                        break;
+                }
+            }
+            case 36: {
+                int d = nearbyRobots[35].location.distanceSquaredTo(myLoc);
+                int j = sb.indexOf(String.valueOf((char) (4095 + d)));
+                sb.insert(j, (char)0x0023);
+                switch (nearbyRobots[35].team.ordinal()) {
+                    case 2:
+                        numCats++;
+                        break;
+                    case 0:
+                        numAllies++;
+                        break;
+                    case 1:
+                        numEnemies++;
+                        break;
+                }
+            }
             case 35: {
                 int d = nearbyRobots[34].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0022');
+                sb.insert(j, (char)0x0022);
                 switch (nearbyRobots[34].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -61,7 +190,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 34: {
                 int d = nearbyRobots[33].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0021');
+                sb.insert(j, (char)0x0021);
                 switch (nearbyRobots[33].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -77,7 +206,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 33: {
                 int d = nearbyRobots[32].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0020');
+                sb.insert(j, (char)0x0020);
                 switch (nearbyRobots[32].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -93,7 +222,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 32: {
                 int d = nearbyRobots[31].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u001F');
+                sb.insert(j, (char)0x001F);
                 switch (nearbyRobots[31].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -109,7 +238,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 31: {
                 int d = nearbyRobots[30].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u001E');
+                sb.insert(j, (char)0x001E);
                 switch (nearbyRobots[30].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -125,7 +254,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 30: {
                 int d = nearbyRobots[29].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u001D');
+                sb.insert(j, (char)0x001D);
                 switch (nearbyRobots[29].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -141,7 +270,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 29: {
                 int d = nearbyRobots[28].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u001C');
+                sb.insert(j, (char)0x001C);
                 switch (nearbyRobots[28].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -157,7 +286,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 28: {
                 int d = nearbyRobots[27].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u001B');
+                sb.insert(j, (char)0x001B);
                 switch (nearbyRobots[27].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -173,7 +302,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 27: {
                 int d = nearbyRobots[26].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u001A');
+                sb.insert(j, (char)0x001A);
                 switch (nearbyRobots[26].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -189,7 +318,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 26: {
                 int d = nearbyRobots[25].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0019');
+                sb.insert(j, (char)0x0019);
                 switch (nearbyRobots[25].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -205,7 +334,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 25: {
                 int d = nearbyRobots[24].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0018');
+                sb.insert(j, (char)0x0018);
                 switch (nearbyRobots[24].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -221,7 +350,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 24: {
                 int d = nearbyRobots[23].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0017');
+                sb.insert(j, (char)0x0017);
                 switch (nearbyRobots[23].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -237,7 +366,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 23: {
                 int d = nearbyRobots[22].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0016');
+                sb.insert(j, (char)0x0016);
                 switch (nearbyRobots[22].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -253,7 +382,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 22: {
                 int d = nearbyRobots[21].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0015');
+                sb.insert(j, (char)0x0015);
                 switch (nearbyRobots[21].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -269,7 +398,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 21: {
                 int d = nearbyRobots[20].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0014');
+                sb.insert(j, (char)0x0014);
                 switch (nearbyRobots[20].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -285,7 +414,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 20: {
                 int d = nearbyRobots[19].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0013');
+                sb.insert(j, (char)0x0013);
                 switch (nearbyRobots[19].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -301,7 +430,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 19: {
                 int d = nearbyRobots[18].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0012');
+                sb.insert(j, (char)0x0012);
                 switch (nearbyRobots[18].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -317,7 +446,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 18: {
                 int d = nearbyRobots[17].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0011');
+                sb.insert(j, (char)0x0011);
                 switch (nearbyRobots[17].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -333,7 +462,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 17: {
                 int d = nearbyRobots[16].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0010');
+                sb.insert(j, (char)0x0010);
                 switch (nearbyRobots[16].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -349,7 +478,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 16: {
                 int d = nearbyRobots[15].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u000F');
+                sb.insert(j, (char)0x000F);
                 switch (nearbyRobots[15].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -365,7 +494,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 15: {
                 int d = nearbyRobots[14].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u000E');
+                sb.insert(j, (char)0x000E);
                 switch (nearbyRobots[14].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -413,7 +542,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 12: {
                 int d = nearbyRobots[11].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u000B');
+                sb.insert(j, (char)0x000B);
                 switch (nearbyRobots[11].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -477,7 +606,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 8: {
                 int d = nearbyRobots[7].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0007');
+                sb.insert(j, (char)0x0007);
                 switch (nearbyRobots[7].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -493,7 +622,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 7: {
                 int d = nearbyRobots[6].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0006');
+                sb.insert(j, (char)0x0006);
                 switch (nearbyRobots[6].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -509,7 +638,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 6: {
                 int d = nearbyRobots[5].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0005');
+                sb.insert(j, (char)0x0005);
                 switch (nearbyRobots[5].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -525,7 +654,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 5: {
                 int d = nearbyRobots[4].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0004');
+                sb.insert(j, (char)0x0004);
                 switch (nearbyRobots[4].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -541,7 +670,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 4: {
                 int d = nearbyRobots[3].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0003');
+                sb.insert(j, (char)0x0003);
                 switch (nearbyRobots[3].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -557,7 +686,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 3: {
                 int d = nearbyRobots[2].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0002');
+                sb.insert(j, (char)0x0002);
                 switch (nearbyRobots[2].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -573,7 +702,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 2: {
                 int d = nearbyRobots[1].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0001');
+                sb.insert(j, (char)0x0001);
                 switch (nearbyRobots[1].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -589,7 +718,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 1: {
                 int d = nearbyRobots[0].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0000');
+                sb.insert(j, (char)0x0000);
                 switch (nearbyRobots[0].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -644,11 +773,131 @@ import awubot.util.Profiler;public class RobotTracker {
         sb.deleteCharAt(sb.indexOf("\u101F"));
         sb.deleteCharAt(sb.indexOf("\u1020"));
         sb.deleteCharAt(sb.indexOf("\u1021"));
+        sb.deleteCharAt(sb.indexOf("\u1022"));
+        sb.deleteCharAt(sb.indexOf("\u1023"));
+        sb.deleteCharAt(sb.indexOf("\u1024"));
+        sb.deleteCharAt(sb.indexOf("\u1025"));
+        sb.deleteCharAt(sb.indexOf("\u1026"));
+        sb.deleteCharAt(sb.indexOf("\u1027"));
+        sb.deleteCharAt(sb.indexOf("\u1028"));
+        sb.deleteCharAt(sb.indexOf("\u1029"));
 
         int nextAlly = numAllies;
         int nextEnemy = numEnemies;
         int nextCat = numCats;
         switch (numRobots) {
+            case 43: {
+                sortedRobots[42] =  nearbyRobots[(int) sb.charAt(42)];
+                switch (sortedRobots[42].team.ordinal()) {
+                    case 2:
+                        sortedCats[--nextCat] = sortedRobots[42];
+                        break;
+                    case 0:
+                        sortedAllies[--nextAlly] = sortedRobots[42];
+                        break;
+                    case 1:
+                        sortedEnemies[--nextEnemy] = sortedRobots[42];
+                        break;
+                }
+            }
+            case 42: {
+                sortedRobots[41] =  nearbyRobots[(int) sb.charAt(41)];
+                switch (sortedRobots[41].team.ordinal()) {
+                    case 2:
+                        sortedCats[--nextCat] = sortedRobots[41];
+                        break;
+                    case 0:
+                        sortedAllies[--nextAlly] = sortedRobots[41];
+                        break;
+                    case 1:
+                        sortedEnemies[--nextEnemy] = sortedRobots[41];
+                        break;
+                }
+            }
+            case 41: {
+                sortedRobots[40] =  nearbyRobots[(int) sb.charAt(40)];
+                switch (sortedRobots[40].team.ordinal()) {
+                    case 2:
+                        sortedCats[--nextCat] = sortedRobots[40];
+                        break;
+                    case 0:
+                        sortedAllies[--nextAlly] = sortedRobots[40];
+                        break;
+                    case 1:
+                        sortedEnemies[--nextEnemy] = sortedRobots[40];
+                        break;
+                }
+            }
+            case 40: {
+                sortedRobots[39] =  nearbyRobots[(int) sb.charAt(39)];
+                switch (sortedRobots[39].team.ordinal()) {
+                    case 2:
+                        sortedCats[--nextCat] = sortedRobots[39];
+                        break;
+                    case 0:
+                        sortedAllies[--nextAlly] = sortedRobots[39];
+                        break;
+                    case 1:
+                        sortedEnemies[--nextEnemy] = sortedRobots[39];
+                        break;
+                }
+            }
+            case 39: {
+                sortedRobots[38] =  nearbyRobots[(int) sb.charAt(38)];
+                switch (sortedRobots[38].team.ordinal()) {
+                    case 2:
+                        sortedCats[--nextCat] = sortedRobots[38];
+                        break;
+                    case 0:
+                        sortedAllies[--nextAlly] = sortedRobots[38];
+                        break;
+                    case 1:
+                        sortedEnemies[--nextEnemy] = sortedRobots[38];
+                        break;
+                }
+            }
+            case 38: {
+                sortedRobots[37] =  nearbyRobots[(int) sb.charAt(37)];
+                switch (sortedRobots[37].team.ordinal()) {
+                    case 2:
+                        sortedCats[--nextCat] = sortedRobots[37];
+                        break;
+                    case 0:
+                        sortedAllies[--nextAlly] = sortedRobots[37];
+                        break;
+                    case 1:
+                        sortedEnemies[--nextEnemy] = sortedRobots[37];
+                        break;
+                }
+            }
+            case 37: {
+                sortedRobots[36] =  nearbyRobots[(int) sb.charAt(36)];
+                switch (sortedRobots[36].team.ordinal()) {
+                    case 2:
+                        sortedCats[--nextCat] = sortedRobots[36];
+                        break;
+                    case 0:
+                        sortedAllies[--nextAlly] = sortedRobots[36];
+                        break;
+                    case 1:
+                        sortedEnemies[--nextEnemy] = sortedRobots[36];
+                        break;
+                }
+            }
+            case 36: {
+                sortedRobots[35] =  nearbyRobots[(int) sb.charAt(35)];
+                switch (sortedRobots[35].team.ordinal()) {
+                    case 2:
+                        sortedCats[--nextCat] = sortedRobots[35];
+                        break;
+                    case 0:
+                        sortedAllies[--nextAlly] = sortedRobots[35];
+                        break;
+                    case 1:
+                        sortedEnemies[--nextEnemy] = sortedRobots[35];
+                        break;
+                }
+            }
             case 35: {
                 sortedRobots[34] =  nearbyRobots[(int) sb.charAt(34)];
                 switch (sortedRobots[34].team.ordinal()) {
@@ -1154,10 +1403,138 @@ import awubot.util.Profiler;public class RobotTracker {
         numRobots = nearbyRobots.length;
         numEnemies = numAllies = numCats = 0;
         switch (numRobots) {
+            case 43: {
+                int d = nearbyRobots[42].location.distanceSquaredTo(myLoc);
+                int j = sb.indexOf(String.valueOf((char) (4095 + d)));
+                sb.insert(j, (char)0x002A);
+                switch (nearbyRobots[42].team.ordinal()) {
+                    case 2:
+                        numCats++;
+                        break;
+                    case 1:
+                        numAllies++;
+                        break;
+                    case 0:
+                        numEnemies++;
+                        break;
+                }
+            }
+            case 42: {
+                int d = nearbyRobots[41].location.distanceSquaredTo(myLoc);
+                int j = sb.indexOf(String.valueOf((char) (4095 + d)));
+                sb.insert(j, (char)0x0029);
+                switch (nearbyRobots[41].team.ordinal()) {
+                    case 2:
+                        numCats++;
+                        break;
+                    case 1:
+                        numAllies++;
+                        break;
+                    case 0:
+                        numEnemies++;
+                        break;
+                }
+            }
+            case 41: {
+                int d = nearbyRobots[40].location.distanceSquaredTo(myLoc);
+                int j = sb.indexOf(String.valueOf((char) (4095 + d)));
+                sb.insert(j, (char)0x0028);
+                switch (nearbyRobots[40].team.ordinal()) {
+                    case 2:
+                        numCats++;
+                        break;
+                    case 1:
+                        numAllies++;
+                        break;
+                    case 0:
+                        numEnemies++;
+                        break;
+                }
+            }
+            case 40: {
+                int d = nearbyRobots[39].location.distanceSquaredTo(myLoc);
+                int j = sb.indexOf(String.valueOf((char) (4095 + d)));
+                sb.insert(j, '\''          );
+                switch (nearbyRobots[39].team.ordinal()) {
+                    case 2:
+                        numCats++;
+                        break;
+                    case 1:
+                        numAllies++;
+                        break;
+                    case 0:
+                        numEnemies++;
+                        break;
+                }
+            }
+            case 39: {
+                int d = nearbyRobots[38].location.distanceSquaredTo(myLoc);
+                int j = sb.indexOf(String.valueOf((char) (4095 + d)));
+                sb.insert(j, (char)0x0026);
+                switch (nearbyRobots[38].team.ordinal()) {
+                    case 2:
+                        numCats++;
+                        break;
+                    case 1:
+                        numAllies++;
+                        break;
+                    case 0:
+                        numEnemies++;
+                        break;
+                }
+            }
+            case 38: {
+                int d = nearbyRobots[37].location.distanceSquaredTo(myLoc);
+                int j = sb.indexOf(String.valueOf((char) (4095 + d)));
+                sb.insert(j, (char)0x0025);
+                switch (nearbyRobots[37].team.ordinal()) {
+                    case 2:
+                        numCats++;
+                        break;
+                    case 1:
+                        numAllies++;
+                        break;
+                    case 0:
+                        numEnemies++;
+                        break;
+                }
+            }
+            case 37: {
+                int d = nearbyRobots[36].location.distanceSquaredTo(myLoc);
+                int j = sb.indexOf(String.valueOf((char) (4095 + d)));
+                sb.insert(j, (char)0x0024);
+                switch (nearbyRobots[36].team.ordinal()) {
+                    case 2:
+                        numCats++;
+                        break;
+                    case 1:
+                        numAllies++;
+                        break;
+                    case 0:
+                        numEnemies++;
+                        break;
+                }
+            }
+            case 36: {
+                int d = nearbyRobots[35].location.distanceSquaredTo(myLoc);
+                int j = sb.indexOf(String.valueOf((char) (4095 + d)));
+                sb.insert(j, (char)0x0023);
+                switch (nearbyRobots[35].team.ordinal()) {
+                    case 2:
+                        numCats++;
+                        break;
+                    case 1:
+                        numAllies++;
+                        break;
+                    case 0:
+                        numEnemies++;
+                        break;
+                }
+            }
             case 35: {
                 int d = nearbyRobots[34].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0022');
+                sb.insert(j, (char)0x0022);
                 switch (nearbyRobots[34].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -1173,7 +1550,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 34: {
                 int d = nearbyRobots[33].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0021');
+                sb.insert(j, (char)0x0021);
                 switch (nearbyRobots[33].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -1189,7 +1566,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 33: {
                 int d = nearbyRobots[32].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0020');
+                sb.insert(j, (char)0x0020);
                 switch (nearbyRobots[32].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -1205,7 +1582,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 32: {
                 int d = nearbyRobots[31].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u001F');
+                sb.insert(j, (char)0x001F);
                 switch (nearbyRobots[31].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -1221,7 +1598,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 31: {
                 int d = nearbyRobots[30].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u001E');
+                sb.insert(j, (char)0x001E);
                 switch (nearbyRobots[30].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -1237,7 +1614,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 30: {
                 int d = nearbyRobots[29].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u001D');
+                sb.insert(j, (char)0x001D);
                 switch (nearbyRobots[29].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -1253,7 +1630,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 29: {
                 int d = nearbyRobots[28].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u001C');
+                sb.insert(j, (char)0x001C);
                 switch (nearbyRobots[28].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -1269,7 +1646,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 28: {
                 int d = nearbyRobots[27].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u001B');
+                sb.insert(j, (char)0x001B);
                 switch (nearbyRobots[27].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -1285,7 +1662,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 27: {
                 int d = nearbyRobots[26].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u001A');
+                sb.insert(j, (char)0x001A);
                 switch (nearbyRobots[26].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -1301,7 +1678,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 26: {
                 int d = nearbyRobots[25].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0019');
+                sb.insert(j, (char)0x0019);
                 switch (nearbyRobots[25].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -1317,7 +1694,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 25: {
                 int d = nearbyRobots[24].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0018');
+                sb.insert(j, (char)0x0018);
                 switch (nearbyRobots[24].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -1333,7 +1710,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 24: {
                 int d = nearbyRobots[23].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0017');
+                sb.insert(j, (char)0x0017);
                 switch (nearbyRobots[23].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -1349,7 +1726,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 23: {
                 int d = nearbyRobots[22].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0016');
+                sb.insert(j, (char)0x0016);
                 switch (nearbyRobots[22].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -1365,7 +1742,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 22: {
                 int d = nearbyRobots[21].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0015');
+                sb.insert(j, (char)0x0015);
                 switch (nearbyRobots[21].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -1381,7 +1758,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 21: {
                 int d = nearbyRobots[20].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0014');
+                sb.insert(j, (char)0x0014);
                 switch (nearbyRobots[20].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -1397,7 +1774,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 20: {
                 int d = nearbyRobots[19].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0013');
+                sb.insert(j, (char)0x0013);
                 switch (nearbyRobots[19].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -1413,7 +1790,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 19: {
                 int d = nearbyRobots[18].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0012');
+                sb.insert(j, (char)0x0012);
                 switch (nearbyRobots[18].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -1429,7 +1806,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 18: {
                 int d = nearbyRobots[17].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0011');
+                sb.insert(j, (char)0x0011);
                 switch (nearbyRobots[17].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -1445,7 +1822,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 17: {
                 int d = nearbyRobots[16].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0010');
+                sb.insert(j, (char)0x0010);
                 switch (nearbyRobots[16].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -1461,7 +1838,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 16: {
                 int d = nearbyRobots[15].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u000F');
+                sb.insert(j, (char)0x000F);
                 switch (nearbyRobots[15].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -1477,7 +1854,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 15: {
                 int d = nearbyRobots[14].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u000E');
+                sb.insert(j, (char)0x000E);
                 switch (nearbyRobots[14].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -1525,7 +1902,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 12: {
                 int d = nearbyRobots[11].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u000B');
+                sb.insert(j, (char)0x000B);
                 switch (nearbyRobots[11].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -1589,7 +1966,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 8: {
                 int d = nearbyRobots[7].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0007');
+                sb.insert(j, (char)0x0007);
                 switch (nearbyRobots[7].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -1605,7 +1982,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 7: {
                 int d = nearbyRobots[6].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0006');
+                sb.insert(j, (char)0x0006);
                 switch (nearbyRobots[6].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -1621,7 +1998,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 6: {
                 int d = nearbyRobots[5].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0005');
+                sb.insert(j, (char)0x0005);
                 switch (nearbyRobots[5].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -1637,7 +2014,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 5: {
                 int d = nearbyRobots[4].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0004');
+                sb.insert(j, (char)0x0004);
                 switch (nearbyRobots[4].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -1653,7 +2030,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 4: {
                 int d = nearbyRobots[3].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0003');
+                sb.insert(j, (char)0x0003);
                 switch (nearbyRobots[3].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -1669,7 +2046,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 3: {
                 int d = nearbyRobots[2].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0002');
+                sb.insert(j, (char)0x0002);
                 switch (nearbyRobots[2].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -1685,7 +2062,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 2: {
                 int d = nearbyRobots[1].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0001');
+                sb.insert(j, (char)0x0001);
                 switch (nearbyRobots[1].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -1701,7 +2078,7 @@ import awubot.util.Profiler;public class RobotTracker {
             case 1: {
                 int d = nearbyRobots[0].location.distanceSquaredTo(myLoc);
                 int j = sb.indexOf(String.valueOf((char) (4095 + d)));
-                sb.insert(j, '\u0000');
+                sb.insert(j, (char)0x0000);
                 switch (nearbyRobots[0].team.ordinal()) {
                     case 2:
                         numCats++;
@@ -1756,11 +2133,131 @@ import awubot.util.Profiler;public class RobotTracker {
         sb.deleteCharAt(sb.indexOf("\u101F"));
         sb.deleteCharAt(sb.indexOf("\u1020"));
         sb.deleteCharAt(sb.indexOf("\u1021"));
+        sb.deleteCharAt(sb.indexOf("\u1022"));
+        sb.deleteCharAt(sb.indexOf("\u1023"));
+        sb.deleteCharAt(sb.indexOf("\u1024"));
+        sb.deleteCharAt(sb.indexOf("\u1025"));
+        sb.deleteCharAt(sb.indexOf("\u1026"));
+        sb.deleteCharAt(sb.indexOf("\u1027"));
+        sb.deleteCharAt(sb.indexOf("\u1028"));
+        sb.deleteCharAt(sb.indexOf("\u1029"));
 
         int nextAlly = numAllies;
         int nextEnemy = numEnemies;
         int nextCat = numCats;
         switch (numRobots) {
+            case 43: {
+                sortedRobots[42] =  nearbyRobots[(int) sb.charAt(42)];
+                switch (sortedRobots[42].team.ordinal()) {
+                    case 2:
+                        sortedCats[--nextCat] = sortedRobots[42];
+                        break;
+                    case 1:
+                        sortedAllies[--nextAlly] = sortedRobots[42];
+                        break;
+                    case 0:
+                        sortedEnemies[--nextEnemy] = sortedRobots[42];
+                        break;
+                }
+            }
+            case 42: {
+                sortedRobots[41] =  nearbyRobots[(int) sb.charAt(41)];
+                switch (sortedRobots[41].team.ordinal()) {
+                    case 2:
+                        sortedCats[--nextCat] = sortedRobots[41];
+                        break;
+                    case 1:
+                        sortedAllies[--nextAlly] = sortedRobots[41];
+                        break;
+                    case 0:
+                        sortedEnemies[--nextEnemy] = sortedRobots[41];
+                        break;
+                }
+            }
+            case 41: {
+                sortedRobots[40] =  nearbyRobots[(int) sb.charAt(40)];
+                switch (sortedRobots[40].team.ordinal()) {
+                    case 2:
+                        sortedCats[--nextCat] = sortedRobots[40];
+                        break;
+                    case 1:
+                        sortedAllies[--nextAlly] = sortedRobots[40];
+                        break;
+                    case 0:
+                        sortedEnemies[--nextEnemy] = sortedRobots[40];
+                        break;
+                }
+            }
+            case 40: {
+                sortedRobots[39] =  nearbyRobots[(int) sb.charAt(39)];
+                switch (sortedRobots[39].team.ordinal()) {
+                    case 2:
+                        sortedCats[--nextCat] = sortedRobots[39];
+                        break;
+                    case 1:
+                        sortedAllies[--nextAlly] = sortedRobots[39];
+                        break;
+                    case 0:
+                        sortedEnemies[--nextEnemy] = sortedRobots[39];
+                        break;
+                }
+            }
+            case 39: {
+                sortedRobots[38] =  nearbyRobots[(int) sb.charAt(38)];
+                switch (sortedRobots[38].team.ordinal()) {
+                    case 2:
+                        sortedCats[--nextCat] = sortedRobots[38];
+                        break;
+                    case 1:
+                        sortedAllies[--nextAlly] = sortedRobots[38];
+                        break;
+                    case 0:
+                        sortedEnemies[--nextEnemy] = sortedRobots[38];
+                        break;
+                }
+            }
+            case 38: {
+                sortedRobots[37] =  nearbyRobots[(int) sb.charAt(37)];
+                switch (sortedRobots[37].team.ordinal()) {
+                    case 2:
+                        sortedCats[--nextCat] = sortedRobots[37];
+                        break;
+                    case 1:
+                        sortedAllies[--nextAlly] = sortedRobots[37];
+                        break;
+                    case 0:
+                        sortedEnemies[--nextEnemy] = sortedRobots[37];
+                        break;
+                }
+            }
+            case 37: {
+                sortedRobots[36] =  nearbyRobots[(int) sb.charAt(36)];
+                switch (sortedRobots[36].team.ordinal()) {
+                    case 2:
+                        sortedCats[--nextCat] = sortedRobots[36];
+                        break;
+                    case 1:
+                        sortedAllies[--nextAlly] = sortedRobots[36];
+                        break;
+                    case 0:
+                        sortedEnemies[--nextEnemy] = sortedRobots[36];
+                        break;
+                }
+            }
+            case 36: {
+                sortedRobots[35] =  nearbyRobots[(int) sb.charAt(35)];
+                switch (sortedRobots[35].team.ordinal()) {
+                    case 2:
+                        sortedCats[--nextCat] = sortedRobots[35];
+                        break;
+                    case 1:
+                        sortedAllies[--nextAlly] = sortedRobots[35];
+                        break;
+                    case 0:
+                        sortedEnemies[--nextEnemy] = sortedRobots[35];
+                        break;
+                }
+            }
             case 35: {
                 sortedRobots[34] =  nearbyRobots[(int) sb.charAt(34)];
                 switch (sortedRobots[34].team.ordinal()) {

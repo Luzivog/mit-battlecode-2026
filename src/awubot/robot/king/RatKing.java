@@ -20,8 +20,6 @@ public class RatKing {
     public static void run() throws GameActionException {
         indicate(rc.getGlobalCheese() + " cheese, " + rc.getHealth() + " HP");
 
-        GlobalArray.preTick();
-        Squeaker.preTick();
         CellTracker.storeVisibleCellsKing();
 
         tryPickUpCheese();

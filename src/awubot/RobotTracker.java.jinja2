@@ -4,9 +4,12 @@
 {%- elif code == 9 -%}'\t'
 {%- elif code == 8 -%}'\b'
 {%- elif code == 12 -%}'\f'
-{%- else -%}'\u{{ "%04X"|format(code) }}'
+{%- elif code == 39 -%}'\''          {# single quote #}
+{%- elif code == 92 -%}'\\'          {# backslash #}
+{%- else -%}(char)0x{{ "%04X"|format(code) }}
 {%- endif -%}
 {%- endmacro %}
+
 
 {% macro java_string_char(code) -%}
 {%- if code == 10 -%}\n
@@ -35,7 +38,7 @@ import static awubot.util.Util.*;
 import awubot.util.Profiler;
 
 {%- set OFF = 0x0FFF -%}
-{%- set MAX_DIST = 34 -%}
+{%- set MAX_DIST = 42 -%}
 
 public class RobotTracker {
 

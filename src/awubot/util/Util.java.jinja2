@@ -350,6 +350,33 @@ public class Util {
         return min(diff, 8 - diff);
     }
 
+    public static Direction dirFromDelta(int dx, int dy) {
+        switch (dy) {
+            case -1:
+                switch (dx) {
+                    case -1: return Direction.NORTHWEST;
+                    case 0: return Direction.NORTH;
+                    case 1: return Direction.NORTHEAST;
+                }
+                break;
+            case 0:
+                switch (dx) {
+                    case -1: return Direction.WEST;
+                    case 0: return Direction.CENTER;
+                    case 1: return Direction.EAST;
+                }
+                break;
+            case 1:
+                switch (dx) {
+                    case -1: return Direction.SOUTHWEST;
+                    case 0: return Direction.SOUTH;
+                    case 1: return Direction.SOUTHEAST;
+                }
+                break;
+        }
+        return null;
+    }
+
     public static Direction[] relatedDirections(Direction dir) {
         return switch(dir.ordinal()) {
             case 0 -> new Direction[]{Direction.NORTH, Direction.NORTHEAST, Direction.NORTHWEST};

@@ -181,7 +181,6 @@ public class CombatStrategy extends Strategy {
         return false;
     }
 
-
     static boolean canPerformMoves(Direction moveDir, Direction facing) throws GameActionException {
         return CombatCommon.canPerformMoves(moveDir, facing);
     }
@@ -261,6 +260,16 @@ public class CombatStrategy extends Strategy {
             cellScore[8] += getCellScoreForEnemy(info, Direction.CENTER);
         }
         Profiler.pop("compute cell scores", 1000);
+
+        StringBuilder indicateSb = new StringBuilder();
+        for (int dy = 1; dy >= -1; dy--) {
+            for (int dx = -1; dx <= 1; dx++) {
+                indicateSb.append(String.format("%6.2f ", cellScore[Util.dirFromDelta(dx, dy).ordinal()]));
+                indicateSb.append(" ");
+            }
+            indicateSb.append("\n");
+        }
+        indicate(sb.toString());
     }
 
     public static double getCellScoreFor(Direction moveDir, Direction facing, RobotInfo target) throws GameActionException {
@@ -315,7 +324,7 @@ public class CombatStrategy extends Strategy {
             if (canSenseAfterMove) {
                 int dangerDistance;
                 if (RobotTracker.numAllies > RobotTracker.numEnemies) dangerDistance = 0;
-                else if (time % 4 == 0) dangerDistance = 1;
+                // else if (time % 4 == 0) dangerDistance = 1;
                 else dangerDistance = 2;
                 if (dist <= dangerDistance) base -= 10;
             }
@@ -324,9 +333,9 @@ public class CombatStrategy extends Strategy {
                 base *= 0.5;
                 // weak
             }
-                return cacheCellScore(info, moveDir, base);
-            }
+            return cacheCellScore(info, moveDir, base);
         }
+    }
         /*
 
           attacking another solo rat is safe as if:

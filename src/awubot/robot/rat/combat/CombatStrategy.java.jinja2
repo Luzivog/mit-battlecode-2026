@@ -178,6 +178,10 @@ public class CombatStrategy extends Strategy {
             boolean tryThrowRes = TryThrow.run();
             Profiler.pop("try throw", 1000);
             if (tryThrowRes) return true;
+            Profiler.push();
+            boolean tryPositionRes = TryPostion.run();
+            Profiler.pop("try position", 1000);
+            if (tryPositionRes) return true;
             return false;
         }
 
@@ -226,25 +230,6 @@ public class CombatStrategy extends Strategy {
         if (tryTrapRes) return true;
         return false;
     }
-
-    {# public static boolean backstep() throws GameActionException {
-        {% for moveDir in directions %}
-        if (CombatCommon.canMove({{moveDir}})) {
-            switch (myDir.ordinal()) {
-                {% for currentFacing in related_map[moveDir] %}
-                case {{loop.index}} -> {:
-                    {% for facing in related_map[currentFacing] %}
-                    if (canPerformMoves({{moveDir}}, {{facing}})) {
-                        return true;
-                    }
-                    {% endfor %}
-                    break;
-                {% endfor %}
-                default -> { }
-            }
-        }
-        {% endfor %}
-    } #}
 
     static boolean canPerformMoves(Direction moveDir, Direction facing) throws GameActionException {
         return CombatCommon.canPerformMoves(moveDir, facing);
@@ -325,6 +310,15 @@ public class CombatStrategy extends Strategy {
             cellScore[8] += getCellScoreForEnemy(info, Direction.CENTER);
         }
         Profiler.pop("compute cell scores", 1000);
+
+        StringBuilder indicateSb = new StringBuilder("Cell scores:\n");
+        for (int dy = 1; dy >= -1; dy--) {
+            for (int dx = -1; dx <= 1; dx++) {
+                indicateSb.append(String.format("%5.2f ", cellScore[Util.dirFromDelta(dx, dy).ordinal()]));
+            }
+            indicateSb.append("\n");
+        }
+        indicate(sb.toString());
     }
 
     public static double getCellScoreFor(Direction moveDir, Direction facing, RobotInfo target) throws GameActionException {
@@ -379,7 +373,7 @@ public class CombatStrategy extends Strategy {
             if (canSenseAfterMove) {
                 int dangerDistance;
                 if (RobotTracker.numAllies > RobotTracker.numEnemies) dangerDistance = 0;
-                else if (time % 4 == 0) dangerDistance = 1;
+                // else if (time % 4 == 0) dangerDistance = 1;
                 else dangerDistance = 2;
                 if (dist <= dangerDistance) base -= 10;
             }
@@ -389,9 +383,9 @@ public class CombatStrategy extends Strategy {
                 // weak
             }
             {# base *= (1.0 / Math.sqrt(dist + 1)); // incredible formula #}
-                return cacheCellScore(info, moveDir, base);
-            }
+            return cacheCellScore(info, moveDir, base);
         }
+    }
         /*
 
           attacking another solo rat is safe as if:

@@ -177,6 +177,7 @@ public class CombatStrategy extends Strategy {
             boolean tryThrowRes = TryThrow.run();
             Profiler.pop("try throw", 1000);
             if (tryThrowRes) return true;
+            return false;
         }
 
         Profiler.push();

@@ -17,21 +17,23 @@ except ImportError:
     psutil = None
 
 DIRT_TESTS = "cheesefarm,rift,ZeroDay,pipes,Nofreecheese,sittingducks"
-DEFAULT = ["DefaultSmall", "DefaultMedium", "DefaultLarge", "evileye", "cheeseguardians"]
-SPRINT_1 = ["cheesefarm", "rift", "ZeroDay", "pipes", "Nofreecheese", "wallsofparadis", "dirtpassageway", "trapped", "Meow", "arrows", "starvation", "keepout", "dirtfulcat", "popthecork", "sittingducks", "thunderdome"]
-DEBUG_MAPS = ["pvparena"]
-teamA = "awubot_fixratthrowing"
-teamB = "awubot_fixratthrowing_old"
+# DEFAULT = ["DefaultSmall", "DefaultMedium", "DefaultLarge", "evileye", "cheeseguardians"]
+# SPRINT_1 = ["cheesefarm", "rift", "ZeroDay", "pipes", "Nofreecheese", "wallsofparadis", "dirtpassageway", "trapped", "Meow", "arrows", "starvation", "keepout", "dirtfulcat", "popthecork", "sittingducks", "thunderdome"]
+# DEBUG_MAPS = ["pvparena"]
+teamA = "awubot"
+teamB = "awubot_fixratthrowing"
+maps = ["microtest"]
 # maps = "8cats_big,bigface,breakthewall,Cage,cheesemining_big,cheeseorcat,dangerous,debug_cat_right,diagonalmap,dirt_around_mine,dirtroad"
 # maps = "isolated_cat,isolated_cheese,killcat,killcatormine,maybedonothing,melbournetrain,minewithcat,mixedmaze,nowall_bigbattle_big,nowallnocat"
 # maps = "oneexit_small,realiseuarecooked,roundabout,rush_big,rush_small,segtree,sixseven,small1v1,small_dirtmaze,tunnelbattle_big,tunnelbattle_big_dirtless,veryverysmall"
 # maps = "CheeseMines,CheeseMinesMedium,colony,FootballField,Ruins,Snails,Towers"
 # maps = "DefaultSmall,DefaultMedium,DefaultLarge,evileye,cheeseguardians"
-maps = DEFAULT + SPRINT_1
+# maps = DEFAULT + SPRINT_1
 # maps = DEBUG_MAPS
+
 # maps = ["Cage,colony,FootballField,Islands,PickYourSpawn,Ruins,Sawtooth,Snails,TestTube,Towers,WheresYourShovel"]
 # maps = ["CombatTest2"]
-seeds = [""] * 3
+seeds = [""] * 5
 
 debug = len(maps) == 1 and len(seeds) == 1
 GRADLEW = "gradlew.bat" if os.name == "nt" else "./gradlew"
@@ -40,6 +42,7 @@ REPO_DIR = os.path.dirname(os.path.abspath(__file__))
 OUTPUT_DIR = os.path.join(REPO_DIR, "match_stdout")
 JAVA_MATCH_KEYWORDS = ("battlecode", "bc26")
 LOG_LINE_LIMIT = 120
+GAP_CONTEXT_LINES = 3
 
 
 def _child_cpu_total():
@@ -60,6 +63,14 @@ def _short_line(line, limit=LOG_LINE_LIMIT):
     if len(text) > limit:
         return text[: limit - 3] + "..."
     return text
+
+
+def _format_timed_line(stdout_timed, idx, start_ts):
+    t, line = stdout_timed[idx]
+    if start_ts is None:
+        return _short_line(line)
+    rel = t - start_ts
+    return f"+{rel:.1f}s {_short_line(line)}"
 
 
 def _write_stdout_file(teamA, teamB, map, seed, stdout):
@@ -83,14 +94,18 @@ def _summarize_stdout_timing(stdout_timed, start_ts):
     max_gap = None
     gap_before = None
     gap_after = None
+    gap_before_index = None
+    gap_after_index = None
     if line_count >= 2:
         prev_t, prev_line = stdout_timed[0]
-        for t, line in stdout_timed[1:]:
+        for idx, (t, line) in enumerate(stdout_timed[1:], start=1):
             gap = t - prev_t
             if max_gap is None or gap > max_gap:
                 max_gap = gap
                 gap_before = prev_line
                 gap_after = line
+                gap_before_index = idx - 1
+                gap_after_index = idx
             prev_t, prev_line = t, line
     for t, line in stdout_timed:
         if match_start is None and "Match Starting" in line:
@@ -107,6 +122,8 @@ def _summarize_stdout_timing(stdout_timed, start_ts):
         "max_gap": max_gap,
         "gap_before": gap_before,
         "gap_after": gap_after,
+        "gap_before_index": gap_before_index,
+        "gap_after_index": gap_after_index,
     }
 
 
@@ -360,7 +377,7 @@ def run_game(params):
         returncode = completed.returncode
     result = stdout
     _write_stdout_file(teamA, teamB, map, seed, stdout)
-    print(result)
+    # print(result)
     if "resign" in result:
         print(f"\033[0;31mResignation {teamA} vs {teamB} on {map} {seed}\033[0m")
     winner = None
@@ -390,6 +407,25 @@ def run_game(params):
             before = _short_line(log_summary["gap_before"])
             after = _short_line(log_summary["gap_after"])
             print(f"Log gap max {log_summary['max_gap']:.1f}s between: {before} -> {after}")
+            gap_before_index = log_summary.get("gap_before_index")
+            gap_after_index = log_summary.get("gap_after_index")
+            if (
+                gap_before_index is not None
+                and gap_after_index is not None
+                and stdout_timed
+            ):
+                before_start = max(0, gap_before_index - GAP_CONTEXT_LINES)
+                before_end = gap_before_index + 1
+                after_start = gap_after_index
+                after_end = min(
+                    len(stdout_timed), gap_after_index + GAP_CONTEXT_LINES + 1
+                )
+                print("Log gap context before:")
+                for idx in range(before_start, before_end):
+                    print(f"  {_format_timed_line(stdout_timed, idx, stdout_start_ts)}")
+                print("Log gap context after:")
+                for idx in range(after_start, after_end):
+                    print(f"  {_format_timed_line(stdout_timed, idx, stdout_start_ts)}")
     wall_elapsed = time.perf_counter() - wall_start
     cpu_elapsed = time.process_time() - cpu_start
     child_cpu_after = _child_cpu_total()
@@ -437,7 +473,7 @@ if __name__ == "__main__":
     debug = len(maps) == 1 and len(seeds) == 1
 
     # Change this number so it doesn't kill your computer
-    NUM_WORKERS = 3
+    NUM_WORKERS = 5 
     params = []
     for seed in seeds:
         # Assign seeds
@@ -447,13 +483,22 @@ if __name__ == "__main__":
         params += [(teamB, teamA, map, seed) for map in maps]
 
     start = time.time()
+    results = []
+    total_matches = len(params)
     with concurrent.futures.ProcessPoolExecutor(max_workers=NUM_WORKERS) as executor:
-        results = list(executor.map(run_game, params))
+        futures = [executor.submit(run_game, param) for param in params]
+        completed = 0
+        for future in concurrent.futures.as_completed(futures):
+            winner = future.result()
+            results.append(winner)
+            completed += 1
+            if winner:
+                score[winner] += 1
+            print(
+                f"Running score ({completed}/{total_matches}): "
+                f"{teamA} {score[teamA]} - {teamB} {score[teamB]}"
+            )
     end = time.time()
 
     print(f"Ran {len(results)} matches in {end - start}s")
-
-    for winner in results:
-        if winner:
-            score[winner] += 1
     print(f"SCORE {score[teamA]}-{score[teamB]}")

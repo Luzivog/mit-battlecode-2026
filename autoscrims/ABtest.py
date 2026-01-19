@@ -16,6 +16,7 @@ from multiprocessing.pool import ThreadPool
 from pathlib import Path
 from threading import Lock
 from rich.console import Console
+from rich.live import Live
 from rich.segment import Segments
 from rich.table import Table
 from rich.text import Text
@@ -135,9 +136,10 @@ class State:
     player2: str
     maps: list[MapEntry]
     matches: list[Match]
-    in_progress: set[tuple[str, bool]] = field(default_factory=set)
     console: Console
     timestamp: str
+    live: Live | None = None
+    in_progress: set[tuple[str, bool]] = field(default_factory=set)
     lock: Lock = field(default_factory=Lock, repr=False)
 
     def print(self) -> None:
@@ -173,7 +175,11 @@ class State:
             elif not has_next and has_up and has_down:
                 separator += "┪"
 
-        self.console.print(Segments([*maps_segments[:-2], Text(separator, style="bold"), *stats_segments[2:]]))
+        renderable = Segments([*maps_segments[:-2], Text(separator, style="bold"), *stats_segments[2:]])
+        if self.live is None:
+            self.console.print(renderable)
+        else:
+            self.live.update(renderable)
 
     def get_maps_table(self) -> Table:
         table = Table()
@@ -465,26 +471,28 @@ def main() -> None:
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
     state = State(args.player1, args.player2, map_entries, [], console, timestamp)
-    state.print()
+    with Live("", console=console, refresh_per_second=4) as live:
+        state.live = live
+        state.print()
 
-    rng = random.Random(args.seed) if args.seed is not None else random.Random()
-    seed_by_label = {}
-    for entry in map_entries:
-        seed_by_label[entry.label] = (
-            args.seed if args.seed is not None else rng.randint(0, 10**9)
-        )
+        rng = random.Random(args.seed) if args.seed is not None else random.Random()
+        seed_by_label = {}
+        for entry in map_entries:
+            seed_by_label[entry.label] = (
+                args.seed if args.seed is not None else rng.randint(0, 10**9)
+            )
 
-    matches = []
-    total_jobs = len(map_entries) * 2
-    job_idx = 0
-    for entry in map_entries:
-        seed = seed_by_label[entry.label]
-        for reverse in [False, True]:
-            job_idx += 1
-            matches.append((state, entry, reverse, seed, job_idx, timeout))
+        matches = []
+        total_jobs = len(map_entries) * 2
+        job_idx = 0
+        for entry in map_entries:
+            seed = seed_by_label[entry.label]
+            for reverse in [False, True]:
+                job_idx += 1
+                matches.append((state, entry, reverse, seed, job_idx, timeout))
 
-    with ThreadPool(args.workers) as pool:
-        pool.starmap(run_match, matches)
+        with ThreadPool(args.workers) as pool:
+            pool.starmap(run_match, matches)
 
 if __name__ == "__main__":
     main()

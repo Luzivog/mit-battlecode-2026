@@ -1,5 +1,6 @@
 package awubot.robot.rat.combat.moves;
 
+import battlecode.common.Clock;
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
@@ -26,20 +27,25 @@ public final class TryThrow {
     static MapLocation throwTarget;
     static double score;
     static int rem;
+    static int bytecodeStart, bytecodeBudget;
 
     // return false if didnt throw -- some other process can figure out how to move
     // TODO: maybe weight targets based on how close they are to friendly rats? might be too effort
     public static boolean run() throws GameActionException {
         if (!rc.isActionReady()) return false;
+        bytecodeStart = Clock.getBytecodeNum();
+        bytecodeBudget = Math.min(3000, (int) (Clock.getBytecodesLeft() - 1000) / 2);
         // Profiler.push();
         md = null;
         td = null;
         best = -1;
         for (Direction dir : allDirections) {
+            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
             moveDir = dir;
             if (moveDir != Direction.CENTER && !rc.canMove(moveDir)) continue;
             newLoc = myLoc.add(moveDir);
             for (Direction tdir : relatedDirections(myDir)) {
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 throwDir = tdir;
                 if (!CombatCommon.canPerformMoves(moveDir, throwDir)) continue;
                 throwTarget = newLoc.add(throwDir);

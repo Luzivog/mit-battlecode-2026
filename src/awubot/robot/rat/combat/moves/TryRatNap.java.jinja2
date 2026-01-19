@@ -45,26 +45,6 @@ import awubot.RobotTracker;
     "Direction.WEST": "W",
     "Direction.NORTHWEST": "NW",
 } %}
-{% set dir_dx = {
-    "Direction.NORTH": 0,
-    "Direction.NORTHEAST": 1,
-    "Direction.EAST": 1,
-    "Direction.SOUTHEAST": 1,
-    "Direction.SOUTH": 0,
-    "Direction.SOUTHWEST": -1,
-    "Direction.WEST": -1,
-    "Direction.NORTHWEST": -1,
-} %}
-{% set dir_dy = {
-    "Direction.NORTH": 1,
-    "Direction.NORTHEAST": 1,
-    "Direction.EAST": 0,
-    "Direction.SOUTHEAST": -1,
-    "Direction.SOUTH": -1,
-    "Direction.SOUTHWEST": -1,
-    "Direction.WEST": 0,
-    "Direction.NORTHWEST": 1,
-} %}
 {% set dir_opposite_map = {
     "Direction.NORTH": "Direction.SOUTH",
     "Direction.NORTHEAST": "Direction.SOUTHWEST",
@@ -75,42 +55,6 @@ import awubot.RobotTracker;
     "Direction.WEST": "Direction.EAST",
     "Direction.NORTHWEST": "Direction.SOUTHEAST",
 } %}
-
-{% macro delta_dir_ord(dx, dy) -%}
-{%- if dx == 0 and dy == 1 -%}0
-{%- elif dx == 1 and dy == 1 -%}1
-{%- elif dx == 1 and dy == 0 -%}2
-{%- elif dx == 1 and dy == -1 -%}3
-{%- elif dx == 0 and dy == -1 -%}4
-{%- elif dx == -1 and dy == -1 -%}5
-{%- elif dx == -1 and dy == 0 -%}6
-{%- elif dx == -1 and dy == 1 -%}7
-{%- else -%}-1
-{%- endif -%}
-{%- endmacro %}
-
-{% macro select_facing_by_delta() -%}
-        switch (dxToTarget) {
-            {% for dx in [-1, 0, 1] %}
-            case {{ dx }} -> {
-                switch (dyToTarget) {
-                    {% for dy in [-1, 0, 1] %}
-                    case {{ dy }} -> {
-                        {%- set ord = delta_dir_ord(dx, dy) | int -%}
-                        {%- if ord >= 0 -%}
-                        {% for facing in related_map[ord] %}
-                        face{{ dir_short_map[facing] }}();
-                        {% endfor %}
-                        {%- endif -%}
-                    }
-                    {% endfor %}
-                    default -> { }
-                }
-            }
-            {% endfor %}
-            default -> { }
-        }
-{%- endmacro %}
 
 public final class TryRatNap {
     private TryRatNap() {
@@ -123,26 +67,27 @@ public final class TryRatNap {
     static Direction bestSecondaryMove;
     static double bestScore;
     static Direction moveDir;
+    static MapLocation newLoc;
     static int dxToTarget;
     static int dyToTarget;
     static double best;
     static double weight;
     static MapLocation t;
-
-    private static int BYTECODE_BUDGET = 3000;
+    static int bytecodeStart, bytecodeBudget;
 
     // return true if successfully ratnapped someone
     // TODO: do danger levels and verify you dont die on the next turn
     public static boolean run() throws GameActionException {
         if (!rc.isActionReady()) return false;
+        bytecodeBudget = Math.min(3000, (int) (Clock.getBytecodesLeft() - 1000) / 2);
+        bytecodeStart = Clock.getBytecodeNum();
         target = null;
         bestMove = null;
         bestFacing = null;
         bestSecondaryMove = null;
         bestScore = -1;
-        int bytecodeStart = Clock.getBytecodeNum();
         for (int i = 0; i < RobotTracker.numEnemies && i < 3; i++) {
-            if (Clock.getBytecodeNum() - bytecodeStart > BYTECODE_BUDGET) break;
+            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
             info = RobotTracker.sortedEnemies[i];
             t = info.location;
             if (chebyshevDistance(myLoc, t) > 2) continue;
@@ -151,7 +96,7 @@ public final class TryRatNap {
             // double weight = scoreEnemy(info);
             weight = 30;
             selectMoves();
-            if (Clock.getBytecodeNum() - bytecodeStart > BYTECODE_BUDGET) break;
+            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
             selectSecondaryMoves();
         }
         if (bestScore < 0.5) return false;
@@ -181,6 +126,7 @@ public final class TryRatNap {
             case {{ ord }} -> {
                 {% for d in wide_related_map[ord] %}
                 move{{ dir_short_map[d] }}();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 {% endfor %}
             }
             {% endfor %}
@@ -192,11 +138,22 @@ public final class TryRatNap {
     private static void move{{ dir_short_map[move_dir] }}() throws GameActionException {
         if (!CombatCommon.canMove{{ dir_short_map[move_dir] }}) return;
         moveDir = {{ move_dir }};
-        dxToTarget = t.x - (myLocX {% if dir_dx[move_dir] %} + {{ dir_dx[move_dir] }}{% endif %});
-        dyToTarget = t.y - (myLocY {% if dir_dy[move_dir] %} + {{ dir_dy[move_dir] }}{% endif %});
+        newLoc = myLoc.add(moveDir);
+        dxToTarget = t.x - newLoc.x;
+        dyToTarget = t.y - newLoc.y;
         if (dxToTarget * dxToTarget + dyToTarget * dyToTarget > 2) return;
         if (info.getHealth() >= rc.getHealth() && canSense(-dxToTarget, -dyToTarget, info.direction)) return; // can i ratnap this guy
-{{ select_facing_by_delta() }}
+        switch (newLoc.directionTo(t).ordinal()) {
+            {% for ord in range(8) %}
+            case {{ ord }} -> {
+                {% for facing in related_map[ord] %}
+                face{{ dir_short_map[facing] }}();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                {% endfor %}
+            }
+            {% endfor %}
+            default -> { }
+        }
     }
 
     {% endfor %}
@@ -232,6 +189,7 @@ public final class TryRatNap {
                 {% for facing in related %}
                 {% for move_dir in related %}
                 considerSecondaryMove({{ dir_opposite_map[move_dir] }}, {{ facing }});
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 {% endfor %}
                 {% endfor %}
             }

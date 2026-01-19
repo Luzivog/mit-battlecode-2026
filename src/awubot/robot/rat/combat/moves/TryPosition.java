@@ -1,5 +1,6 @@
 package awubot.robot.rat.combat.moves;
 
+import battlecode.common.Clock;
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
 import battlecode.common.GameConstants;
@@ -25,13 +26,16 @@ public final class TryPosition {
     static Direction moveDir;
     static MapLocation newLoc;
     static double score;
+    static int bytecodeStart, bytecodeBudget;
 
     public static boolean run() throws GameActionException {
         if (!rc.isActionReady()) return false;
+        bytecodeStart = Clock.getBytecodeNum();
+        bytecodeBudget = Math.min(3000, (int) (Clock.getBytecodesLeft() - 1000) / 2);
         // Profiler.push();
         bestMove = null;
         bestFacing = null;
-        bestScore = -1;
+        bestScore = -1e9;
         selectMoves();
         assert(CombatStrategy.performMoves(bestMove, bestFacing));
         indicate("COMBAT STRAT: POSITION move " + bestMove + " face " + bestFacing + " score " + bestScore);
@@ -39,14 +43,23 @@ public final class TryPosition {
     }
 
     private static void selectMoves() throws GameActionException {
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
         moveN();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
         moveNE();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
         moveE();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
         moveSE();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
         moveS();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
         moveSW();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
         moveW();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
         moveNW();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
         moveC();
     }
 
@@ -57,43 +70,67 @@ public final class TryPosition {
         switch (myDir.ordinal()) {
             case 0 -> {
                 faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 1 -> {
                 faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 2 -> {
                 faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 3 -> {
                 faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 4 -> {
                 faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 5 -> {
                 faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 6 -> {
                 faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 7 -> {
                 faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             default -> { }
         }
@@ -105,43 +142,67 @@ public final class TryPosition {
         switch (myDir.ordinal()) {
             case 0 -> {
                 faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 1 -> {
                 faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 2 -> {
                 faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 3 -> {
                 faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 4 -> {
                 faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 5 -> {
                 faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 6 -> {
                 faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 7 -> {
                 faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             default -> { }
         }
@@ -153,43 +214,67 @@ public final class TryPosition {
         switch (myDir.ordinal()) {
             case 0 -> {
                 faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 1 -> {
                 faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 2 -> {
                 faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 3 -> {
                 faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 4 -> {
                 faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 5 -> {
                 faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 6 -> {
                 faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 7 -> {
                 faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             default -> { }
         }
@@ -201,43 +286,67 @@ public final class TryPosition {
         switch (myDir.ordinal()) {
             case 0 -> {
                 faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 1 -> {
                 faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 2 -> {
                 faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 3 -> {
                 faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 4 -> {
                 faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 5 -> {
                 faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 6 -> {
                 faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 7 -> {
                 faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             default -> { }
         }
@@ -249,43 +358,67 @@ public final class TryPosition {
         switch (myDir.ordinal()) {
             case 0 -> {
                 faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 1 -> {
                 faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 2 -> {
                 faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 3 -> {
                 faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 4 -> {
                 faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 5 -> {
                 faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 6 -> {
                 faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 7 -> {
                 faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             default -> { }
         }
@@ -297,43 +430,67 @@ public final class TryPosition {
         switch (myDir.ordinal()) {
             case 0 -> {
                 faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 1 -> {
                 faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 2 -> {
                 faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 3 -> {
                 faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 4 -> {
                 faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 5 -> {
                 faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 6 -> {
                 faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 7 -> {
                 faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             default -> { }
         }
@@ -345,43 +502,67 @@ public final class TryPosition {
         switch (myDir.ordinal()) {
             case 0 -> {
                 faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 1 -> {
                 faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 2 -> {
                 faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 3 -> {
                 faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 4 -> {
                 faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 5 -> {
                 faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 6 -> {
                 faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 7 -> {
                 faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             default -> { }
         }
@@ -393,43 +574,67 @@ public final class TryPosition {
         switch (myDir.ordinal()) {
             case 0 -> {
                 faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 1 -> {
                 faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 2 -> {
                 faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 3 -> {
                 faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 4 -> {
                 faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 5 -> {
                 faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 6 -> {
                 faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 7 -> {
                 faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             default -> { }
         }
@@ -441,43 +646,67 @@ public final class TryPosition {
         switch (myDir.ordinal()) {
             case 0 -> {
                 faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 1 -> {
                 faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 2 -> {
                 faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 3 -> {
                 faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 4 -> {
                 faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 5 -> {
                 faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 6 -> {
                 faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 7 -> {
                 faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             default -> { }
         }

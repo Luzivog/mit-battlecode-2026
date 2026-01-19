@@ -812,6 +812,7 @@ public class Util {
     // for debugging purposes
     public static String indicatorString = "";
     public static void indicate(Object o) {
+        if (Game.DISABLE_OUTPUT) return;
         indicatorString += o + "\n";
         rc.setIndicatorString(indicatorString);
     }

@@ -1,3 +1,8 @@
+# Usage:
+#   python autoscrims/ABtest.py TEAM_A TEAM_B [--maps-dir DIR] [--maps MAP1,MAP2] [--reps N]
+#   Optional .env: AB_PLAYER1, AB_PLAYER2, AB_MAPS_DIR, AB_REPS, AB_SEED, AB_WORKERS, AB_NO_BUILD, AB_TIMEOUT
+# Notes:
+#   --reps repeats each map N times (each repeat runs both sides); --seed fixes the seed for all entries.
 import math
 import os
 import random
@@ -9,6 +14,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from multiprocessing.pool import ThreadPool
 from pathlib import Path
+from threading import Lock
 from rich.console import Console
 from rich.segment import Segments
 from rich.table import Table
@@ -77,6 +83,21 @@ def parse_maps(value: str | None) -> list[str] | None:
     parts = value.replace(",", " ").split()
     return [part for part in parts if part]
 
+
+def binom_p_value(wins: int, total: int) -> float:
+    if total <= 0:
+        return 1.0
+    wins = max(0, min(wins, total))
+    tail = sum(math.comb(total, k) for k in range(0, min(wins, total - wins) + 1))
+    p_value = 2.0 * (tail / (1 << total))
+    return min(1.0, p_value)
+
+
+def format_p_value(p_value: float) -> str:
+    if p_value < 1e-6:
+        return "<1e-6"
+    return f"{p_value:.3g}"
+
 @dataclass
 class MapEntry:
     name: str
@@ -116,6 +137,8 @@ class State:
     matches: list[Match]
     console: Console
     timestamp: str
+    in_progress: set[tuple[str, bool]] = field(default_factory=set)
+    lock: Lock = field(default_factory=Lock, repr=False)
 
     def print(self) -> None:
         maps_table = self.get_maps_table()
@@ -186,7 +209,10 @@ class State:
                         None,
                     )
                     if match is None:
-                        slots[1 if reverse else 0] = ""
+                        if (map_label, reverse) in self.in_progress:
+                            slots[1 if reverse else 0] = "[orange1]...[/]"
+                        else:
+                            slots[1 if reverse else 0] = ""
                     elif match.player1_wins != reverse:
                         # row.append(f"[green][link={self.get_viewer_url(match.replay_name)}]{match.win_condition_short}[/][/]")
                         slots[1 if reverse else 0] = f"[green]{match.win_condition_short}[/]"
@@ -220,6 +246,7 @@ class State:
         table.add_column("Player", style="bold", overflow="fold")
         table.add_column("Results", overflow="fold")
         table.add_column("Win rate", overflow="fold")
+        table.add_column("p-value", overflow="fold")
         table.add_column("Maps", overflow="fold")
 
         player1_stats = PlayerStatistics()
@@ -266,6 +293,7 @@ class State:
             table.add_column(condition, overflow="fold")
 
         match_count = len(self.matches)
+        p_value_str = format_p_value(binom_p_value(player1_stats.wins, match_count))
 
         for name, stats, other_stats in [
             (self.player1, player1_stats, player2_stats),
@@ -275,6 +303,7 @@ class State:
                 name,
                 f"[green]{stats.wins}[/]/[red]{match_count - stats.wins}[/]",
                 f"{stats.wins / match_count * 100 if match_count > 0 else 0:,.2f}%",
+                p_value_str,
                 f"[green]{stats.win_maps}[/]/[yellow]{stats.draw_maps}[/]/[red]{stats.lose_maps}[/]"
             ]
 
@@ -302,11 +331,14 @@ def run_match(
     player2 = state.player2 if not reverse else state.player1
     total = len(state.maps) * 2
 
-    print(f"[{job_idx}/{total}] Start {player1} vs {player2} on {map_entry.label} seed {seed}")
     replay_name = (
         f"matches/run-{state.timestamp}-{player1}-vs-{player2}-on-"
         f"{map_entry.name}-rep{map_entry.rep}-seed{seed}.bc26"
     )
+
+    with state.lock:
+        state.in_progress.add((map_entry.label, reverse))
+        state.print()
 
     try:
         process = subprocess.run(
@@ -325,14 +357,16 @@ def run_match(
             timeout=timeout,
         )
     except subprocess.TimeoutExpired:
-        print(
-            f"[{job_idx}/{total}] Timeout after {timeout}s: "
-            f"{player1} vs {player2} on {map_entry.label} seed {seed}"
-        )
+        with state.lock:
+            state.in_progress.discard((map_entry.label, reverse))
+            state.print()
         return
     stdout = process.stdout.decode("utf-8")
 
     if process.returncode != 0:
+        with state.lock:
+            state.in_progress.discard((map_entry.label, reverse))
+            state.print()
         print(
             f"Gradle exited with status code {process.returncode} after running "
             f"{player1} vs. {player2} on {map_entry.name}\n{stdout}"
@@ -347,9 +381,10 @@ def run_match(
     win_condition_line = next(line for line in lines if line.startswith("[server] Reason: "))
     win_condition = win_condition_line.split(": ", 1)[1]
 
-    print(f"[{job_idx}/{total}] Finished {player1} vs {player2} on {map_entry.label} seed {seed}")
-    state.matches.append(Match(map_entry.label, reverse, player1_wins, win_condition, replay_name))
-    state.print()
+    with state.lock:
+        state.in_progress.discard((map_entry.label, reverse))
+        state.matches.append(Match(map_entry.label, reverse, player1_wins, win_condition, replay_name))
+        state.print()
 
 def main() -> None:
     default_player1 = env_first("AB_PLAYER1", "BC_TEAM_A", "BC_PLAYER1")
@@ -447,7 +482,6 @@ def main() -> None:
         for reverse in [False, True]:
             job_idx += 1
             matches.append((state, entry, reverse, seed, job_idx, timeout))
-    print(f"Queued {total_jobs} matches.")
 
     with ThreadPool(args.workers) as pool:
         pool.starmap(run_match, matches)

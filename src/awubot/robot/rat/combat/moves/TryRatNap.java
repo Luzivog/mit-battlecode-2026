@@ -16,8 +16,6 @@ import static awubot.robot.rat.BabyRat.*;
 import awubot.RobotTracker;
 
 
-
-
 public final class TryRatNap {
     private TryRatNap() {
     }
@@ -29,26 +27,27 @@ public final class TryRatNap {
     static Direction bestSecondaryMove;
     static double bestScore;
     static Direction moveDir;
+    static MapLocation newLoc;
     static int dxToTarget;
     static int dyToTarget;
     static double best;
     static double weight;
     static MapLocation t;
-
-    private static int BYTECODE_BUDGET = 3000;
+    static int bytecodeStart, bytecodeBudget;
 
     // return true if successfully ratnapped someone
     // TODO: do danger levels and verify you dont die on the next turn
     public static boolean run() throws GameActionException {
         if (!rc.isActionReady()) return false;
+        bytecodeBudget = Math.min(3000, (int) (Clock.getBytecodesLeft() - 1000) / 2);
+        bytecodeStart = Clock.getBytecodeNum();
         target = null;
         bestMove = null;
         bestFacing = null;
         bestSecondaryMove = null;
         bestScore = -1;
-        int bytecodeStart = Clock.getBytecodeNum();
         for (int i = 0; i < RobotTracker.numEnemies && i < 3; i++) {
-            if (Clock.getBytecodeNum() - bytecodeStart > BYTECODE_BUDGET) break;
+            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
             info = RobotTracker.sortedEnemies[i];
             t = info.location;
             if (chebyshevDistance(myLoc, t) > 2) continue;
@@ -57,7 +56,7 @@ public final class TryRatNap {
             // double weight = scoreEnemy(info);
             weight = 30;
             selectMoves();
-            if (Clock.getBytecodeNum() - bytecodeStart > BYTECODE_BUDGET) break;
+            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
             selectSecondaryMoves();
         }
         if (bestScore < 0.5) return false;
@@ -85,59 +84,99 @@ public final class TryRatNap {
         switch (myDir.ordinal()) {
             case 0 -> {
                 moveN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 moveNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 moveNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 moveE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 moveW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 1 -> {
                 moveNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 moveN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 moveE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 moveNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 moveSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 2 -> {
                 moveE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 moveNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 moveSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 moveN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 moveS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 3 -> {
                 moveSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 moveS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 moveE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 moveNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 moveSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 4 -> {
                 moveS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 moveSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 moveSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 moveE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 moveW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 5 -> {
                 moveSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 moveS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 moveW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 moveNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 moveSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 6 -> {
                 moveW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 moveNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 moveSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 moveN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 moveS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 7 -> {
                 moveNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 moveN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 moveW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 moveNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 moveSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             default -> { }
         }
@@ -146,58 +185,75 @@ public final class TryRatNap {
     private static void moveN() throws GameActionException {
         if (!CombatCommon.canMoveN) return;
         moveDir = Direction.NORTH;
-        dxToTarget = t.x - (myLocX );
-        dyToTarget = t.y - (myLocY  + 1);
+        newLoc = myLoc.add(moveDir);
+        dxToTarget = t.x - newLoc.x;
+        dyToTarget = t.y - newLoc.y;
         if (dxToTarget * dxToTarget + dyToTarget * dyToTarget > 2) return;
         if (info.getHealth() >= rc.getHealth() && canSense(-dxToTarget, -dyToTarget, info.direction)) return; // can i ratnap this guy
-switch (dxToTarget) {
-            case -1 -> {
-                switch (dyToTarget) {
-                    case -1 -> {                        faceSW();
-                        faceS();
-                        faceW();
-}
-                    case 0 -> {                        faceW();
-                        faceNW();
-                        faceSW();
-}
-                    case 1 -> {                        faceNW();
-                        faceN();
-                        faceW();
-}
-                    default -> { }
-                }
-            }
+        switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
-                switch (dyToTarget) {
-                    case -1 -> {                        faceS();
-                        faceSE();
-                        faceSW();
-}
-                    case 0 -> {}
-                    case 1 -> {                        faceN();
-                        faceNE();
-                        faceNW();
-}
-                    default -> { }
-                }
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 1 -> {
-                switch (dyToTarget) {
-                    case -1 -> {                        faceSE();
-                        faceS();
-                        faceE();
-}
-                    case 0 -> {                        faceE();
-                        faceNE();
-                        faceSE();
-}
-                    case 1 -> {                        faceNE();
-                        faceN();
-                        faceE();
-}
-                    default -> { }
-                }
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 2 -> {
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 3 -> {
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 4 -> {
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 5 -> {
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 6 -> {
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 7 -> {
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             default -> { }
         }
@@ -206,58 +262,75 @@ switch (dxToTarget) {
     private static void moveNE() throws GameActionException {
         if (!CombatCommon.canMoveNE) return;
         moveDir = Direction.NORTHEAST;
-        dxToTarget = t.x - (myLocX  + 1);
-        dyToTarget = t.y - (myLocY  + 1);
+        newLoc = myLoc.add(moveDir);
+        dxToTarget = t.x - newLoc.x;
+        dyToTarget = t.y - newLoc.y;
         if (dxToTarget * dxToTarget + dyToTarget * dyToTarget > 2) return;
         if (info.getHealth() >= rc.getHealth() && canSense(-dxToTarget, -dyToTarget, info.direction)) return; // can i ratnap this guy
-switch (dxToTarget) {
-            case -1 -> {
-                switch (dyToTarget) {
-                    case -1 -> {                        faceSW();
-                        faceS();
-                        faceW();
-}
-                    case 0 -> {                        faceW();
-                        faceNW();
-                        faceSW();
-}
-                    case 1 -> {                        faceNW();
-                        faceN();
-                        faceW();
-}
-                    default -> { }
-                }
-            }
+        switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
-                switch (dyToTarget) {
-                    case -1 -> {                        faceS();
-                        faceSE();
-                        faceSW();
-}
-                    case 0 -> {}
-                    case 1 -> {                        faceN();
-                        faceNE();
-                        faceNW();
-}
-                    default -> { }
-                }
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 1 -> {
-                switch (dyToTarget) {
-                    case -1 -> {                        faceSE();
-                        faceS();
-                        faceE();
-}
-                    case 0 -> {                        faceE();
-                        faceNE();
-                        faceSE();
-}
-                    case 1 -> {                        faceNE();
-                        faceN();
-                        faceE();
-}
-                    default -> { }
-                }
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 2 -> {
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 3 -> {
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 4 -> {
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 5 -> {
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 6 -> {
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 7 -> {
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             default -> { }
         }
@@ -266,58 +339,75 @@ switch (dxToTarget) {
     private static void moveE() throws GameActionException {
         if (!CombatCommon.canMoveE) return;
         moveDir = Direction.EAST;
-        dxToTarget = t.x - (myLocX  + 1);
-        dyToTarget = t.y - (myLocY );
+        newLoc = myLoc.add(moveDir);
+        dxToTarget = t.x - newLoc.x;
+        dyToTarget = t.y - newLoc.y;
         if (dxToTarget * dxToTarget + dyToTarget * dyToTarget > 2) return;
         if (info.getHealth() >= rc.getHealth() && canSense(-dxToTarget, -dyToTarget, info.direction)) return; // can i ratnap this guy
-switch (dxToTarget) {
-            case -1 -> {
-                switch (dyToTarget) {
-                    case -1 -> {                        faceSW();
-                        faceS();
-                        faceW();
-}
-                    case 0 -> {                        faceW();
-                        faceNW();
-                        faceSW();
-}
-                    case 1 -> {                        faceNW();
-                        faceN();
-                        faceW();
-}
-                    default -> { }
-                }
-            }
+        switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
-                switch (dyToTarget) {
-                    case -1 -> {                        faceS();
-                        faceSE();
-                        faceSW();
-}
-                    case 0 -> {}
-                    case 1 -> {                        faceN();
-                        faceNE();
-                        faceNW();
-}
-                    default -> { }
-                }
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 1 -> {
-                switch (dyToTarget) {
-                    case -1 -> {                        faceSE();
-                        faceS();
-                        faceE();
-}
-                    case 0 -> {                        faceE();
-                        faceNE();
-                        faceSE();
-}
-                    case 1 -> {                        faceNE();
-                        faceN();
-                        faceE();
-}
-                    default -> { }
-                }
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 2 -> {
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 3 -> {
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 4 -> {
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 5 -> {
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 6 -> {
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 7 -> {
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             default -> { }
         }
@@ -326,58 +416,75 @@ switch (dxToTarget) {
     private static void moveSE() throws GameActionException {
         if (!CombatCommon.canMoveSE) return;
         moveDir = Direction.SOUTHEAST;
-        dxToTarget = t.x - (myLocX  + 1);
-        dyToTarget = t.y - (myLocY  + -1);
+        newLoc = myLoc.add(moveDir);
+        dxToTarget = t.x - newLoc.x;
+        dyToTarget = t.y - newLoc.y;
         if (dxToTarget * dxToTarget + dyToTarget * dyToTarget > 2) return;
         if (info.getHealth() >= rc.getHealth() && canSense(-dxToTarget, -dyToTarget, info.direction)) return; // can i ratnap this guy
-switch (dxToTarget) {
-            case -1 -> {
-                switch (dyToTarget) {
-                    case -1 -> {                        faceSW();
-                        faceS();
-                        faceW();
-}
-                    case 0 -> {                        faceW();
-                        faceNW();
-                        faceSW();
-}
-                    case 1 -> {                        faceNW();
-                        faceN();
-                        faceW();
-}
-                    default -> { }
-                }
-            }
+        switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
-                switch (dyToTarget) {
-                    case -1 -> {                        faceS();
-                        faceSE();
-                        faceSW();
-}
-                    case 0 -> {}
-                    case 1 -> {                        faceN();
-                        faceNE();
-                        faceNW();
-}
-                    default -> { }
-                }
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 1 -> {
-                switch (dyToTarget) {
-                    case -1 -> {                        faceSE();
-                        faceS();
-                        faceE();
-}
-                    case 0 -> {                        faceE();
-                        faceNE();
-                        faceSE();
-}
-                    case 1 -> {                        faceNE();
-                        faceN();
-                        faceE();
-}
-                    default -> { }
-                }
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 2 -> {
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 3 -> {
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 4 -> {
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 5 -> {
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 6 -> {
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 7 -> {
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             default -> { }
         }
@@ -386,58 +493,75 @@ switch (dxToTarget) {
     private static void moveS() throws GameActionException {
         if (!CombatCommon.canMoveS) return;
         moveDir = Direction.SOUTH;
-        dxToTarget = t.x - (myLocX );
-        dyToTarget = t.y - (myLocY  + -1);
+        newLoc = myLoc.add(moveDir);
+        dxToTarget = t.x - newLoc.x;
+        dyToTarget = t.y - newLoc.y;
         if (dxToTarget * dxToTarget + dyToTarget * dyToTarget > 2) return;
         if (info.getHealth() >= rc.getHealth() && canSense(-dxToTarget, -dyToTarget, info.direction)) return; // can i ratnap this guy
-switch (dxToTarget) {
-            case -1 -> {
-                switch (dyToTarget) {
-                    case -1 -> {                        faceSW();
-                        faceS();
-                        faceW();
-}
-                    case 0 -> {                        faceW();
-                        faceNW();
-                        faceSW();
-}
-                    case 1 -> {                        faceNW();
-                        faceN();
-                        faceW();
-}
-                    default -> { }
-                }
-            }
+        switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
-                switch (dyToTarget) {
-                    case -1 -> {                        faceS();
-                        faceSE();
-                        faceSW();
-}
-                    case 0 -> {}
-                    case 1 -> {                        faceN();
-                        faceNE();
-                        faceNW();
-}
-                    default -> { }
-                }
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 1 -> {
-                switch (dyToTarget) {
-                    case -1 -> {                        faceSE();
-                        faceS();
-                        faceE();
-}
-                    case 0 -> {                        faceE();
-                        faceNE();
-                        faceSE();
-}
-                    case 1 -> {                        faceNE();
-                        faceN();
-                        faceE();
-}
-                    default -> { }
-                }
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 2 -> {
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 3 -> {
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 4 -> {
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 5 -> {
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 6 -> {
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 7 -> {
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             default -> { }
         }
@@ -446,58 +570,75 @@ switch (dxToTarget) {
     private static void moveSW() throws GameActionException {
         if (!CombatCommon.canMoveSW) return;
         moveDir = Direction.SOUTHWEST;
-        dxToTarget = t.x - (myLocX  + -1);
-        dyToTarget = t.y - (myLocY  + -1);
+        newLoc = myLoc.add(moveDir);
+        dxToTarget = t.x - newLoc.x;
+        dyToTarget = t.y - newLoc.y;
         if (dxToTarget * dxToTarget + dyToTarget * dyToTarget > 2) return;
         if (info.getHealth() >= rc.getHealth() && canSense(-dxToTarget, -dyToTarget, info.direction)) return; // can i ratnap this guy
-switch (dxToTarget) {
-            case -1 -> {
-                switch (dyToTarget) {
-                    case -1 -> {                        faceSW();
-                        faceS();
-                        faceW();
-}
-                    case 0 -> {                        faceW();
-                        faceNW();
-                        faceSW();
-}
-                    case 1 -> {                        faceNW();
-                        faceN();
-                        faceW();
-}
-                    default -> { }
-                }
-            }
+        switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
-                switch (dyToTarget) {
-                    case -1 -> {                        faceS();
-                        faceSE();
-                        faceSW();
-}
-                    case 0 -> {}
-                    case 1 -> {                        faceN();
-                        faceNE();
-                        faceNW();
-}
-                    default -> { }
-                }
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 1 -> {
-                switch (dyToTarget) {
-                    case -1 -> {                        faceSE();
-                        faceS();
-                        faceE();
-}
-                    case 0 -> {                        faceE();
-                        faceNE();
-                        faceSE();
-}
-                    case 1 -> {                        faceNE();
-                        faceN();
-                        faceE();
-}
-                    default -> { }
-                }
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 2 -> {
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 3 -> {
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 4 -> {
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 5 -> {
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 6 -> {
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 7 -> {
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             default -> { }
         }
@@ -506,58 +647,75 @@ switch (dxToTarget) {
     private static void moveW() throws GameActionException {
         if (!CombatCommon.canMoveW) return;
         moveDir = Direction.WEST;
-        dxToTarget = t.x - (myLocX  + -1);
-        dyToTarget = t.y - (myLocY );
+        newLoc = myLoc.add(moveDir);
+        dxToTarget = t.x - newLoc.x;
+        dyToTarget = t.y - newLoc.y;
         if (dxToTarget * dxToTarget + dyToTarget * dyToTarget > 2) return;
         if (info.getHealth() >= rc.getHealth() && canSense(-dxToTarget, -dyToTarget, info.direction)) return; // can i ratnap this guy
-switch (dxToTarget) {
-            case -1 -> {
-                switch (dyToTarget) {
-                    case -1 -> {                        faceSW();
-                        faceS();
-                        faceW();
-}
-                    case 0 -> {                        faceW();
-                        faceNW();
-                        faceSW();
-}
-                    case 1 -> {                        faceNW();
-                        faceN();
-                        faceW();
-}
-                    default -> { }
-                }
-            }
+        switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
-                switch (dyToTarget) {
-                    case -1 -> {                        faceS();
-                        faceSE();
-                        faceSW();
-}
-                    case 0 -> {}
-                    case 1 -> {                        faceN();
-                        faceNE();
-                        faceNW();
-}
-                    default -> { }
-                }
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 1 -> {
-                switch (dyToTarget) {
-                    case -1 -> {                        faceSE();
-                        faceS();
-                        faceE();
-}
-                    case 0 -> {                        faceE();
-                        faceNE();
-                        faceSE();
-}
-                    case 1 -> {                        faceNE();
-                        faceN();
-                        faceE();
-}
-                    default -> { }
-                }
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 2 -> {
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 3 -> {
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 4 -> {
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 5 -> {
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 6 -> {
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 7 -> {
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             default -> { }
         }
@@ -566,58 +724,75 @@ switch (dxToTarget) {
     private static void moveNW() throws GameActionException {
         if (!CombatCommon.canMoveNW) return;
         moveDir = Direction.NORTHWEST;
-        dxToTarget = t.x - (myLocX  + -1);
-        dyToTarget = t.y - (myLocY  + 1);
+        newLoc = myLoc.add(moveDir);
+        dxToTarget = t.x - newLoc.x;
+        dyToTarget = t.y - newLoc.y;
         if (dxToTarget * dxToTarget + dyToTarget * dyToTarget > 2) return;
         if (info.getHealth() >= rc.getHealth() && canSense(-dxToTarget, -dyToTarget, info.direction)) return; // can i ratnap this guy
-switch (dxToTarget) {
-            case -1 -> {
-                switch (dyToTarget) {
-                    case -1 -> {                        faceSW();
-                        faceS();
-                        faceW();
-}
-                    case 0 -> {                        faceW();
-                        faceNW();
-                        faceSW();
-}
-                    case 1 -> {                        faceNW();
-                        faceN();
-                        faceW();
-}
-                    default -> { }
-                }
-            }
+        switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
-                switch (dyToTarget) {
-                    case -1 -> {                        faceS();
-                        faceSE();
-                        faceSW();
-}
-                    case 0 -> {}
-                    case 1 -> {                        faceN();
-                        faceNE();
-                        faceNW();
-}
-                    default -> { }
-                }
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 1 -> {
-                switch (dyToTarget) {
-                    case -1 -> {                        faceSE();
-                        faceS();
-                        faceE();
-}
-                    case 0 -> {                        faceE();
-                        faceNE();
-                        faceSE();
-}
-                    case 1 -> {                        faceNE();
-                        faceN();
-                        faceE();
-}
-                    default -> { }
-                }
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 2 -> {
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 3 -> {
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 4 -> {
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 5 -> {
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 6 -> {
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 7 -> {
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             default -> { }
         }
@@ -775,91 +950,163 @@ switch (dxToTarget) {
         switch (myDir.ordinal()) {
             case 0 -> {
                 considerSecondaryMove(Direction.SOUTH, Direction.NORTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.SOUTH, Direction.NORTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.SOUTH, Direction.NORTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 1 -> {
                 considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.SOUTH, Direction.NORTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.WEST, Direction.NORTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.SOUTH, Direction.NORTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.WEST, Direction.NORTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.SOUTHWEST, Direction.EAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.SOUTH, Direction.EAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.WEST, Direction.EAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 2 -> {
                 considerSecondaryMove(Direction.WEST, Direction.EAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.SOUTHWEST, Direction.EAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.NORTHWEST, Direction.EAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.WEST, Direction.NORTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.NORTHWEST, Direction.NORTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.WEST, Direction.SOUTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.SOUTHWEST, Direction.SOUTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 3 -> {
                 considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.NORTH, Direction.SOUTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.WEST, Direction.SOUTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.NORTH, Direction.SOUTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.WEST, Direction.SOUTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.NORTHWEST, Direction.EAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.NORTH, Direction.EAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.WEST, Direction.EAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 4 -> {
                 considerSecondaryMove(Direction.NORTH, Direction.SOUTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.NORTH, Direction.SOUTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.NORTH, Direction.SOUTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 5 -> {
                 considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.NORTH, Direction.SOUTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.EAST, Direction.SOUTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.NORTH, Direction.SOUTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.EAST, Direction.SOUTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.NORTHEAST, Direction.WEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.NORTH, Direction.WEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.EAST, Direction.WEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 6 -> {
                 considerSecondaryMove(Direction.EAST, Direction.WEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.SOUTHEAST, Direction.WEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.NORTHEAST, Direction.WEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.EAST, Direction.NORTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.NORTHEAST, Direction.NORTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.EAST, Direction.SOUTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.SOUTHEAST, Direction.SOUTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 7 -> {
                 considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.SOUTH, Direction.NORTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.EAST, Direction.NORTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.SOUTH, Direction.NORTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.EAST, Direction.NORTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.SOUTHEAST, Direction.WEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.SOUTH, Direction.WEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 considerSecondaryMove(Direction.EAST, Direction.WEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             default -> { }
         }

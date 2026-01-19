@@ -1,5 +1,6 @@
 package awubot.robot.rat.combat.moves;
 
+import battlecode.common.Clock;
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
 import battlecode.common.GameConstants;
@@ -56,13 +57,16 @@ public final class TryPosition {
     static Direction moveDir;
     static MapLocation newLoc;
     static double score;
+    static int bytecodeStart, bytecodeBudget;
 
     public static boolean run() throws GameActionException {
         if (!rc.isActionReady()) return false;
+        bytecodeStart = Clock.getBytecodeNum();
+        bytecodeBudget = Math.min(3000, (int) (Clock.getBytecodesLeft() - 1000) / 2);
         // Profiler.push();
         bestMove = null;
         bestFacing = null;
-        bestScore = -1;
+        bestScore = -1e9;
         selectMoves();
         assert(CombatStrategy.performMoves(bestMove, bestFacing));
         indicate("COMBAT STRAT: POSITION move " + bestMove + " face " + bestFacing + " score " + bestScore);
@@ -71,6 +75,7 @@ public final class TryPosition {
 
     private static void selectMoves() throws GameActionException {
         {% for move_dir in directions + ['Direction.CENTER'] %}
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
         move{{ dir_short_map[move_dir] }}();
         {% endfor %}
     }
@@ -85,6 +90,7 @@ public final class TryPosition {
             case {{ ord }} -> {
                 {% for f in related_map[ord] %}
                 face{{ dir_short_map[f] }}();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 {% endfor %}
             }
             {% endfor %}

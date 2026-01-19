@@ -73,7 +73,10 @@ public class CombatStrategy extends Strategy {
 
     public static double[] cellScore; // [movement direction]
 
+    static int precompStart, precompBudget;
     private void precomp() throws GameActionException {
+        precompStart = Clock.getBytecodeNum();
+        precompBudget = 5000;
         // negligable bytecode
         CombatCommon.precomp();
 
@@ -168,7 +171,8 @@ public class CombatStrategy extends Strategy {
             println("ROBOT DIDNT MAKE A MOVE");
         }
         // TODO: deal with cats (maybe naman's job?)
-        return false;
+        // return false;
+        return true;
     }
 
     public boolean miniTick() throws GameActionException {
@@ -240,18 +244,6 @@ public class CombatStrategy extends Strategy {
     public static void computeCellScores() throws GameActionException {
         sb = new StringBuilder();
         cellScore = new double[9];
-        for (int i = 0; i < RobotTracker.numEnemies && i < 3; i++) {
-            RobotInfo info = RobotTracker.sortedEnemies[i];
-            cellScore[0] += getCellScoreForEnemy(info, Direction.NORTH);
-            cellScore[1] += getCellScoreForEnemy(info, Direction.NORTHEAST);
-            cellScore[2] += getCellScoreForEnemy(info, Direction.EAST);
-            cellScore[3] += getCellScoreForEnemy(info, Direction.SOUTHEAST);
-            cellScore[4] += getCellScoreForEnemy(info, Direction.SOUTH);
-            cellScore[5] += getCellScoreForEnemy(info, Direction.SOUTHWEST);
-            cellScore[6] += getCellScoreForEnemy(info, Direction.WEST);
-            cellScore[7] += getCellScoreForEnemy(info, Direction.NORTHWEST);
-            cellScore[8] += getCellScoreForEnemy(info, Direction.CENTER);
-        }
         for (int i = 0; i < RobotTracker.numCats && i < 3; i++) {
             RobotInfo info = RobotTracker.sortedCats[i];
             cellScore[0] += getCellScoreForEnemy(info, Direction.NORTH);
@@ -263,6 +255,28 @@ public class CombatStrategy extends Strategy {
             cellScore[6] += getCellScoreForEnemy(info, Direction.WEST);
             cellScore[7] += getCellScoreForEnemy(info, Direction.NORTHWEST);
             cellScore[8] += getCellScoreForEnemy(info, Direction.CENTER);
+        }
+        for (int i = 0; i < RobotTracker.numEnemies && i < 3; i++) {
+            RobotInfo info = RobotTracker.sortedEnemies[i];
+            if (Clock.getBytecodeNum() - precompStart > precompBudget) break;
+            cellScore[0] += getCellScoreForEnemy(info, Direction.NORTH);
+            if (Clock.getBytecodeNum() - precompStart > precompBudget) break;
+            cellScore[1] += getCellScoreForEnemy(info, Direction.NORTHEAST);
+            if (Clock.getBytecodeNum() - precompStart > precompBudget) break;
+            cellScore[2] += getCellScoreForEnemy(info, Direction.EAST);
+            if (Clock.getBytecodeNum() - precompStart > precompBudget) break;
+            cellScore[3] += getCellScoreForEnemy(info, Direction.SOUTHEAST);
+            if (Clock.getBytecodeNum() - precompStart > precompBudget) break;
+            cellScore[4] += getCellScoreForEnemy(info, Direction.SOUTH);
+            if (Clock.getBytecodeNum() - precompStart > precompBudget) break;
+            cellScore[5] += getCellScoreForEnemy(info, Direction.SOUTHWEST);
+            if (Clock.getBytecodeNum() - precompStart > precompBudget) break;
+            cellScore[6] += getCellScoreForEnemy(info, Direction.WEST);
+            if (Clock.getBytecodeNum() - precompStart > precompBudget) break;
+            cellScore[7] += getCellScoreForEnemy(info, Direction.NORTHWEST);
+            if (Clock.getBytecodeNum() - precompStart > precompBudget) break;
+            cellScore[8] += getCellScoreForEnemy(info, Direction.CENTER);
+            if (Clock.getBytecodeNum() - precompStart > precompBudget) break;
         }
 
         StringBuilder indicateSb = new StringBuilder("Cell scores:\n");
@@ -339,68 +353,69 @@ public class CombatStrategy extends Strategy {
             return cacheCellScore(info, moveDir, base);
         }
     }
-        /*
+    
+    /*
 
-          attacking another solo rat is safe as if:
-          - you end the turn with at least as much health (no ratnap)
-          - they can't see you
-          if you are in a horde, it should be safe to run at them
+        attacking another solo rat is safe as if:
+        - you end the turn with at least as much health (no ratnap)
+        - they can't see you
+        if you are in a horde, it should be safe to run at them
 
-        */
-        public static boolean shouldFight(RobotInfo enemy) {
-            if (enemy.getType() == UnitType.CAT) {
-                return time > 1000 && rc.getAllCheese() > 300 && RobotTracker.numEnemies == 0 && rc.getHealth() > 50 && rc.getRawCheese() == 0;
-            }
-            if (enemy.getType() == UnitType.RAT_KING) return true;
-            if (enemy.getHealth() <= rc.getHealth()) return true;
-            if (!canSense(enemy.location, myLoc, enemy.direction)) return true;
-            if (GlobalArray.nearestRatKing != null && GlobalArray.nearestRatKing.distanceSquaredTo(myLoc) <= 36) return true;
-            if (RobotTracker.numAllies > RobotTracker.numEnemies) return true;
-            return false;
+    */
+    public static boolean shouldFight(RobotInfo enemy) {
+        if (enemy.getType() == UnitType.CAT) {
+            return time > 1000 && rc.getAllCheese() > 300 && RobotTracker.numEnemies == 0 && rc.getHealth() > 50 && rc.getRawCheese() == 0;
         }
-
-        // currently given arbitrary weights
-        public double scoreEnemy(RobotInfo info) {
-            if (info.getType() == UnitType.RAT_KING) return 5;
-            // one tap this guy
-            if (info.getHealth() - GameConstants.RAT_BITE_DAMAGE <= 0) {
-                return 3.0;
-            }
-            if (info.getHealth() <= 30) {
-                // try to get rid of low hp rats
-                return 1.3;
-            }
-            if (info.getHealth() >= rc.getHealth()) {
-                // try to bring enemy rats into napping distance
-                return 1.2;
-            }
-            return 1;
-        }
-
-        public static int getCheeseNeeded(int damageBuff) {
-            if (damageBuff == 0) return 0;
-            int base = damageBuff - 1;
-            return base * base + 1;
-        }
-
-        public static int canEnemyReach(RobotInfo info, Direction moveDir) throws GameActionException {
-            MapLocation to = myLoc.add(moveDir);
-            int dist = chebyshevDistance(to, info.location);
-            if (dist > 2) return 0;
-            if (!isCellMaybePassable(to)) return 0;;
-            return 1;
-        }
-
-        public static RobotInfo getNearestTarget() {
-            for (int i = 0; i < RobotTracker.numEnemies; i++) {
-                RobotInfo info = RobotTracker.sortedEnemies[i];
-                if (info.getTeam() == rc.getTeam()) continue;
-                if (shouldFight(info)) return info;
-            }
-            for  (int i = 0; i < RobotTracker.numCats; i++) {
-                RobotInfo info = RobotTracker.sortedCats[i];
-                if (shouldFight(info)) return info;
-            }
-            return null;
-        }
+        if (enemy.getType() == UnitType.RAT_KING) return true;
+        if (enemy.getHealth() <= rc.getHealth()) return true;
+        if (!canSense(enemy.location, myLoc, enemy.direction)) return true;
+        if (GlobalArray.nearestRatKing != null && GlobalArray.nearestRatKing.distanceSquaredTo(myLoc) <= 36) return true;
+        if (RobotTracker.numAllies > RobotTracker.numEnemies) return true;
+        return false;
     }
+
+    // currently given arbitrary weights
+    public double scoreEnemy(RobotInfo info) {
+        if (info.getType() == UnitType.RAT_KING) return 5;
+        // one tap this guy
+        if (info.getHealth() - GameConstants.RAT_BITE_DAMAGE <= 0) {
+            return 3.0;
+        }
+        if (info.getHealth() <= 30) {
+            // try to get rid of low hp rats
+            return 1.3;
+        }
+        if (info.getHealth() >= rc.getHealth()) {
+            // try to bring enemy rats into napping distance
+            return 1.2;
+        }
+        return 1;
+    }
+
+    public static int getCheeseNeeded(int damageBuff) {
+        if (damageBuff == 0) return 0;
+        int base = damageBuff - 1;
+        return base * base + 1;
+    }
+
+    public static int canEnemyReach(RobotInfo info, Direction moveDir) throws GameActionException {
+        MapLocation to = myLoc.add(moveDir);
+        int dist = chebyshevDistance(to, info.location);
+        if (dist > 2) return 0;
+        if (!isCellMaybePassable(to)) return 0;;
+        return 1;
+    }
+
+    public static RobotInfo getNearestTarget() {
+        for (int i = 0; i < RobotTracker.numEnemies; i++) {
+            RobotInfo info = RobotTracker.sortedEnemies[i];
+            if (info.getTeam() == rc.getTeam()) continue;
+            if (shouldFight(info)) return info;
+        }
+        for  (int i = 0; i < RobotTracker.numCats; i++) {
+            RobotInfo info = RobotTracker.sortedCats[i];
+            if (shouldFight(info)) return info;
+        }
+        return null;
+    }
+}

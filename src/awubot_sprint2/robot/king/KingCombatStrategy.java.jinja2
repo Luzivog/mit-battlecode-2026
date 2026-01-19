@@ -1,0 +1,75 @@
+package awubot_sprint2.robot.king;
+
+import battlecode.common.*;
+import awubot_sprint2.robot.Strategy;
+
+import static awubot_sprint2.robot.king.RatKing.*;
+import static awubot_sprint2.Game.*;
+import static awubot_sprint2.util.Util.*;
+
+public class KingCombatStrategy extends Strategy {
+    @Override
+    public boolean runTick() throws GameActionException {
+        var nearbyRobots = rc.senseNearbyRobots();
+        var enemy = false;
+        for(var robot : nearbyRobots) {
+            if(robot.team == team) continue;
+            enemy = true;
+            break;
+        }
+        if(!enemy) return false;
+        if(rc.isMovementReady()) {
+            {% for i in range(8) %}
+            var score{{i}} = 0;
+            {% endfor %}
+            for(var robot : nearbyRobots) {
+                if(robot.team == team) continue;
+                var weight = switch(robot.type) {
+                    case BABY_RAT -> 1;
+                    case RAT_KING -> 3;
+                    case CAT -> 5;
+                };
+                var dir = myLoc.directionTo(robot.location);
+                switch(dir.ordinal()) {
+                    {% for i in range(8) %}
+                    case {{i}} -> {
+                        score{{i}}           -= weight * 3;
+                        score{{(i + 7) % 8}} -= weight * 2;
+                        score{{(i + 1) % 8}} -= weight * 2;
+                        score{{(i + 3) % 8}} += weight;
+                        score{{(i + 4) % 8}} += weight;
+                        score{{(i + 5) % 8}} += weight;
+                    }
+                    {% endfor %}
+                    default -> {
+                        assert false : "unexpected direction";
+                    }
+                }
+            }
+            int best = 0;
+            var move = Direction.CENTER;
+            {% for i in range(8) %}
+            if(score{{i}} > best && rc.canMove({{directions[i]}})) {
+                best = score{{i}};
+                move = {{directions[i]}};
+            }
+            {% endfor %}
+            indicate("evading");
+            if(move != Direction.CENTER) rawMove(move);
+        }
+        if(rc.isActionReady()) {
+            RobotInfo best = null;
+            int bestHp = 1000000000;
+            for(var robot : rc.senseNearbyRobots(8, team.opponent())) {
+                if(robot.health < bestHp) {
+                    best = robot;
+                    bestHp = robot.health;
+                }
+            }
+            if(best != null) {
+                rc.attack(best.location);
+            }
+        }
+        return true;
+    }
+}

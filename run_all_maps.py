@@ -121,7 +121,7 @@ def run_match(job):
 
 def default_workers():
     cpu = os.cpu_count() or 4
-    return max(2, min(8, cpu))
+    return max(2, min(12, cpu))
 
 
 def main():

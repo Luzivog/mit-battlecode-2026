@@ -105,7 +105,7 @@ def run_match(job):
         if "resign" in output:
             status = f"{status}, resign detected"
         print(
-            f"[{thread_name}] Done {team_a} vs {team_b} on {map_name} in {duration:.1f}s ({status})"
+            f"[{thread_name}] {winner} won {team_a} vs {team_b} on {map_name} in {duration:.1f}s ({status})"
         )
         return {
             "map": map_name,

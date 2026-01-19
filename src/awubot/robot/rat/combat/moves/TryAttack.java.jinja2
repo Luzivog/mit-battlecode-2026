@@ -1,5 +1,6 @@
 package awubot.robot.rat.combat.moves;
 
+import battlecode.common.Clock;
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
 import battlecode.common.GameConstants;
@@ -60,6 +61,7 @@ public final class TryAttack {
     static Direction moveDir;
     static MapLocation newLoc;
     static double score;
+    static int bytecodeStart, bytecodeBudget;
 
     public static boolean run() throws GameActionException {
         if (!rc.isActionReady()) return false;
@@ -68,13 +70,19 @@ public final class TryAttack {
         bestMove = null;
         bestFacing = null;
         bestScore = -1;
+        bytecodeStart = Clock.getBytecodeNum();
+        bytecodeBudget = Math.min(3000, (int) (Clock.getBytecodesLeft() - 1000) / 2);
         for (int i = 0; i < RobotTracker.numEnemies && i < 3; i++) {
+            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
             info = RobotTracker.sortedEnemies[i];
             considerEnemy();
         }
         if (target == null && RobotTracker.numCats > 0) {
-            info = RobotTracker.sortedCats[0];
-            considerEnemy();
+            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget);
+            else {
+                info = RobotTracker.sortedCats[0];
+                considerEnemy();
+            }
         }
         // Profiler.pop("try attack");
         if (bestScore < 0.5) {
@@ -107,6 +115,7 @@ public final class TryAttack {
             case {{ ord }} -> {
                 {% for d in wide_related_map[ord] %}
                 move{{ dir_short_map[d] }}();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 {% endfor %}
             }
             {% endfor %}
@@ -125,6 +134,7 @@ public final class TryAttack {
             case {{ ord }} -> {
                 {% for f in related_map[ord] %}
                 face{{ dir_short_map[f] }}();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 {% endfor %}
             }
             {% endfor %}

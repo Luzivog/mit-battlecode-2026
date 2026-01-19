@@ -60,7 +60,7 @@ public class RobotPlayer {
                 // rc.resign();
             } finally {
                 if (time != rc.getRoundNum()) {
-                    println("BYTECODE EXCEEDED");
+                    println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! BYTECODE EXCEEDED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                     // rc.resign();
                 }
                 Clock.yield();

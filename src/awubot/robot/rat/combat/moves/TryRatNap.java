@@ -1,5 +1,6 @@
 package awubot.robot.rat.combat.moves;
 
+import battlecode.common.Clock;
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
 import battlecode.common.GameConstants;
@@ -25,82 +26,38 @@ public final class TryRatNap {
     static Direction bestFacing;
     static Direction bestSecondaryMove;
     static double bestScore;
-    static Direction md;
+    static Direction moveDir;
+    static MapLocation newLoc;
+    static int dxToTarget;
+    static int dyToTarget;
     static double best;
     static double weight;
     static MapLocation t;
+    static int bytecodeStart, bytecodeBudget;
 
     // return true if successfully ratnapped someone
     // TODO: do danger levels and verify you dont die on the next turn
     public static boolean run() throws GameActionException {
         if (!rc.isActionReady()) return false;
+        bytecodeBudget = Math.min(3000, (int) (Clock.getBytecodesLeft() - 1000) / 2);
+        bytecodeStart = Clock.getBytecodeNum();
         target = null;
         bestMove = null;
         bestFacing = null;
         bestSecondaryMove = null;
         bestScore = -1;
         for (int i = 0; i < RobotTracker.numEnemies && i < 3; i++) {
+            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
             info = RobotTracker.sortedEnemies[i];
-            if (info.getTeam() == team) continue;
-            if (chebyshevDistance(myLoc, info.location) > 2) continue;
+            t = info.location;
+            if (chebyshevDistance(myLoc, t) > 2) continue;
             if (info.getHealth() <= GameConstants.RAT_BITE_DAMAGE) continue; // just kill
             if (info.getType() != UnitType.BABY_RAT) continue;
-            t = info.location;
             // double weight = scoreEnemy(info);
             weight = 30;
-
-            for (Direction moveDir : directions) {
-                MapLocation newLoc = myLoc.add(moveDir);
-                if (newLoc.distanceSquaredTo(t) > 2) continue;
-                if (!CombatCommon.canMove(moveDir)) continue;
-                if (canSense(t, newLoc, info.direction) && info.getHealth() >= rc.getHealth()) continue; // can i ratnap this guy
-                // for (Direction facing : relatedDirections(newLoc.directionTo(t))) {
-                for (Direction facing : directions) {
-                    if (!canSense(newLoc, t, facing)) continue;
-                    if (!CombatCommon.canPerformMoves(moveDir, facing)) continue;
-                    double score = weight;
-                    if (moveDir == Direction.CENTER) {
-                        score += 10; // prefer standing still
-                    }
-                    score += CombatStrategy.getCellScoreFor(moveDir, facing, info);
-                    // println("danger: " + getDangerFor(moveDir, facing, info));
-                    if (score <= 0.5) continue;
-                    if (facing != myDir) {
-                        score *= 1.2; // prefer turning
-                    }
-                    if (score > bestScore) {
-                        bestScore = score;
-                        target = info;
-                        bestMove = moveDir;
-                        bestFacing = facing;
-                        bestSecondaryMove = null;
-                    }
-                }
-            }
-            {
-                MapLocation newLoc = myLoc;
-                if (newLoc.distanceSquaredTo(t) > 2) continue;
-                if (info.getHealth() >= rc.getHealth()) continue; // can i ratnap this guy
-                for (Direction facing : relatedDirections(myDir)) {
-                    for (Direction _moveDir : relatedDirections(myDir)) {
-                        Direction moveDir = _moveDir.opposite();
-                        if (!CombatCommon.canPerformMoves(moveDir, facing)) continue;
-                        double score = weight + 5;
-                        score += CombatStrategy.getCellScoreFor(moveDir, facing, info);
-                        if (score <= 0.5) continue;
-                        if (facing != myDir) {
-                            score *= 1.2; // prefer turning
-                        }
-                        if (score > bestScore) {
-                            bestScore = score;
-                            target = info;
-                            bestMove = null;
-                            bestFacing = facing;
-                            bestSecondaryMove = moveDir;
-                        }
-                    }
-                }
-            }
+            selectMoves();
+            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
+            selectSecondaryMoves();
         }
         if (bestScore < 0.5) return false;
         if (bestMove != null) {
@@ -123,6 +80,1055 @@ public final class TryRatNap {
         return true;
     }
 
+    private static void selectMoves() throws GameActionException {
+        switch (myDir.ordinal()) {
+            case 0 -> {
+                moveN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 1 -> {
+                moveNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 2 -> {
+                moveE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 3 -> {
+                moveSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 4 -> {
+                moveS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 5 -> {
+                moveSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 6 -> {
+                moveW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 7 -> {
+                moveNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            default -> { }
+        }
+    }
+
+    private static void moveN() throws GameActionException {
+        if (!CombatCommon.canMoveN) return;
+        moveDir = Direction.NORTH;
+        newLoc = myLoc.add(moveDir);
+        dxToTarget = t.x - newLoc.x;
+        dyToTarget = t.y - newLoc.y;
+        if (dxToTarget * dxToTarget + dyToTarget * dyToTarget > 2) return;
+        if (info.getHealth() >= rc.getHealth() && canSense(-dxToTarget, -dyToTarget, info.direction)) return; // can i ratnap this guy
+        switch (newLoc.directionTo(t).ordinal()) {
+            case 0 -> {
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 1 -> {
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 2 -> {
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 3 -> {
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 4 -> {
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 5 -> {
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 6 -> {
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 7 -> {
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            default -> { }
+        }
+    }
+
+    private static void moveNE() throws GameActionException {
+        if (!CombatCommon.canMoveNE) return;
+        moveDir = Direction.NORTHEAST;
+        newLoc = myLoc.add(moveDir);
+        dxToTarget = t.x - newLoc.x;
+        dyToTarget = t.y - newLoc.y;
+        if (dxToTarget * dxToTarget + dyToTarget * dyToTarget > 2) return;
+        if (info.getHealth() >= rc.getHealth() && canSense(-dxToTarget, -dyToTarget, info.direction)) return; // can i ratnap this guy
+        switch (newLoc.directionTo(t).ordinal()) {
+            case 0 -> {
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 1 -> {
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 2 -> {
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 3 -> {
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 4 -> {
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 5 -> {
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 6 -> {
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 7 -> {
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            default -> { }
+        }
+    }
+
+    private static void moveE() throws GameActionException {
+        if (!CombatCommon.canMoveE) return;
+        moveDir = Direction.EAST;
+        newLoc = myLoc.add(moveDir);
+        dxToTarget = t.x - newLoc.x;
+        dyToTarget = t.y - newLoc.y;
+        if (dxToTarget * dxToTarget + dyToTarget * dyToTarget > 2) return;
+        if (info.getHealth() >= rc.getHealth() && canSense(-dxToTarget, -dyToTarget, info.direction)) return; // can i ratnap this guy
+        switch (newLoc.directionTo(t).ordinal()) {
+            case 0 -> {
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 1 -> {
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 2 -> {
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 3 -> {
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 4 -> {
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 5 -> {
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 6 -> {
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 7 -> {
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            default -> { }
+        }
+    }
+
+    private static void moveSE() throws GameActionException {
+        if (!CombatCommon.canMoveSE) return;
+        moveDir = Direction.SOUTHEAST;
+        newLoc = myLoc.add(moveDir);
+        dxToTarget = t.x - newLoc.x;
+        dyToTarget = t.y - newLoc.y;
+        if (dxToTarget * dxToTarget + dyToTarget * dyToTarget > 2) return;
+        if (info.getHealth() >= rc.getHealth() && canSense(-dxToTarget, -dyToTarget, info.direction)) return; // can i ratnap this guy
+        switch (newLoc.directionTo(t).ordinal()) {
+            case 0 -> {
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 1 -> {
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 2 -> {
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 3 -> {
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 4 -> {
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 5 -> {
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 6 -> {
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 7 -> {
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            default -> { }
+        }
+    }
+
+    private static void moveS() throws GameActionException {
+        if (!CombatCommon.canMoveS) return;
+        moveDir = Direction.SOUTH;
+        newLoc = myLoc.add(moveDir);
+        dxToTarget = t.x - newLoc.x;
+        dyToTarget = t.y - newLoc.y;
+        if (dxToTarget * dxToTarget + dyToTarget * dyToTarget > 2) return;
+        if (info.getHealth() >= rc.getHealth() && canSense(-dxToTarget, -dyToTarget, info.direction)) return; // can i ratnap this guy
+        switch (newLoc.directionTo(t).ordinal()) {
+            case 0 -> {
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 1 -> {
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 2 -> {
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 3 -> {
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 4 -> {
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 5 -> {
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 6 -> {
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 7 -> {
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            default -> { }
+        }
+    }
+
+    private static void moveSW() throws GameActionException {
+        if (!CombatCommon.canMoveSW) return;
+        moveDir = Direction.SOUTHWEST;
+        newLoc = myLoc.add(moveDir);
+        dxToTarget = t.x - newLoc.x;
+        dyToTarget = t.y - newLoc.y;
+        if (dxToTarget * dxToTarget + dyToTarget * dyToTarget > 2) return;
+        if (info.getHealth() >= rc.getHealth() && canSense(-dxToTarget, -dyToTarget, info.direction)) return; // can i ratnap this guy
+        switch (newLoc.directionTo(t).ordinal()) {
+            case 0 -> {
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 1 -> {
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 2 -> {
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 3 -> {
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 4 -> {
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 5 -> {
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 6 -> {
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 7 -> {
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            default -> { }
+        }
+    }
+
+    private static void moveW() throws GameActionException {
+        if (!CombatCommon.canMoveW) return;
+        moveDir = Direction.WEST;
+        newLoc = myLoc.add(moveDir);
+        dxToTarget = t.x - newLoc.x;
+        dyToTarget = t.y - newLoc.y;
+        if (dxToTarget * dxToTarget + dyToTarget * dyToTarget > 2) return;
+        if (info.getHealth() >= rc.getHealth() && canSense(-dxToTarget, -dyToTarget, info.direction)) return; // can i ratnap this guy
+        switch (newLoc.directionTo(t).ordinal()) {
+            case 0 -> {
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 1 -> {
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 2 -> {
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 3 -> {
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 4 -> {
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 5 -> {
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 6 -> {
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 7 -> {
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            default -> { }
+        }
+    }
+
+    private static void moveNW() throws GameActionException {
+        if (!CombatCommon.canMoveNW) return;
+        moveDir = Direction.NORTHWEST;
+        newLoc = myLoc.add(moveDir);
+        dxToTarget = t.x - newLoc.x;
+        dyToTarget = t.y - newLoc.y;
+        if (dxToTarget * dxToTarget + dyToTarget * dyToTarget > 2) return;
+        if (info.getHealth() >= rc.getHealth() && canSense(-dxToTarget, -dyToTarget, info.direction)) return; // can i ratnap this guy
+        switch (newLoc.directionTo(t).ordinal()) {
+            case 0 -> {
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 1 -> {
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 2 -> {
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 3 -> {
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 4 -> {
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 5 -> {
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 6 -> {
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 7 -> {
+                faceNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                faceW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            default -> { }
+        }
+    }
+
+    private static void faceN() throws GameActionException {
+        if (!canSense(dxToTarget, dyToTarget, Direction.NORTH)) return;
+        if (!CombatCommon.canPerformMoves(moveDir, Direction.NORTH)) return;
+        double score = weight;
+        score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTH, info);
+        if (score <= 0.5) return;
+        if (Direction.NORTH != myDir) {
+            score *= 1.2; // prefer turning
+        }
+        if (score > bestScore) {
+            bestScore = score;
+            target = info;
+            bestMove = moveDir;
+            bestFacing = Direction.NORTH;
+            bestSecondaryMove = null;
+        }
+    }
+
+    private static void faceNE() throws GameActionException {
+        if (!canSense(dxToTarget, dyToTarget, Direction.NORTHEAST)) return;
+        if (!CombatCommon.canPerformMoves(moveDir, Direction.NORTHEAST)) return;
+        double score = weight;
+        score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHEAST, info);
+        if (score <= 0.5) return;
+        if (Direction.NORTHEAST != myDir) {
+            score *= 1.2; // prefer turning
+        }
+        if (score > bestScore) {
+            bestScore = score;
+            target = info;
+            bestMove = moveDir;
+            bestFacing = Direction.NORTHEAST;
+            bestSecondaryMove = null;
+        }
+    }
+
+    private static void faceE() throws GameActionException {
+        if (!canSense(dxToTarget, dyToTarget, Direction.EAST)) return;
+        if (!CombatCommon.canPerformMoves(moveDir, Direction.EAST)) return;
+        double score = weight;
+        score += CombatStrategy.getCellScoreFor(moveDir, Direction.EAST, info);
+        if (score <= 0.5) return;
+        if (Direction.EAST != myDir) {
+            score *= 1.2; // prefer turning
+        }
+        if (score > bestScore) {
+            bestScore = score;
+            target = info;
+            bestMove = moveDir;
+            bestFacing = Direction.EAST;
+            bestSecondaryMove = null;
+        }
+    }
+
+    private static void faceSE() throws GameActionException {
+        if (!canSense(dxToTarget, dyToTarget, Direction.SOUTHEAST)) return;
+        if (!CombatCommon.canPerformMoves(moveDir, Direction.SOUTHEAST)) return;
+        double score = weight;
+        score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHEAST, info);
+        if (score <= 0.5) return;
+        if (Direction.SOUTHEAST != myDir) {
+            score *= 1.2; // prefer turning
+        }
+        if (score > bestScore) {
+            bestScore = score;
+            target = info;
+            bestMove = moveDir;
+            bestFacing = Direction.SOUTHEAST;
+            bestSecondaryMove = null;
+        }
+    }
+
+    private static void faceS() throws GameActionException {
+        if (!canSense(dxToTarget, dyToTarget, Direction.SOUTH)) return;
+        if (!CombatCommon.canPerformMoves(moveDir, Direction.SOUTH)) return;
+        double score = weight;
+        score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTH, info);
+        if (score <= 0.5) return;
+        if (Direction.SOUTH != myDir) {
+            score *= 1.2; // prefer turning
+        }
+        if (score > bestScore) {
+            bestScore = score;
+            target = info;
+            bestMove = moveDir;
+            bestFacing = Direction.SOUTH;
+            bestSecondaryMove = null;
+        }
+    }
+
+    private static void faceSW() throws GameActionException {
+        if (!canSense(dxToTarget, dyToTarget, Direction.SOUTHWEST)) return;
+        if (!CombatCommon.canPerformMoves(moveDir, Direction.SOUTHWEST)) return;
+        double score = weight;
+        score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHWEST, info);
+        if (score <= 0.5) return;
+        if (Direction.SOUTHWEST != myDir) {
+            score *= 1.2; // prefer turning
+        }
+        if (score > bestScore) {
+            bestScore = score;
+            target = info;
+            bestMove = moveDir;
+            bestFacing = Direction.SOUTHWEST;
+            bestSecondaryMove = null;
+        }
+    }
+
+    private static void faceW() throws GameActionException {
+        if (!canSense(dxToTarget, dyToTarget, Direction.WEST)) return;
+        if (!CombatCommon.canPerformMoves(moveDir, Direction.WEST)) return;
+        double score = weight;
+        score += CombatStrategy.getCellScoreFor(moveDir, Direction.WEST, info);
+        if (score <= 0.5) return;
+        if (Direction.WEST != myDir) {
+            score *= 1.2; // prefer turning
+        }
+        if (score > bestScore) {
+            bestScore = score;
+            target = info;
+            bestMove = moveDir;
+            bestFacing = Direction.WEST;
+            bestSecondaryMove = null;
+        }
+    }
+
+    private static void faceNW() throws GameActionException {
+        if (!canSense(dxToTarget, dyToTarget, Direction.NORTHWEST)) return;
+        if (!CombatCommon.canPerformMoves(moveDir, Direction.NORTHWEST)) return;
+        double score = weight;
+        score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHWEST, info);
+        if (score <= 0.5) return;
+        if (Direction.NORTHWEST != myDir) {
+            score *= 1.2; // prefer turning
+        }
+        if (score > bestScore) {
+            bestScore = score;
+            target = info;
+            bestMove = moveDir;
+            bestFacing = Direction.NORTHWEST;
+            bestSecondaryMove = null;
+        }
+    }
+
+    private static void selectSecondaryMoves() throws GameActionException {
+        int dx = t.x - myLocX;
+        int dy = t.y - myLocY;
+        if (dx * dx + dy * dy > 2) return;
+        if (info.getHealth() >= rc.getHealth()) return; // can i ratnap this guy
+        switch (myDir.ordinal()) {
+            case 0 -> {
+                considerSecondaryMove(Direction.SOUTH, Direction.NORTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTH, Direction.NORTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTH, Direction.NORTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 1 -> {
+                considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTH, Direction.NORTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.WEST, Direction.NORTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTH, Direction.NORTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.WEST, Direction.NORTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTHWEST, Direction.EAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTH, Direction.EAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.WEST, Direction.EAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 2 -> {
+                considerSecondaryMove(Direction.WEST, Direction.EAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTHWEST, Direction.EAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTHWEST, Direction.EAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.WEST, Direction.NORTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTHWEST, Direction.NORTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.WEST, Direction.SOUTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTHWEST, Direction.SOUTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 3 -> {
+                considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTH, Direction.SOUTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.WEST, Direction.SOUTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTH, Direction.SOUTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.WEST, Direction.SOUTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTHWEST, Direction.EAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTH, Direction.EAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.WEST, Direction.EAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 4 -> {
+                considerSecondaryMove(Direction.NORTH, Direction.SOUTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTH, Direction.SOUTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTH, Direction.SOUTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 5 -> {
+                considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTH, Direction.SOUTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.EAST, Direction.SOUTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTH, Direction.SOUTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.EAST, Direction.SOUTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTHEAST, Direction.WEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTH, Direction.WEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.EAST, Direction.WEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 6 -> {
+                considerSecondaryMove(Direction.EAST, Direction.WEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTHEAST, Direction.WEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTHEAST, Direction.WEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.EAST, Direction.NORTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTHEAST, Direction.NORTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.EAST, Direction.SOUTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTHEAST, Direction.SOUTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 7 -> {
+                considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTH, Direction.NORTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.EAST, Direction.NORTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTH, Direction.NORTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.EAST, Direction.NORTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTHEAST, Direction.WEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTH, Direction.WEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.EAST, Direction.WEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            default -> { }
+        }
+    }
+
+    private static void considerSecondaryMove(Direction moveDir, Direction facing) throws GameActionException {
+        if (!CombatCommon.canPerformMoves(moveDir, facing)) return;
+        double score = weight + 5;
+        score += CombatStrategy.getCellScoreFor(moveDir, facing, info);
+        if (score <= 0.5) return;
+        if (facing != myDir) {
+            score *= 1.2; // prefer turning
+        }
+        if (score > bestScore) {
+            bestScore = score;
+            target = info;
+            bestMove = null;
+            bestFacing = facing;
+            bestSecondaryMove = moveDir;
+        }
+    }
+
     public static boolean miniRun() throws GameActionException {
         // first try to nap a rat looking at us
         for (int i = 0; i < RobotTracker.numEnemies && i < 3; i++) {
@@ -131,7 +1137,9 @@ public final class TryRatNap {
             if (info.location.distanceSquaredTo(myLoc) > 2) continue;
             if (info.getHealth() <= GameConstants.RAT_BITE_DAMAGE) continue; // just kill
             if (info.getType() != UnitType.BABY_RAT) continue;
-            if (canSense(myLoc, info.location, info.direction)) {
+            int dx = info.location.x - myLocX;
+            int dy = info.location.y - myLocY;
+            if (canSense(dx, dy, info.direction)) {
                 if (rc.canCarryRat(info.location)) {
                     rc.carryRat(info.location);
                     println("!!!!!!!!!!!!!!!!!!!!!!! mini napped rat");

@@ -1,5 +1,6 @@
 package awubot.robot.rat.combat.moves;
 
+import battlecode.common.Clock;
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
 import battlecode.common.MapInfo;
@@ -59,13 +60,15 @@ public final class TryTrap {
     static MapLocation curMoveLoc;
     static MapLocation weightSource;
     static int weightCompTime;
-
+    static int bytecodeStart, bytecodeBudget;
 
     public static boolean run() throws GameActionException {
         if (rc.getAllCheese() < 300 || !confirmCanPlace()) return false;
-        // Profiler.push();
+        bytecodeStart = Clock.getBytecodeNum();
+        bytecodeBudget = Math.min(3000, (int) (Clock.getBytecodesLeft() - 1000) / 2);
+        Profiler.push();
         computeWeights();
-        // Profiler.pop("TryTrap.computeWeights");
+        Profiler.pop("TryTrap.computeWeights");
         resetBest();
         selectMoves();
         if (best <= 0.5) return false;
@@ -2755,59 +2758,99 @@ w_2_2 += 2;
     private static void selectMoves() throws GameActionException {
         switch (myDir.ordinal()) {
             case 0 -> {
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveW();
             }
             case 1 -> {
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveSE();
             }
             case 2 -> {
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveS();
             }
             case 3 -> {
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveSW();
             }
             case 4 -> {
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveW();
             }
             case 5 -> {
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveSE();
             }
             case 6 -> {
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveS();
             }
             case 7 -> {
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 moveSW();
             }
             default -> { }
@@ -2818,8 +2861,11 @@ w_2_2 += 2;
         if (!CombatCommon.canMoveN) return;
         curMoveLoc = myLoc.add(Direction.NORTH);
         faceNN();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
         faceNEN();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
         faceNWN();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
     }
 
     private static void faceNN() throws GameActionException {
@@ -2958,8 +3004,11 @@ private static void placeWNWN() {
         if (!CombatCommon.canMoveNE) return;
         curMoveLoc = myLoc.add(Direction.NORTHEAST);
         faceNENE();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
         faceNNE();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
         faceENE();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
     }
 
     private static void faceNENE() throws GameActionException {
@@ -3098,8 +3147,11 @@ private static void placeSEENE() {
         if (!CombatCommon.canMoveE) return;
         curMoveLoc = myLoc.add(Direction.EAST);
         faceEE();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
         faceNEE();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
         faceSEE();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
     }
 
     private static void faceEE() throws GameActionException {
@@ -3238,8 +3290,11 @@ private static void placeESEE() {
         if (!CombatCommon.canMoveSE) return;
         curMoveLoc = myLoc.add(Direction.SOUTHEAST);
         faceSESE();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
         faceSSE();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
         faceESE();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
     }
 
     private static void faceSESE() throws GameActionException {
@@ -3378,8 +3433,11 @@ private static void placeSEESE() {
         if (!CombatCommon.canMoveS) return;
         curMoveLoc = myLoc.add(Direction.SOUTH);
         faceSS();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
         faceSES();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
         faceSWS();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
     }
 
     private static void faceSS() throws GameActionException {
@@ -3518,8 +3576,11 @@ private static void placeWSWS() {
         if (!CombatCommon.canMoveSW) return;
         curMoveLoc = myLoc.add(Direction.SOUTHWEST);
         faceSWSW();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
         faceSSW();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
         faceWSW();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
     }
 
     private static void faceSWSW() throws GameActionException {
@@ -3658,8 +3719,11 @@ private static void placeSWWSW() {
         if (!CombatCommon.canMoveW) return;
         curMoveLoc = myLoc.add(Direction.WEST);
         faceWW();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
         faceNWW();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
         faceSWW();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
     }
 
     private static void faceWW() throws GameActionException {
@@ -3798,8 +3862,11 @@ private static void placeWSWW() {
         if (!CombatCommon.canMoveNW) return;
         curMoveLoc = myLoc.add(Direction.NORTHWEST);
         faceNWNW();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
         faceNNW();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
         faceWNW();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
     }
 
     private static void faceNWNW() throws GameActionException {

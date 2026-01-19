@@ -1,5 +1,6 @@
 package awubot.robot.rat.combat.moves;
 
+import battlecode.common.Clock;
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
 import battlecode.common.GameConstants;
@@ -24,6 +25,36 @@ import awubot.RobotTracker;
     6: ["Direction.WEST", "Direction.NORTHWEST", "Direction.SOUTHWEST"],
     7: ["Direction.NORTHWEST", "Direction.NORTH", "Direction.WEST"],
 } %}
+{% set wide_related_map = {
+    0: ["Direction.NORTH", "Direction.NORTHEAST", "Direction.NORTHWEST", "Direction.EAST", "Direction.WEST"],
+    1: ["Direction.NORTHEAST", "Direction.NORTH", "Direction.EAST", "Direction.NORTHWEST", "Direction.SOUTHEAST"],
+    2: ["Direction.EAST", "Direction.NORTHEAST", "Direction.SOUTHEAST", "Direction.NORTH", "Direction.SOUTH"],
+    3: ["Direction.SOUTHEAST", "Direction.SOUTH", "Direction.EAST", "Direction.NORTHEAST", "Direction.SOUTHWEST"],
+    4: ["Direction.SOUTH", "Direction.SOUTHEAST", "Direction.SOUTHWEST", "Direction.EAST", "Direction.WEST"],
+    5: ["Direction.SOUTHWEST", "Direction.SOUTH", "Direction.WEST", "Direction.NORTHWEST", "Direction.SOUTHEAST"],
+    6: ["Direction.WEST", "Direction.NORTHWEST", "Direction.SOUTHWEST", "Direction.NORTH", "Direction.SOUTH"],
+    7: ["Direction.NORTHWEST", "Direction.NORTH", "Direction.WEST", "Direction.NORTHEAST", "Direction.SOUTHWEST"],
+} %}
+{% set dir_short_map = {
+    "Direction.NORTH": "N",
+    "Direction.NORTHEAST": "NE",
+    "Direction.EAST": "E",
+    "Direction.SOUTHEAST": "SE",
+    "Direction.SOUTH": "S",
+    "Direction.SOUTHWEST": "SW",
+    "Direction.WEST": "W",
+    "Direction.NORTHWEST": "NW",
+} %}
+{% set dir_opposite_map = {
+    "Direction.NORTH": "Direction.SOUTH",
+    "Direction.NORTHEAST": "Direction.SOUTHWEST",
+    "Direction.EAST": "Direction.WEST",
+    "Direction.SOUTHEAST": "Direction.NORTHWEST",
+    "Direction.SOUTH": "Direction.NORTH",
+    "Direction.SOUTHWEST": "Direction.NORTHEAST",
+    "Direction.WEST": "Direction.EAST",
+    "Direction.NORTHWEST": "Direction.SOUTHEAST",
+} %}
 
 public final class TryRatNap {
     private TryRatNap() {
@@ -35,82 +66,38 @@ public final class TryRatNap {
     static Direction bestFacing;
     static Direction bestSecondaryMove;
     static double bestScore;
-    static Direction md;
+    static Direction moveDir;
+    static MapLocation newLoc;
+    static int dxToTarget;
+    static int dyToTarget;
     static double best;
     static double weight;
     static MapLocation t;
+    static int bytecodeStart, bytecodeBudget;
 
     // return true if successfully ratnapped someone
     // TODO: do danger levels and verify you dont die on the next turn
     public static boolean run() throws GameActionException {
         if (!rc.isActionReady()) return false;
+        bytecodeBudget = Math.min(3000, (int) (Clock.getBytecodesLeft() - 1000) / 2);
+        bytecodeStart = Clock.getBytecodeNum();
         target = null;
         bestMove = null;
         bestFacing = null;
         bestSecondaryMove = null;
         bestScore = -1;
         for (int i = 0; i < RobotTracker.numEnemies && i < 3; i++) {
+            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
             info = RobotTracker.sortedEnemies[i];
-            if (info.getTeam() == team) continue;
-            if (chebyshevDistance(myLoc, info.location) > 2) continue;
+            t = info.location;
+            if (chebyshevDistance(myLoc, t) > 2) continue;
             if (info.getHealth() <= GameConstants.RAT_BITE_DAMAGE) continue; // just kill
             if (info.getType() != UnitType.BABY_RAT) continue;
-            t = info.location;
             // double weight = scoreEnemy(info);
             weight = 30;
-
-            for (Direction moveDir : directions) {
-                MapLocation newLoc = myLoc.add(moveDir);
-                if (newLoc.distanceSquaredTo(t) > 2) continue;
-                if (!CombatCommon.canMove(moveDir)) continue;
-                if (canSense(t, newLoc, info.direction) && info.getHealth() >= rc.getHealth()) continue; // can i ratnap this guy
-                // for (Direction facing : relatedDirections(newLoc.directionTo(t))) {
-                for (Direction facing : directions) {
-                    if (!canSense(newLoc, t, facing)) continue;
-                    if (!CombatCommon.canPerformMoves(moveDir, facing)) continue;
-                    double score = weight;
-                    if (moveDir == Direction.CENTER) {
-                        score += 10; // prefer standing still
-                    }
-                    score += CombatStrategy.getCellScoreFor(moveDir, facing, info);
-                    // println("danger: " + getDangerFor(moveDir, facing, info));
-                    if (score <= 0.5) continue;
-                    if (facing != myDir) {
-                        score *= 1.2; // prefer turning
-                    }
-                    if (score > bestScore) {
-                        bestScore = score;
-                        target = info;
-                        bestMove = moveDir;
-                        bestFacing = facing;
-                        bestSecondaryMove = null;
-                    }
-                }
-            }
-            {
-                MapLocation newLoc = myLoc;
-                if (newLoc.distanceSquaredTo(t) > 2) continue;
-                if (info.getHealth() >= rc.getHealth()) continue; // can i ratnap this guy
-                for (Direction facing : relatedDirections(myDir)) {
-                    for (Direction _moveDir : relatedDirections(myDir)) {
-                        Direction moveDir = _moveDir.opposite();
-                        if (!CombatCommon.canPerformMoves(moveDir, facing)) continue;
-                        double score = weight + 5;
-                        score += CombatStrategy.getCellScoreFor(moveDir, facing, info);
-                        if (score <= 0.5) continue;
-                        if (facing != myDir) {
-                            score *= 1.2; // prefer turning
-                        }
-                        if (score > bestScore) {
-                            bestScore = score;
-                            target = info;
-                            bestMove = null;
-                            bestFacing = facing;
-                            bestSecondaryMove = moveDir;
-                        }
-                    }
-                }
-            }
+            selectMoves();
+            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
+            selectSecondaryMoves();
         }
         if (bestScore < 0.5) return false;
         if (bestMove != null) {
@@ -133,6 +120,101 @@ public final class TryRatNap {
         return true;
     }
 
+    private static void selectMoves() throws GameActionException {
+        switch (myDir.ordinal()) {
+            {% for ord in range(8) %}
+            case {{ ord }} -> {
+                {% for d in wide_related_map[ord] %}
+                move{{ dir_short_map[d] }}();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                {% endfor %}
+            }
+            {% endfor %}
+            default -> { }
+        }
+    }
+
+    {% for move_dir in directions %}
+    private static void move{{ dir_short_map[move_dir] }}() throws GameActionException {
+        if (!CombatCommon.canMove{{ dir_short_map[move_dir] }}) return;
+        moveDir = {{ move_dir }};
+        newLoc = myLoc.add(moveDir);
+        dxToTarget = t.x - newLoc.x;
+        dyToTarget = t.y - newLoc.y;
+        if (dxToTarget * dxToTarget + dyToTarget * dyToTarget > 2) return;
+        if (info.getHealth() >= rc.getHealth() && canSense(-dxToTarget, -dyToTarget, info.direction)) return; // can i ratnap this guy
+        switch (newLoc.directionTo(t).ordinal()) {
+            {% for ord in range(8) %}
+            case {{ ord }} -> {
+                {% for facing in related_map[ord] %}
+                face{{ dir_short_map[facing] }}();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                {% endfor %}
+            }
+            {% endfor %}
+            default -> { }
+        }
+    }
+
+    {% endfor %}
+    {% for face_dir in directions %}
+    private static void face{{ dir_short_map[face_dir] }}() throws GameActionException {
+        if (!canSense(dxToTarget, dyToTarget, {{ face_dir }})) return;
+        if (!CombatCommon.canPerformMoves(moveDir, {{ face_dir }})) return;
+        double score = weight;
+        score += CombatStrategy.getCellScoreFor(moveDir, {{ face_dir }}, info);
+        if (score <= 0.5) return;
+        if ({{ face_dir }} != myDir) {
+            score *= 1.2; // prefer turning
+        }
+        if (score > bestScore) {
+            bestScore = score;
+            target = info;
+            bestMove = moveDir;
+            bestFacing = {{ face_dir }};
+            bestSecondaryMove = null;
+        }
+    }
+
+    {% endfor %}
+    private static void selectSecondaryMoves() throws GameActionException {
+        int dx = t.x - myLocX;
+        int dy = t.y - myLocY;
+        if (dx * dx + dy * dy > 2) return;
+        if (info.getHealth() >= rc.getHealth()) return; // can i ratnap this guy
+        switch (myDir.ordinal()) {
+            {% for ord in range(8) %}
+            case {{ ord }} -> {
+                {% set related = related_map[ord] %}
+                {% for facing in related %}
+                {% for move_dir in related %}
+                considerSecondaryMove({{ dir_opposite_map[move_dir] }}, {{ facing }});
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                {% endfor %}
+                {% endfor %}
+            }
+            {% endfor %}
+            default -> { }
+        }
+    }
+
+    private static void considerSecondaryMove(Direction moveDir, Direction facing) throws GameActionException {
+        if (!CombatCommon.canPerformMoves(moveDir, facing)) return;
+        double score = weight + 5;
+        score += CombatStrategy.getCellScoreFor(moveDir, facing, info);
+        if (score <= 0.5) return;
+        if (facing != myDir) {
+            score *= 1.2; // prefer turning
+        }
+        if (score > bestScore) {
+            bestScore = score;
+            target = info;
+            bestMove = null;
+            bestFacing = facing;
+            bestSecondaryMove = moveDir;
+        }
+    }
+
     public static boolean miniRun() throws GameActionException {
         // first try to nap a rat looking at us
         for (int i = 0; i < RobotTracker.numEnemies && i < 3; i++) {
@@ -141,7 +223,9 @@ public final class TryRatNap {
             if (info.location.distanceSquaredTo(myLoc) > 2) continue;
             if (info.getHealth() <= GameConstants.RAT_BITE_DAMAGE) continue; // just kill
             if (info.getType() != UnitType.BABY_RAT) continue;
-            if (canSense(myLoc, info.location, info.direction)) {
+            int dx = info.location.x - myLocX;
+            int dy = info.location.y - myLocY;
+            if (canSense(dx, dy, info.direction)) {
                 if (rc.canCarryRat(info.location)) {
                     rc.carryRat(info.location);
                     println("!!!!!!!!!!!!!!!!!!!!!!! mini napped rat");

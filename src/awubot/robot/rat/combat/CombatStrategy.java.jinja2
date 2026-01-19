@@ -18,6 +18,7 @@ import awubot.robot.Strategy;
 import awubot.robot.rat.combat.moves.TryAttack;
 import awubot.robot.rat.combat.moves.TryFight;
 import awubot.robot.rat.combat.moves.TryRatNap;
+import awubot.robot.rat.combat.moves.TryPosition;
 import awubot.robot.rat.combat.moves.TryThrow;
 import awubot.robot.rat.combat.moves.TryTrap;
 import awubot.util.Profiler;
@@ -116,7 +117,10 @@ public class CombatStrategy extends Strategy {
 
     public static double[] cellScore; // [movement direction]
 
+    static int precompStart, precompBudget;
     private void precomp() throws GameActionException {
+        precompStart = Clock.getBytecodeNum();
+        precompBudget = 5000;
         // negligable bytecode
         CombatCommon.precomp();
 
@@ -146,6 +150,7 @@ public class CombatStrategy extends Strategy {
     // idek why this is returning. check if can move anyways after to squeeze out some juice
     private boolean _runTick() throws GameActionException {
         if (rc.isBeingCarried() || rc.isBeingThrown()) return false;
+        println("-- COMBAT STRAT TICK --- starting bytecode count " + Clock.getBytecodeNum() + "\n");
 
         if (rc.getCarrying() == null) {
             Profiler.push();
@@ -160,9 +165,9 @@ public class CombatStrategy extends Strategy {
                     sources[sourceCnt++] = RobotTracker.sortedCats[i].location;
                 }
             }
-            for (int i = 0; i < sourceCnt; i++) {
-                indicate("combat source prep: " + sources[i]);
-            }
+            // for (int i = 0; i < sourceCnt; i++) {
+            //     indicate("combat source prep: " + sources[i]);
+            // }
             moveMask = Pathfinder.multisourceBfs(sources, sourceCnt);
             Profiler.pop("combat bfs");
             indicate("MOVEMASK: " + Integer.toBinaryString(moveMask));
@@ -171,34 +176,38 @@ public class CombatStrategy extends Strategy {
 
         Profiler.push();
         precomp();
-        Profiler.pop("precomp", 3500);
+        Profiler.pop("precomp");
 
         if (rc.getCarrying() != null) {
             Profiler.push();
             boolean tryThrowRes = TryThrow.run();
-            Profiler.pop("try throw", 1000);
+            Profiler.pop("try throw");
             if (tryThrowRes) return true;
+            Profiler.push();
+            boolean tryPositionRes = TryPosition.run();
+            Profiler.pop("try position");
+            if (tryPositionRes) return true;
             return false;
         }
 
         Profiler.push();
         boolean tryRatNapRes = TryRatNap.run();
-        Profiler.pop("try ratnap", 1000);
+        Profiler.pop("try ratnap");
         if (tryRatNapRes) return true;
 
         Profiler.push();
         boolean tryAttackRes = TryAttack.run();
-        Profiler.pop("try attack", 1000);
+        Profiler.pop("try attack");
         if (tryAttackRes) return true;
 
         Profiler.push();
         boolean tryTrapRes = TryTrap.run();
-        Profiler.pop("try trap", 3000);
+        Profiler.pop("try trap");
         if (tryTrapRes) return true;
 
         Profiler.push();
         boolean tryFightRes = TryFight.run();
-        Profiler.pop("try fight", 1000);
+        Profiler.pop("try fight");
         if (tryFightRes) {
             miniTick();
             return true;
@@ -208,13 +217,14 @@ public class CombatStrategy extends Strategy {
             println("ROBOT DIDNT MAKE A MOVE");
         }
         // TODO: deal with cats (maybe naman's job?)
-        return false;
+        // return false;
+        return true;
     }
 
     public boolean miniTick() throws GameActionException {
         Profiler.push();
         boolean tryRatNapRes = TryRatNap.miniRun();
-        Profiler.pop("mini ratnap", 300);
+        Profiler.pop("mini ratnap");
         if (tryRatNapRes) return true;
 
         boolean tryAttackRes = TryAttack.miniRun();
@@ -222,29 +232,10 @@ public class CombatStrategy extends Strategy {
 
         Profiler.push();
         boolean tryTrapRes = TryTrap.miniRun();
-        Profiler.pop("mini trap", 300);
+        Profiler.pop("mini trap");
         if (tryTrapRes) return true;
         return false;
     }
-
-    {# public static boolean backstep() throws GameActionException {
-        {% for moveDir in directions %}
-        if (CombatCommon.canMove({{moveDir}})) {
-            switch (myDir.ordinal()) {
-                {% for currentFacing in related_map[moveDir] %}
-                case {{loop.index}} -> {:
-                    {% for facing in related_map[currentFacing] %}
-                    if (canPerformMoves({{moveDir}}, {{facing}})) {
-                        return true;
-                    }
-                    {% endfor %}
-                    break;
-                {% endfor %}
-                default -> { }
-            }
-        }
-        {% endfor %}
-    } #}
 
     static boolean canPerformMoves(Direction moveDir, Direction facing) throws GameActionException {
         return CombatCommon.canPerformMoves(moveDir, facing);
@@ -297,21 +288,8 @@ public class CombatStrategy extends Strategy {
     }
 
     public static void computeCellScores() throws GameActionException {
-        Profiler.push();
         sb = new StringBuilder();
         cellScore = new double[9];
-        for (int i = 0; i < RobotTracker.numEnemies && i < 3; i++) {
-            RobotInfo info = RobotTracker.sortedEnemies[i];
-            cellScore[0] += getCellScoreForEnemy(info, Direction.NORTH);
-            cellScore[1] += getCellScoreForEnemy(info, Direction.NORTHEAST);
-            cellScore[2] += getCellScoreForEnemy(info, Direction.EAST);
-            cellScore[3] += getCellScoreForEnemy(info, Direction.SOUTHEAST);
-            cellScore[4] += getCellScoreForEnemy(info, Direction.SOUTH);
-            cellScore[5] += getCellScoreForEnemy(info, Direction.SOUTHWEST);
-            cellScore[6] += getCellScoreForEnemy(info, Direction.WEST);
-            cellScore[7] += getCellScoreForEnemy(info, Direction.NORTHWEST);
-            cellScore[8] += getCellScoreForEnemy(info, Direction.CENTER);
-        }
         for (int i = 0; i < RobotTracker.numCats && i < 3; i++) {
             RobotInfo info = RobotTracker.sortedCats[i];
             cellScore[0] += getCellScoreForEnemy(info, Direction.NORTH);
@@ -324,7 +302,37 @@ public class CombatStrategy extends Strategy {
             cellScore[7] += getCellScoreForEnemy(info, Direction.NORTHWEST);
             cellScore[8] += getCellScoreForEnemy(info, Direction.CENTER);
         }
-        Profiler.pop("compute cell scores", 1000);
+        for (int i = 0; i < RobotTracker.numEnemies && i < 3; i++) {
+            RobotInfo info = RobotTracker.sortedEnemies[i];
+            if (Clock.getBytecodeNum() - precompStart > precompBudget) break;
+            cellScore[0] += getCellScoreForEnemy(info, Direction.NORTH);
+            if (Clock.getBytecodeNum() - precompStart > precompBudget) break;
+            cellScore[1] += getCellScoreForEnemy(info, Direction.NORTHEAST);
+            if (Clock.getBytecodeNum() - precompStart > precompBudget) break;
+            cellScore[2] += getCellScoreForEnemy(info, Direction.EAST);
+            if (Clock.getBytecodeNum() - precompStart > precompBudget) break;
+            cellScore[3] += getCellScoreForEnemy(info, Direction.SOUTHEAST);
+            if (Clock.getBytecodeNum() - precompStart > precompBudget) break;
+            cellScore[4] += getCellScoreForEnemy(info, Direction.SOUTH);
+            if (Clock.getBytecodeNum() - precompStart > precompBudget) break;
+            cellScore[5] += getCellScoreForEnemy(info, Direction.SOUTHWEST);
+            if (Clock.getBytecodeNum() - precompStart > precompBudget) break;
+            cellScore[6] += getCellScoreForEnemy(info, Direction.WEST);
+            if (Clock.getBytecodeNum() - precompStart > precompBudget) break;
+            cellScore[7] += getCellScoreForEnemy(info, Direction.NORTHWEST);
+            if (Clock.getBytecodeNum() - precompStart > precompBudget) break;
+            cellScore[8] += getCellScoreForEnemy(info, Direction.CENTER);
+            if (Clock.getBytecodeNum() - precompStart > precompBudget) break;
+        }
+
+        StringBuilder indicateSb = new StringBuilder("Cell scores:\n");
+        for (int dy = 1; dy >= -1; dy--) {
+            for (int dx = -1; dx <= 1; dx++) {
+                indicateSb.append(String.format("%5.2f ", cellScore[Util.dirFromDelta(dx, dy).ordinal()]));
+            }
+            indicateSb.append("\n");
+        }
+        indicate(indicateSb.toString());
     }
 
     public static double getCellScoreFor(Direction moveDir, Direction facing, RobotInfo target) throws GameActionException {
@@ -341,14 +349,14 @@ public class CombatStrategy extends Strategy {
     public static double getCellScoreForEnemy(RobotInfo info, Direction moveDir) {
         MapLocation to = myLoc.add(moveDir);
         if (!rc.onTheMap(to)) return 0;
-        int dist = chebyshevDistance(to, info.location);
+        int dist = chebyshevDistance(to, info);
         if (info.getType() == UnitType.CAT) {
             // TODO: implement vision check
             if (dist >= 4 || shouldFight(info)) return 0;
-            else return cacheCellScore(info, moveDir, -40);
+            else return cacheCellScore(info, moveDir, -100);
         }
+        if (dist > 3) return 0;
         MapLocation enemyLoc = info.location;
-        if (dist > 3) return 0; // ignore
         if (info.getType() == UnitType.RAT_KING) {
             if (dist > 2) return 0; // is this correct?
             else return cacheCellScore(info, moveDir, 1);
@@ -379,7 +387,7 @@ public class CombatStrategy extends Strategy {
             if (canSenseAfterMove) {
                 int dangerDistance;
                 if (RobotTracker.numAllies > RobotTracker.numEnemies) dangerDistance = 0;
-                else if (time % 4 == 0) dangerDistance = 1;
+                // else if (time % 4 == 0) dangerDistance = 1;
                 else dangerDistance = 2;
                 if (dist <= dangerDistance) base -= 10;
             }
@@ -389,71 +397,72 @@ public class CombatStrategy extends Strategy {
                 // weak
             }
             {# base *= (1.0 / Math.sqrt(dist + 1)); // incredible formula #}
-                return cacheCellScore(info, moveDir, base);
-            }
-        }
-        /*
-
-          attacking another solo rat is safe as if:
-          - you end the turn with at least as much health (no ratnap)
-          - they can't see you
-          if you are in a horde, it should be safe to run at them
-
-        */
-        public static boolean shouldFight(RobotInfo enemy) {
-            if (enemy.getType() == UnitType.CAT) {
-                return time > 1000 && rc.getAllCheese() > 300 && RobotTracker.numEnemies == 0 && rc.getHealth() > 50 && rc.getRawCheese() == 0;
-            }
-            if (enemy.getType() == UnitType.RAT_KING) return true;
-            if (enemy.getHealth() <= rc.getHealth()) return true;
-            if (!canSense(enemy.location, myLoc, enemy.direction)) return true;
-            if (GlobalArray.nearestRatKing != null && GlobalArray.nearestRatKing.distanceSquaredTo(myLoc) <= 36) return true;
-            if (RobotTracker.numAllies > RobotTracker.numEnemies) return true;
-            return false;
-        }
-
-        // currently given arbitrary weights
-        public double scoreEnemy(RobotInfo info) {
-            if (info.getType() == UnitType.RAT_KING) return 5;
-            // one tap this guy
-            if (info.getHealth() - GameConstants.RAT_BITE_DAMAGE <= 0) {
-                return 3.0;
-            }
-            if (info.getHealth() <= 30) {
-                // try to get rid of low hp rats
-                return 1.3;
-            }
-            if (info.getHealth() >= rc.getHealth()) {
-                // try to bring enemy rats into napping distance
-                return 1.2;
-            }
-            return 1;
-        }
-
-        public static int getCheeseNeeded(int damageBuff) {
-            if (damageBuff == 0) return 0;
-            int base = damageBuff - 1;
-            return base * base + 1;
-        }
-
-        public static int canEnemyReach(RobotInfo info, Direction moveDir) throws GameActionException {
-            MapLocation to = myLoc.add(moveDir);
-            int dist = chebyshevDistance(to, info.location);
-            if (dist > 2) return 0;
-            if (!isCellMaybePassable(to)) return 0;;
-            return 1;
-        }
-
-        public static RobotInfo getNearestTarget() {
-            for (int i = 0; i < RobotTracker.numEnemies; i++) {
-                RobotInfo info = RobotTracker.sortedEnemies[i];
-                if (info.getTeam() == rc.getTeam()) continue;
-                if (shouldFight(info)) return info;
-            }
-            for  (int i = 0; i < RobotTracker.numCats; i++) {
-                RobotInfo info = RobotTracker.sortedCats[i];
-                if (shouldFight(info)) return info;
-            }
-            return null;
+            return cacheCellScore(info, moveDir, base);
         }
     }
+    
+    /*
+
+        attacking another solo rat is safe as if:
+        - you end the turn with at least as much health (no ratnap)
+        - they can't see you
+        if you are in a horde, it should be safe to run at them
+
+    */
+    public static boolean shouldFight(RobotInfo enemy) {
+        if (enemy.getType() == UnitType.CAT) {
+            return time > 1000 && rc.getAllCheese() > 300 && RobotTracker.numEnemies == 0 && rc.getHealth() > 50 && rc.getRawCheese() == 0;
+        }
+        if (enemy.getType() == UnitType.RAT_KING) return true;
+        if (enemy.getHealth() <= rc.getHealth()) return true;
+        if (!canSense(enemy.location, myLoc, enemy.direction)) return true;
+        if (GlobalArray.nearestRatKing != null && GlobalArray.nearestRatKing.distanceSquaredTo(myLoc) <= 36) return true;
+        if (RobotTracker.numAllies > RobotTracker.numEnemies) return true;
+        return false;
+    }
+
+    // currently given arbitrary weights
+    public double scoreEnemy(RobotInfo info) {
+        if (info.getType() == UnitType.RAT_KING) return 5;
+        // one tap this guy
+        if (info.getHealth() - GameConstants.RAT_BITE_DAMAGE <= 0) {
+            return 3.0;
+        }
+        if (info.getHealth() <= 30) {
+            // try to get rid of low hp rats
+            return 1.3;
+        }
+        if (info.getHealth() >= rc.getHealth()) {
+            // try to bring enemy rats into napping distance
+            return 1.2;
+        }
+        return 1;
+    }
+
+    public static int getCheeseNeeded(int damageBuff) {
+        if (damageBuff == 0) return 0;
+        int base = damageBuff - 1;
+        return base * base + 1;
+    }
+
+    public static int canEnemyReach(RobotInfo info, Direction moveDir) throws GameActionException {
+        MapLocation to = myLoc.add(moveDir);
+        int dist = chebyshevDistance(to, info.location);
+        if (dist > 2) return 0;
+        if (!isCellMaybePassable(to)) return 0;;
+        return 1;
+    }
+
+    public static RobotInfo getNearestTarget() {
+        for (int i = 0; i < RobotTracker.numEnemies; i++) {
+            RobotInfo info = RobotTracker.sortedEnemies[i];
+            if (info.getTeam() == rc.getTeam()) continue;
+            if (shouldFight(info)) return info;
+        }
+        for  (int i = 0; i < RobotTracker.numCats; i++) {
+            RobotInfo info = RobotTracker.sortedCats[i];
+            if (shouldFight(info)) return info;
+        }
+        return null;
+    }
+}

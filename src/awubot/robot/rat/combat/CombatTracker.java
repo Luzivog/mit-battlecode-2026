@@ -751,7 +751,8 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
     public static void registerEnemy(RobotInfo info) {
         int dx = info.location.x - myLocX;
         int dy = info.location.y - myLocY;
-        if (dx < -2 || dx > 2 || dy < -2 || dy > 2) return;
+        if (dx < -3 || dx > 3 || dy < -3 || dy > 3) return;
+        // indicate("registering enemy at dx=" + dx + " dy=" + dy);
         boolean highHealth = info.getHealth() > rc.getHealth();
         if (highHealth) {
             registerEnemyHigh(dx, dy, info.direction);
@@ -762,8 +763,757 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
 
     public static void registerEnemyLow(int dx, int dy, Direction facing) {
         switch (dx) {
+            case -3 -> {
+                switch (dy) {
+                    case -3 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                
+                                
+                                lowSW += 0x0000010000000000L;
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                lowSW += 0x0000010000000000L;
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                lowSW += 0x0000010000000000L;
+                                
+                                
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 4 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 5 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    case -2 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                lowW += 0x0000010000000000L;
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                lowSW += 0x0001010000000000L;
+                                lowW += 0x0000010000000000L;
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                lowSW += 0x0001010000000000L;
+                                lowW += 0x0000010000000000L;
+                                
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 4 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 5 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    case -1 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                lowNW += 0x0000010000000000L;
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                lowSW += 0x0101010000000000L;
+                                lowW += 0x0001010000000000L;
+                                lowNW += 0x0000010000000000L;
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                lowSW += 0x0101010000000000L;
+                                lowW += 0x0001010000000000L;
+                                lowNW += 0x0000010000000000L;
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                lowSW += 0x0101010000000000L;
+                                
+                                
+                                
+                            }
+                            case 4 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 5 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    case 0 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                lowW += 0x0101010000000000L;
+                                lowNW += 0x0001010000000000L;
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                lowSW += 0x0101000000000000L;
+                                lowW += 0x0101010000000000L;
+                                lowNW += 0x0001010000000000L;
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                lowSW += 0x0101000000000000L;
+                                lowW += 0x0101010000000000L;
+                                
+                                
+                            }
+                            case 4 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 5 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    case 1 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                lowNW += 0x0101010000000000L;
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                lowSW += 0x0100000000000000L;
+                                lowW += 0x0101000000000000L;
+                                lowNW += 0x0101010000000000L;
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                lowSW += 0x0100000000000000L;
+                                lowW += 0x0101000000000000L;
+                                lowNW += 0x0101010000000000L;
+                                
+                            }
+                            case 4 -> {
+                                
+                                
+                                
+                                
+                                
+                                lowSW += 0x0100000000000000L;
+                                
+                                
+                                
+                            }
+                            case 5 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    case 2 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                lowW += 0x0100000000000000L;
+                                lowNW += 0x0101000000000000L;
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                lowW += 0x0100000000000000L;
+                                lowNW += 0x0101000000000000L;
+                                
+                            }
+                            case 4 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                lowW += 0x0100000000000000L;
+                                
+                                
+                            }
+                            case 5 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    case 3 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                lowNW += 0x0100000000000000L;
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                lowNW += 0x0100000000000000L;
+                                
+                            }
+                            case 4 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                lowNW += 0x0100000000000000L;
+                                
+                            }
+                            case 5 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    default -> { }
+                }
+            }
             case -2 -> {
                 switch (dy) {
+                    case -3 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                
+                                lowS += 0x0000010000000000L;
+                                lowSW += 0x0000010100000000L;
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                lowS += 0x0000010000000000L;
+                                lowSW += 0x0000010100000000L;
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                lowS += 0x0000010000000000L;
+                                
+                                
+                                
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 4 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 5 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
                     case -2 -> {
                         switch (facing.ordinal()) {
                             case 0 -> {
@@ -1192,6 +1942,99 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 lowW += 0x0100000000000001L;
                                 lowNW += 0x0101000000000001L;
                                 lowC += 0x0100000000000000L;
+                            }
+                            case 5 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    case 3 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                lowN += 0x0100000000000000L;
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 3 -> {
+                                lowN += 0x0100000000000000L;
+                                
+                                
+                                
+                                
+                                
+                                
+                                lowNW += 0x0100000000000001L;
+                                
+                            }
+                            case 4 -> {
+                                lowN += 0x0100000000000000L;
+                                
+                                
+                                
+                                
+                                
+                                
+                                lowNW += 0x0100000000000001L;
+                                
                             }
                             case 5 -> {
                                 
@@ -1234,6 +2077,99 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
             }
             case -1 -> {
                 switch (dy) {
+                    case -3 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                lowSE += 0x0000010000000000L;
+                                lowS += 0x0000010100000000L;
+                                lowSW += 0x0000010101000000L;
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                lowSE += 0x0000010000000000L;
+                                lowS += 0x0000010100000000L;
+                                lowSW += 0x0000010101000000L;
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                lowSE += 0x0000010000000000L;
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 4 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 5 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                
+                                
+                                lowSW += 0x0000010101000000L;
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
                     case -2 -> {
                         switch (facing.ordinal()) {
                             case 0 -> {
@@ -1672,6 +2608,99 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 lowW += 0x0100000000000101L;
                                 lowNW += 0x0101000000010101L;
+                                
+                            }
+                            case 6 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    case 3 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                lowNE += 0x0100000000000000L;
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 3 -> {
+                                lowN += 0x0100000000000001L;
+                                lowNE += 0x0100000000000000L;
+                                
+                                
+                                
+                                
+                                
+                                lowNW += 0x0100000000000101L;
+                                
+                            }
+                            case 4 -> {
+                                lowN += 0x0100000000000001L;
+                                lowNE += 0x0100000000000000L;
+                                
+                                
+                                
+                                
+                                
+                                lowNW += 0x0100000000000101L;
+                                
+                            }
+                            case 5 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                lowNW += 0x0100000000000101L;
                                 
                             }
                             case 6 -> {
@@ -1704,6 +2733,99 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
             }
             case 0 -> {
                 switch (dy) {
+                    case -3 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                lowSE += 0x0000010100000000L;
+                                lowS += 0x0000010101000000L;
+                                lowSW += 0x0000000101000000L;
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                lowSE += 0x0000010100000000L;
+                                lowS += 0x0000010101000000L;
+                                
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 4 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 5 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                
+                                lowS += 0x0000010101000000L;
+                                lowSW += 0x0000000101000000L;
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
                     case -2 -> {
                         switch (facing.ordinal()) {
                             case 0 -> {
@@ -2153,6 +3275,99 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                                 lowNW += 0x0000000000010101L;
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    case 3 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 3 -> {
+                                lowN += 0x0100000000000101L;
+                                lowNE += 0x0100000000000001L;
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 4 -> {
+                                lowN += 0x0100000000000101L;
+                                lowNE += 0x0100000000000001L;
+                                
+                                
+                                
+                                
+                                
+                                lowNW += 0x0000000000000101L;
+                                
+                            }
+                            case 5 -> {
+                                lowN += 0x0100000000000101L;
+                                
+                                
+                                
+                                
+                                
+                                
+                                lowNW += 0x0000000000000101L;
+                                
+                            }
+                            case 6 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
                                 
                             }
                             case 7 -> {
@@ -2174,6 +3389,99 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
             }
             case 1 -> {
                 switch (dy) {
+                    case -3 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                lowSE += 0x0000010101000000L;
+                                lowS += 0x0000000101000000L;
+                                lowSW += 0x0000000001000000L;
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                lowSE += 0x0000010101000000L;
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 4 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 5 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                
+                                
+                                
+                                
+                                lowSW += 0x0000000001000000L;
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                lowSE += 0x0000010101000000L;
+                                lowS += 0x0000000101000000L;
+                                lowSW += 0x0000000001000000L;
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
                     case -2 -> {
                         switch (facing.ordinal()) {
                             case 0 -> {
@@ -2623,6 +3931,99 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 lowW += 0x0000000000000100L;
                                 lowNW += 0x0000000000010100L;
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    case 3 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 3 -> {
+                                
+                                lowNE += 0x0100000000000101L;
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 4 -> {
+                                lowN += 0x0000000000000101L;
+                                lowNE += 0x0100000000000101L;
+                                
+                                
+                                
+                                
+                                
+                                lowNW += 0x0000000000000100L;
+                                
+                            }
+                            case 5 -> {
+                                lowN += 0x0000000000000101L;
+                                lowNE += 0x0100000000000101L;
+                                
+                                
+                                
+                                
+                                
+                                lowNW += 0x0000000000000100L;
+                                
+                            }
+                            case 6 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                lowNW += 0x0000000000000100L;
                                 
                             }
                             case 7 -> {
@@ -2644,6 +4045,99 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
             }
             case 2 -> {
                 switch (dy) {
+                    case -3 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                lowSE += 0x0000000101000000L;
+                                lowS += 0x0000000001000000L;
+                                
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 4 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 5 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                
+                                
+                                
+                                lowS += 0x0000000001000000L;
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                lowSE += 0x0000000101000000L;
+                                lowS += 0x0000000001000000L;
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
                     case -2 -> {
                         switch (facing.ordinal()) {
                             case 0 -> {
@@ -3094,6 +4588,755 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                                 lowC += 0x0000000000000100L;
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    case 3 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 4 -> {
+                                lowN += 0x0000000000000100L;
+                                lowNE += 0x0000000000000101L;
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 5 -> {
+                                lowN += 0x0000000000000100L;
+                                lowNE += 0x0000000000000101L;
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                lowN += 0x0000000000000100L;
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    default -> { }
+                }
+            }
+            case 3 -> {
+                switch (dy) {
+                    case -3 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                lowSE += 0x0000000001000000L;
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 4 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 5 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                
+                                
+                                lowSE += 0x0000000001000000L;
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                lowSE += 0x0000000001000000L;
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    case -2 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                lowE += 0x0000000001000000L;
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 4 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 5 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                
+                                lowE += 0x0000000001000000L;
+                                lowSE += 0x0000000001010000L;
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                lowE += 0x0000000001000000L;
+                                lowSE += 0x0000000001010000L;
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    case -1 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                lowNE += 0x0000000001000000L;
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 4 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 5 -> {
+                                
+                                
+                                
+                                lowSE += 0x0000000001010100L;
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                lowNE += 0x0000000001000000L;
+                                lowE += 0x0000000001010000L;
+                                lowSE += 0x0000000001010100L;
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                lowNE += 0x0000000001000000L;
+                                lowE += 0x0000000001010000L;
+                                lowSE += 0x0000000001010100L;
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    case 0 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 4 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 5 -> {
+                                
+                                
+                                lowE += 0x0000000001010100L;
+                                lowSE += 0x0000000000010100L;
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                lowNE += 0x0000000001010000L;
+                                lowE += 0x0000000001010100L;
+                                lowSE += 0x0000000000010100L;
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                lowNE += 0x0000000001010000L;
+                                lowE += 0x0000000001010100L;
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    case 1 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 4 -> {
+                                
+                                
+                                
+                                lowSE += 0x0000000000000100L;
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 5 -> {
+                                
+                                lowNE += 0x0000000001010100L;
+                                lowE += 0x0000000000010100L;
+                                lowSE += 0x0000000000000100L;
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                lowNE += 0x0000000001010100L;
+                                lowE += 0x0000000000010100L;
+                                lowSE += 0x0000000000000100L;
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                lowNE += 0x0000000001010100L;
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    case 2 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 4 -> {
+                                
+                                
+                                lowE += 0x0000000000000100L;
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 5 -> {
+                                
+                                lowNE += 0x0000000000010100L;
+                                lowE += 0x0000000000000100L;
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                lowNE += 0x0000000000010100L;
+                                lowE += 0x0000000000000100L;
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    case 3 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 4 -> {
+                                
+                                lowNE += 0x0000000000000100L;
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 5 -> {
+                                
+                                lowNE += 0x0000000000000100L;
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                lowNE += 0x0000000000000100L;
+                                
+                                
+                                
+                                
+                                
+                                
+                                
                             }
                             case 7 -> {
                                 
@@ -3118,8 +5361,757 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
 
     public static void registerEnemyHigh(int dx, int dy, Direction facing) {
         switch (dx) {
+            case -3 -> {
+                switch (dy) {
+                    case -3 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                
+                                
+                                highSW += 0x0000010000000000L;
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                highSW += 0x0000010000000000L;
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                highSW += 0x0000010000000000L;
+                                
+                                
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 4 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 5 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    case -2 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                highW += 0x0000010000000000L;
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                highSW += 0x0001010000000000L;
+                                highW += 0x0000010000000000L;
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                highSW += 0x0001010000000000L;
+                                highW += 0x0000010000000000L;
+                                
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 4 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 5 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    case -1 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                highNW += 0x0000010000000000L;
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                highSW += 0x0101010000000000L;
+                                highW += 0x0001010000000000L;
+                                highNW += 0x0000010000000000L;
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                highSW += 0x0101010000000000L;
+                                highW += 0x0001010000000000L;
+                                highNW += 0x0000010000000000L;
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                highSW += 0x0101010000000000L;
+                                
+                                
+                                
+                            }
+                            case 4 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 5 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    case 0 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                highW += 0x0101010000000000L;
+                                highNW += 0x0001010000000000L;
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                highSW += 0x0101000000000000L;
+                                highW += 0x0101010000000000L;
+                                highNW += 0x0001010000000000L;
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                highSW += 0x0101000000000000L;
+                                highW += 0x0101010000000000L;
+                                
+                                
+                            }
+                            case 4 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 5 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    case 1 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                highNW += 0x0101010000000000L;
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                highSW += 0x0100000000000000L;
+                                highW += 0x0101000000000000L;
+                                highNW += 0x0101010000000000L;
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                highSW += 0x0100000000000000L;
+                                highW += 0x0101000000000000L;
+                                highNW += 0x0101010000000000L;
+                                
+                            }
+                            case 4 -> {
+                                
+                                
+                                
+                                
+                                
+                                highSW += 0x0100000000000000L;
+                                
+                                
+                                
+                            }
+                            case 5 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    case 2 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                highW += 0x0100000000000000L;
+                                highNW += 0x0101000000000000L;
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                highW += 0x0100000000000000L;
+                                highNW += 0x0101000000000000L;
+                                
+                            }
+                            case 4 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                highW += 0x0100000000000000L;
+                                
+                                
+                            }
+                            case 5 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    case 3 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                highNW += 0x0100000000000000L;
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                highNW += 0x0100000000000000L;
+                                
+                            }
+                            case 4 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                highNW += 0x0100000000000000L;
+                                
+                            }
+                            case 5 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    default -> { }
+                }
+            }
             case -2 -> {
                 switch (dy) {
+                    case -3 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                
+                                highS += 0x0000010000000000L;
+                                highSW += 0x0000010100000000L;
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                highS += 0x0000010000000000L;
+                                highSW += 0x0000010100000000L;
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                highS += 0x0000010000000000L;
+                                
+                                
+                                
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 4 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 5 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
                     case -2 -> {
                         switch (facing.ordinal()) {
                             case 0 -> {
@@ -3548,6 +6540,99 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 highW += 0x0100000000000001L;
                                 highNW += 0x0101000000000001L;
                                 highC += 0x0100000000000000L;
+                            }
+                            case 5 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    case 3 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                highN += 0x0100000000000000L;
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 3 -> {
+                                highN += 0x0100000000000000L;
+                                
+                                
+                                
+                                
+                                
+                                
+                                highNW += 0x0100000000000001L;
+                                
+                            }
+                            case 4 -> {
+                                highN += 0x0100000000000000L;
+                                
+                                
+                                
+                                
+                                
+                                
+                                highNW += 0x0100000000000001L;
+                                
                             }
                             case 5 -> {
                                 
@@ -3590,6 +6675,99 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
             }
             case -1 -> {
                 switch (dy) {
+                    case -3 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                highSE += 0x0000010000000000L;
+                                highS += 0x0000010100000000L;
+                                highSW += 0x0000010101000000L;
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                highSE += 0x0000010000000000L;
+                                highS += 0x0000010100000000L;
+                                highSW += 0x0000010101000000L;
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                highSE += 0x0000010000000000L;
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 4 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 5 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                
+                                
+                                highSW += 0x0000010101000000L;
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
                     case -2 -> {
                         switch (facing.ordinal()) {
                             case 0 -> {
@@ -4028,6 +7206,99 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 highW += 0x0100000000000101L;
                                 highNW += 0x0101000000010101L;
+                                
+                            }
+                            case 6 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    case 3 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                highNE += 0x0100000000000000L;
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 3 -> {
+                                highN += 0x0100000000000001L;
+                                highNE += 0x0100000000000000L;
+                                
+                                
+                                
+                                
+                                
+                                highNW += 0x0100000000000101L;
+                                
+                            }
+                            case 4 -> {
+                                highN += 0x0100000000000001L;
+                                highNE += 0x0100000000000000L;
+                                
+                                
+                                
+                                
+                                
+                                highNW += 0x0100000000000101L;
+                                
+                            }
+                            case 5 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                highNW += 0x0100000000000101L;
                                 
                             }
                             case 6 -> {
@@ -4060,6 +7331,99 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
             }
             case 0 -> {
                 switch (dy) {
+                    case -3 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                highSE += 0x0000010100000000L;
+                                highS += 0x0000010101000000L;
+                                highSW += 0x0000000101000000L;
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                highSE += 0x0000010100000000L;
+                                highS += 0x0000010101000000L;
+                                
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 4 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 5 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                
+                                highS += 0x0000010101000000L;
+                                highSW += 0x0000000101000000L;
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
                     case -2 -> {
                         switch (facing.ordinal()) {
                             case 0 -> {
@@ -4509,6 +7873,99 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                                 highNW += 0x0000000000010101L;
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    case 3 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 3 -> {
+                                highN += 0x0100000000000101L;
+                                highNE += 0x0100000000000001L;
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 4 -> {
+                                highN += 0x0100000000000101L;
+                                highNE += 0x0100000000000001L;
+                                
+                                
+                                
+                                
+                                
+                                highNW += 0x0000000000000101L;
+                                
+                            }
+                            case 5 -> {
+                                highN += 0x0100000000000101L;
+                                
+                                
+                                
+                                
+                                
+                                
+                                highNW += 0x0000000000000101L;
+                                
+                            }
+                            case 6 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
                                 
                             }
                             case 7 -> {
@@ -4530,6 +7987,99 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
             }
             case 1 -> {
                 switch (dy) {
+                    case -3 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                highSE += 0x0000010101000000L;
+                                highS += 0x0000000101000000L;
+                                highSW += 0x0000000001000000L;
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                highSE += 0x0000010101000000L;
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 4 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 5 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                
+                                
+                                
+                                
+                                highSW += 0x0000000001000000L;
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                highSE += 0x0000010101000000L;
+                                highS += 0x0000000101000000L;
+                                highSW += 0x0000000001000000L;
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
                     case -2 -> {
                         switch (facing.ordinal()) {
                             case 0 -> {
@@ -4979,6 +8529,99 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 highW += 0x0000000000000100L;
                                 highNW += 0x0000000000010100L;
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    case 3 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 3 -> {
+                                
+                                highNE += 0x0100000000000101L;
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 4 -> {
+                                highN += 0x0000000000000101L;
+                                highNE += 0x0100000000000101L;
+                                
+                                
+                                
+                                
+                                
+                                highNW += 0x0000000000000100L;
+                                
+                            }
+                            case 5 -> {
+                                highN += 0x0000000000000101L;
+                                highNE += 0x0100000000000101L;
+                                
+                                
+                                
+                                
+                                
+                                highNW += 0x0000000000000100L;
+                                
+                            }
+                            case 6 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                highNW += 0x0000000000000100L;
                                 
                             }
                             case 7 -> {
@@ -5000,6 +8643,99 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
             }
             case 2 -> {
                 switch (dy) {
+                    case -3 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                highSE += 0x0000000101000000L;
+                                highS += 0x0000000001000000L;
+                                
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 4 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 5 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                
+                                
+                                
+                                highS += 0x0000000001000000L;
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                highSE += 0x0000000101000000L;
+                                highS += 0x0000000001000000L;
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
                     case -2 -> {
                         switch (facing.ordinal()) {
                             case 0 -> {
@@ -5450,6 +9186,755 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                 
                                 
                                 highC += 0x0000000000000100L;
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    case 3 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 4 -> {
+                                highN += 0x0000000000000100L;
+                                highNE += 0x0000000000000101L;
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 5 -> {
+                                highN += 0x0000000000000100L;
+                                highNE += 0x0000000000000101L;
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                highN += 0x0000000000000100L;
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    default -> { }
+                }
+            }
+            case 3 -> {
+                switch (dy) {
+                    case -3 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                highSE += 0x0000000001000000L;
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 4 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 5 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                
+                                
+                                highSE += 0x0000000001000000L;
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                highSE += 0x0000000001000000L;
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    case -2 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                highE += 0x0000000001000000L;
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 4 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 5 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                
+                                highE += 0x0000000001000000L;
+                                highSE += 0x0000000001010000L;
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                highE += 0x0000000001000000L;
+                                highSE += 0x0000000001010000L;
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    case -1 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                highNE += 0x0000000001000000L;
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 4 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 5 -> {
+                                
+                                
+                                
+                                highSE += 0x0000000001010100L;
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                highNE += 0x0000000001000000L;
+                                highE += 0x0000000001010000L;
+                                highSE += 0x0000000001010100L;
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                highNE += 0x0000000001000000L;
+                                highE += 0x0000000001010000L;
+                                highSE += 0x0000000001010100L;
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    case 0 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 4 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 5 -> {
+                                
+                                
+                                highE += 0x0000000001010100L;
+                                highSE += 0x0000000000010100L;
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                highNE += 0x0000000001010000L;
+                                highE += 0x0000000001010100L;
+                                highSE += 0x0000000000010100L;
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                highNE += 0x0000000001010000L;
+                                highE += 0x0000000001010100L;
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    case 1 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 4 -> {
+                                
+                                
+                                
+                                highSE += 0x0000000000000100L;
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 5 -> {
+                                
+                                highNE += 0x0000000001010100L;
+                                highE += 0x0000000000010100L;
+                                highSE += 0x0000000000000100L;
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                highNE += 0x0000000001010100L;
+                                highE += 0x0000000000010100L;
+                                highSE += 0x0000000000000100L;
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                highNE += 0x0000000001010100L;
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    case 2 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 4 -> {
+                                
+                                
+                                highE += 0x0000000000000100L;
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 5 -> {
+                                
+                                highNE += 0x0000000000010100L;
+                                highE += 0x0000000000000100L;
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                highNE += 0x0000000000010100L;
+                                highE += 0x0000000000000100L;
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 7 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            default -> { }
+                        }
+                    }
+                    case 3 -> {
+                        switch (facing.ordinal()) {
+                            case 0 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 1 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 2 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 3 -> {
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 4 -> {
+                                
+                                highNE += 0x0000000000000100L;
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 5 -> {
+                                
+                                highNE += 0x0000000000000100L;
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            }
+                            case 6 -> {
+                                
+                                highNE += 0x0000000000000100L;
+                                
+                                
+                                
+                                
+                                
+                                
+                                
                             }
                             case 7 -> {
                                 

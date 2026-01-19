@@ -1,5 +1,6 @@
 package awubot.robot.rat.combat.moves;
 
+import battlecode.common.Clock;
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
 import battlecode.common.MapInfo;
@@ -136,13 +137,15 @@ public final class TryTrap {
     static MapLocation curMoveLoc;
     static MapLocation weightSource;
     static int weightCompTime;
-
+    static int bytecodeStart, bytecodeBudget;
 
     public static boolean run() throws GameActionException {
         if (rc.getAllCheese() < 300 || !confirmCanPlace()) return false;
-        // Profiler.push();
+        bytecodeStart = Clock.getBytecodeNum();
+        bytecodeBudget = Math.min(3000, (int) (Clock.getBytecodesLeft() - 1000) / 2);
+        Profiler.push();
         computeWeights();
-        // Profiler.pop("TryTrap.computeWeights");
+        Profiler.pop("TryTrap.computeWeights");
         resetBest();
         selectMoves();
         if (best <= 0.5) return false;
@@ -337,6 +340,7 @@ public final class TryTrap {
             {% for ord in range(8) %}
             case {{ord}} -> {
                 {% for d in wide_related_map[ord] %}
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 move{{ dir_short_map[d] }}();
                 {% endfor %}
             }
@@ -351,6 +355,7 @@ public final class TryTrap {
         curMoveLoc = myLoc.add({{ move_dir }});
         {% for facing in related_map[dir_ord_map[move_dir]] %}
         face{{ dir_short_map[facing] }}{{ dir_short_map[move_dir] }}();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
         {% endfor %}
     }
 

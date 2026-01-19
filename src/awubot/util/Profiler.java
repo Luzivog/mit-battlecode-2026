@@ -49,7 +49,10 @@ public class Profiler {
             if (isRatKing) res += 20000;
             else res += 17500;
         }
-        if (res >= lwb) println(obj.toString() + ": " + res + (res >= 17500 ? " EXCEEDED" : ""));
+        if (res >= lwb) {
+            println(obj.toString() + ": " + res + (res >= 17500 ? " EXCEEDED" : ""));
+            // indicate(obj.toString() + ": " + res);
+        }
     }
 
     public static void pop_ind(Object obj) {

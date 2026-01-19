@@ -316,7 +316,8 @@ public class CombatTracker {
     public static void registerEnemy(RobotInfo info) {
         int dx = info.location.x - myLocX;
         int dy = info.location.y - myLocY;
-        if (dx < -2 || dx > 2 || dy < -2 || dy > 2) return;
+        if (dx < -3 || dx > 3 || dy < -3 || dy > 3) return;
+        // indicate("registering enemy at dx=" + dx + " dy=" + dy);
         boolean highHealth = info.getHealth() > rc.getHealth();
         if (highHealth) {
             registerEnemyHigh(dx, dy, info.direction);
@@ -327,10 +328,10 @@ public class CombatTracker {
 
     public static void registerEnemyLow(int dx, int dy, Direction facing) {
         switch (dx) {
-            {% for dx in range(-2, 3) %}
+            {% for dx in range(-3, 4) %}
             case {{ dx }} -> {
                 switch (dy) {
-                    {% for dy in range(-2, 3) %}
+                    {% for dy in range(-3, 4) %}
                     case {{ dy }} -> {
                         switch (facing.ordinal()) {
                             {% for fi in range(directions|length) %}
@@ -354,10 +355,10 @@ public class CombatTracker {
 
     public static void registerEnemyHigh(int dx, int dy, Direction facing) {
         switch (dx) {
-            {% for dx in range(-2, 3) %}
+            {% for dx in range(-3, 4) %}
             case {{ dx }} -> {
                 switch (dy) {
-                    {% for dy in range(-2, 3) %}
+                    {% for dy in range(-3, 4) %}
                     case {{ dy }} -> {
                         switch (facing.ordinal()) {
                             {% for fi in range(directions|length) %}

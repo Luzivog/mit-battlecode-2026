@@ -100,7 +100,7 @@ public class CombatStrategy extends Strategy {
     private boolean _runTick() throws GameActionException {
         if (rc.isBeingCarried() || rc.isBeingThrown()) return false;
 
-        if (rc.getCarrying() != null) {
+        if (rc.getCarrying() == null) {
             Profiler.push();
             sourceCnt = 0;
             for (int i = 0; i < RobotTracker.numEnemies; i++) {
@@ -131,6 +131,7 @@ public class CombatStrategy extends Strategy {
             boolean tryThrowRes = TryThrow.run();
             Profiler.pop("try throw", 1000);
             if (tryThrowRes) return true;
+            return false;
         }
 
         Profiler.push();

@@ -710,8 +710,10 @@ public final class TryAttack {
             if (chebyshevDistance(myLoc, ri) > 1) break;
             attack(ri);
             println("!!!!!!!!!!!!!!mini attacked!!");
+            indicate("accepted mini attack");
             return true;
         }
+        indicate("rejected mini attac");
         return false;
     }
 }

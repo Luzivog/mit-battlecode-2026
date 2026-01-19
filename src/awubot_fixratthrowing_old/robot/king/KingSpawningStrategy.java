@@ -9,6 +9,9 @@ import static awubot_fixratthrowing_old.util.Util.*;
 import awubot_fixratthrowing_old.RobotTracker;
 
 public class KingSpawningStrategy extends Strategy {
+    
+    private static int numSpawned = 0;
+
     @Override
     public boolean runTick() throws GameActionException {
         var thresh = Math.min(rc.getGlobalCheese() / 25 + 10, 40);
@@ -37,7 +40,9 @@ public class KingSpawningStrategy extends Strategy {
 
         if(rc.getCurrentRatCost() <= thresh && (rc.getGlobalCheese() >= 100 || rc.getCurrentRatCost() == 10)) {
             trySpawn(target);
+            numSpawned++;
         }
+        indicate("spawned " + numSpawned);
         return true;
     }
 

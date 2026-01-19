@@ -39,9 +39,10 @@ import java.util.function.Consumer;
   TODO:
   - add code for detecting enemies out of vision
   - consider avoiding cells within cheb dist of 1/2 of enemy rats
-  - prefer cells that walk out of enemy vision
   - strongly prefer looking at enemies
   - offence squeak signals
+  - combat tracker bugfix
+  - better movement
 
 */
 
@@ -100,7 +101,7 @@ public class CombatStrategy extends Strategy {
     private boolean _runTick() throws GameActionException {
         if (rc.isBeingCarried() || rc.isBeingThrown()) return false;
 
-        if (rc.getCarrying() != null) {
+        if (rc.getCarrying() == null) {
             Profiler.push();
             sourceCnt = 0;
             for (int i = 0; i < RobotTracker.numEnemies; i++) {
@@ -131,6 +132,7 @@ public class CombatStrategy extends Strategy {
             boolean tryThrowRes = TryThrow.run();
             Profiler.pop("try throw", 1000);
             if (tryThrowRes) return true;
+            return false;
         }
 
         Profiler.push();

@@ -16,10 +16,10 @@ public class KingSpawningStrategy extends Strategy {
     public boolean runTick() throws GameActionException {
         indicate("spawned " + numSpawned);
 
-        int numKings = GlobalArray.countRatKings();
+        int numKings = Math.max(1, GlobalArray.countRatKings());
         int extraPerKing = (rc.getGlobalCheese() / 1000) * (numKings - 1);
         int maxRatCost = 10 + 40 * numKings + extraPerKing;
-        
+
         if (rc.getCurrentRatCost() >= maxRatCost) {
             indicate("at rat limit (" + (numKings * 16) + " rats for " + numKings + " kings)");
             return true;

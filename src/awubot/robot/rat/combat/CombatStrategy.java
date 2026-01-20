@@ -295,6 +295,11 @@ public class CombatStrategy extends Strategy {
         indicate(indicateSb.toString());
     }
 
+    public static double getCellScoreFor(Direction moveDir, Direction facing, RobotInfo target, int damage) throws GameActionException {
+        if (CombatTracker.hasThreat(moveDir, facing, target, damage)) return -100;
+        return cellScore[moveDir.ordinal()] - readCellScore(target, moveDir);
+    }
+
     public static double getCellScoreFor(Direction moveDir, Direction facing, RobotInfo target) throws GameActionException {
         if (CombatTracker.hasThreat(moveDir, facing, target)) return -100;
         return cellScore[moveDir.ordinal()] - readCellScore(target, moveDir);
@@ -358,6 +363,11 @@ public class CombatStrategy extends Strategy {
             }
             return cacheCellScore(info, moveDir, base);
         }
+    }
+
+    public static int getBiteDamage() {
+        if (rc.getAllCheese() < 300) return 10;
+        else return 12;
     }
     
     /*

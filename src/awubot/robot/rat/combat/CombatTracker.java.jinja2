@@ -355,7 +355,7 @@ public class CombatTracker {
         }
     }
 
-    public static boolean _hasThreat(Direction moveDir, Direction facing) {
+    public static boolean hasThreat(Direction moveDir, Direction facing) {
         switch (moveDir.ordinal()) {
             {% for mi in range(moveShort|length) %}
             case {{ mi }} -> {
@@ -369,13 +369,6 @@ public class CombatTracker {
             {% endfor %}
             default -> { return false; }
         }
-    }
-    public static boolean hasThreat(Direction moveDir, Direction facing) {
-        boolean res = _hasThreat(moveDir, facing);
-        if (am(12590, 21)) {
-            println("debug hasThreat" + " moveDir " + moveDir + " faceDir " + facing + " result " + res);
-        }
-        return res;
     }
 
     public static boolean hasThreat(Direction moveDir, Direction facing, RobotInfo target) {
@@ -405,6 +398,38 @@ public class CombatTracker {
             base -= (sub & threat);
         } else {
             base -= (sub & getHiddenMask(facing) & threat);
+        }
+        return base != 0L;
+    }
+
+    public static boolean hasThreat(Direction moveDir, Direction facing, RobotInfo target, int damage) {
+        long base;
+        switch (moveDir.ordinal()) {
+            {% for mi in range(moveShort|length) %}
+            case {{ mi }} -> {
+                switch (facing.ordinal()) {
+                    {% for fi in range(shortDirections|length) %}
+                    case {{ fi }} -> { base = threat{{ moveShort[mi] }}{{ shortDirections[fi] }}; }
+                    {% endfor %}
+                    default -> { base = 0L; }
+                }
+            }
+            {% endfor %}
+            default -> { base = 0L; }
+        }
+        if (target == null) return base != 0L;
+        if (target.getTeam() == rc.getTeam()) return base != 0L;
+        if (target.getType() != UnitType.BABY_RAT) return base != 0L;
+        int enemyDx = target.location.x - myLocX;
+        int enemyDy = target.location.y - myLocY;
+        if (enemyDx < -3 || enemyDx > 3 || enemyDy < -3 || enemyDy > 3) return base != 0L;
+        boolean beforeHigh = target.getHealth() > rc.getHealth();
+        boolean afterHigh = (target.getHealth() - damage) > rc.getHealth();
+        if (afterHigh != beforeHigh) {
+            long sub = enemyMaskForMove(enemyDx, enemyDy, target.direction, moveDir);
+            long threat = getMoveThreatMask(moveDir);
+            base -= (sub & threat);
+            base += (sub & getHiddenMask(facing) & threat);
         }
         return base != 0L;
     }

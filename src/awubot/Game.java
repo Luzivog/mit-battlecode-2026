@@ -146,7 +146,7 @@ public class Game {
         // rc.resign();
 
         // if (!isRatKing) println("index: " + myIndex);
-        if (time > 30) rc.resign();
+        // if (time > 40) rc.resign();
         // if (time != rc.getRoundNum()) {
         //     println("bytecode exceeded");
         //     rc.resign();

@@ -445,10 +445,6 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
     public static void registerEnemy(RobotInfo info) {
         int dx = info.location.x - myLocX;
         int dy = info.location.y - myLocY;
-        // indicate("registering enemy at dx=" + dx + " dy=" + dy);
-        if (am(12590, 21)) {
-            println("registring enemy at " + dx + "," + dy + " facing " + info.direction + " health " + info.getHealth());
-        }
         boolean highHealth = info.getHealth() > rc.getHealth();
         if (highHealth) {
             registerEnemyHigh(dx, dy, info.direction);
@@ -9653,7 +9649,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
         }
     }
 
-    public static boolean _hasThreat(Direction moveDir, Direction facing) {
+    public static boolean hasThreat(Direction moveDir, Direction facing) {
         switch (moveDir.ordinal()) {
             case 0 -> {
                 switch (facing.ordinal()) {
@@ -9774,13 +9770,6 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
             }
             default -> { return false; }
         }
-    }
-    public static boolean hasThreat(Direction moveDir, Direction facing) {
-        boolean res = _hasThreat(moveDir, facing);
-        if (am(12590, 21)) {
-            println("debug hasThreat" + " moveDir " + moveDir + " faceDir " + facing + " result " + res);
-        }
-        return res;
     }
 
     public static boolean hasThreat(Direction moveDir, Direction facing, RobotInfo target) {
@@ -9910,13 +9899,152 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
         if (target.getType() != UnitType.BABY_RAT) return base != 0L;
         int enemyDx = target.location.x - myLocX;
         int enemyDy = target.location.y - myLocY;
-        if (enemyDx < -2 || enemyDx > 2 || enemyDy < -2 || enemyDy > 2) return base != 0L;
+        if (enemyDx < -3 || enemyDx > 3 || enemyDy < -3 || enemyDy > 3) return base != 0L;
         long sub = enemyMaskForMove(enemyDx, enemyDy, target.direction, moveDir);
         long threat = getMoveThreatMask(moveDir);
         if (target.getHealth() > rc.getHealth()) {
             base -= (sub & threat);
         } else {
             base -= (sub & getHiddenMask(facing) & threat);
+        }
+        return base != 0L;
+    }
+
+    public static boolean hasThreat(Direction moveDir, Direction facing, RobotInfo target, int damage) {
+        long base;
+        switch (moveDir.ordinal()) {
+            case 0 -> {
+                switch (facing.ordinal()) {
+                    case 0 -> { base = threatNN; }
+                    case 1 -> { base = threatNNE; }
+                    case 2 -> { base = threatNE; }
+                    case 3 -> { base = threatNSE; }
+                    case 4 -> { base = threatNS; }
+                    case 5 -> { base = threatNSW; }
+                    case 6 -> { base = threatNW; }
+                    case 7 -> { base = threatNNW; }
+                    default -> { base = 0L; }
+                }
+            }
+            case 1 -> {
+                switch (facing.ordinal()) {
+                    case 0 -> { base = threatNEN; }
+                    case 1 -> { base = threatNENE; }
+                    case 2 -> { base = threatNEE; }
+                    case 3 -> { base = threatNESE; }
+                    case 4 -> { base = threatNES; }
+                    case 5 -> { base = threatNESW; }
+                    case 6 -> { base = threatNEW; }
+                    case 7 -> { base = threatNENW; }
+                    default -> { base = 0L; }
+                }
+            }
+            case 2 -> {
+                switch (facing.ordinal()) {
+                    case 0 -> { base = threatEN; }
+                    case 1 -> { base = threatENE; }
+                    case 2 -> { base = threatEE; }
+                    case 3 -> { base = threatESE; }
+                    case 4 -> { base = threatES; }
+                    case 5 -> { base = threatESW; }
+                    case 6 -> { base = threatEW; }
+                    case 7 -> { base = threatENW; }
+                    default -> { base = 0L; }
+                }
+            }
+            case 3 -> {
+                switch (facing.ordinal()) {
+                    case 0 -> { base = threatSEN; }
+                    case 1 -> { base = threatSENE; }
+                    case 2 -> { base = threatSEE; }
+                    case 3 -> { base = threatSESE; }
+                    case 4 -> { base = threatSES; }
+                    case 5 -> { base = threatSESW; }
+                    case 6 -> { base = threatSEW; }
+                    case 7 -> { base = threatSENW; }
+                    default -> { base = 0L; }
+                }
+            }
+            case 4 -> {
+                switch (facing.ordinal()) {
+                    case 0 -> { base = threatSN; }
+                    case 1 -> { base = threatSNE; }
+                    case 2 -> { base = threatSE; }
+                    case 3 -> { base = threatSSE; }
+                    case 4 -> { base = threatSS; }
+                    case 5 -> { base = threatSSW; }
+                    case 6 -> { base = threatSW; }
+                    case 7 -> { base = threatSNW; }
+                    default -> { base = 0L; }
+                }
+            }
+            case 5 -> {
+                switch (facing.ordinal()) {
+                    case 0 -> { base = threatSWN; }
+                    case 1 -> { base = threatSWNE; }
+                    case 2 -> { base = threatSWE; }
+                    case 3 -> { base = threatSWSE; }
+                    case 4 -> { base = threatSWS; }
+                    case 5 -> { base = threatSWSW; }
+                    case 6 -> { base = threatSWW; }
+                    case 7 -> { base = threatSWNW; }
+                    default -> { base = 0L; }
+                }
+            }
+            case 6 -> {
+                switch (facing.ordinal()) {
+                    case 0 -> { base = threatWN; }
+                    case 1 -> { base = threatWNE; }
+                    case 2 -> { base = threatWE; }
+                    case 3 -> { base = threatWSE; }
+                    case 4 -> { base = threatWS; }
+                    case 5 -> { base = threatWSW; }
+                    case 6 -> { base = threatWW; }
+                    case 7 -> { base = threatWNW; }
+                    default -> { base = 0L; }
+                }
+            }
+            case 7 -> {
+                switch (facing.ordinal()) {
+                    case 0 -> { base = threatNWN; }
+                    case 1 -> { base = threatNWNE; }
+                    case 2 -> { base = threatNWE; }
+                    case 3 -> { base = threatNWSE; }
+                    case 4 -> { base = threatNWS; }
+                    case 5 -> { base = threatNWSW; }
+                    case 6 -> { base = threatNWW; }
+                    case 7 -> { base = threatNWNW; }
+                    default -> { base = 0L; }
+                }
+            }
+            case 8 -> {
+                switch (facing.ordinal()) {
+                    case 0 -> { base = threatCN; }
+                    case 1 -> { base = threatCNE; }
+                    case 2 -> { base = threatCE; }
+                    case 3 -> { base = threatCSE; }
+                    case 4 -> { base = threatCS; }
+                    case 5 -> { base = threatCSW; }
+                    case 6 -> { base = threatCW; }
+                    case 7 -> { base = threatCNW; }
+                    default -> { base = 0L; }
+                }
+            }
+            default -> { base = 0L; }
+        }
+        if (target == null) return base != 0L;
+        if (target.getTeam() == rc.getTeam()) return base != 0L;
+        if (target.getType() != UnitType.BABY_RAT) return base != 0L;
+        int enemyDx = target.location.x - myLocX;
+        int enemyDy = target.location.y - myLocY;
+        if (enemyDx < -3 || enemyDx > 3 || enemyDy < -3 || enemyDy > 3) return base != 0L;
+        boolean beforeHigh = target.getHealth() > rc.getHealth();
+        boolean afterHigh = (target.getHealth() - damage) > rc.getHealth();
+        if (afterHigh != beforeHigh) {
+            long sub = enemyMaskForMove(enemyDx, enemyDy, target.direction, moveDir);
+            long threat = getMoveThreatMask(moveDir);
+            base -= (sub & threat);
+            base += (sub & getHiddenMask(facing) & threat);
         }
         return base != 0L;
     }
@@ -9954,8 +10082,949 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
         int faceIdx = facing.ordinal();
         int moveIdx = moveDir.ordinal();
         switch (dx) {
+            case -3 -> {
+                switch (dy) {
+                    case -3 -> {
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000010000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000010000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000010000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            default -> { return 0L; }
+                        }
+                    }
+                    case -2 -> {
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000010000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0001010000000000L; }
+                                    case 6 -> { return 0x0000010000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0001010000000000L; }
+                                    case 6 -> { return 0x0000010000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            default -> { return 0L; }
+                        }
+                    }
+                    case -1 -> {
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000010000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0101010000000000L; }
+                                    case 6 -> { return 0x0001010000000000L; }
+                                    case 7 -> { return 0x0000010000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0101010000000000L; }
+                                    case 6 -> { return 0x0001010000000000L; }
+                                    case 7 -> { return 0x0000010000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0101010000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            default -> { return 0L; }
+                        }
+                    }
+                    case 0 -> {
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0101010000000000L; }
+                                    case 7 -> { return 0x0001010000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0101000000000000L; }
+                                    case 6 -> { return 0x0101010000000000L; }
+                                    case 7 -> { return 0x0001010000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0101000000000000L; }
+                                    case 6 -> { return 0x0101010000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            default -> { return 0L; }
+                        }
+                    }
+                    case 1 -> {
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0101010000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0100000000000000L; }
+                                    case 6 -> { return 0x0101000000000000L; }
+                                    case 7 -> { return 0x0101010000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0100000000000000L; }
+                                    case 6 -> { return 0x0101000000000000L; }
+                                    case 7 -> { return 0x0101010000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0100000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            default -> { return 0L; }
+                        }
+                    }
+                    case 2 -> {
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0100000000000000L; }
+                                    case 7 -> { return 0x0101000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0100000000000000L; }
+                                    case 7 -> { return 0x0101000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0100000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            default -> { return 0L; }
+                        }
+                    }
+                    case 3 -> {
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0100000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0100000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0100000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            default -> { return 0L; }
+                        }
+                    }
+                    default -> { return 0L; }
+                }
+            }
             case -2 -> {
                 switch (dy) {
+                    case -3 -> {
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000010000000000L; }
+                                    case 5 -> { return 0x0000010100000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000010000000000L; }
+                                    case 5 -> { return 0x0000010100000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000010000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            default -> { return 0L; }
+                        }
+                    }
                     case -2 -> {
                         switch (faceIdx) {
                             case 0 -> {
@@ -10493,6 +11562,123 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                     case 6 -> { return 0x0100000000000001L; }
                                     case 7 -> { return 0x0101000000000001L; }
                                     case 8 -> { return 0x0100000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            default -> { return 0L; }
+                        }
+                    }
+                    case 3 -> {
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0100000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0100000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0100000000000001L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0100000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0100000000000001L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }
@@ -10546,6 +11732,123 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
             }
             case -1 -> {
                 switch (dy) {
+                    case -3 -> {
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000010000000000L; }
+                                    case 4 -> { return 0x0000010100000000L; }
+                                    case 5 -> { return 0x0000010101000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000010000000000L; }
+                                    case 4 -> { return 0x0000010100000000L; }
+                                    case 5 -> { return 0x0000010101000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000010000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000010101000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            default -> { return 0L; }
+                        }
+                    }
                     case -2 -> {
                         switch (faceIdx) {
                             case 0 -> {
@@ -11096,6 +12399,123 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                     case 5 -> { return 0x0000000000000000L; }
                                     case 6 -> { return 0x0100000000000101L; }
                                     case 7 -> { return 0x0101000000010101L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            default -> { return 0L; }
+                        }
+                    }
+                    case 3 -> {
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0100000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0100000000000001L; }
+                                    case 1 -> { return 0x0100000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0100000000000101L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0100000000000001L; }
+                                    case 1 -> { return 0x0100000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0100000000000101L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0100000000000101L; }
                                     case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
@@ -11136,6 +12556,123 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
             }
             case 0 -> {
                 switch (dy) {
+                    case -3 -> {
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000010100000000L; }
+                                    case 4 -> { return 0x0000010101000000L; }
+                                    case 5 -> { return 0x0000000101000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000010100000000L; }
+                                    case 4 -> { return 0x0000010101000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000010101000000L; }
+                                    case 5 -> { return 0x0000000101000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            default -> { return 0L; }
+                        }
+                    }
                     case -2 -> {
                         switch (faceIdx) {
                             case 0 -> {
@@ -11700,6 +13237,123 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                     case 5 -> { return 0x0000000000000000L; }
                                     case 6 -> { return 0x0000000000000000L; }
                                     case 7 -> { return 0x0000000000010101L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            default -> { return 0L; }
+                        }
+                    }
+                    case 3 -> {
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0100000000000101L; }
+                                    case 1 -> { return 0x0100000000000001L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0100000000000101L; }
+                                    case 1 -> { return 0x0100000000000001L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000101L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0100000000000101L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000101L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
                                     case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
@@ -11726,6 +13380,123 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
             }
             case 1 -> {
                 switch (dy) {
+                    case -3 -> {
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000010101000000L; }
+                                    case 4 -> { return 0x0000000101000000L; }
+                                    case 5 -> { return 0x0000000001000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000010101000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000001000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000010101000000L; }
+                                    case 4 -> { return 0x0000000101000000L; }
+                                    case 5 -> { return 0x0000000001000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            default -> { return 0L; }
+                        }
+                    }
                     case -2 -> {
                         switch (faceIdx) {
                             case 0 -> {
@@ -12290,6 +14061,123 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                     case 5 -> { return 0x0000000000000000L; }
                                     case 6 -> { return 0x0000000000000100L; }
                                     case 7 -> { return 0x0000000000010100L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            default -> { return 0L; }
+                        }
+                    }
+                    case 3 -> {
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0100000000000101L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000101L; }
+                                    case 1 -> { return 0x0100000000000101L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000100L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000101L; }
+                                    case 1 -> { return 0x0100000000000101L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000100L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000100L; }
                                     case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
@@ -12316,6 +14204,123 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
             }
             case 2 -> {
                 switch (dy) {
+                    case -3 -> {
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000101000000L; }
+                                    case 4 -> { return 0x0000000001000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000001000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000101000000L; }
+                                    case 4 -> { return 0x0000000001000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            default -> { return 0L; }
+                        }
+                    }
                     case -2 -> {
                         switch (faceIdx) {
                             case 0 -> {
@@ -12881,6 +14886,947 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
                                     case 6 -> { return 0x0000000000000000L; }
                                     case 7 -> { return 0x0000000000000000L; }
                                     case 8 -> { return 0x0000000000000100L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            default -> { return 0L; }
+                        }
+                    }
+                    case 3 -> {
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000100L; }
+                                    case 1 -> { return 0x0000000000000101L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000100L; }
+                                    case 1 -> { return 0x0000000000000101L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000100L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            default -> { return 0L; }
+                        }
+                    }
+                    default -> { return 0L; }
+                }
+            }
+            case 3 -> {
+                switch (dy) {
+                    case -3 -> {
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000001000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000001000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000001000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            default -> { return 0L; }
+                        }
+                    }
+                    case -2 -> {
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000001000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000001000000L; }
+                                    case 3 -> { return 0x0000000001010000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000001000000L; }
+                                    case 3 -> { return 0x0000000001010000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            default -> { return 0L; }
+                        }
+                    }
+                    case -1 -> {
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000001000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000001010100L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000001000000L; }
+                                    case 2 -> { return 0x0000000001010000L; }
+                                    case 3 -> { return 0x0000000001010100L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000001000000L; }
+                                    case 2 -> { return 0x0000000001010000L; }
+                                    case 3 -> { return 0x0000000001010100L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            default -> { return 0L; }
+                        }
+                    }
+                    case 0 -> {
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000001010100L; }
+                                    case 3 -> { return 0x0000000000010100L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000001010000L; }
+                                    case 2 -> { return 0x0000000001010100L; }
+                                    case 3 -> { return 0x0000000000010100L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000001010000L; }
+                                    case 2 -> { return 0x0000000001010100L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            default -> { return 0L; }
+                        }
+                    }
+                    case 1 -> {
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000100L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000001010100L; }
+                                    case 2 -> { return 0x0000000000010100L; }
+                                    case 3 -> { return 0x0000000000000100L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000001010100L; }
+                                    case 2 -> { return 0x0000000000010100L; }
+                                    case 3 -> { return 0x0000000000000100L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000001010100L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            default -> { return 0L; }
+                        }
+                    }
+                    case 2 -> {
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000100L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000010100L; }
+                                    case 2 -> { return 0x0000000000000100L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000010100L; }
+                                    case 2 -> { return 0x0000000000000100L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 7 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            default -> { return 0L; }
+                        }
+                    }
+                    case 3 -> {
+                        switch (faceIdx) {
+                            case 0 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 1 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 2 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 3 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000000L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 4 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000100L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 5 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000100L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
+                                    default -> { return 0L; }
+                                }
+                            }
+                            case 6 -> {
+                                switch (moveIdx) {
+                                    case 0 -> { return 0x0000000000000000L; }
+                                    case 1 -> { return 0x0000000000000100L; }
+                                    case 2 -> { return 0x0000000000000000L; }
+                                    case 3 -> { return 0x0000000000000000L; }
+                                    case 4 -> { return 0x0000000000000000L; }
+                                    case 5 -> { return 0x0000000000000000L; }
+                                    case 6 -> { return 0x0000000000000000L; }
+                                    case 7 -> { return 0x0000000000000000L; }
+                                    case 8 -> { return 0x0000000000000000L; }
                                     default -> { return 0L; }
                                 }
                             }

@@ -141,4 +141,8 @@ public class BabyRat {
     public static void attack(RobotInfo info) throws GameActionException {
         rc.attack(myLoc.add(myLoc.directionTo(info.location)));
     }
+
+    public static void attack(RobotInfo info, int damage) throws GameActionException {
+        rc.attack(myLoc.add(myLoc.directionTo(info.location)), CombatStrategy.getCheeseNeeded(damage - 10));
+    }
 }

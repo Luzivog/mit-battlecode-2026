@@ -23,6 +23,7 @@ public final class TryAttack {
     static RobotInfo target;
     static Direction bestMove;
     static Direction bestFacing;
+    static int bestDamage;
     static double bestScore;
     static RobotInfo info;
     static MapLocation t;
@@ -59,7 +60,7 @@ public final class TryAttack {
             return false;
         }
         assert(CombatStrategy.performMoves(bestMove, bestFacing));
-        attack(target);
+        attack(target, bestDamage);
         println("!!!!!!!!!!!!!!!!!!!!!!! attacked rat");
         indicate("COMBAT STRAT: ATTACK");
         return true;
@@ -71,7 +72,7 @@ public final class TryAttack {
 
         t = info.location;
         weight = 10;
-        if (info.getHealth() <= GameConstants.RAT_BITE_DAMAGE) {
+        if (info.getHealth() <= CombatStrategy.getBiteDamage()) {
             weight += 30; // prefer one tapping
         }
 
@@ -858,168 +859,160 @@ public final class TryAttack {
         if (!canSense(newLoc, t, Direction.NORTH)) return;
         if (!CombatCommon.canPerformMoves(moveDir, Direction.NORTH)) return;
         score = weight;
+        if (Direction.NORTH != myDir) {
+            score += 2; // prefer turning
+        }
         if (rc.getHealth() <= 24) {
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTH, info);
         } else {
-            // technically enemy might switch from high to low status after hit
-            // can be accounted for in future
-            score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTH); 
-        }
-        if (Direction.NORTH != myDir) {
-            score *= 1.1; // prefer turning
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTH, info, CombatStrategy.getBiteDamage());
         }
         if (score > bestScore) {
             bestScore = score;
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.NORTH;
+            bestDamage = CombatStrategy.getBiteDamage();
         }
     }
     private static void faceNE() throws GameActionException {
         if (!canSense(newLoc, t, Direction.NORTHEAST)) return;
         if (!CombatCommon.canPerformMoves(moveDir, Direction.NORTHEAST)) return;
         score = weight;
+        if (Direction.NORTHEAST != myDir) {
+            score += 2; // prefer turning
+        }
         if (rc.getHealth() <= 24) {
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHEAST, info);
         } else {
-            // technically enemy might switch from high to low status after hit
-            // can be accounted for in future
-            score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHEAST); 
-        }
-        if (Direction.NORTHEAST != myDir) {
-            score *= 1.1; // prefer turning
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHEAST, info, CombatStrategy.getBiteDamage());
         }
         if (score > bestScore) {
             bestScore = score;
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.NORTHEAST;
+            bestDamage = CombatStrategy.getBiteDamage();
         }
     }
     private static void faceE() throws GameActionException {
         if (!canSense(newLoc, t, Direction.EAST)) return;
         if (!CombatCommon.canPerformMoves(moveDir, Direction.EAST)) return;
         score = weight;
+        if (Direction.EAST != myDir) {
+            score += 2; // prefer turning
+        }
         if (rc.getHealth() <= 24) {
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.EAST, info);
         } else {
-            // technically enemy might switch from high to low status after hit
-            // can be accounted for in future
-            score += CombatStrategy.getCellScoreFor(moveDir, Direction.EAST); 
-        }
-        if (Direction.EAST != myDir) {
-            score *= 1.1; // prefer turning
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.EAST, info, CombatStrategy.getBiteDamage());
         }
         if (score > bestScore) {
             bestScore = score;
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.EAST;
+            bestDamage = CombatStrategy.getBiteDamage();
         }
     }
     private static void faceSE() throws GameActionException {
         if (!canSense(newLoc, t, Direction.SOUTHEAST)) return;
         if (!CombatCommon.canPerformMoves(moveDir, Direction.SOUTHEAST)) return;
         score = weight;
+        if (Direction.SOUTHEAST != myDir) {
+            score += 2; // prefer turning
+        }
         if (rc.getHealth() <= 24) {
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHEAST, info);
         } else {
-            // technically enemy might switch from high to low status after hit
-            // can be accounted for in future
-            score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHEAST); 
-        }
-        if (Direction.SOUTHEAST != myDir) {
-            score *= 1.1; // prefer turning
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHEAST, info, CombatStrategy.getBiteDamage());
         }
         if (score > bestScore) {
             bestScore = score;
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.SOUTHEAST;
+            bestDamage = CombatStrategy.getBiteDamage();
         }
     }
     private static void faceS() throws GameActionException {
         if (!canSense(newLoc, t, Direction.SOUTH)) return;
         if (!CombatCommon.canPerformMoves(moveDir, Direction.SOUTH)) return;
         score = weight;
+        if (Direction.SOUTH != myDir) {
+            score += 2; // prefer turning
+        }
         if (rc.getHealth() <= 24) {
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTH, info);
         } else {
-            // technically enemy might switch from high to low status after hit
-            // can be accounted for in future
-            score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTH); 
-        }
-        if (Direction.SOUTH != myDir) {
-            score *= 1.1; // prefer turning
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTH, info, CombatStrategy.getBiteDamage());
         }
         if (score > bestScore) {
             bestScore = score;
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.SOUTH;
+            bestDamage = CombatStrategy.getBiteDamage();
         }
     }
     private static void faceSW() throws GameActionException {
         if (!canSense(newLoc, t, Direction.SOUTHWEST)) return;
         if (!CombatCommon.canPerformMoves(moveDir, Direction.SOUTHWEST)) return;
         score = weight;
+        if (Direction.SOUTHWEST != myDir) {
+            score += 2; // prefer turning
+        }
         if (rc.getHealth() <= 24) {
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHWEST, info);
         } else {
-            // technically enemy might switch from high to low status after hit
-            // can be accounted for in future
-            score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHWEST); 
-        }
-        if (Direction.SOUTHWEST != myDir) {
-            score *= 1.1; // prefer turning
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHWEST, info, CombatStrategy.getBiteDamage());
         }
         if (score > bestScore) {
             bestScore = score;
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.SOUTHWEST;
+            bestDamage = CombatStrategy.getBiteDamage();
         }
     }
     private static void faceW() throws GameActionException {
         if (!canSense(newLoc, t, Direction.WEST)) return;
         if (!CombatCommon.canPerformMoves(moveDir, Direction.WEST)) return;
         score = weight;
+        if (Direction.WEST != myDir) {
+            score += 2; // prefer turning
+        }
         if (rc.getHealth() <= 24) {
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.WEST, info);
         } else {
-            // technically enemy might switch from high to low status after hit
-            // can be accounted for in future
-            score += CombatStrategy.getCellScoreFor(moveDir, Direction.WEST); 
-        }
-        if (Direction.WEST != myDir) {
-            score *= 1.1; // prefer turning
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.WEST, info, CombatStrategy.getBiteDamage());
         }
         if (score > bestScore) {
             bestScore = score;
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.WEST;
+            bestDamage = CombatStrategy.getBiteDamage();
         }
     }
     private static void faceNW() throws GameActionException {
         if (!canSense(newLoc, t, Direction.NORTHWEST)) return;
         if (!CombatCommon.canPerformMoves(moveDir, Direction.NORTHWEST)) return;
         score = weight;
+        if (Direction.NORTHWEST != myDir) {
+            score += 2; // prefer turning
+        }
         if (rc.getHealth() <= 24) {
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHWEST, info);
         } else {
-            // technically enemy might switch from high to low status after hit
-            // can be accounted for in future
-            score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHWEST); 
-        }
-        if (Direction.NORTHWEST != myDir) {
-            score *= 1.1; // prefer turning
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHWEST, info, CombatStrategy.getBiteDamage());
         }
         if (score > bestScore) {
             bestScore = score;
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.NORTHWEST;
+            bestDamage = CombatStrategy.getBiteDamage();
         }
     }
 
@@ -1028,7 +1021,7 @@ public final class TryAttack {
         for (int i = 0; i < RobotTracker.numEnemies && i < 2; i++) {
             RobotInfo ri = RobotTracker.sortedEnemies[i];
             if (chebyshevDistance(myLoc, ri) > 1) break;
-            attack(ri);
+            attack(ri, CombatStrategy.getBiteDamage());
             println("!!!!!!!!!!!!!!mini attacked!!");
             indicate("accepted mini attack");
             return true;

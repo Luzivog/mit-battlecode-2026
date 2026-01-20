@@ -298,37 +298,17 @@ public class CombatStrategy extends Strategy {
         cellScore = new double[9];
         for (int i = 0; i < RobotTracker.numCats && i < 3; i++) {
             RobotInfo info = RobotTracker.sortedCats[i];
-            cellScore[0] += getCellScoreForEnemy(info, Direction.NORTH);
-            cellScore[1] += getCellScoreForEnemy(info, Direction.NORTHEAST);
-            cellScore[2] += getCellScoreForEnemy(info, Direction.EAST);
-            cellScore[3] += getCellScoreForEnemy(info, Direction.SOUTHEAST);
-            cellScore[4] += getCellScoreForEnemy(info, Direction.SOUTH);
-            cellScore[5] += getCellScoreForEnemy(info, Direction.SOUTHWEST);
-            cellScore[6] += getCellScoreForEnemy(info, Direction.WEST);
-            cellScore[7] += getCellScoreForEnemy(info, Direction.NORTHWEST);
-            cellScore[8] += getCellScoreForEnemy(info, Direction.CENTER);
+            {% for dir in allDirections %}
+            cellScore[{{ loop.index0 }}] += getCellScoreForEnemy(info, {{ dir }});
+            {% endfor %}
         }
         for (int i = 0; i < RobotTracker.numEnemies && i < 3; i++) {
             RobotInfo info = RobotTracker.sortedEnemies[i];
             if (Clock.getBytecodeNum() - precompStart > precompBudget) break;
-            cellScore[0] += getCellScoreForEnemy(info, Direction.NORTH);
+            {% for dir in allDirections %}
+            cellScore[{{ loop.index0 }}] += getCellScoreForEnemy(info, {{ dir }});
             if (Clock.getBytecodeNum() - precompStart > precompBudget) break;
-            cellScore[1] += getCellScoreForEnemy(info, Direction.NORTHEAST);
-            if (Clock.getBytecodeNum() - precompStart > precompBudget) break;
-            cellScore[2] += getCellScoreForEnemy(info, Direction.EAST);
-            if (Clock.getBytecodeNum() - precompStart > precompBudget) break;
-            cellScore[3] += getCellScoreForEnemy(info, Direction.SOUTHEAST);
-            if (Clock.getBytecodeNum() - precompStart > precompBudget) break;
-            cellScore[4] += getCellScoreForEnemy(info, Direction.SOUTH);
-            if (Clock.getBytecodeNum() - precompStart > precompBudget) break;
-            cellScore[5] += getCellScoreForEnemy(info, Direction.SOUTHWEST);
-            if (Clock.getBytecodeNum() - precompStart > precompBudget) break;
-            cellScore[6] += getCellScoreForEnemy(info, Direction.WEST);
-            if (Clock.getBytecodeNum() - precompStart > precompBudget) break;
-            cellScore[7] += getCellScoreForEnemy(info, Direction.NORTHWEST);
-            if (Clock.getBytecodeNum() - precompStart > precompBudget) break;
-            cellScore[8] += getCellScoreForEnemy(info, Direction.CENTER);
-            if (Clock.getBytecodeNum() - precompStart > precompBudget) break;
+            {% endfor %}
         }
 
         StringBuilder indicateSb = new StringBuilder("Cell scores:\n");
@@ -339,6 +319,11 @@ public class CombatStrategy extends Strategy {
             indicateSb.append("\n");
         }
         indicate(indicateSb.toString());
+    }
+
+    public static double getCellScoreFor(Direction moveDir, Direction facing, RobotInfo target, int damage) throws GameActionException {
+        if (CombatTracker.hasThreat(moveDir, facing, target, damage)) return -100;
+        return cellScore[moveDir.ordinal()] - readCellScore(target, moveDir);
     }
 
     public static double getCellScoreFor(Direction moveDir, Direction facing, RobotInfo target) throws GameActionException {
@@ -405,6 +390,11 @@ public class CombatStrategy extends Strategy {
             {# base *= (1.0 / Math.sqrt(dist + 1)); // incredible formula #}
             return cacheCellScore(info, moveDir, base);
         }
+    }
+
+    public static int getBiteDamage() {
+        if (rc.getAllCheese() < 300) return 10;
+        else return 12;
     }
     
     /*

@@ -44,6 +44,9 @@ public final class TryFight {
             assert(false);
             return false;
         }
+        if (am(11417, 31)) {
+            println("TARGET: " + target.location);
+        }
         bytecodeStart = Clock.getBytecodeNum();
         bytecodeBudget = Clock.getBytecodesLeft() - 1500;
         selectMoves();
@@ -765,16 +768,16 @@ public final class TryFight {
         int moveCost = CombatCommon.movementCost(moveDir, Direction.NORTH);
         if (moveCost == -1) return;
         score = CombatStrategy.getCellScoreFor(moveDir, Direction.NORTH);
-        if (am(12590, 21)) {
-            println("debug face" + " moveDir " + moveDir + " faceDir " + Direction.NORTH + " score " + score);
-        }
         if (moveCost == 1) score += 10;
         facingTarget = canSense(dxToTarget, dyToTarget, Direction.NORTH);
         if (!facingTarget) {
             score -= 5;
         }
-        if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) == 0) {
+        if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) != 0) {
             score += 30;
+        }
+        if (am(11417, 31)) {
+            println("MOVE " + moveDir + " FACE " + Direction.NORTH + " SCORE " + score);
         }
         if (Direction.NORTH != myDir) {
             // prefer turning
@@ -791,16 +794,16 @@ public final class TryFight {
         int moveCost = CombatCommon.movementCost(moveDir, Direction.NORTHEAST);
         if (moveCost == -1) return;
         score = CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHEAST);
-        if (am(12590, 21)) {
-            println("debug face" + " moveDir " + moveDir + " faceDir " + Direction.NORTHEAST + " score " + score);
-        }
         if (moveCost == 1) score += 10;
         facingTarget = canSense(dxToTarget, dyToTarget, Direction.NORTHEAST);
         if (!facingTarget) {
             score -= 5;
         }
-        if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) == 0) {
+        if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) != 0) {
             score += 30;
+        }
+        if (am(11417, 31)) {
+            println("MOVE " + moveDir + " FACE " + Direction.NORTHEAST + " SCORE " + score);
         }
         if (Direction.NORTHEAST != myDir) {
             // prefer turning
@@ -817,16 +820,16 @@ public final class TryFight {
         int moveCost = CombatCommon.movementCost(moveDir, Direction.EAST);
         if (moveCost == -1) return;
         score = CombatStrategy.getCellScoreFor(moveDir, Direction.EAST);
-        if (am(12590, 21)) {
-            println("debug face" + " moveDir " + moveDir + " faceDir " + Direction.EAST + " score " + score);
-        }
         if (moveCost == 1) score += 10;
         facingTarget = canSense(dxToTarget, dyToTarget, Direction.EAST);
         if (!facingTarget) {
             score -= 5;
         }
-        if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) == 0) {
+        if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) != 0) {
             score += 30;
+        }
+        if (am(11417, 31)) {
+            println("MOVE " + moveDir + " FACE " + Direction.EAST + " SCORE " + score);
         }
         if (Direction.EAST != myDir) {
             // prefer turning
@@ -843,16 +846,16 @@ public final class TryFight {
         int moveCost = CombatCommon.movementCost(moveDir, Direction.SOUTHEAST);
         if (moveCost == -1) return;
         score = CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHEAST);
-        if (am(12590, 21)) {
-            println("debug face" + " moveDir " + moveDir + " faceDir " + Direction.SOUTHEAST + " score " + score);
-        }
         if (moveCost == 1) score += 10;
         facingTarget = canSense(dxToTarget, dyToTarget, Direction.SOUTHEAST);
         if (!facingTarget) {
             score -= 5;
         }
-        if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) == 0) {
+        if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) != 0) {
             score += 30;
+        }
+        if (am(11417, 31)) {
+            println("MOVE " + moveDir + " FACE " + Direction.SOUTHEAST + " SCORE " + score);
         }
         if (Direction.SOUTHEAST != myDir) {
             // prefer turning
@@ -869,16 +872,16 @@ public final class TryFight {
         int moveCost = CombatCommon.movementCost(moveDir, Direction.SOUTH);
         if (moveCost == -1) return;
         score = CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTH);
-        if (am(12590, 21)) {
-            println("debug face" + " moveDir " + moveDir + " faceDir " + Direction.SOUTH + " score " + score);
-        }
         if (moveCost == 1) score += 10;
         facingTarget = canSense(dxToTarget, dyToTarget, Direction.SOUTH);
         if (!facingTarget) {
             score -= 5;
         }
-        if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) == 0) {
+        if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) != 0) {
             score += 30;
+        }
+        if (am(11417, 31)) {
+            println("MOVE " + moveDir + " FACE " + Direction.SOUTH + " SCORE " + score);
         }
         if (Direction.SOUTH != myDir) {
             // prefer turning
@@ -895,16 +898,16 @@ public final class TryFight {
         int moveCost = CombatCommon.movementCost(moveDir, Direction.SOUTHWEST);
         if (moveCost == -1) return;
         score = CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHWEST);
-        if (am(12590, 21)) {
-            println("debug face" + " moveDir " + moveDir + " faceDir " + Direction.SOUTHWEST + " score " + score);
-        }
         if (moveCost == 1) score += 10;
         facingTarget = canSense(dxToTarget, dyToTarget, Direction.SOUTHWEST);
         if (!facingTarget) {
             score -= 5;
         }
-        if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) == 0) {
+        if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) != 0) {
             score += 30;
+        }
+        if (am(11417, 31)) {
+            println("MOVE " + moveDir + " FACE " + Direction.SOUTHWEST + " SCORE " + score);
         }
         if (Direction.SOUTHWEST != myDir) {
             // prefer turning
@@ -921,16 +924,16 @@ public final class TryFight {
         int moveCost = CombatCommon.movementCost(moveDir, Direction.WEST);
         if (moveCost == -1) return;
         score = CombatStrategy.getCellScoreFor(moveDir, Direction.WEST);
-        if (am(12590, 21)) {
-            println("debug face" + " moveDir " + moveDir + " faceDir " + Direction.WEST + " score " + score);
-        }
         if (moveCost == 1) score += 10;
         facingTarget = canSense(dxToTarget, dyToTarget, Direction.WEST);
         if (!facingTarget) {
             score -= 5;
         }
-        if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) == 0) {
+        if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) != 0) {
             score += 30;
+        }
+        if (am(11417, 31)) {
+            println("MOVE " + moveDir + " FACE " + Direction.WEST + " SCORE " + score);
         }
         if (Direction.WEST != myDir) {
             // prefer turning
@@ -947,16 +950,16 @@ public final class TryFight {
         int moveCost = CombatCommon.movementCost(moveDir, Direction.NORTHWEST);
         if (moveCost == -1) return;
         score = CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHWEST);
-        if (am(12590, 21)) {
-            println("debug face" + " moveDir " + moveDir + " faceDir " + Direction.NORTHWEST + " score " + score);
-        }
         if (moveCost == 1) score += 10;
         facingTarget = canSense(dxToTarget, dyToTarget, Direction.NORTHWEST);
         if (!facingTarget) {
             score -= 5;
         }
-        if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) == 0) {
+        if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) != 0) {
             score += 30;
+        }
+        if (am(11417, 31)) {
+            println("MOVE " + moveDir + " FACE " + Direction.NORTHWEST + " SCORE " + score);
         }
         if (Direction.NORTHWEST != myDir) {
             // prefer turning

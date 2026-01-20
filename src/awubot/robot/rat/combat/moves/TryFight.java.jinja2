@@ -86,6 +86,9 @@ public final class TryFight {
             assert(false);
             return false;
         }
+        if (am(11417, 31)) {
+            println("TARGET: " + target.location);
+        }
         bytecodeStart = Clock.getBytecodeNum();
         bytecodeBudget = Clock.getBytecodesLeft() - 1500;
         selectMoves();
@@ -134,15 +137,12 @@ public final class TryFight {
         int moveCost = CombatCommon.movementCost(moveDir, {{ face_dir }});
         if (moveCost == -1) return;
         score = CombatStrategy.getCellScoreFor(moveDir, {{ face_dir }});
-        if (am(12590, 21)) {
-            println("debug face" + " moveDir " + moveDir + " faceDir " + {{ face_dir }} + " score " + score);
-        }
         if (moveCost == 1) score += 10;
         facingTarget = canSense(dxToTarget, dyToTarget, {{ face_dir }});
         if (!facingTarget) {
             score -= 5;
         }
-        if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) == 0) {
+        if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) != 0) {
             score += 30;
         }
         if ({{ face_dir }} != myDir) {

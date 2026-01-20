@@ -119,6 +119,7 @@ public class BabyRat {
     }
 
     public static void turn(Direction dir) throws GameActionException {
+        if (dir == myDir) return;
         _turn(dir);
         tryPickUpCheese();
         tryTransferCheese();

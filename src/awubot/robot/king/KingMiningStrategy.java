@@ -1,9 +1,9 @@
 package awubot.robot.king;
 
-import battlecode.common.Direction;
 import battlecode.common.GameActionException;
 import battlecode.common.MapInfo;
 import battlecode.common.MapLocation;
+import awubot.Game;
 import awubot.Pathfinder;
 import awubot.comms.GlobalArray;
 import awubot.robot.Strategy;
@@ -34,29 +34,47 @@ public class KingMiningStrategy extends Strategy {
 
     @Override
     public boolean runTick() throws GameActionException {
-        indicate("scan for cheese mines: " + scanForCheeseMines());
+        scanForCheeseMines();
+
         if (!theFoundCheeseMine) {
-            if (!scanForCheeseMines()) {
-                moveTowardCenter();
-            }
+            selectFromKnownMines();
         }
 
-        if (theFoundCheeseMine) {
-            scanForCheeseMines();
+        if (!theFoundCheeseMine) {
+            moveTowardCenter();
+        } else {
+            GlobalArray.writeKingMineAssignment(kingId, theMineTarget);
             moveTowardMine();
         }
-        //indicate("a;sldkfja;lkjfakl;sdjfal;dksjfa;lsdjfa;sldkjf mining");
+
+        indicate("mine target: " + theMineTarget);
         return true;
     }
 
     public boolean scanForCheeseMines() throws GameActionException {
+        MapLocation myBestMine = null;
+        int myBestDist = Integer.MAX_VALUE;
+
         for (MapInfo myInfo : rc.senseNearbyMapInfos()) {
             if (myInfo.hasCheeseMine()) {
-                theMineTarget = myInfo.getMapLocation();
-                GlobalArray.globalCheeseMines.add(encode2x2(theMineTarget));
-                theFoundCheeseMine = true;
-                return true;
+                MapLocation myMine = myInfo.getMapLocation();
+                GlobalArray.globalCheeseMines.add(encode2x2(myMine));
+
+                if (GlobalArray.isMineAssignedToAnyKing(myMine)) continue;
+
+                int myDist = myLoc.distanceSquaredTo(myMine);
+                if (myDist < myBestDist) {
+                    myBestDist = myDist;
+                    myBestMine = myMine;
+                }
             }
+        }
+
+        if (myBestMine != null) {
+            theMineTarget = myBestMine;
+            theFoundCheeseMine = true;
+            GlobalArray.writeKingMineAssignment(kingId, theMineTarget);
+            return true;
         }
         return false;
     }
@@ -69,5 +87,31 @@ public class KingMiningStrategy extends Strategy {
         if (!rc.isMovementReady() || theMineTarget == null) return;
         if (myLoc.distanceSquaredTo(theMineTarget) <= 4) return;
         Pathfinder.makeMove(theMineTarget);
+    }
+
+    private void selectFromKnownMines() throws GameActionException {
+        if (theMineTarget != null) return;
+
+        MapLocation myBestMine = null;
+        int myBestDist = Integer.MAX_VALUE;
+
+        int myMineCount = Game.knownCheeseMines.set.length();
+        for (int i = 0; i < myMineCount && i < 10; i++) {
+            MapLocation myMine = decode2x2(Game.knownCheeseMines.at(i));
+            if (myMine == null) continue;
+            if (GlobalArray.isMineAssignedToAnyKing(myMine)) continue;
+
+            int myDist = myLoc.distanceSquaredTo(myMine);
+            if (myDist < myBestDist) {
+                myBestDist = myDist;
+                myBestMine = myMine;
+            }
+        }
+
+        if (myBestMine != null) {
+            theMineTarget = myBestMine;
+            theFoundCheeseMine = true;
+            GlobalArray.writeKingMineAssignment(kingId, theMineTarget);
+        }
     }
 }

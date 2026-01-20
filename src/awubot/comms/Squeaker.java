@@ -19,7 +19,7 @@ public class Squeaker {
 
     // special cases
     10: cheese mine locations (up to 3) (rounded to 2x2)
-    11: enemy rat king location (up to 3) (rounded to 2x2)
+    11: enemy combat !!!!
 
     rest will be prefixed with 0:
     (0)00: symmetry

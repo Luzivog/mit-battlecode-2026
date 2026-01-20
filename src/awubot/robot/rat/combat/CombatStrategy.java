@@ -379,7 +379,7 @@ public class CombatStrategy extends Strategy {
             return time > 1000 && rc.getAllCheese() > 300 && RobotTracker.numEnemies == 0 && rc.getHealth() > 50 && rc.getRawCheese() == 0;
         }
         if (enemy.getType() == UnitType.RAT_KING) return true;
-        if (enemy.getHealth() <= rc.getHealth()) return true;
+        if (enemy.getHealth() - getBiteDamage() <= rc.getHealth()) return true;
         if (!canSense(enemy.location, myLoc, enemy.direction)) return true;
         if (GlobalArray.nearestRatKing != null && GlobalArray.nearestRatKing.distanceSquaredTo(myLoc) <= 36) return true;
         if (RobotTracker.numAllies > RobotTracker.numEnemies) return true;

@@ -46,6 +46,16 @@ import awubot.RobotTracker;
     "Direction.NORTHWEST": "NW",
     "Direction.CENTER": "C",
 } %}
+{% set dir_opposite_map = {
+    "Direction.NORTH": "Direction.SOUTH",
+    "Direction.NORTHEAST": "Direction.SOUTHWEST",
+    "Direction.EAST": "Direction.WEST",
+    "Direction.SOUTHEAST": "Direction.NORTHWEST",
+    "Direction.SOUTH": "Direction.NORTH",
+    "Direction.SOUTHWEST": "Direction.NORTHEAST",
+    "Direction.WEST": "Direction.EAST",
+    "Direction.NORTHWEST": "Direction.SOUTHEAST",
+} %}
 
 public final class TryAttack {
     private TryAttack() {
@@ -54,6 +64,7 @@ public final class TryAttack {
     static RobotInfo target;
     static Direction bestMove;
     static Direction bestFacing;
+    static Direction bestSecondaryMove;
     static int bestDamage;
     static double bestScore;
     static RobotInfo info;
@@ -70,6 +81,7 @@ public final class TryAttack {
         target = null;
         bestMove = null;
         bestFacing = null;
+        bestSecondaryMove = null;
         bestScore = -1;
         bytecodeStart = Clock.getBytecodeNum();
         bytecodeBudget = Math.min(3000, (int) (Clock.getBytecodesLeft() - 1000) / 2);
@@ -90,8 +102,13 @@ public final class TryAttack {
             indicate("didnt find good attack");
             return false;
         }
-        assert(CombatStrategy.performMoves(bestMove, bestFacing));
-        attack(target, bestDamage);
+        if (bestMove != null) {
+            assert(CombatStrategy.performMoves(bestMove, bestFacing));
+            attack(target, bestDamage);
+        } else {
+            attack(target, bestDamage);
+            assert(CombatStrategy.performMoves(bestSecondaryMove, bestFacing));
+        }
         println("!!!!!!!!!!!!!!!!!!!!!!! attacked rat");
         indicate("COMBAT STRAT: ATTACK");
         return true;
@@ -108,6 +125,8 @@ public final class TryAttack {
         }
 
         selectMoves();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+        selectSecondaryMoves();
     }
 
     private static void selectMoves() throws GameActionException {
@@ -168,6 +187,47 @@ public final class TryAttack {
         }
     }
     {% endfor %}
+
+    private static void selectSecondaryMoves() throws GameActionException {
+        if (myLoc.distanceSquaredTo(t) > 2) return;
+        switch (myDir.ordinal()) {
+            {% for ord in range(8) %}
+            case {{ ord }} -> {
+                {% set related = related_map[ord] %}
+                {% for facing in related %}
+                {% for move_dir in related %}
+                considerSecondaryMove({{ dir_opposite_map[move_dir] }}, {{ facing }});
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                {% endfor %}
+                {% endfor %}
+            }
+            {% endfor %}
+            default -> { }
+        }
+    }
+
+    private static void considerSecondaryMove(Direction moveDir, Direction facing) throws GameActionException {
+        int moveCost = CombatCommon.movementCost(moveDir, facing);
+        if (moveCost == -1) return;
+        double score = weight;
+        if (moveCost == 0) score -= CombatCommon.strafeCost();
+        if (facing != myDir) {
+            score += 2; // prefer turning
+        }
+        if (rc.getHealth() <= 24) {
+            score += CombatStrategy.getCellScoreFor(moveDir, facing, info);
+        } else {
+            score += CombatStrategy.getCellScoreFor(moveDir, facing, info, CombatStrategy.getBiteDamage());
+        }
+        if (score > bestScore) {
+            bestScore = score;
+            target = info;
+            bestMove = null;
+            bestSecondaryMove = moveDir;
+            bestFacing = facing;
+            bestDamage = CombatStrategy.getBiteDamage();
+        }
+    }
 
     public static boolean miniRun() throws GameActionException {
         if (!rc.isActionReady()) return false;

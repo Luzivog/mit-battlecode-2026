@@ -123,7 +123,7 @@ public final class TryAttack {
         }
     }
 
-    {% for move_dir in directions + ['Direction.CENTER'] %}
+    {% for move_dir in allDirections %}
     private static void move{{ dir_short_map[move_dir] }}() throws GameActionException {
         if (!CombatCommon.canMove{{dir_short_map[move_dir] }}) return;
         moveDir = {{ move_dir }};
@@ -148,7 +148,13 @@ public final class TryAttack {
         if (!canSense(newLoc, t, {{ face_dir }})) return;
         if (!CombatCommon.canPerformMoves(moveDir, {{ face_dir }})) return;
         score = weight;
-        score += CombatStrategy.getCellScoreFor(moveDir, {{ face_dir }}, info);
+        if (rc.getHealth() <= 24) {
+            score += CombatStrategy.getCellScoreFor(moveDir, {{ face_dir }}, info);
+        } else {
+            // technically enemy might switch from high to low status after hit
+            // can be accounted for in future
+            score += CombatStrategy.getCellScoreFor(moveDir, {{ face_dir }}); 
+        }
         if ({{ face_dir }} != myDir) {
             score *= 1.1; // prefer turning
         }

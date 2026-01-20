@@ -28,6 +28,7 @@ public class BabyRat {
     }
 
     public static void run() throws GameActionException {
+        isLastMove = false;
         // indicate("cheesemines: " + GlobalArray.cheeseMines.set.length());
         shouldGlance = true;
 
@@ -101,36 +102,43 @@ public class BabyRat {
         }
     }
 
+    public static boolean isLastMove;
     public static void rawMove(Direction dir) throws GameActionException {
         if(dir == myDir) {
             rawMove();
             return;
         }
         _rawMove(dir);
-        // IF TLE: optimise this
-        CellTracker.storeVisibleCells();
         tryPickUpCheese();
         tryTransferCheese();
-        RobotTracker.updateRobots();
+        // IF TLE: optimise this
+        if (!isLastMove) {
+            CellTracker.storeVisibleCells();
+            RobotTracker.updateRobots();
+        }
     }
 
     public static void turn(Direction dir) throws GameActionException {
         _turn(dir);
         tryPickUpCheese();
         tryTransferCheese();
-        RobotTracker.updateRobots();
+        if (!isLastMove) {
+            CellTracker.storeVisibleCells();
+            RobotTracker.updateRobots();
+        }
     }
 
     public static void rawMove() throws GameActionException {
         _rawMove(myDir);
-        CellTracker.storeVisibleCellsPostMoveForward();
         tryPickUpCheese();
         tryTransferCheese();
-        RobotTracker.updateRobots();
+        if (!isLastMove) {
+            CellTracker.storeVisibleCellsPostMoveForward();
+            RobotTracker.updateRobots();
+        }
     }
 
     public static void attack(RobotInfo info) throws GameActionException {
         rc.attack(myLoc.add(myLoc.directionTo(info.location)));
     }
-
 }

@@ -644,10 +644,6 @@ public class Util {
         return false;
     }
 
-    public static boolean canStrafe() {
-        return rc.getMovementCooldownTurns() <= 18;
-    }
-
     public static int angleDistance(Direction a, Direction b) {
         int diff = abs(a.ordinal() - b.ordinal());
         // println("dist " + a + " " + b + " " + min(diff, 8 - diff));
@@ -812,9 +808,12 @@ public class Util {
     // for debugging purposes
     public static String indicatorString = "";
     public static void indicate(Object o) {
-        if (Game.DISABLE_OUTPUT) return;
         indicatorString += o + "\n";
         rc.setIndicatorString(indicatorString);
+    }
+
+    public static boolean am(int id, int t) {
+        return rc.getID() == id && time == t;
     }
 
     public static int manhattan(MapLocation a, MapLocation b) {

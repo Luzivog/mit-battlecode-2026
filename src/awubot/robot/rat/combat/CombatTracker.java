@@ -423,318 +423,12 @@ private static final long hiddenNW = 0x0000ffffffffff00L;
         }
     }
 
+    // TODO: account for dirt
     public static void loadThreatFromMap() throws GameActionException {
         int x = myLoc.x;
         int y = myLoc.y;
-t_m2_2 = (x >= 2 && y < mapHeight - 2) && CellTracker.mapData[x  + -2].charAt(y  + 2) != '\2';t_m1_2 = (x >= 1 && y < mapHeight - 2) && CellTracker.mapData[x  + -1].charAt(y  + 2) != '\2';t_0_2 = (y < mapHeight - 2) && CellTracker.mapData[x ].charAt(y  + 2) != '\2';t_1_2 = (x < mapWidth - 1 && y < mapHeight - 2) && CellTracker.mapData[x  + 1].charAt(y  + 2) != '\2';t_2_2 = (x < mapWidth - 2 && y < mapHeight - 2) && CellTracker.mapData[x  + 2].charAt(y  + 2) != '\2';t_m2_1 = (x >= 2 && y < mapHeight - 1) && CellTracker.mapData[x  + -2].charAt(y  + 1) != '\2';t_m1_1 = (x >= 1 && y < mapHeight - 1) && CellTracker.mapData[x  + -1].charAt(y  + 1) != '\2';t_0_1 = (y < mapHeight - 1) && CellTracker.mapData[x ].charAt(y  + 1) != '\2';t_1_1 = (x < mapWidth - 1 && y < mapHeight - 1) && CellTracker.mapData[x  + 1].charAt(y  + 1) != '\2';t_2_1 = (x < mapWidth - 2 && y < mapHeight - 1) && CellTracker.mapData[x  + 2].charAt(y  + 1) != '\2';t_m2_0 = (x >= 2) && CellTracker.mapData[x  + -2].charAt(y ) != '\2';t_m1_0 = (x >= 1) && CellTracker.mapData[x  + -1].charAt(y ) != '\2';        t_0_0 = true;t_1_0 = (x < mapWidth - 1) && CellTracker.mapData[x  + 1].charAt(y ) != '\2';t_2_0 = (x < mapWidth - 2) && CellTracker.mapData[x  + 2].charAt(y ) != '\2';t_m2_m1 = (x >= 2 && y >= 1) && CellTracker.mapData[x  + -2].charAt(y  + -1) != '\2';t_m1_m1 = (x >= 1 && y >= 1) && CellTracker.mapData[x  + -1].charAt(y  + -1) != '\2';t_0_m1 = (y >= 1) && CellTracker.mapData[x ].charAt(y  + -1) != '\2';t_1_m1 = (x < mapWidth - 1 && y >= 1) && CellTracker.mapData[x  + 1].charAt(y  + -1) != '\2';t_2_m1 = (x < mapWidth - 2 && y >= 1) && CellTracker.mapData[x  + 2].charAt(y  + -1) != '\2';t_m2_m2 = (x >= 2 && y >= 2) && CellTracker.mapData[x  + -2].charAt(y  + -2) != '\2';t_m1_m2 = (x >= 1 && y >= 2) && CellTracker.mapData[x  + -1].charAt(y  + -2) != '\2';t_0_m2 = (y >= 2) && CellTracker.mapData[x ].charAt(y  + -2) != '\2';t_1_m2 = (x < mapWidth - 1 && y >= 2) && CellTracker.mapData[x  + 1].charAt(y  + -2) != '\2';t_2_m2 = (x < mapWidth - 2 && y >= 2) && CellTracker.mapData[x  + 2].charAt(y  + -2) != '\2';        for (RobotInfo info : rc.senseNearbyRobots()) {
-            if (info.getType() != UnitType.BABY_RAT) continue;
-            int dx = info.location.x - x;
-            int dy = info.location.y - y;
-            switch (dx) {
-                case -2 -> {
-                    switch (dy) {
-                        case -2 -> {                            t_m2_m2 = info.getTeam() != team;                        }
-                        case -1 -> {                            t_m2_m1 = info.getTeam() != team;                        }
-                        case 0 -> {                            t_m2_0 = info.getTeam() != team;                        }
-                        case 1 -> {                            t_m2_1 = info.getTeam() != team;                        }
-                        case 2 -> {                            t_m2_2 = info.getTeam() != team;                        }
-                        default -> { }
-                    }
-                }
-                case -1 -> {
-                    switch (dy) {
-                        case -2 -> {                            t_m1_m2 = info.getTeam() != team;                        }
-                        case -1 -> {                            t_m1_m1 = info.getTeam() != team;                        }
-                        case 0 -> {                            t_m1_0 = info.getTeam() != team;                        }
-                        case 1 -> {                            t_m1_1 = info.getTeam() != team;                        }
-                        case 2 -> {                            t_m1_2 = info.getTeam() != team;                        }
-                        default -> { }
-                    }
-                }
-                case 0 -> {
-                    switch (dy) {
-                        case -2 -> {                            t_0_m2 = info.getTeam() != team;                        }
-                        case -1 -> {                            t_0_m1 = info.getTeam() != team;                        }
-                        case 0 -> {                        }
-                        case 1 -> {                            t_0_1 = info.getTeam() != team;                        }
-                        case 2 -> {                            t_0_2 = info.getTeam() != team;                        }
-                        default -> { }
-                    }
-                }
-                case 1 -> {
-                    switch (dy) {
-                        case -2 -> {                            t_1_m2 = info.getTeam() != team;                        }
-                        case -1 -> {                            t_1_m1 = info.getTeam() != team;                        }
-                        case 0 -> {                            t_1_0 = info.getTeam() != team;                        }
-                        case 1 -> {                            t_1_1 = info.getTeam() != team;                        }
-                        case 2 -> {                            t_1_2 = info.getTeam() != team;                        }
-                        default -> { }
-                    }
-                }
-                case 2 -> {
-                    switch (dy) {
-                        case -2 -> {                            t_2_m2 = info.getTeam() != team;                        }
-                        case -1 -> {                            t_2_m1 = info.getTeam() != team;                        }
-                        case 0 -> {                            t_2_0 = info.getTeam() != team;                        }
-                        case 1 -> {                            t_2_1 = info.getTeam() != team;                        }
-                        case 2 -> {                            t_2_2 = info.getTeam() != team;                        }
-                        default -> { }
-                    }
-                }
-                default -> { }
-            }
-        }
-    }
+t_m2_2 = (x >= 2 && y < mapHeight - 2) && CellTracker.mapData[x  + -2].charAt(y  + 2) != '\2';t_m1_2 = (x >= 1 && y < mapHeight - 2) && CellTracker.mapData[x  + -1].charAt(y  + 2) != '\2';t_0_2 = (y < mapHeight - 2) && CellTracker.mapData[x ].charAt(y  + 2) != '\2';t_1_2 = (x < mapWidth - 1 && y < mapHeight - 2) && CellTracker.mapData[x  + 1].charAt(y  + 2) != '\2';t_2_2 = (x < mapWidth - 2 && y < mapHeight - 2) && CellTracker.mapData[x  + 2].charAt(y  + 2) != '\2';t_m2_1 = (x >= 2 && y < mapHeight - 1) && CellTracker.mapData[x  + -2].charAt(y  + 1) != '\2';t_m1_1 = (x >= 1 && y < mapHeight - 1) && CellTracker.mapData[x  + -1].charAt(y  + 1) != '\2';t_0_1 = (y < mapHeight - 1) && CellTracker.mapData[x ].charAt(y  + 1) != '\2';t_1_1 = (x < mapWidth - 1 && y < mapHeight - 1) && CellTracker.mapData[x  + 1].charAt(y  + 1) != '\2';t_2_1 = (x < mapWidth - 2 && y < mapHeight - 1) && CellTracker.mapData[x  + 2].charAt(y  + 1) != '\2';t_m2_0 = (x >= 2) && CellTracker.mapData[x  + -2].charAt(y ) != '\2';t_m1_0 = (x >= 1) && CellTracker.mapData[x  + -1].charAt(y ) != '\2';        t_0_0 = true;t_1_0 = (x < mapWidth - 1) && CellTracker.mapData[x  + 1].charAt(y ) != '\2';t_2_0 = (x < mapWidth - 2) && CellTracker.mapData[x  + 2].charAt(y ) != '\2';t_m2_m1 = (x >= 2 && y >= 1) && CellTracker.mapData[x  + -2].charAt(y  + -1) != '\2';t_m1_m1 = (x >= 1 && y >= 1) && CellTracker.mapData[x  + -1].charAt(y  + -1) != '\2';t_0_m1 = (y >= 1) && CellTracker.mapData[x ].charAt(y  + -1) != '\2';t_1_m1 = (x < mapWidth - 1 && y >= 1) && CellTracker.mapData[x  + 1].charAt(y  + -1) != '\2';t_2_m1 = (x < mapWidth - 2 && y >= 1) && CellTracker.mapData[x  + 2].charAt(y  + -1) != '\2';t_m2_m2 = (x >= 2 && y >= 2) && CellTracker.mapData[x  + -2].charAt(y  + -2) != '\2';t_m1_m2 = (x >= 1 && y >= 2) && CellTracker.mapData[x  + -1].charAt(y  + -2) != '\2';t_0_m2 = (y >= 2) && CellTracker.mapData[x ].charAt(y  + -2) != '\2';t_1_m2 = (x < mapWidth - 1 && y >= 2) && CellTracker.mapData[x  + 1].charAt(y  + -2) != '\2';t_2_m2 = (x < mapWidth - 2 && y >= 2) && CellTracker.mapData[x  + 2].charAt(y  + -2) != '\2';    }
 
-    public static void registerTrap(int dx, int dy) {
-        switch (dx) {
-            case -2 -> {
-                switch (dy) {
-                    case -2 -> {
-                        t_m2_m2 = false;
-                        t_m2_m1 = false;
-                        t_m1_m2 = false;
-                        t_m1_m1 = false;
-                    }
-                    case -1 -> {
-                        t_m2_m2 = false;
-                        t_m2_m1 = false;
-                        t_m2_0 = false;
-                        t_m1_m2 = false;
-                        t_m1_m1 = false;
-                        t_m1_0 = false;
-                    }
-                    case 0 -> {
-                        t_m2_m1 = false;
-                        t_m2_0 = false;
-                        t_m2_1 = false;
-                        t_m1_m1 = false;
-                        t_m1_0 = false;
-                        t_m1_1 = false;
-                    }
-                    case 1 -> {
-                        t_m2_0 = false;
-                        t_m2_1 = false;
-                        t_m2_2 = false;
-                        t_m1_0 = false;
-                        t_m1_1 = false;
-                        t_m1_2 = false;
-                    }
-                    case 2 -> {
-                        t_m2_1 = false;
-                        t_m2_2 = false;
-                        t_m1_1 = false;
-                        t_m1_2 = false;
-                    }
-                    default -> { }
-                }
-            }
-            case -1 -> {
-                switch (dy) {
-                    case -2 -> {
-                        t_m2_m2 = false;
-                        t_m2_m1 = false;
-                        t_m1_m2 = false;
-                        t_m1_m1 = false;
-                        t_0_m2 = false;
-                        t_0_m1 = false;
-                    }
-                    case -1 -> {
-                        t_m2_m2 = false;
-                        t_m2_m1 = false;
-                        t_m2_0 = false;
-                        t_m1_m2 = false;
-                        t_m1_m1 = false;
-                        t_m1_0 = false;
-                        t_0_m2 = false;
-                        t_0_m1 = false;
-                        t_0_0 = false;
-                    }
-                    case 0 -> {
-                        t_m2_m1 = false;
-                        t_m2_0 = false;
-                        t_m2_1 = false;
-                        t_m1_m1 = false;
-                        t_m1_0 = false;
-                        t_m1_1 = false;
-                        t_0_m1 = false;
-                        t_0_0 = false;
-                        t_0_1 = false;
-                    }
-                    case 1 -> {
-                        t_m2_0 = false;
-                        t_m2_1 = false;
-                        t_m2_2 = false;
-                        t_m1_0 = false;
-                        t_m1_1 = false;
-                        t_m1_2 = false;
-                        t_0_0 = false;
-                        t_0_1 = false;
-                        t_0_2 = false;
-                    }
-                    case 2 -> {
-                        t_m2_1 = false;
-                        t_m2_2 = false;
-                        t_m1_1 = false;
-                        t_m1_2 = false;
-                        t_0_1 = false;
-                        t_0_2 = false;
-                    }
-                    default -> { }
-                }
-            }
-            case 0 -> {
-                switch (dy) {
-                    case -2 -> {
-                        t_m1_m2 = false;
-                        t_m1_m1 = false;
-                        t_0_m2 = false;
-                        t_0_m1 = false;
-                        t_1_m2 = false;
-                        t_1_m1 = false;
-                    }
-                    case -1 -> {
-                        t_m1_m2 = false;
-                        t_m1_m1 = false;
-                        t_m1_0 = false;
-                        t_0_m2 = false;
-                        t_0_m1 = false;
-                        t_0_0 = false;
-                        t_1_m2 = false;
-                        t_1_m1 = false;
-                        t_1_0 = false;
-                    }
-                    case 0 -> {
-                        t_m1_m1 = false;
-                        t_m1_0 = false;
-                        t_m1_1 = false;
-                        t_0_m1 = false;
-                        t_0_0 = false;
-                        t_0_1 = false;
-                        t_1_m1 = false;
-                        t_1_0 = false;
-                        t_1_1 = false;
-                    }
-                    case 1 -> {
-                        t_m1_0 = false;
-                        t_m1_1 = false;
-                        t_m1_2 = false;
-                        t_0_0 = false;
-                        t_0_1 = false;
-                        t_0_2 = false;
-                        t_1_0 = false;
-                        t_1_1 = false;
-                        t_1_2 = false;
-                    }
-                    case 2 -> {
-                        t_m1_1 = false;
-                        t_m1_2 = false;
-                        t_0_1 = false;
-                        t_0_2 = false;
-                        t_1_1 = false;
-                        t_1_2 = false;
-                    }
-                    default -> { }
-                }
-            }
-            case 1 -> {
-                switch (dy) {
-                    case -2 -> {
-                        t_0_m2 = false;
-                        t_0_m1 = false;
-                        t_1_m2 = false;
-                        t_1_m1 = false;
-                        t_2_m2 = false;
-                        t_2_m1 = false;
-                    }
-                    case -1 -> {
-                        t_0_m2 = false;
-                        t_0_m1 = false;
-                        t_0_0 = false;
-                        t_1_m2 = false;
-                        t_1_m1 = false;
-                        t_1_0 = false;
-                        t_2_m2 = false;
-                        t_2_m1 = false;
-                        t_2_0 = false;
-                    }
-                    case 0 -> {
-                        t_0_m1 = false;
-                        t_0_0 = false;
-                        t_0_1 = false;
-                        t_1_m1 = false;
-                        t_1_0 = false;
-                        t_1_1 = false;
-                        t_2_m1 = false;
-                        t_2_0 = false;
-                        t_2_1 = false;
-                    }
-                    case 1 -> {
-                        t_0_0 = false;
-                        t_0_1 = false;
-                        t_0_2 = false;
-                        t_1_0 = false;
-                        t_1_1 = false;
-                        t_1_2 = false;
-                        t_2_0 = false;
-                        t_2_1 = false;
-                        t_2_2 = false;
-                    }
-                    case 2 -> {
-                        t_0_1 = false;
-                        t_0_2 = false;
-                        t_1_1 = false;
-                        t_1_2 = false;
-                        t_2_1 = false;
-                        t_2_2 = false;
-                    }
-                    default -> { }
-                }
-            }
-            case 2 -> {
-                switch (dy) {
-                    case -2 -> {
-                        t_1_m2 = false;
-                        t_1_m1 = false;
-                        t_2_m2 = false;
-                        t_2_m1 = false;
-                    }
-                    case -1 -> {
-                        t_1_m2 = false;
-                        t_1_m1 = false;
-                        t_1_0 = false;
-                        t_2_m2 = false;
-                        t_2_m1 = false;
-                        t_2_0 = false;
-                    }
-                    case 0 -> {
-                        t_1_m1 = false;
-                        t_1_0 = false;
-                        t_1_1 = false;
-                        t_2_m1 = false;
-                        t_2_0 = false;
-                        t_2_1 = false;
-                    }
-                    case 1 -> {
-                        t_1_0 = false;
-                        t_1_1 = false;
-                        t_1_2 = false;
-                        t_2_0 = false;
-                        t_2_1 = false;
-                        t_2_2 = false;
-                    }
-                    case 2 -> {
-                        t_1_1 = false;
-                        t_1_2 = false;
-                        t_2_1 = false;
-                        t_2_2 = false;
-                    }
-                    default -> { }
-                }
-            }
-            default -> { }
-        }
-    }
 
     public static void recomputeThreatMasks() {
 moveThreatN = (t_0_2 ? 0x00000000000000ffL : 0L) | (t_1_2 ? 0x000000000000ff00L : 0L) | (t_1_1 ? 0x0000000000ff0000L : 0L) | (t_1_0 ? 0x00000000ff000000L : 0L) | (t_0_0 ? 0x000000ff00000000L : 0L) | (t_m1_0 ? 0x0000ff0000000000L : 0L) | (t_m1_1 ? 0x00ff000000000000L : 0L) | (t_m1_2 ? 0xff00000000000000L : 0L);
@@ -751,8 +445,10 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
     public static void registerEnemy(RobotInfo info) {
         int dx = info.location.x - myLocX;
         int dy = info.location.y - myLocY;
-        if (dx < -3 || dx > 3 || dy < -3 || dy > 3) return;
         // indicate("registering enemy at dx=" + dx + " dy=" + dy);
+        if (am(12590, 21)) {
+            println("registring enemy at " + dx + "," + dy + " facing " + info.direction + " health " + info.getHealth());
+        }
         boolean highHealth = info.getHealth() > rc.getHealth();
         if (highHealth) {
             registerEnemyHigh(dx, dy, info.direction);
@@ -9957,7 +9653,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
         }
     }
 
-    public static boolean hasThreat(Direction moveDir, Direction facing) {
+    public static boolean _hasThreat(Direction moveDir, Direction facing) {
         switch (moveDir.ordinal()) {
             case 0 -> {
                 switch (facing.ordinal()) {
@@ -10078,6 +9774,13 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
             }
             default -> { return false; }
         }
+    }
+    public static boolean hasThreat(Direction moveDir, Direction facing) {
+        boolean res = _hasThreat(moveDir, facing);
+        if (am(12590, 21)) {
+            println("debug hasThreat" + " moveDir " + moveDir + " faceDir " + facing + " result " + res);
+        }
+        return res;
     }
 
     public static boolean hasThreat(Direction moveDir, Direction facing, RobotInfo target) {

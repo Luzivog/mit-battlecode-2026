@@ -61,7 +61,10 @@ public final class TryRatNap {
         }
         if (bestScore < 0.5) return false;
         if (bestMove != null) {
-            assert(CombatStrategy.performMoves(bestMove, bestFacing));
+            if (!CombatStrategy.performMoves(bestMove, bestFacing)) {
+                println(bestMove + " " + bestFacing);
+                assert(false);
+            }
             if (rc.canCarryRat(target.location)) {
                 rc.carryRat(target.location);
             } else {

@@ -16,7 +16,7 @@ import awubot.util.Profiler;
 import awubot.util.Util;
 
 public class Game {
-    public static boolean DISABLE_OUTPUT = true;
+    public static boolean DISABLE_OUTPUT = false;
 
     public static RobotController rc;
     public static int mapWidth, mapHeight;
@@ -146,7 +146,7 @@ public class Game {
         // rc.resign();
 
         // if (!isRatKing) println("index: " + myIndex);
-        // if (time > 100) rc.resign();
+        if (time > 30) rc.resign();
         // if (time != rc.getRoundNum()) {
         //     println("bytecode exceeded");
         //     rc.resign();

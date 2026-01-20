@@ -39,49 +39,27 @@ public final class CombatCommon {
     }
 
     private static boolean computeCanPerform(Direction moveDir, Direction facing) {
-        if (moveDir != Direction.CENTER && !canMove(moveDir)) return false;
         if (moveDir == Direction.CENTER) {
-            return facing == myDir || rc.canTurn();
+            if (facing == myDir || rc.canTurn()) return true;
+            else return false;
         }
         if (!rc.isMovementReady() || !canMove(moveDir)) return false;
-        if (moveDir == myDir && facing == myDir) return true;
-        if (moveDir == myDir) {
-            return myDir == facing || rc.canTurn();
-        }
-        if (moveDir == facing && rc.canTurn()) return true;
-        if (canStrafe()) {
-            if (facing == myDir) return true;
-            return rc.canTurn();
-        }
-        return false;
+        if (facing != myDir && !rc.canTurn()) return false;
+        if (moveDir == myDir && myDir == facing) return true; 
+        if ((moveDir == myDir || moveDir == facing)) return true;
+        return true;
     }
 
-    
     // -1 = impossible, 0 = strafe, 1 = no strafe
     public static int movementCost(Direction moveDir, Direction facing) {
-        if (moveDir != Direction.CENTER && !canMove(moveDir)) return -1;
         if (moveDir == Direction.CENTER) {
-            if (facing == myDir || rc.canTurn()) {
-                return 1;
-            } else {
-                return -1;
-            }
+            if (facing == myDir || rc.canTurn()) return 1;
+            else return -1;
         }
-        if (!rc.isMovementReady() || !canMove(moveDir)) {
-            return -1;
-        }
-        if (moveDir == myDir && facing == myDir) return 1;
-        if (moveDir == myDir) {
-            if (myDir == facing || rc.canTurn()) {
-                return 1;
-            } else {
-                return -1;
-            }
-        }
-        if (moveDir == facing && rc.canTurn()) return 1;
-        if (canStrafe()) {
-            if (facing == myDir || rc.canTurn()) return 0;
-        }
-        return -1;
+        if (!rc.isMovementReady() || !canMove(moveDir)) return -1;
+        if (facing != myDir && !rc.canTurn()) return -1;
+        if (moveDir == myDir && myDir == facing) return 1; 
+        if ((moveDir == myDir || moveDir == facing)) return 1;
+        return 0;
     }
 }

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import sys
 import time
 from pathlib import Path
 
@@ -105,6 +106,12 @@ def _template_name(path: Path) -> str:
     return rel.as_posix()
 
 
+def _red(text: str) -> str:
+    if sys.stdout.isatty():
+        return f"\x1b[31m{text}\x1b[0m"
+    return text
+
+
 def compile_template(path: Path, debug: bool):
     if not path.name.endswith(".jinja2"):
         return
@@ -150,7 +157,7 @@ def compile_template(path: Path, debug: bool):
         print(f"[compiled] {path} → {output_path}")
 
     except Exception as e:
-        print(f"[error] {path}: {e}")
+        print(_red(f"[error] {path}: {e}"))
 
 
 def compile_all(debug: bool):

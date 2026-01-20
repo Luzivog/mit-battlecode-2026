@@ -11,6 +11,7 @@ import awubot.robot.rat.combat.CombatStrategy;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 import static awubot.robot.rat.BabyRat.*;
+import awubot.RobotTracker;
 
 {% set related_map = {
     0: ["Direction.NORTH", "Direction.NORTHEAST", "Direction.NORTHWEST"],
@@ -62,11 +63,11 @@ public final class TryFight {
     static Direction md;
     static Direction fd;
     static double best;
-    static RobotInfo target;
     static Direction moveDir;
     static MapLocation newLoc;
     static double score;
     static boolean facingTarget;
+    static RobotInfo target;
     static int dxToTarget;
     static int dyToTarget;
     static int bytecodeStart, bytecodeBudget;
@@ -76,14 +77,21 @@ public final class TryFight {
         md = null;
         fd = null;
         best = -1e9;
-        target = CombatStrategy.getNearestTarget();
-        if (target == null) return false;
+        if (RobotTracker.numEnemies > 0) {
+            target = RobotTracker.sortedEnemies[0];
+        } else if (RobotTracker.numEnemies > 0) {
+            target = RobotTracker.sortedCats[0];
+        } else {
+            println("wtf ?????????????????????????????????????????????????????????");
+            assert(false);
+            return false;
+        }
         bytecodeStart = Clock.getBytecodeNum();
-        bytecodeBudget = Math.min(3000, (int) (Clock.getBytecodesLeft() - 1000) / 2);
+        bytecodeBudget = Clock.getBytecodesLeft() - 1500;
         selectMoves();
         // Profiler.pop("try fight");
         // force this strategy
-        if (md == null) return false;
+        // if (md == null) return false;
         CombatStrategy.performMoves(md, fd);
         indicate("COMBAT STRAT: FIGHT");
         // try to squeeze some juice out
@@ -91,15 +99,14 @@ public final class TryFight {
     }
 
     private static void selectMoves() throws GameActionException {
-        {% for d in directions %}
+        {% for d in allDirections %}
         move{{ dir_short_map[d] }}();
         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-        {% endfor %}
+        {% endfor %} 
     }
 
-    {% for move_dir in directions + ['Direction.CENTER'] %}
+    {% for move_dir in allDirections %}
     private static void move{{ dir_short_map[move_dir] }}() throws GameActionException {
-        if ((CombatStrategy.moveMask & (1 << {{ dir_ord_map[move_dir] }})) == 0) return;
         {% if move_dir != "Direction.CENTER" %}
         if (!rc.isMovementReady()) return;
         {% endif %}
@@ -113,7 +120,7 @@ public final class TryFight {
             case {{ ord }} -> {
                 {% for facing in related_map[ord] %}
                 face{{ dir_short_map[facing] }}();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 {% endfor %}
             }
             {% endfor %}
@@ -126,11 +133,17 @@ public final class TryFight {
     private static void face{{ dir_short_map[face_dir] }}() throws GameActionException {
         int moveCost = CombatCommon.movementCost(moveDir, {{ face_dir }});
         if (moveCost == -1) return;
-        score = CombatStrategy.getCellScoreFor(moveDir, {{ face_dir }}, target);
+        score = CombatStrategy.getCellScoreFor(moveDir, {{ face_dir }});
+        if (am(12590, 21)) {
+            println("debug face" + " moveDir " + moveDir + " faceDir " + {{ face_dir }} + " score " + score);
+        }
         if (moveCost == 1) score += 10;
         facingTarget = canSense(dxToTarget, dyToTarget, {{ face_dir }});
         if (!facingTarget) {
-            score -= 15;
+            score -= 5;
+        }
+        if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) == 0) {
+            score += 30;
         }
         if ({{ face_dir }} != myDir) {
             // prefer turning

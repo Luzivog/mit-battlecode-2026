@@ -6702,6 +6702,7 @@ public class Pathfinder {
         var localPassable0 = CellTracker.localPassable0 & ~CellTracker.localDirt0;
         var localPassable1 = CellTracker.localPassable1 & ~CellTracker.localDirt1;
         if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
+            indicate("loop 0");
             int res = 0;
             if(
                (reach1 & (1l << 10))
@@ -6759,6 +6760,7 @@ public class Pathfinder {
     reach1 &= localPassable1;
 
         if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
+            indicate("loop 1");
             int res = 0;
             if(
                (reach1 & (1l << 10))
@@ -6816,6 +6818,7 @@ public class Pathfinder {
     reach1 &= localPassable1;
 
         if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
+            indicate("loop 2");
             int res = 0;
             if(
                (reach1 & (1l << 10))
@@ -6873,6 +6876,7 @@ public class Pathfinder {
     reach1 &= localPassable1;
 
         if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
+            indicate("loop 3");
             int res = 0;
             if(
                (reach1 & (1l << 10))
@@ -6930,6 +6934,7 @@ public class Pathfinder {
     reach1 &= localPassable1;
 
         if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
+            indicate("loop 4");
             int res = 0;
             if(
                (reach1 & (1l << 10))
@@ -6987,6 +6992,7 @@ public class Pathfinder {
     reach1 &= localPassable1;
 
         if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
+            indicate("loop 5");
             int res = 0;
             if(
                (reach1 & (1l << 10))
@@ -7044,6 +7050,7 @@ public class Pathfinder {
     reach1 &= localPassable1;
 
         if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
+            indicate("loop 6");
             int res = 0;
             if(
                (reach1 & (1l << 10))

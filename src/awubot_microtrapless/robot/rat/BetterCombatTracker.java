@@ -1,4 +1,4 @@
-package awubot.robot.rat;
+package awubot_microtrapless.robot.rat;
 
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
@@ -8,8 +8,8 @@ import battlecode.common.RobotInfo;
 import battlecode.common.TrapType;
 import battlecode.common.UnitType;
 
-import static awubot.Game.*;
-import static awubot.util.Util.*;
+import static awubot_microtrapless.Game.*;
+import static awubot_microtrapless.util.Util.*;
 
 public class BetterCombatTracker {
     private static final int GRID_RADIUS = 2;

@@ -60,7 +60,7 @@ public final class TryPosition {
     static int bytecodeStart, bytecodeBudget;
 
     public static boolean run() throws GameActionException {
-        if (!rc.isActionReady()) return false;
+        if (!rc.isMovementReady()) return false;
         bytecodeStart = Clock.getBytecodeNum();
         bytecodeBudget = Math.min(3000, (int) (Clock.getBytecodesLeft() - 1000) / 2);
         // Profiler.push();
@@ -74,13 +74,13 @@ public final class TryPosition {
     }
 
     private static void selectMoves() throws GameActionException {
-        {% for move_dir in directions + ['Direction.CENTER'] %}
+        {% for move_dir in allDirections %}
         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
         move{{ dir_short_map[move_dir] }}();
         {% endfor %}
     }
 
-    {% for move_dir in directions + ['Direction.CENTER'] %}
+    {% for move_dir in allDirections %}
     private static void move{{ dir_short_map[move_dir] }}() throws GameActionException {
         if (!CombatCommon.canMove{{dir_short_map[move_dir] }}) return;
         moveDir = {{ move_dir }};
@@ -101,10 +101,13 @@ public final class TryPosition {
 
     {% for face_dir in directions %}
     private static void face{{ dir_short_map[face_dir] }}() throws GameActionException {
-        if (!CombatCommon.canPerformMoves(moveDir, {{ face_dir }})) return;
+        int moveCost = CombatCommon.movementCost(moveDir, {{ face_dir }});
+        if (moveCost == -1) return;
+        if (moveCost == 1) score += 10;
+        if (moveDir != Direction.CENTER) score += 5;
         score += CombatStrategy.getCellScoreFor(moveDir, {{ face_dir }});
         if ({{ face_dir }} != myDir) {
-            score *= 1.1; // prefer turning
+            score += 2;
         }
         if (score > bestScore) {
             bestScore = score;

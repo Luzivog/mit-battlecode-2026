@@ -66,10 +66,8 @@ public class CombatTracker {
     {%- set ndir = directions[i] -%}
     {%- set nx = dx_m + dir_dx[ndir] -%}
     {%- set ny = dy_m + dir_dy[ndir] -%}
-    {%- if nx >= -2 and nx <= 2 and ny >= -2 and ny <= 2 -%}
     {%- set term = "(" ~ cell_var(nx, ny) ~ " ? " ~ long_hex(bitLeftShift(255, i * 8)) ~ " : 0L)" -%}
     {%- set ns.terms = ns.terms + [term] -%}
-    {%- endif -%}
     {%- endfor -%}
     {%- if ns.terms|length == 0 -%}
     0L
@@ -229,6 +227,7 @@ public class CombatTracker {
         {% endfor %}
     }
 
+    // TODO: account for dirt
     public static void loadThreatFromMap() throws GameActionException {
         int x = myLoc.x;
         int y = myLoc.y;
@@ -256,31 +255,9 @@ public class CombatTracker {
         {%- endif %}
         {% endfor %}
         {% endfor %}
-        for (RobotInfo info : rc.senseNearbyRobots()) {
-            if (info.getType() != UnitType.BABY_RAT) continue;
-            int dx = info.location.x - x;
-            int dy = info.location.y - y;
-            switch (dx) {
-                {% for dx in range(-2, 3) %}
-                case {{ dx }} -> {
-                    switch (dy) {
-                        {% for dy in range(-2, 3) %}
-                        case {{ dy }} -> {
-                            {%- if dx != 0 or dy != 0 %}
-                            {{ cell_var(dx, dy) }} = info.getTeam() != team;
-                            {%- endif %}
-                        }
-                        {% endfor %}
-                        default -> { }
-                    }
-                }
-                {% endfor %}
-                default -> { }
-            }
-        }
     }
 
-    public static void registerTrap(int dx, int dy) {
+    {# public static void registerTrap(int dx, int dy) {
         switch (dx) {
             {% for dx in range(-2, 3) %}
             case {{ dx }} -> {
@@ -302,7 +279,7 @@ public class CombatTracker {
             {% endfor %}
             default -> { }
         }
-    }
+    } #}
 
     public static void recomputeThreatMasks() {
         {% for i in range(moveDirs|length) %}
@@ -316,8 +293,10 @@ public class CombatTracker {
     public static void registerEnemy(RobotInfo info) {
         int dx = info.location.x - myLocX;
         int dy = info.location.y - myLocY;
-        if (dx < -3 || dx > 3 || dy < -3 || dy > 3) return;
         // indicate("registering enemy at dx=" + dx + " dy=" + dy);
+        if (am(12590, 21)) {
+            println("registring enemy at " + dx + "," + dy + " facing " + info.direction + " health " + info.getHealth());
+        }
         boolean highHealth = info.getHealth() > rc.getHealth();
         if (highHealth) {
             registerEnemyHigh(dx, dy, info.direction);
@@ -380,7 +359,7 @@ public class CombatTracker {
         }
     }
 
-    public static boolean hasThreat(Direction moveDir, Direction facing) {
+    public static boolean _hasThreat(Direction moveDir, Direction facing) {
         switch (moveDir.ordinal()) {
             {% for mi in range(moveShort|length) %}
             case {{ mi }} -> {
@@ -394,6 +373,13 @@ public class CombatTracker {
             {% endfor %}
             default -> { return false; }
         }
+    }
+    public static boolean hasThreat(Direction moveDir, Direction facing) {
+        boolean res = _hasThreat(moveDir, facing);
+        if (am(12590, 21)) {
+            println("debug hasThreat" + " moveDir " + moveDir + " faceDir " + facing + " result " + res);
+        }
+        return res;
     }
 
     public static boolean hasThreat(Direction moveDir, Direction facing, RobotInfo target) {

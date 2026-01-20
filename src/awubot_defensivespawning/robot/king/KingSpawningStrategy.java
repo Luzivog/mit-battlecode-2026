@@ -40,7 +40,6 @@ public class KingSpawningStrategy extends Strategy {
 
         if(rc.getCurrentRatCost() <= thresh && (rc.getGlobalCheese() >= 100 || rc.getCurrentRatCost() == 10)) {
             trySpawn(target);
-            numSpawned++;
         }
         indicate("spawned " + numSpawned);
         return true;
@@ -60,6 +59,7 @@ public class KingSpawningStrategy extends Strategy {
         if(best != null) {
             turn(best.directionTo(target));
             rc.buildRat(best);
+            numSpawned++;
         }
     }
 }

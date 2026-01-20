@@ -29,7 +29,7 @@ public final class TryPosition {
     static int bytecodeStart, bytecodeBudget;
 
     public static boolean run() throws GameActionException {
-        if (!rc.isActionReady()) return false;
+        if (!rc.isMovementReady()) return false;
         bytecodeStart = Clock.getBytecodeNum();
         bytecodeBudget = Math.min(3000, (int) (Clock.getBytecodesLeft() - 1000) / 2);
         // Profiler.push();
@@ -713,10 +713,13 @@ public final class TryPosition {
     }
 
     private static void faceN() throws GameActionException {
-        if (!CombatCommon.canPerformMoves(moveDir, Direction.NORTH)) return;
+        int moveCost = CombatCommon.movementCost(moveDir, Direction.NORTH);
+        if (moveCost == -1) return;
+        if (moveCost == 1) score += 10;
+        if (moveDir != Direction.CENTER) score += 5;
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTH);
         if (Direction.NORTH != myDir) {
-            score *= 1.1; // prefer turning
+            score += 2;
         }
         if (score > bestScore) {
             bestScore = score;
@@ -725,10 +728,13 @@ public final class TryPosition {
         }
     }
     private static void faceNE() throws GameActionException {
-        if (!CombatCommon.canPerformMoves(moveDir, Direction.NORTHEAST)) return;
+        int moveCost = CombatCommon.movementCost(moveDir, Direction.NORTHEAST);
+        if (moveCost == -1) return;
+        if (moveCost == 1) score += 10;
+        if (moveDir != Direction.CENTER) score += 5;
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHEAST);
         if (Direction.NORTHEAST != myDir) {
-            score *= 1.1; // prefer turning
+            score += 2;
         }
         if (score > bestScore) {
             bestScore = score;
@@ -737,10 +743,13 @@ public final class TryPosition {
         }
     }
     private static void faceE() throws GameActionException {
-        if (!CombatCommon.canPerformMoves(moveDir, Direction.EAST)) return;
+        int moveCost = CombatCommon.movementCost(moveDir, Direction.EAST);
+        if (moveCost == -1) return;
+        if (moveCost == 1) score += 10;
+        if (moveDir != Direction.CENTER) score += 5;
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.EAST);
         if (Direction.EAST != myDir) {
-            score *= 1.1; // prefer turning
+            score += 2;
         }
         if (score > bestScore) {
             bestScore = score;
@@ -749,10 +758,13 @@ public final class TryPosition {
         }
     }
     private static void faceSE() throws GameActionException {
-        if (!CombatCommon.canPerformMoves(moveDir, Direction.SOUTHEAST)) return;
+        int moveCost = CombatCommon.movementCost(moveDir, Direction.SOUTHEAST);
+        if (moveCost == -1) return;
+        if (moveCost == 1) score += 10;
+        if (moveDir != Direction.CENTER) score += 5;
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHEAST);
         if (Direction.SOUTHEAST != myDir) {
-            score *= 1.1; // prefer turning
+            score += 2;
         }
         if (score > bestScore) {
             bestScore = score;
@@ -761,10 +773,13 @@ public final class TryPosition {
         }
     }
     private static void faceS() throws GameActionException {
-        if (!CombatCommon.canPerformMoves(moveDir, Direction.SOUTH)) return;
+        int moveCost = CombatCommon.movementCost(moveDir, Direction.SOUTH);
+        if (moveCost == -1) return;
+        if (moveCost == 1) score += 10;
+        if (moveDir != Direction.CENTER) score += 5;
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTH);
         if (Direction.SOUTH != myDir) {
-            score *= 1.1; // prefer turning
+            score += 2;
         }
         if (score > bestScore) {
             bestScore = score;
@@ -773,10 +788,13 @@ public final class TryPosition {
         }
     }
     private static void faceSW() throws GameActionException {
-        if (!CombatCommon.canPerformMoves(moveDir, Direction.SOUTHWEST)) return;
+        int moveCost = CombatCommon.movementCost(moveDir, Direction.SOUTHWEST);
+        if (moveCost == -1) return;
+        if (moveCost == 1) score += 10;
+        if (moveDir != Direction.CENTER) score += 5;
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHWEST);
         if (Direction.SOUTHWEST != myDir) {
-            score *= 1.1; // prefer turning
+            score += 2;
         }
         if (score > bestScore) {
             bestScore = score;
@@ -785,10 +803,13 @@ public final class TryPosition {
         }
     }
     private static void faceW() throws GameActionException {
-        if (!CombatCommon.canPerformMoves(moveDir, Direction.WEST)) return;
+        int moveCost = CombatCommon.movementCost(moveDir, Direction.WEST);
+        if (moveCost == -1) return;
+        if (moveCost == 1) score += 10;
+        if (moveDir != Direction.CENTER) score += 5;
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.WEST);
         if (Direction.WEST != myDir) {
-            score *= 1.1; // prefer turning
+            score += 2;
         }
         if (score > bestScore) {
             bestScore = score;
@@ -797,10 +818,13 @@ public final class TryPosition {
         }
     }
     private static void faceNW() throws GameActionException {
-        if (!CombatCommon.canPerformMoves(moveDir, Direction.NORTHWEST)) return;
+        int moveCost = CombatCommon.movementCost(moveDir, Direction.NORTHWEST);
+        if (moveCost == -1) return;
+        if (moveCost == 1) score += 10;
+        if (moveDir != Direction.CENTER) score += 5;
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHWEST);
         if (Direction.NORTHWEST != myDir) {
-            score *= 1.1; // prefer turning
+            score += 2;
         }
         if (score > bestScore) {
             bestScore = score;

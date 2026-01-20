@@ -858,7 +858,13 @@ public final class TryAttack {
         if (!canSense(newLoc, t, Direction.NORTH)) return;
         if (!CombatCommon.canPerformMoves(moveDir, Direction.NORTH)) return;
         score = weight;
-        score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTH, info);
+        if (rc.getHealth() <= 24) {
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTH, info);
+        } else {
+            // technically enemy might switch from high to low status after hit
+            // can be accounted for in future
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTH); 
+        }
         if (Direction.NORTH != myDir) {
             score *= 1.1; // prefer turning
         }
@@ -873,7 +879,13 @@ public final class TryAttack {
         if (!canSense(newLoc, t, Direction.NORTHEAST)) return;
         if (!CombatCommon.canPerformMoves(moveDir, Direction.NORTHEAST)) return;
         score = weight;
-        score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHEAST, info);
+        if (rc.getHealth() <= 24) {
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHEAST, info);
+        } else {
+            // technically enemy might switch from high to low status after hit
+            // can be accounted for in future
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHEAST); 
+        }
         if (Direction.NORTHEAST != myDir) {
             score *= 1.1; // prefer turning
         }
@@ -888,7 +900,13 @@ public final class TryAttack {
         if (!canSense(newLoc, t, Direction.EAST)) return;
         if (!CombatCommon.canPerformMoves(moveDir, Direction.EAST)) return;
         score = weight;
-        score += CombatStrategy.getCellScoreFor(moveDir, Direction.EAST, info);
+        if (rc.getHealth() <= 24) {
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.EAST, info);
+        } else {
+            // technically enemy might switch from high to low status after hit
+            // can be accounted for in future
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.EAST); 
+        }
         if (Direction.EAST != myDir) {
             score *= 1.1; // prefer turning
         }
@@ -903,7 +921,13 @@ public final class TryAttack {
         if (!canSense(newLoc, t, Direction.SOUTHEAST)) return;
         if (!CombatCommon.canPerformMoves(moveDir, Direction.SOUTHEAST)) return;
         score = weight;
-        score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHEAST, info);
+        if (rc.getHealth() <= 24) {
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHEAST, info);
+        } else {
+            // technically enemy might switch from high to low status after hit
+            // can be accounted for in future
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHEAST); 
+        }
         if (Direction.SOUTHEAST != myDir) {
             score *= 1.1; // prefer turning
         }
@@ -918,7 +942,13 @@ public final class TryAttack {
         if (!canSense(newLoc, t, Direction.SOUTH)) return;
         if (!CombatCommon.canPerformMoves(moveDir, Direction.SOUTH)) return;
         score = weight;
-        score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTH, info);
+        if (rc.getHealth() <= 24) {
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTH, info);
+        } else {
+            // technically enemy might switch from high to low status after hit
+            // can be accounted for in future
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTH); 
+        }
         if (Direction.SOUTH != myDir) {
             score *= 1.1; // prefer turning
         }
@@ -933,7 +963,13 @@ public final class TryAttack {
         if (!canSense(newLoc, t, Direction.SOUTHWEST)) return;
         if (!CombatCommon.canPerformMoves(moveDir, Direction.SOUTHWEST)) return;
         score = weight;
-        score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHWEST, info);
+        if (rc.getHealth() <= 24) {
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHWEST, info);
+        } else {
+            // technically enemy might switch from high to low status after hit
+            // can be accounted for in future
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHWEST); 
+        }
         if (Direction.SOUTHWEST != myDir) {
             score *= 1.1; // prefer turning
         }
@@ -948,7 +984,13 @@ public final class TryAttack {
         if (!canSense(newLoc, t, Direction.WEST)) return;
         if (!CombatCommon.canPerformMoves(moveDir, Direction.WEST)) return;
         score = weight;
-        score += CombatStrategy.getCellScoreFor(moveDir, Direction.WEST, info);
+        if (rc.getHealth() <= 24) {
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.WEST, info);
+        } else {
+            // technically enemy might switch from high to low status after hit
+            // can be accounted for in future
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.WEST); 
+        }
         if (Direction.WEST != myDir) {
             score *= 1.1; // prefer turning
         }
@@ -963,7 +1005,13 @@ public final class TryAttack {
         if (!canSense(newLoc, t, Direction.NORTHWEST)) return;
         if (!CombatCommon.canPerformMoves(moveDir, Direction.NORTHWEST)) return;
         score = weight;
-        score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHWEST, info);
+        if (rc.getHealth() <= 24) {
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHWEST, info);
+        } else {
+            // technically enemy might switch from high to low status after hit
+            // can be accounted for in future
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHWEST); 
+        }
         if (Direction.NORTHWEST != myDir) {
             score *= 1.1; // prefer turning
         }

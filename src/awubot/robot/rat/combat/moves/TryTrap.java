@@ -4005,6 +4005,7 @@ private static void placeSWWNW() {
     
     public static boolean miniRun() throws GameActionException {
         if (!rc.isActionReady()) return false;
+        if (rc.getAllCheese() < 300 || rc.getRawCheese() < 20 || !confirmCanPlace()) return false;
         if (weightCompTime != time) {
             clearWeights();
             weightSource = myLoc;

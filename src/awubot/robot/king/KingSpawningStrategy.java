@@ -14,6 +14,7 @@ public class KingSpawningStrategy extends Strategy {
 
     @Override
     public boolean runTick() throws GameActionException {
+        indicate("spawned " + numSpawned);
 
         int numKings = GlobalArray.countRatKings();
         int extraPerKing = (rc.getGlobalCheese() / 1000) * (numKings - 1);
@@ -53,7 +54,6 @@ public class KingSpawningStrategy extends Strategy {
         if(rc.getCurrentRatCost() <= thresh && (rc.getGlobalCheese() >= 100 || rc.getCurrentRatCost() == 10)) {
             trySpawn(target);
         }
-        indicate("spawned " + numSpawned);
         return true;
     }
 

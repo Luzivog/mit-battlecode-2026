@@ -110,9 +110,7 @@ public class CombatStrategy extends Strategy {
             Profiler.push();
             sourceCnt = 0;
             for (int i = 0; i < RobotTracker.numEnemies; i++) {
-                if (shouldFight(RobotTracker.sortedEnemies[i])) {
-                    sources[sourceCnt++] = RobotTracker.sortedEnemies[i].location;
-                }
+                sources[sourceCnt++] = RobotTracker.sortedEnemies[i].location;
             }
             for (int i = 0; i < RobotTracker.numCats; i++) {
                 if (shouldFight(RobotTracker.sortedCats[i])) {
@@ -141,29 +139,32 @@ public class CombatStrategy extends Strategy {
             boolean tryPositionRes = TryPosition.run();
             Profiler.pop("try position");
             if (tryPositionRes) return true;
-            return false;
+            return true; // bruh
         }
+        isLastMove = true;
 
         Profiler.push();
         boolean tryRatNapRes = TryRatNap.run();
-        Profiler.pop("try ratnap");
+        Profiler.pop("try ratnap", 5000);
         if (tryRatNapRes) return true;
 
         Profiler.push();
-        boolean tryAttackRes = TryAttack.run();
-        Profiler.pop("try attack");
-        if (tryAttackRes) return true;
+        boolean tryTrapRes = TryTrap.run();
+        Profiler.pop("try trap", 5000);
+        if (tryTrapRes) return true;
 
         Profiler.push();
-        boolean tryTrapRes = TryTrap.run();
-        Profiler.pop("try trap");
-        if (tryTrapRes) return true;
+        boolean tryAttackRes = TryAttack.run();
+        Profiler.pop("try attack", 5000);
+        if (tryAttackRes) return true;
 
         Profiler.push();
         boolean tryFightRes = TryFight.run();
         Profiler.pop("try fight");
         if (tryFightRes) {
+            Profiler.push();
             miniTick();
+            Profiler.pop("mini tick", 500);
             return true;
         }
         indicate("COMBAT STRAT: NONE");
@@ -198,34 +199,39 @@ public class CombatStrategy extends Strategy {
     public static boolean performMoves(Direction moveDir, Direction facing) throws GameActionException {
         if (moveDir != Direction.CENTER && !CombatCommon.canMove(moveDir)) return false;
         if (moveDir == Direction.CENTER) {
-            if (facing != myDir) turn(facing);
+            if (facing != myDir) {
+                if (!rc.canTurn()) return false;
+                turn(facing);
+            }
             return true;
         }
+        if (!rc.isMovementReady()) return false;
         if (moveDir == myDir && facing == myDir) {
             rawMove();
             return true; // move
         }
         if (moveDir == myDir) { // move turn
             rawMove();
-            if (facing != myDir) turn(facing);
+            if (facing != myDir) {
+                if (!rc.canTurn()) return false;
+                turn(facing);
+            }
             return true;
         }
-        if (moveDir == facing && rc.canTurn()) { // turn move
+        if (moveDir == facing) { // turn move
+            if (!rc.canTurn()) return false;
             turn(moveDir);
             rawMove();
             return true;
         }
-        if (canStrafe()) {
-            if (facing == myDir) { // strafe
-                rawMove(moveDir);
-                return true;
-            }
-            // strafe turn
+        if (facing == myDir) { // strafe
             rawMove(moveDir);
-            turn(facing);
             return true;
         }
-        return false;
+        rawMove(moveDir);
+        if (!rc.canTurn()) return false;
+        turn(facing);
+        return true;
     }
 
     private static StringBuilder sb;

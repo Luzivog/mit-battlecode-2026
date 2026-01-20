@@ -786,6 +786,7 @@ public class Pathfinder {
         var localPassable1 = CellTracker.localPassable1 & ~CellTracker.localDirt1;
         {% for i in range(7) %}
         if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
+            indicate("loop {{i}}");
             int res = 0;
             {% for b, dir, off in [
                                    (1, "Direction.NORTH", 71),

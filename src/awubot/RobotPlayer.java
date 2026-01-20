@@ -47,12 +47,14 @@ public class RobotPlayer {
                     hasInitialisedRobot = true;
                 }
 
-                if(isRatKing) {
+                if (isRatKing) {
                     RatKing.run();
                 } else {
                     BabyRat.run();
                 }
-                Squeaker.postTick();
+                if (Clock.getBytecodesLeft() > 1000) {
+                    Squeaker.postTick();
+                }
                 GlobalArray.postTick();
                 Game.postTick();
             } catch (Exception e) {

@@ -293,10 +293,6 @@ public class CombatTracker {
     public static void registerEnemy(RobotInfo info) {
         int dx = info.location.x - myLocX;
         int dy = info.location.y - myLocY;
-        // indicate("registering enemy at dx=" + dx + " dy=" + dy);
-        if (am(12590, 21)) {
-            println("registring enemy at " + dx + "," + dy + " facing " + info.direction + " health " + info.getHealth());
-        }
         boolean highHealth = info.getHealth() > rc.getHealth();
         if (highHealth) {
             registerEnemyHigh(dx, dy, info.direction);
@@ -402,7 +398,7 @@ public class CombatTracker {
         if (target.getType() != UnitType.BABY_RAT) return base != 0L;
         int enemyDx = target.location.x - myLocX;
         int enemyDy = target.location.y - myLocY;
-        if (enemyDx < -2 || enemyDx > 2 || enemyDy < -2 || enemyDy > 2) return base != 0L;
+        if (enemyDx < -3 || enemyDx > 3 || enemyDy < -3 || enemyDy > 3) return base != 0L;
         long sub = enemyMaskForMove(enemyDx, enemyDy, target.direction, moveDir);
         long threat = getMoveThreatMask(moveDir);
         if (target.getHealth() > rc.getHealth()) {
@@ -435,10 +431,10 @@ public class CombatTracker {
         int faceIdx = facing.ordinal();
         int moveIdx = moveDir.ordinal();
         switch (dx) {
-            {% for dx in range(-2, 3) %}
+            {% for dx in range(-3, 4) %}
             case {{ dx }} -> {
                 switch (dy) {
-                    {% for dy in range(-2, 3) %}
+                    {% for dy in range(-3, 4) %}
                     case {{ dy }} -> {
                         switch (faceIdx) {
                             {% for fi in range(directions|length) %}

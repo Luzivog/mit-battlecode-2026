@@ -44,6 +44,7 @@ import awubot.RobotTracker;
     "Direction.SOUTHWEST": "SW",
     "Direction.WEST": "W",
     "Direction.NORTHWEST": "NW",
+    "Direction.CENTER": "C",
 } %}
 {% set dir_opposite_map = {
     "Direction.NORTH": "Direction.SOUTH",
@@ -128,7 +129,7 @@ public final class TryRatNap {
         switch (myDir.ordinal()) {
             {% for ord in range(8) %}
             case {{ ord }} -> {
-                {% for d in wide_related_map[ord] %}
+                {% for d in wide_related_map[ord] + ["Direction.CENTER"] %}
                 move{{ dir_short_map[d] }}();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 {% endfor %}
@@ -138,7 +139,7 @@ public final class TryRatNap {
         }
     }
 
-    {% for move_dir in directions %}
+    {% for move_dir in allDirections %}
     private static void move{{ dir_short_map[move_dir] }}() throws GameActionException {
         if (!CombatCommon.canMove{{ dir_short_map[move_dir] }}) return;
         moveDir = {{ move_dir }};

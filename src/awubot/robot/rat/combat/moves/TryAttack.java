@@ -76,9 +76,6 @@ public final class TryAttack {
     private static void considerEnemy() throws GameActionException {
         if (!CombatStrategy.shouldFight(info)) return;
         if (chebyshevDistance(myLoc, info) > 2) return;
-        if (am(12590, 21)) {
-            println("considering enemy at " + info.location + " health: " + info.getHealth());
-        }
 
         t = info.location;
         weight = 10;
@@ -881,9 +878,6 @@ public final class TryAttack {
         } else {
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTH, info, CombatStrategy.getBiteDamage());
         }
-        if (am(12590, 21)) {
-            println("considerMove moveDir: " + moveDir + " facing: " + Direction.NORTH + " score: " + score);
-        }
         if (score > bestScore) {
             bestScore = score;
             target = info;
@@ -905,9 +899,6 @@ public final class TryAttack {
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHEAST, info);
         } else {
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHEAST, info, CombatStrategy.getBiteDamage());
-        }
-        if (am(12590, 21)) {
-            println("considerMove moveDir: " + moveDir + " facing: " + Direction.NORTHEAST + " score: " + score);
         }
         if (score > bestScore) {
             bestScore = score;
@@ -931,9 +922,6 @@ public final class TryAttack {
         } else {
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.EAST, info, CombatStrategy.getBiteDamage());
         }
-        if (am(12590, 21)) {
-            println("considerMove moveDir: " + moveDir + " facing: " + Direction.EAST + " score: " + score);
-        }
         if (score > bestScore) {
             bestScore = score;
             target = info;
@@ -955,9 +943,6 @@ public final class TryAttack {
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHEAST, info);
         } else {
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHEAST, info, CombatStrategy.getBiteDamage());
-        }
-        if (am(12590, 21)) {
-            println("considerMove moveDir: " + moveDir + " facing: " + Direction.SOUTHEAST + " score: " + score);
         }
         if (score > bestScore) {
             bestScore = score;
@@ -981,9 +966,6 @@ public final class TryAttack {
         } else {
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTH, info, CombatStrategy.getBiteDamage());
         }
-        if (am(12590, 21)) {
-            println("considerMove moveDir: " + moveDir + " facing: " + Direction.SOUTH + " score: " + score);
-        }
         if (score > bestScore) {
             bestScore = score;
             target = info;
@@ -1005,9 +987,6 @@ public final class TryAttack {
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHWEST, info);
         } else {
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHWEST, info, CombatStrategy.getBiteDamage());
-        }
-        if (am(12590, 21)) {
-            println("considerMove moveDir: " + moveDir + " facing: " + Direction.SOUTHWEST + " score: " + score);
         }
         if (score > bestScore) {
             bestScore = score;
@@ -1031,9 +1010,6 @@ public final class TryAttack {
         } else {
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.WEST, info, CombatStrategy.getBiteDamage());
         }
-        if (am(12590, 21)) {
-            println("considerMove moveDir: " + moveDir + " facing: " + Direction.WEST + " score: " + score);
-        }
         if (score > bestScore) {
             bestScore = score;
             target = info;
@@ -1055,9 +1031,6 @@ public final class TryAttack {
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHWEST, info);
         } else {
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHWEST, info, CombatStrategy.getBiteDamage());
-        }
-        if (am(12590, 21)) {
-            println("considerMove moveDir: " + moveDir + " facing: " + Direction.NORTHWEST + " score: " + score);
         }
         if (score > bestScore) {
             bestScore = score;
@@ -1247,9 +1220,6 @@ public final class TryAttack {
             score += CombatStrategy.getCellScoreFor(moveDir, facing, info);
         } else {
             score += CombatStrategy.getCellScoreFor(moveDir, facing, info, CombatStrategy.getBiteDamage());
-        }
-        if (am(12590, 21)) {
-            println("considerSecondaryMove moveDir: " + moveDir + " facing: " + facing + " score: " + score);
         }
         if (score > bestScore) {
             bestScore = score;

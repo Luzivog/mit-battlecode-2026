@@ -49,22 +49,12 @@ public final class CombatCommon {
             default -> false;
         };
     }
-
-    public static boolean canPerformMoves(Direction moveDir, Direction facing) {
-        return computeCanPerform(moveDir, facing);
+    
+    // TODO: tune
+    public static int strafeCost() {
+        return (rc.getMovementCooldownTurns() < 2 ? 3 : 8);
     }
 
-    private static boolean computeCanPerform(Direction moveDir, Direction facing) {
-        if (moveDir == Direction.CENTER) {
-            if (facing == myDir || rc.canTurn()) return true;
-            else return false;
-        }
-        if (!rc.isMovementReady() || !canMove(moveDir)) return false;
-        if (facing != myDir && !rc.canTurn()) return false;
-        if (moveDir == myDir && myDir == facing) return true; 
-        if ((moveDir == myDir || moveDir == facing)) return true;
-        return true;
-    }
 
     // -1 = impossible, 0 = strafe, 1 = no strafe
     public static int movementCost(Direction moveDir, Direction facing) {

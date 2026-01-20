@@ -47,7 +47,8 @@ public final class TryThrow {
             for (Direction tdir : relatedDirections(myDir)) {
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 throwDir = tdir;
-                if (!CombatCommon.canPerformMoves(moveDir, throwDir)) continue;
+                int moveCost = CombatCommon.movementCost(moveDir, throwDir);
+                if (moveCost == -1) continue;
                 throwTarget = newLoc.add(throwDir);
                 if (!rc.canSenseLocation(throwTarget)) continue; // make sure u know whats happening there
                 if (!rc.senseMapInfo(throwTarget).isPassable()) continue; // need empty

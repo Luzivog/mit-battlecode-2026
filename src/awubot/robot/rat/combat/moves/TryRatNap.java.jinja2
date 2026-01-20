@@ -66,6 +66,7 @@ public final class TryRatNap {
     static Direction bestFacing;
     static Direction bestSecondaryMove;
     static double bestScore;
+    static double score;
     static Direction moveDir;
     static MapLocation newLoc;
     static int dxToTarget;
@@ -163,12 +164,14 @@ public final class TryRatNap {
     {% for face_dir in directions %}
     private static void face{{ dir_short_map[face_dir] }}() throws GameActionException {
         if (!canSense(dxToTarget, dyToTarget, {{ face_dir }})) return;
-        if (!CombatCommon.canPerformMoves(moveDir, {{ face_dir }})) return;
-        double score = weight;
+        int moveCost = CombatCommon.movementCost(moveDir, {{ face_dir }});
+        if (moveCost == -1) return;
+        score = weight;
+        if (moveCost == 0) score -= CombatCommon.strafeCost();
         score += CombatStrategy.getCellScoreFor(moveDir, {{ face_dir }}, info);
         if (score <= 0.5) return;
         if ({{ face_dir }} != myDir) {
-            score *= 1.2; // prefer turning
+            score += 2; // prefer turning
         }
         if (score > bestScore) {
             bestScore = score;
@@ -202,8 +205,10 @@ public final class TryRatNap {
     }
 
     private static void considerSecondaryMove(Direction moveDir, Direction facing) throws GameActionException {
-        if (!CombatCommon.canPerformMoves(moveDir, facing)) return;
+        int moveCost = CombatCommon.movementCost(moveDir, facing);
+        if (moveCost == -1) return;
         double score = weight + 5;
+        if (moveCost == 0) score -= CombatCommon.strafeCost();
         score += CombatStrategy.getCellScoreFor(moveDir, facing, info);
         if (score <= 0.5) return;
         if (facing != myDir) {

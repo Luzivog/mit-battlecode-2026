@@ -10041,6 +10041,9 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
         boolean beforeHigh = target.getHealth() > rc.getHealth();
         boolean afterHigh = (target.getHealth() - damage) > rc.getHealth();
         if (afterHigh != beforeHigh) {
+            if (am(12590, 21)) {
+                println("Threat status changed for move " + moveDir + " facing " + facing + " damage " + damage);
+            }
             long sub = enemyMaskForMove(enemyDx, enemyDy, target.direction, moveDir);
             long threat = getMoveThreatMask(moveDir);
             base -= (sub & threat);

@@ -26,6 +26,7 @@ public final class TryRatNap {
     static Direction bestFacing;
     static Direction bestSecondaryMove;
     static double bestScore;
+    static double score;
     static Direction moveDir;
     static MapLocation newLoc;
     static int dxToTarget;
@@ -803,12 +804,14 @@ public final class TryRatNap {
 
     private static void faceN() throws GameActionException {
         if (!canSense(dxToTarget, dyToTarget, Direction.NORTH)) return;
-        if (!CombatCommon.canPerformMoves(moveDir, Direction.NORTH)) return;
-        double score = weight;
+        int moveCost = CombatCommon.movementCost(moveDir, Direction.NORTH);
+        if (moveCost == -1) return;
+        score = weight;
+        if (moveCost == 0) score -= CombatCommon.strafeCost();
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTH, info);
         if (score <= 0.5) return;
         if (Direction.NORTH != myDir) {
-            score *= 1.2; // prefer turning
+            score += 2; // prefer turning
         }
         if (score > bestScore) {
             bestScore = score;
@@ -821,12 +824,14 @@ public final class TryRatNap {
 
     private static void faceNE() throws GameActionException {
         if (!canSense(dxToTarget, dyToTarget, Direction.NORTHEAST)) return;
-        if (!CombatCommon.canPerformMoves(moveDir, Direction.NORTHEAST)) return;
-        double score = weight;
+        int moveCost = CombatCommon.movementCost(moveDir, Direction.NORTHEAST);
+        if (moveCost == -1) return;
+        score = weight;
+        if (moveCost == 0) score -= CombatCommon.strafeCost();
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHEAST, info);
         if (score <= 0.5) return;
         if (Direction.NORTHEAST != myDir) {
-            score *= 1.2; // prefer turning
+            score += 2; // prefer turning
         }
         if (score > bestScore) {
             bestScore = score;
@@ -839,12 +844,14 @@ public final class TryRatNap {
 
     private static void faceE() throws GameActionException {
         if (!canSense(dxToTarget, dyToTarget, Direction.EAST)) return;
-        if (!CombatCommon.canPerformMoves(moveDir, Direction.EAST)) return;
-        double score = weight;
+        int moveCost = CombatCommon.movementCost(moveDir, Direction.EAST);
+        if (moveCost == -1) return;
+        score = weight;
+        if (moveCost == 0) score -= CombatCommon.strafeCost();
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.EAST, info);
         if (score <= 0.5) return;
         if (Direction.EAST != myDir) {
-            score *= 1.2; // prefer turning
+            score += 2; // prefer turning
         }
         if (score > bestScore) {
             bestScore = score;
@@ -857,12 +864,14 @@ public final class TryRatNap {
 
     private static void faceSE() throws GameActionException {
         if (!canSense(dxToTarget, dyToTarget, Direction.SOUTHEAST)) return;
-        if (!CombatCommon.canPerformMoves(moveDir, Direction.SOUTHEAST)) return;
-        double score = weight;
+        int moveCost = CombatCommon.movementCost(moveDir, Direction.SOUTHEAST);
+        if (moveCost == -1) return;
+        score = weight;
+        if (moveCost == 0) score -= CombatCommon.strafeCost();
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHEAST, info);
         if (score <= 0.5) return;
         if (Direction.SOUTHEAST != myDir) {
-            score *= 1.2; // prefer turning
+            score += 2; // prefer turning
         }
         if (score > bestScore) {
             bestScore = score;
@@ -875,12 +884,14 @@ public final class TryRatNap {
 
     private static void faceS() throws GameActionException {
         if (!canSense(dxToTarget, dyToTarget, Direction.SOUTH)) return;
-        if (!CombatCommon.canPerformMoves(moveDir, Direction.SOUTH)) return;
-        double score = weight;
+        int moveCost = CombatCommon.movementCost(moveDir, Direction.SOUTH);
+        if (moveCost == -1) return;
+        score = weight;
+        if (moveCost == 0) score -= CombatCommon.strafeCost();
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTH, info);
         if (score <= 0.5) return;
         if (Direction.SOUTH != myDir) {
-            score *= 1.2; // prefer turning
+            score += 2; // prefer turning
         }
         if (score > bestScore) {
             bestScore = score;
@@ -893,12 +904,14 @@ public final class TryRatNap {
 
     private static void faceSW() throws GameActionException {
         if (!canSense(dxToTarget, dyToTarget, Direction.SOUTHWEST)) return;
-        if (!CombatCommon.canPerformMoves(moveDir, Direction.SOUTHWEST)) return;
-        double score = weight;
+        int moveCost = CombatCommon.movementCost(moveDir, Direction.SOUTHWEST);
+        if (moveCost == -1) return;
+        score = weight;
+        if (moveCost == 0) score -= CombatCommon.strafeCost();
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHWEST, info);
         if (score <= 0.5) return;
         if (Direction.SOUTHWEST != myDir) {
-            score *= 1.2; // prefer turning
+            score += 2; // prefer turning
         }
         if (score > bestScore) {
             bestScore = score;
@@ -911,12 +924,14 @@ public final class TryRatNap {
 
     private static void faceW() throws GameActionException {
         if (!canSense(dxToTarget, dyToTarget, Direction.WEST)) return;
-        if (!CombatCommon.canPerformMoves(moveDir, Direction.WEST)) return;
-        double score = weight;
+        int moveCost = CombatCommon.movementCost(moveDir, Direction.WEST);
+        if (moveCost == -1) return;
+        score = weight;
+        if (moveCost == 0) score -= CombatCommon.strafeCost();
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.WEST, info);
         if (score <= 0.5) return;
         if (Direction.WEST != myDir) {
-            score *= 1.2; // prefer turning
+            score += 2; // prefer turning
         }
         if (score > bestScore) {
             bestScore = score;
@@ -929,12 +944,14 @@ public final class TryRatNap {
 
     private static void faceNW() throws GameActionException {
         if (!canSense(dxToTarget, dyToTarget, Direction.NORTHWEST)) return;
-        if (!CombatCommon.canPerformMoves(moveDir, Direction.NORTHWEST)) return;
-        double score = weight;
+        int moveCost = CombatCommon.movementCost(moveDir, Direction.NORTHWEST);
+        if (moveCost == -1) return;
+        score = weight;
+        if (moveCost == 0) score -= CombatCommon.strafeCost();
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHWEST, info);
         if (score <= 0.5) return;
         if (Direction.NORTHWEST != myDir) {
-            score *= 1.2; // prefer turning
+            score += 2; // prefer turning
         }
         if (score > bestScore) {
             bestScore = score;
@@ -1116,8 +1133,10 @@ public final class TryRatNap {
     }
 
     private static void considerSecondaryMove(Direction moveDir, Direction facing) throws GameActionException {
-        if (!CombatCommon.canPerformMoves(moveDir, facing)) return;
+        int moveCost = CombatCommon.movementCost(moveDir, facing);
+        if (moveCost == -1) return;
         double score = weight + 5;
+        if (moveCost == 0) score -= CombatCommon.strafeCost();
         score += CombatStrategy.getCellScoreFor(moveDir, facing, info);
         if (score <= 0.5) return;
         if (facing != myDir) {

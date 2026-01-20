@@ -776,9 +776,6 @@ public final class TryFight {
         if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) != 0) {
             score += 30;
         }
-        if (am(11417, 31)) {
-            println("MOVE " + moveDir + " FACE " + Direction.NORTH + " SCORE " + score);
-        }
         if (Direction.NORTH != myDir) {
             // prefer turning
             score += 2;
@@ -801,9 +798,6 @@ public final class TryFight {
         }
         if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) != 0) {
             score += 30;
-        }
-        if (am(11417, 31)) {
-            println("MOVE " + moveDir + " FACE " + Direction.NORTHEAST + " SCORE " + score);
         }
         if (Direction.NORTHEAST != myDir) {
             // prefer turning
@@ -828,9 +822,6 @@ public final class TryFight {
         if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) != 0) {
             score += 30;
         }
-        if (am(11417, 31)) {
-            println("MOVE " + moveDir + " FACE " + Direction.EAST + " SCORE " + score);
-        }
         if (Direction.EAST != myDir) {
             // prefer turning
             score += 2;
@@ -853,9 +844,6 @@ public final class TryFight {
         }
         if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) != 0) {
             score += 30;
-        }
-        if (am(11417, 31)) {
-            println("MOVE " + moveDir + " FACE " + Direction.SOUTHEAST + " SCORE " + score);
         }
         if (Direction.SOUTHEAST != myDir) {
             // prefer turning
@@ -880,9 +868,6 @@ public final class TryFight {
         if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) != 0) {
             score += 30;
         }
-        if (am(11417, 31)) {
-            println("MOVE " + moveDir + " FACE " + Direction.SOUTH + " SCORE " + score);
-        }
         if (Direction.SOUTH != myDir) {
             // prefer turning
             score += 2;
@@ -905,9 +890,6 @@ public final class TryFight {
         }
         if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) != 0) {
             score += 30;
-        }
-        if (am(11417, 31)) {
-            println("MOVE " + moveDir + " FACE " + Direction.SOUTHWEST + " SCORE " + score);
         }
         if (Direction.SOUTHWEST != myDir) {
             // prefer turning
@@ -932,9 +914,6 @@ public final class TryFight {
         if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) != 0) {
             score += 30;
         }
-        if (am(11417, 31)) {
-            println("MOVE " + moveDir + " FACE " + Direction.WEST + " SCORE " + score);
-        }
         if (Direction.WEST != myDir) {
             // prefer turning
             score += 2;
@@ -957,9 +936,6 @@ public final class TryFight {
         }
         if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) != 0) {
             score += 30;
-        }
-        if (am(11417, 31)) {
-            println("MOVE " + moveDir + " FACE " + Direction.NORTHWEST + " SCORE " + score);
         }
         if (Direction.NORTHWEST != myDir) {
             // prefer turning

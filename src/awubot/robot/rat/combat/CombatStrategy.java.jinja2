@@ -238,10 +238,6 @@ public class CombatStrategy extends Strategy {
         return false;
     }
 
-    static boolean canPerformMoves(Direction moveDir, Direction facing) throws GameActionException {
-        return CombatCommon.canPerformMoves(moveDir, facing);
-    }
-
     public static boolean performMoves(Direction moveDir, Direction facing) throws GameActionException {
         if (moveDir != Direction.CENTER && !CombatCommon.canMove(moveDir)) return false;
         if (moveDir == Direction.CENTER) {

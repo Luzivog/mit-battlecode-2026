@@ -147,8 +147,10 @@ public final class TryAttack {
     {% for face_dir in directions %}
     private static void face{{ dir_short_map[face_dir] }}() throws GameActionException {
         if (!canSense(newLoc, t, {{ face_dir }})) return;
-        if (!CombatCommon.canPerformMoves(moveDir, {{ face_dir }})) return;
+        int moveCost = CombatCommon.movementCost(moveDir, {{ face_dir }});
+        if (moveCost == -1) return;
         score = weight;
+        if (moveCost == 0) score -= CombatCommon.strafeCost();
         if ({{ face_dir }} != myDir) {
             score += 2; // prefer turning
         }

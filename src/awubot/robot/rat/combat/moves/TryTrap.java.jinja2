@@ -362,7 +362,8 @@ public final class TryTrap {
     {% for facing in related_map[dir_ord_map[move_dir]] %}
     private static void face{{ dir_short_map[facing] }}{{ dir_short_map[move_dir] }}() throws GameActionException {
         if (CombatTracker.threat{{ dir_short_map[move_dir] }}{{ dir_short_map[facing] }} != 0L) return;
-        if (!CombatCommon.canPerformMoves({{ move_dir }}, {{ facing }})) return;
+        int moveCost = CombatCommon.movementCost({{ move_dir }}, {{ facing }});
+        if (moveCost == -1) return;
         {% for place_dir in related_map[dir_ord_map[facing]] %}
         place{{ dir_short_map[place_dir] }}{{ dir_short_map[facing] }}{{ dir_short_map[move_dir] }}();
         {% endfor %}

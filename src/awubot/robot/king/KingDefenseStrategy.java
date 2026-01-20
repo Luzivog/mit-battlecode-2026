@@ -18,17 +18,17 @@ public class KingDefenseStrategy extends Strategy {
     private static final int OFFENSIVE_LURE_HP = 200;
     private static final int OFFENSIVE_LURE_CHEESE = 150;
 
-    private final ThreatContext theContext;
-    private final KingMiningStrategy theMiningStrategy;
+    private final ThreatContext context;
+    private final KingMiningStrategy miningStrategy;
 
-    private int thePlacedCatTraps = 0;
-    private MapLocation[] theCatTrapLocations = new MapLocation[MAX_CAT_TRAPS];
-    private int theLastLureSignalRound = 0;
-    private int theTotalLureSignals = 0;
+    private int placedCatTraps = 0;
+    private MapLocation[] catTrapLocations = new MapLocation[MAX_CAT_TRAPS];
+    private int lastLureSignalRound = 0;
+    private int totalLureSignals = 0;
 
     public KingDefenseStrategy(ThreatContext aContext, KingMiningStrategy aMiningStrategy) {
-        theContext = aContext;
-        theMiningStrategy = aMiningStrategy;
+        context = aContext;
+        miningStrategy = aMiningStrategy;
     }
 
     @Override
@@ -36,11 +36,11 @@ public class KingDefenseStrategy extends Strategy {
         if (time % 50 == 0) {
             System.out.println("[KING] K" + kingId + " t=" + time +
                 " hp=" + rc.getHealth() + " cheese=" + rc.getGlobalCheese() +
-                " nearestCat=" + theContext.theCatDistSq +
-                " state=" + theContext.theDefenseState);
+                " nearestCat=" + context.catDistSq +
+                " state=" + context.defenseState);
         }
 
-        switch (theContext.theDefenseState) {
+        switch (context.defenseState) {
             case CRITICAL:
                 executeCritical();
                 break;
@@ -58,12 +58,12 @@ public class KingDefenseStrategy extends Strategy {
     }
 
     public boolean isDefensiveActionTaken() throws GameActionException {
-        return theContext.theDefenseState == ThreatContext.DefenseState.EVADING ||
-               theContext.theDefenseState == ThreatContext.DefenseState.CRITICAL;
+        return context.defenseState == ThreatContext.DefenseState.EVADING ||
+               context.defenseState == ThreatContext.DefenseState.CRITICAL;
     }
 
     public boolean wantsToFlee() {
-        return theContext.theNearestCat != null;
+        return context.nearestCat != null;
     }
 
     private void executeCritical() throws GameActionException {
@@ -87,15 +87,15 @@ public class KingDefenseStrategy extends Strategy {
         if (!rc.isMovementReady()) return false;
 
         Direction myAwayDir;
-        if (theContext.theTrackedCatCount > 1 && (theContext.theThreatVectorX != 0 || theContext.theThreatVectorY != 0)) {
-            MapLocation myThreatCenter = new MapLocation(myLoc.x + theContext.theThreatVectorX, myLoc.y + theContext.theThreatVectorY);
+        if (context.trackedCatCount > 1 && (context.threatVectorX != 0 || context.threatVectorY != 0)) {
+            MapLocation myThreatCenter = new MapLocation(myLoc.x + context.threatVectorX, myLoc.y + context.threatVectorY);
             myAwayDir = myThreatCenter.directionTo(myLoc);
-        } else if (theContext.theNearestCat != null) {
-            myAwayDir = theContext.theNearestCat.location.directionTo(myLoc);
-        } else if (theContext.theNearestEnemyRatKing != null) {
-            myAwayDir = theContext.theNearestEnemyRatKing.location.directionTo(myLoc);
-        } else if (theContext.theNearestEnemyRat != null) {
-            myAwayDir = theContext.theNearestEnemyRat.location.directionTo(myLoc);
+        } else if (context.nearestCat != null) {
+            myAwayDir = context.nearestCat.location.directionTo(myLoc);
+        } else if (context.nearestEnemyRatKing != null) {
+            myAwayDir = context.nearestEnemyRatKing.location.directionTo(myLoc);
+        } else if (context.nearestEnemyRat != null) {
+            myAwayDir = context.nearestEnemyRat.location.directionTo(myLoc);
         } else {
             return moveTowardSafety();
         }
@@ -165,9 +165,9 @@ public class KingDefenseStrategy extends Strategy {
     private boolean placeDefensiveDirt() throws GameActionException {
         if (!rc.isActionReady()) return false;
         if (rc.getGlobalCheese() < 60) return false;
-        if (theContext.theNearestCat == null) return false;
+        if (context.nearestCat == null) return false;
 
-        MapLocation myCatLoc = theContext.theNearestCat.location;
+        MapLocation myCatLoc = context.nearestCat.location;
         Direction myTowardKing = myCatLoc.directionTo(myLoc);
 
         MapLocation myBaseLoc = myLoc.add(myTowardKing.opposite()).add(myTowardKing.opposite());
@@ -197,11 +197,11 @@ public class KingDefenseStrategy extends Strategy {
     private boolean placeProactiveCatTrapMinefield() throws GameActionException {
         if (!rc.isActionReady()) return false;
         if (rc.getGlobalCheese() < 200) return false;
-        if (thePlacedCatTraps >= MAX_CAT_TRAPS) return false;
+        if (placedCatTraps >= MAX_CAT_TRAPS) return false;
 
         Direction myPriorityDir = Direction.CENTER;
-        MapLocation myMineTarget = theMiningStrategy.getMineTarget();
-        MapLocation myCenterTarget = theMiningStrategy.getCenterTarget();
+        MapLocation myMineTarget = miningStrategy.getMineTarget();
+        MapLocation myCenterTarget = miningStrategy.getCenterTarget();
 
         if (myMineTarget != null) {
             myPriorityDir = myLoc.directionTo(myMineTarget);
@@ -231,8 +231,8 @@ public class KingDefenseStrategy extends Strategy {
 
                 if (!isLocationAlreadyTrapped(myTrapLoc) && rc.canPlaceCatTrap(myTrapLoc)) {
                     rc.placeCatTrap(myTrapLoc);
-                    theCatTrapLocations[thePlacedCatTraps] = myTrapLoc;
-                    thePlacedCatTraps++;
+                    catTrapLocations[placedCatTraps] = myTrapLoc;
+                    placedCatTraps++;
                     return true;
                 }
             }
@@ -243,25 +243,25 @@ public class KingDefenseStrategy extends Strategy {
     private boolean placeReactiveCatTrap() throws GameActionException {
         if (!rc.isActionReady()) return false;
         if (rc.getGlobalCheese() < 10) return false;
-        if (thePlacedCatTraps >= MAX_CAT_TRAPS) return false;
-        if (theContext.theNearestCat == null) return false;
+        if (placedCatTraps >= MAX_CAT_TRAPS) return false;
+        if (context.nearestCat == null) return false;
 
-        MapLocation myCatLoc = theContext.theNearestCat.location;
+        MapLocation myCatLoc = context.nearestCat.location;
         Direction myCatToKing = myCatLoc.directionTo(myLoc);
         MapLocation myTrapLoc = myCatLoc.add(myCatToKing).add(myCatToKing);
 
         if (!isLocationAlreadyTrapped(myTrapLoc) && rc.canPlaceCatTrap(myTrapLoc)) {
             rc.placeCatTrap(myTrapLoc);
-            theCatTrapLocations[thePlacedCatTraps] = myTrapLoc;
-            thePlacedCatTraps++;
+            catTrapLocations[placedCatTraps] = myTrapLoc;
+            placedCatTraps++;
             return true;
         }
         return false;
     }
 
     private boolean isLocationAlreadyTrapped(MapLocation aLoc) {
-        for (int i = 0; i < thePlacedCatTraps; i++) {
-            if (theCatTrapLocations[i] != null && theCatTrapLocations[i].equals(aLoc)) {
+        for (int i = 0; i < placedCatTraps; i++) {
+            if (catTrapLocations[i] != null && catTrapLocations[i].equals(aLoc)) {
                 return true;
             }
         }
@@ -269,14 +269,14 @@ public class KingDefenseStrategy extends Strategy {
     }
 
     private void signalLureBabyRats() throws GameActionException {
-        if (theContext.theNearestCat == null) return;
-        if (time - theLastLureSignalRound < LURE_SIGNAL_COOLDOWN) return;
+        if (context.nearestCat == null) return;
+        if (time - lastLureSignalRound < LURE_SIGNAL_COOLDOWN) return;
 
-        MapLocation myCatLoc = theContext.theNearestCat.location;
+        MapLocation myCatLoc = context.nearestCat.location;
         boolean myShouldLure = false;
         String myReason = "";
 
-        if (theContext.theCatDistSq <= ThreatContext.CAT_DANGER_DIST_SQ) {
+        if (context.catDistSq <= ThreatContext.CAT_DANGER_DIST_SQ) {
             myShouldLure = true;
             myReason = "defensive";
         }
@@ -297,12 +297,12 @@ public class KingDefenseStrategy extends Strategy {
         MapLocation myEnemyKingLoc = getEnemyKingLocation();
         Squeaker.squeakLureSignal(myCatLoc, myEnemyKingLoc);
 
-        theLastLureSignalRound = time;
-        theTotalLureSignals++;
+        lastLureSignalRound = time;
+        totalLureSignals++;
         System.out.println("[KING] K" + kingId + " t=" + time +
             " LURE_SIGNAL reason=" + myReason +
             " hp=" + rc.getHealth() + " cheese=" + rc.getGlobalCheese() +
-            " catDist=" + theContext.theCatDistSq + " total=" + theTotalLureSignals);
+            " catDist=" + context.catDistSq + " total=" + totalLureSignals);
     }
 
     private MapLocation getEnemyKingLocation() {

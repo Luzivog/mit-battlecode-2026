@@ -11,21 +11,21 @@ public class CatLureStrategy2 extends Strategy {
     private static final int MISSION_COMPLETE_DIST_SQ = 36;
     private static final int CAT_LOST_THRESHOLD = 20;
 
-    private MapLocation theEnemyKingLoc = null;
-    private int theLureTTL = 0;
-    private boolean theIsActive = false;
+    private MapLocation enemyKingLoc = null;
+    private int lureTTL = 0;
+    private boolean isActive = false;
 
     public void setLureTarget(MapLocation aCatLoc, MapLocation aEnemyKingLoc) {
-        theEnemyKingLoc = aEnemyKingLoc;
-        theLureTTL = LURE_DURATION;
-        theIsActive = true;
+        enemyKingLoc = aEnemyKingLoc;
+        lureTTL = LURE_DURATION;
+        isActive = true;
     }
 
     @Override
     public boolean runTick() throws GameActionException {
-        if (!theIsActive) return false;
+        if (!isActive) return false;
 
-        theLureTTL--;
+        lureTTL--;
         indicate("LURING CAT TO ENEMY!");
 
         moveTowardEnemy();
@@ -37,9 +37,9 @@ public class CatLureStrategy2 extends Strategy {
     }
 
     private void moveTowardEnemy() throws GameActionException {
-        if (!rc.isMovementReady() || theEnemyKingLoc == null) return;
+        if (!rc.isMovementReady() || enemyKingLoc == null) return;
 
-        Direction myToEnemy = myLoc.directionTo(theEnemyKingLoc);
+        Direction myToEnemy = myLoc.directionTo(enemyKingLoc);
         Direction[] myTryDirs = {
             myToEnemy,
             myToEnemy.rotateLeft(),
@@ -57,14 +57,14 @@ public class CatLureStrategy2 extends Strategy {
     }
 
     private boolean shouldTerminate() {
-        if (theEnemyKingLoc != null && myLoc.distanceSquaredTo(theEnemyKingLoc) <= MISSION_COMPLETE_DIST_SQ) {
+        if (enemyKingLoc != null && myLoc.distanceSquaredTo(enemyKingLoc) <= MISSION_COMPLETE_DIST_SQ) {
             indicate("REACHED ENEMY TERRITORY - mission complete!");
             return true;
         }
 
-        if (theLureTTL <= 0) return true;
+        if (lureTTL <= 0) return true;
 
-        if (!isCatNearby() && theLureTTL < CAT_LOST_THRESHOLD) return true;
+        if (!isCatNearby() && lureTTL < CAT_LOST_THRESHOLD) return true;
 
         return false;
     }
@@ -79,7 +79,7 @@ public class CatLureStrategy2 extends Strategy {
     }
 
     private void reset() {
-        theIsActive = false;
-        theEnemyKingLoc = null;
+        isActive = false;
+        enemyKingLoc = null;
     }
 }

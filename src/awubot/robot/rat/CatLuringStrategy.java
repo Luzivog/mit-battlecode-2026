@@ -19,25 +19,25 @@ public class CatLuringStrategy extends Strategy {
     private static final int MISSION_COMPLETE_DIST_SQ = 49;
     private static final int MIN_TURN_FOR_AUTO = 20;
 
-    private MapLocation theCatLoc = null;
-    private MapLocation theEnemyKingLoc = null;
-    private int theLureTTL = 0;
-    private boolean theIsActive = false;
-    private int theLastCatSeenRound = 0;
-    private int theSqueakCooldown = 0;
-    private int theMissionsCompleted = 0;
+    private MapLocation catLoc = null;
+    private MapLocation enemyKingLoc = null;
+    private int lureTTL = 0;
+    private boolean isActive = false;
+    private int lastCatSeenRound = 0;
+    private int squeakCooldown = 0;
+    private int missionsCompleted = 0;
 
     public void activateLure(MapLocation aCatLoc, MapLocation aEnemyKingLoc) {
-        theCatLoc = aCatLoc;
-        theEnemyKingLoc = aEnemyKingLoc;
-        theLureTTL = LURE_TTL;
-        theIsActive = true;
-        theLastCatSeenRound = time;
+        catLoc = aCatLoc;
+        enemyKingLoc = aEnemyKingLoc;
+        lureTTL = LURE_TTL;
+        isActive = true;
+        lastCatSeenRound = time;
         System.out.println("[LURE] R" + rc.getID() + " t=" + time + " ACTIVATED cat=" + aCatLoc + " target=" + aEnemyKingLoc);
     }
 
     public boolean tryAutoActivate() throws GameActionException {
-        if (theIsActive) return false;
+        if (isActive) return false;
         if (time < MIN_TURN_FOR_AUTO) return false;
 
         MapLocation myCatLoc = null;
@@ -58,24 +58,24 @@ public class CatLuringStrategy extends Strategy {
 
     @Override
     public boolean runTick() throws GameActionException {
-        if (!theIsActive) return false;
+        if (!isActive) return false;
 
-        theLureTTL--;
-        indicate("LURING[" + theLureTTL + "] -> " + theEnemyKingLoc);
+        lureTTL--;
+        indicate("LURING[" + lureTTL + "] -> " + enemyKingLoc);
 
-        if (theEnemyKingLoc != null) {
-            rc.setIndicatorLine(myLoc, theEnemyKingLoc, 255, 0, 255);
+        if (enemyKingLoc != null) {
+            rc.setIndicatorLine(myLoc, enemyKingLoc, 255, 0, 255);
         }
-        if (theCatLoc != null) {
-            rc.setIndicatorLine(myLoc, theCatLoc, 255, 0, 0);
+        if (catLoc != null) {
+            rc.setIndicatorLine(myLoc, catLoc, 255, 0, 0);
         }
 
         boolean myCatNearby = updateCatTracking();
 
         System.out.println("[LURE] R" + rc.getID() + " t=" + time +
-            " active=" + theIsActive + " ttl=" + theLureTTL +
-            " cat=" + theCatLoc + " catNear=" + myCatNearby +
-            " target=" + theEnemyKingLoc + " missions=" + theMissionsCompleted);
+            " active=" + isActive + " ttl=" + lureTTL +
+            " cat=" + catLoc + " catNear=" + myCatNearby +
+            " target=" + enemyKingLoc + " missions=" + missionsCompleted);
 
         if (shouldTerminateLure(myCatNearby)) {
             terminateLure(myCatNearby);
@@ -90,8 +90,8 @@ public class CatLuringStrategy extends Strategy {
     private boolean updateCatTracking() {
         for (RobotInfo myRobot : rc.senseNearbyRobots()) {
             if (myRobot.getType() == UnitType.CAT) {
-                theCatLoc = myRobot.location;
-                theLastCatSeenRound = time;
+                catLoc = myRobot.location;
+                lastCatSeenRound = time;
                 return true;
             }
         }
@@ -99,18 +99,18 @@ public class CatLuringStrategy extends Strategy {
     }
 
     private boolean shouldTerminateLure(boolean aCatNearby) {
-        if (theLureTTL <= 0) {
+        if (lureTTL <= 0) {
             System.out.println("[LURE] R" + rc.getID() + " t=" + time + " TTL expired");
             return true;
         }
 
-        if (theEnemyKingLoc != null &&
-            myLoc.distanceSquaredTo(theEnemyKingLoc) <= MISSION_COMPLETE_DIST_SQ) {
+        if (enemyKingLoc != null &&
+            myLoc.distanceSquaredTo(enemyKingLoc) <= MISSION_COMPLETE_DIST_SQ) {
             System.out.println("[LURE] R" + rc.getID() + " t=" + time + " MISSION COMPLETE - reached enemy!");
             return true;
         }
 
-        if (!aCatNearby && (time - theLastCatSeenRound) > CAT_LOST_THRESHOLD) {
+        if (!aCatNearby && (time - lastCatSeenRound) > CAT_LOST_THRESHOLD) {
             System.out.println("[LURE] R" + rc.getID() + " t=" + time + " Cat lost");
             return true;
         }
@@ -124,22 +124,22 @@ public class CatLuringStrategy extends Strategy {
     }
 
     private void terminateLure(boolean aWasSuccessful) {
-        if (aWasSuccessful && theEnemyKingLoc != null &&
-            myLoc.distanceSquaredTo(theEnemyKingLoc) <= MISSION_COMPLETE_DIST_SQ) {
-            theMissionsCompleted++;
-            System.out.println("[LURE] R" + rc.getID() + " t=" + time + " SUCCESS! Total missions: " + theMissionsCompleted);
+        if (aWasSuccessful && enemyKingLoc != null &&
+            myLoc.distanceSquaredTo(enemyKingLoc) <= MISSION_COMPLETE_DIST_SQ) {
+            missionsCompleted++;
+            System.out.println("[LURE] R" + rc.getID() + " t=" + time + " SUCCESS! Total missions: " + missionsCompleted);
         }
 
-        theIsActive = false;
-        theCatLoc = null;
-        theEnemyKingLoc = null;
+        isActive = false;
+        catLoc = null;
+        enemyKingLoc = null;
     }
 
     private void executeOffensiveMovement() throws GameActionException {
         if (!rc.isMovementReady()) return;
-        if (theEnemyKingLoc == null) return;
+        if (enemyKingLoc == null) return;
 
-        Direction myToEnemy = myLoc.directionTo(theEnemyKingLoc);
+        Direction myToEnemy = myLoc.directionTo(enemyKingLoc);
         Direction[] myTryDirs = {
             myToEnemy,
             myToEnemy.rotateLeft(),
@@ -155,15 +155,15 @@ public class CatLuringStrategy extends Strategy {
             }
         }
 
-        Pathfinder.makeMove(theEnemyKingLoc);
+        Pathfinder.makeMove(enemyKingLoc);
     }
 
     private void executeSqueaking() {
-        theSqueakCooldown--;
-        if (theSqueakCooldown > 0) return;
+        squeakCooldown--;
+        if (squeakCooldown > 0) return;
 
         rc.squeak(0);
-        theSqueakCooldown = SQUEAK_INTERVAL;
+        squeakCooldown = SQUEAK_INTERVAL;
     }
 
     private MapLocation getEnemyKingLocation() {
@@ -183,10 +183,10 @@ public class CatLuringStrategy extends Strategy {
     }
 
     public boolean isActive() {
-        return theIsActive;
+        return isActive;
     }
 
     public int getMissionsCompleted() {
-        return theMissionsCompleted;
+        return missionsCompleted;
     }
 }

@@ -16,30 +16,30 @@ public class ThreatContext {
     public static final int CRITICAL_HP = 150;
     public static final int MAX_TRACKED_CATS = 4;
 
-    public RobotInfo theNearestCat = null;
-    public RobotInfo theNearestEnemyRat = null;
-    public RobotInfo theNearestEnemyRatKing = null;
-    public int theCatDistSq = Integer.MAX_VALUE;
-    public int theEnemyRatDistSq = Integer.MAX_VALUE;
-    public int theEnemyRatKingDistSq = Integer.MAX_VALUE;
+    public RobotInfo nearestCat = null;
+    public RobotInfo nearestEnemyRat = null;
+    public RobotInfo nearestEnemyRatKing = null;
+    public int catDistSq = Integer.MAX_VALUE;
+    public int enemyRatDistSq = Integer.MAX_VALUE;
+    public int enemyRatKingDistSq = Integer.MAX_VALUE;
 
-    public RobotInfo[] theTrackedCats = new RobotInfo[MAX_TRACKED_CATS];
-    public int theTrackedCatCount = 0;
-    public int theThreatVectorX = 0;
-    public int theThreatVectorY = 0;
+    public RobotInfo[] trackedCats = new RobotInfo[MAX_TRACKED_CATS];
+    public int trackedCatCount = 0;
+    public int threatVectorX = 0;
+    public int threatVectorY = 0;
 
-    public DefenseState theDefenseState = DefenseState.NORMAL;
+    public DefenseState defenseState = DefenseState.NORMAL;
 
     public void reset() {
-        theTrackedCatCount = 0;
-        theNearestCat = null;
-        theNearestEnemyRat = null;
-        theNearestEnemyRatKing = null;
-        theCatDistSq = Integer.MAX_VALUE;
-        theEnemyRatDistSq = Integer.MAX_VALUE;
-        theEnemyRatKingDistSq = Integer.MAX_VALUE;
-        theThreatVectorX = 0;
-        theThreatVectorY = 0;
+        trackedCatCount = 0;
+        nearestCat = null;
+        nearestEnemyRat = null;
+        nearestEnemyRatKing = null;
+        catDistSq = Integer.MAX_VALUE;
+        enemyRatDistSq = Integer.MAX_VALUE;
+        enemyRatKingDistSq = Integer.MAX_VALUE;
+        threatVectorX = 0;
+        threatVectorY = 0;
     }
 
     public void scanThreats() throws GameActionException {
@@ -50,13 +50,13 @@ public class ThreatContext {
             if (myCat == null) continue;
 
             int myDistSq = myLoc.distanceSquaredTo(myCat.location);
-            if (theTrackedCatCount < MAX_TRACKED_CATS) {
-                theTrackedCats[theTrackedCatCount] = myCat;
-                theTrackedCatCount++;
+            if (trackedCatCount < MAX_TRACKED_CATS) {
+                trackedCats[trackedCatCount] = myCat;
+                trackedCatCount++;
             }
-            if (myDistSq < theCatDistSq) {
-                theCatDistSq = myDistSq;
-                theNearestCat = myCat;
+            if (myDistSq < catDistSq) {
+                catDistSq = myDistSq;
+                nearestCat = myCat;
             }
         }
 
@@ -66,14 +66,14 @@ public class ThreatContext {
 
             int myDistSq = myLoc.distanceSquaredTo(myEnemy.location);
             if (myEnemy.getType() == UnitType.RAT_KING) {
-                if (myDistSq < theEnemyRatKingDistSq) {
-                    theEnemyRatKingDistSq = myDistSq;
-                    theNearestEnemyRatKing = myEnemy;
+                if (myDistSq < enemyRatKingDistSq) {
+                    enemyRatKingDistSq = myDistSq;
+                    nearestEnemyRatKing = myEnemy;
                 }
             } else if (myEnemy.getType() == UnitType.BABY_RAT) {
-                if (myDistSq < theEnemyRatDistSq) {
-                    theEnemyRatDistSq = myDistSq;
-                    theNearestEnemyRat = myEnemy;
+                if (myDistSq < enemyRatDistSq) {
+                    enemyRatDistSq = myDistSq;
+                    nearestEnemyRat = myEnemy;
                 }
             }
         }
@@ -82,14 +82,14 @@ public class ThreatContext {
     }
 
     public void computeThreatVector() {
-        if (theTrackedCatCount == 0) return;
+        if (trackedCatCount == 0) return;
 
         int myWeightedX = 0;
         int myWeightedY = 0;
         int myTotalWeight = 0;
 
-        for (int i = 0; i < theTrackedCatCount; i++) {
-            MapLocation myCatLoc = theTrackedCats[i].location;
+        for (int i = 0; i < trackedCatCount; i++) {
+            MapLocation myCatLoc = trackedCats[i].location;
             int myDistSq = myLoc.distanceSquaredTo(myCatLoc);
             int myWeight = 10000 / (myDistSq + 1);
 
@@ -99,28 +99,28 @@ public class ThreatContext {
         }
 
         if (myTotalWeight > 0) {
-            theThreatVectorX = myWeightedX / myTotalWeight;
-            theThreatVectorY = myWeightedY / myTotalWeight;
+            threatVectorX = myWeightedX / myTotalWeight;
+            threatVectorY = myWeightedY / myTotalWeight;
         }
     }
 
     public void updateDefenseState() {
-        if (theNearestEnemyRatKing != null && theEnemyRatKingDistSq <= 25) {
-            theDefenseState = DefenseState.EVADING;
+        if (nearestEnemyRatKing != null && enemyRatKingDistSq <= 25) {
+            defenseState = DefenseState.EVADING;
             return;
         }
 
         int myHp = rc.getHealth();
 
-        if (myHp <= CRITICAL_HP || theCatDistSq <= CAT_CRITICAL_DIST_SQ) {
-            theDefenseState = DefenseState.CRITICAL;
-        } else if (theCatDistSq <= CAT_DANGER_DIST_SQ ||
-                   (theEnemyRatDistSq <= 8 && myHp <= 250)) {
-            theDefenseState = DefenseState.EVADING;
-        } else if (theNearestCat != null || theNearestEnemyRat != null) {
-            theDefenseState = DefenseState.ALERT;
+        if (myHp <= CRITICAL_HP || catDistSq <= CAT_CRITICAL_DIST_SQ) {
+            defenseState = DefenseState.CRITICAL;
+        } else if (catDistSq <= CAT_DANGER_DIST_SQ ||
+                   (enemyRatDistSq <= 8 && myHp <= 250)) {
+            defenseState = DefenseState.EVADING;
+        } else if (nearestCat != null || nearestEnemyRat != null) {
+            defenseState = DefenseState.ALERT;
         } else {
-            theDefenseState = DefenseState.NORMAL;
+            defenseState = DefenseState.NORMAL;
         }
     }
 }

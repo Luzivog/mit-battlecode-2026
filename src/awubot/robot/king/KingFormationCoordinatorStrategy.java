@@ -22,14 +22,19 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     private static final int FORMATION_COOLDOWN = 150;
     private static final int MIN_TURN_FOR_FORMATION = 200;
 
-    private final ThreatContext theContext;
-    private final KingMiningStrategy theMiningStrategy;
+    private final ThreatContext context;
+    private final KingMiningStrategy miningStrategy;
 
-    private FormationState theState = FormationState.IDLE;
-    private MapLocation theFormationTarget = null;
-    private MapLocation theTargetMine = null;
-    private int theCoordinationStartTurn = 0;
-    private int theLastFormationTurn = -FORMATION_COOLDOWN;
+    private final int tabooMinX;
+    private final int tabooMaxX;
+    private final int tabooMinY;
+    private final int tabooMaxY;
+
+    private FormationState state = FormationState.IDLE;
+    private MapLocation formationTarget = null;
+    private MapLocation targetMine = null;
+    private int coordinationStartTurn = 0;
+    private int lastFormationTurn = -FORMATION_COOLDOWN;
     private int kingCount = 1;
 
     private enum FormationState {
@@ -39,8 +44,26 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     }
 
     public KingFormationCoordinatorStrategy(ThreatContext aContext, KingMiningStrategy aMiningStrategy) {
-        theContext = aContext;
-        theMiningStrategy = aMiningStrategy;
+        context = aContext;
+        miningStrategy = aMiningStrategy;
+
+        boolean myIsSmallMap = mapWidth < 45 && mapHeight < 45;
+        if (myIsSmallMap) {
+            tabooMinX = mapWidth / 3;
+            tabooMaxX = 2 * mapWidth / 3;
+            tabooMinY = mapHeight / 3;
+            tabooMaxY = 2 * mapHeight / 3;
+        } else {
+            tabooMinX = 3 * mapWidth / 8;
+            tabooMaxX = 5 * mapWidth / 8;
+            tabooMinY = 3 * mapHeight / 8;
+            tabooMaxY = 5 * mapHeight / 8;
+        }
+    }
+
+    private boolean isInTabooZone(MapLocation aLoc) {
+        return aLoc.x >= tabooMinX && aLoc.x <= tabooMaxX
+            && aLoc.y >= tabooMinY && aLoc.y <= tabooMaxY;
     }
 
     private int getCheeseThreshold(int aCurrentKingCount) {
@@ -66,14 +89,14 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         }
         kingCount = myKingCount;
 
-        if (theContext.theDefenseState != ThreatContext.DefenseState.NORMAL) {
-            if (theState == FormationState.COORDINATING) {
+        if (context.defenseState != ThreatContext.DefenseState.NORMAL) {
+            if (state == FormationState.COORDINATING) {
                 abortFormation();
             }
             return true;
         }
 
-        switch (theState) {
+        switch (state) {
             case IDLE:
                 tryStartFormation();
                 break;
@@ -88,7 +111,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     private void tryStartFormation() throws GameActionException {
         if (time < MIN_TURN_FOR_FORMATION) return;
         int myGlobalCheese = rc.getGlobalCheese();
-        if (time - theLastFormationTurn < FORMATION_COOLDOWN) return;
+        if (time - lastFormationTurn < FORMATION_COOLDOWN) return;
         int myKingCount = GlobalArray.countRatKings();
         if (myKingCount == 5) return;
         if (myGlobalCheese < getCheeseThreshold(myKingCount) + UPGRADE_COST) return;
@@ -103,15 +126,15 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         MapLocation myFormationSpot = findFormationSpotNearMine(myBestMine);
         if (myFormationSpot == null) return;
 
-        theFormationTarget = myFormationSpot;
-        theTargetMine = myBestMine;
-        theCoordinationStartTurn = time;
-        theState = FormationState.COORDINATING;
+        formationTarget = myFormationSpot;
+        targetMine = myBestMine;
+        coordinationStartTurn = time;
+        state = FormationState.COORDINATING;
 
-        GlobalArray.writeFormationTarget(theFormationTarget, theTargetMine, kingId);
-        GlobalArray.writeKingMineAssignment(kingId + 1, theMiningStrategy.getMineTarget());
+        GlobalArray.writeFormationTarget(formationTarget, targetMine, kingId);
+        GlobalArray.writeKingMineAssignment(kingId + 1, miningStrategy.getMineTarget());
 
-        indicate("FORMATION: coordinating at " + theFormationTarget);
+        indicate("FORMATION: coordinating at " + formationTarget);
     }
 
     private MapLocation selectBestMineForFormation() throws GameActionException {
@@ -124,6 +147,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
             if (myMine == null) continue;
 
             if (GlobalArray.isMineAssignedToAnyKing(myMine)) continue;
+            if (isInTabooZone(myMine)) continue;
 
             int myScore = scoreMineForFormation(myMine);
             if (myScore > myBestScore) {
@@ -212,6 +236,8 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     }
 
     private boolean isValidFormationCenter(MapLocation aCenter) throws GameActionException {
+        if (isInTabooZone(aCenter)) return false;
+
         for (int i = 0; i < 5; i++) {
             MapLocation myKingLoc = GlobalArray.getRatKing(i);
             if (myKingLoc != null && aCenter.distanceSquaredTo(myKingLoc) < MIN_DIST_FROM_KINGS_SQ) {
@@ -244,7 +270,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     }
 
     private void monitorFormation() throws GameActionException {
-        if (time - theCoordinationStartTurn > COORDINATION_TIMEOUT) {
+        if (time - coordinationStartTurn > COORDINATION_TIMEOUT) {
             abortFormation();
             return;
         }
@@ -256,20 +282,20 @@ public class KingFormationCoordinatorStrategy extends Strategy {
 
         MapLocation myCurrentTarget = GlobalArray.getFormationTarget();
         if (myCurrentTarget == null) {
-            theState = FormationState.IDLE;
-            theLastFormationTurn = time;
+            state = FormationState.IDLE;
+            lastFormationTurn = time;
             indicate("FORMATION: completed or cleared");
             return;
         }
 
-        if (theContext.theNearestCat != null &&
-            theFormationTarget != null &&
-            theContext.theNearestCat.location.distanceSquaredTo(theFormationTarget) < 625) {
+        if (context.nearestCat != null &&
+            formationTarget != null &&
+            context.nearestCat.location.distanceSquaredTo(formationTarget) < 625) {
             abortFormation();
             return;
         }
 
-        indicate("FORMATION: monitoring " + theFormationTarget);
+        indicate("FORMATION: monitoring " + formationTarget);
     }
 
     private void abortFormation() throws GameActionException {
@@ -277,10 +303,10 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         if (myCoordinator == kingId) {
             GlobalArray.clearFormation();
         }
-        theState = FormationState.IDLE;
-        theFormationTarget = null;
-        theTargetMine = null;
-        theLastFormationTurn = time;
+        state = FormationState.IDLE;
+        formationTarget = null;
+        targetMine = null;
+        lastFormationTurn = time;
         indicate("FORMATION: aborted");
     }
 }

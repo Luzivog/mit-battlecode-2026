@@ -30,7 +30,7 @@ if load_dotenv is not None:
     load_dotenv()
 
 ROOT = Path(__file__).parent.parent
-DEFAULT_MAPS_DIR = ROOT / "test_maps"
+DEFAULT_MAPS_DIR = ROOT / "maps"
 
 
 def gradle_cmd() -> list[str]:

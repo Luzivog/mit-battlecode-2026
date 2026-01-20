@@ -63,7 +63,7 @@ public final class TryTrap {
     static int bytecodeStart, bytecodeBudget;
 
     public static boolean run() throws GameActionException {
-        if (rc.getAllCheese() < 300 || !confirmCanPlace()) return false;
+        if (rc.getAllCheese() < 300 || rc.getRawCheese() < 20 || !confirmCanPlace()) return false;
         bytecodeStart = Clock.getBytecodeNum();
         bytecodeBudget = Math.min(3000, (int) (Clock.getBytecodesLeft() - 1000) / 2);
         Profiler.push();

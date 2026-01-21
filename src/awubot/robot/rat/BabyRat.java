@@ -35,11 +35,11 @@ public class BabyRat {
         tryPickUpCheese();
         tryTransferCheese();
 
-        if (rc.isBeingThrown()) {
-            if (rc.canTurn()) {
-                rc.turn(myLoc.directionTo(myPreviousLoc));
-            }
-        }
+        // if (rc.isBeingThrown()) {
+        //     if (rc.canTurn()) {
+        //         rc.turn(myLoc.directionTo(myPreviousLoc));
+        //     }
+        // }
 
         // indicate("before combat strat: " + Clock.getBytecodeNum());
         if (combatStrategy.runTick()) {

@@ -18,8 +18,15 @@ public class GoHomeStrategy extends Strategy {
     public boolean runTick() throws GameActionException {
         if(rc.getRawCheese() == 0) return false;
         indicate("going home");
-        // TODO: handle when king dies
+        
         var kingLoc = GlobalArray.getRatKing(king);
+        
+        if (kingLoc == null) {
+            // king died, try to find another king
+            king = GlobalArray.nearestRatKingId;
+            kingLoc = GlobalArray.nearestRatKing;
+            if (kingLoc == null) return false;
+        }
 
         rc.setIndicatorLine(myLoc, kingLoc, 0, 255, 0);
         Pathfinder.makeMove(kingLoc);

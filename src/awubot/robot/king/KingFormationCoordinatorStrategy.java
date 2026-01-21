@@ -169,13 +169,16 @@ public class KingFormationCoordinatorStrategy extends Strategy {
                 if (myDist < MIN_DIST_FROM_KINGS_SQ) {
                     myScore -= 500;
                 }
+
+                // we want to spawn other kings pretty far away
+                myScore += myDist;
             }
         }
 
         if (rc.canSenseLocation(aMine)) {
-            int myNearbyRats = scoreNearbyAlliedRats(aMine, 49);  
+            myScore += scoreNearbyAlliedRats(aMine, 49);  
 
-            int enemyNearbyRats = scoreNearbyEnemyRats(aMine, 49);
+            myScore += scoreNearbyEnemyRats(aMine, 49);
         }
 
         int myDistFromSelf = myLoc.distanceSquaredTo(aMine);
@@ -193,7 +196,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
             if (myRobot == null) continue;
             if (myRobot.getType() != UnitType.BABY_RAT) continue;
             if (myRobot.location.distanceSquaredTo(aCenter) > aRadiusSq) continue;
-            myCount += 200;
+            myCount += 20;
         }
         return myCount;
     }
@@ -206,7 +209,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
             if (myRobot.getType() == UnitType.RAT_KING) myCount -= 5000;
             if (myRobot.getType() != UnitType.BABY_RAT) continue;
             if (myRobot.location.distanceSquaredTo(aCenter) > aRadiusSq) continue;
-            // myCount -= 300;
+            myCount -= 15;
         }
         return myCount;
     }

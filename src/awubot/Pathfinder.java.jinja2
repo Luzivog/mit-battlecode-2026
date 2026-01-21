@@ -551,8 +551,9 @@ public class Pathfinder {
 
         // deal with the edge case of moving immediately out of sight
         if(myLoc.equals(bug.pos)) {
-            assert !myLoc.equals(bug.outOfSightLoc) : "we are at outOfSightLoc";
             var loc = bug.outOfSightLoc;
+            bug.outOfSightLoc = null;
+            if(loc == null || loc.equals(myLoc)) return;
             var dir = myLoc.directionTo(loc);
             turn(dir);
             if(CellTracker.isPassable(loc) && (!CellTracker.isDirt(loc) || Config.allowDirt())) {

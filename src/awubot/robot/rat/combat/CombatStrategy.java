@@ -14,6 +14,8 @@ import awubot.Game;
 import awubot.Pathfinder;
 import awubot.comms.GlobalArray;
 import awubot.comms.Squeaker;
+import awubot.comms.Enemy;
+import awubot.comms.EnemyManager;
 import awubot.robot.Strategy;
 import awubot.robot.rat.combat.moves.TryAttack;
 import awubot.robot.rat.combat.moves.TryFight;
@@ -100,6 +102,7 @@ public class CombatStrategy extends Strategy {
 
     public static int moveMask, sourceCnt;
     public MapLocation[] sources = new MapLocation[9];
+    public static Enemy funnyTarget;
 
     // idek why this is returning. check if can move anyways after to squeeze out some juice
     private boolean _runTick() throws GameActionException {
@@ -107,6 +110,7 @@ public class CombatStrategy extends Strategy {
         // if (rc.getRawCheese() >= 50 && myLoc.distanceSquaredto(GlobalArray.nearestRatKing) <= 36) return false;
         // println("-- COMBAT STRAT TICK --- starting bytecode count " + Clock.getBytecodeNum() + "\n");
 
+        funnyTarget = null;
         if (rc.getCarrying() == null) {
             // Profiler.push();
             sourceCnt = 0;
@@ -118,6 +122,19 @@ public class CombatStrategy extends Strategy {
                     sources[sourceCnt++] = RobotTracker.sortedCats[i].location;
                 }
             }
+            if (sourceCnt == 0 && EnemyManager.numKnownEnemies > 0 && rc.canTurn()) {
+                // find nearest
+                int nearestDist = Integer.MAX_VALUE;
+                for (int i = 0; i < EnemyManager.numKnownEnemies; i++) {
+                    MapLocation enemyLoc = EnemyManager.knownEnemies[i].location;
+                    int dist = myLoc.distanceSquaredTo(enemyLoc);
+                    if (dist < nearestDist) {
+                        nearestDist = dist;
+                        funnyTarget = EnemyManager.knownEnemies[i];
+                    }
+                }
+                sources[sourceCnt++] = funnyTarget.location;
+            }
             // for (int i = 0; i < sourceCnt; i++) {
             //     indicate("combat source prep: " + sources[i]);
             // }
@@ -125,6 +142,11 @@ public class CombatStrategy extends Strategy {
             // Profiler.pop("combat bfs");
             indicate("MOVEMASK: " + Integer.toBinaryString(moveMask));
             if (moveMask == 0) return false; // no enemies nearby
+            if (funnyTarget != null) {
+                println("AGGROED ON FUNNY TARGET!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " + funnyTarget.location);
+                indicate("funny pos: " + funnyTarget.location);
+                turn(myLoc.directionTo(funnyTarget.location));
+            }
         }
 
         Profiler.push();

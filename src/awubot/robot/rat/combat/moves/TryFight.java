@@ -12,6 +12,7 @@ import static awubot.Game.*;
 import static awubot.util.Util.*;
 import static awubot.robot.rat.BabyRat.*;
 import awubot.RobotTracker;
+import awubot.comms.Enemy;
 
 
 public final class TryFight {
@@ -25,7 +26,7 @@ public final class TryFight {
     static MapLocation newLoc;
     static double score;
     static boolean facingTarget;
-    static RobotInfo target;
+    static Enemy target;
     static int dxToTarget;
     static int dyToTarget;
     static int bytecodeStart, bytecodeBudget;
@@ -36,16 +37,15 @@ public final class TryFight {
         fd = null;
         best = -1e9;
         if (RobotTracker.numEnemies > 0) {
-            target = RobotTracker.sortedEnemies[0];
+            target = new Enemy(RobotTracker.sortedEnemies[0]);
         } else if (RobotTracker.numCats > 0) {
-            target = RobotTracker.sortedCats[0];
+            target = new Enemy(RobotTracker.sortedCats[0]);
+        } else if (CombatStrategy.funnyTarget != null) {
+            target = CombatStrategy.funnyTarget;
         } else {
             println("wtf ?????????????????????????????????????????????????????????");
             assert(false);
             return false;
-        }
-        if (am(11417, 31)) {
-            println("TARGET: " + target.location);
         }
         bytecodeStart = Clock.getBytecodeNum();
         bytecodeBudget = Clock.getBytecodesLeft() - 1500;

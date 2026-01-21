@@ -58,13 +58,25 @@ public final class CombatCommon {
 
     // -1 = impossible, 0 = strafe, 1 = no strafe
     public static int movementCost(Direction moveDir, Direction facing) {
+        if (am(12556, 20)) {
+            println("moveDir: " + moveDir + " facing: " + facing + " canTurn " + rc.canTurn() + " isMovementReady " + rc.isMovementReady() + " canMove " + canMove(moveDir) + " current facing " + myDir);
+        }
         if (moveDir == Direction.CENTER) {
             if (facing == myDir || rc.canTurn()) return 1;
             else return -1;
         }
         if (!rc.isMovementReady() || !canMove(moveDir)) return -1;
+        if (am(12556, 20)) {
+            println("passed movement ready and can move");
+        }
         if (facing != myDir && !rc.canTurn()) return -1;
+        if (am(12556, 20)) {
+            println("passed can turn");
+        }
         if (moveDir == myDir && myDir == facing) return 1; 
+        if (am(12556, 20)) {
+            println("passed no strafe case");
+        }
         if ((moveDir == myDir || moveDir == facing)) return 1;
         return 0;
     }

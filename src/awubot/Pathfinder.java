@@ -367,6 +367,7 @@ class BugnavInstance {
     }
 
     private static boolean possiblyPassable(MapLocation loc) {
+        if(isRatKing) return CellTracker.isKingPassable(loc);
         return (CellTracker.isPassable(loc) || !CellTracker.isSeen(loc)) && !RobotTracker.kingSet.contains(loc) && (Config.allowDirt() || !CellTracker.isDirt(loc) || CellTracker.isWallAdjacent(loc));
     }
 
@@ -452,6 +453,7 @@ class BugnavInstance {
         leftTurn = bug.leftTurn;
         bottomDir = bug.bottomDir;
         topDir = bug.topDir;
+        outOfSightLoc = bug.outOfSightLoc;
         copyPath: {
             appendPosition(bug.path0);
             if(bug.nextPathIndex == 1) break copyPath;
@@ -499,6 +501,7 @@ class BugnavInstance {
         leftTurn = bug.leftTurn;
         bottomDir = bug.bottomDir;
         topDir = bug.topDir;
+        outOfSightLoc = bug.outOfSightLoc;
         copyPath: {
             appendPosition(bug.path0);
             if(bug.nextPathIndex == 1) break copyPath;
@@ -546,6 +549,7 @@ class BugnavInstance {
         leftTurn = bug.leftTurn;
         bottomDir = bug.bottomDir;
         topDir = bug.topDir;
+        outOfSightLoc = bug.outOfSightLoc;
         copyPath: {
             appendPosition(bug.path0);
             if(bug.nextPathIndex == 1) break copyPath;
@@ -597,6 +601,7 @@ class BugnavInstance {
         leftTurn = bug.leftTurn;
         bottomDir = bug.bottomDir;
         topDir = bug.topDir;
+        outOfSightLoc = bug.outOfSightLoc;
         copyPath: {
             appendPosition(bug.path0);
             if(bug.nextPathIndex == 1) break copyPath;
@@ -652,6 +657,7 @@ class BugnavInstance {
         leftTurn = bug.leftTurn;
         bottomDir = bug.bottomDir;
         topDir = bug.topDir;
+        outOfSightLoc = bug.outOfSightLoc;
         copyPath: {
             appendPosition(bug.path0);
             if(bug.nextPathIndex == 1) break copyPath;
@@ -688,7 +694,7 @@ class BugnavInstance {
 
             }
         }
-        return false;
+        return true;
     }
 
     // false = halt bug
@@ -872,6 +878,15 @@ class BugnavInstance {
                     indicate("past right");
                     leftTurn = true;
                     guessedLeft[pos.y] |= 1l << pos.x;
+                } else if(isRatKing) {
+                    // just guess :skull:
+                    if(Rng.mcg() >> 30 == 0) {
+                        leftTurn = true;
+                        guessedLeft[pos.y] |= 1l << pos.x;
+                    } else {
+                        leftTurn = false;
+                        guessedRight[pos.y] |= 1l << pos.x;
+                    }
                 } else {
                     indicate("looking ahead");
                     return doLookahead();
@@ -1957,6 +1972,8 @@ public class Pathfinder {
         // deal with the edge case of moving immediately out of sight
         if(myLoc.equals(bug.pos)) {
             var loc = bug.outOfSightLoc;
+            bug.outOfSightLoc = null;
+            if(loc == null || loc.equals(myLoc)) return;
             var dir = myLoc.directionTo(loc);
             turn(dir);
             if(CellTracker.isPassable(loc) && (!CellTracker.isDirt(loc) || Config.allowDirt())) {

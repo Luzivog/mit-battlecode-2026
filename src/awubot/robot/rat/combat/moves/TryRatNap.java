@@ -1056,9 +1056,7 @@ public final class TryRatNap {
     }
 
     private static void selectSecondaryMoves() throws GameActionException {
-        int dx = t.x - myLocX;
-        int dy = t.y - myLocY;
-        if (dx * dx + dy * dy > 2) return;
+        if (myLoc.distanceSquaredTo(t) > 2) return;
         if (info.getHealth() >= rc.getHealth()) return; // can i ratnap this guy
         switch (myDir.ordinal()) {
             case 0 -> {
@@ -1250,7 +1248,7 @@ public final class TryRatNap {
             info = RobotTracker.sortedEnemies[i];
             if (info.getTeam() == team) continue;
             if (info.location.distanceSquaredTo(myLoc) > 2) continue;
-            if (info.getHealth() <= GameConstants.RAT_BITE_DAMAGE) continue; // just kill
+            if (info.getHealth() <= CombatStrategy.getBiteDamage()) continue; // just kill
             if (info.getType() != UnitType.BABY_RAT) continue;
             int dx = info.location.x - myLocX;
             int dy = info.location.y - myLocY;
@@ -1263,9 +1261,10 @@ public final class TryRatNap {
             }
         }
         // nap anyone
-        for (RobotInfo info : rc.senseNearbyRobots(2)) {
+        for (int i = 0; i < RobotTracker.numEnemies && i < 3; i++) {
+            info = RobotTracker.sortedEnemies[i];
             if (info.getTeam() == team) continue;
-            if (info.getHealth() <= GameConstants.RAT_BITE_DAMAGE) continue; // just kill
+            if (info.getHealth() <= CombatStrategy.getBiteDamage()) continue; // just kill
             if (info.getType() != UnitType.BABY_RAT) continue;
             if (rc.canCarryRat(info.location)) {
                 rc.carryRat(info.location);

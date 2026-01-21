@@ -62,12 +62,15 @@ public final class TryPosition {
     public static boolean run() throws GameActionException {
         if (!rc.isMovementReady()) return false;
         bytecodeStart = Clock.getBytecodeNum();
-        bytecodeBudget = Math.min(3000, (int) (Clock.getBytecodesLeft() - 1000) / 2);
+        bytecodeBudget = Math.min(3000, Clock.getBytecodesLeft() - 1000);
         // Profiler.push();
         bestMove = null;
         bestFacing = null;
         bestScore = -1e9;
         selectMoves();
+        if (bestScore < 0) {
+            println("POSITION IS COOKED UHJH OHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
+        }
         assert(CombatStrategy.performMoves(bestMove, bestFacing));
         indicate("COMBAT STRAT: POSITION move " + bestMove + " face " + bestFacing + " score " + bestScore);
         return true;
@@ -103,11 +106,15 @@ public final class TryPosition {
     private static void face{{ dir_short_map[face_dir] }}() throws GameActionException {
         int moveCost = CombatCommon.movementCost(moveDir, {{ face_dir }});
         if (moveCost == -1) return;
+        score = 0;
         if (moveCost == 1) score += 10;
         if (moveDir != Direction.CENTER) score += 5;
         score += CombatStrategy.getCellScoreFor(moveDir, {{ face_dir }});
         if ({{ face_dir }} != myDir) {
             score += 2;
+        }
+        if (am(11908, 24)) {
+            println("considered pos move " + moveDir + " face " + {{ face_dir }} + " score " + score);
         }
         if (score > bestScore) {
             bestScore = score;

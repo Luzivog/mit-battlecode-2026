@@ -13,6 +13,7 @@ public class CellTracker {
     '\0' - unknown
     '\1' - passable
     '\2' - wall
+    mapdata[y coordinate][x coordinate] for cell info!!
 
     */
     public static StringBuilder[] mapData;
@@ -2306,840 +2307,1080 @@ public class CellTracker {
             case 0 -> {
                 if(info.isDirt()) dirt0 |= 1l << locX;
                 else dirt0 &= ~(1l << locX);
+                if (mapData[0].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[0].setCharAt(locX, '\2');
+                    } else {
+                        mapData[0].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen0 & 1l << locX) == 0l) {
                     seen0 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[0].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable0 |= 1l << locX;
-                        mapData[0].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 1 -> {
                 if(info.isDirt()) dirt1 |= 1l << locX;
                 else dirt1 &= ~(1l << locX);
+                if (mapData[1].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[1].setCharAt(locX, '\2');
+                    } else {
+                        mapData[1].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen1 & 1l << locX) == 0l) {
                     seen1 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[1].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable1 |= 1l << locX;
-                        mapData[1].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 2 -> {
                 if(info.isDirt()) dirt2 |= 1l << locX;
                 else dirt2 &= ~(1l << locX);
+                if (mapData[2].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[2].setCharAt(locX, '\2');
+                    } else {
+                        mapData[2].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen2 & 1l << locX) == 0l) {
                     seen2 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[2].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable2 |= 1l << locX;
-                        mapData[2].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 3 -> {
                 if(info.isDirt()) dirt3 |= 1l << locX;
                 else dirt3 &= ~(1l << locX);
+                if (mapData[3].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[3].setCharAt(locX, '\2');
+                    } else {
+                        mapData[3].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen3 & 1l << locX) == 0l) {
                     seen3 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[3].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable3 |= 1l << locX;
-                        mapData[3].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 4 -> {
                 if(info.isDirt()) dirt4 |= 1l << locX;
                 else dirt4 &= ~(1l << locX);
+                if (mapData[4].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[4].setCharAt(locX, '\2');
+                    } else {
+                        mapData[4].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen4 & 1l << locX) == 0l) {
                     seen4 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[4].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable4 |= 1l << locX;
-                        mapData[4].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 5 -> {
                 if(info.isDirt()) dirt5 |= 1l << locX;
                 else dirt5 &= ~(1l << locX);
+                if (mapData[5].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[5].setCharAt(locX, '\2');
+                    } else {
+                        mapData[5].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen5 & 1l << locX) == 0l) {
                     seen5 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[5].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable5 |= 1l << locX;
-                        mapData[5].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 6 -> {
                 if(info.isDirt()) dirt6 |= 1l << locX;
                 else dirt6 &= ~(1l << locX);
+                if (mapData[6].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[6].setCharAt(locX, '\2');
+                    } else {
+                        mapData[6].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen6 & 1l << locX) == 0l) {
                     seen6 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[6].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable6 |= 1l << locX;
-                        mapData[6].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 7 -> {
                 if(info.isDirt()) dirt7 |= 1l << locX;
                 else dirt7 &= ~(1l << locX);
+                if (mapData[7].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[7].setCharAt(locX, '\2');
+                    } else {
+                        mapData[7].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen7 & 1l << locX) == 0l) {
                     seen7 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[7].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable7 |= 1l << locX;
-                        mapData[7].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 8 -> {
                 if(info.isDirt()) dirt8 |= 1l << locX;
                 else dirt8 &= ~(1l << locX);
+                if (mapData[8].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[8].setCharAt(locX, '\2');
+                    } else {
+                        mapData[8].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen8 & 1l << locX) == 0l) {
                     seen8 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[8].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable8 |= 1l << locX;
-                        mapData[8].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 9 -> {
                 if(info.isDirt()) dirt9 |= 1l << locX;
                 else dirt9 &= ~(1l << locX);
+                if (mapData[9].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[9].setCharAt(locX, '\2');
+                    } else {
+                        mapData[9].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen9 & 1l << locX) == 0l) {
                     seen9 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[9].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable9 |= 1l << locX;
-                        mapData[9].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 10 -> {
                 if(info.isDirt()) dirt10 |= 1l << locX;
                 else dirt10 &= ~(1l << locX);
+                if (mapData[10].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[10].setCharAt(locX, '\2');
+                    } else {
+                        mapData[10].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen10 & 1l << locX) == 0l) {
                     seen10 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[10].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable10 |= 1l << locX;
-                        mapData[10].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 11 -> {
                 if(info.isDirt()) dirt11 |= 1l << locX;
                 else dirt11 &= ~(1l << locX);
+                if (mapData[11].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[11].setCharAt(locX, '\2');
+                    } else {
+                        mapData[11].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen11 & 1l << locX) == 0l) {
                     seen11 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[11].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable11 |= 1l << locX;
-                        mapData[11].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 12 -> {
                 if(info.isDirt()) dirt12 |= 1l << locX;
                 else dirt12 &= ~(1l << locX);
+                if (mapData[12].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[12].setCharAt(locX, '\2');
+                    } else {
+                        mapData[12].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen12 & 1l << locX) == 0l) {
                     seen12 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[12].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable12 |= 1l << locX;
-                        mapData[12].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 13 -> {
                 if(info.isDirt()) dirt13 |= 1l << locX;
                 else dirt13 &= ~(1l << locX);
+                if (mapData[13].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[13].setCharAt(locX, '\2');
+                    } else {
+                        mapData[13].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen13 & 1l << locX) == 0l) {
                     seen13 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[13].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable13 |= 1l << locX;
-                        mapData[13].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 14 -> {
                 if(info.isDirt()) dirt14 |= 1l << locX;
                 else dirt14 &= ~(1l << locX);
+                if (mapData[14].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[14].setCharAt(locX, '\2');
+                    } else {
+                        mapData[14].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen14 & 1l << locX) == 0l) {
                     seen14 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[14].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable14 |= 1l << locX;
-                        mapData[14].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 15 -> {
                 if(info.isDirt()) dirt15 |= 1l << locX;
                 else dirt15 &= ~(1l << locX);
+                if (mapData[15].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[15].setCharAt(locX, '\2');
+                    } else {
+                        mapData[15].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen15 & 1l << locX) == 0l) {
                     seen15 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[15].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable15 |= 1l << locX;
-                        mapData[15].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 16 -> {
                 if(info.isDirt()) dirt16 |= 1l << locX;
                 else dirt16 &= ~(1l << locX);
+                if (mapData[16].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[16].setCharAt(locX, '\2');
+                    } else {
+                        mapData[16].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen16 & 1l << locX) == 0l) {
                     seen16 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[16].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable16 |= 1l << locX;
-                        mapData[16].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 17 -> {
                 if(info.isDirt()) dirt17 |= 1l << locX;
                 else dirt17 &= ~(1l << locX);
+                if (mapData[17].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[17].setCharAt(locX, '\2');
+                    } else {
+                        mapData[17].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen17 & 1l << locX) == 0l) {
                     seen17 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[17].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable17 |= 1l << locX;
-                        mapData[17].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 18 -> {
                 if(info.isDirt()) dirt18 |= 1l << locX;
                 else dirt18 &= ~(1l << locX);
+                if (mapData[18].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[18].setCharAt(locX, '\2');
+                    } else {
+                        mapData[18].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen18 & 1l << locX) == 0l) {
                     seen18 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[18].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable18 |= 1l << locX;
-                        mapData[18].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 19 -> {
                 if(info.isDirt()) dirt19 |= 1l << locX;
                 else dirt19 &= ~(1l << locX);
+                if (mapData[19].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[19].setCharAt(locX, '\2');
+                    } else {
+                        mapData[19].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen19 & 1l << locX) == 0l) {
                     seen19 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[19].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable19 |= 1l << locX;
-                        mapData[19].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 20 -> {
                 if(info.isDirt()) dirt20 |= 1l << locX;
                 else dirt20 &= ~(1l << locX);
+                if (mapData[20].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[20].setCharAt(locX, '\2');
+                    } else {
+                        mapData[20].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen20 & 1l << locX) == 0l) {
                     seen20 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[20].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable20 |= 1l << locX;
-                        mapData[20].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 21 -> {
                 if(info.isDirt()) dirt21 |= 1l << locX;
                 else dirt21 &= ~(1l << locX);
+                if (mapData[21].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[21].setCharAt(locX, '\2');
+                    } else {
+                        mapData[21].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen21 & 1l << locX) == 0l) {
                     seen21 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[21].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable21 |= 1l << locX;
-                        mapData[21].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 22 -> {
                 if(info.isDirt()) dirt22 |= 1l << locX;
                 else dirt22 &= ~(1l << locX);
+                if (mapData[22].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[22].setCharAt(locX, '\2');
+                    } else {
+                        mapData[22].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen22 & 1l << locX) == 0l) {
                     seen22 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[22].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable22 |= 1l << locX;
-                        mapData[22].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 23 -> {
                 if(info.isDirt()) dirt23 |= 1l << locX;
                 else dirt23 &= ~(1l << locX);
+                if (mapData[23].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[23].setCharAt(locX, '\2');
+                    } else {
+                        mapData[23].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen23 & 1l << locX) == 0l) {
                     seen23 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[23].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable23 |= 1l << locX;
-                        mapData[23].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 24 -> {
                 if(info.isDirt()) dirt24 |= 1l << locX;
                 else dirt24 &= ~(1l << locX);
+                if (mapData[24].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[24].setCharAt(locX, '\2');
+                    } else {
+                        mapData[24].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen24 & 1l << locX) == 0l) {
                     seen24 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[24].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable24 |= 1l << locX;
-                        mapData[24].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 25 -> {
                 if(info.isDirt()) dirt25 |= 1l << locX;
                 else dirt25 &= ~(1l << locX);
+                if (mapData[25].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[25].setCharAt(locX, '\2');
+                    } else {
+                        mapData[25].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen25 & 1l << locX) == 0l) {
                     seen25 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[25].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable25 |= 1l << locX;
-                        mapData[25].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 26 -> {
                 if(info.isDirt()) dirt26 |= 1l << locX;
                 else dirt26 &= ~(1l << locX);
+                if (mapData[26].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[26].setCharAt(locX, '\2');
+                    } else {
+                        mapData[26].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen26 & 1l << locX) == 0l) {
                     seen26 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[26].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable26 |= 1l << locX;
-                        mapData[26].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 27 -> {
                 if(info.isDirt()) dirt27 |= 1l << locX;
                 else dirt27 &= ~(1l << locX);
+                if (mapData[27].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[27].setCharAt(locX, '\2');
+                    } else {
+                        mapData[27].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen27 & 1l << locX) == 0l) {
                     seen27 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[27].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable27 |= 1l << locX;
-                        mapData[27].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 28 -> {
                 if(info.isDirt()) dirt28 |= 1l << locX;
                 else dirt28 &= ~(1l << locX);
+                if (mapData[28].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[28].setCharAt(locX, '\2');
+                    } else {
+                        mapData[28].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen28 & 1l << locX) == 0l) {
                     seen28 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[28].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable28 |= 1l << locX;
-                        mapData[28].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 29 -> {
                 if(info.isDirt()) dirt29 |= 1l << locX;
                 else dirt29 &= ~(1l << locX);
+                if (mapData[29].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[29].setCharAt(locX, '\2');
+                    } else {
+                        mapData[29].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen29 & 1l << locX) == 0l) {
                     seen29 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[29].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable29 |= 1l << locX;
-                        mapData[29].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 30 -> {
                 if(info.isDirt()) dirt30 |= 1l << locX;
                 else dirt30 &= ~(1l << locX);
+                if (mapData[30].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[30].setCharAt(locX, '\2');
+                    } else {
+                        mapData[30].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen30 & 1l << locX) == 0l) {
                     seen30 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[30].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable30 |= 1l << locX;
-                        mapData[30].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 31 -> {
                 if(info.isDirt()) dirt31 |= 1l << locX;
                 else dirt31 &= ~(1l << locX);
+                if (mapData[31].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[31].setCharAt(locX, '\2');
+                    } else {
+                        mapData[31].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen31 & 1l << locX) == 0l) {
                     seen31 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[31].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable31 |= 1l << locX;
-                        mapData[31].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 32 -> {
                 if(info.isDirt()) dirt32 |= 1l << locX;
                 else dirt32 &= ~(1l << locX);
+                if (mapData[32].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[32].setCharAt(locX, '\2');
+                    } else {
+                        mapData[32].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen32 & 1l << locX) == 0l) {
                     seen32 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[32].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable32 |= 1l << locX;
-                        mapData[32].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 33 -> {
                 if(info.isDirt()) dirt33 |= 1l << locX;
                 else dirt33 &= ~(1l << locX);
+                if (mapData[33].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[33].setCharAt(locX, '\2');
+                    } else {
+                        mapData[33].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen33 & 1l << locX) == 0l) {
                     seen33 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[33].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable33 |= 1l << locX;
-                        mapData[33].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 34 -> {
                 if(info.isDirt()) dirt34 |= 1l << locX;
                 else dirt34 &= ~(1l << locX);
+                if (mapData[34].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[34].setCharAt(locX, '\2');
+                    } else {
+                        mapData[34].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen34 & 1l << locX) == 0l) {
                     seen34 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[34].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable34 |= 1l << locX;
-                        mapData[34].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 35 -> {
                 if(info.isDirt()) dirt35 |= 1l << locX;
                 else dirt35 &= ~(1l << locX);
+                if (mapData[35].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[35].setCharAt(locX, '\2');
+                    } else {
+                        mapData[35].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen35 & 1l << locX) == 0l) {
                     seen35 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[35].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable35 |= 1l << locX;
-                        mapData[35].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 36 -> {
                 if(info.isDirt()) dirt36 |= 1l << locX;
                 else dirt36 &= ~(1l << locX);
+                if (mapData[36].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[36].setCharAt(locX, '\2');
+                    } else {
+                        mapData[36].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen36 & 1l << locX) == 0l) {
                     seen36 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[36].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable36 |= 1l << locX;
-                        mapData[36].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 37 -> {
                 if(info.isDirt()) dirt37 |= 1l << locX;
                 else dirt37 &= ~(1l << locX);
+                if (mapData[37].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[37].setCharAt(locX, '\2');
+                    } else {
+                        mapData[37].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen37 & 1l << locX) == 0l) {
                     seen37 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[37].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable37 |= 1l << locX;
-                        mapData[37].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 38 -> {
                 if(info.isDirt()) dirt38 |= 1l << locX;
                 else dirt38 &= ~(1l << locX);
+                if (mapData[38].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[38].setCharAt(locX, '\2');
+                    } else {
+                        mapData[38].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen38 & 1l << locX) == 0l) {
                     seen38 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[38].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable38 |= 1l << locX;
-                        mapData[38].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 39 -> {
                 if(info.isDirt()) dirt39 |= 1l << locX;
                 else dirt39 &= ~(1l << locX);
+                if (mapData[39].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[39].setCharAt(locX, '\2');
+                    } else {
+                        mapData[39].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen39 & 1l << locX) == 0l) {
                     seen39 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[39].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable39 |= 1l << locX;
-                        mapData[39].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 40 -> {
                 if(info.isDirt()) dirt40 |= 1l << locX;
                 else dirt40 &= ~(1l << locX);
+                if (mapData[40].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[40].setCharAt(locX, '\2');
+                    } else {
+                        mapData[40].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen40 & 1l << locX) == 0l) {
                     seen40 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[40].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable40 |= 1l << locX;
-                        mapData[40].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 41 -> {
                 if(info.isDirt()) dirt41 |= 1l << locX;
                 else dirt41 &= ~(1l << locX);
+                if (mapData[41].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[41].setCharAt(locX, '\2');
+                    } else {
+                        mapData[41].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen41 & 1l << locX) == 0l) {
                     seen41 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[41].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable41 |= 1l << locX;
-                        mapData[41].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 42 -> {
                 if(info.isDirt()) dirt42 |= 1l << locX;
                 else dirt42 &= ~(1l << locX);
+                if (mapData[42].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[42].setCharAt(locX, '\2');
+                    } else {
+                        mapData[42].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen42 & 1l << locX) == 0l) {
                     seen42 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[42].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable42 |= 1l << locX;
-                        mapData[42].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 43 -> {
                 if(info.isDirt()) dirt43 |= 1l << locX;
                 else dirt43 &= ~(1l << locX);
+                if (mapData[43].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[43].setCharAt(locX, '\2');
+                    } else {
+                        mapData[43].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen43 & 1l << locX) == 0l) {
                     seen43 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[43].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable43 |= 1l << locX;
-                        mapData[43].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 44 -> {
                 if(info.isDirt()) dirt44 |= 1l << locX;
                 else dirt44 &= ~(1l << locX);
+                if (mapData[44].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[44].setCharAt(locX, '\2');
+                    } else {
+                        mapData[44].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen44 & 1l << locX) == 0l) {
                     seen44 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[44].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable44 |= 1l << locX;
-                        mapData[44].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 45 -> {
                 if(info.isDirt()) dirt45 |= 1l << locX;
                 else dirt45 &= ~(1l << locX);
+                if (mapData[45].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[45].setCharAt(locX, '\2');
+                    } else {
+                        mapData[45].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen45 & 1l << locX) == 0l) {
                     seen45 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[45].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable45 |= 1l << locX;
-                        mapData[45].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 46 -> {
                 if(info.isDirt()) dirt46 |= 1l << locX;
                 else dirt46 &= ~(1l << locX);
+                if (mapData[46].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[46].setCharAt(locX, '\2');
+                    } else {
+                        mapData[46].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen46 & 1l << locX) == 0l) {
                     seen46 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[46].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable46 |= 1l << locX;
-                        mapData[46].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 47 -> {
                 if(info.isDirt()) dirt47 |= 1l << locX;
                 else dirt47 &= ~(1l << locX);
+                if (mapData[47].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[47].setCharAt(locX, '\2');
+                    } else {
+                        mapData[47].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen47 & 1l << locX) == 0l) {
                     seen47 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[47].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable47 |= 1l << locX;
-                        mapData[47].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 48 -> {
                 if(info.isDirt()) dirt48 |= 1l << locX;
                 else dirt48 &= ~(1l << locX);
+                if (mapData[48].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[48].setCharAt(locX, '\2');
+                    } else {
+                        mapData[48].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen48 & 1l << locX) == 0l) {
                     seen48 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[48].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable48 |= 1l << locX;
-                        mapData[48].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 49 -> {
                 if(info.isDirt()) dirt49 |= 1l << locX;
                 else dirt49 &= ~(1l << locX);
+                if (mapData[49].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[49].setCharAt(locX, '\2');
+                    } else {
+                        mapData[49].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen49 & 1l << locX) == 0l) {
                     seen49 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[49].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable49 |= 1l << locX;
-                        mapData[49].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 50 -> {
                 if(info.isDirt()) dirt50 |= 1l << locX;
                 else dirt50 &= ~(1l << locX);
+                if (mapData[50].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[50].setCharAt(locX, '\2');
+                    } else {
+                        mapData[50].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen50 & 1l << locX) == 0l) {
                     seen50 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[50].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable50 |= 1l << locX;
-                        mapData[50].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 51 -> {
                 if(info.isDirt()) dirt51 |= 1l << locX;
                 else dirt51 &= ~(1l << locX);
+                if (mapData[51].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[51].setCharAt(locX, '\2');
+                    } else {
+                        mapData[51].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen51 & 1l << locX) == 0l) {
                     seen51 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[51].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable51 |= 1l << locX;
-                        mapData[51].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 52 -> {
                 if(info.isDirt()) dirt52 |= 1l << locX;
                 else dirt52 &= ~(1l << locX);
+                if (mapData[52].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[52].setCharAt(locX, '\2');
+                    } else {
+                        mapData[52].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen52 & 1l << locX) == 0l) {
                     seen52 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[52].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable52 |= 1l << locX;
-                        mapData[52].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 53 -> {
                 if(info.isDirt()) dirt53 |= 1l << locX;
                 else dirt53 &= ~(1l << locX);
+                if (mapData[53].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[53].setCharAt(locX, '\2');
+                    } else {
+                        mapData[53].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen53 & 1l << locX) == 0l) {
                     seen53 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[53].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable53 |= 1l << locX;
-                        mapData[53].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 54 -> {
                 if(info.isDirt()) dirt54 |= 1l << locX;
                 else dirt54 &= ~(1l << locX);
+                if (mapData[54].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[54].setCharAt(locX, '\2');
+                    } else {
+                        mapData[54].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen54 & 1l << locX) == 0l) {
                     seen54 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[54].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable54 |= 1l << locX;
-                        mapData[54].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 55 -> {
                 if(info.isDirt()) dirt55 |= 1l << locX;
                 else dirt55 &= ~(1l << locX);
+                if (mapData[55].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[55].setCharAt(locX, '\2');
+                    } else {
+                        mapData[55].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen55 & 1l << locX) == 0l) {
                     seen55 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[55].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable55 |= 1l << locX;
-                        mapData[55].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 56 -> {
                 if(info.isDirt()) dirt56 |= 1l << locX;
                 else dirt56 &= ~(1l << locX);
+                if (mapData[56].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[56].setCharAt(locX, '\2');
+                    } else {
+                        mapData[56].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen56 & 1l << locX) == 0l) {
                     seen56 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[56].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable56 |= 1l << locX;
-                        mapData[56].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 57 -> {
                 if(info.isDirt()) dirt57 |= 1l << locX;
                 else dirt57 &= ~(1l << locX);
+                if (mapData[57].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[57].setCharAt(locX, '\2');
+                    } else {
+                        mapData[57].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen57 & 1l << locX) == 0l) {
                     seen57 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[57].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable57 |= 1l << locX;
-                        mapData[57].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 58 -> {
                 if(info.isDirt()) dirt58 |= 1l << locX;
                 else dirt58 &= ~(1l << locX);
+                if (mapData[58].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[58].setCharAt(locX, '\2');
+                    } else {
+                        mapData[58].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen58 & 1l << locX) == 0l) {
                     seen58 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[58].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable58 |= 1l << locX;
-                        mapData[58].setCharAt(locX, '\u0001');
                     }
                 }
             }
             case 59 -> {
                 if(info.isDirt()) dirt59 |= 1l << locX;
                 else dirt59 &= ~(1l << locX);
+                if (mapData[59].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[59].setCharAt(locX, '\2');
+                    } else {
+                        mapData[59].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen59 & 1l << locX) == 0l) {
                     seen59 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[59].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable59 |= 1l << locX;
-                        mapData[59].setCharAt(locX, '\u0001');
                     }
                 }
             }

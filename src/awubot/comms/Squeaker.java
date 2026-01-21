@@ -71,6 +71,10 @@ public class Squeaker {
                     }
                     break;
                 case 1:
+                    int lo = bytes & ((1 << 15) - 1);
+                    int hi = (bytes >>> 15) & ((1 << 15) - 1);
+                    EnemyManager.registerPacket(lo, msg.getSource());
+                    EnemyManager.registerPacket(hi, msg.getSource());
                     break;
                 default:
                     assert(false);
@@ -95,6 +99,10 @@ public class Squeaker {
                     assert(false);
             }
         }
+    }
+
+    public static void squeakEnemy(int data) {
+        rc.squeak((0b11 << 30) | data);
     }
 
     public static void squeakLureSignal(MapLocation myCatLoc, MapLocation myEnemyKingLoc) {
@@ -140,6 +148,7 @@ public class Squeaker {
                 return;
             }
         }
+        if (EnemyManager.trySqueak()) return;
         if (!isRatKing) {
             squeakMine(); // can add other squeaks later
         }

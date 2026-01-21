@@ -104,10 +104,10 @@ public class CombatStrategy extends Strategy {
     // idek why this is returning. check if can move anyways after to squeeze out some juice
     private boolean _runTick() throws GameActionException {
         if (rc.isBeingCarried() || rc.isBeingThrown()) return false;
-        println("-- COMBAT STRAT TICK --- starting bytecode count " + Clock.getBytecodeNum() + "\n");
+        // println("-- COMBAT STRAT TICK --- starting bytecode count " + Clock.getBytecodeNum() + "\n");
 
         if (rc.getCarrying() == null) {
-            Profiler.push();
+            // Profiler.push();
             sourceCnt = 0;
             for (int i = 0; i < RobotTracker.numEnemies; i++) {
                 sources[sourceCnt++] = RobotTracker.sortedEnemies[i].location;
@@ -121,7 +121,7 @@ public class CombatStrategy extends Strategy {
             //     indicate("combat source prep: " + sources[i]);
             // }
             moveMask = Pathfinder.multisourceBfs(sources, sourceCnt);
-            Profiler.pop("combat bfs");
+            // Profiler.pop("combat bfs");
             indicate("MOVEMASK: " + Integer.toBinaryString(moveMask));
             if (moveMask == 0) return false; // no enemies nearby
         }
@@ -130,18 +130,18 @@ public class CombatStrategy extends Strategy {
         precomp();
         Profiler.pop("precomp");
 
+        isLastMove = true;
         if (rc.getCarrying() != null) {
             Profiler.push();
             boolean tryThrowRes = TryThrow.run();
-            Profiler.pop("try throw");
+            Profiler.pop("try throw", 4000);
             if (tryThrowRes) return true;
             Profiler.push();
             boolean tryPositionRes = TryPosition.run();
-            Profiler.pop("try position");
+            Profiler.pop("try position", 3000);
             if (tryPositionRes) return true;
             return true; // bruh
         }
-        isLastMove = true;
 
         Profiler.push();
         boolean tryRatNapRes = TryRatNap.run();
@@ -177,17 +177,17 @@ public class CombatStrategy extends Strategy {
     }
 
     public boolean miniTick() throws GameActionException {
-        Profiler.push();
+        // Profiler.push();
         boolean tryRatNapRes = TryRatNap.miniRun();
-        Profiler.pop("mini ratnap");
+        // Profiler.pop("mini ratnap");
         if (tryRatNapRes) return true;
 
         boolean tryAttackRes = TryAttack.miniRun();
         if (tryAttackRes) return true;
 
-        Profiler.push();
+        // Profiler.push();
         boolean tryTrapRes = TryTrap.miniRun();
-        Profiler.pop("mini trap");
+        // Profiler.pop("mini trap");
         if (tryTrapRes) return true;
         return false;
     }
@@ -324,11 +324,11 @@ public class CombatStrategy extends Strategy {
         } else {
             double base = 0;
             Direction enemyDir = info.direction;
-            int dx = enemyLoc.x - myLocX;
-            int dy = enemyLoc.y - myLocY;
+            int dx = myLocX - enemyLoc.x;
+            int dy = myLocY - enemyLoc.y;
             boolean canCurrentlySense = canSense(dx, dy, enemyDir);
-            dx -= moveDir.dx;
-            dy -= moveDir.dy;
+            dx += moveDir.dx;
+            dy += moveDir.dy;
             boolean canSenseAfterMove = canSense(dx, dy, enemyDir);
 
             if (canCurrentlySense) {

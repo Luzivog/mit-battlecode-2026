@@ -13,6 +13,8 @@ import static awubot.util.Util.*;
 import awubot.util.Profiler;
 import awubot.CellTracker;
 import awubot.RobotTracker;
+import awubot.comms.Enemy;
+import awubot.comms.EnemyManager;
 
 public class CombatTracker {
     private static final int GRID_RADIUS = 2;
@@ -194,7 +196,12 @@ public class CombatTracker {
         for (int i = 0; i < RobotTracker.numEnemies; i++) {
             RobotInfo info = RobotTracker.sortedEnemies[i];
             if (info.getType() != UnitType.BABY_RAT) continue;
-            registerEnemy(info);
+            registerEnemy(new Enemy(info));
+        }
+        // be aware of squeaked danger (hopefully should reduce chance of getting napped while not blocking too many moves unnecessarily)
+        for (int i = 0; i < EnemyManager.numKnownEnemies; i++) {
+            Enemy enemy = EnemyManager.knownEnemies[i];
+            registerEnemy(enemy);
         }
         // Profiler.pop("CombatTracker: registering enemies");
 
@@ -290,10 +297,13 @@ public class CombatTracker {
         {% endfor %}
     }
 
-    public static void registerEnemy(RobotInfo info) {
+    public static void registerEnemy(Enemy info) {
         int dx = info.location.x - myLocX;
         int dy = info.location.y - myLocY;
-        boolean highHealth = info.getHealth() > rc.getHealth();
+        boolean highHealth = info.health > rc.getHealth();
+        if (am(11908, 24)) {
+            println("combat tracker considered enemy " + info.location + " direction " + info.direction + " hp " + info.health);
+        }
         if (highHealth) {
             registerEnemyHigh(dx, dy, info.direction);
         } else {

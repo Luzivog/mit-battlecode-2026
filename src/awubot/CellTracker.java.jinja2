@@ -13,6 +13,7 @@ public class CellTracker {
     '\0' - unknown
     '\1' - passable
     '\2' - wall
+    mapdata[y coordinate][x coordinate] for cell info!!
 
     */
     public static StringBuilder[] mapData;
@@ -133,14 +134,18 @@ public class CellTracker {
             case {{i}} -> {
                 if(info.isDirt()) dirt{{i}} |= 1l << locX;
                 else dirt{{i}} &= ~(1l << locX);
+                if (mapData[{{i}}].charAt(locX) == '\0') {
+                    if (info.isWall()) {
+                        mapData[{{i}}].setCharAt(locX, '\2');
+                    } else {
+                        mapData[{{i}}].setCharAt(locX, '\1');
+                    }
+                }
                 if((seen{{i}} & 1l << locX) == 0l) {
                     seen{{i}} |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
-                    if(info.isWall()) {
-                        mapData[{{i}}].setCharAt(locX, '\u0002');
-                    } else {
+                    if(!info.isWall()) {
                         passable{{i}} |= 1l << locX;
-                        mapData[{{i}}].setCharAt(locX, '\u0001');
                     }
                 }
             }

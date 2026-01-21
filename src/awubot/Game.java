@@ -31,6 +31,7 @@ public class Game {
     public static MapLocation myPreviousLoc;
     public static FastIndexedIntSet knownCheeseMines;
     public static MapLocation spawn;
+    public static int carryStartTime;
 
     public static void _rawMove(Direction dir) throws GameActionException {
         rc.move(dir);
@@ -68,6 +69,7 @@ public class Game {
         team = rc.getTeam();
         spawn = myLoc;
         knownCheeseMines = new FastIndexedIntSet();
+        carryStartTime = -1;
 
         // StringBuilder sb = new StringBuilder();
         // Direction moveDir = Direction.NORTH;
@@ -113,7 +115,7 @@ public class Game {
         // Clear indicator string at the start of each turn
         indicatorString = "";
         StringBuilder sb = new StringBuilder();
-
+        if (rc.getCarrying() == null) carryStartTime = -1;
 
         // Profiler.begin();   
         // for (int i = nearbyRobots.length - 1; i >= 0; i--) {
@@ -125,6 +127,8 @@ public class Game {
 
     public static void postTick() throws GameActionException {
         myPreviousLoc = myLoc;
+        if (rc.getCarrying() == null) carryStartTime = -1;
+        else if (carryStartTime == -1) carryStartTime = time;
         // Profiler.begin();
         // MapInfo info = rc.senseMapInfo(myLoc);
         // Profiler.end_print("sense");

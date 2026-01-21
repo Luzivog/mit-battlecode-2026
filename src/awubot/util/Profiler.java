@@ -7,8 +7,6 @@ import static awubot.Game.isRatKing;
 import static awubot.Game.rc;
 import static awubot.util.Util.*;
 
-import java.util.ArrayList;
-
 public class Profiler {
     private static int cnt = 0, turnNum = 0;
     private static int acc = 0;
@@ -30,12 +28,13 @@ public class Profiler {
         report_print(obj);
     }
 
-    private static ArrayList<Integer> stk = new ArrayList<>();
+    private static int[] stk = new int[20];
+    private static int stkSize = 0;
     public static void push() {
-        stk.add(Clock.getBytecodeNum());
+        stk[stkSize++] = Clock.getBytecodeNum();
     }
     public static void pop(Object obj) {
-        int res = Clock.getBytecodeNum() - stk.remove(stk.size() - 1) - 32;
+        int res = Clock.getBytecodeNum() - stk[--stkSize];
         if (res < 0) {
             if (isRatKing) res += 20000;
             else res += 17500;
@@ -44,7 +43,7 @@ public class Profiler {
     }
 
     public static void pop(Object obj, int lwb) {
-        int res = Clock.getBytecodeNum() - stk.remove(stk.size() - 1) - 32;
+        int res = Clock.getBytecodeNum() - stk[--stkSize];
         if (res < 0) {
             if (isRatKing) res += 20000;
             else res += 17500;
@@ -56,7 +55,7 @@ public class Profiler {
     }
 
     public static void pop_ind(Object obj) {
-        int res = Clock.getBytecodeNum() - stk.remove(stk.size() - 1) - 32;
+        int res = Clock.getBytecodeNum() - stk[--stkSize];
         if (res < 0) {
             if (isRatKing) res += 20000;
             else res += 17500;
@@ -65,7 +64,7 @@ public class Profiler {
     }
 
     public static void pop_ind(Object obj, int lwb) {
-        int res = Clock.getBytecodeNum() - stk.remove(stk.size() - 1) - 32;
+        int res = Clock.getBytecodeNum() - stk[--stkSize];
         if (res < 0) {
             if (isRatKing) res += 20000;
             else res += 17500;

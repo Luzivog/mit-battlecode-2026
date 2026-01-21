@@ -3,11 +3,13 @@
 #   Optional .env: AB_PLAYER1, AB_PLAYER2, AB_MAPS_DIR, AB_REPS, AB_SEED, AB_WORKERS, AB_NO_BUILD, AB_TIMEOUT
 # Notes:
 #   --reps repeats each map N times (each repeat runs both sides); --seed fixes the seed for all entries.
+import io
 import math
 import os
 import random
 import subprocess
 import sys
+import time
 from argparse import ArgumentParser
 from collections import Counter
 from dataclasses import dataclass, field
@@ -15,7 +17,7 @@ from datetime import datetime
 from multiprocessing.pool import ThreadPool
 from pathlib import Path
 from threading import Lock
-from rich.console import Console
+from rich.console import Console, Group
 from rich.live import Live
 from rich.segment import Segments
 from rich.table import Table
@@ -31,6 +33,12 @@ if load_dotenv is not None:
 
 ROOT = Path(__file__).parent.parent
 DEFAULT_MAPS_DIR = ROOT / "maps"
+RESULTS_DIR = ROOT / "match_results"
+SHIT_TESTS: set[str] = set(["closeup", "troll2", "averystrangespace", "5t4rv4t10n_1337", "coop"])  # Map names (stems) to always skip.
+ERROR_LOG_LIMIT = 10
+ERROR_LOG_LINES = 12
+COMPILE_RETRY_DELAY = 10
+COMPILE_RETRY_ATTEMPTS = 1
 
 
 def gradle_cmd() -> list[str]:
@@ -44,6 +52,13 @@ def list_local_maps(maps_dir: Path) -> list[str]:
     if not maps:
         raise SystemExit(f"No .map26 files found in {maps_dir}")
     return sorted(maps, key=str.lower)
+
+
+def filter_shit_tests(maps: list[str]) -> list[str]:
+    if not SHIT_TESTS:
+        return maps
+    skip = {name.lower() for name in SHIT_TESTS}
+    return [name for name in maps if name.lower() not in skip]
 
 
 def env_first(*names: str) -> str | None:
@@ -99,6 +114,39 @@ def format_p_value(p_value: float) -> str:
         return "<1e-6"
     return f"{p_value:.3g}"
 
+
+def tail_lines(text: str, limit: int) -> list[str]:
+    if limit <= 0:
+        return []
+    lines = [line.rstrip() for line in text.splitlines()]
+    non_empty = [line for line in lines if line.strip()]
+    target = non_empty if non_empty else lines
+    return target[-limit:]
+
+
+def is_compile_error(output: str) -> bool:
+    lower = output.lower()
+    if "compilation failed" in lower or "compilejava failed" in lower:
+        return True
+    if "error:" in lower and "compilejava" in lower:
+        return True
+    return False
+
+
+def robot_player_paths(team: str) -> list[Path]:
+    package_path = Path(*team.split("."))
+    base = ROOT / "src" / package_path
+    return [base / "RobotPlayer.java", base / "RobotPlayer.scala"]
+
+
+def validate_team_exists(team: str) -> None:
+    candidates = robot_player_paths(team)
+    if any(path.exists() for path in candidates):
+        return
+    expected = ", ".join(str(path) for path in candidates)
+    raise SystemExit(f"Bot '{team}' not found. Expected RobotPlayer at {expected}.")
+
+
 @dataclass
 class MapEntry:
     name: str
@@ -130,6 +178,14 @@ class PlayerStatistics:
     lose_maps: int = 0
     wins_by_condition: Counter = field(default_factory=lambda: Counter())
 
+
+@dataclass
+class ErrorLog:
+    timestamp: str
+    context: str
+    lines: list[str]
+
+
 @dataclass
 class State:
     player1: str
@@ -138,9 +194,46 @@ class State:
     matches: list[Match]
     console: Console
     timestamp: str
+    results_path: Path | None = None
+    snapshot_console: Console | None = None
     live: Live | None = None
     in_progress: set[tuple[str, bool]] = field(default_factory=set)
+    errors: list[ErrorLog] = field(default_factory=list)
     lock: Lock = field(default_factory=Lock, repr=False)
+
+    def add_error(self, context: str, output: str) -> None:
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        lines = tail_lines(output, ERROR_LOG_LINES)
+        self.errors.append(ErrorLog(timestamp, context, lines))
+        if len(self.errors) > ERROR_LOG_LIMIT:
+            self.errors = self.errors[-ERROR_LOG_LIMIT:]
+
+    def render_errors(self) -> Text | None:
+        if not self.errors:
+            return None
+        lines = ["", "Errors (most recent first):"]
+        for entry in reversed(self.errors[-ERROR_LOG_LIMIT:]):
+            lines.append(f"{entry.timestamp} | {entry.context}")
+            for line in entry.lines:
+                lines.append(f"  {line}")
+        return Text("\n".join(lines), style="red")
+
+    def write_snapshot(self, renderable) -> None:
+        if self.results_path is None:
+            return
+        if self.snapshot_console is None:
+            width = getattr(self.console, "width", None) or 120
+            self.snapshot_console = Console(
+                width=width,
+                record=True,
+                color_system=None,
+                force_terminal=False,
+                file=io.StringIO(),
+            )
+        self.snapshot_console.print(renderable)
+        text = self.snapshot_console.export_text(clear=True)
+        self.results_path.parent.mkdir(parents=True, exist_ok=True)
+        self.results_path.write_text(text, encoding="utf-8", newline="\n")
 
     def print(self) -> None:
         maps_table = self.get_maps_table()
@@ -176,10 +269,14 @@ class State:
                 separator += "┪"
 
         renderable = Segments([*maps_segments[:-2], Text(separator, style="bold"), *stats_segments[2:]])
+        errors_text = self.render_errors()
+        if errors_text is not None:
+            renderable = Group(renderable, errors_text)
         if self.live is None:
             self.console.print(renderable)
         else:
-            self.live.update(renderable)
+            self.live.update(renderable, refresh=True)
+        self.write_snapshot(renderable)
 
     def get_maps_table(self) -> Table:
         table = Table()
@@ -346,38 +443,58 @@ def run_match(
         state.in_progress.add((map_entry.label, reverse))
         state.print()
 
-    try:
-        process = subprocess.run(
-            gradle_cmd()
-            + [
-                "runWithoutBuild",
-                f"-PteamA={player1}",
-                f"-PteamB={player2}",
-                f"-Pmaps={map_entry.name}",
-                f"-Pseed={seed}",
-                f"-Preplay={replay_name}",
-            ],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            cwd=str(ROOT),
-            timeout=timeout,
-        )
-    except subprocess.TimeoutExpired:
-        with state.lock:
-            state.in_progress.discard((map_entry.label, reverse))
-            state.print()
-        return
-    stdout = process.stdout.decode("utf-8")
+    stdout = ""
+    process = None
+    for attempt in range(COMPILE_RETRY_ATTEMPTS + 1):
+        try:
+            process = subprocess.run(
+                gradle_cmd()
+                + [
+                    "runWithoutBuild",
+                    f"-PteamA={player1}",
+                    f"-PteamB={player2}",
+                    f"-Pmaps={map_entry.name}",
+                    f"-Pseed={seed}",
+                    f"-Preplay={replay_name}",
+                ],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                cwd=str(ROOT),
+                timeout=timeout,
+            )
+        except subprocess.TimeoutExpired:
+            timeout_msg = (
+                f"Timeout after {timeout}s: {player1} vs {player2} "
+                f"on {map_entry.label} seed {seed}"
+            )
+            with state.lock:
+                state.in_progress.discard((map_entry.label, reverse))
+                state.add_error("timeout", timeout_msg)
+                state.print()
+            return
 
-    if process.returncode != 0:
+        stdout = process.stdout.decode("utf-8")
+        if process.returncode == 0:
+            break
+
+        if is_compile_error(stdout) and attempt < COMPILE_RETRY_ATTEMPTS:
+            time.sleep(COMPILE_RETRY_DELAY)
+            continue
+
+        error_kind = "compile error" if is_compile_error(stdout) else "run error"
+        context = f"{error_kind}: {player1} vs {player2} on {map_entry.label} seed {seed}"
         with state.lock:
             state.in_progress.discard((map_entry.label, reverse))
+            state.add_error(context, stdout)
             state.print()
-        print(
-            f"Gradle exited with status code {process.returncode} after running "
-            f"{player1} vs. {player2} on {map_entry.name}\n{stdout}"
-        )
         sys.exit(process.returncode)
+
+    if process is None:
+        with state.lock:
+            state.in_progress.discard((map_entry.label, reverse))
+            state.add_error("run error", "No process was spawned for this match.")
+            state.print()
+        sys.exit(1)
 
     lines = stdout.splitlines()
 
@@ -452,7 +569,13 @@ def main() -> None:
     if not args.player1 or not args.player2:
         raise SystemExit("Provide player1/player2 args or set AB_PLAYER1/AB_PLAYER2 in .env.")
 
+    validate_team_exists(args.player1)
+    validate_team_exists(args.player2)
+
     base_maps = parse_maps(args.maps) if args.maps else list_local_maps(Path(args.maps_dir))
+    base_maps = filter_shit_tests(base_maps)
+    if not base_maps:
+        raise SystemExit("No maps left after applying SHIT_TESTS.")
     timeout = args.timeout if args.timeout and args.timeout > 0 else None
     if args.reps < 1:
         raise SystemExit("--reps must be >= 1")
@@ -463,17 +586,30 @@ def main() -> None:
             map_entries.append(MapEntry(map_name, label, rep))
     os.makedirs(ROOT / "matches", exist_ok=True)
 
-    if not args.no_build:
-        subprocess.run(gradle_cmd() + ["build"], check=False, cwd=str(ROOT))
-    
-
     console = Console(highlight=False)
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
-    state = State(args.player1, args.player2, map_entries, [], console, timestamp)
+    results_path = RESULTS_DIR / f"abtest_{timestamp}.txt"
+    state = State(args.player1, args.player2, map_entries, [], console, timestamp, results_path=results_path)
     with Live("", console=console, refresh_per_second=4) as live:
         state.live = live
         state.print()
+
+        if not args.no_build:
+            build_proc = subprocess.run(
+                gradle_cmd() + ["build"],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                cwd=str(ROOT),
+                text=True,
+            )
+            if build_proc.returncode != 0:
+                output = build_proc.stdout or ""
+                error_kind = "compile error" if is_compile_error(output) else "build error"
+                with state.lock:
+                    state.add_error(f"{error_kind}: gradle build", output)
+                    state.print()
+                sys.exit(build_proc.returncode)
 
         rng = random.Random(args.seed) if args.seed is not None else random.Random()
         seed_by_label = {}

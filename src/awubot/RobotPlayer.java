@@ -1,6 +1,7 @@
 package awubot;
 
 import battlecode.common.*;
+import awubot.comms.EnemyManager;
 import awubot.comms.GlobalArray;
 import awubot.comms.Squeaker;
 import awubot.robot.king.RatKing;
@@ -24,6 +25,7 @@ public class RobotPlayer {
         Game.init(rc);
         Rng.seed();
         Rng.init();
+        EnemyManager.init();
         GlobalArray.initGlobalArray();
         CellTracker.init();
 
@@ -35,6 +37,7 @@ public class RobotPlayer {
                 GlobalArray.preTick();
                 RobotTracker.reset();
                 RobotTracker.preTick();
+                EnemyManager.preTick();
                 Squeaker.preTick();
                 CellTracker.storeVisibleCells();
 
@@ -54,6 +57,8 @@ public class RobotPlayer {
                 }
                 if (Clock.getBytecodesLeft() > 1000) {
                     Squeaker.postTick();
+                } else {
+                    Util.indicate("skipped squeaker");
                 }
                 GlobalArray.postTick();
                 Game.postTick();
@@ -65,6 +70,7 @@ public class RobotPlayer {
                     println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! BYTECODE EXCEEDED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                     // rc.resign();
                 }
+                rc.setIndicatorString(Util.indicatorString);
                 Clock.yield();
             }
         }

@@ -167,6 +167,7 @@ class Match:
         return {
            "The winning team destroyed all of the enemy team's rat kings.": "KILL",
            "The winning team had more points at the end of the game.": "PTS",
+           "The winning team won on tiebreakers": "TIEBRK",
            "The winning team won arbitrarily (coin flip).": "RNG",
         }.get(self.win_condition, self.win_condition)
 

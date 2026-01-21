@@ -150,6 +150,7 @@ public class CombatStrategy extends Strategy {
     // idek why this is returning. check if can move anyways after to squeeze out some juice
     private boolean _runTick() throws GameActionException {
         if (rc.isBeingCarried() || rc.isBeingThrown()) return false;
+        // if (rc.getRawCheese() >= 50 && myLoc.distanceSquaredto(GlobalArray.nearestRatKing) <= 36) return false;
         // println("-- COMBAT STRAT TICK --- starting bytecode count " + Clock.getBytecodeNum() + "\n");
 
         if (rc.getCarrying() == null) {
@@ -292,6 +293,7 @@ public class CombatStrategy extends Strategy {
     public static void computeCellScores() throws GameActionException {
         sb = new StringBuilder();
         cellScore = new double[9];
+        if (1 == 1) return;
         for (int i = 0; i < RobotTracker.numCats && i < 3; i++) {
             RobotInfo info = RobotTracker.sortedCats[i];
             {% for dir in allDirections %}

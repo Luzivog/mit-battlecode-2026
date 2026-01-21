@@ -349,8 +349,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + {{ rem * 4 }};
-                break scan;
+                score += 10;
+                break scan; 
             }
             {% if debug %} println("cell is passable"); {% endif %}
             {% if in_grid %}

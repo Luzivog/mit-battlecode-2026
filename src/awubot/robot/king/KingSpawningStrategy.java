@@ -18,40 +18,34 @@ public class KingSpawningStrategy extends Strategy {
 
         int numKings = Math.max(1, GlobalArray.countRatKings());
         int extraPerKing = (rc.getGlobalCheese() / 1000) * (numKings - 1);
-        int maxRatCost = 10 + 40 * numKings + extraPerKing;
 
-        if (rc.getCurrentRatCost() >= maxRatCost) {
-            indicate("at rat limit (" + (numKings * 16) + " rats for " + numKings + " kings)");
-            return true;
-        }
-
-        var thresh = Math.min(rc.getGlobalCheese() / 20 + 10, maxRatCost);
+        var thresh = rc.getGlobalCheese() / 20 + 10;
 
         if (RobotTracker.numCats > 0 && RobotTracker.numAllies == 0) {
             thresh = 50;
         }
 
-        // defensive spawning if enemies outnumber allies
         MapLocation target = null;
-        var cnt = 0;
+        int targetNeighbours = 0;
         for (int i = 0; i < RobotTracker.numEnemies; i++) {
             RobotInfo robot = RobotTracker.sortedEnemies[i];
-            if (robot == null || robot.getType() != UnitType.BABY_RAT) continue;
-            cnt++;
             MapLocation loc = robot.getLocation();
-            if (target == null || loc.distanceSquaredTo(myLoc) < target.distanceSquaredTo(myLoc)) {
+            int cnt = 0;
+            for (RobotInfo info : rc.senseNearbyRobots(loc, 4, team == Team.A ? Team.B : Team.A)) {
+                if (info.getTeam() == team) cnt++;
+            }
+            if (cnt <= 1 && (target == null || cnt > targetNeighbours)) {
                 target = loc;
+                targetNeighbours = cnt;
             }
         }
-        for (int i = 0; i < RobotTracker.numAllies; i++) {
-            RobotInfo robot = RobotTracker.sortedAllies[i];
-            if (robot == null || robot.getType() != UnitType.BABY_RAT) continue;
-            cnt--;
+        if (target == null) target = new MapLocation(mapWidth / 2, mapHeight / 2);
+        else {
+            indicate("targeting enemy cluster at " + target + " with " + targetNeighbours + " neighbours");
+            thresh += 20;
         }
-        if(cnt > 0) thresh += 20;
-        if(target == null) target = new MapLocation(mapWidth / 2, mapHeight / 2);
 
-        if(rc.getCurrentRatCost() <= thresh && (rc.getGlobalCheese() >= 100 || rc.getCurrentRatCost() == 10)) {
+        if (rc.getCurrentRatCost() <= thresh && (rc.getGlobalCheese() >= 100 || rc.getCurrentRatCost() == 10)) {
             trySpawn(target);
         }
         return true;
@@ -60,23 +54,20 @@ public class KingSpawningStrategy extends Strategy {
 
     void trySpawn(MapLocation target) throws GameActionException {
         MapLocation best = null;
-        for(var dir : directions) {
-            for (var dir2 : directions) {
-                MapLocation spawnLoc = myLoc.add(dir).add(dir2);
-                if(rc.canBuildRat(spawnLoc)) {
-                    if(best == null || spawnLoc.distanceSquaredTo(target) < best.distanceSquaredTo(target)) {
-                        best = spawnLoc;
+        for (int dx = -2; dx <= 2; dx++) {
+            for (int dy = -2; dy <= 2; dy++) {
+                if (Math.max(Math.abs(dx), Math.abs(dy)) == 2) {
+                    MapLocation loc = myLoc.translate(dx, dy);
+                    if (rc.canBuildRat(loc)) {
+                        if (best == null || best.distanceSquaredTo(target) > loc.distanceSquaredTo(target))
+                        best = loc;
+                        break;
                     }
                 }
             }
         }
-        if(best != null) {
-            Direction mySpawnDir = best.directionTo(target);
-            if (mySpawnDir != Direction.CENTER) {
-                turn(mySpawnDir);
-            } else {
-                println("wtf mySpawnDir is center");
-            }
+        if (best != null) {
+            rc.turn(best.directionTo(target));
             rc.buildRat(best);
             numSpawned++;
         }

@@ -2052,8 +2052,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_0_3 != null) {
                 if (occ_0_3.getTeam() == team) {
@@ -2089,8 +2089,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_0_4 != null) {
                 if (occ_0_4.getTeam() == team) {
@@ -2126,8 +2126,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX, myLocY + 5)) {
                 score += 28;
@@ -2143,8 +2143,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX, myLocY + 6)) {
                 score += 24;
@@ -2184,8 +2184,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_2_3 != null) {
                 if (occ_2_3.getTeam() == team) {
@@ -2221,8 +2221,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_3_4 != null) {
                 if (occ_3_4.getTeam() == team) {
@@ -2258,8 +2258,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + 5)) {
                 score += 28;
@@ -2275,8 +2275,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + 6)) {
                 score += 24;
@@ -2316,8 +2316,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_2_1 != null) {
                 if (occ_2_1.getTeam() == team) {
@@ -2353,8 +2353,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_3_1 != null) {
                 if (occ_3_1.getTeam() == team) {
@@ -2390,8 +2390,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_4_1 != null) {
                 if (occ_4_1.getTeam() == team) {
@@ -2424,8 +2424,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + 1)) {
                 score += 24;
@@ -2465,8 +2465,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_2_m1 != null) {
                 if (occ_2_m1.getTeam() == team) {
@@ -2502,8 +2502,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_3_m2 != null) {
                 if (occ_3_m2.getTeam() == team) {
@@ -2539,8 +2539,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_4_m3 != null) {
                 if (occ_4_m3.getTeam() == team) {
@@ -2573,8 +2573,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + -4)) {
                 score += 24;
@@ -2614,8 +2614,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_0_m1 != null) {
                 if (occ_0_m1.getTeam() == team) {
@@ -2651,8 +2651,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_0_m2 != null) {
                 if (occ_0_m2.getTeam() == team) {
@@ -2688,8 +2688,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_0_m3 != null) {
                 if (occ_0_m3.getTeam() == team) {
@@ -2722,8 +2722,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_0_m4 != null) {
                 if (occ_0_m4.getTeam() == team) {
@@ -2780,8 +2780,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m2_m1 != null) {
                 if (occ_m2_m1.getTeam() == team) {
@@ -2817,8 +2817,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m3_m2 != null) {
                 if (occ_m3_m2.getTeam() == team) {
@@ -2854,8 +2854,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m4_m3 != null) {
                 if (occ_m4_m3.getTeam() == team) {
@@ -2888,8 +2888,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + -4)) {
                 score += 24;
@@ -2929,8 +2929,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m2_1 != null) {
                 if (occ_m2_1.getTeam() == team) {
@@ -2966,8 +2966,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m3_1 != null) {
                 if (occ_m3_1.getTeam() == team) {
@@ -3003,8 +3003,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m4_1 != null) {
                 if (occ_m4_1.getTeam() == team) {
@@ -3037,8 +3037,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + 1)) {
                 score += 24;
@@ -3078,8 +3078,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m2_3 != null) {
                 if (occ_m2_3.getTeam() == team) {
@@ -3115,8 +3115,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m3_4 != null) {
                 if (occ_m3_4.getTeam() == team) {
@@ -3152,8 +3152,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + 5)) {
                 score += 28;
@@ -3169,8 +3169,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + 6)) {
                 score += 24;
@@ -3210,8 +3210,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_1_3 != null) {
                 if (occ_1_3.getTeam() == team) {
@@ -3247,8 +3247,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_1_4 != null) {
                 if (occ_1_4.getTeam() == team) {
@@ -3284,8 +3284,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + 5)) {
                 score += 28;
@@ -3301,8 +3301,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + 6)) {
                 score += 24;
@@ -3342,8 +3342,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_3_3 != null) {
                 if (occ_3_3.getTeam() == team) {
@@ -3379,8 +3379,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_4_4 != null) {
                 if (occ_4_4.getTeam() == team) {
@@ -3416,8 +3416,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + 5)) {
                 score += 28;
@@ -3433,8 +3433,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 6, myLocY + 6)) {
                 score += 24;
@@ -3474,8 +3474,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_3_1 != null) {
                 if (occ_3_1.getTeam() == team) {
@@ -3511,8 +3511,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_4_1 != null) {
                 if (occ_4_1.getTeam() == team) {
@@ -3548,8 +3548,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + 1)) {
                 score += 28;
@@ -3565,8 +3565,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 6, myLocY + 1)) {
                 score += 24;
@@ -3606,8 +3606,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_3_m1 != null) {
                 if (occ_3_m1.getTeam() == team) {
@@ -3643,8 +3643,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_4_m2 != null) {
                 if (occ_4_m2.getTeam() == team) {
@@ -3680,8 +3680,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + -3)) {
                 score += 28;
@@ -3697,8 +3697,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 6, myLocY + -4)) {
                 score += 24;
@@ -3738,8 +3738,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_1_m1 != null) {
                 if (occ_1_m1.getTeam() == team) {
@@ -3775,8 +3775,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_1_m2 != null) {
                 if (occ_1_m2.getTeam() == team) {
@@ -3812,8 +3812,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_1_m3 != null) {
                 if (occ_1_m3.getTeam() == team) {
@@ -3846,8 +3846,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_1_m4 != null) {
                 if (occ_1_m4.getTeam() == team) {
@@ -3904,8 +3904,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m1_m1 != null) {
                 if (occ_m1_m1.getTeam() == team) {
@@ -3941,8 +3941,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m2_m2 != null) {
                 if (occ_m2_m2.getTeam() == team) {
@@ -3978,8 +3978,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m3_m3 != null) {
                 if (occ_m3_m3.getTeam() == team) {
@@ -4012,8 +4012,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m4_m4 != null) {
                 if (occ_m4_m4.getTeam() == team) {
@@ -4070,8 +4070,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m1_1 != null) {
                 if (occ_m1_1.getTeam() == team) {
@@ -4107,8 +4107,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m2_1 != null) {
                 if (occ_m2_1.getTeam() == team) {
@@ -4144,8 +4144,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m3_1 != null) {
                 if (occ_m3_1.getTeam() == team) {
@@ -4178,8 +4178,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m4_1 != null) {
                 if (occ_m4_1.getTeam() == team) {
@@ -4236,8 +4236,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m1_3 != null) {
                 if (occ_m1_3.getTeam() == team) {
@@ -4273,8 +4273,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m2_4 != null) {
                 if (occ_m2_4.getTeam() == team) {
@@ -4310,8 +4310,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + 5)) {
                 score += 28;
@@ -4327,8 +4327,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + 6)) {
                 score += 24;
@@ -4368,8 +4368,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_1_2 != null) {
                 if (occ_1_2.getTeam() == team) {
@@ -4405,8 +4405,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_1_3 != null) {
                 if (occ_1_3.getTeam() == team) {
@@ -4442,8 +4442,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_1_4 != null) {
                 if (occ_1_4.getTeam() == team) {
@@ -4476,8 +4476,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + 5)) {
                 score += 24;
@@ -4517,8 +4517,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_3_2 != null) {
                 if (occ_3_2.getTeam() == team) {
@@ -4554,8 +4554,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_4_3 != null) {
                 if (occ_4_3.getTeam() == team) {
@@ -4591,8 +4591,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + 4)) {
                 score += 28;
@@ -4608,8 +4608,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 6, myLocY + 5)) {
                 score += 24;
@@ -4649,8 +4649,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_3_0 != null) {
                 if (occ_3_0.getTeam() == team) {
@@ -4686,8 +4686,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_4_0 != null) {
                 if (occ_4_0.getTeam() == team) {
@@ -4723,8 +4723,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY)) {
                 score += 28;
@@ -4740,8 +4740,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 6, myLocY)) {
                 score += 24;
@@ -4781,8 +4781,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_3_m2 != null) {
                 if (occ_3_m2.getTeam() == team) {
@@ -4818,8 +4818,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_4_m3 != null) {
                 if (occ_4_m3.getTeam() == team) {
@@ -4855,8 +4855,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + -4)) {
                 score += 28;
@@ -4872,8 +4872,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 6, myLocY + -5)) {
                 score += 24;
@@ -4913,8 +4913,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_1_m2 != null) {
                 if (occ_1_m2.getTeam() == team) {
@@ -4950,8 +4950,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_1_m3 != null) {
                 if (occ_1_m3.getTeam() == team) {
@@ -4987,8 +4987,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_1_m4 != null) {
                 if (occ_1_m4.getTeam() == team) {
@@ -5021,8 +5021,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + -5)) {
                 score += 24;
@@ -5062,8 +5062,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m1_m2 != null) {
                 if (occ_m1_m2.getTeam() == team) {
@@ -5099,8 +5099,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m2_m3 != null) {
                 if (occ_m2_m3.getTeam() == team) {
@@ -5136,8 +5136,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m3_m4 != null) {
                 if (occ_m3_m4.getTeam() == team) {
@@ -5170,8 +5170,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + -5)) {
                 score += 24;
@@ -5211,8 +5211,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m1_0 != null) {
                 if (occ_m1_0.getTeam() == team) {
@@ -5248,8 +5248,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m2_0 != null) {
                 if (occ_m2_0.getTeam() == team) {
@@ -5285,8 +5285,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m3_0 != null) {
                 if (occ_m3_0.getTeam() == team) {
@@ -5319,8 +5319,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m4_0 != null) {
                 if (occ_m4_0.getTeam() == team) {
@@ -5377,8 +5377,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m1_2 != null) {
                 if (occ_m1_2.getTeam() == team) {
@@ -5414,8 +5414,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m2_3 != null) {
                 if (occ_m2_3.getTeam() == team) {
@@ -5451,8 +5451,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m3_4 != null) {
                 if (occ_m3_4.getTeam() == team) {
@@ -5485,8 +5485,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + 5)) {
                 score += 24;
@@ -5526,8 +5526,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_1_1 != null) {
                 if (occ_1_1.getTeam() == team) {
@@ -5563,8 +5563,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_1_2 != null) {
                 if (occ_1_2.getTeam() == team) {
@@ -5600,8 +5600,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_1_3 != null) {
                 if (occ_1_3.getTeam() == team) {
@@ -5634,8 +5634,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_1_4 != null) {
                 if (occ_1_4.getTeam() == team) {
@@ -5692,8 +5692,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_3_1 != null) {
                 if (occ_3_1.getTeam() == team) {
@@ -5729,8 +5729,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_4_2 != null) {
                 if (occ_4_2.getTeam() == team) {
@@ -5766,8 +5766,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + 3)) {
                 score += 28;
@@ -5783,8 +5783,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 6, myLocY + 4)) {
                 score += 24;
@@ -5824,8 +5824,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_3_m1 != null) {
                 if (occ_3_m1.getTeam() == team) {
@@ -5861,8 +5861,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_4_m1 != null) {
                 if (occ_4_m1.getTeam() == team) {
@@ -5898,8 +5898,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + -1)) {
                 score += 28;
@@ -5915,8 +5915,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 6, myLocY + -1)) {
                 score += 24;
@@ -5956,8 +5956,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_3_m3 != null) {
                 if (occ_3_m3.getTeam() == team) {
@@ -5993,8 +5993,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_4_m4 != null) {
                 if (occ_4_m4.getTeam() == team) {
@@ -6030,8 +6030,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + -5)) {
                 score += 28;
@@ -6047,8 +6047,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 6, myLocY + -6)) {
                 score += 24;
@@ -6088,8 +6088,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_1_m3 != null) {
                 if (occ_1_m3.getTeam() == team) {
@@ -6125,8 +6125,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_1_m4 != null) {
                 if (occ_1_m4.getTeam() == team) {
@@ -6162,8 +6162,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + -5)) {
                 score += 28;
@@ -6179,8 +6179,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + -6)) {
                 score += 24;
@@ -6220,8 +6220,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m1_m3 != null) {
                 if (occ_m1_m3.getTeam() == team) {
@@ -6257,8 +6257,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m2_m4 != null) {
                 if (occ_m2_m4.getTeam() == team) {
@@ -6294,8 +6294,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + -5)) {
                 score += 28;
@@ -6311,8 +6311,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + -6)) {
                 score += 24;
@@ -6352,8 +6352,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m1_m1 != null) {
                 if (occ_m1_m1.getTeam() == team) {
@@ -6389,8 +6389,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m2_m1 != null) {
                 if (occ_m2_m1.getTeam() == team) {
@@ -6426,8 +6426,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m3_m1 != null) {
                 if (occ_m3_m1.getTeam() == team) {
@@ -6460,8 +6460,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m4_m1 != null) {
                 if (occ_m4_m1.getTeam() == team) {
@@ -6518,8 +6518,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m1_1 != null) {
                 if (occ_m1_1.getTeam() == team) {
@@ -6555,8 +6555,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m2_2 != null) {
                 if (occ_m2_2.getTeam() == team) {
@@ -6592,8 +6592,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m3_3 != null) {
                 if (occ_m3_3.getTeam() == team) {
@@ -6626,8 +6626,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m4_4 != null) {
                 if (occ_m4_4.getTeam() == team) {
@@ -6684,8 +6684,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_0_1 != null) {
                 if (occ_0_1.getTeam() == team) {
@@ -6721,8 +6721,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_0_2 != null) {
                 if (occ_0_2.getTeam() == team) {
@@ -6758,8 +6758,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_0_3 != null) {
                 if (occ_0_3.getTeam() == team) {
@@ -6792,8 +6792,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_0_4 != null) {
                 if (occ_0_4.getTeam() == team) {
@@ -6850,8 +6850,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_2_1 != null) {
                 if (occ_2_1.getTeam() == team) {
@@ -6887,8 +6887,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_3_2 != null) {
                 if (occ_3_2.getTeam() == team) {
@@ -6924,8 +6924,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_4_3 != null) {
                 if (occ_4_3.getTeam() == team) {
@@ -6958,8 +6958,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + 4)) {
                 score += 24;
@@ -6999,8 +6999,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_2_m1 != null) {
                 if (occ_2_m1.getTeam() == team) {
@@ -7036,8 +7036,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_3_m1 != null) {
                 if (occ_3_m1.getTeam() == team) {
@@ -7073,8 +7073,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_4_m1 != null) {
                 if (occ_4_m1.getTeam() == team) {
@@ -7107,8 +7107,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + -1)) {
                 score += 24;
@@ -7148,8 +7148,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_2_m3 != null) {
                 if (occ_2_m3.getTeam() == team) {
@@ -7185,8 +7185,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_3_m4 != null) {
                 if (occ_3_m4.getTeam() == team) {
@@ -7222,8 +7222,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + -5)) {
                 score += 28;
@@ -7239,8 +7239,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + -6)) {
                 score += 24;
@@ -7280,8 +7280,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_0_m3 != null) {
                 if (occ_0_m3.getTeam() == team) {
@@ -7317,8 +7317,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_0_m4 != null) {
                 if (occ_0_m4.getTeam() == team) {
@@ -7354,8 +7354,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX, myLocY + -5)) {
                 score += 28;
@@ -7371,8 +7371,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX, myLocY + -6)) {
                 score += 24;
@@ -7412,8 +7412,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m2_m3 != null) {
                 if (occ_m2_m3.getTeam() == team) {
@@ -7449,8 +7449,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m3_m4 != null) {
                 if (occ_m3_m4.getTeam() == team) {
@@ -7486,8 +7486,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + -5)) {
                 score += 28;
@@ -7503,8 +7503,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + -6)) {
                 score += 24;
@@ -7544,8 +7544,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m2_m1 != null) {
                 if (occ_m2_m1.getTeam() == team) {
@@ -7581,8 +7581,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m3_m1 != null) {
                 if (occ_m3_m1.getTeam() == team) {
@@ -7618,8 +7618,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m4_m1 != null) {
                 if (occ_m4_m1.getTeam() == team) {
@@ -7652,8 +7652,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + -1)) {
                 score += 24;
@@ -7693,8 +7693,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m2_1 != null) {
                 if (occ_m2_1.getTeam() == team) {
@@ -7730,8 +7730,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m3_2 != null) {
                 if (occ_m3_2.getTeam() == team) {
@@ -7767,8 +7767,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m4_3 != null) {
                 if (occ_m4_3.getTeam() == team) {
@@ -7801,8 +7801,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + 4)) {
                 score += 24;
@@ -7842,8 +7842,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m1_1 != null) {
                 if (occ_m1_1.getTeam() == team) {
@@ -7879,8 +7879,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m1_2 != null) {
                 if (occ_m1_2.getTeam() == team) {
@@ -7916,8 +7916,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m1_3 != null) {
                 if (occ_m1_3.getTeam() == team) {
@@ -7950,8 +7950,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m1_4 != null) {
                 if (occ_m1_4.getTeam() == team) {
@@ -8008,8 +8008,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_1_1 != null) {
                 if (occ_1_1.getTeam() == team) {
@@ -8045,8 +8045,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_2_2 != null) {
                 if (occ_2_2.getTeam() == team) {
@@ -8082,8 +8082,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_3_3 != null) {
                 if (occ_3_3.getTeam() == team) {
@@ -8116,8 +8116,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_4_4 != null) {
                 if (occ_4_4.getTeam() == team) {
@@ -8174,8 +8174,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_1_m1 != null) {
                 if (occ_1_m1.getTeam() == team) {
@@ -8211,8 +8211,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_2_m1 != null) {
                 if (occ_2_m1.getTeam() == team) {
@@ -8248,8 +8248,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_3_m1 != null) {
                 if (occ_3_m1.getTeam() == team) {
@@ -8282,8 +8282,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_4_m1 != null) {
                 if (occ_4_m1.getTeam() == team) {
@@ -8340,8 +8340,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_1_m3 != null) {
                 if (occ_1_m3.getTeam() == team) {
@@ -8377,8 +8377,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_2_m4 != null) {
                 if (occ_2_m4.getTeam() == team) {
@@ -8414,8 +8414,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + -5)) {
                 score += 28;
@@ -8431,8 +8431,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + -6)) {
                 score += 24;
@@ -8472,8 +8472,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m1_m3 != null) {
                 if (occ_m1_m3.getTeam() == team) {
@@ -8509,8 +8509,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m1_m4 != null) {
                 if (occ_m1_m4.getTeam() == team) {
@@ -8546,8 +8546,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + -5)) {
                 score += 28;
@@ -8563,8 +8563,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + -6)) {
                 score += 24;
@@ -8604,8 +8604,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m3_m3 != null) {
                 if (occ_m3_m3.getTeam() == team) {
@@ -8641,8 +8641,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m4_m4 != null) {
                 if (occ_m4_m4.getTeam() == team) {
@@ -8678,8 +8678,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + -5)) {
                 score += 28;
@@ -8695,8 +8695,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -6, myLocY + -6)) {
                 score += 24;
@@ -8736,8 +8736,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m3_m1 != null) {
                 if (occ_m3_m1.getTeam() == team) {
@@ -8773,8 +8773,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m4_m1 != null) {
                 if (occ_m4_m1.getTeam() == team) {
@@ -8810,8 +8810,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + -1)) {
                 score += 28;
@@ -8827,8 +8827,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -6, myLocY + -1)) {
                 score += 24;
@@ -8868,8 +8868,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m3_1 != null) {
                 if (occ_m3_1.getTeam() == team) {
@@ -8905,8 +8905,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m4_2 != null) {
                 if (occ_m4_2.getTeam() == team) {
@@ -8942,8 +8942,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + 3)) {
                 score += 28;
@@ -8959,8 +8959,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -6, myLocY + 4)) {
                 score += 24;
@@ -9000,8 +9000,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m1_2 != null) {
                 if (occ_m1_2.getTeam() == team) {
@@ -9037,8 +9037,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m1_3 != null) {
                 if (occ_m1_3.getTeam() == team) {
@@ -9074,8 +9074,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m1_4 != null) {
                 if (occ_m1_4.getTeam() == team) {
@@ -9108,8 +9108,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + 5)) {
                 score += 24;
@@ -9149,8 +9149,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_1_2 != null) {
                 if (occ_1_2.getTeam() == team) {
@@ -9186,8 +9186,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_2_3 != null) {
                 if (occ_2_3.getTeam() == team) {
@@ -9223,8 +9223,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_3_4 != null) {
                 if (occ_3_4.getTeam() == team) {
@@ -9257,8 +9257,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + 5)) {
                 score += 24;
@@ -9298,8 +9298,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_1_0 != null) {
                 if (occ_1_0.getTeam() == team) {
@@ -9335,8 +9335,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_2_0 != null) {
                 if (occ_2_0.getTeam() == team) {
@@ -9372,8 +9372,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_3_0 != null) {
                 if (occ_3_0.getTeam() == team) {
@@ -9406,8 +9406,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_4_0 != null) {
                 if (occ_4_0.getTeam() == team) {
@@ -9464,8 +9464,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_1_m2 != null) {
                 if (occ_1_m2.getTeam() == team) {
@@ -9501,8 +9501,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_2_m3 != null) {
                 if (occ_2_m3.getTeam() == team) {
@@ -9538,8 +9538,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_3_m4 != null) {
                 if (occ_3_m4.getTeam() == team) {
@@ -9572,8 +9572,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + -5)) {
                 score += 24;
@@ -9613,8 +9613,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m1_m2 != null) {
                 if (occ_m1_m2.getTeam() == team) {
@@ -9650,8 +9650,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m1_m3 != null) {
                 if (occ_m1_m3.getTeam() == team) {
@@ -9687,8 +9687,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m1_m4 != null) {
                 if (occ_m1_m4.getTeam() == team) {
@@ -9721,8 +9721,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + -5)) {
                 score += 24;
@@ -9762,8 +9762,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m3_m2 != null) {
                 if (occ_m3_m2.getTeam() == team) {
@@ -9799,8 +9799,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m4_m3 != null) {
                 if (occ_m4_m3.getTeam() == team) {
@@ -9836,8 +9836,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + -4)) {
                 score += 28;
@@ -9853,8 +9853,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -6, myLocY + -5)) {
                 score += 24;
@@ -9894,8 +9894,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m3_0 != null) {
                 if (occ_m3_0.getTeam() == team) {
@@ -9931,8 +9931,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m4_0 != null) {
                 if (occ_m4_0.getTeam() == team) {
@@ -9968,8 +9968,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY)) {
                 score += 28;
@@ -9985,8 +9985,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -6, myLocY)) {
                 score += 24;
@@ -10026,8 +10026,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m3_2 != null) {
                 if (occ_m3_2.getTeam() == team) {
@@ -10063,8 +10063,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m4_3 != null) {
                 if (occ_m4_3.getTeam() == team) {
@@ -10100,8 +10100,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + 4)) {
                 score += 28;
@@ -10117,8 +10117,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -6, myLocY + 5)) {
                 score += 24;
@@ -10158,8 +10158,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m1_3 != null) {
                 if (occ_m1_3.getTeam() == team) {
@@ -10195,8 +10195,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m1_4 != null) {
                 if (occ_m1_4.getTeam() == team) {
@@ -10232,8 +10232,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + 5)) {
                 score += 28;
@@ -10249,8 +10249,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + 6)) {
                 score += 24;
@@ -10290,8 +10290,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_1_3 != null) {
                 if (occ_1_3.getTeam() == team) {
@@ -10327,8 +10327,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_2_4 != null) {
                 if (occ_2_4.getTeam() == team) {
@@ -10364,8 +10364,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + 5)) {
                 score += 28;
@@ -10381,8 +10381,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + 6)) {
                 score += 24;
@@ -10422,8 +10422,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_1_1 != null) {
                 if (occ_1_1.getTeam() == team) {
@@ -10459,8 +10459,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_2_1 != null) {
                 if (occ_2_1.getTeam() == team) {
@@ -10496,8 +10496,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_3_1 != null) {
                 if (occ_3_1.getTeam() == team) {
@@ -10530,8 +10530,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_4_1 != null) {
                 if (occ_4_1.getTeam() == team) {
@@ -10588,8 +10588,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_1_m1 != null) {
                 if (occ_1_m1.getTeam() == team) {
@@ -10625,8 +10625,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_2_m2 != null) {
                 if (occ_2_m2.getTeam() == team) {
@@ -10662,8 +10662,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_3_m3 != null) {
                 if (occ_3_m3.getTeam() == team) {
@@ -10696,8 +10696,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_4_m4 != null) {
                 if (occ_4_m4.getTeam() == team) {
@@ -10754,8 +10754,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m1_m1 != null) {
                 if (occ_m1_m1.getTeam() == team) {
@@ -10791,8 +10791,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m1_m2 != null) {
                 if (occ_m1_m2.getTeam() == team) {
@@ -10828,8 +10828,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m1_m3 != null) {
                 if (occ_m1_m3.getTeam() == team) {
@@ -10862,8 +10862,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m1_m4 != null) {
                 if (occ_m1_m4.getTeam() == team) {
@@ -10920,8 +10920,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m3_m1 != null) {
                 if (occ_m3_m1.getTeam() == team) {
@@ -10957,8 +10957,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m4_m2 != null) {
                 if (occ_m4_m2.getTeam() == team) {
@@ -10994,8 +10994,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + -3)) {
                 score += 28;
@@ -11011,8 +11011,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -6, myLocY + -4)) {
                 score += 24;
@@ -11052,8 +11052,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m3_1 != null) {
                 if (occ_m3_1.getTeam() == team) {
@@ -11089,8 +11089,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m4_1 != null) {
                 if (occ_m4_1.getTeam() == team) {
@@ -11126,8 +11126,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + 1)) {
                 score += 28;
@@ -11143,8 +11143,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -6, myLocY + 1)) {
                 score += 24;
@@ -11184,8 +11184,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m3_3 != null) {
                 if (occ_m3_3.getTeam() == team) {
@@ -11221,8 +11221,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m4_4 != null) {
                 if (occ_m4_4.getTeam() == team) {
@@ -11258,8 +11258,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + 5)) {
                 score += 28;
@@ -11275,8 +11275,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -6, myLocY + 6)) {
                 score += 24;
@@ -11316,8 +11316,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_0_2 != null) {
                 if (occ_0_2.getTeam() == team) {
@@ -11353,8 +11353,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_0_3 != null) {
                 if (occ_0_3.getTeam() == team) {
@@ -11390,8 +11390,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_0_4 != null) {
                 if (occ_0_4.getTeam() == team) {
@@ -11424,8 +11424,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX, myLocY + 5)) {
                 score += 24;
@@ -11465,8 +11465,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_2_2 != null) {
                 if (occ_2_2.getTeam() == team) {
@@ -11502,8 +11502,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_3_3 != null) {
                 if (occ_3_3.getTeam() == team) {
@@ -11539,8 +11539,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_4_4 != null) {
                 if (occ_4_4.getTeam() == team) {
@@ -11573,8 +11573,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + 5)) {
                 score += 24;
@@ -11614,8 +11614,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_2_0 != null) {
                 if (occ_2_0.getTeam() == team) {
@@ -11651,8 +11651,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_3_0 != null) {
                 if (occ_3_0.getTeam() == team) {
@@ -11688,8 +11688,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_4_0 != null) {
                 if (occ_4_0.getTeam() == team) {
@@ -11722,8 +11722,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY)) {
                 score += 24;
@@ -11763,8 +11763,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_2_m2 != null) {
                 if (occ_2_m2.getTeam() == team) {
@@ -11800,8 +11800,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_3_m3 != null) {
                 if (occ_3_m3.getTeam() == team) {
@@ -11837,8 +11837,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_4_m4 != null) {
                 if (occ_4_m4.getTeam() == team) {
@@ -11871,8 +11871,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + -5)) {
                 score += 24;
@@ -11912,8 +11912,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_0_m2 != null) {
                 if (occ_0_m2.getTeam() == team) {
@@ -11949,8 +11949,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_0_m3 != null) {
                 if (occ_0_m3.getTeam() == team) {
@@ -11986,8 +11986,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_0_m4 != null) {
                 if (occ_0_m4.getTeam() == team) {
@@ -12020,8 +12020,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX, myLocY + -5)) {
                 score += 24;
@@ -12061,8 +12061,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m2_m2 != null) {
                 if (occ_m2_m2.getTeam() == team) {
@@ -12098,8 +12098,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m3_m3 != null) {
                 if (occ_m3_m3.getTeam() == team) {
@@ -12135,8 +12135,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m4_m4 != null) {
                 if (occ_m4_m4.getTeam() == team) {
@@ -12169,8 +12169,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + -5)) {
                 score += 24;
@@ -12210,8 +12210,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m2_0 != null) {
                 if (occ_m2_0.getTeam() == team) {
@@ -12247,8 +12247,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m3_0 != null) {
                 if (occ_m3_0.getTeam() == team) {
@@ -12284,8 +12284,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m4_0 != null) {
                 if (occ_m4_0.getTeam() == team) {
@@ -12318,8 +12318,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY)) {
                 score += 24;
@@ -12359,8 +12359,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 36;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m2_2 != null) {
                 if (occ_m2_2.getTeam() == team) {
@@ -12396,8 +12396,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 32;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m3_3 != null) {
                 if (occ_m3_3.getTeam() == team) {
@@ -12433,8 +12433,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 28;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (occ_m4_4 != null) {
                 if (occ_m4_4.getTeam() == team) {
@@ -12467,8 +12467,8 @@ public final class TryThrow {
                     break scan;
                 }
             } else {
-                score += 10 + 24;
-                break scan;
+                score += 10;
+                break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + 5)) {
                 score += 24;

@@ -103,6 +103,9 @@ public class Squeaker {
 
     public static void squeakEnemy(int data) {
         rc.squeak((0b11 << 30) | data);
+        if (isRatKing) {
+            indicate("SQUEAKED ENEMY");
+        }
     }
 
     public static void squeakLureSignal(MapLocation myCatLoc, MapLocation myEnemyKingLoc) {

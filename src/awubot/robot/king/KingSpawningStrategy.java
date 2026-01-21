@@ -69,7 +69,12 @@ public class KingSpawningStrategy extends Strategy {
             }
         }
         if(best != null) {
-            turn(best.directionTo(target));
+            Direction mySpawnDir = best.directionTo(target);
+            if (mySpawnDir != Direction.CENTER) {
+                turn(mySpawnDir);
+            } else {
+                println("wtf mySpawnDir is center");
+            }
             rc.buildRat(best);
             numSpawned++;
         }

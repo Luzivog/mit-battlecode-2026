@@ -57,14 +57,16 @@ public class KingSpawningStrategy extends Strategy {
         return true;
     }
 
-    // TODO: consider all 16 spawning locations instead of just 8
+
     void trySpawn(MapLocation target) throws GameActionException {
         MapLocation best = null;
         for(var dir : directions) {
-            MapLocation spawnLoc = myLoc.add(dir).add(dir);
-            if(rc.canBuildRat(spawnLoc)) {
-                if(best == null || spawnLoc.distanceSquaredTo(target) < best.distanceSquaredTo(target)) {
-                    best = spawnLoc;
+            for (var dir2 : directions) {
+                MapLocation spawnLoc = myLoc.add(dir).add(dir2);
+                if(rc.canBuildRat(spawnLoc)) {
+                    if(best == null || spawnLoc.distanceSquaredTo(target) < best.distanceSquaredTo(target)) {
+                        best = spawnLoc;
+                    }
                 }
             }
         }

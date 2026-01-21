@@ -816,6 +816,10 @@ public class Util {
         return rc.getID() == id && time == t;
     }
 
+    public static boolean amAfter(int id, int t) {
+        return rc.getID() == id && time >= t;
+    }
+
     public static int manhattan(MapLocation a, MapLocation b) {
         return abs(a.x - b.x) + abs(a.y - b.y);
     }

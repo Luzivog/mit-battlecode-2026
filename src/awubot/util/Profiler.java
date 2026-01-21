@@ -33,6 +33,7 @@ public class Profiler {
     public static void push() {
         stk[stkSize++] = Clock.getBytecodeNum();
     }
+
     public static void pop(Object obj) {
         int res = Clock.getBytecodeNum() - stk[--stkSize];
         if (res < 0) {

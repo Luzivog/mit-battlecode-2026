@@ -427,7 +427,7 @@ class BugnavInstance {
 
         boolean leftReady = leftBug.nextPathIndex >= 5 || leftBug.hitEdge || leftBug.outOfSight || leftBug.arrived;
         boolean rightReady = rightBug.nextPathIndex >= 5 || rightBug.hitEdge || rightBug.outOfSight || rightBug.arrived;
-        indicate("ready " + leftReady + " " + rightReady);
+        // indicate("ready " + leftReady + " " + rightReady);
         if(!myLoc.equals(pos) && (!leftReady || !rightReady)) return !(leftDone && rightDone);
         indicate("going ahead");
 
@@ -435,9 +435,9 @@ class BugnavInstance {
         var rightScore =  Math.sqrt(rightBug.pos.distanceSquaredTo(target)) + rightBug.nextPathIndex * 0.7 ;
         indicate("lookahead" + pos);
         // indicate(leftBug.pos);
-        indicate(leftScore);
+        // indicate(leftScore);
         // indicate(rightBug.pos);
-        indicate(rightScore);
+        // indicate(rightScore);
 
 
         if(leftBug.arrived) {
@@ -1908,6 +1908,14 @@ public class Pathfinder {
             else return;
         }
         if(dir == myDir) {
+            // bail out if we see that we will walk into a cat
+            for(int i = RobotTracker.numCats - 1; i >= 0; i--) {
+                var cat = RobotTracker.sortedCats[i];
+                if(cat.location.isWithinDistanceSquared(nextLoc, 5, cat.direction, 180, true)) {
+                    indicate("avoiding cat at " + nextLoc);
+                    return;
+                }
+            }
             if(rc.canMoveForward()) rawMove();
         } else {
             // if we can't turn, then strafe
@@ -2022,13 +2030,15 @@ public class Pathfinder {
         doBugnavBfs(target);
     }
 
-
-    private static void doBugnavBfs(MapLocation target) throws GameActionException {
+    private static long localPassableExceptAllies0, localPassableExceptAllies1;
+    private static boolean dirtAllowed;
+    private static long nearCat0, nearCat1;
+    private static void prepareBfsMasks() throws GameActionException {
         Profiler.begin();
         CellTracker.computeLocalBfsMasks();
-        boolean dirtAllowed = Config.allowDirt();
-        var localPassableExceptAllies0 = CellTracker.localPassable0 & ~(1l << 60);
-        var localPassableExceptAllies1 = CellTracker.localPassable1;
+        dirtAllowed = Config.allowDirt();
+        localPassableExceptAllies0 = CellTracker.localPassable0 & ~(1l << 60);
+        localPassableExceptAllies1 = CellTracker.localPassable1;
         // can't dig dirt if we don't have enough cheese or are a rat king
         if(rc.getAllCheese() < GameConstants.DIG_DIRT_CHEESE_COST || isRatKing) {
             // minkowski sum the walls for the rat king
@@ -2054,6 +2064,7 @@ public class Pathfinder {
             var pos = RobotTracker.allies[i];
             int xi = pos.x - myLoc.x + 5;
             int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
             {
                 int idx = yi * 11 + xi;
                 if(idx < 61) {
@@ -2064,6 +2075,1609 @@ public class Pathfinder {
             }
         }
 
+        }
+        nearCat0 = nearCat1 = 0;
+        for(int i = 0; i < 4; i++) {
+            indicate("N " + RobotTracker.catHistNum[i]);
+            catLoop:
+            for(int j = RobotTracker.catHistNum[i] - 1; j >= 0; j--) {
+                var cat = RobotTracker.catHist[i][j];
+                if(cat == null) continue;
+                var catLoc = cat.location;
+                for(int dx = 0; dx <= 1; dx++) {
+                    for(int dy = 0; dy <= 1; dy++) {
+                        var senseLoc = catLoc.translate(dx, dy);
+                        if(canSense(myLoc, senseLoc, myDir)) {
+                            var robot = rc.senseRobotAtLocation(senseLoc);
+                            if(robot != null && robot.location.equals(catLoc) && robot.getType() == UnitType.CAT) {
+                                        {
+            var pos = catLoc.translate(0, 0);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        {
+            var pos = catLoc.translate(0, 1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        {
+            var pos = catLoc.translate(1, 0);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        {
+            var pos = catLoc.translate(1, 1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                switch(robot.direction.ordinal()) {
+                                    case 0 -> {
+                                                {
+            var pos = catLoc.translate(-1, 0);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(-1, 0))) rc.setIndicatorDot(catLoc.translate(-1, 0), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(-1, 1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(-1, 1))) rc.setIndicatorDot(catLoc.translate(-1, 1), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(-1, 2);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(-1, 2))) rc.setIndicatorDot(catLoc.translate(-1, 2), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(0, 2);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(0, 2))) rc.setIndicatorDot(catLoc.translate(0, 2), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(1, 2);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(1, 2))) rc.setIndicatorDot(catLoc.translate(1, 2), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(2, 2);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(2, 2))) rc.setIndicatorDot(catLoc.translate(2, 2), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(2, 1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(2, 1))) rc.setIndicatorDot(catLoc.translate(2, 1), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(2, 0);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(2, 0))) rc.setIndicatorDot(catLoc.translate(2, 0), 100, 0, 255);
+                                    }
+                                    case 1 -> {
+                                                {
+            var pos = catLoc.translate(-1, 1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(-1, 1))) rc.setIndicatorDot(catLoc.translate(-1, 1), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(-1, 2);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(-1, 2))) rc.setIndicatorDot(catLoc.translate(-1, 2), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(0, 2);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(0, 2))) rc.setIndicatorDot(catLoc.translate(0, 2), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(1, 2);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(1, 2))) rc.setIndicatorDot(catLoc.translate(1, 2), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(2, 2);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(2, 2))) rc.setIndicatorDot(catLoc.translate(2, 2), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(2, 1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(2, 1))) rc.setIndicatorDot(catLoc.translate(2, 1), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(2, 0);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(2, 0))) rc.setIndicatorDot(catLoc.translate(2, 0), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(2, -1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(2, -1))) rc.setIndicatorDot(catLoc.translate(2, -1), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(1, -1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(1, -1))) rc.setIndicatorDot(catLoc.translate(1, -1), 100, 0, 255);
+                                    }
+                                    case 2 -> {
+                                                {
+            var pos = catLoc.translate(0, 2);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(0, 2))) rc.setIndicatorDot(catLoc.translate(0, 2), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(1, 2);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(1, 2))) rc.setIndicatorDot(catLoc.translate(1, 2), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(2, 2);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(2, 2))) rc.setIndicatorDot(catLoc.translate(2, 2), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(2, 1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(2, 1))) rc.setIndicatorDot(catLoc.translate(2, 1), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(2, 0);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(2, 0))) rc.setIndicatorDot(catLoc.translate(2, 0), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(2, -1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(2, -1))) rc.setIndicatorDot(catLoc.translate(2, -1), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(1, -1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(1, -1))) rc.setIndicatorDot(catLoc.translate(1, -1), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(0, -1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(0, -1))) rc.setIndicatorDot(catLoc.translate(0, -1), 100, 0, 255);
+                                    }
+                                    case 3 -> {
+                                                {
+            var pos = catLoc.translate(1, 2);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(1, 2))) rc.setIndicatorDot(catLoc.translate(1, 2), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(2, 2);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(2, 2))) rc.setIndicatorDot(catLoc.translate(2, 2), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(2, 1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(2, 1))) rc.setIndicatorDot(catLoc.translate(2, 1), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(2, 0);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(2, 0))) rc.setIndicatorDot(catLoc.translate(2, 0), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(2, -1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(2, -1))) rc.setIndicatorDot(catLoc.translate(2, -1), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(1, -1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(1, -1))) rc.setIndicatorDot(catLoc.translate(1, -1), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(0, -1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(0, -1))) rc.setIndicatorDot(catLoc.translate(0, -1), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(-1, -1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(-1, -1))) rc.setIndicatorDot(catLoc.translate(-1, -1), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(-1, 0);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(-1, 0))) rc.setIndicatorDot(catLoc.translate(-1, 0), 100, 0, 255);
+                                    }
+                                    case 4 -> {
+                                                {
+            var pos = catLoc.translate(2, 1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(2, 1))) rc.setIndicatorDot(catLoc.translate(2, 1), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(2, 0);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(2, 0))) rc.setIndicatorDot(catLoc.translate(2, 0), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(2, -1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(2, -1))) rc.setIndicatorDot(catLoc.translate(2, -1), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(1, -1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(1, -1))) rc.setIndicatorDot(catLoc.translate(1, -1), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(0, -1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(0, -1))) rc.setIndicatorDot(catLoc.translate(0, -1), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(-1, -1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(-1, -1))) rc.setIndicatorDot(catLoc.translate(-1, -1), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(-1, 0);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(-1, 0))) rc.setIndicatorDot(catLoc.translate(-1, 0), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(-1, 1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(-1, 1))) rc.setIndicatorDot(catLoc.translate(-1, 1), 100, 0, 255);
+                                    }
+                                    case 5 -> {
+                                                {
+            var pos = catLoc.translate(2, 0);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(2, 0))) rc.setIndicatorDot(catLoc.translate(2, 0), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(2, -1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(2, -1))) rc.setIndicatorDot(catLoc.translate(2, -1), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(1, -1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(1, -1))) rc.setIndicatorDot(catLoc.translate(1, -1), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(0, -1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(0, -1))) rc.setIndicatorDot(catLoc.translate(0, -1), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(-1, -1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(-1, -1))) rc.setIndicatorDot(catLoc.translate(-1, -1), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(-1, 0);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(-1, 0))) rc.setIndicatorDot(catLoc.translate(-1, 0), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(-1, 1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(-1, 1))) rc.setIndicatorDot(catLoc.translate(-1, 1), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(-1, 2);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(-1, 2))) rc.setIndicatorDot(catLoc.translate(-1, 2), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(0, 2);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(0, 2))) rc.setIndicatorDot(catLoc.translate(0, 2), 100, 0, 255);
+                                    }
+                                    case 6 -> {
+                                                {
+            var pos = catLoc.translate(1, -1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(1, -1))) rc.setIndicatorDot(catLoc.translate(1, -1), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(0, -1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(0, -1))) rc.setIndicatorDot(catLoc.translate(0, -1), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(-1, -1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(-1, -1))) rc.setIndicatorDot(catLoc.translate(-1, -1), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(-1, 0);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(-1, 0))) rc.setIndicatorDot(catLoc.translate(-1, 0), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(-1, 1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(-1, 1))) rc.setIndicatorDot(catLoc.translate(-1, 1), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(-1, 2);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(-1, 2))) rc.setIndicatorDot(catLoc.translate(-1, 2), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(0, 2);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(0, 2))) rc.setIndicatorDot(catLoc.translate(0, 2), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(1, 2);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(1, 2))) rc.setIndicatorDot(catLoc.translate(1, 2), 100, 0, 255);
+                                    }
+                                    case 7 -> {
+                                                {
+            var pos = catLoc.translate(0, -1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(0, -1))) rc.setIndicatorDot(catLoc.translate(0, -1), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(-1, -1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(-1, -1))) rc.setIndicatorDot(catLoc.translate(-1, -1), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(-1, 0);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(-1, 0))) rc.setIndicatorDot(catLoc.translate(-1, 0), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(-1, 1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(-1, 1))) rc.setIndicatorDot(catLoc.translate(-1, 1), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(-1, 2);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(-1, 2))) rc.setIndicatorDot(catLoc.translate(-1, 2), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(0, 2);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(0, 2))) rc.setIndicatorDot(catLoc.translate(0, 2), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(1, 2);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(1, 2))) rc.setIndicatorDot(catLoc.translate(1, 2), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(2, 2);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(2, 2))) rc.setIndicatorDot(catLoc.translate(2, 2), 100, 0, 255);
+                                                {
+            var pos = catLoc.translate(2, 1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                                        // if(rc.onTheMap(catLoc.translate(2, 1))) rc.setIndicatorDot(catLoc.translate(2, 1), 100, 0, 255);
+                                    }
+                                }
+                            } else {
+                                // invalidate this entry
+                                RobotTracker.catHist[i][j] = null;
+                            }
+                            continue catLoop;
+                        }
+                    }
+                }
+                // we can't sense this cat, use historical info only
+                        {
+            var pos = catLoc.translate(0, 0);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                        {
+            var pos = catLoc.translate(0, 1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                        {
+            var pos = catLoc.translate(1, 0);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                        {
+            var pos = catLoc.translate(1, 1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassableExceptAllies0 &= ~ (1l << idx);
+                } else {
+                    localPassableExceptAllies1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+                        {
+            var pos = catLoc.translate(-1, 0);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    nearCat0 |= (1l << idx);
+                } else {
+                    nearCat1 |= (1l << (idx - 61));
+                }
+            }
+        }
+
+                        {
+            var pos = catLoc.translate(-1, 1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    nearCat0 |= (1l << idx);
+                } else {
+                    nearCat1 |= (1l << (idx - 61));
+                }
+            }
+        }
+
+                        {
+            var pos = catLoc.translate(-1, 2);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    nearCat0 |= (1l << idx);
+                } else {
+                    nearCat1 |= (1l << (idx - 61));
+                }
+            }
+        }
+
+                        {
+            var pos = catLoc.translate(0, 2);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    nearCat0 |= (1l << idx);
+                } else {
+                    nearCat1 |= (1l << (idx - 61));
+                }
+            }
+        }
+
+                        {
+            var pos = catLoc.translate(1, 2);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    nearCat0 |= (1l << idx);
+                } else {
+                    nearCat1 |= (1l << (idx - 61));
+                }
+            }
+        }
+
+                        {
+            var pos = catLoc.translate(2, 2);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    nearCat0 |= (1l << idx);
+                } else {
+                    nearCat1 |= (1l << (idx - 61));
+                }
+            }
+        }
+
+                        {
+            var pos = catLoc.translate(2, 1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    nearCat0 |= (1l << idx);
+                } else {
+                    nearCat1 |= (1l << (idx - 61));
+                }
+            }
+        }
+
+                        {
+            var pos = catLoc.translate(2, 0);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    nearCat0 |= (1l << idx);
+                } else {
+                    nearCat1 |= (1l << (idx - 61));
+                }
+            }
+        }
+
+                        {
+            var pos = catLoc.translate(2, -1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    nearCat0 |= (1l << idx);
+                } else {
+                    nearCat1 |= (1l << (idx - 61));
+                }
+            }
+        }
+
+                        {
+            var pos = catLoc.translate(1, -1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    nearCat0 |= (1l << idx);
+                } else {
+                    nearCat1 |= (1l << (idx - 61));
+                }
+            }
+        }
+
+                        {
+            var pos = catLoc.translate(0, -1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    nearCat0 |= (1l << idx);
+                } else {
+                    nearCat1 |= (1l << (idx - 61));
+                }
+            }
+        }
+
+                        {
+            var pos = catLoc.translate(-1, -1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    nearCat0 |= (1l << idx);
+                } else {
+                    nearCat1 |= (1l << (idx - 61));
+                }
+            }
+        }
+
+                        {
+            var pos = catLoc.translate(-1, 0);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    nearCat0 |= (1l << idx);
+                } else {
+                    nearCat1 |= (1l << (idx - 61));
+                }
+            }
+        }
+
+                        {
+            var pos = catLoc.translate(-1, 1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    nearCat0 |= (1l << idx);
+                } else {
+                    nearCat1 |= (1l << (idx - 61));
+                }
+            }
+        }
+
+                        {
+            var pos = catLoc.translate(-1, 2);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    nearCat0 |= (1l << idx);
+                } else {
+                    nearCat1 |= (1l << (idx - 61));
+                }
+            }
+        }
+
+                        {
+            var pos = catLoc.translate(0, 2);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    nearCat0 |= (1l << idx);
+                } else {
+                    nearCat1 |= (1l << (idx - 61));
+                }
+            }
+        }
+
+                        {
+            var pos = catLoc.translate(1, 2);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    nearCat0 |= (1l << idx);
+                } else {
+                    nearCat1 |= (1l << (idx - 61));
+                }
+            }
+        }
+
+                        {
+            var pos = catLoc.translate(2, 2);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    nearCat0 |= (1l << idx);
+                } else {
+                    nearCat1 |= (1l << (idx - 61));
+                }
+            }
+        }
+
+                        {
+            var pos = catLoc.translate(2, 1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    nearCat0 |= (1l << idx);
+                } else {
+                    nearCat1 |= (1l << (idx - 61));
+                }
+            }
+        }
+
+                        {
+            var pos = catLoc.translate(2, 0);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    nearCat0 |= (1l << idx);
+                } else {
+                    nearCat1 |= (1l << (idx - 61));
+                }
+            }
+        }
+
+                        {
+            var pos = catLoc.translate(2, -1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    nearCat0 |= (1l << idx);
+                } else {
+                    nearCat1 |= (1l << (idx - 61));
+                }
+            }
+        }
+
+                        {
+            var pos = catLoc.translate(1, -1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    nearCat0 |= (1l << idx);
+                } else {
+                    nearCat1 |= (1l << (idx - 61));
+                }
+            }
+        }
+
+                        {
+            var pos = catLoc.translate(0, -1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    nearCat0 |= (1l << idx);
+                } else {
+                    nearCat1 |= (1l << (idx - 61));
+                }
+            }
+        }
+
+                        {
+            var pos = catLoc.translate(-1, -1);
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    nearCat0 |= (1l << idx);
+                } else {
+                    nearCat1 |= (1l << (idx - 61));
+                }
+            }
+        }
+
+            }
         }
         // minkowski sum the walls for the rat king again (5x5 hitbox for walls, 3x3 hitbox for allies and dirt)
                     if(isRatKing) {
@@ -2078,6 +3692,34 @@ public class Pathfinder {
                 localPassableExceptAllies1 |= localPassableExceptAllies1 >> 11;
             }
 
+    }
+
+    private static int catPenalty(MapLocation loc) {
+        // prefer avoiding cat vision range; weight visible cats more heavily
+        int score = 0;
+        for(int i = 0; i < 4; i++) {
+            int penalty, angle;
+            if(i == time % 4) {
+                penalty = 3000;
+                angle = 180;
+            } else {
+                penalty = 1300;
+                angle = 360;
+            }
+            for(int j = RobotTracker.catHistNum[i] - 1; j >= 0; j--) {
+                var cat = RobotTracker.catHist[i][j];
+                if(cat == null) continue;
+                if(cat.location.isWithinDistanceSquared(loc, UnitType.CAT.visionConeRadiusSquared, cat.direction, angle, true)) {
+                    score += penalty;
+                }
+            }
+        }
+        return score;
+    }
+
+
+    private static void doBugnavBfs(MapLocation target) throws GameActionException {
+        prepareBfsMasks();
         // d{i}0 + d{i}1 is the mask of reachable within i steps
         long d00 = 0, d01 = 0;
         long d10 = 0, d11 = 0;
@@ -2103,12 +3745,14 @@ public class Pathfinder {
             }
         }
         // {
-        //     var A = rc.getRoundNum() >= 63;
-        //     var B = rc.getID() == 10950;
-        //     if(A && B) {
-        //         indicatorString = "";
+        //     if(amAfter(13427, 91)) {
+        //         // indicatorString = "";
         //         CellTracker.printLocalMask(d00, d01);
-        //         Clock.yield();
+        //         // CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
+        //         // Clock.yield();
+        //         // indicatorString = "";
+        //         // CellTracker.printLocalMask(nearCat0, nearCat1);
+        //         // Clock.yield();
         //     }
         // }
 
@@ -2139,12 +3783,14 @@ public class Pathfinder {
         d11 |= d01;
         // Profiler.end("bfs iteration");
         // {
-        //     var A = rc.getRoundNum() >= 63;
-        //     var B = rc.getID() == 10950;
-        //     if(A && B) {
-        //         indicatorString = "";
+        //     if(amAfter(13427, 91)) {
+        //         // indicatorString = "";
         //         CellTracker.printLocalMask(d10, d11);
-        //         Clock.yield();
+        //         // CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
+        //         // Clock.yield();
+        //         // indicatorString = "";
+        //         // CellTracker.printLocalMask(nearCat0, nearCat1);
+        //         // Clock.yield();
         //     }
         // }
         if((d10 & 0x807000000000000l) != 0 || (d11 & 0xe01) != 0) {
@@ -2162,9 +3808,7 @@ public class Pathfinder {
 
             Direction bestMove = null;
             double bestScore = 1e18;
-            if(
-               (d10 & (1l << 49))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH)
@@ -2179,6 +3823,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d10 & (1l << 49))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 49))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -2188,15 +3846,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d11 & (1l << 0))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST)
@@ -2211,6 +3869,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d11 & (1l << 0))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 0))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -2220,15 +3892,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d11 & (1l << 10))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH)
@@ -2243,6 +3915,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d11 & (1l << 10))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 10))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -2252,15 +3938,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d10 & (1l << 59))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST)
@@ -2275,6 +3961,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d10 & (1l << 59))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 59))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -2284,15 +3984,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d10 & (1l << 48))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST)
@@ -2307,6 +4007,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d10 & (1l << 48))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 48))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -2316,15 +4030,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d10 & (1l << 50))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST)
@@ -2339,6 +4053,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d10 & (1l << 50))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 50))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -2348,15 +4076,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d11 & (1l << 9))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST)
@@ -2371,6 +4099,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d11 & (1l << 9))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 9))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -2380,15 +4122,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d11 & (1l << 11))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST)
@@ -2403,6 +4145,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d11 & (1l << 11))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 11))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -2412,6 +4168,8 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -2476,12 +4234,14 @@ public class Pathfinder {
             }
         }
         // {
-        //     var A = rc.getRoundNum() >= 63;
-        //     var B = rc.getID() == 10950;
-        //     if(A && B) {
-        //         indicatorString = "";
+        //     if(amAfter(13427, 91)) {
+        //         // indicatorString = "";
         //         CellTracker.printLocalMask(d20, d21);
-        //         Clock.yield();
+        //         // CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
+        //         // Clock.yield();
+        //         // indicatorString = "";
+        //         // CellTracker.printLocalMask(nearCat0, nearCat1);
+        //         // Clock.yield();
         //     }
         // }
         if((d20 & 0x807000000000000l) != 0 || (d21 & 0xe01) != 0) {
@@ -2499,9 +4259,7 @@ public class Pathfinder {
 
             Direction bestMove = null;
             double bestScore = 1e18;
-            if(
-               (d20 & (1l << 49))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH)
@@ -2516,6 +4274,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d20 & (1l << 49))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 49))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -2525,15 +4297,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d21 & (1l << 0))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST)
@@ -2548,6 +4320,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d21 & (1l << 0))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 0))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -2557,15 +4343,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d21 & (1l << 10))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH)
@@ -2580,6 +4366,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d21 & (1l << 10))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 10))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -2589,15 +4389,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d20 & (1l << 59))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST)
@@ -2612,6 +4412,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d20 & (1l << 59))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 59))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -2621,15 +4435,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d20 & (1l << 48))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST)
@@ -2644,6 +4458,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d20 & (1l << 48))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 48))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -2653,15 +4481,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d20 & (1l << 50))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST)
@@ -2676,6 +4504,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d20 & (1l << 50))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 50))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -2685,15 +4527,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d21 & (1l << 9))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST)
@@ -2708,6 +4550,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d21 & (1l << 9))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 9))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -2717,15 +4573,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d21 & (1l << 11))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST)
@@ -2740,6 +4596,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d21 & (1l << 11))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 11))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -2749,6 +4619,8 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -2793,12 +4665,14 @@ public class Pathfinder {
         d31 |= d21;
         // Profiler.end("bfs iteration");
         // {
-        //     var A = rc.getRoundNum() >= 63;
-        //     var B = rc.getID() == 10950;
-        //     if(A && B) {
-        //         indicatorString = "";
+        //     if(amAfter(13427, 91)) {
+        //         // indicatorString = "";
         //         CellTracker.printLocalMask(d30, d31);
-        //         Clock.yield();
+        //         // CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
+        //         // Clock.yield();
+        //         // indicatorString = "";
+        //         // CellTracker.printLocalMask(nearCat0, nearCat1);
+        //         // Clock.yield();
         //     }
         // }
         if((d30 & 0x807000000000000l) != 0 || (d31 & 0xe01) != 0) {
@@ -2816,9 +4690,7 @@ public class Pathfinder {
 
             Direction bestMove = null;
             double bestScore = 1e18;
-            if(
-               (d30 & (1l << 49))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH)
@@ -2833,6 +4705,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d30 & (1l << 49))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 49))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -2842,15 +4728,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d31 & (1l << 0))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST)
@@ -2865,6 +4751,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d31 & (1l << 0))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 0))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -2874,15 +4774,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d31 & (1l << 10))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH)
@@ -2897,6 +4797,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d31 & (1l << 10))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 10))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -2906,15 +4820,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d30 & (1l << 59))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST)
@@ -2929,6 +4843,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d30 & (1l << 59))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 59))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -2938,15 +4866,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d30 & (1l << 48))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST)
@@ -2961,6 +4889,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d30 & (1l << 48))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 48))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -2970,15 +4912,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d30 & (1l << 50))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST)
@@ -2993,6 +4935,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d30 & (1l << 50))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 50))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -3002,15 +4958,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d31 & (1l << 9))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST)
@@ -3025,6 +4981,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d31 & (1l << 9))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 9))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -3034,15 +5004,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d31 & (1l << 11))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST)
@@ -3057,6 +5027,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d31 & (1l << 11))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 11))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -3066,6 +5050,8 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -3130,12 +5116,14 @@ public class Pathfinder {
             }
         }
         // {
-        //     var A = rc.getRoundNum() >= 63;
-        //     var B = rc.getID() == 10950;
-        //     if(A && B) {
-        //         indicatorString = "";
+        //     if(amAfter(13427, 91)) {
+        //         // indicatorString = "";
         //         CellTracker.printLocalMask(d40, d41);
-        //         Clock.yield();
+        //         // CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
+        //         // Clock.yield();
+        //         // indicatorString = "";
+        //         // CellTracker.printLocalMask(nearCat0, nearCat1);
+        //         // Clock.yield();
         //     }
         // }
         if((d40 & 0x807000000000000l) != 0 || (d41 & 0xe01) != 0) {
@@ -3153,9 +5141,7 @@ public class Pathfinder {
 
             Direction bestMove = null;
             double bestScore = 1e18;
-            if(
-               (d40 & (1l << 49))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH)
@@ -3170,6 +5156,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d40 & (1l << 49))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 49))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -3179,15 +5179,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d41 & (1l << 0))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST)
@@ -3202,6 +5202,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d41 & (1l << 0))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 0))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -3211,15 +5225,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d41 & (1l << 10))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH)
@@ -3234,6 +5248,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d41 & (1l << 10))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 10))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -3243,15 +5271,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d40 & (1l << 59))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST)
@@ -3266,6 +5294,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d40 & (1l << 59))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 59))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -3275,15 +5317,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d40 & (1l << 48))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST)
@@ -3298,6 +5340,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d40 & (1l << 48))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 48))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -3307,15 +5363,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d40 & (1l << 50))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST)
@@ -3330,6 +5386,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d40 & (1l << 50))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 50))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -3339,15 +5409,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d41 & (1l << 9))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST)
@@ -3362,6 +5432,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d41 & (1l << 9))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 9))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -3371,15 +5455,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d41 & (1l << 11))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST)
@@ -3394,6 +5478,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d41 & (1l << 11))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 11))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -3403,6 +5501,8 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -3447,12 +5547,14 @@ public class Pathfinder {
         d51 |= d41;
         // Profiler.end("bfs iteration");
         // {
-        //     var A = rc.getRoundNum() >= 63;
-        //     var B = rc.getID() == 10950;
-        //     if(A && B) {
-        //         indicatorString = "";
+        //     if(amAfter(13427, 91)) {
+        //         // indicatorString = "";
         //         CellTracker.printLocalMask(d50, d51);
-        //         Clock.yield();
+        //         // CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
+        //         // Clock.yield();
+        //         // indicatorString = "";
+        //         // CellTracker.printLocalMask(nearCat0, nearCat1);
+        //         // Clock.yield();
         //     }
         // }
         if((d50 & 0x807000000000000l) != 0 || (d51 & 0xe01) != 0) {
@@ -3470,9 +5572,7 @@ public class Pathfinder {
 
             Direction bestMove = null;
             double bestScore = 1e18;
-            if(
-               (d50 & (1l << 49))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH)
@@ -3487,6 +5587,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d50 & (1l << 49))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 49))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -3496,15 +5610,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d51 & (1l << 0))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST)
@@ -3519,6 +5633,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d51 & (1l << 0))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 0))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -3528,15 +5656,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d51 & (1l << 10))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH)
@@ -3551,6 +5679,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d51 & (1l << 10))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 10))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -3560,15 +5702,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d50 & (1l << 59))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST)
@@ -3583,6 +5725,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d50 & (1l << 59))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 59))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -3592,15 +5748,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d50 & (1l << 48))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST)
@@ -3615,6 +5771,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d50 & (1l << 48))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 48))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -3624,15 +5794,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d50 & (1l << 50))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST)
@@ -3647,6 +5817,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d50 & (1l << 50))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 50))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -3656,15 +5840,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d51 & (1l << 9))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST)
@@ -3679,6 +5863,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d51 & (1l << 9))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 9))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -3688,15 +5886,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d51 & (1l << 11))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST)
@@ -3711,6 +5909,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d51 & (1l << 11))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 11))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -3720,6 +5932,8 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -3784,12 +5998,14 @@ public class Pathfinder {
             }
         }
         // {
-        //     var A = rc.getRoundNum() >= 63;
-        //     var B = rc.getID() == 10950;
-        //     if(A && B) {
-        //         indicatorString = "";
+        //     if(amAfter(13427, 91)) {
+        //         // indicatorString = "";
         //         CellTracker.printLocalMask(d60, d61);
-        //         Clock.yield();
+        //         // CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
+        //         // Clock.yield();
+        //         // indicatorString = "";
+        //         // CellTracker.printLocalMask(nearCat0, nearCat1);
+        //         // Clock.yield();
         //     }
         // }
         if((d60 & 0x807000000000000l) != 0 || (d61 & 0xe01) != 0) {
@@ -3807,9 +6023,7 @@ public class Pathfinder {
 
             Direction bestMove = null;
             double bestScore = 1e18;
-            if(
-               (d60 & (1l << 49))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH)
@@ -3824,6 +6038,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d60 & (1l << 49))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 49))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -3833,15 +6061,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d61 & (1l << 0))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST)
@@ -3856,6 +6084,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d61 & (1l << 0))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 0))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -3865,15 +6107,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d61 & (1l << 10))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH)
@@ -3888,6 +6130,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d61 & (1l << 10))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 10))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -3897,15 +6153,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d60 & (1l << 59))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST)
@@ -3920,6 +6176,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d60 & (1l << 59))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 59))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -3929,15 +6199,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d60 & (1l << 48))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST)
@@ -3952,6 +6222,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d60 & (1l << 48))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 48))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -3961,15 +6245,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d60 & (1l << 50))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST)
@@ -3984,6 +6268,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d60 & (1l << 50))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 50))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -3993,15 +6291,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d61 & (1l << 9))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST)
@@ -4016,6 +6314,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d61 & (1l << 9))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 9))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -4025,15 +6337,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d61 & (1l << 11))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST)
@@ -4048,6 +6360,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d61 & (1l << 11))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 11))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -4057,6 +6383,8 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -4101,12 +6429,14 @@ public class Pathfinder {
         d71 |= d61;
         // Profiler.end("bfs iteration");
         // {
-        //     var A = rc.getRoundNum() >= 63;
-        //     var B = rc.getID() == 10950;
-        //     if(A && B) {
-        //         indicatorString = "";
+        //     if(amAfter(13427, 91)) {
+        //         // indicatorString = "";
         //         CellTracker.printLocalMask(d70, d71);
-        //         Clock.yield();
+        //         // CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
+        //         // Clock.yield();
+        //         // indicatorString = "";
+        //         // CellTracker.printLocalMask(nearCat0, nearCat1);
+        //         // Clock.yield();
         //     }
         // }
         if((d70 & 0x807000000000000l) != 0 || (d71 & 0xe01) != 0) {
@@ -4124,9 +6454,7 @@ public class Pathfinder {
 
             Direction bestMove = null;
             double bestScore = 1e18;
-            if(
-               (d70 & (1l << 49))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH)
@@ -4141,6 +6469,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d70 & (1l << 49))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 49))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -4150,15 +6492,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d71 & (1l << 0))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST)
@@ -4173,6 +6515,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d71 & (1l << 0))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 0))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -4182,15 +6538,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d71 & (1l << 10))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH)
@@ -4205,6 +6561,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d71 & (1l << 10))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 10))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -4214,15 +6584,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d70 & (1l << 59))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST)
@@ -4237,6 +6607,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d70 & (1l << 59))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 59))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -4246,15 +6630,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d70 & (1l << 48))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST)
@@ -4269,6 +6653,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d70 & (1l << 48))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 48))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -4278,15 +6676,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d70 & (1l << 50))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST)
@@ -4301,6 +6699,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d70 & (1l << 50))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 50))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -4310,15 +6722,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d71 & (1l << 9))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST)
@@ -4333,6 +6745,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d71 & (1l << 9))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 9))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -4342,15 +6768,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d71 & (1l << 11))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST)
@@ -4365,6 +6791,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d71 & (1l << 11))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 11))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -4374,6 +6814,8 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -4438,12 +6880,14 @@ public class Pathfinder {
             }
         }
         // {
-        //     var A = rc.getRoundNum() >= 63;
-        //     var B = rc.getID() == 10950;
-        //     if(A && B) {
-        //         indicatorString = "";
+        //     if(amAfter(13427, 91)) {
+        //         // indicatorString = "";
         //         CellTracker.printLocalMask(d80, d81);
-        //         Clock.yield();
+        //         // CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
+        //         // Clock.yield();
+        //         // indicatorString = "";
+        //         // CellTracker.printLocalMask(nearCat0, nearCat1);
+        //         // Clock.yield();
         //     }
         // }
         if((d80 & 0x807000000000000l) != 0 || (d81 & 0xe01) != 0) {
@@ -4461,9 +6905,7 @@ public class Pathfinder {
 
             Direction bestMove = null;
             double bestScore = 1e18;
-            if(
-               (d80 & (1l << 49))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH)
@@ -4478,6 +6920,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d80 & (1l << 49))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 49))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -4487,15 +6943,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d81 & (1l << 0))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST)
@@ -4510,6 +6966,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d81 & (1l << 0))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 0))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -4519,15 +6989,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d81 & (1l << 10))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH)
@@ -4542,6 +7012,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d81 & (1l << 10))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 10))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -4551,15 +7035,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d80 & (1l << 59))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST)
@@ -4574,6 +7058,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d80 & (1l << 59))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 59))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -4583,15 +7081,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d80 & (1l << 48))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST)
@@ -4606,6 +7104,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d80 & (1l << 48))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 48))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -4615,15 +7127,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d80 & (1l << 50))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST)
@@ -4638,6 +7150,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d80 & (1l << 50))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 50))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -4647,15 +7173,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d81 & (1l << 9))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST)
@@ -4670,6 +7196,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d81 & (1l << 9))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 9))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -4679,15 +7219,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d81 & (1l << 11))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST)
@@ -4702,6 +7242,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d81 & (1l << 11))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 11))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -4711,6 +7265,8 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -4755,12 +7311,14 @@ public class Pathfinder {
         d91 |= d81;
         // Profiler.end("bfs iteration");
         // {
-        //     var A = rc.getRoundNum() >= 63;
-        //     var B = rc.getID() == 10950;
-        //     if(A && B) {
-        //         indicatorString = "";
+        //     if(amAfter(13427, 91)) {
+        //         // indicatorString = "";
         //         CellTracker.printLocalMask(d90, d91);
-        //         Clock.yield();
+        //         // CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
+        //         // Clock.yield();
+        //         // indicatorString = "";
+        //         // CellTracker.printLocalMask(nearCat0, nearCat1);
+        //         // Clock.yield();
         //     }
         // }
         if((d90 & 0x807000000000000l) != 0 || (d91 & 0xe01) != 0) {
@@ -4778,9 +7336,7 @@ public class Pathfinder {
 
             Direction bestMove = null;
             double bestScore = 1e18;
-            if(
-               (d90 & (1l << 49))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH)
@@ -4795,6 +7351,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d90 & (1l << 49))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 49))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -4804,15 +7374,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d91 & (1l << 0))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST)
@@ -4827,6 +7397,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d91 & (1l << 0))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 0))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -4836,15 +7420,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d91 & (1l << 10))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH)
@@ -4859,6 +7443,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d91 & (1l << 10))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 10))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -4868,15 +7466,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d90 & (1l << 59))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST)
@@ -4891,6 +7489,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d90 & (1l << 59))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 59))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -4900,15 +7512,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d90 & (1l << 48))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST)
@@ -4923,6 +7535,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d90 & (1l << 48))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 48))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -4932,15 +7558,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d90 & (1l << 50))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST)
@@ -4955,6 +7581,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d90 & (1l << 50))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 50))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -4964,15 +7604,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d91 & (1l << 9))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST)
@@ -4987,6 +7627,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d91 & (1l << 9))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 9))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -4996,15 +7650,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d91 & (1l << 11))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST)
@@ -5019,6 +7673,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d91 & (1l << 11))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 11))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -5028,6 +7696,8 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -5092,12 +7762,14 @@ public class Pathfinder {
             }
         }
         // {
-        //     var A = rc.getRoundNum() >= 63;
-        //     var B = rc.getID() == 10950;
-        //     if(A && B) {
-        //         indicatorString = "";
+        //     if(amAfter(13427, 91)) {
+        //         // indicatorString = "";
         //         CellTracker.printLocalMask(d100, d101);
-        //         Clock.yield();
+        //         // CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
+        //         // Clock.yield();
+        //         // indicatorString = "";
+        //         // CellTracker.printLocalMask(nearCat0, nearCat1);
+        //         // Clock.yield();
         //     }
         // }
         if((d100 & 0x807000000000000l) != 0 || (d101 & 0xe01) != 0) {
@@ -5115,9 +7787,7 @@ public class Pathfinder {
 
             Direction bestMove = null;
             double bestScore = 1e18;
-            if(
-               (d100 & (1l << 49))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH)
@@ -5132,6 +7802,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d100 & (1l << 49))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 49))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -5141,15 +7825,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d101 & (1l << 0))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST)
@@ -5164,6 +7848,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d101 & (1l << 0))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 0))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -5173,15 +7871,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d101 & (1l << 10))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH)
@@ -5196,6 +7894,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d101 & (1l << 10))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 10))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -5205,15 +7917,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d100 & (1l << 59))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST)
@@ -5228,6 +7940,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d100 & (1l << 59))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 59))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -5237,15 +7963,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d100 & (1l << 48))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST)
@@ -5260,6 +7986,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d100 & (1l << 48))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 48))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -5269,15 +8009,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d100 & (1l << 50))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST)
@@ -5292,6 +8032,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d100 & (1l << 50))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 50))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -5301,15 +8055,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d101 & (1l << 9))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST)
@@ -5324,6 +8078,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d101 & (1l << 9))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 9))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -5333,15 +8101,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d101 & (1l << 11))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST)
@@ -5356,6 +8124,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d101 & (1l << 11))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 11))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -5365,6 +8147,8 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -5409,12 +8193,14 @@ public class Pathfinder {
         d111 |= d101;
         // Profiler.end("bfs iteration");
         // {
-        //     var A = rc.getRoundNum() >= 63;
-        //     var B = rc.getID() == 10950;
-        //     if(A && B) {
-        //         indicatorString = "";
+        //     if(amAfter(13427, 91)) {
+        //         // indicatorString = "";
         //         CellTracker.printLocalMask(d110, d111);
-        //         Clock.yield();
+        //         // CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
+        //         // Clock.yield();
+        //         // indicatorString = "";
+        //         // CellTracker.printLocalMask(nearCat0, nearCat1);
+        //         // Clock.yield();
         //     }
         // }
         if((d110 & 0x807000000000000l) != 0 || (d111 & 0xe01) != 0) {
@@ -5432,9 +8218,7 @@ public class Pathfinder {
 
             Direction bestMove = null;
             double bestScore = 1e18;
-            if(
-               (d110 & (1l << 49))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH)
@@ -5449,6 +8233,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d110 & (1l << 49))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 49))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -5458,15 +8256,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d111 & (1l << 0))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST)
@@ -5481,6 +8279,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d111 & (1l << 0))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 0))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -5490,15 +8302,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d111 & (1l << 10))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH)
@@ -5513,6 +8325,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d111 & (1l << 10))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 10))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -5522,15 +8348,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d110 & (1l << 59))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST)
@@ -5545,6 +8371,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d110 & (1l << 59))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 59))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -5554,15 +8394,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d110 & (1l << 48))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST)
@@ -5577,6 +8417,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d110 & (1l << 48))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 48))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -5586,15 +8440,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d110 & (1l << 50))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST)
@@ -5609,6 +8463,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d110 & (1l << 50))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 50))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -5618,15 +8486,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d111 & (1l << 9))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST)
@@ -5641,6 +8509,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d111 & (1l << 9))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 9))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -5650,15 +8532,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d111 & (1l << 11))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST)
@@ -5673,6 +8555,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d111 & (1l << 11))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 11))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -5682,6 +8578,8 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -5746,12 +8644,14 @@ public class Pathfinder {
             }
         }
         // {
-        //     var A = rc.getRoundNum() >= 63;
-        //     var B = rc.getID() == 10950;
-        //     if(A && B) {
-        //         indicatorString = "";
+        //     if(amAfter(13427, 91)) {
+        //         // indicatorString = "";
         //         CellTracker.printLocalMask(d120, d121);
-        //         Clock.yield();
+        //         // CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
+        //         // Clock.yield();
+        //         // indicatorString = "";
+        //         // CellTracker.printLocalMask(nearCat0, nearCat1);
+        //         // Clock.yield();
         //     }
         // }
         if((d120 & 0x807000000000000l) != 0 || (d121 & 0xe01) != 0) {
@@ -5769,9 +8669,7 @@ public class Pathfinder {
 
             Direction bestMove = null;
             double bestScore = 1e18;
-            if(
-               (d120 & (1l << 49))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH)
@@ -5786,6 +8684,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d120 & (1l << 49))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 49))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -5795,15 +8707,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d121 & (1l << 0))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST)
@@ -5818,6 +8730,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d121 & (1l << 0))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 0))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -5827,15 +8753,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d121 & (1l << 10))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH)
@@ -5850,6 +8776,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d121 & (1l << 10))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 10))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -5859,15 +8799,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d120 & (1l << 59))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST)
@@ -5882,6 +8822,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d120 & (1l << 59))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 59))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -5891,15 +8845,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d120 & (1l << 48))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST)
@@ -5914,6 +8868,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d120 & (1l << 48))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 48))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -5923,15 +8891,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d120 & (1l << 50))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST)
@@ -5946,6 +8914,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d120 & (1l << 50))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 50))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -5955,15 +8937,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d121 & (1l << 9))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST)
@@ -5978,6 +8960,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d121 & (1l << 9))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 9))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -5987,15 +8983,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d121 & (1l << 11))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST)
@@ -6010,6 +9006,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d121 & (1l << 11))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 11))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -6019,6 +9029,8 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -6063,12 +9075,14 @@ public class Pathfinder {
         d131 |= d121;
         // Profiler.end("bfs iteration");
         // {
-        //     var A = rc.getRoundNum() >= 63;
-        //     var B = rc.getID() == 10950;
-        //     if(A && B) {
-        //         indicatorString = "";
+        //     if(amAfter(13427, 91)) {
+        //         // indicatorString = "";
         //         CellTracker.printLocalMask(d130, d131);
-        //         Clock.yield();
+        //         // CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
+        //         // Clock.yield();
+        //         // indicatorString = "";
+        //         // CellTracker.printLocalMask(nearCat0, nearCat1);
+        //         // Clock.yield();
         //     }
         // }
         if((d130 & 0x807000000000000l) != 0 || (d131 & 0xe01) != 0) {
@@ -6086,9 +9100,7 @@ public class Pathfinder {
 
             Direction bestMove = null;
             double bestScore = 1e18;
-            if(
-               (d130 & (1l << 49))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH)
@@ -6103,6 +9115,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d130 & (1l << 49))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 49))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -6112,15 +9138,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d131 & (1l << 0))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST)
@@ -6135,6 +9161,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d131 & (1l << 0))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 0))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -6144,15 +9184,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d131 & (1l << 10))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH)
@@ -6167,6 +9207,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d131 & (1l << 10))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 10))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -6176,15 +9230,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d130 & (1l << 59))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST)
@@ -6199,6 +9253,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d130 & (1l << 59))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 59))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -6208,15 +9276,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d130 & (1l << 48))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST)
@@ -6231,6 +9299,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d130 & (1l << 48))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 48))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -6240,15 +9322,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d130 & (1l << 50))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST)
@@ -6263,6 +9345,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d130 & (1l << 50))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 50))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -6272,15 +9368,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d131 & (1l << 9))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST)
@@ -6295,6 +9391,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d131 & (1l << 9))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 9))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -6304,15 +9414,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d131 & (1l << 11))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST)
@@ -6327,6 +9437,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d131 & (1l << 11))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 11))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -6336,6 +9460,8 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -6400,12 +9526,14 @@ public class Pathfinder {
             }
         }
         // {
-        //     var A = rc.getRoundNum() >= 63;
-        //     var B = rc.getID() == 10950;
-        //     if(A && B) {
-        //         indicatorString = "";
+        //     if(amAfter(13427, 91)) {
+        //         // indicatorString = "";
         //         CellTracker.printLocalMask(d140, d141);
-        //         Clock.yield();
+        //         // CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
+        //         // Clock.yield();
+        //         // indicatorString = "";
+        //         // CellTracker.printLocalMask(nearCat0, nearCat1);
+        //         // Clock.yield();
         //     }
         // }
         if((d140 & 0x807000000000000l) != 0 || (d141 & 0xe01) != 0) {
@@ -6423,9 +9551,7 @@ public class Pathfinder {
 
             Direction bestMove = null;
             double bestScore = 1e18;
-            if(
-               (d140 & (1l << 49))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTH)
@@ -6440,6 +9566,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d140 & (1l << 49))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 49))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -6449,15 +9589,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTH == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d141 & (1l << 0))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.EAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.EAST)
@@ -6472,6 +9612,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d141 & (1l << 0))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 0))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -6481,15 +9635,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.EAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d141 & (1l << 10))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTH);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTH)
@@ -6504,6 +9658,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d141 & (1l << 10))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 10))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -6513,15 +9681,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTH == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d140 & (1l << 59))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.WEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.WEST)
@@ -6536,6 +9704,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d140 & (1l << 59))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 59))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -6545,15 +9727,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.WEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d140 & (1l << 48))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHWEST)
@@ -6568,6 +9750,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d140 & (1l << 48))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 48))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -6577,15 +9773,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d140 & (1l << 50))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.SOUTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.SOUTHEAST)
@@ -6600,6 +9796,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d140 & (1l << 50))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat0 & (1l << 50))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -6609,15 +9819,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d141 & (1l << 9))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTHWEST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHWEST)
@@ -6632,6 +9842,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d141 & (1l << 9))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 9))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -6641,15 +9865,15 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
                     }
                 }
             }
-            if(
-               (d141 & (1l << 11))
-               != 0) {
+            {
                 var nextLoc = myLoc.add(Direction.NORTHEAST);
                 boolean isDirt = false;
                 if(rc.canMove(Direction.NORTHEAST)
@@ -6664,6 +9888,20 @@ public class Pathfinder {
                        ) {
                         score /= 2;
                     }
+                    // prefer getting closer to the target
+                    if(
+                       (d141 & (1l << 11))
+                       != 0
+                       ) {
+                        score -= 1200;
+                    }
+                    // strongly prefer avoiding adjacent squares to historical cat locations
+                    if(
+                       (nearCat1 & (1l << 11))
+                       != 0
+                       ) {
+                        score += 2700;
+                    }
                     // prefer definitely empty squares over possibly dirt
                     if(isDirt) {
                         score += 1000;
@@ -6673,6 +9911,8 @@ public class Pathfinder {
                     if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
                         score -= 500;
                     }
+                    score += catPenalty(nextLoc);
+                    indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;

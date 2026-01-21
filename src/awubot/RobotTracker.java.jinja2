@@ -46,7 +46,7 @@ public class RobotTracker {
     public static RobotInfo[] sortedRobots = new RobotInfo[25];
     public static RobotInfo[] sortedEnemies = new RobotInfo[25];
     public static RobotInfo[] sortedAllies = new RobotInfo[25];
-    public static RobotInfo[] sortedCats = new RobotInfo[5];
+    public static RobotInfo[] sortedCats = new RobotInfo[10];
     public static int numRobots, numEnemies, numAllies, numCats;
     private static char DELIM_CHAR = '\u0FFF';
     private static String DELIM_STRING = "\u0FFF";
@@ -136,8 +136,17 @@ public class RobotTracker {
     }
     {% endfor %}
 
+    public static RobotInfo[][] catHist = new RobotInfo[4][10];
+    public static int[] catHistNum = new int[4];
+    public static void updateHistoricalCatLocs() throws GameActionException {
+        for(int i = 0; i < numCats; i++) {
+            catHist[time % 4][i] = sortedCats[i];
+        }
+        catHistNum[time % 4] = numCats;
+    }
+
     public static int allyCount = 0;
-    public static MapLocation[] allies = new MapLocation[55];
+    public static MapLocation[] allies = new MapLocation[120];
     public static FastMapLocationSet allySet, kingSet;
     public static void addAlly(MapLocation loc) {
         if(!allySet.contains(loc)) {

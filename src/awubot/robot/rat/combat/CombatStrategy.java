@@ -94,7 +94,7 @@ public class CombatStrategy extends Strategy {
     public boolean runTick() throws GameActionException {
         Profiler.push();
         boolean res = _runTick();
-        Profiler.pop_ind("combat strategy");
+        Profiler.pop("combat strategy");
         return res;
     }
 

@@ -35,11 +35,9 @@ public class BabyRat {
         tryPickUpCheese();
         tryTransferCheese();
 
-        // if (rc.isBeingThrown()) {
-        //     if (rc.canTurn()) {
-        //         rc.turn(myLoc.directionTo(myPreviousLoc));
-        //     }
-        // }
+        if (rc.isBeingThrown() || rc.isBeingCarried()) {
+            return;
+        }
 
         // indicate("before combat strat: " + Clock.getBytecodeNum());
         if (combatStrategy.runTick()) {
@@ -48,6 +46,7 @@ public class BabyRat {
 
         // all nonessential systems go here, only run if we are not in combat
         CellTracker.checkSymmetry();
+        RobotTracker.updateHistoricalCatLocs();
 
         indicate("sym " + CellTracker.hsym + " " + CellTracker.vsym + " " + CellTracker.rsym);
         primaryStrategy.runTick();

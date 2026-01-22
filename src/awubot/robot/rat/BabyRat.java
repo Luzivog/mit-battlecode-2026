@@ -52,6 +52,7 @@ public class BabyRat {
         primaryStrategy.runTick();
         combatStrategy.miniTick();
 
+        isLastMove = true;
         executeGlance();
     }
 

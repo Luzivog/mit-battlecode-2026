@@ -9918,7 +9918,6 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
     }
 
     public static boolean hasThreat(Direction moveDir, Direction facing, RobotInfo target, int damage) {
-        println("hasThreat called for move " + moveDir + " facing " + facing + " against target " + (target != null ? target.location.toString() : "null") + " with damage " + damage);
         long base;
         switch (moveDir.ordinal()) {
             case 0 -> {
@@ -10043,22 +10042,16 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
         if (target == null) return base != 0L;
         if (target.getTeam() == rc.getTeam()) return base != 0L;
         if (target.getType() != UnitType.BABY_RAT) return base != 0L;
-        println("base threat mask: " + Long.toHexString(base));
         int enemyDx = target.location.x - myLocX;
         int enemyDy = target.location.y - myLocY;
         if (enemyDx < -3 || enemyDx > 3 || enemyDy < -3 || enemyDy > 3) return base != 0L;
         boolean beforeHigh = target.getHealth() > rc.getHealth();
         boolean afterHigh = (target.getHealth() - damage) > rc.getHealth();
         if (afterHigh != beforeHigh) {
-            println("health threshold crossed, recomputing threat mask");
             long sub = enemyMaskForMove(enemyDx, enemyDy, target.direction, moveDir);
             long threat = getMoveThreatMask(moveDir);
-            println("enemy mask: " + Long.toHexString(sub));
-            println("move threat mask: " + Long.toHexString(threat));
             base -= (sub & threat);
             base += (sub & getHiddenMask(facing) & threat);
-            println("new threat mask: " + Long.toHexString(base));
-            println("hidden mask : " + Long.toHexString(getHiddenMask(facing)));
         }
         return base != 0L;
     }

@@ -6,8 +6,8 @@ import awubot.util.Rng;
 import awubot.util.Profiler;
 import awubot.util.string.FastMapLocationSet;
 import static awubot.Game.*;
-import static awubot.robot.rat.BabyRat.*; // TODO: make pathfinder compatible with rat king
 import awubot.robot.rat.BabyRat;
+import awubot.robot.king.RatKing;
 
 // IF TLE: lower these constants (especially MAX_BUG_ITERS)
 
@@ -1770,6 +1770,14 @@ public class Pathfinder {
 
     }
 
+    private static void makeMove(Direction dir) throws GameActionException {
+        if(isRatKing) {
+            if(rc.canMove(dir)) RatKing.rawMove(dir);
+        } else {
+            BabyRat.makeMove(dir);
+        }
+    }
+
     public static void makeMove(BugnavInstance bug) throws GameActionException {
         indicate("bug.pos: " + bug.pos);
         int shade = 255;
@@ -1807,12 +1815,13 @@ public class Pathfinder {
 
         // deal with the edge case of moving immediately out of sight
         if(myLoc.equals(bug.pos) && bug.outOfSightLoc != null && !bug.outOfSightLoc.equals(myLoc)) {
+            assert !isRatKing;
             var loc = bug.outOfSightLoc;
             bug.outOfSightLoc = null;
             var dir = myLoc.directionTo(loc);
-            turn(dir);
+            BabyRat.turn(dir);
             if(CellTracker.isPassable(loc) && (!CellTracker.isDirt(loc) || Config.allowDirt())) {
-                BabyRat.makeMove(dir);
+                makeMove(dir);
             }
         }
 
@@ -1843,7 +1852,7 @@ public class Pathfinder {
             if(myLoc.add(dir).equals(bug.pos)) {
                 if(dir != Direction.CENTER) {
                     indicate("adjacent");
-                    BabyRat.makeMove(dir);
+                    makeMove(dir);
                 }
                 bug.lastDist = 0;
                 return;
@@ -3999,7 +4008,7 @@ public class Pathfinder {
                 // indicate("bestMove: " + bestMove);
                 bug.lastDist = 1;
                 indicate("iters: " + 1);
-                BabyRat.makeMove(bestMove);
+                makeMove(bestMove);
                 return;
             }
         }
@@ -4442,7 +4451,7 @@ public class Pathfinder {
                 // indicate("bestMove: " + bestMove);
                 bug.lastDist = 2;
                 indicate("iters: " + 2);
-                BabyRat.makeMove(bestMove);
+                makeMove(bestMove);
                 return;
             }
         }
@@ -4865,7 +4874,7 @@ public class Pathfinder {
                 // indicate("bestMove: " + bestMove);
                 bug.lastDist = 3;
                 indicate("iters: " + 3);
-                BabyRat.makeMove(bestMove);
+                makeMove(bestMove);
                 return;
             }
         }
@@ -5308,7 +5317,7 @@ public class Pathfinder {
                 // indicate("bestMove: " + bestMove);
                 bug.lastDist = 4;
                 indicate("iters: " + 4);
-                BabyRat.makeMove(bestMove);
+                makeMove(bestMove);
                 return;
             }
         }
@@ -5731,7 +5740,7 @@ public class Pathfinder {
                 // indicate("bestMove: " + bestMove);
                 bug.lastDist = 5;
                 indicate("iters: " + 5);
-                BabyRat.makeMove(bestMove);
+                makeMove(bestMove);
                 return;
             }
         }
@@ -6174,7 +6183,7 @@ public class Pathfinder {
                 // indicate("bestMove: " + bestMove);
                 bug.lastDist = 6;
                 indicate("iters: " + 6);
-                BabyRat.makeMove(bestMove);
+                makeMove(bestMove);
                 return;
             }
         }
@@ -6597,7 +6606,7 @@ public class Pathfinder {
                 // indicate("bestMove: " + bestMove);
                 bug.lastDist = 7;
                 indicate("iters: " + 7);
-                BabyRat.makeMove(bestMove);
+                makeMove(bestMove);
                 return;
             }
         }
@@ -7040,7 +7049,7 @@ public class Pathfinder {
                 // indicate("bestMove: " + bestMove);
                 bug.lastDist = 8;
                 indicate("iters: " + 8);
-                BabyRat.makeMove(bestMove);
+                makeMove(bestMove);
                 return;
             }
         }
@@ -7463,7 +7472,7 @@ public class Pathfinder {
                 // indicate("bestMove: " + bestMove);
                 bug.lastDist = 9;
                 indicate("iters: " + 9);
-                BabyRat.makeMove(bestMove);
+                makeMove(bestMove);
                 return;
             }
         }
@@ -7906,7 +7915,7 @@ public class Pathfinder {
                 // indicate("bestMove: " + bestMove);
                 bug.lastDist = 10;
                 indicate("iters: " + 10);
-                BabyRat.makeMove(bestMove);
+                makeMove(bestMove);
                 return;
             }
         }
@@ -8329,7 +8338,7 @@ public class Pathfinder {
                 // indicate("bestMove: " + bestMove);
                 bug.lastDist = 11;
                 indicate("iters: " + 11);
-                BabyRat.makeMove(bestMove);
+                makeMove(bestMove);
                 return;
             }
         }
@@ -8772,7 +8781,7 @@ public class Pathfinder {
                 // indicate("bestMove: " + bestMove);
                 bug.lastDist = 12;
                 indicate("iters: " + 12);
-                BabyRat.makeMove(bestMove);
+                makeMove(bestMove);
                 return;
             }
         }
@@ -9195,7 +9204,7 @@ public class Pathfinder {
                 // indicate("bestMove: " + bestMove);
                 bug.lastDist = 13;
                 indicate("iters: " + 13);
-                BabyRat.makeMove(bestMove);
+                makeMove(bestMove);
                 return;
             }
         }
@@ -9638,7 +9647,7 @@ public class Pathfinder {
                 // indicate("bestMove: " + bestMove);
                 bug.lastDist = 14;
                 indicate("iters: " + 14);
-                BabyRat.makeMove(bestMove);
+                makeMove(bestMove);
                 return;
             }
         }
@@ -9685,7 +9694,7 @@ public class Pathfinder {
         if(rc.canMove(Direction.SOUTHWEST)) dirs[dirCount++] = Direction.SOUTHWEST;
         if(rc.canMove(Direction.WEST)) dirs[dirCount++] = Direction.WEST;
         if(rc.canMove(Direction.NORTHWEST)) dirs[dirCount++] = Direction.NORTHWEST;
-        if(dirCount > 0) BabyRat.makeMove(dirs[Rng.mcg() % dirCount]);
+        if(dirCount > 0) makeMove(dirs[Rng.mcg() % dirCount]);
 
         bug.clearPath();
     }

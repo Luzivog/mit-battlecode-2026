@@ -22,15 +22,15 @@ public class BabyRat {
         // GlobalArray.readSpawnStrategy();
         primaryStrategy = new MinerStrategy();
         combatStrategy = new CombatStrategy();
-        Profiler.begin();
         AntColony.init();
-        Profiler.end("ant colony init");
     }
 
     public static void run() throws GameActionException {
         isLastMove = false;
         // indicate("cheesemines: " + GlobalArray.cheeseMines.set.length());
         shouldGlance = true;
+
+        CellTracker.storeVisibleCells();
 
         tryPickUpCheese();
         tryTransferCheese();

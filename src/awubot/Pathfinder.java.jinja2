@@ -6,8 +6,8 @@ import awubot.util.Rng;
 import awubot.util.Profiler;
 import awubot.util.string.FastMapLocationSet;
 import static awubot.Game.*;
-import static awubot.robot.rat.BabyRat.*; // TODO: make pathfinder compatible with rat king
 import awubot.robot.rat.BabyRat;
+import awubot.robot.king.RatKing;
 
 // IF TLE: lower these constants (especially MAX_BUG_ITERS)
 {% set MAX_BUG_ITERS = 5 %}
@@ -474,6 +474,14 @@ public class Pathfinder {
         {{ tryDirs("Right", "Left") }}
     }
 
+    private static void makeMove(Direction dir) throws GameActionException {
+        if(isRatKing) {
+            if(rc.canMove(dir)) RatKing.rawMove(dir);
+        } else {
+            BabyRat.makeMove(dir);
+        }
+    }
+
     public static void makeMove(BugnavInstance bug) throws GameActionException {
         indicate("bug.pos: " + bug.pos);
         int shade = 255;
@@ -493,12 +501,13 @@ public class Pathfinder {
 
         // deal with the edge case of moving immediately out of sight
         if(myLoc.equals(bug.pos) && bug.outOfSightLoc != null && !bug.outOfSightLoc.equals(myLoc)) {
+            assert !isRatKing;
             var loc = bug.outOfSightLoc;
             bug.outOfSightLoc = null;
             var dir = myLoc.directionTo(loc);
-            turn(dir);
+            BabyRat.turn(dir);
             if(CellTracker.isPassable(loc) && (!CellTracker.isDirt(loc) || Config.allowDirt())) {
-                BabyRat.makeMove(dir);
+                makeMove(dir);
             }
         }
 
@@ -529,7 +538,7 @@ public class Pathfinder {
             if(myLoc.add(dir).equals(bug.pos)) {
                 if(dir != Direction.CENTER) {
                     indicate("adjacent");
-                    BabyRat.makeMove(dir);
+                    makeMove(dir);
                 }
                 bug.lastDist = 0;
                 return;
@@ -801,7 +810,7 @@ public class Pathfinder {
                 // indicate("bestMove: " + bestMove);
                 bug.lastDist = {{i}};
                 indicate("iters: " + {{i}});
-                BabyRat.makeMove(bestMove);
+                makeMove(bestMove);
                 return;
             }
         }
@@ -833,7 +842,7 @@ public class Pathfinder {
         {% for dir in directions %}
         if(rc.canMove({{dir}})) dirs[dirCount++] = {{dir}};
         {% endfor %}
-        if(dirCount > 0) BabyRat.makeMove(dirs[Rng.mcg() % dirCount]);
+        if(dirCount > 0) makeMove(dirs[Rng.mcg() % dirCount]);
 
         bug.clearPath();
     }

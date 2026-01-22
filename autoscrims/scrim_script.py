@@ -16,8 +16,6 @@ MAP_COUNT = int(os.getenv("BC_MAP_COUNT", "10"))
 ONLY_US_TEAMS = os.getenv("BC_ONLY_US", "false").strip().lower() in ("1", "true", "yes")
 REQUEST_SLEEP = float(os.getenv("BC_REQUEST_SLEEP", "0.1"))
 
-
-
 def get_teams(start_page=1, end_page=1):
     page = 1
     teams = []
@@ -27,7 +25,6 @@ def get_teams(start_page=1, end_page=1):
         data = response.json()
         page += 1
         teams += data['results']
-    #filter for US teams
     return teams
 
 def get_us_teams(start_page=1, end_page=1):

@@ -18,11 +18,11 @@ public class KingSpawningStrategy extends Strategy {
 
         int numKings = Math.max(1, GlobalArray.countRatKings());
         int extraPerKing = (rc.getGlobalCheese() / 1000) * (numKings - 1);
-
-        var thresh = rc.getGlobalCheese() / 20 + 10;
+        int maxRatCost = 40 * numKings + extraPerKing;
+        int thresh = Math.min(rc.getGlobalCheese() / 20 + 10, maxRatCost);
 
         if (RobotTracker.numCats > 0 && RobotTracker.numAllies == 0) {
-            thresh = 50;
+            thresh += 10;
         }
 
         MapLocation target = null;

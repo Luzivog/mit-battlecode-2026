@@ -17,6 +17,21 @@ import awubot.Game;
     6: ["Direction.WEST", "Direction.NORTHWEST", "Direction.SOUTHWEST"],
     7: ["Direction.NORTHWEST", "Direction.NORTH", "Direction.WEST"],
 } %}
+{% macro can_sense_angle(dir, x, y) -%}
+{%- if dir == "Direction.NORTH" -%}{{- 1 if y >= (x|abs) else 0 -}}
+{%- elif dir == "Direction.NORTHEAST" -%}{{- 1 if x >= 0 and y >= 0 else 0 -}}
+{%- elif dir == "Direction.EAST" -%}{{- 1 if x >= (y|abs) else 0 -}}
+{%- elif dir == "Direction.SOUTHEAST" -%}{{- 1 if x >= 0 and y <= 0 else 0 -}}
+{%- elif dir == "Direction.SOUTH" -%}{{- 1 if y <= -(x|abs) else 0 -}}
+{%- elif dir == "Direction.SOUTHWEST" -%}{{- 1 if x <= 0 and y <= 0 else 0 -}}
+{%- elif dir == "Direction.WEST" -%}{{- 1 if x <= -(y|abs) else 0 -}}
+{%- elif dir == "Direction.NORTHWEST" -%}{{- 1 if x <= 0 and y >= 0 else 0 -}}
+{%- else -%}{{- 0 -}}
+{%- endif -%}
+{%- endmacro %}
+{% macro can_sense_distance(x, y) -%}
+{{- 1 if x * x + y * y <= 20 else 0 -}}
+{%- endmacro %}
 import static java.lang.Math.*;
 
 public class Util {
@@ -151,16 +166,9 @@ public class Util {
                     {% for x in range(-4, 5) %}
                     {% set ns = namespace(dys=[]) %}
                     {% for y in range(-4, 5) %}
-                    {% if dir == "Direction.NORTH" %}       {% set visible = y >= (x|abs) %}
-                    {% elif dir == "Direction.NORTHEAST" %} {% set visible = x >= 0 and y >= 0 %}
-                    {% elif dir == "Direction.EAST" %}      {% set visible = x >= (y|abs) %}
-                    {% elif dir == "Direction.SOUTHEAST" %} {% set visible = x >= 0 and y <= 0 %}
-                    {% elif dir == "Direction.SOUTH" %}     {% set visible = y <= -(x|abs) %}
-                    {% elif dir == "Direction.SOUTHWEST" %} {% set visible = x <= 0 and y <= 0 %}
-                    {% elif dir == "Direction.WEST" %}      {% set visible = x <= -(y|abs) %}
-                    {% elif dir == "Direction.NORTHWEST" %} {% set visible = x <= 0 and y >= 0 %}
-                    {% endif %}
-                    {% if x * x + y * y <= 20 and visible %}
+                    {% set visible = can_sense_angle(dir, x, y) | int %}
+                    {% set in_range = can_sense_distance(x, y) | int %}
+                    {% if in_range and visible %}
                     {% set ns.dys = ns.dys + [y] %}
                     {% endif %}
                     {% endfor %}
@@ -182,6 +190,54 @@ public class Util {
                 return false;
             }
         }
+    }
+
+    public static boolean canHardSense(int dx, int dy, Direction dir) {
+        switch(dir.ordinal()) {
+            {% for i in range(8) %}
+            {% set dir = directions[i] %}
+            case {{i}} -> {
+                switch(dx) {
+                    {% for x in range(-4, 5) %}
+                    case {{x}} -> {
+                        switch(dy) {
+                            {% for y in range(-4, 5) %}
+                            case {{y}} -> {
+                                {% set ns = namespace(good=1) %}
+                                {% for x0 in range(x - 1, x + 2) %}
+                                {% for y0 in range(y - 1, y + 2) %}
+                                {% set ns.good = ns.good and (can_sense_angle(dir, x0, y0) | int) %}
+                                {% endfor %}
+                                {% endfor %}
+                                {% if ns.good %}
+                                return true;
+                                {% else %}
+                                return false;
+                                {% endif %}
+                            }
+                            {% endfor %}
+                            default -> {
+                                return false;
+                            }
+                        }
+                    }
+                    {% endfor %}
+                    default -> {
+                        return false;
+                    }
+                }
+            }
+            {% endfor %}
+            default -> {
+                return false;
+            }
+        }
+    }
+
+    public static int getSenseLevel(int dx, int dy, Direction dir) {
+        if (!canSense(dx, dy, dir)) return 0;
+        if (canHardSense(dx, dy, dir)) return 2;
+        return 1;
     }
 
     public static boolean canSense(MapLocation s, MapLocation t, Direction dir) {

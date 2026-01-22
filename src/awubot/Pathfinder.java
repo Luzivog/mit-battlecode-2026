@@ -9980,7 +9980,7 @@ public class Pathfinder {
     }
 
     // returns a mask of good directions according to the default order
-    public static int multisourceBfs(MapLocation[] sources, int sourceCnt) throws GameActionException {
+    public static int[] multisourceBfs(MapLocation[] sources, int sourceCnt) throws GameActionException {
         CellTracker.computeLocalBfsMasks();
         long reach0 = 0, reach1 = 0;
         for (int i = 0; i < sourceCnt; i++) {
@@ -10044,7 +10044,7 @@ public class Pathfinder {
                != 0) {
                 res |= 128;
             }
-            return res;
+            return new int[] {res, 0};
         }
             // we don't need to worry about the "seam" here because it's at the cell we are standing on
     reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
@@ -10102,7 +10102,7 @@ public class Pathfinder {
                != 0) {
                 res |= 128;
             }
-            return res;
+            return new int[] {res, 1};
         }
             // we don't need to worry about the "seam" here because it's at the cell we are standing on
     reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
@@ -10160,7 +10160,7 @@ public class Pathfinder {
                != 0) {
                 res |= 128;
             }
-            return res;
+            return new int[] {res, 2};
         }
             // we don't need to worry about the "seam" here because it's at the cell we are standing on
     reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
@@ -10218,7 +10218,7 @@ public class Pathfinder {
                != 0) {
                 res |= 128;
             }
-            return res;
+            return new int[] {res, 3};
         }
             // we don't need to worry about the "seam" here because it's at the cell we are standing on
     reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
@@ -10276,7 +10276,7 @@ public class Pathfinder {
                != 0) {
                 res |= 128;
             }
-            return res;
+            return new int[] {res, 4};
         }
             // we don't need to worry about the "seam" here because it's at the cell we are standing on
     reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
@@ -10334,7 +10334,7 @@ public class Pathfinder {
                != 0) {
                 res |= 128;
             }
-            return res;
+            return new int[] {res, 5};
         }
             // we don't need to worry about the "seam" here because it's at the cell we are standing on
     reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
@@ -10392,8 +10392,8 @@ public class Pathfinder {
                != 0) {
                 res |= 128;
             }
-            return res;
+            return new int[] {res, 6};
         }
-        return 0;
+        return new int[] {0, 1000};
     }
 }

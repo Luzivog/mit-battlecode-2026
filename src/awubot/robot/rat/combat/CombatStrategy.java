@@ -138,11 +138,14 @@ public class CombatStrategy extends Strategy {
             // for (int i = 0; i < sourceCnt; i++) {
             //     indicate("combat source prep: " + sources[i]);
             // }
-            moveMask = Pathfinder.multisourceBfs(sources, sourceCnt);
+            int[] bfsResult = Pathfinder.multisourceBfs(sources, sourceCnt);
+            moveMask = bfsResult[0];    
+            int bfsIters = bfsResult[1];
+            println("BFS iters: " + bfsIters);
             // Profiler.pop("combat bfs");
             indicate("MOVEMASK: " + Integer.toBinaryString(moveMask));
             if (moveMask == 0) return false; // no enemies nearby
-            if (funnyTarget != null) {
+            if (funnyTarget != null && bfsIters <= 5) {
                 println("AGGROED ON FUNNY TARGET!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " + funnyTarget.location);
                 indicate("funny pos: " + funnyTarget.location);
                 turn(myLoc.directionTo(funnyTarget.location));

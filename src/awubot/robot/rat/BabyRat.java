@@ -31,6 +31,7 @@ public class BabyRat {
         shouldGlance = true;
 
         CellTracker.storeVisibleCells();
+        AntColony.preTick();
 
         tryPickUpCheese();
         tryTransferCheese();

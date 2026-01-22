@@ -552,7 +552,7 @@ public class Pathfinder {
     private static long localPassableExceptAllies0, localPassableExceptAllies1;
     private static boolean dirtAllowed;
     private static long nearCat0, nearCat1;
-    private static void prepareBfsMasks() throws GameActionException {
+    private static void prepareBfsMasks(boolean noKings) throws GameActionException {
         Profiler.begin();
         CellTracker.computeLocalBfsMasks();
         dirtAllowed = Config.allowDirt();
@@ -599,8 +599,16 @@ public class Pathfinder {
             localPassableExceptAllies1 &= ~CellTracker.localDirt1;
         }
         // IF TLE: unroll this
-        for(int i = RobotTracker.allyCount - 1; i >= 0; i--) {
-            {{ writePos("RobotTracker.allies[i]", "localPassableExceptAllies", 0, True) }}
+        if(noKings) {
+            for(int i = RobotTracker.numAllies - 1; i >= 0; i--) {
+                var ally = RobotTracker.sortedAllies[i];
+                if(ally.getType() == UnitType.RAT_KING) continue;
+                {{ writePos("ally.location", "localPassableExceptAllies", 0, True) }}
+            }
+        } else {
+            for(int i = RobotTracker.allyCount - 1; i >= 0; i--) {
+                {{ writePos("RobotTracker.allies[i]", "localPassableExceptAllies", 0, True) }}
+            }
         }
         nearCat0 = nearCat1 = 0;
         for(int i = 0; i < 4; i++) {
@@ -693,15 +701,29 @@ public class Pathfinder {
     {{mask}}1 &= {{localPassable}}1;
     {% endmacro %}
 
-    private static void doBugnavBfs(BugnavInstance bug) throws GameActionException {
-        prepareBfsMasks();
+    {% for mode in ["bugnav", "source"] %}
+    {% if mode == "bugnav" %}
+    private static void doBugnavBfs(BugnavInstance bug) throws GameActionException
+    {% else %}
+    public static void doBfs(MapLocation source) throws GameActionException
+    {% endif %}
+    {
+        {% if mode == "source" %}
+        System.out.println("bfs to " + source);
+        {% endif %}
+        prepareBfsMasks({% if mode == "bugnav" %} false {% else %} true {% endif %});
         Profiler.begin();
         // d{i}0 + d{i}1 is the mask of reachable within i steps
         long d00 = 0, d01 = 0;
         long d10 = 0, d11 = 0;
 
+        {% if mode == "source" %}
+        assert chebyshevDistance(myLoc, source) <= 5;
+        {{ writePos("source", "d0", 1, False) }}
+        {% endif %}
+
         {% for i in range(MAX_PATH) %}
-        {% if i % 2 == 0 %}
+        {% if mode == "bugnav" and i % 2 == 0 %}
         {
             var bugPos = bug.getRecentPos({{i}} / 2);
             if(!bugPos.equals(myLoc)) {
@@ -709,18 +731,12 @@ public class Pathfinder {
             }
         }
         {% endif %}
-        // {
-        //     if(amAfter(11360, 47)) {
-        //         indicatorString = "";
-        //         // CellTracker.printLocalMask(d{{i}}0, d{{i}}1);
-        //         // CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
-        //         // Clock.yield();
-        //         // indicatorString = "";
-        //         // CellTracker.printLocalMask(nearCat0, nearCat1);
-        //         // Clock.yield();
-        //     }
-        // }
-        {% if i %}
+        if(amAfter(10692, 11)) {
+            // indicatorString = "";
+            CellTracker.printLocalMask(d{{i}}0, d{{i}}1);
+            // Clock.yield();
+        }
+        {% if i or mode == "source" %}
         if((d{{i}}0 & 0x807000000000000l) != 0 || (d{{i}}1 & 0xe01) != 0) {
             // Profiler.begin();
             // this is sloppy since we only care about tiles <= 2 chebyshev distance away
@@ -753,7 +769,11 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
+                    {% if mode == "bugnav" %}
                     double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
+                    {% else %}
+                    double score = nextLoc.distanceSquaredTo(source);
+                    {% endif %}
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        {% if off < 61 %}
@@ -808,7 +828,9 @@ public class Pathfinder {
             if(bestMove != null) {
                 Profiler.end("bfs");
                 // indicate("bestMove: " + bestMove);
+                {% if mode == "bugnav" %}
                 bug.lastDist = {{i}};
+                {% endif %}
                 indicate("iters: " + {{i}});
                 makeMove(bestMove);
                 return;
@@ -833,6 +855,8 @@ public class Pathfinder {
         {% endfor %}
         Profiler.end("bfs");
 
+        {% if mode == "bugnav" %}
+
         println("fallback when bfs can't find path");
         indicate("fallback when bfs can't find path");
 
@@ -845,7 +869,15 @@ public class Pathfinder {
         if(dirCount > 0) makeMove(dirs[Rng.mcg() % dirCount]);
 
         bug.clearPath();
+
+        {% else %}
+
+        System.out.println("FAILFAILFAILFAILFAILFAILFAIL");
+        assert false : "bfs failed to find path";
+
+        {% endif %}
     }
+    {% endfor %}
 
     // returns a mask of good directions according to the default order
     public static int[] multisourceBfs(MapLocation[] sources, int sourceCnt) {
@@ -895,6 +927,14 @@ public class Pathfinder {
     public static long reach0, reach1;
     public static void computeReachable() {
         CellTracker.computeLocalBfsMasks();
+        // TODO: consider allies impassable
+        var localPassable0 = CellTracker.localPassable0;
+        var localPassable1 = CellTracker.localPassable1;
+        for(int i = RobotTracker.numAllies - 1; i >= 0; i--) {
+            var ally = RobotTracker.sortedAllies[i];
+            if(ally.getType() == UnitType.RAT_KING) continue;
+            {{ writePos("ally.location", "localPassable", 0, True) }}
+        }
         reach0 = 0x807000000000000l & CellTracker.localPassable0;
         reach1 = 0xe01 & CellTracker.localPassable1;
         {% for i in range(5) %}

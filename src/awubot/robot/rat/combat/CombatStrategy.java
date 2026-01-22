@@ -17,8 +17,8 @@ import awubot.comms.Squeaker;
 import awubot.comms.Enemy;
 import awubot.comms.EnemyManager;
 import awubot.robot.Strategy;
-import awubot.robot.rat.combat.moves.TryAttack;
 import awubot.robot.rat.combat.moves.TryFight;
+import awubot.robot.rat.combat.moves.TryAttack;
 import awubot.robot.rat.combat.moves.TryRatNap;
 import awubot.robot.rat.combat.moves.TryPosition;
 import awubot.robot.rat.combat.moves.TryThrow;
@@ -89,6 +89,7 @@ public class CombatStrategy extends Strategy {
         } finally {
             Profiler.pop("combat tracker");
         }
+
 
         Profiler.push();
         try {

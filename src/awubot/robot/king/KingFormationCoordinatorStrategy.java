@@ -16,9 +16,9 @@ import awubot.Game;
 public class KingFormationCoordinatorStrategy extends Strategy {
     private static final int[] CHEESE_THRESHOLDS = {800, 1000, 1200, 1800, 1000000000};
     private static final int UPGRADE_COST = 50;
-    private static final int MIN_DIST_FROM_KINGS_SQ = 64;
+    private static final int MIN_DIST_FROM_KINGS_SQ = 100;
     private static final int MAX_FORMATION_DIST_TO_MINE_SQ = 25;
-    private static final int COORDINATION_TIMEOUT = 200;
+    private static final int COORDINATION_TIMEOUT = 120;
     private static final int FORMATION_COOLDOWN = 150;
     private static final int MIN_TURN_FOR_FORMATION = 200;
 
@@ -76,12 +76,11 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         int myKingCount = GlobalArray.countRatKings();
         int numRats = (rc.getCurrentRatCost() - 10) * 2 / 5;
 
-        if (myKingCount >= 5 || (myKingCount >= 2 && time >= 1100) || numRats < 15 * myKingCount) {
+        if (myKingCount >= 5 || time >= 1100 || numRats < 15 * myKingCount) {
             abortFormation();
             kingCount = myKingCount;
             return true;
         }
-
 
         if (myKingCount > kingCount) {
             abortFormation();
@@ -110,23 +109,14 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     }
 
     private void tryStartFormation() throws GameActionException {
-        
         if (time < MIN_TURN_FOR_FORMATION) return;
-        indicate("time ok");
-
-
         int myGlobalCheese = rc.getGlobalCheese();
-        
         if (time - lastFormationTurn < FORMATION_COOLDOWN) return;
-        indicate("time since last formation ok");
         int myKingCount = GlobalArray.countRatKings();
         if (myKingCount == 5) return;
-        indicate("king count ok");
         if (myGlobalCheese < getCheeseThreshold(myKingCount) + UPGRADE_COST) return;
-        indicate("cheese ok");
         int numRats = (rc.getCurrentRatCost() - 10) * 2 / 5;
         if (numRats < 15 * myKingCount) return;
-        indicate("rat count ok");
 
         if (GlobalArray.getFormationTarget() != null) return;
 

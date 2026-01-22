@@ -10001,6 +10001,23 @@ public class Pathfinder {
         }
         var localPassable0 = CellTracker.localPassable0 & ~CellTracker.localDirt0;
         var localPassable1 = CellTracker.localPassable1 & ~CellTracker.localDirt1;
+        for(int i = RobotTracker.allyCount - 1; i >= 0; i--) {
+                    {
+            var pos = RobotTracker.allies[i];
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassable0 &= ~ (1l << idx);
+                } else {
+                    localPassable1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+        }
         if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
             indicate("loop 0");
             int res = 0;

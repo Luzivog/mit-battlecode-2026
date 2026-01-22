@@ -919,6 +919,9 @@ public class Pathfinder {
         }
         var localPassable0 = CellTracker.localPassable0 & ~CellTracker.localDirt0;
         var localPassable1 = CellTracker.localPassable1 & ~CellTracker.localDirt1;
+        for(int i = RobotTracker.allyCount - 1; i >= 0; i--) {
+            {{ writePos("RobotTracker.allies[i]", "localPassable", 0, True) }}
+        }
         {% for i in range(7) %}
         if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
             indicate("loop {{i}}");

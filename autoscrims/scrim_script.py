@@ -7,14 +7,15 @@ from dotenv import load_dotenv
 load_dotenv()
 
 API_BASE = os.getenv("BC_API_BASE", "https://api.battlecode.org/api")
-EPISODE = os.getenv("BC_EPISODE", "bc26java")
+EPISODE = os.getenv("BC_EPISODE", "bc26")
 USERNAME = os.getenv("BC_USERNAME")
 PASSWORD = os.getenv("BC_PASSWORD")
 TEAM_PAGE_START = int(os.getenv("BC_TEAM_PAGE_START", "1"))
-TEAM_PAGE_END = int(os.getenv("BC_TEAM_PAGE_END", "2"))
+TEAM_PAGE_END = int(os.getenv("BC_TEAM_PAGE_END", "1"))
 MAP_COUNT = int(os.getenv("BC_MAP_COUNT", "10"))
 ONLY_US_TEAMS = os.getenv("BC_ONLY_US", "false").strip().lower() in ("1", "true", "yes")
 REQUEST_SLEEP = float(os.getenv("BC_REQUEST_SLEEP", "0.1"))
+MAPS_PER_SCRIM = 10
 
 def get_teams(start_page=1, end_page=1):
     page = 1
@@ -57,12 +58,15 @@ if __name__ == "__main__":
     for team in teams:
         print(team['name'])
     all_map_names = get_map_names()
+    random.shuffle(all_map_names)
     map_count = min(MAP_COUNT, len(all_map_names))
-    map_names = random.sample(all_map_names, map_count)
+    selected_maps = all_map_names[:map_count]
+    map_groups = [selected_maps[i:i + MAPS_PER_SCRIM] for i in range(0, len(selected_maps), MAPS_PER_SCRIM)]
     srim_url = f"{API_BASE}/compete/{EPISODE}/request/"
     for team in teams:
-        payload = {"is_ranked":False,"requested_to":team['id'],"player_order":"?","map_names":map_names}
-        print(payload)
-        response = requests.post(srim_url, json=payload, headers={"Authorization": f"Bearer {token}"})
-        print(response.json())
-        time.sleep(REQUEST_SLEEP)
+        for map_group in map_groups:
+            payload = {"is_ranked":False,"requested_to":team['id'],"player_order":"?","map_names":map_group}
+            print(payload)
+            response = requests.post(srim_url, json=payload, headers={"Authorization": f"Bearer {token}"})
+            print(response.json())
+            time.sleep(REQUEST_SLEEP)

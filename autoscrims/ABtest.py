@@ -3,6 +3,7 @@
 #   Optional .env: AB_PLAYER1, AB_PLAYER2, AB_MAPS_DIR, AB_REPS, AB_SEED, AB_WORKERS, AB_NO_BUILD, AB_TIMEOUT
 # Notes:
 #   --reps repeats each map N times (each repeat runs both sides); --seed fixes the seed for all entries.
+import difflib
 import io
 import math
 import os
@@ -59,6 +60,31 @@ def filter_shit_tests(maps: list[str]) -> list[str]:
         return maps
     skip = {name.lower() for name in SHIT_TESTS}
     return [name for name in maps if name.lower() not in skip]
+
+
+def validate_map_names(maps: list[str], maps_dir: Path) -> list[str]:
+    available = list_local_maps(maps_dir)
+    available_lookup = {name.lower(): name for name in available}
+    resolved: list[str] = []
+    missing: list[str] = []
+    suggestions: dict[str, list[str]] = {}
+    for name in maps:
+        key = name.lower()
+        if key in available_lookup:
+            resolved.append(available_lookup[key])
+        else:
+            missing.append(name)
+            suggestions[name] = difflib.get_close_matches(name, available, n=3, cutoff=0.6)
+    if missing:
+        lines = [
+            f"Unknown map name(s): {', '.join(missing)}",
+            f"Maps directory: {maps_dir}",
+        ]
+        for name in missing:
+            if suggestions.get(name):
+                lines.append(f"  Did you mean: {', '.join(suggestions[name])}")
+        raise SystemExit("\n".join(lines))
+    return resolved
 
 
 def env_first(*names: str) -> str | None:
@@ -573,7 +599,12 @@ def main() -> None:
     validate_team_exists(args.player1)
     validate_team_exists(args.player2)
 
-    base_maps = parse_maps(args.maps) if args.maps else list_local_maps(Path(args.maps_dir))
+    maps_dir = Path(args.maps_dir)
+    if args.maps:
+        requested = parse_maps(args.maps) or []
+        base_maps = validate_map_names(requested, maps_dir)
+    else:
+        base_maps = list_local_maps(maps_dir)
     base_maps = filter_shit_tests(base_maps)
     if not base_maps:
         raise SystemExit("No maps left after applying SHIT_TESTS.")

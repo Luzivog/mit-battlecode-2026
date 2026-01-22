@@ -1,11 +1,11 @@
-package awubot.robot.rat;
+package awubot_mystery.robot.rat;
 
 import battlecode.common.*;
-import awubot.Pathfinder;
-import awubot.comms.GlobalArray;
-import awubot.robot.Strategy;
-import static awubot.Game.*;
-import static awubot.util.Util.*;
+import awubot_mystery.Pathfinder;
+import awubot_mystery.comms.GlobalArray;
+import awubot_mystery.robot.Strategy;
+import static awubot_mystery.Game.*;
+import static awubot_mystery.util.Util.*;
 
 public class GoHomeStrategy extends Strategy {
     private int king;

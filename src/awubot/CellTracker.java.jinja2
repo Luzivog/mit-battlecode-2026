@@ -134,12 +134,10 @@ public class CellTracker {
             case {{i}} -> {
                 if(info.isDirt()) dirt{{i}} |= 1l << locX;
                 else dirt{{i}} &= ~(1l << locX);
-                if (mapData[{{i}}].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[{{i}}].setCharAt(locX, '\2');
-                    } else {
-                        mapData[{{i}}].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[{{i}}].setCharAt(locX, '\2');
+                } else {
+                    mapData[{{i}}].setCharAt(locX, '\1');
                 }
                 if((seen{{i}} & 1l << locX) == 0l) {
                     seen{{i}} |= 1l << locX;
@@ -184,7 +182,7 @@ public class CellTracker {
             }
             {% endfor %}
         }
-        Profiler.end("storeVisibleCells");
+        Profiler.end("SVC");
     }
 
     public static void storeVisibleCellsPostMoveForward() throws GameActionException {
@@ -218,7 +216,7 @@ public class CellTracker {
             }
             {% endfor %}
         }
-        Profiler.end("storeVisibleCellsPostMove");
+        Profiler.end("SVCPM");
     }
 
     public static void storeVisibleCellsKing() throws GameActionException {
@@ -227,7 +225,7 @@ public class CellTracker {
         for(var info : rc.senseNearbyMapInfos()) {
             CellTracker.storeCell(info);
         }
-        Profiler.end("storeVisibleCellsKing");
+        Profiler.end("SVCK");
     }
 
     public static long localPassable0, localPassable1;
@@ -267,7 +265,7 @@ public class CellTracker {
     }
     {% endfor %}
     static MapLocation localBfsPos = new MapLocation(-1, -1);
-    public static void computeLocalBfsMasks() throws GameActionException {
+    public static void computeLocalBfsMasks() {
         if(myLoc.equals(localBfsPos)) return;
         localBfsPos = myLoc;
         {% for mask in ["dirt", "passable"] %}

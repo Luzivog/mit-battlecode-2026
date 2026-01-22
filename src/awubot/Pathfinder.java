@@ -6,7 +6,8 @@ import awubot.util.Rng;
 import awubot.util.Profiler;
 import awubot.util.string.FastMapLocationSet;
 import static awubot.Game.*;
-import static awubot.robot.rat.BabyRat.*; // TODO: make pathfinder compatible with rat king
+import awubot.robot.rat.BabyRat;
+import awubot.robot.king.RatKing;
 
 // IF TLE: lower these constants (especially MAX_BUG_ITERS)
 
@@ -22,1968 +23,1803 @@ class Config {
     }
 }
 
-class BugnavInstance {
-    MapLocation target;
+public class Pathfinder {
+    public static class BugnavInstance {
+        public MapLocation target;
 
-    // false for the instances spawned for lookahead
-    boolean isMaster;
-    // child instances for lookahead
-    BugnavInstance leftBug, rightBug;
-    // these are reset when we physically move
-    boolean leftDone, rightDone;
-    // detect movement with this
-    MapLocation lastLoc;
-    Direction lastDir;
-    // loop detection
-    long[] guessedLeft, guessedRight;
-    // where we want to go, in case path length is zero, we should turn to here
-    MapLocation outOfSightLoc;
+        // false for the instances spawned for lookahead
+        boolean isMaster;
+        // child instances for lookahead
+        BugnavInstance leftBug, rightBug;
+        // these are reset when we physically move
+        boolean leftDone, rightDone;
+        // detect movement with this
+        MapLocation lastLoc_;
+        Direction lastDir;
+        // loop detection
+        long[] guessedLeft, guessedRight;
+        // where we want to go, in case path length is zero, we should turn to here
+        MapLocation outOfSightLoc;
 
-    // extra "return variables" for lookahead instances
-    boolean hitEdge = false, outOfSight = false, arrived = false;
+        // extra "return variables" for lookahead instances
+        boolean hitEdge = false, outOfSight = false, arrived = false;
 
-    FastMapLocationSet vis = new FastMapLocationSet();
-    boolean givenUp = false;
+        FastMapLocationSet vis = new FastMapLocationSet();
+        public boolean givenUp = false;
 
-    Direction bottomDir, topDir;
+        Direction bottomDir, topDir;
 
-    // state (you can reconstruct the entire state from these variables + target/bottomDir)
-    MapLocation pos;
-    int stackSize;
-    int emptyStackTurns;
-    boolean leftTurn;
+        // state (you can reconstruct the entire state from these variables + target/bottomDir)
+        MapLocation pos;
+        int stackSize;
+        int emptyStackTurns;
+        boolean leftTurn;
 
-    int windingNumber = 0;
+        int windingNumber = 0;
 
-    public int nextPathIndex;
-    public MapLocation path0;
-    public MapLocation path1;
-    public MapLocation path2;
-    public MapLocation path3;
-    public MapLocation path4;
-    public MapLocation path5;
-    public MapLocation path6;
-    public MapLocation path7;
-    public MapLocation path8;
-    public MapLocation path9;
-    public MapLocation path10;
-    public MapLocation path11;
-    public MapLocation path12;
-    public MapLocation path13;
-    public MapLocation path14;
+        // bfs distance to pos
+        int lastDist = 0;
 
-    void clearPath() {
-        pos = myLoc;
-        nextPathIndex = 0;
-        stackSize = 0;
-        windingNumber = 0;
-        emptyStackTurns = 1000;
-        bottomDir = topDir = pos.directionTo(target);
-        leftBug = rightBug = null;
-        path0 = new MapLocation(-1000, -1000);
-        path1 = new MapLocation(-1000, -1000);
-        path2 = new MapLocation(-1000, -1000);
-        path3 = new MapLocation(-1000, -1000);
-        path4 = new MapLocation(-1000, -1000);
-        path5 = new MapLocation(-1000, -1000);
-        path6 = new MapLocation(-1000, -1000);
-        path7 = new MapLocation(-1000, -1000);
-        path8 = new MapLocation(-1000, -1000);
-        path9 = new MapLocation(-1000, -1000);
-        path10 = new MapLocation(-1000, -1000);
-        path11 = new MapLocation(-1000, -1000);
-        path12 = new MapLocation(-1000, -1000);
-        path13 = new MapLocation(-1000, -1000);
-        path14 = new MapLocation(-1000, -1000);
-    }
+        MapLocation lastBugPos, lastLoc, secondLastBugPos, secondLastLoc;
+        int reps = 0;
 
-    BugnavInstance(boolean leftTurn, MapLocation target) {
-        this.leftTurn = leftTurn;
-        this.target = target;
-        this.isMaster = true;
-        guessedLeft = new long[mapHeight];
-        guessedRight = new long[mapHeight];
-        clearPath();
-    }
+        public int nextPathIndex;
+        public MapLocation path0;
+        public MapLocation path1;
+        public MapLocation path2;
+        public MapLocation path3;
+        public MapLocation path4;
+        public MapLocation path5;
+        public MapLocation path6;
+        public MapLocation path7;
+        public MapLocation path8;
+        public MapLocation path9;
+        public MapLocation path10;
+        public MapLocation path11;
+        public MapLocation path12;
+        public MapLocation path13;
+        public MapLocation path14;
 
-    BugnavInstance(MapLocation pos, boolean leftTurn, MapLocation target, boolean isMaster) {
-        this.leftTurn = leftTurn;
-        this.target = target;
-        this.isMaster = isMaster;
-        clearPath();
-        this.pos = pos;
-        appendCurrentPosition();
-    }
+        void clearPath() {
+            pos = myLoc;
+            lastDist = 0;
+            lastBugPos = lastLoc = secondLastBugPos = secondLastLoc = new MapLocation(-1, -1);
+            reps = 0;
+            nextPathIndex = 0;
+            stackSize = 0;
+            windingNumber = 0;
+            emptyStackTurns = 1000;
+            bottomDir = topDir = pos.directionTo(target);
+            leftBug = rightBug = null;
+            path0 = new MapLocation(-1000, -1000);
+            path1 = new MapLocation(-1000, -1000);
+            path2 = new MapLocation(-1000, -1000);
+            path3 = new MapLocation(-1000, -1000);
+            path4 = new MapLocation(-1000, -1000);
+            path5 = new MapLocation(-1000, -1000);
+            path6 = new MapLocation(-1000, -1000);
+            path7 = new MapLocation(-1000, -1000);
+            path8 = new MapLocation(-1000, -1000);
+            path9 = new MapLocation(-1000, -1000);
+            path10 = new MapLocation(-1000, -1000);
+            path11 = new MapLocation(-1000, -1000);
+            path12 = new MapLocation(-1000, -1000);
+            path13 = new MapLocation(-1000, -1000);
+            path14 = new MapLocation(-1000, -1000);
+        }
 
-    void appendPosition(MapLocation loc) {
-        switch (nextPathIndex) {
-            case 0 -> {
-                if (!path14.equals(loc)) {
-                    if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
-                        indicate("loop detected");
-                        println("loop detected");
-                        givenUp = true;
+        public BugnavInstance(MapLocation target) {
+            this.leftTurn = (Rng.mcg() >> 30) == 0;
+            this.target = target;
+            this.isMaster = true;
+            guessedLeft = new long[mapHeight];
+            guessedRight = new long[mapHeight];
+            clearPath();
+        }
+
+        private BugnavInstance(MapLocation pos, boolean leftTurn, MapLocation target, boolean isMaster) {
+            this.leftTurn = leftTurn;
+            this.target = target;
+            this.isMaster = isMaster;
+            clearPath();
+            this.pos = pos;
+            appendCurrentPosition();
+        }
+
+        void appendPosition(MapLocation loc) {
+            switch (nextPathIndex) {
+                case 0 -> {
+                    if (!path14.equals(loc)) {
+                        if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
+                            indicate("loop detected");
+                            println("loop detected");
+                            givenUp = true;
+                        }
+                        vis.add(loc);
+                        path0 = loc;
+                        nextPathIndex = 1;
                     }
-                    vis.add(loc);
-                    path0 = loc;
-                    nextPathIndex = 1;
                 }
-            }
-            case 1 -> {
-                if (!path0.equals(loc)) {
-                    if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
-                        indicate("loop detected");
-                        println("loop detected");
-                        givenUp = true;
+                case 1 -> {
+                    if (!path0.equals(loc)) {
+                        if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
+                            indicate("loop detected");
+                            println("loop detected");
+                            givenUp = true;
+                        }
+                        vis.add(loc);
+                        path1 = loc;
+                        nextPathIndex = 2;
                     }
-                    vis.add(loc);
-                    path1 = loc;
-                    nextPathIndex = 2;
                 }
-            }
-            case 2 -> {
-                if (!path1.equals(loc)) {
-                    if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
-                        indicate("loop detected");
-                        println("loop detected");
-                        givenUp = true;
+                case 2 -> {
+                    if (!path1.equals(loc)) {
+                        if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
+                            indicate("loop detected");
+                            println("loop detected");
+                            givenUp = true;
+                        }
+                        vis.add(loc);
+                        path2 = loc;
+                        nextPathIndex = 3;
                     }
-                    vis.add(loc);
-                    path2 = loc;
-                    nextPathIndex = 3;
                 }
-            }
-            case 3 -> {
-                if (!path2.equals(loc)) {
-                    if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
-                        indicate("loop detected");
-                        println("loop detected");
-                        givenUp = true;
+                case 3 -> {
+                    if (!path2.equals(loc)) {
+                        if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
+                            indicate("loop detected");
+                            println("loop detected");
+                            givenUp = true;
+                        }
+                        vis.add(loc);
+                        path3 = loc;
+                        nextPathIndex = 4;
                     }
-                    vis.add(loc);
-                    path3 = loc;
-                    nextPathIndex = 4;
                 }
-            }
-            case 4 -> {
-                if (!path3.equals(loc)) {
-                    if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
-                        indicate("loop detected");
-                        println("loop detected");
-                        givenUp = true;
+                case 4 -> {
+                    if (!path3.equals(loc)) {
+                        if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
+                            indicate("loop detected");
+                            println("loop detected");
+                            givenUp = true;
+                        }
+                        vis.add(loc);
+                        path4 = loc;
+                        nextPathIndex = 5;
                     }
-                    vis.add(loc);
-                    path4 = loc;
-                    nextPathIndex = 5;
                 }
-            }
-            case 5 -> {
-                if (!path4.equals(loc)) {
-                    if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
-                        indicate("loop detected");
-                        println("loop detected");
-                        givenUp = true;
+                case 5 -> {
+                    if (!path4.equals(loc)) {
+                        if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
+                            indicate("loop detected");
+                            println("loop detected");
+                            givenUp = true;
+                        }
+                        vis.add(loc);
+                        path5 = loc;
+                        nextPathIndex = 6;
                     }
-                    vis.add(loc);
-                    path5 = loc;
-                    nextPathIndex = 6;
                 }
-            }
-            case 6 -> {
-                if (!path5.equals(loc)) {
-                    if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
-                        indicate("loop detected");
-                        println("loop detected");
-                        givenUp = true;
+                case 6 -> {
+                    if (!path5.equals(loc)) {
+                        if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
+                            indicate("loop detected");
+                            println("loop detected");
+                            givenUp = true;
+                        }
+                        vis.add(loc);
+                        path6 = loc;
+                        nextPathIndex = 7;
                     }
-                    vis.add(loc);
-                    path6 = loc;
-                    nextPathIndex = 7;
                 }
-            }
-            case 7 -> {
-                if (!path6.equals(loc)) {
-                    if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
-                        indicate("loop detected");
-                        println("loop detected");
-                        givenUp = true;
+                case 7 -> {
+                    if (!path6.equals(loc)) {
+                        if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
+                            indicate("loop detected");
+                            println("loop detected");
+                            givenUp = true;
+                        }
+                        vis.add(loc);
+                        path7 = loc;
+                        nextPathIndex = 8;
                     }
-                    vis.add(loc);
-                    path7 = loc;
-                    nextPathIndex = 8;
                 }
-            }
-            case 8 -> {
-                if (!path7.equals(loc)) {
-                    if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
-                        indicate("loop detected");
-                        println("loop detected");
-                        givenUp = true;
+                case 8 -> {
+                    if (!path7.equals(loc)) {
+                        if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
+                            indicate("loop detected");
+                            println("loop detected");
+                            givenUp = true;
+                        }
+                        vis.add(loc);
+                        path8 = loc;
+                        nextPathIndex = 9;
                     }
-                    vis.add(loc);
-                    path8 = loc;
-                    nextPathIndex = 9;
                 }
-            }
-            case 9 -> {
-                if (!path8.equals(loc)) {
-                    if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
-                        indicate("loop detected");
-                        println("loop detected");
-                        givenUp = true;
+                case 9 -> {
+                    if (!path8.equals(loc)) {
+                        if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
+                            indicate("loop detected");
+                            println("loop detected");
+                            givenUp = true;
+                        }
+                        vis.add(loc);
+                        path9 = loc;
+                        nextPathIndex = 10;
                     }
-                    vis.add(loc);
-                    path9 = loc;
-                    nextPathIndex = 10;
                 }
-            }
-            case 10 -> {
-                if (!path9.equals(loc)) {
-                    if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
-                        indicate("loop detected");
-                        println("loop detected");
-                        givenUp = true;
+                case 10 -> {
+                    if (!path9.equals(loc)) {
+                        if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
+                            indicate("loop detected");
+                            println("loop detected");
+                            givenUp = true;
+                        }
+                        vis.add(loc);
+                        path10 = loc;
+                        nextPathIndex = 11;
                     }
-                    vis.add(loc);
-                    path10 = loc;
-                    nextPathIndex = 11;
                 }
-            }
-            case 11 -> {
-                if (!path10.equals(loc)) {
-                    if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
-                        indicate("loop detected");
-                        println("loop detected");
-                        givenUp = true;
+                case 11 -> {
+                    if (!path10.equals(loc)) {
+                        if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
+                            indicate("loop detected");
+                            println("loop detected");
+                            givenUp = true;
+                        }
+                        vis.add(loc);
+                        path11 = loc;
+                        nextPathIndex = 12;
                     }
-                    vis.add(loc);
-                    path11 = loc;
-                    nextPathIndex = 12;
                 }
-            }
-            case 12 -> {
-                if (!path11.equals(loc)) {
-                    if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
-                        indicate("loop detected");
-                        println("loop detected");
-                        givenUp = true;
+                case 12 -> {
+                    if (!path11.equals(loc)) {
+                        if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
+                            indicate("loop detected");
+                            println("loop detected");
+                            givenUp = true;
+                        }
+                        vis.add(loc);
+                        path12 = loc;
+                        nextPathIndex = 13;
                     }
-                    vis.add(loc);
-                    path12 = loc;
-                    nextPathIndex = 13;
                 }
-            }
-            case 13 -> {
-                if (!path12.equals(loc)) {
-                    if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
-                        indicate("loop detected");
-                        println("loop detected");
-                        givenUp = true;
+                case 13 -> {
+                    if (!path12.equals(loc)) {
+                        if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
+                            indicate("loop detected");
+                            println("loop detected");
+                            givenUp = true;
+                        }
+                        vis.add(loc);
+                        path13 = loc;
+                        nextPathIndex = 14;
                     }
-                    vis.add(loc);
-                    path13 = loc;
-                    nextPathIndex = 14;
                 }
-            }
-            case 14 -> {
-                if (!path13.equals(loc)) {
-                    if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
-                        indicate("loop detected");
-                        println("loop detected");
-                        givenUp = true;
+                case 14 -> {
+                    if (!path13.equals(loc)) {
+                        if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
+                            indicate("loop detected");
+                            println("loop detected");
+                            givenUp = true;
+                        }
+                        vis.add(loc);
+                        path14 = loc;
+                        nextPathIndex = 0;
                     }
-                    vis.add(loc);
-                    path14 = loc;
-                    nextPathIndex = 0;
                 }
-            }
-            default -> {
-                assert false;
+                default -> {
+                    assert false;
+                }
             }
         }
-    }
 
-    void appendCurrentPosition() {
-        appendPosition(pos);
-    }
+        void appendCurrentPosition() {
+            appendPosition(pos);
+        }
 
-    MapLocation getRecentPos(int i) {
-        switch ((nextPathIndex - i + 14) % 15) {
-            case 0 -> {
-                return path0;
-            }
-            case 1 -> {
-                return path1;
-            }
-            case 2 -> {
-                return path2;
-            }
-            case 3 -> {
-                return path3;
-            }
-            case 4 -> {
-                return path4;
-            }
-            case 5 -> {
-                return path5;
-            }
-            case 6 -> {
-                return path6;
-            }
-            case 7 -> {
-                return path7;
-            }
-            case 8 -> {
-                return path8;
-            }
-            case 9 -> {
-                return path9;
-            }
-            case 10 -> {
-                return path10;
-            }
-            case 11 -> {
-                return path11;
-            }
-            case 12 -> {
-                return path12;
-            }
-            case 13 -> {
-                return path13;
-            }
-            case 14 -> {
-                return path14;
-            }
-            default -> {
-                assert false : "index out of range";
-                return null;
+        MapLocation getRecentPos(int i) {
+            switch ((nextPathIndex - i + 14) % 15) {
+                case 0 -> {
+                    return path0;
+                }
+                case 1 -> {
+                    return path1;
+                }
+                case 2 -> {
+                    return path2;
+                }
+                case 3 -> {
+                    return path3;
+                }
+                case 4 -> {
+                    return path4;
+                }
+                case 5 -> {
+                    return path5;
+                }
+                case 6 -> {
+                    return path6;
+                }
+                case 7 -> {
+                    return path7;
+                }
+                case 8 -> {
+                    return path8;
+                }
+                case 9 -> {
+                    return path9;
+                }
+                case 10 -> {
+                    return path10;
+                }
+                case 11 -> {
+                    return path11;
+                }
+                case 12 -> {
+                    return path12;
+                }
+                case 13 -> {
+                    return path13;
+                }
+                case 14 -> {
+                    return path14;
+                }
+                default -> {
+                    assert false : "index out of range";
+                    return null;
+                }
             }
         }
-    }
 
-    private static boolean isPassable(MapLocation loc) {
-        if(isRatKing) return CellTracker.isKingPassable(loc);
-        return CellTracker.isPassable(loc) && !RobotTracker.kingSet.contains(loc) && (Config.allowDirt() || !CellTracker.isDirt(loc) || CellTracker.isWallAdjacent(loc));
-    }
+        private static boolean isPassable(MapLocation loc) {
+            if(isRatKing) return CellTracker.isKingPassable(loc);
+            return CellTracker.isPassable(loc) && !RobotTracker.kingSet.contains(loc) && (Config.allowDirt() || !CellTracker.isDirt(loc) || CellTracker.isWallAdjacent(loc));
+        }
 
-    private static boolean possiblyPassable(MapLocation loc) {
-        if(isRatKing) return CellTracker.isKingPassable(loc);
-        return (CellTracker.isPassable(loc) || !CellTracker.isSeen(loc)) && !RobotTracker.kingSet.contains(loc) && (Config.allowDirt() || !CellTracker.isDirt(loc) || CellTracker.isWallAdjacent(loc));
-    }
+        private static boolean possiblyPassable(MapLocation loc) {
+            if(isRatKing) return CellTracker.isKingPassable(loc);
+            return (CellTracker.isPassable(loc) || !CellTracker.isSeen(loc)) && !RobotTracker.kingSet.contains(loc) && (Config.allowDirt() || !CellTracker.isDirt(loc) || CellTracker.isWallAdjacent(loc));
+        }
 
-    boolean doLookahead() throws GameActionException {
-        // indicate("lookahead!!");
-        if(leftBug == null) {
-            // initialise
-            leftBug = new BugnavInstance(pos, true, target, false);
-            rightBug = new BugnavInstance(pos, false, target, false);
-            lastLoc = new MapLocation(-1, -1);
-            lastDir = Direction.CENTER;
+        boolean doLookahead() throws GameActionException {
+            // indicate("lookahead!!");
+            if(leftBug == null) {
+                // initialise
+                leftBug = new BugnavInstance(pos, true, target, false);
+                rightBug = new BugnavInstance(pos, false, target, false);
+                lastLoc_ = new MapLocation(-1, -1);
+                lastDir = Direction.CENTER;
+                return true;
+            }
+            // rc.setIndicatorDot(leftBug.pos, 255, 255, 0);
+            // rc.setIndicatorDot(rightBug.pos, 255, 255, 0);
+            // Profiler.begin();
+            if(!myLoc.equals(lastLoc_) || !myDir.equals(lastDir)) {
+                // we moved, so we might be able to advance previously stuck stuff further
+                lastLoc_ = myLoc;
+                lastDir = myDir;
+                leftDone = leftBug.hitEdge || leftBug.nextPathIndex == 14;
+                rightDone = rightBug.hitEdge || leftBug.nextPathIndex == 14;
+            }
+
+            if(!(leftDone && rightDone)) {
+                if(rightDone) {
+                                    // indicate("advance left");
+                leftBug.outOfSight = false;
+                leftDone = !leftBug.advance();
+                // indicate(leftBug.pos);
+                rc.setIndicatorDot(leftBug.pos, 255, 0, 255);
+
+                } else if(leftDone) {
+                                    // indicate("advance right");
+                rightBug.outOfSight = false;
+                rightDone = !rightBug.advance();
+                // indicate(rightBug.pos);
+                rc.setIndicatorDot(rightBug.pos, 255, 0, 255);
+
+                } else if(leftBug.nextPathIndex > rightBug.nextPathIndex) {
+                                    // indicate("advance right");
+                rightBug.outOfSight = false;
+                rightDone = !rightBug.advance();
+                // indicate(rightBug.pos);
+                rc.setIndicatorDot(rightBug.pos, 255, 0, 255);
+
+                } else {
+                                    // indicate("advance left");
+                leftBug.outOfSight = false;
+                leftDone = !leftBug.advance();
+                // indicate(leftBug.pos);
+                rc.setIndicatorDot(leftBug.pos, 255, 0, 255);
+
+                }
+            }
+            // Profiler.end("lookahead");
+
+            boolean leftReady = leftBug.nextPathIndex >= 5 || leftBug.hitEdge || leftBug.outOfSight || leftBug.arrived;
+            boolean rightReady = rightBug.nextPathIndex >= 5 || rightBug.hitEdge || rightBug.outOfSight || rightBug.arrived;
+            // indicate("ready " + leftReady + " " + rightReady);
+            if(!myLoc.equals(pos) && (!leftReady || !rightReady)) return !(leftDone && rightDone);
+            indicate("going ahead");
+
+            var leftScore =  Math.sqrt(leftBug.pos.distanceSquaredTo(target)) + leftBug.nextPathIndex * 0.7 ;
+            var rightScore =  Math.sqrt(rightBug.pos.distanceSquaredTo(target)) + rightBug.nextPathIndex * 0.7 ;
+            indicate("lookahead" + pos);
+            // indicate(leftBug.pos);
+            // indicate(leftScore);
+            // indicate(rightBug.pos);
+            // indicate(rightScore);
+
+
+            if(leftBug.arrived) {
+                            var bug = leftBug;
+            if(bug.leftTurn) {
+                guessedLeft[pos.y] |= 1l << pos.x;
+            } else {
+                guessedRight[pos.y] |= 1l << pos.x;
+            }
+            pos = bug.pos;
+            stackSize = bug.stackSize;
+            emptyStackTurns = bug.emptyStackTurns;
+            leftTurn = bug.leftTurn;
+            bottomDir = bug.bottomDir;
+            topDir = bug.topDir;
+            outOfSightLoc = bug.outOfSightLoc;
+            copyPath: {
+                appendPosition(bug.path0);
+                if(bug.nextPathIndex == 1) break copyPath;
+                appendPosition(bug.path1);
+                if(bug.nextPathIndex == 2) break copyPath;
+                appendPosition(bug.path2);
+                if(bug.nextPathIndex == 3) break copyPath;
+                appendPosition(bug.path3);
+                if(bug.nextPathIndex == 4) break copyPath;
+                appendPosition(bug.path4);
+                if(bug.nextPathIndex == 5) break copyPath;
+                appendPosition(bug.path5);
+                if(bug.nextPathIndex == 6) break copyPath;
+                appendPosition(bug.path6);
+                if(bug.nextPathIndex == 7) break copyPath;
+                appendPosition(bug.path7);
+                if(bug.nextPathIndex == 8) break copyPath;
+                appendPosition(bug.path8);
+                if(bug.nextPathIndex == 9) break copyPath;
+                appendPosition(bug.path9);
+                if(bug.nextPathIndex == 10) break copyPath;
+                appendPosition(bug.path10);
+                if(bug.nextPathIndex == 11) break copyPath;
+                appendPosition(bug.path11);
+                if(bug.nextPathIndex == 12) break copyPath;
+                appendPosition(bug.path12);
+                if(bug.nextPathIndex == 13) break copyPath;
+                appendPosition(bug.path13);
+                if(bug.nextPathIndex == 14) break copyPath;
+                appendPosition(bug.path14);
+            }
+            leftBug = null;
+            rightBug = null;
+
+            } else if(leftBug.arrived) {
+                            var bug = rightBug;
+            if(bug.leftTurn) {
+                guessedLeft[pos.y] |= 1l << pos.x;
+            } else {
+                guessedRight[pos.y] |= 1l << pos.x;
+            }
+            pos = bug.pos;
+            stackSize = bug.stackSize;
+            emptyStackTurns = bug.emptyStackTurns;
+            leftTurn = bug.leftTurn;
+            bottomDir = bug.bottomDir;
+            topDir = bug.topDir;
+            outOfSightLoc = bug.outOfSightLoc;
+            copyPath: {
+                appendPosition(bug.path0);
+                if(bug.nextPathIndex == 1) break copyPath;
+                appendPosition(bug.path1);
+                if(bug.nextPathIndex == 2) break copyPath;
+                appendPosition(bug.path2);
+                if(bug.nextPathIndex == 3) break copyPath;
+                appendPosition(bug.path3);
+                if(bug.nextPathIndex == 4) break copyPath;
+                appendPosition(bug.path4);
+                if(bug.nextPathIndex == 5) break copyPath;
+                appendPosition(bug.path5);
+                if(bug.nextPathIndex == 6) break copyPath;
+                appendPosition(bug.path6);
+                if(bug.nextPathIndex == 7) break copyPath;
+                appendPosition(bug.path7);
+                if(bug.nextPathIndex == 8) break copyPath;
+                appendPosition(bug.path8);
+                if(bug.nextPathIndex == 9) break copyPath;
+                appendPosition(bug.path9);
+                if(bug.nextPathIndex == 10) break copyPath;
+                appendPosition(bug.path10);
+                if(bug.nextPathIndex == 11) break copyPath;
+                appendPosition(bug.path11);
+                if(bug.nextPathIndex == 12) break copyPath;
+                appendPosition(bug.path12);
+                if(bug.nextPathIndex == 13) break copyPath;
+                appendPosition(bug.path13);
+                if(bug.nextPathIndex == 14) break copyPath;
+                appendPosition(bug.path14);
+            }
+            leftBug = null;
+            rightBug = null;
+
+            } else if(leftBug.hitEdge != rightBug.hitEdge) {
+                            var bug = rightBug.hitEdge ? leftBug : rightBug;
+            if(bug.leftTurn) {
+                guessedLeft[pos.y] |= 1l << pos.x;
+            } else {
+                guessedRight[pos.y] |= 1l << pos.x;
+            }
+            pos = bug.pos;
+            stackSize = bug.stackSize;
+            emptyStackTurns = bug.emptyStackTurns;
+            leftTurn = bug.leftTurn;
+            bottomDir = bug.bottomDir;
+            topDir = bug.topDir;
+            outOfSightLoc = bug.outOfSightLoc;
+            copyPath: {
+                appendPosition(bug.path0);
+                if(bug.nextPathIndex == 1) break copyPath;
+                appendPosition(bug.path1);
+                if(bug.nextPathIndex == 2) break copyPath;
+                appendPosition(bug.path2);
+                if(bug.nextPathIndex == 3) break copyPath;
+                appendPosition(bug.path3);
+                if(bug.nextPathIndex == 4) break copyPath;
+                appendPosition(bug.path4);
+                if(bug.nextPathIndex == 5) break copyPath;
+                appendPosition(bug.path5);
+                if(bug.nextPathIndex == 6) break copyPath;
+                appendPosition(bug.path6);
+                if(bug.nextPathIndex == 7) break copyPath;
+                appendPosition(bug.path7);
+                if(bug.nextPathIndex == 8) break copyPath;
+                appendPosition(bug.path8);
+                if(bug.nextPathIndex == 9) break copyPath;
+                appendPosition(bug.path9);
+                if(bug.nextPathIndex == 10) break copyPath;
+                appendPosition(bug.path10);
+                if(bug.nextPathIndex == 11) break copyPath;
+                appendPosition(bug.path11);
+                if(bug.nextPathIndex == 12) break copyPath;
+                appendPosition(bug.path12);
+                if(bug.nextPathIndex == 13) break copyPath;
+                appendPosition(bug.path13);
+                if(bug.nextPathIndex == 14) break copyPath;
+                appendPosition(bug.path14);
+            }
+            leftBug = null;
+            rightBug = null;
+
+            } else {
+                var better = leftScore < rightScore ? leftBug : rightBug;
+                var worse = leftScore < rightScore ? rightBug : leftBug;
+                if(!better.outOfSight && worse.outOfSight) {
+                    indicate("clear winner");
+                                var bug = better;
+            if(bug.leftTurn) {
+                guessedLeft[pos.y] |= 1l << pos.x;
+            } else {
+                guessedRight[pos.y] |= 1l << pos.x;
+            }
+            pos = bug.pos;
+            stackSize = bug.stackSize;
+            emptyStackTurns = bug.emptyStackTurns;
+            leftTurn = bug.leftTurn;
+            bottomDir = bug.bottomDir;
+            topDir = bug.topDir;
+            outOfSightLoc = bug.outOfSightLoc;
+            copyPath: {
+                appendPosition(bug.path0);
+                if(bug.nextPathIndex == 1) break copyPath;
+                appendPosition(bug.path1);
+                if(bug.nextPathIndex == 2) break copyPath;
+                appendPosition(bug.path2);
+                if(bug.nextPathIndex == 3) break copyPath;
+                appendPosition(bug.path3);
+                if(bug.nextPathIndex == 4) break copyPath;
+                appendPosition(bug.path4);
+                if(bug.nextPathIndex == 5) break copyPath;
+                appendPosition(bug.path5);
+                if(bug.nextPathIndex == 6) break copyPath;
+                appendPosition(bug.path6);
+                if(bug.nextPathIndex == 7) break copyPath;
+                appendPosition(bug.path7);
+                if(bug.nextPathIndex == 8) break copyPath;
+                appendPosition(bug.path8);
+                if(bug.nextPathIndex == 9) break copyPath;
+                appendPosition(bug.path9);
+                if(bug.nextPathIndex == 10) break copyPath;
+                appendPosition(bug.path10);
+                if(bug.nextPathIndex == 11) break copyPath;
+                appendPosition(bug.path11);
+                if(bug.nextPathIndex == 12) break copyPath;
+                appendPosition(bug.path12);
+                if(bug.nextPathIndex == 13) break copyPath;
+                appendPosition(bug.path13);
+                if(bug.nextPathIndex == 14) break copyPath;
+                appendPosition(bug.path14);
+            }
+            leftBug = null;
+            rightBug = null;
+
+                } else if(!better.outOfSight || myLoc.isAdjacentTo(pos)) {
+                    indicate("unclear, guessing");
+                    leftScore = Math.pow(leftScore, 15);
+                    rightScore = Math.pow(rightScore, 15);
+                    var total = leftScore + rightScore;
+                    leftScore /= total;
+                    rightScore /= total;
+                    indicate(leftScore);
+                    indicate(rightScore);
+                                var bug = Rng.mcg() < rightScore * 0x7fffffff ? leftBug : rightBug;
+            if(bug.leftTurn) {
+                guessedLeft[pos.y] |= 1l << pos.x;
+            } else {
+                guessedRight[pos.y] |= 1l << pos.x;
+            }
+            pos = bug.pos;
+            stackSize = bug.stackSize;
+            emptyStackTurns = bug.emptyStackTurns;
+            leftTurn = bug.leftTurn;
+            bottomDir = bug.bottomDir;
+            topDir = bug.topDir;
+            outOfSightLoc = bug.outOfSightLoc;
+            copyPath: {
+                appendPosition(bug.path0);
+                if(bug.nextPathIndex == 1) break copyPath;
+                appendPosition(bug.path1);
+                if(bug.nextPathIndex == 2) break copyPath;
+                appendPosition(bug.path2);
+                if(bug.nextPathIndex == 3) break copyPath;
+                appendPosition(bug.path3);
+                if(bug.nextPathIndex == 4) break copyPath;
+                appendPosition(bug.path4);
+                if(bug.nextPathIndex == 5) break copyPath;
+                appendPosition(bug.path5);
+                if(bug.nextPathIndex == 6) break copyPath;
+                appendPosition(bug.path6);
+                if(bug.nextPathIndex == 7) break copyPath;
+                appendPosition(bug.path7);
+                if(bug.nextPathIndex == 8) break copyPath;
+                appendPosition(bug.path8);
+                if(bug.nextPathIndex == 9) break copyPath;
+                appendPosition(bug.path9);
+                if(bug.nextPathIndex == 10) break copyPath;
+                appendPosition(bug.path10);
+                if(bug.nextPathIndex == 11) break copyPath;
+                appendPosition(bug.path11);
+                if(bug.nextPathIndex == 12) break copyPath;
+                appendPosition(bug.path12);
+                if(bug.nextPathIndex == 13) break copyPath;
+                appendPosition(bug.path13);
+                if(bug.nextPathIndex == 14) break copyPath;
+                appendPosition(bug.path14);
+            }
+            leftBug = null;
+            rightBug = null;
+
+                }
+            }
             return true;
         }
-        // rc.setIndicatorDot(leftBug.pos, 255, 255, 0);
-        // rc.setIndicatorDot(rightBug.pos, 255, 255, 0);
-        // Profiler.begin();
-        if(!myLoc.equals(lastLoc) || !myDir.equals(lastDir)) {
-            // we moved, so we might be able to advance previously stuck stuff further
-            lastLoc = myLoc;
-            lastDir = myDir;
-            leftDone = leftBug.hitEdge || leftBug.nextPathIndex == 14;
-            rightDone = rightBug.hitEdge || leftBug.nextPathIndex == 14;
-        }
 
-        if(!(leftDone && rightDone)) {
-            if(rightDone) {
-                            // indicate("advance left");
-            leftBug.outOfSight = false;
-            leftDone = !leftBug.advance();
-            // indicate(leftBug.pos);
-            rc.setIndicatorDot(leftBug.pos, 255, 0, 255);
-
-            } else if(leftDone) {
-                            // indicate("advance right");
-            rightBug.outOfSight = false;
-            rightDone = !rightBug.advance();
-            // indicate(rightBug.pos);
-            rc.setIndicatorDot(rightBug.pos, 255, 0, 255);
-
-            } else if(leftBug.nextPathIndex > rightBug.nextPathIndex) {
-                            // indicate("advance right");
-            rightBug.outOfSight = false;
-            rightDone = !rightBug.advance();
-            // indicate(rightBug.pos);
-            rc.setIndicatorDot(rightBug.pos, 255, 0, 255);
-
-            } else {
-                            // indicate("advance left");
-            leftBug.outOfSight = false;
-            leftDone = !leftBug.advance();
-            // indicate(leftBug.pos);
-            rc.setIndicatorDot(leftBug.pos, 255, 0, 255);
-
+        // false = halt bug
+        boolean advance() throws GameActionException {
+            if(leftBug != null) {
+                // we are currently in the middle of a lookahead
+                return doLookahead();
             }
-        }
-        // Profiler.end("lookahead");
+            // indicate("leftTurn " + leftTurn);
 
-        boolean leftReady = leftBug.nextPathIndex >= 5 || leftBug.hitEdge || leftBug.outOfSight || leftBug.arrived;
-        boolean rightReady = rightBug.nextPathIndex >= 5 || rightBug.hitEdge || rightBug.outOfSight || rightBug.arrived;
-        // indicate("ready " + leftReady + " " + rightReady);
-        if(!myLoc.equals(pos) && (!leftReady || !rightReady)) return !(leftDone && rightDone);
-        indicate("going ahead");
-
-        var leftScore =  Math.sqrt(leftBug.pos.distanceSquaredTo(target)) + leftBug.nextPathIndex * 0.7 ;
-        var rightScore =  Math.sqrt(rightBug.pos.distanceSquaredTo(target)) + rightBug.nextPathIndex * 0.7 ;
-        indicate("lookahead" + pos);
-        // indicate(leftBug.pos);
-        // indicate(leftScore);
-        // indicate(rightBug.pos);
-        // indicate(rightScore);
-
-
-        if(leftBug.arrived) {
-                    var bug = leftBug;
-        if(bug.leftTurn) {
-            guessedLeft[pos.y] |= 1l << pos.x;
-        } else {
-            guessedRight[pos.y] |= 1l << pos.x;
-        }
-        pos = bug.pos;
-        stackSize = bug.stackSize;
-        emptyStackTurns = bug.emptyStackTurns;
-        leftTurn = bug.leftTurn;
-        bottomDir = bug.bottomDir;
-        topDir = bug.topDir;
-        outOfSightLoc = bug.outOfSightLoc;
-        copyPath: {
-            appendPosition(bug.path0);
-            if(bug.nextPathIndex == 1) break copyPath;
-            appendPosition(bug.path1);
-            if(bug.nextPathIndex == 2) break copyPath;
-            appendPosition(bug.path2);
-            if(bug.nextPathIndex == 3) break copyPath;
-            appendPosition(bug.path3);
-            if(bug.nextPathIndex == 4) break copyPath;
-            appendPosition(bug.path4);
-            if(bug.nextPathIndex == 5) break copyPath;
-            appendPosition(bug.path5);
-            if(bug.nextPathIndex == 6) break copyPath;
-            appendPosition(bug.path6);
-            if(bug.nextPathIndex == 7) break copyPath;
-            appendPosition(bug.path7);
-            if(bug.nextPathIndex == 8) break copyPath;
-            appendPosition(bug.path8);
-            if(bug.nextPathIndex == 9) break copyPath;
-            appendPosition(bug.path9);
-            if(bug.nextPathIndex == 10) break copyPath;
-            appendPosition(bug.path10);
-            if(bug.nextPathIndex == 11) break copyPath;
-            appendPosition(bug.path11);
-            if(bug.nextPathIndex == 12) break copyPath;
-            appendPosition(bug.path12);
-            if(bug.nextPathIndex == 13) break copyPath;
-            appendPosition(bug.path13);
-            if(bug.nextPathIndex == 14) break copyPath;
-            appendPosition(bug.path14);
-        }
-        leftBug = null;
-        rightBug = null;
-
-        } else if(leftBug.arrived) {
-                    var bug = rightBug;
-        if(bug.leftTurn) {
-            guessedLeft[pos.y] |= 1l << pos.x;
-        } else {
-            guessedRight[pos.y] |= 1l << pos.x;
-        }
-        pos = bug.pos;
-        stackSize = bug.stackSize;
-        emptyStackTurns = bug.emptyStackTurns;
-        leftTurn = bug.leftTurn;
-        bottomDir = bug.bottomDir;
-        topDir = bug.topDir;
-        outOfSightLoc = bug.outOfSightLoc;
-        copyPath: {
-            appendPosition(bug.path0);
-            if(bug.nextPathIndex == 1) break copyPath;
-            appendPosition(bug.path1);
-            if(bug.nextPathIndex == 2) break copyPath;
-            appendPosition(bug.path2);
-            if(bug.nextPathIndex == 3) break copyPath;
-            appendPosition(bug.path3);
-            if(bug.nextPathIndex == 4) break copyPath;
-            appendPosition(bug.path4);
-            if(bug.nextPathIndex == 5) break copyPath;
-            appendPosition(bug.path5);
-            if(bug.nextPathIndex == 6) break copyPath;
-            appendPosition(bug.path6);
-            if(bug.nextPathIndex == 7) break copyPath;
-            appendPosition(bug.path7);
-            if(bug.nextPathIndex == 8) break copyPath;
-            appendPosition(bug.path8);
-            if(bug.nextPathIndex == 9) break copyPath;
-            appendPosition(bug.path9);
-            if(bug.nextPathIndex == 10) break copyPath;
-            appendPosition(bug.path10);
-            if(bug.nextPathIndex == 11) break copyPath;
-            appendPosition(bug.path11);
-            if(bug.nextPathIndex == 12) break copyPath;
-            appendPosition(bug.path12);
-            if(bug.nextPathIndex == 13) break copyPath;
-            appendPosition(bug.path13);
-            if(bug.nextPathIndex == 14) break copyPath;
-            appendPosition(bug.path14);
-        }
-        leftBug = null;
-        rightBug = null;
-
-        } else if(leftBug.hitEdge != rightBug.hitEdge) {
-                    var bug = rightBug.hitEdge ? leftBug : rightBug;
-        if(bug.leftTurn) {
-            guessedLeft[pos.y] |= 1l << pos.x;
-        } else {
-            guessedRight[pos.y] |= 1l << pos.x;
-        }
-        pos = bug.pos;
-        stackSize = bug.stackSize;
-        emptyStackTurns = bug.emptyStackTurns;
-        leftTurn = bug.leftTurn;
-        bottomDir = bug.bottomDir;
-        topDir = bug.topDir;
-        outOfSightLoc = bug.outOfSightLoc;
-        copyPath: {
-            appendPosition(bug.path0);
-            if(bug.nextPathIndex == 1) break copyPath;
-            appendPosition(bug.path1);
-            if(bug.nextPathIndex == 2) break copyPath;
-            appendPosition(bug.path2);
-            if(bug.nextPathIndex == 3) break copyPath;
-            appendPosition(bug.path3);
-            if(bug.nextPathIndex == 4) break copyPath;
-            appendPosition(bug.path4);
-            if(bug.nextPathIndex == 5) break copyPath;
-            appendPosition(bug.path5);
-            if(bug.nextPathIndex == 6) break copyPath;
-            appendPosition(bug.path6);
-            if(bug.nextPathIndex == 7) break copyPath;
-            appendPosition(bug.path7);
-            if(bug.nextPathIndex == 8) break copyPath;
-            appendPosition(bug.path8);
-            if(bug.nextPathIndex == 9) break copyPath;
-            appendPosition(bug.path9);
-            if(bug.nextPathIndex == 10) break copyPath;
-            appendPosition(bug.path10);
-            if(bug.nextPathIndex == 11) break copyPath;
-            appendPosition(bug.path11);
-            if(bug.nextPathIndex == 12) break copyPath;
-            appendPosition(bug.path12);
-            if(bug.nextPathIndex == 13) break copyPath;
-            appendPosition(bug.path13);
-            if(bug.nextPathIndex == 14) break copyPath;
-            appendPosition(bug.path14);
-        }
-        leftBug = null;
-        rightBug = null;
-
-        } else {
-            var better = leftScore < rightScore ? leftBug : rightBug;
-            var worse = leftScore < rightScore ? rightBug : leftBug;
-            if(!better.outOfSight && worse.outOfSight) {
-                indicate("clear winner");
-                        var bug = better;
-        if(bug.leftTurn) {
-            guessedLeft[pos.y] |= 1l << pos.x;
-        } else {
-            guessedRight[pos.y] |= 1l << pos.x;
-        }
-        pos = bug.pos;
-        stackSize = bug.stackSize;
-        emptyStackTurns = bug.emptyStackTurns;
-        leftTurn = bug.leftTurn;
-        bottomDir = bug.bottomDir;
-        topDir = bug.topDir;
-        outOfSightLoc = bug.outOfSightLoc;
-        copyPath: {
-            appendPosition(bug.path0);
-            if(bug.nextPathIndex == 1) break copyPath;
-            appendPosition(bug.path1);
-            if(bug.nextPathIndex == 2) break copyPath;
-            appendPosition(bug.path2);
-            if(bug.nextPathIndex == 3) break copyPath;
-            appendPosition(bug.path3);
-            if(bug.nextPathIndex == 4) break copyPath;
-            appendPosition(bug.path4);
-            if(bug.nextPathIndex == 5) break copyPath;
-            appendPosition(bug.path5);
-            if(bug.nextPathIndex == 6) break copyPath;
-            appendPosition(bug.path6);
-            if(bug.nextPathIndex == 7) break copyPath;
-            appendPosition(bug.path7);
-            if(bug.nextPathIndex == 8) break copyPath;
-            appendPosition(bug.path8);
-            if(bug.nextPathIndex == 9) break copyPath;
-            appendPosition(bug.path9);
-            if(bug.nextPathIndex == 10) break copyPath;
-            appendPosition(bug.path10);
-            if(bug.nextPathIndex == 11) break copyPath;
-            appendPosition(bug.path11);
-            if(bug.nextPathIndex == 12) break copyPath;
-            appendPosition(bug.path12);
-            if(bug.nextPathIndex == 13) break copyPath;
-            appendPosition(bug.path13);
-            if(bug.nextPathIndex == 14) break copyPath;
-            appendPosition(bug.path14);
-        }
-        leftBug = null;
-        rightBug = null;
-
-            } else if(!better.outOfSight || myLoc.isAdjacentTo(pos)) {
-                indicate("unclear, guessing");
-                leftScore = Math.pow(leftScore, 15);
-                rightScore = Math.pow(rightScore, 15);
-                var total = leftScore + rightScore;
-                leftScore /= total;
-                rightScore /= total;
-                indicate(leftScore);
-                indicate(rightScore);
-                        var bug = Rng.mcg() < rightScore * 0x7fffffff ? leftBug : rightBug;
-        if(bug.leftTurn) {
-            guessedLeft[pos.y] |= 1l << pos.x;
-        } else {
-            guessedRight[pos.y] |= 1l << pos.x;
-        }
-        pos = bug.pos;
-        stackSize = bug.stackSize;
-        emptyStackTurns = bug.emptyStackTurns;
-        leftTurn = bug.leftTurn;
-        bottomDir = bug.bottomDir;
-        topDir = bug.topDir;
-        outOfSightLoc = bug.outOfSightLoc;
-        copyPath: {
-            appendPosition(bug.path0);
-            if(bug.nextPathIndex == 1) break copyPath;
-            appendPosition(bug.path1);
-            if(bug.nextPathIndex == 2) break copyPath;
-            appendPosition(bug.path2);
-            if(bug.nextPathIndex == 3) break copyPath;
-            appendPosition(bug.path3);
-            if(bug.nextPathIndex == 4) break copyPath;
-            appendPosition(bug.path4);
-            if(bug.nextPathIndex == 5) break copyPath;
-            appendPosition(bug.path5);
-            if(bug.nextPathIndex == 6) break copyPath;
-            appendPosition(bug.path6);
-            if(bug.nextPathIndex == 7) break copyPath;
-            appendPosition(bug.path7);
-            if(bug.nextPathIndex == 8) break copyPath;
-            appendPosition(bug.path8);
-            if(bug.nextPathIndex == 9) break copyPath;
-            appendPosition(bug.path9);
-            if(bug.nextPathIndex == 10) break copyPath;
-            appendPosition(bug.path10);
-            if(bug.nextPathIndex == 11) break copyPath;
-            appendPosition(bug.path11);
-            if(bug.nextPathIndex == 12) break copyPath;
-            appendPosition(bug.path12);
-            if(bug.nextPathIndex == 13) break copyPath;
-            appendPosition(bug.path13);
-            if(bug.nextPathIndex == 14) break copyPath;
-            appendPosition(bug.path14);
-        }
-        leftBug = null;
-        rightBug = null;
-
+            if(pos.isAdjacentTo(target)) {
+                pos = target;
+                appendCurrentPosition();
+                arrived = true;
+                return false;
             }
-        }
-        return true;
-    }
 
-    // false = halt bug
-    boolean advance() throws GameActionException {
-        if(leftBug != null) {
-            // we are currently in the middle of a lookahead
-            return doLookahead();
-        }
-        // indicate("leftTurn " + leftTurn);
-
-        if(pos.isAdjacentTo(target)) {
-            pos = target;
-            appendCurrentPosition();
-            arrived = true;
-            return false;
-        }
-
-        var dirToTarget = pos.directionTo(target);
-        if(dirToTarget != bottomDir) {
-            // indicate("changing bottomDir from " + bottomDir + " to " + dirToTarget);
-            if(dirToTarget == Direction.CENTER) return false;
-            // indicate("NEW DIR " + dirToTarget);
-            if(dirToTarget == bottomDir.rotateLeft()) {
-                windingNumber++;
-                // indicate("INCREMENT");
-            } else if(dirToTarget == bottomDir.rotateRight()) {
-                windingNumber--;
-                // indicate("DECREMENT");
-            }
-            if(stackSize == 0) {
-                bottomDir = topDir = dirToTarget;
-            } else {
-                if(leftTurn) {
-                                    if(dirToTarget == bottomDir.rotateRight()) {
-                    bottomDir = dirToTarget;
-                    stackSize++;
+            var dirToTarget = pos.directionTo(target);
+            if(dirToTarget != bottomDir) {
+                // indicate("changing bottomDir from " + bottomDir + " to " + dirToTarget);
+                if(dirToTarget == Direction.CENTER) return false;
+                // indicate("NEW DIR " + dirToTarget);
+                if(dirToTarget == bottomDir.rotateLeft()) {
+                    windingNumber++;
+                    // indicate("INCREMENT");
+                } else if(dirToTarget == bottomDir.rotateRight()) {
+                    windingNumber--;
+                    // indicate("DECREMENT");
+                }
+                if(stackSize == 0) {
+                    bottomDir = topDir = dirToTarget;
                 } else {
-                    if(dirToTarget != bottomDir.rotateLeft()) {
-                        System.out.println("unexpected direction change from " + bottomDir + " to " + dirToTarget);
-                        clearPath();
-                    } else {
+                    if(leftTurn) {
+                                            if(dirToTarget == bottomDir.rotateRight()) {
                         bottomDir = dirToTarget;
-                        stackSize--;
-                        if(stackSize < 0) {
-                            stackSize = 0;
-                            topDir = bottomDir;
+                        stackSize++;
+                    } else {
+                        if(dirToTarget != bottomDir.rotateLeft()) {
+                            System.out.println("unexpected direction change from " + bottomDir + " to " + dirToTarget);
+                            clearPath();
+                        } else {
+                            bottomDir = dirToTarget;
+                            stackSize--;
+                            if(stackSize < 0) {
+                                stackSize = 0;
+                                topDir = bottomDir;
+                            }
                         }
                     }
-                }
 
-                } else {
-                                    if(dirToTarget == bottomDir.rotateLeft()) {
-                    bottomDir = dirToTarget;
-                    stackSize++;
-                } else {
-                    if(dirToTarget != bottomDir.rotateRight()) {
-                        System.out.println("unexpected direction change from " + bottomDir + " to " + dirToTarget);
-                        clearPath();
                     } else {
+                                            if(dirToTarget == bottomDir.rotateLeft()) {
                         bottomDir = dirToTarget;
-                        stackSize--;
-                        if(stackSize < 0) {
-                            stackSize = 0;
-                            topDir = bottomDir;
+                        stackSize++;
+                    } else {
+                        if(dirToTarget != bottomDir.rotateRight()) {
+                            System.out.println("unexpected direction change from " + bottomDir + " to " + dirToTarget);
+                            clearPath();
+                        } else {
+                            bottomDir = dirToTarget;
+                            stackSize--;
+                            if(stackSize < 0) {
+                                stackSize = 0;
+                                topDir = bottomDir;
+                            }
                         }
                     }
-                }
 
-                }
-            }
-        }
-        // indicate("winding number " + windingNumber);
-        // indicate("direction " + pos + " " + topDir + " " + bottomDir + " " + leftTurn);
-
-        MapLocation greedyLoc = pos.add(bottomDir);
-        if(stackSize <= 1) {
-            var greedyGood = possiblyPassable(greedyLoc);
-            if(greedyGood) {
-                            if(isPassable(greedyLoc) && chebyshevDistance(myLoc, greedyLoc) <= 5) {
-                // indicate("greedyLoc " + greedyLoc);
-                pos = greedyLoc;
-                topDir = bottomDir;
-                stackSize = 0;
-                emptyStackTurns++;
-                appendCurrentPosition();
-                return true;
-            }
-            rc.setIndicatorDot(greedyLoc, 0, 255, 255);
-            outOfSight = true;
-            outOfSightLoc = greedyLoc;
-            return false;
-
-            }
-            var leftLoc = pos.add(bottomDir.rotateLeft());
-            var rightLoc = pos.add(bottomDir.rotateRight());
-            var leftGood = possiblyPassable(leftLoc);
-            var rightGood = possiblyPassable(rightLoc);
-            if(leftGood && !rightGood) {
-                            if(isPassable(leftLoc) && chebyshevDistance(myLoc, leftLoc) <= 5) {
-                // indicate("leftLoc " + leftLoc);
-                pos = leftLoc;
-                topDir = bottomDir;
-                stackSize = 0;
-                emptyStackTurns++;
-                appendCurrentPosition();
-                return true;
-            }
-            rc.setIndicatorDot(leftLoc, 0, 255, 255);
-            outOfSight = true;
-            outOfSightLoc = leftLoc;
-            return false;
-
-            }
-            if(!leftGood && rightGood) {
-                            if(isPassable(rightLoc) && chebyshevDistance(myLoc, rightLoc) <= 5) {
-                // indicate("rightLoc " + rightLoc);
-                pos = rightLoc;
-                topDir = bottomDir;
-                stackSize = 0;
-                emptyStackTurns++;
-                appendCurrentPosition();
-                return true;
-            }
-            rc.setIndicatorDot(rightLoc, 0, 255, 255);
-            outOfSight = true;
-            outOfSightLoc = rightLoc;
-            return false;
-
-            }
-            if(leftGood && rightGood) {
-                if(leftLoc.distanceSquaredTo(target) < rightLoc.distanceSquaredTo(target)) {
-                                if(isPassable(leftLoc) && chebyshevDistance(myLoc, leftLoc) <= 5) {
-                // indicate("leftLoc " + leftLoc);
-                pos = leftLoc;
-                topDir = bottomDir;
-                stackSize = 0;
-                emptyStackTurns++;
-                appendCurrentPosition();
-                return true;
-            }
-            rc.setIndicatorDot(leftLoc, 0, 255, 255);
-            outOfSight = true;
-            outOfSightLoc = leftLoc;
-            return false;
-
-                } else {
-                                if(isPassable(rightLoc) && chebyshevDistance(myLoc, rightLoc) <= 5) {
-                // indicate("rightLoc " + rightLoc);
-                pos = rightLoc;
-                topDir = bottomDir;
-                stackSize = 0;
-                emptyStackTurns++;
-                appendCurrentPosition();
-                return true;
-            }
-            rc.setIndicatorDot(rightLoc, 0, 255, 255);
-            outOfSight = true;
-            outOfSightLoc = rightLoc;
-            return false;
-
+                    }
                 }
             }
-        }
+            // indicate("winding number " + windingNumber);
+            // indicate("direction " + pos + " " + topDir + " " + bottomDir + " " + leftTurn);
 
-        // guess rotation direction (kinda inefficient but wtv)
-        if(isMaster && stackSize == 0 && (CellTracker.isSeen(greedyLoc) || RobotTracker.kingSet.contains(greedyLoc))) {
-            if(emptyStackTurns >= 2) {
-                boolean pastLeft = ((guessedLeft[pos.y] >> pos.x) & 1l) != 0;
-                boolean pastRight = ((guessedRight[pos.y] >> pos.x) & 1l) != 0;
-                if(pastLeft && pastRight) {
-                    indicate("idk which way");
-                    // just pick randomly, we have no idea what's going on
-                    // leftTurn = Rng.mcg() >> 30 == 0;
-                    // keep going the same way, we'll get there eventually
-                } else if(pastLeft) {
-                    indicate("past left");
-                    // try the other way
-                    leftTurn = false;
-                    guessedRight[pos.y] |= 1l << pos.x;
-                } else if(pastRight) {
-                    indicate("past right");
-                    leftTurn = true;
-                    guessedLeft[pos.y] |= 1l << pos.x;
-                } else if(isRatKing) {
-                    // just guess :skull:
-                    if(Rng.mcg() >> 30 == 0) {
-                        leftTurn = true;
-                        guessedLeft[pos.y] |= 1l << pos.x;
+            MapLocation greedyLoc = pos.add(bottomDir);
+            if(stackSize <= 1) {
+                var greedyGood = possiblyPassable(greedyLoc);
+                if(greedyGood) {
+                                    if(isPassable(greedyLoc) && chebyshevDistance(myLoc, greedyLoc) <= 5) {
+                    // indicate("greedyLoc " + greedyLoc);
+                    pos = greedyLoc;
+                    topDir = bottomDir;
+                    stackSize = 0;
+                    emptyStackTurns++;
+                    appendCurrentPosition();
+                    return true;
+                }
+                rc.setIndicatorDot(greedyLoc, 0, 255, 255);
+                outOfSight = true;
+                outOfSightLoc = greedyLoc;
+                return false;
+
+                }
+                var leftLoc = pos.add(bottomDir.rotateLeft());
+                var rightLoc = pos.add(bottomDir.rotateRight());
+                var leftGood = possiblyPassable(leftLoc);
+                var rightGood = possiblyPassable(rightLoc);
+                if(leftGood && !rightGood) {
+                                    if(isPassable(leftLoc) && chebyshevDistance(myLoc, leftLoc) <= 5) {
+                    // indicate("leftLoc " + leftLoc);
+                    pos = leftLoc;
+                    topDir = bottomDir;
+                    stackSize = 0;
+                    emptyStackTurns++;
+                    appendCurrentPosition();
+                    return true;
+                }
+                rc.setIndicatorDot(leftLoc, 0, 255, 255);
+                outOfSight = true;
+                outOfSightLoc = leftLoc;
+                return false;
+
+                }
+                if(!leftGood && rightGood) {
+                                    if(isPassable(rightLoc) && chebyshevDistance(myLoc, rightLoc) <= 5) {
+                    // indicate("rightLoc " + rightLoc);
+                    pos = rightLoc;
+                    topDir = bottomDir;
+                    stackSize = 0;
+                    emptyStackTurns++;
+                    appendCurrentPosition();
+                    return true;
+                }
+                rc.setIndicatorDot(rightLoc, 0, 255, 255);
+                outOfSight = true;
+                outOfSightLoc = rightLoc;
+                return false;
+
+                }
+                if(leftGood && rightGood) {
+                    if(leftLoc.distanceSquaredTo(target) < rightLoc.distanceSquaredTo(target)) {
+                                        if(isPassable(leftLoc) && chebyshevDistance(myLoc, leftLoc) <= 5) {
+                    // indicate("leftLoc " + leftLoc);
+                    pos = leftLoc;
+                    topDir = bottomDir;
+                    stackSize = 0;
+                    emptyStackTurns++;
+                    appendCurrentPosition();
+                    return true;
+                }
+                rc.setIndicatorDot(leftLoc, 0, 255, 255);
+                outOfSight = true;
+                outOfSightLoc = leftLoc;
+                return false;
+
                     } else {
+                                        if(isPassable(rightLoc) && chebyshevDistance(myLoc, rightLoc) <= 5) {
+                    // indicate("rightLoc " + rightLoc);
+                    pos = rightLoc;
+                    topDir = bottomDir;
+                    stackSize = 0;
+                    emptyStackTurns++;
+                    appendCurrentPosition();
+                    return true;
+                }
+                rc.setIndicatorDot(rightLoc, 0, 255, 255);
+                outOfSight = true;
+                outOfSightLoc = rightLoc;
+                return false;
+
+                    }
+                }
+            }
+
+            // guess rotation direction (kinda inefficient but wtv)
+            if(isMaster && stackSize == 0 && (CellTracker.isSeen(greedyLoc) || RobotTracker.kingSet.contains(greedyLoc))) {
+                if(emptyStackTurns >= 2) {
+                    boolean pastLeft = ((guessedLeft[pos.y] >> pos.x) & 1l) != 0;
+                    boolean pastRight = ((guessedRight[pos.y] >> pos.x) & 1l) != 0;
+                    if(pastLeft && pastRight) {
+                        indicate("idk which way");
+                        // just pick randomly, we have no idea what's going on
+                        // leftTurn = Rng.mcg() >> 30 == 0;
+                        // keep going the same way, we'll get there eventually
+                    } else if(pastLeft) {
+                        indicate("past left");
+                        // try the other way
                         leftTurn = false;
                         guessedRight[pos.y] |= 1l << pos.x;
+                    } else if(pastRight) {
+                        indicate("past right");
+                        leftTurn = true;
+                        guessedLeft[pos.y] |= 1l << pos.x;
+                    } else if(isRatKing) {
+                        // just guess :skull:
+                        if(Rng.mcg() >> 30 == 0) {
+                            leftTurn = true;
+                            guessedLeft[pos.y] |= 1l << pos.x;
+                        } else {
+                            leftTurn = false;
+                            guessedRight[pos.y] |= 1l << pos.x;
+                        }
+                    } else {
+                        indicate("looking ahead");
+                        return doLookahead();
                     }
-                } else {
-                    indicate("looking ahead");
-                    return doLookahead();
-                }
-            } else if(emptyStackTurns < 0) {
-                emptyStackTurns = 0;
-            }
-        }
-        if(leftTurn) {
-            return tryDirsLeft();
-        } else {
-            return tryDirsRight();
-        }
-    }
-        private boolean tryDirsLeft() throws GameActionException {
-        var tryDir = topDir.rotateRight().rotateRight();
-        if(stackSize + -2 >= 0
-           // only try -2 for diagonals
-           && Math.abs(topDir.dx + topDir.dy) != 1
-           )
-        {
-            // System.out.println("T " + tryDir);
-            var nextPos = pos.add(tryDir);
-            if(!rc.onTheMap(nextPos)) {
-                 if(isMaster) {
-                    // avoid following the edge of the map (TODO: 1-thick borders)
-                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + -2);
-                    if(vis.contains(nextPos)) {
-                        indicate("gave up at edge");
-                        System.out.println("gave up at edge");
-                        givenUp = true;
-                        return false;
-                    }
-                    vis.add(nextPos);
-                    leftTurn = !leftTurn;
-                    clearPath();
-                    // don't guess turn direction, we know that one direction is bad already
-                    emptyStackTurns = -1000;
-                    // start again
-                    return tryDirsRight();
-                } else {
-                    hitEdge = true;
-                }
-                // Profiler.end("bugnav " + -2 + " " + isMaster);
-                indicate("bugnav " + -2 + " " + isMaster);
-                return false;
-            }
-            var isPassable = isPassable(nextPos);
-            if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
-                rc.setIndicatorDot(nextPos, 0, 255, 255);
-                outOfSight = true;
-                outOfSightLoc = nextPos;
-                // Profiler.end("bugnav " + -2 + " " + isMaster);
-                indicate("bugnav " + -2 + " " + isMaster);
-                return false;
-            }
-            if(isPassable) {
-                pos = nextPos;
-                topDir = tryDir;
-                stackSize += -2;
-                if(stackSize == 0) {
-                    emptyStackTurns++;
-                } else {
+                } else if(emptyStackTurns < 0) {
                     emptyStackTurns = 0;
                 }
-                appendCurrentPosition();
-                // Profiler.end("bugnav " + -2 + " " + isMaster);
-                // indicate("bugnav " + -2 + " " + isMaster);
-                return true;
             }
-        }
-        tryDir = tryDir.rotateLeft();
-        if(stackSize + -1 >= 0
-           // only try -2 for diagonals
-           )
-        {
-            // System.out.println("T " + tryDir);
-            var nextPos = pos.add(tryDir);
-            if(!rc.onTheMap(nextPos)) {
-                 if(isMaster) {
-                    // avoid following the edge of the map (TODO: 1-thick borders)
-                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + -1);
-                    if(vis.contains(nextPos)) {
-                        indicate("gave up at edge");
-                        System.out.println("gave up at edge");
-                        givenUp = true;
-                        return false;
-                    }
-                    vis.add(nextPos);
-                    leftTurn = !leftTurn;
-                    clearPath();
-                    // don't guess turn direction, we know that one direction is bad already
-                    emptyStackTurns = -1000;
-                    // start again
-                    return tryDirsRight();
-                } else {
-                    hitEdge = true;
-                }
-                // Profiler.end("bugnav " + -1 + " " + isMaster);
-                indicate("bugnav " + -1 + " " + isMaster);
-                return false;
-            }
-            var isPassable = isPassable(nextPos);
-            if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
-                rc.setIndicatorDot(nextPos, 0, 255, 255);
-                outOfSight = true;
-                outOfSightLoc = nextPos;
-                // Profiler.end("bugnav " + -1 + " " + isMaster);
-                indicate("bugnav " + -1 + " " + isMaster);
-                return false;
-            }
-            if(isPassable) {
-                pos = nextPos;
-                topDir = tryDir;
-                stackSize += -1;
-                if(stackSize == 0) {
-                    emptyStackTurns++;
-                } else {
-                    emptyStackTurns = 0;
-                }
-                appendCurrentPosition();
-                // Profiler.end("bugnav " + -1 + " " + isMaster);
-                // indicate("bugnav " + -1 + " " + isMaster);
-                return true;
-            }
-        }
-        tryDir = tryDir.rotateLeft();
-        {
-            // System.out.println("T " + tryDir);
-            var nextPos = pos.add(tryDir);
-            if(!rc.onTheMap(nextPos)) {
-                 if(isMaster) {
-                    // avoid following the edge of the map (TODO: 1-thick borders)
-                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 0);
-                    if(vis.contains(nextPos)) {
-                        indicate("gave up at edge");
-                        System.out.println("gave up at edge");
-                        givenUp = true;
-                        return false;
-                    }
-                    vis.add(nextPos);
-                    leftTurn = !leftTurn;
-                    clearPath();
-                    // don't guess turn direction, we know that one direction is bad already
-                    emptyStackTurns = -1000;
-                    // start again
-                    return tryDirsRight();
-                } else {
-                    hitEdge = true;
-                }
-                // Profiler.end("bugnav " + 0 + " " + isMaster);
-                indicate("bugnav " + 0 + " " + isMaster);
-                return false;
-            }
-            var isPassable = isPassable(nextPos);
-            if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
-                rc.setIndicatorDot(nextPos, 0, 255, 255);
-                outOfSight = true;
-                outOfSightLoc = nextPos;
-                // Profiler.end("bugnav " + 0 + " " + isMaster);
-                indicate("bugnav " + 0 + " " + isMaster);
-                return false;
-            }
-            if(isPassable) {
-                pos = nextPos;
-                topDir = tryDir;
-                if(stackSize == 0) {
-                    emptyStackTurns++;
-                } else {
-                    emptyStackTurns = 0;
-                }
-                appendCurrentPosition();
-                // Profiler.end("bugnav " + 0 + " " + isMaster);
-                // indicate("bugnav " + 0 + " " + isMaster);
-                return true;
-            }
-        }
-        tryDir = tryDir.rotateLeft();
-        {
-            // System.out.println("T " + tryDir);
-            var nextPos = pos.add(tryDir);
-            if(!rc.onTheMap(nextPos)) {
-                 if(isMaster) {
-                    // avoid following the edge of the map (TODO: 1-thick borders)
-                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 1);
-                    if(vis.contains(nextPos)) {
-                        indicate("gave up at edge");
-                        System.out.println("gave up at edge");
-                        givenUp = true;
-                        return false;
-                    }
-                    vis.add(nextPos);
-                    leftTurn = !leftTurn;
-                    clearPath();
-                    // don't guess turn direction, we know that one direction is bad already
-                    emptyStackTurns = -1000;
-                    // start again
-                    return tryDirsRight();
-                } else {
-                    hitEdge = true;
-                }
-                // Profiler.end("bugnav " + 1 + " " + isMaster);
-                indicate("bugnav " + 1 + " " + isMaster);
-                return false;
-            }
-            var isPassable = isPassable(nextPos);
-            if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
-                rc.setIndicatorDot(nextPos, 0, 255, 255);
-                outOfSight = true;
-                outOfSightLoc = nextPos;
-                // Profiler.end("bugnav " + 1 + " " + isMaster);
-                indicate("bugnav " + 1 + " " + isMaster);
-                return false;
-            }
-            if(isPassable) {
-                pos = nextPos;
-                topDir = tryDir;
-                stackSize += 1;
-                if(stackSize == 0) {
-                    emptyStackTurns++;
-                } else {
-                    emptyStackTurns = 0;
-                }
-                appendCurrentPosition();
-                // Profiler.end("bugnav " + 1 + " " + isMaster);
-                // indicate("bugnav " + 1 + " " + isMaster);
-                return true;
-            }
-        }
-        tryDir = tryDir.rotateLeft();
-        {
-            // System.out.println("T " + tryDir);
-            var nextPos = pos.add(tryDir);
-            if(!rc.onTheMap(nextPos)) {
-                 if(isMaster) {
-                    // avoid following the edge of the map (TODO: 1-thick borders)
-                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 2);
-                    if(vis.contains(nextPos)) {
-                        indicate("gave up at edge");
-                        System.out.println("gave up at edge");
-                        givenUp = true;
-                        return false;
-                    }
-                    vis.add(nextPos);
-                    leftTurn = !leftTurn;
-                    clearPath();
-                    // don't guess turn direction, we know that one direction is bad already
-                    emptyStackTurns = -1000;
-                    // start again
-                    return tryDirsRight();
-                } else {
-                    hitEdge = true;
-                }
-                // Profiler.end("bugnav " + 2 + " " + isMaster);
-                indicate("bugnav " + 2 + " " + isMaster);
-                return false;
-            }
-            var isPassable = isPassable(nextPos);
-            if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
-                rc.setIndicatorDot(nextPos, 0, 255, 255);
-                outOfSight = true;
-                outOfSightLoc = nextPos;
-                // Profiler.end("bugnav " + 2 + " " + isMaster);
-                indicate("bugnav " + 2 + " " + isMaster);
-                return false;
-            }
-            if(isPassable) {
-                pos = nextPos;
-                topDir = tryDir;
-                stackSize += 2;
-                if(stackSize == 0) {
-                    emptyStackTurns++;
-                } else {
-                    emptyStackTurns = 0;
-                }
-                appendCurrentPosition();
-                // Profiler.end("bugnav " + 2 + " " + isMaster);
-                // indicate("bugnav " + 2 + " " + isMaster);
-                return true;
-            }
-        }
-        tryDir = tryDir.rotateLeft();
-        {
-            // System.out.println("T " + tryDir);
-            var nextPos = pos.add(tryDir);
-            if(!rc.onTheMap(nextPos)) {
-                 if(isMaster) {
-                    // avoid following the edge of the map (TODO: 1-thick borders)
-                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 3);
-                    if(vis.contains(nextPos)) {
-                        indicate("gave up at edge");
-                        System.out.println("gave up at edge");
-                        givenUp = true;
-                        return false;
-                    }
-                    vis.add(nextPos);
-                    leftTurn = !leftTurn;
-                    clearPath();
-                    // don't guess turn direction, we know that one direction is bad already
-                    emptyStackTurns = -1000;
-                    // start again
-                    return tryDirsRight();
-                } else {
-                    hitEdge = true;
-                }
-                // Profiler.end("bugnav " + 3 + " " + isMaster);
-                indicate("bugnav " + 3 + " " + isMaster);
-                return false;
-            }
-            var isPassable = isPassable(nextPos);
-            if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
-                rc.setIndicatorDot(nextPos, 0, 255, 255);
-                outOfSight = true;
-                outOfSightLoc = nextPos;
-                // Profiler.end("bugnav " + 3 + " " + isMaster);
-                indicate("bugnav " + 3 + " " + isMaster);
-                return false;
-            }
-            if(isPassable) {
-                pos = nextPos;
-                topDir = tryDir;
-                stackSize += 3;
-                if(stackSize == 0) {
-                    emptyStackTurns++;
-                } else {
-                    emptyStackTurns = 0;
-                }
-                appendCurrentPosition();
-                // Profiler.end("bugnav " + 3 + " " + isMaster);
-                // indicate("bugnav " + 3 + " " + isMaster);
-                return true;
-            }
-        }
-        tryDir = tryDir.rotateLeft();
-        {
-            // System.out.println("T " + tryDir);
-            var nextPos = pos.add(tryDir);
-            if(!rc.onTheMap(nextPos)) {
-                 if(isMaster) {
-                    // avoid following the edge of the map (TODO: 1-thick borders)
-                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 4);
-                    if(vis.contains(nextPos)) {
-                        indicate("gave up at edge");
-                        System.out.println("gave up at edge");
-                        givenUp = true;
-                        return false;
-                    }
-                    vis.add(nextPos);
-                    leftTurn = !leftTurn;
-                    clearPath();
-                    // don't guess turn direction, we know that one direction is bad already
-                    emptyStackTurns = -1000;
-                    // start again
-                    return tryDirsRight();
-                } else {
-                    hitEdge = true;
-                }
-                // Profiler.end("bugnav " + 4 + " " + isMaster);
-                indicate("bugnav " + 4 + " " + isMaster);
-                return false;
-            }
-            var isPassable = isPassable(nextPos);
-            if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
-                rc.setIndicatorDot(nextPos, 0, 255, 255);
-                outOfSight = true;
-                outOfSightLoc = nextPos;
-                // Profiler.end("bugnav " + 4 + " " + isMaster);
-                indicate("bugnav " + 4 + " " + isMaster);
-                return false;
-            }
-            if(isPassable) {
-                pos = nextPos;
-                topDir = tryDir;
-                stackSize += 4;
-                if(stackSize == 0) {
-                    emptyStackTurns++;
-                } else {
-                    emptyStackTurns = 0;
-                }
-                appendCurrentPosition();
-                // Profiler.end("bugnav " + 4 + " " + isMaster);
-                // indicate("bugnav " + 4 + " " + isMaster);
-                return true;
-            }
-        }
-        tryDir = tryDir.rotateLeft();
-        {
-            // System.out.println("T " + tryDir);
-            var nextPos = pos.add(tryDir);
-            if(!rc.onTheMap(nextPos)) {
-                 if(isMaster) {
-                    // avoid following the edge of the map (TODO: 1-thick borders)
-                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 5);
-                    if(vis.contains(nextPos)) {
-                        indicate("gave up at edge");
-                        System.out.println("gave up at edge");
-                        givenUp = true;
-                        return false;
-                    }
-                    vis.add(nextPos);
-                    leftTurn = !leftTurn;
-                    clearPath();
-                    // don't guess turn direction, we know that one direction is bad already
-                    emptyStackTurns = -1000;
-                    // start again
-                    return tryDirsRight();
-                } else {
-                    hitEdge = true;
-                }
-                // Profiler.end("bugnav " + 5 + " " + isMaster);
-                indicate("bugnav " + 5 + " " + isMaster);
-                return false;
-            }
-            var isPassable = isPassable(nextPos);
-            if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
-                rc.setIndicatorDot(nextPos, 0, 255, 255);
-                outOfSight = true;
-                outOfSightLoc = nextPos;
-                // Profiler.end("bugnav " + 5 + " " + isMaster);
-                indicate("bugnav " + 5 + " " + isMaster);
-                return false;
-            }
-            if(isPassable) {
-                pos = nextPos;
-                topDir = tryDir;
-                stackSize += 5;
-                if(stackSize == 0) {
-                    emptyStackTurns++;
-                } else {
-                    emptyStackTurns = 0;
-                }
-                appendCurrentPosition();
-                // Profiler.end("bugnav " + 5 + " " + isMaster);
-                // indicate("bugnav " + 5 + " " + isMaster);
-                return true;
-            }
-        }
-        tryDir = tryDir.rotateLeft();
-        println("no valid move found from " + pos);
-        return false;
-    }
-
-        private boolean tryDirsRight() throws GameActionException {
-        var tryDir = topDir.rotateLeft().rotateLeft();
-        if(stackSize + -2 >= 0
-           // only try -2 for diagonals
-           && Math.abs(topDir.dx + topDir.dy) != 1
-           )
-        {
-            // System.out.println("T " + tryDir);
-            var nextPos = pos.add(tryDir);
-            if(!rc.onTheMap(nextPos)) {
-                 if(isMaster) {
-                    // avoid following the edge of the map (TODO: 1-thick borders)
-                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + -2);
-                    if(vis.contains(nextPos)) {
-                        indicate("gave up at edge");
-                        System.out.println("gave up at edge");
-                        givenUp = true;
-                        return false;
-                    }
-                    vis.add(nextPos);
-                    leftTurn = !leftTurn;
-                    clearPath();
-                    // don't guess turn direction, we know that one direction is bad already
-                    emptyStackTurns = -1000;
-                    // start again
-                    return tryDirsLeft();
-                } else {
-                    hitEdge = true;
-                }
-                // Profiler.end("bugnav " + -2 + " " + isMaster);
-                indicate("bugnav " + -2 + " " + isMaster);
-                return false;
-            }
-            var isPassable = isPassable(nextPos);
-            if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
-                rc.setIndicatorDot(nextPos, 0, 255, 255);
-                outOfSight = true;
-                outOfSightLoc = nextPos;
-                // Profiler.end("bugnav " + -2 + " " + isMaster);
-                indicate("bugnav " + -2 + " " + isMaster);
-                return false;
-            }
-            if(isPassable) {
-                pos = nextPos;
-                topDir = tryDir;
-                stackSize += -2;
-                if(stackSize == 0) {
-                    emptyStackTurns++;
-                } else {
-                    emptyStackTurns = 0;
-                }
-                appendCurrentPosition();
-                // Profiler.end("bugnav " + -2 + " " + isMaster);
-                // indicate("bugnav " + -2 + " " + isMaster);
-                return true;
-            }
-        }
-        tryDir = tryDir.rotateRight();
-        if(stackSize + -1 >= 0
-           // only try -2 for diagonals
-           )
-        {
-            // System.out.println("T " + tryDir);
-            var nextPos = pos.add(tryDir);
-            if(!rc.onTheMap(nextPos)) {
-                 if(isMaster) {
-                    // avoid following the edge of the map (TODO: 1-thick borders)
-                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + -1);
-                    if(vis.contains(nextPos)) {
-                        indicate("gave up at edge");
-                        System.out.println("gave up at edge");
-                        givenUp = true;
-                        return false;
-                    }
-                    vis.add(nextPos);
-                    leftTurn = !leftTurn;
-                    clearPath();
-                    // don't guess turn direction, we know that one direction is bad already
-                    emptyStackTurns = -1000;
-                    // start again
-                    return tryDirsLeft();
-                } else {
-                    hitEdge = true;
-                }
-                // Profiler.end("bugnav " + -1 + " " + isMaster);
-                indicate("bugnav " + -1 + " " + isMaster);
-                return false;
-            }
-            var isPassable = isPassable(nextPos);
-            if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
-                rc.setIndicatorDot(nextPos, 0, 255, 255);
-                outOfSight = true;
-                outOfSightLoc = nextPos;
-                // Profiler.end("bugnav " + -1 + " " + isMaster);
-                indicate("bugnav " + -1 + " " + isMaster);
-                return false;
-            }
-            if(isPassable) {
-                pos = nextPos;
-                topDir = tryDir;
-                stackSize += -1;
-                if(stackSize == 0) {
-                    emptyStackTurns++;
-                } else {
-                    emptyStackTurns = 0;
-                }
-                appendCurrentPosition();
-                // Profiler.end("bugnav " + -1 + " " + isMaster);
-                // indicate("bugnav " + -1 + " " + isMaster);
-                return true;
-            }
-        }
-        tryDir = tryDir.rotateRight();
-        {
-            // System.out.println("T " + tryDir);
-            var nextPos = pos.add(tryDir);
-            if(!rc.onTheMap(nextPos)) {
-                 if(isMaster) {
-                    // avoid following the edge of the map (TODO: 1-thick borders)
-                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 0);
-                    if(vis.contains(nextPos)) {
-                        indicate("gave up at edge");
-                        System.out.println("gave up at edge");
-                        givenUp = true;
-                        return false;
-                    }
-                    vis.add(nextPos);
-                    leftTurn = !leftTurn;
-                    clearPath();
-                    // don't guess turn direction, we know that one direction is bad already
-                    emptyStackTurns = -1000;
-                    // start again
-                    return tryDirsLeft();
-                } else {
-                    hitEdge = true;
-                }
-                // Profiler.end("bugnav " + 0 + " " + isMaster);
-                indicate("bugnav " + 0 + " " + isMaster);
-                return false;
-            }
-            var isPassable = isPassable(nextPos);
-            if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
-                rc.setIndicatorDot(nextPos, 0, 255, 255);
-                outOfSight = true;
-                outOfSightLoc = nextPos;
-                // Profiler.end("bugnav " + 0 + " " + isMaster);
-                indicate("bugnav " + 0 + " " + isMaster);
-                return false;
-            }
-            if(isPassable) {
-                pos = nextPos;
-                topDir = tryDir;
-                if(stackSize == 0) {
-                    emptyStackTurns++;
-                } else {
-                    emptyStackTurns = 0;
-                }
-                appendCurrentPosition();
-                // Profiler.end("bugnav " + 0 + " " + isMaster);
-                // indicate("bugnav " + 0 + " " + isMaster);
-                return true;
-            }
-        }
-        tryDir = tryDir.rotateRight();
-        {
-            // System.out.println("T " + tryDir);
-            var nextPos = pos.add(tryDir);
-            if(!rc.onTheMap(nextPos)) {
-                 if(isMaster) {
-                    // avoid following the edge of the map (TODO: 1-thick borders)
-                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 1);
-                    if(vis.contains(nextPos)) {
-                        indicate("gave up at edge");
-                        System.out.println("gave up at edge");
-                        givenUp = true;
-                        return false;
-                    }
-                    vis.add(nextPos);
-                    leftTurn = !leftTurn;
-                    clearPath();
-                    // don't guess turn direction, we know that one direction is bad already
-                    emptyStackTurns = -1000;
-                    // start again
-                    return tryDirsLeft();
-                } else {
-                    hitEdge = true;
-                }
-                // Profiler.end("bugnav " + 1 + " " + isMaster);
-                indicate("bugnav " + 1 + " " + isMaster);
-                return false;
-            }
-            var isPassable = isPassable(nextPos);
-            if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
-                rc.setIndicatorDot(nextPos, 0, 255, 255);
-                outOfSight = true;
-                outOfSightLoc = nextPos;
-                // Profiler.end("bugnav " + 1 + " " + isMaster);
-                indicate("bugnav " + 1 + " " + isMaster);
-                return false;
-            }
-            if(isPassable) {
-                pos = nextPos;
-                topDir = tryDir;
-                stackSize += 1;
-                if(stackSize == 0) {
-                    emptyStackTurns++;
-                } else {
-                    emptyStackTurns = 0;
-                }
-                appendCurrentPosition();
-                // Profiler.end("bugnav " + 1 + " " + isMaster);
-                // indicate("bugnav " + 1 + " " + isMaster);
-                return true;
-            }
-        }
-        tryDir = tryDir.rotateRight();
-        {
-            // System.out.println("T " + tryDir);
-            var nextPos = pos.add(tryDir);
-            if(!rc.onTheMap(nextPos)) {
-                 if(isMaster) {
-                    // avoid following the edge of the map (TODO: 1-thick borders)
-                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 2);
-                    if(vis.contains(nextPos)) {
-                        indicate("gave up at edge");
-                        System.out.println("gave up at edge");
-                        givenUp = true;
-                        return false;
-                    }
-                    vis.add(nextPos);
-                    leftTurn = !leftTurn;
-                    clearPath();
-                    // don't guess turn direction, we know that one direction is bad already
-                    emptyStackTurns = -1000;
-                    // start again
-                    return tryDirsLeft();
-                } else {
-                    hitEdge = true;
-                }
-                // Profiler.end("bugnav " + 2 + " " + isMaster);
-                indicate("bugnav " + 2 + " " + isMaster);
-                return false;
-            }
-            var isPassable = isPassable(nextPos);
-            if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
-                rc.setIndicatorDot(nextPos, 0, 255, 255);
-                outOfSight = true;
-                outOfSightLoc = nextPos;
-                // Profiler.end("bugnav " + 2 + " " + isMaster);
-                indicate("bugnav " + 2 + " " + isMaster);
-                return false;
-            }
-            if(isPassable) {
-                pos = nextPos;
-                topDir = tryDir;
-                stackSize += 2;
-                if(stackSize == 0) {
-                    emptyStackTurns++;
-                } else {
-                    emptyStackTurns = 0;
-                }
-                appendCurrentPosition();
-                // Profiler.end("bugnav " + 2 + " " + isMaster);
-                // indicate("bugnav " + 2 + " " + isMaster);
-                return true;
-            }
-        }
-        tryDir = tryDir.rotateRight();
-        {
-            // System.out.println("T " + tryDir);
-            var nextPos = pos.add(tryDir);
-            if(!rc.onTheMap(nextPos)) {
-                 if(isMaster) {
-                    // avoid following the edge of the map (TODO: 1-thick borders)
-                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 3);
-                    if(vis.contains(nextPos)) {
-                        indicate("gave up at edge");
-                        System.out.println("gave up at edge");
-                        givenUp = true;
-                        return false;
-                    }
-                    vis.add(nextPos);
-                    leftTurn = !leftTurn;
-                    clearPath();
-                    // don't guess turn direction, we know that one direction is bad already
-                    emptyStackTurns = -1000;
-                    // start again
-                    return tryDirsLeft();
-                } else {
-                    hitEdge = true;
-                }
-                // Profiler.end("bugnav " + 3 + " " + isMaster);
-                indicate("bugnav " + 3 + " " + isMaster);
-                return false;
-            }
-            var isPassable = isPassable(nextPos);
-            if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
-                rc.setIndicatorDot(nextPos, 0, 255, 255);
-                outOfSight = true;
-                outOfSightLoc = nextPos;
-                // Profiler.end("bugnav " + 3 + " " + isMaster);
-                indicate("bugnav " + 3 + " " + isMaster);
-                return false;
-            }
-            if(isPassable) {
-                pos = nextPos;
-                topDir = tryDir;
-                stackSize += 3;
-                if(stackSize == 0) {
-                    emptyStackTurns++;
-                } else {
-                    emptyStackTurns = 0;
-                }
-                appendCurrentPosition();
-                // Profiler.end("bugnav " + 3 + " " + isMaster);
-                // indicate("bugnav " + 3 + " " + isMaster);
-                return true;
-            }
-        }
-        tryDir = tryDir.rotateRight();
-        {
-            // System.out.println("T " + tryDir);
-            var nextPos = pos.add(tryDir);
-            if(!rc.onTheMap(nextPos)) {
-                 if(isMaster) {
-                    // avoid following the edge of the map (TODO: 1-thick borders)
-                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 4);
-                    if(vis.contains(nextPos)) {
-                        indicate("gave up at edge");
-                        System.out.println("gave up at edge");
-                        givenUp = true;
-                        return false;
-                    }
-                    vis.add(nextPos);
-                    leftTurn = !leftTurn;
-                    clearPath();
-                    // don't guess turn direction, we know that one direction is bad already
-                    emptyStackTurns = -1000;
-                    // start again
-                    return tryDirsLeft();
-                } else {
-                    hitEdge = true;
-                }
-                // Profiler.end("bugnav " + 4 + " " + isMaster);
-                indicate("bugnav " + 4 + " " + isMaster);
-                return false;
-            }
-            var isPassable = isPassable(nextPos);
-            if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
-                rc.setIndicatorDot(nextPos, 0, 255, 255);
-                outOfSight = true;
-                outOfSightLoc = nextPos;
-                // Profiler.end("bugnav " + 4 + " " + isMaster);
-                indicate("bugnav " + 4 + " " + isMaster);
-                return false;
-            }
-            if(isPassable) {
-                pos = nextPos;
-                topDir = tryDir;
-                stackSize += 4;
-                if(stackSize == 0) {
-                    emptyStackTurns++;
-                } else {
-                    emptyStackTurns = 0;
-                }
-                appendCurrentPosition();
-                // Profiler.end("bugnav " + 4 + " " + isMaster);
-                // indicate("bugnav " + 4 + " " + isMaster);
-                return true;
-            }
-        }
-        tryDir = tryDir.rotateRight();
-        {
-            // System.out.println("T " + tryDir);
-            var nextPos = pos.add(tryDir);
-            if(!rc.onTheMap(nextPos)) {
-                 if(isMaster) {
-                    // avoid following the edge of the map (TODO: 1-thick borders)
-                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 5);
-                    if(vis.contains(nextPos)) {
-                        indicate("gave up at edge");
-                        System.out.println("gave up at edge");
-                        givenUp = true;
-                        return false;
-                    }
-                    vis.add(nextPos);
-                    leftTurn = !leftTurn;
-                    clearPath();
-                    // don't guess turn direction, we know that one direction is bad already
-                    emptyStackTurns = -1000;
-                    // start again
-                    return tryDirsLeft();
-                } else {
-                    hitEdge = true;
-                }
-                // Profiler.end("bugnav " + 5 + " " + isMaster);
-                indicate("bugnav " + 5 + " " + isMaster);
-                return false;
-            }
-            var isPassable = isPassable(nextPos);
-            if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
-                rc.setIndicatorDot(nextPos, 0, 255, 255);
-                outOfSight = true;
-                outOfSightLoc = nextPos;
-                // Profiler.end("bugnav " + 5 + " " + isMaster);
-                indicate("bugnav " + 5 + " " + isMaster);
-                return false;
-            }
-            if(isPassable) {
-                pos = nextPos;
-                topDir = tryDir;
-                stackSize += 5;
-                if(stackSize == 0) {
-                    emptyStackTurns++;
-                } else {
-                    emptyStackTurns = 0;
-                }
-                appendCurrentPosition();
-                // Profiler.end("bugnav " + 5 + " " + isMaster);
-                // indicate("bugnav " + 5 + " " + isMaster);
-                return true;
-            }
-        }
-        tryDir = tryDir.rotateRight();
-        println("no valid move found from " + pos);
-        return false;
-    }
-
-}
-
-public class Pathfinder {
-    static BugnavInstance bug;
-    static int lastDist = 0;
-
-    static int bfsPathLength = 0;
-    static MapLocation bfsPath0;
-    static MapLocation bfsPath1;
-    static MapLocation bfsPath2;
-    static MapLocation bfsPath3;
-    static MapLocation bfsPath4;
-    static MapLocation bfsPath5;
-    static MapLocation bfsPath6;
-    static MapLocation bfsPath7;
-    static MapLocation bfsPath8;
-    static MapLocation bfsPath9;
-    static MapLocation bfsPath10;
-    static MapLocation bfsPath11;
-    static MapLocation bfsPath12;
-    static MapLocation bfsPath13;
-    static MapLocation bfsPath14;
-    static void appendPosition(MapLocation loc) {
-        switch(bfsPathLength) {
-            case 0 -> {
-                bfsPath0 = loc;
-                bfsPathLength = 1;
-            }
-            case 1 -> {
-                bfsPath1 = loc;
-                bfsPathLength = 2;
-            }
-            case 2 -> {
-                bfsPath2 = loc;
-                bfsPathLength = 3;
-            }
-            case 3 -> {
-                bfsPath3 = loc;
-                bfsPathLength = 4;
-            }
-            case 4 -> {
-                bfsPath4 = loc;
-                bfsPathLength = 5;
-            }
-            case 5 -> {
-                bfsPath5 = loc;
-                bfsPathLength = 6;
-            }
-            case 6 -> {
-                bfsPath6 = loc;
-                bfsPathLength = 7;
-            }
-            case 7 -> {
-                bfsPath7 = loc;
-                bfsPathLength = 8;
-            }
-            case 8 -> {
-                bfsPath8 = loc;
-                bfsPathLength = 9;
-            }
-            case 9 -> {
-                bfsPath9 = loc;
-                bfsPathLength = 10;
-            }
-            case 10 -> {
-                bfsPath10 = loc;
-                bfsPathLength = 11;
-            }
-            case 11 -> {
-                bfsPath11 = loc;
-                bfsPathLength = 12;
-            }
-            case 12 -> {
-                bfsPath12 = loc;
-                bfsPathLength = 13;
-            }
-            case 13 -> {
-                bfsPath13 = loc;
-                bfsPathLength = 14;
-            }
-            case 14 -> {
-                bfsPath14 = loc;
-                bfsPathLength = 15;
-            }
-            default -> {
-                assert false;
-            }
-        }
-    }
-    static MapLocation getRecentPos(int i) {
-        switch(bfsPathLength - i - 1) {
-            case 0 -> {
-                return bfsPath0;
-            }
-            case 1 -> {
-                return bfsPath1;
-            }
-            case 2 -> {
-                return bfsPath2;
-            }
-            case 3 -> {
-                return bfsPath3;
-            }
-            case 4 -> {
-                return bfsPath4;
-            }
-            case 5 -> {
-                return bfsPath5;
-            }
-            case 6 -> {
-                return bfsPath6;
-            }
-            case 7 -> {
-                return bfsPath7;
-            }
-            case 8 -> {
-                return bfsPath8;
-            }
-            case 9 -> {
-                return bfsPath9;
-            }
-            case 10 -> {
-                return bfsPath10;
-            }
-            case 11 -> {
-                return bfsPath11;
-            }
-            case 12 -> {
-                return bfsPath12;
-            }
-            case 13 -> {
-                return bfsPath13;
-            }
-            case 14 -> {
-                return bfsPath14;
-            }
-            default -> {
-                assert false : "index out of range";
-                return null;
-            }
-        }
-    }
-
-    public static void makeMove(Direction dir) throws GameActionException {
-        if(rc.canTurn()) turn(dir);
-        var nextLoc = myLoc.add(dir);
-        if(rc.onTheMap(nextLoc) && canSense(myLoc, nextLoc, myDir) && rc.senseMapInfo(nextLoc).isDirt()) {
-            if(rc.canRemoveDirt(nextLoc)) rc.removeDirt(nextLoc);
-            else return;
-        }
-        if(dir == myDir) {
-            // bail out if we see that we will walk into a cat
-            for(int i = RobotTracker.numCats - 1; i >= 0; i--) {
-                var cat = RobotTracker.sortedCats[i];
-                if(cat.location.isWithinDistanceSquared(nextLoc, 5, cat.direction, 180, true)) {
-                    indicate("avoiding cat at " + nextLoc);
-                    return;
-                }
-            }
-            if(rc.canMoveForward()) rawMove();
-        } else {
-            // if we can't turn, then strafe
-            if(rc.canMove(dir)) rawMove(dir);
-        }
-    }
-
-    public static boolean givenUp() {
-        return bug != null && bug.givenUp;
-    }
-
-    static MapLocation lastBugPos, lastLoc, secondLastBugPos, secondLastLoc;
-    static int reps = 0;
-
-    public static void makeMove(MapLocation target) throws GameActionException {
-        indicate("lastDist " + lastDist);
-        // TODO: better handling when target changes
-        if(bug == null || !target.equals(bug.target)) {
-            if(bug != null && target.isAdjacentTo(bug.target)) {
-                indicate("target changed but adjacent, keep going");
-                bug.target = target;
+            if(leftTurn) {
+                return tryDirsLeft();
             } else {
-                indicate("RETARGET");
-                lastBugPos = lastLoc = secondLastBugPos = secondLastLoc = new MapLocation(-1, -1);
-                lastDist = 0;
-                bug = new BugnavInstance(true, target);
+                return tryDirsRight();
             }
         }
+                private boolean tryDirsLeft() throws GameActionException {
+            var tryDir = topDir.rotateRight().rotateRight();
+            if(stackSize + -2 >= 0
+               // only try -2 for diagonals
+               && Math.abs(topDir.dx + topDir.dy) != 1
+               )
+            {
+                // System.out.println("T " + tryDir);
+                var nextPos = pos.add(tryDir);
+                if(!rc.onTheMap(nextPos)) {
+                     if(isMaster) {
+                        // avoid following the edge of the map (TODO: 1-thick borders)
+                        indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + -2);
+                        if(vis.contains(nextPos)) {
+                            indicate("gave up at edge");
+                            System.out.println("gave up at edge");
+                            givenUp = true;
+                            return false;
+                        }
+                        vis.add(nextPos);
+                        leftTurn = !leftTurn;
+                        clearPath();
+                        // don't guess turn direction, we know that one direction is bad already
+                        emptyStackTurns = -1000;
+                        // start again
+                        return tryDirsRight();
+                    } else {
+                        hitEdge = true;
+                    }
+                    // Profiler.end("bugnav " + -2 + " " + isMaster);
+                    indicate("bugnav " + -2 + " " + isMaster);
+                    return false;
+                }
+                var isPassable = isPassable(nextPos);
+                if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
+                    rc.setIndicatorDot(nextPos, 0, 255, 255);
+                    outOfSight = true;
+                    outOfSightLoc = nextPos;
+                    // Profiler.end("bugnav " + -2 + " " + isMaster);
+                    indicate("bugnav " + -2 + " " + isMaster);
+                    return false;
+                }
+                if(isPassable) {
+                    pos = nextPos;
+                    topDir = tryDir;
+                    stackSize += -2;
+                    if(stackSize == 0) {
+                        emptyStackTurns++;
+                    } else {
+                        emptyStackTurns = 0;
+                    }
+                    appendCurrentPosition();
+                    // Profiler.end("bugnav " + -2 + " " + isMaster);
+                    // indicate("bugnav " + -2 + " " + isMaster);
+                    return true;
+                }
+            }
+            tryDir = tryDir.rotateLeft();
+            if(stackSize + -1 >= 0
+               // only try -2 for diagonals
+               )
+            {
+                // System.out.println("T " + tryDir);
+                var nextPos = pos.add(tryDir);
+                if(!rc.onTheMap(nextPos)) {
+                     if(isMaster) {
+                        // avoid following the edge of the map (TODO: 1-thick borders)
+                        indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + -1);
+                        if(vis.contains(nextPos)) {
+                            indicate("gave up at edge");
+                            System.out.println("gave up at edge");
+                            givenUp = true;
+                            return false;
+                        }
+                        vis.add(nextPos);
+                        leftTurn = !leftTurn;
+                        clearPath();
+                        // don't guess turn direction, we know that one direction is bad already
+                        emptyStackTurns = -1000;
+                        // start again
+                        return tryDirsRight();
+                    } else {
+                        hitEdge = true;
+                    }
+                    // Profiler.end("bugnav " + -1 + " " + isMaster);
+                    indicate("bugnav " + -1 + " " + isMaster);
+                    return false;
+                }
+                var isPassable = isPassable(nextPos);
+                if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
+                    rc.setIndicatorDot(nextPos, 0, 255, 255);
+                    outOfSight = true;
+                    outOfSightLoc = nextPos;
+                    // Profiler.end("bugnav " + -1 + " " + isMaster);
+                    indicate("bugnav " + -1 + " " + isMaster);
+                    return false;
+                }
+                if(isPassable) {
+                    pos = nextPos;
+                    topDir = tryDir;
+                    stackSize += -1;
+                    if(stackSize == 0) {
+                        emptyStackTurns++;
+                    } else {
+                        emptyStackTurns = 0;
+                    }
+                    appendCurrentPosition();
+                    // Profiler.end("bugnav " + -1 + " " + isMaster);
+                    // indicate("bugnav " + -1 + " " + isMaster);
+                    return true;
+                }
+            }
+            tryDir = tryDir.rotateLeft();
+            {
+                // System.out.println("T " + tryDir);
+                var nextPos = pos.add(tryDir);
+                if(!rc.onTheMap(nextPos)) {
+                     if(isMaster) {
+                        // avoid following the edge of the map (TODO: 1-thick borders)
+                        indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 0);
+                        if(vis.contains(nextPos)) {
+                            indicate("gave up at edge");
+                            System.out.println("gave up at edge");
+                            givenUp = true;
+                            return false;
+                        }
+                        vis.add(nextPos);
+                        leftTurn = !leftTurn;
+                        clearPath();
+                        // don't guess turn direction, we know that one direction is bad already
+                        emptyStackTurns = -1000;
+                        // start again
+                        return tryDirsRight();
+                    } else {
+                        hitEdge = true;
+                    }
+                    // Profiler.end("bugnav " + 0 + " " + isMaster);
+                    indicate("bugnav " + 0 + " " + isMaster);
+                    return false;
+                }
+                var isPassable = isPassable(nextPos);
+                if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
+                    rc.setIndicatorDot(nextPos, 0, 255, 255);
+                    outOfSight = true;
+                    outOfSightLoc = nextPos;
+                    // Profiler.end("bugnav " + 0 + " " + isMaster);
+                    indicate("bugnav " + 0 + " " + isMaster);
+                    return false;
+                }
+                if(isPassable) {
+                    pos = nextPos;
+                    topDir = tryDir;
+                    if(stackSize == 0) {
+                        emptyStackTurns++;
+                    } else {
+                        emptyStackTurns = 0;
+                    }
+                    appendCurrentPosition();
+                    // Profiler.end("bugnav " + 0 + " " + isMaster);
+                    // indicate("bugnav " + 0 + " " + isMaster);
+                    return true;
+                }
+            }
+            tryDir = tryDir.rotateLeft();
+            {
+                // System.out.println("T " + tryDir);
+                var nextPos = pos.add(tryDir);
+                if(!rc.onTheMap(nextPos)) {
+                     if(isMaster) {
+                        // avoid following the edge of the map (TODO: 1-thick borders)
+                        indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 1);
+                        if(vis.contains(nextPos)) {
+                            indicate("gave up at edge");
+                            System.out.println("gave up at edge");
+                            givenUp = true;
+                            return false;
+                        }
+                        vis.add(nextPos);
+                        leftTurn = !leftTurn;
+                        clearPath();
+                        // don't guess turn direction, we know that one direction is bad already
+                        emptyStackTurns = -1000;
+                        // start again
+                        return tryDirsRight();
+                    } else {
+                        hitEdge = true;
+                    }
+                    // Profiler.end("bugnav " + 1 + " " + isMaster);
+                    indicate("bugnav " + 1 + " " + isMaster);
+                    return false;
+                }
+                var isPassable = isPassable(nextPos);
+                if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
+                    rc.setIndicatorDot(nextPos, 0, 255, 255);
+                    outOfSight = true;
+                    outOfSightLoc = nextPos;
+                    // Profiler.end("bugnav " + 1 + " " + isMaster);
+                    indicate("bugnav " + 1 + " " + isMaster);
+                    return false;
+                }
+                if(isPassable) {
+                    pos = nextPos;
+                    topDir = tryDir;
+                    stackSize += 1;
+                    if(stackSize == 0) {
+                        emptyStackTurns++;
+                    } else {
+                        emptyStackTurns = 0;
+                    }
+                    appendCurrentPosition();
+                    // Profiler.end("bugnav " + 1 + " " + isMaster);
+                    // indicate("bugnav " + 1 + " " + isMaster);
+                    return true;
+                }
+            }
+            tryDir = tryDir.rotateLeft();
+            {
+                // System.out.println("T " + tryDir);
+                var nextPos = pos.add(tryDir);
+                if(!rc.onTheMap(nextPos)) {
+                     if(isMaster) {
+                        // avoid following the edge of the map (TODO: 1-thick borders)
+                        indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 2);
+                        if(vis.contains(nextPos)) {
+                            indicate("gave up at edge");
+                            System.out.println("gave up at edge");
+                            givenUp = true;
+                            return false;
+                        }
+                        vis.add(nextPos);
+                        leftTurn = !leftTurn;
+                        clearPath();
+                        // don't guess turn direction, we know that one direction is bad already
+                        emptyStackTurns = -1000;
+                        // start again
+                        return tryDirsRight();
+                    } else {
+                        hitEdge = true;
+                    }
+                    // Profiler.end("bugnav " + 2 + " " + isMaster);
+                    indicate("bugnav " + 2 + " " + isMaster);
+                    return false;
+                }
+                var isPassable = isPassable(nextPos);
+                if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
+                    rc.setIndicatorDot(nextPos, 0, 255, 255);
+                    outOfSight = true;
+                    outOfSightLoc = nextPos;
+                    // Profiler.end("bugnav " + 2 + " " + isMaster);
+                    indicate("bugnav " + 2 + " " + isMaster);
+                    return false;
+                }
+                if(isPassable) {
+                    pos = nextPos;
+                    topDir = tryDir;
+                    stackSize += 2;
+                    if(stackSize == 0) {
+                        emptyStackTurns++;
+                    } else {
+                        emptyStackTurns = 0;
+                    }
+                    appendCurrentPosition();
+                    // Profiler.end("bugnav " + 2 + " " + isMaster);
+                    // indicate("bugnav " + 2 + " " + isMaster);
+                    return true;
+                }
+            }
+            tryDir = tryDir.rotateLeft();
+            {
+                // System.out.println("T " + tryDir);
+                var nextPos = pos.add(tryDir);
+                if(!rc.onTheMap(nextPos)) {
+                     if(isMaster) {
+                        // avoid following the edge of the map (TODO: 1-thick borders)
+                        indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 3);
+                        if(vis.contains(nextPos)) {
+                            indicate("gave up at edge");
+                            System.out.println("gave up at edge");
+                            givenUp = true;
+                            return false;
+                        }
+                        vis.add(nextPos);
+                        leftTurn = !leftTurn;
+                        clearPath();
+                        // don't guess turn direction, we know that one direction is bad already
+                        emptyStackTurns = -1000;
+                        // start again
+                        return tryDirsRight();
+                    } else {
+                        hitEdge = true;
+                    }
+                    // Profiler.end("bugnav " + 3 + " " + isMaster);
+                    indicate("bugnav " + 3 + " " + isMaster);
+                    return false;
+                }
+                var isPassable = isPassable(nextPos);
+                if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
+                    rc.setIndicatorDot(nextPos, 0, 255, 255);
+                    outOfSight = true;
+                    outOfSightLoc = nextPos;
+                    // Profiler.end("bugnav " + 3 + " " + isMaster);
+                    indicate("bugnav " + 3 + " " + isMaster);
+                    return false;
+                }
+                if(isPassable) {
+                    pos = nextPos;
+                    topDir = tryDir;
+                    stackSize += 3;
+                    if(stackSize == 0) {
+                        emptyStackTurns++;
+                    } else {
+                        emptyStackTurns = 0;
+                    }
+                    appendCurrentPosition();
+                    // Profiler.end("bugnav " + 3 + " " + isMaster);
+                    // indicate("bugnav " + 3 + " " + isMaster);
+                    return true;
+                }
+            }
+            tryDir = tryDir.rotateLeft();
+            {
+                // System.out.println("T " + tryDir);
+                var nextPos = pos.add(tryDir);
+                if(!rc.onTheMap(nextPos)) {
+                     if(isMaster) {
+                        // avoid following the edge of the map (TODO: 1-thick borders)
+                        indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 4);
+                        if(vis.contains(nextPos)) {
+                            indicate("gave up at edge");
+                            System.out.println("gave up at edge");
+                            givenUp = true;
+                            return false;
+                        }
+                        vis.add(nextPos);
+                        leftTurn = !leftTurn;
+                        clearPath();
+                        // don't guess turn direction, we know that one direction is bad already
+                        emptyStackTurns = -1000;
+                        // start again
+                        return tryDirsRight();
+                    } else {
+                        hitEdge = true;
+                    }
+                    // Profiler.end("bugnav " + 4 + " " + isMaster);
+                    indicate("bugnav " + 4 + " " + isMaster);
+                    return false;
+                }
+                var isPassable = isPassable(nextPos);
+                if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
+                    rc.setIndicatorDot(nextPos, 0, 255, 255);
+                    outOfSight = true;
+                    outOfSightLoc = nextPos;
+                    // Profiler.end("bugnav " + 4 + " " + isMaster);
+                    indicate("bugnav " + 4 + " " + isMaster);
+                    return false;
+                }
+                if(isPassable) {
+                    pos = nextPos;
+                    topDir = tryDir;
+                    stackSize += 4;
+                    if(stackSize == 0) {
+                        emptyStackTurns++;
+                    } else {
+                        emptyStackTurns = 0;
+                    }
+                    appendCurrentPosition();
+                    // Profiler.end("bugnav " + 4 + " " + isMaster);
+                    // indicate("bugnav " + 4 + " " + isMaster);
+                    return true;
+                }
+            }
+            tryDir = tryDir.rotateLeft();
+            {
+                // System.out.println("T " + tryDir);
+                var nextPos = pos.add(tryDir);
+                if(!rc.onTheMap(nextPos)) {
+                     if(isMaster) {
+                        // avoid following the edge of the map (TODO: 1-thick borders)
+                        indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 5);
+                        if(vis.contains(nextPos)) {
+                            indicate("gave up at edge");
+                            System.out.println("gave up at edge");
+                            givenUp = true;
+                            return false;
+                        }
+                        vis.add(nextPos);
+                        leftTurn = !leftTurn;
+                        clearPath();
+                        // don't guess turn direction, we know that one direction is bad already
+                        emptyStackTurns = -1000;
+                        // start again
+                        return tryDirsRight();
+                    } else {
+                        hitEdge = true;
+                    }
+                    // Profiler.end("bugnav " + 5 + " " + isMaster);
+                    indicate("bugnav " + 5 + " " + isMaster);
+                    return false;
+                }
+                var isPassable = isPassable(nextPos);
+                if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
+                    rc.setIndicatorDot(nextPos, 0, 255, 255);
+                    outOfSight = true;
+                    outOfSightLoc = nextPos;
+                    // Profiler.end("bugnav " + 5 + " " + isMaster);
+                    indicate("bugnav " + 5 + " " + isMaster);
+                    return false;
+                }
+                if(isPassable) {
+                    pos = nextPos;
+                    topDir = tryDir;
+                    stackSize += 5;
+                    if(stackSize == 0) {
+                        emptyStackTurns++;
+                    } else {
+                        emptyStackTurns = 0;
+                    }
+                    appendCurrentPosition();
+                    // Profiler.end("bugnav " + 5 + " " + isMaster);
+                    // indicate("bugnav " + 5 + " " + isMaster);
+                    return true;
+                }
+            }
+            tryDir = tryDir.rotateLeft();
+            println("no valid move found from " + pos);
+            return false;
+        }
+
+                private boolean tryDirsRight() throws GameActionException {
+            var tryDir = topDir.rotateLeft().rotateLeft();
+            if(stackSize + -2 >= 0
+               // only try -2 for diagonals
+               && Math.abs(topDir.dx + topDir.dy) != 1
+               )
+            {
+                // System.out.println("T " + tryDir);
+                var nextPos = pos.add(tryDir);
+                if(!rc.onTheMap(nextPos)) {
+                     if(isMaster) {
+                        // avoid following the edge of the map (TODO: 1-thick borders)
+                        indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + -2);
+                        if(vis.contains(nextPos)) {
+                            indicate("gave up at edge");
+                            System.out.println("gave up at edge");
+                            givenUp = true;
+                            return false;
+                        }
+                        vis.add(nextPos);
+                        leftTurn = !leftTurn;
+                        clearPath();
+                        // don't guess turn direction, we know that one direction is bad already
+                        emptyStackTurns = -1000;
+                        // start again
+                        return tryDirsLeft();
+                    } else {
+                        hitEdge = true;
+                    }
+                    // Profiler.end("bugnav " + -2 + " " + isMaster);
+                    indicate("bugnav " + -2 + " " + isMaster);
+                    return false;
+                }
+                var isPassable = isPassable(nextPos);
+                if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
+                    rc.setIndicatorDot(nextPos, 0, 255, 255);
+                    outOfSight = true;
+                    outOfSightLoc = nextPos;
+                    // Profiler.end("bugnav " + -2 + " " + isMaster);
+                    indicate("bugnav " + -2 + " " + isMaster);
+                    return false;
+                }
+                if(isPassable) {
+                    pos = nextPos;
+                    topDir = tryDir;
+                    stackSize += -2;
+                    if(stackSize == 0) {
+                        emptyStackTurns++;
+                    } else {
+                        emptyStackTurns = 0;
+                    }
+                    appendCurrentPosition();
+                    // Profiler.end("bugnav " + -2 + " " + isMaster);
+                    // indicate("bugnav " + -2 + " " + isMaster);
+                    return true;
+                }
+            }
+            tryDir = tryDir.rotateRight();
+            if(stackSize + -1 >= 0
+               // only try -2 for diagonals
+               )
+            {
+                // System.out.println("T " + tryDir);
+                var nextPos = pos.add(tryDir);
+                if(!rc.onTheMap(nextPos)) {
+                     if(isMaster) {
+                        // avoid following the edge of the map (TODO: 1-thick borders)
+                        indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + -1);
+                        if(vis.contains(nextPos)) {
+                            indicate("gave up at edge");
+                            System.out.println("gave up at edge");
+                            givenUp = true;
+                            return false;
+                        }
+                        vis.add(nextPos);
+                        leftTurn = !leftTurn;
+                        clearPath();
+                        // don't guess turn direction, we know that one direction is bad already
+                        emptyStackTurns = -1000;
+                        // start again
+                        return tryDirsLeft();
+                    } else {
+                        hitEdge = true;
+                    }
+                    // Profiler.end("bugnav " + -1 + " " + isMaster);
+                    indicate("bugnav " + -1 + " " + isMaster);
+                    return false;
+                }
+                var isPassable = isPassable(nextPos);
+                if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
+                    rc.setIndicatorDot(nextPos, 0, 255, 255);
+                    outOfSight = true;
+                    outOfSightLoc = nextPos;
+                    // Profiler.end("bugnav " + -1 + " " + isMaster);
+                    indicate("bugnav " + -1 + " " + isMaster);
+                    return false;
+                }
+                if(isPassable) {
+                    pos = nextPos;
+                    topDir = tryDir;
+                    stackSize += -1;
+                    if(stackSize == 0) {
+                        emptyStackTurns++;
+                    } else {
+                        emptyStackTurns = 0;
+                    }
+                    appendCurrentPosition();
+                    // Profiler.end("bugnav " + -1 + " " + isMaster);
+                    // indicate("bugnav " + -1 + " " + isMaster);
+                    return true;
+                }
+            }
+            tryDir = tryDir.rotateRight();
+            {
+                // System.out.println("T " + tryDir);
+                var nextPos = pos.add(tryDir);
+                if(!rc.onTheMap(nextPos)) {
+                     if(isMaster) {
+                        // avoid following the edge of the map (TODO: 1-thick borders)
+                        indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 0);
+                        if(vis.contains(nextPos)) {
+                            indicate("gave up at edge");
+                            System.out.println("gave up at edge");
+                            givenUp = true;
+                            return false;
+                        }
+                        vis.add(nextPos);
+                        leftTurn = !leftTurn;
+                        clearPath();
+                        // don't guess turn direction, we know that one direction is bad already
+                        emptyStackTurns = -1000;
+                        // start again
+                        return tryDirsLeft();
+                    } else {
+                        hitEdge = true;
+                    }
+                    // Profiler.end("bugnav " + 0 + " " + isMaster);
+                    indicate("bugnav " + 0 + " " + isMaster);
+                    return false;
+                }
+                var isPassable = isPassable(nextPos);
+                if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
+                    rc.setIndicatorDot(nextPos, 0, 255, 255);
+                    outOfSight = true;
+                    outOfSightLoc = nextPos;
+                    // Profiler.end("bugnav " + 0 + " " + isMaster);
+                    indicate("bugnav " + 0 + " " + isMaster);
+                    return false;
+                }
+                if(isPassable) {
+                    pos = nextPos;
+                    topDir = tryDir;
+                    if(stackSize == 0) {
+                        emptyStackTurns++;
+                    } else {
+                        emptyStackTurns = 0;
+                    }
+                    appendCurrentPosition();
+                    // Profiler.end("bugnav " + 0 + " " + isMaster);
+                    // indicate("bugnav " + 0 + " " + isMaster);
+                    return true;
+                }
+            }
+            tryDir = tryDir.rotateRight();
+            {
+                // System.out.println("T " + tryDir);
+                var nextPos = pos.add(tryDir);
+                if(!rc.onTheMap(nextPos)) {
+                     if(isMaster) {
+                        // avoid following the edge of the map (TODO: 1-thick borders)
+                        indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 1);
+                        if(vis.contains(nextPos)) {
+                            indicate("gave up at edge");
+                            System.out.println("gave up at edge");
+                            givenUp = true;
+                            return false;
+                        }
+                        vis.add(nextPos);
+                        leftTurn = !leftTurn;
+                        clearPath();
+                        // don't guess turn direction, we know that one direction is bad already
+                        emptyStackTurns = -1000;
+                        // start again
+                        return tryDirsLeft();
+                    } else {
+                        hitEdge = true;
+                    }
+                    // Profiler.end("bugnav " + 1 + " " + isMaster);
+                    indicate("bugnav " + 1 + " " + isMaster);
+                    return false;
+                }
+                var isPassable = isPassable(nextPos);
+                if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
+                    rc.setIndicatorDot(nextPos, 0, 255, 255);
+                    outOfSight = true;
+                    outOfSightLoc = nextPos;
+                    // Profiler.end("bugnav " + 1 + " " + isMaster);
+                    indicate("bugnav " + 1 + " " + isMaster);
+                    return false;
+                }
+                if(isPassable) {
+                    pos = nextPos;
+                    topDir = tryDir;
+                    stackSize += 1;
+                    if(stackSize == 0) {
+                        emptyStackTurns++;
+                    } else {
+                        emptyStackTurns = 0;
+                    }
+                    appendCurrentPosition();
+                    // Profiler.end("bugnav " + 1 + " " + isMaster);
+                    // indicate("bugnav " + 1 + " " + isMaster);
+                    return true;
+                }
+            }
+            tryDir = tryDir.rotateRight();
+            {
+                // System.out.println("T " + tryDir);
+                var nextPos = pos.add(tryDir);
+                if(!rc.onTheMap(nextPos)) {
+                     if(isMaster) {
+                        // avoid following the edge of the map (TODO: 1-thick borders)
+                        indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 2);
+                        if(vis.contains(nextPos)) {
+                            indicate("gave up at edge");
+                            System.out.println("gave up at edge");
+                            givenUp = true;
+                            return false;
+                        }
+                        vis.add(nextPos);
+                        leftTurn = !leftTurn;
+                        clearPath();
+                        // don't guess turn direction, we know that one direction is bad already
+                        emptyStackTurns = -1000;
+                        // start again
+                        return tryDirsLeft();
+                    } else {
+                        hitEdge = true;
+                    }
+                    // Profiler.end("bugnav " + 2 + " " + isMaster);
+                    indicate("bugnav " + 2 + " " + isMaster);
+                    return false;
+                }
+                var isPassable = isPassable(nextPos);
+                if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
+                    rc.setIndicatorDot(nextPos, 0, 255, 255);
+                    outOfSight = true;
+                    outOfSightLoc = nextPos;
+                    // Profiler.end("bugnav " + 2 + " " + isMaster);
+                    indicate("bugnav " + 2 + " " + isMaster);
+                    return false;
+                }
+                if(isPassable) {
+                    pos = nextPos;
+                    topDir = tryDir;
+                    stackSize += 2;
+                    if(stackSize == 0) {
+                        emptyStackTurns++;
+                    } else {
+                        emptyStackTurns = 0;
+                    }
+                    appendCurrentPosition();
+                    // Profiler.end("bugnav " + 2 + " " + isMaster);
+                    // indicate("bugnav " + 2 + " " + isMaster);
+                    return true;
+                }
+            }
+            tryDir = tryDir.rotateRight();
+            {
+                // System.out.println("T " + tryDir);
+                var nextPos = pos.add(tryDir);
+                if(!rc.onTheMap(nextPos)) {
+                     if(isMaster) {
+                        // avoid following the edge of the map (TODO: 1-thick borders)
+                        indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 3);
+                        if(vis.contains(nextPos)) {
+                            indicate("gave up at edge");
+                            System.out.println("gave up at edge");
+                            givenUp = true;
+                            return false;
+                        }
+                        vis.add(nextPos);
+                        leftTurn = !leftTurn;
+                        clearPath();
+                        // don't guess turn direction, we know that one direction is bad already
+                        emptyStackTurns = -1000;
+                        // start again
+                        return tryDirsLeft();
+                    } else {
+                        hitEdge = true;
+                    }
+                    // Profiler.end("bugnav " + 3 + " " + isMaster);
+                    indicate("bugnav " + 3 + " " + isMaster);
+                    return false;
+                }
+                var isPassable = isPassable(nextPos);
+                if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
+                    rc.setIndicatorDot(nextPos, 0, 255, 255);
+                    outOfSight = true;
+                    outOfSightLoc = nextPos;
+                    // Profiler.end("bugnav " + 3 + " " + isMaster);
+                    indicate("bugnav " + 3 + " " + isMaster);
+                    return false;
+                }
+                if(isPassable) {
+                    pos = nextPos;
+                    topDir = tryDir;
+                    stackSize += 3;
+                    if(stackSize == 0) {
+                        emptyStackTurns++;
+                    } else {
+                        emptyStackTurns = 0;
+                    }
+                    appendCurrentPosition();
+                    // Profiler.end("bugnav " + 3 + " " + isMaster);
+                    // indicate("bugnav " + 3 + " " + isMaster);
+                    return true;
+                }
+            }
+            tryDir = tryDir.rotateRight();
+            {
+                // System.out.println("T " + tryDir);
+                var nextPos = pos.add(tryDir);
+                if(!rc.onTheMap(nextPos)) {
+                     if(isMaster) {
+                        // avoid following the edge of the map (TODO: 1-thick borders)
+                        indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 4);
+                        if(vis.contains(nextPos)) {
+                            indicate("gave up at edge");
+                            System.out.println("gave up at edge");
+                            givenUp = true;
+                            return false;
+                        }
+                        vis.add(nextPos);
+                        leftTurn = !leftTurn;
+                        clearPath();
+                        // don't guess turn direction, we know that one direction is bad already
+                        emptyStackTurns = -1000;
+                        // start again
+                        return tryDirsLeft();
+                    } else {
+                        hitEdge = true;
+                    }
+                    // Profiler.end("bugnav " + 4 + " " + isMaster);
+                    indicate("bugnav " + 4 + " " + isMaster);
+                    return false;
+                }
+                var isPassable = isPassable(nextPos);
+                if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
+                    rc.setIndicatorDot(nextPos, 0, 255, 255);
+                    outOfSight = true;
+                    outOfSightLoc = nextPos;
+                    // Profiler.end("bugnav " + 4 + " " + isMaster);
+                    indicate("bugnav " + 4 + " " + isMaster);
+                    return false;
+                }
+                if(isPassable) {
+                    pos = nextPos;
+                    topDir = tryDir;
+                    stackSize += 4;
+                    if(stackSize == 0) {
+                        emptyStackTurns++;
+                    } else {
+                        emptyStackTurns = 0;
+                    }
+                    appendCurrentPosition();
+                    // Profiler.end("bugnav " + 4 + " " + isMaster);
+                    // indicate("bugnav " + 4 + " " + isMaster);
+                    return true;
+                }
+            }
+            tryDir = tryDir.rotateRight();
+            {
+                // System.out.println("T " + tryDir);
+                var nextPos = pos.add(tryDir);
+                if(!rc.onTheMap(nextPos)) {
+                     if(isMaster) {
+                        // avoid following the edge of the map (TODO: 1-thick borders)
+                        indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 5);
+                        if(vis.contains(nextPos)) {
+                            indicate("gave up at edge");
+                            System.out.println("gave up at edge");
+                            givenUp = true;
+                            return false;
+                        }
+                        vis.add(nextPos);
+                        leftTurn = !leftTurn;
+                        clearPath();
+                        // don't guess turn direction, we know that one direction is bad already
+                        emptyStackTurns = -1000;
+                        // start again
+                        return tryDirsLeft();
+                    } else {
+                        hitEdge = true;
+                    }
+                    // Profiler.end("bugnav " + 5 + " " + isMaster);
+                    indicate("bugnav " + 5 + " " + isMaster);
+                    return false;
+                }
+                var isPassable = isPassable(nextPos);
+                if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
+                    rc.setIndicatorDot(nextPos, 0, 255, 255);
+                    outOfSight = true;
+                    outOfSightLoc = nextPos;
+                    // Profiler.end("bugnav " + 5 + " " + isMaster);
+                    indicate("bugnav " + 5 + " " + isMaster);
+                    return false;
+                }
+                if(isPassable) {
+                    pos = nextPos;
+                    topDir = tryDir;
+                    stackSize += 5;
+                    if(stackSize == 0) {
+                        emptyStackTurns++;
+                    } else {
+                        emptyStackTurns = 0;
+                    }
+                    appendCurrentPosition();
+                    // Profiler.end("bugnav " + 5 + " " + isMaster);
+                    // indicate("bugnav " + 5 + " " + isMaster);
+                    return true;
+                }
+            }
+            tryDir = tryDir.rotateRight();
+            println("no valid move found from " + pos);
+            return false;
+        }
+
+    }
+
+    private static void makeMove(Direction dir) throws GameActionException {
+        if(isRatKing) {
+            if(rc.canMove(dir)) RatKing.rawMove(dir);
+        } else {
+            BabyRat.makeMove(dir);
+        }
+    }
+
+    public static void makeMove(BugnavInstance bug) throws GameActionException {
+        indicate("bug.pos: " + bug.pos);
         int shade = 255;
         // Profiler.begin();
-        if((!isRatKing || myLoc.equals(bug.pos)) && (lastDist < 3 || RobotTracker.allySet.contains(bug.pos))) {
+        if((!isRatKing || myLoc.equals(bug.pos)) && (bug.lastDist < 3 || RobotTracker.allySet.contains(bug.pos))) {
             bugLoop: {
                 rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
                 Profiler.begin();
                 if(!bug.advance() || isRatKing) break bugLoop;
-                lastDist++;
+                bug.lastDist++;
                 // Profiler.end("bug");
                 rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
                 Profiler.begin();
                 if(!bug.advance() || isRatKing) break bugLoop;
-                lastDist++;
+                bug.lastDist++;
                 // Profiler.end("bug");
                 rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
                 Profiler.begin();
                 if(!bug.advance() || isRatKing) break bugLoop;
-                lastDist++;
+                bug.lastDist++;
                 // Profiler.end("bug");
                 rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
                 Profiler.begin();
                 if(!bug.advance() || isRatKing) break bugLoop;
-                lastDist++;
+                bug.lastDist++;
                 // Profiler.end("bug");
                 rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
                 Profiler.begin();
                 if(!bug.advance() || isRatKing) break bugLoop;
-                lastDist++;
+                bug.lastDist++;
                 // Profiler.end("bug");
             }
         }
         // Profiler.end("bug");
 
         // deal with the edge case of moving immediately out of sight
-        if(myLoc.equals(bug.pos)) {
+        if(myLoc.equals(bug.pos) && bug.outOfSightLoc != null && !bug.outOfSightLoc.equals(myLoc)) {
+            assert !isRatKing;
             var loc = bug.outOfSightLoc;
             bug.outOfSightLoc = null;
-            if(loc == null || loc.equals(myLoc)) return;
             var dir = myLoc.directionTo(loc);
-            turn(dir);
+            BabyRat.turn(dir);
             if(CellTracker.isPassable(loc) && (!CellTracker.isDirt(loc) || Config.allowDirt())) {
                 makeMove(dir);
             }
@@ -1991,25 +1827,22 @@ public class Pathfinder {
 
         if(!rc.isMovementReady()) return;
 
-        if(bug.pos == secondLastBugPos && myLoc.equals(secondLastLoc)) {
-            reps++;
-            if(reps >= 5) {
+        if(bug.pos == bug.secondLastBugPos && myLoc.equals(bug.secondLastLoc)) {
+            bug.reps++;
+            if(bug.reps >= 5) {
                 indicate("stuck, resetting bug");
                 println("stuck, resetting bug");
                 bug.clearPath();
                 bug.advance();
-                lastBugPos = lastLoc = new MapLocation(-1, -1);
-                lastDist = 0;
-                reps = 0;
             }
         } else {
-            reps = 0;
+            bug.reps = 0;
         }
-        if(!lastLoc.equals(myLoc) || !lastBugPos.equals(bug.pos)) {
-            secondLastBugPos = lastBugPos;
-            secondLastLoc = lastLoc;
-            lastBugPos = bug.pos;
-            lastLoc = myLoc;
+        if(!bug.lastLoc.equals(myLoc) || !bug.lastBugPos.equals(bug.pos)) {
+            bug.secondLastBugPos = bug.lastBugPos;
+            bug.secondLastLoc = bug.lastLoc;
+            bug.lastBugPos = bug.pos;
+            bug.lastLoc = myLoc;
         }
         rc.setIndicatorDot(bug.pos, 255, 0, 0);
 
@@ -2021,13 +1854,13 @@ public class Pathfinder {
                     indicate("adjacent");
                     makeMove(dir);
                 }
-                lastDist = 0;
+                bug.lastDist = 0;
                 return;
             }
         }
         // TODO: what if location == bug.pos?
 
-        doBugnavBfs(target);
+        doBugnavBfs(bug);
     }
 
     private static long localPassableExceptAllies0, localPassableExceptAllies1;
@@ -2078,7 +1911,6 @@ public class Pathfinder {
         }
         nearCat0 = nearCat1 = 0;
         for(int i = 0; i < 4; i++) {
-            indicate("N " + RobotTracker.catHistNum[i]);
             catLoop:
             for(int j = RobotTracker.catHistNum[i] - 1; j >= 0; j--) {
                 var cat = RobotTracker.catHist[i][j];
@@ -3692,6 +3524,7 @@ public class Pathfinder {
                 localPassableExceptAllies1 |= localPassableExceptAllies1 >> 11;
             }
 
+        Profiler.end("bfs masks");
     }
 
     private static int catPenalty(MapLocation loc) {
@@ -3718,8 +3551,9 @@ public class Pathfinder {
     }
 
 
-    private static void doBugnavBfs(MapLocation target) throws GameActionException {
+    private static void doBugnavBfs(BugnavInstance bug) throws GameActionException {
         prepareBfsMasks();
+        Profiler.begin();
         // d{i}0 + d{i}1 is the mask of reachable within i steps
         long d00 = 0, d01 = 0;
         long d10 = 0, d11 = 0;
@@ -3745,9 +3579,9 @@ public class Pathfinder {
             }
         }
         // {
-        //     if(amAfter(13427, 91)) {
-        //         // indicatorString = "";
-        //         CellTracker.printLocalMask(d00, d01);
+        //     if(amAfter(11360, 47)) {
+        //         indicatorString = "";
+        //         // CellTracker.printLocalMask(d00, d01);
         //         // CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
         //         // Clock.yield();
         //         // indicatorString = "";
@@ -3783,9 +3617,9 @@ public class Pathfinder {
         d11 |= d01;
         // Profiler.end("bfs iteration");
         // {
-        //     if(amAfter(13427, 91)) {
-        //         // indicatorString = "";
-        //         CellTracker.printLocalMask(d10, d11);
+        //     if(amAfter(11360, 47)) {
+        //         indicatorString = "";
+        //         // CellTracker.printLocalMask(d10, d11);
         //         // CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
         //         // Clock.yield();
         //         // indicatorString = "";
@@ -3815,7 +3649,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 49))
@@ -3847,7 +3681,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -3861,7 +3694,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 0))
@@ -3893,7 +3726,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
@@ -3907,7 +3739,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 10))
@@ -3939,7 +3771,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -3953,7 +3784,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 59))
@@ -3985,7 +3816,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
@@ -3999,7 +3829,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 48))
@@ -4031,7 +3861,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -4045,7 +3874,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 50))
@@ -4077,7 +3906,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
@@ -4091,7 +3919,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 9))
@@ -4123,7 +3951,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -4137,7 +3964,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 11))
@@ -4169,7 +3996,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -4180,8 +4006,8 @@ public class Pathfinder {
             if(bestMove != null) {
                 Profiler.end("bfs");
                 // indicate("bestMove: " + bestMove);
-                lastDist = 1;
-                indicate("bfs iterations: " + 1);
+                bug.lastDist = 1;
+                indicate("iters: " + 1);
                 makeMove(bestMove);
                 return;
             }
@@ -4234,9 +4060,9 @@ public class Pathfinder {
             }
         }
         // {
-        //     if(amAfter(13427, 91)) {
-        //         // indicatorString = "";
-        //         CellTracker.printLocalMask(d20, d21);
+        //     if(amAfter(11360, 47)) {
+        //         indicatorString = "";
+        //         // CellTracker.printLocalMask(d20, d21);
         //         // CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
         //         // Clock.yield();
         //         // indicatorString = "";
@@ -4266,7 +4092,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 49))
@@ -4298,7 +4124,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -4312,7 +4137,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 0))
@@ -4344,7 +4169,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
@@ -4358,7 +4182,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 10))
@@ -4390,7 +4214,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -4404,7 +4227,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 59))
@@ -4436,7 +4259,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
@@ -4450,7 +4272,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 48))
@@ -4482,7 +4304,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -4496,7 +4317,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 50))
@@ -4528,7 +4349,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
@@ -4542,7 +4362,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 9))
@@ -4574,7 +4394,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -4588,7 +4407,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 11))
@@ -4620,7 +4439,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -4631,8 +4449,8 @@ public class Pathfinder {
             if(bestMove != null) {
                 Profiler.end("bfs");
                 // indicate("bestMove: " + bestMove);
-                lastDist = 2;
-                indicate("bfs iterations: " + 2);
+                bug.lastDist = 2;
+                indicate("iters: " + 2);
                 makeMove(bestMove);
                 return;
             }
@@ -4665,9 +4483,9 @@ public class Pathfinder {
         d31 |= d21;
         // Profiler.end("bfs iteration");
         // {
-        //     if(amAfter(13427, 91)) {
-        //         // indicatorString = "";
-        //         CellTracker.printLocalMask(d30, d31);
+        //     if(amAfter(11360, 47)) {
+        //         indicatorString = "";
+        //         // CellTracker.printLocalMask(d30, d31);
         //         // CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
         //         // Clock.yield();
         //         // indicatorString = "";
@@ -4697,7 +4515,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 49))
@@ -4729,7 +4547,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -4743,7 +4560,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 0))
@@ -4775,7 +4592,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
@@ -4789,7 +4605,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 10))
@@ -4821,7 +4637,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -4835,7 +4650,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 59))
@@ -4867,7 +4682,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
@@ -4881,7 +4695,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 48))
@@ -4913,7 +4727,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -4927,7 +4740,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 50))
@@ -4959,7 +4772,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
@@ -4973,7 +4785,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 9))
@@ -5005,7 +4817,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -5019,7 +4830,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 11))
@@ -5051,7 +4862,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -5062,8 +4872,8 @@ public class Pathfinder {
             if(bestMove != null) {
                 Profiler.end("bfs");
                 // indicate("bestMove: " + bestMove);
-                lastDist = 3;
-                indicate("bfs iterations: " + 3);
+                bug.lastDist = 3;
+                indicate("iters: " + 3);
                 makeMove(bestMove);
                 return;
             }
@@ -5116,9 +4926,9 @@ public class Pathfinder {
             }
         }
         // {
-        //     if(amAfter(13427, 91)) {
-        //         // indicatorString = "";
-        //         CellTracker.printLocalMask(d40, d41);
+        //     if(amAfter(11360, 47)) {
+        //         indicatorString = "";
+        //         // CellTracker.printLocalMask(d40, d41);
         //         // CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
         //         // Clock.yield();
         //         // indicatorString = "";
@@ -5148,7 +4958,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 49))
@@ -5180,7 +4990,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -5194,7 +5003,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 0))
@@ -5226,7 +5035,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
@@ -5240,7 +5048,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 10))
@@ -5272,7 +5080,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -5286,7 +5093,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 59))
@@ -5318,7 +5125,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
@@ -5332,7 +5138,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 48))
@@ -5364,7 +5170,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -5378,7 +5183,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 50))
@@ -5410,7 +5215,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
@@ -5424,7 +5228,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 9))
@@ -5456,7 +5260,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -5470,7 +5273,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 11))
@@ -5502,7 +5305,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -5513,8 +5315,8 @@ public class Pathfinder {
             if(bestMove != null) {
                 Profiler.end("bfs");
                 // indicate("bestMove: " + bestMove);
-                lastDist = 4;
-                indicate("bfs iterations: " + 4);
+                bug.lastDist = 4;
+                indicate("iters: " + 4);
                 makeMove(bestMove);
                 return;
             }
@@ -5547,9 +5349,9 @@ public class Pathfinder {
         d51 |= d41;
         // Profiler.end("bfs iteration");
         // {
-        //     if(amAfter(13427, 91)) {
-        //         // indicatorString = "";
-        //         CellTracker.printLocalMask(d50, d51);
+        //     if(amAfter(11360, 47)) {
+        //         indicatorString = "";
+        //         // CellTracker.printLocalMask(d50, d51);
         //         // CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
         //         // Clock.yield();
         //         // indicatorString = "";
@@ -5579,7 +5381,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 49))
@@ -5611,7 +5413,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -5625,7 +5426,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 0))
@@ -5657,7 +5458,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
@@ -5671,7 +5471,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 10))
@@ -5703,7 +5503,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -5717,7 +5516,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 59))
@@ -5749,7 +5548,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
@@ -5763,7 +5561,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 48))
@@ -5795,7 +5593,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -5809,7 +5606,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 50))
@@ -5841,7 +5638,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
@@ -5855,7 +5651,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 9))
@@ -5887,7 +5683,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -5901,7 +5696,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 11))
@@ -5933,7 +5728,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -5944,8 +5738,8 @@ public class Pathfinder {
             if(bestMove != null) {
                 Profiler.end("bfs");
                 // indicate("bestMove: " + bestMove);
-                lastDist = 5;
-                indicate("bfs iterations: " + 5);
+                bug.lastDist = 5;
+                indicate("iters: " + 5);
                 makeMove(bestMove);
                 return;
             }
@@ -5998,9 +5792,9 @@ public class Pathfinder {
             }
         }
         // {
-        //     if(amAfter(13427, 91)) {
-        //         // indicatorString = "";
-        //         CellTracker.printLocalMask(d60, d61);
+        //     if(amAfter(11360, 47)) {
+        //         indicatorString = "";
+        //         // CellTracker.printLocalMask(d60, d61);
         //         // CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
         //         // Clock.yield();
         //         // indicatorString = "";
@@ -6030,7 +5824,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 49))
@@ -6062,7 +5856,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -6076,7 +5869,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 0))
@@ -6108,7 +5901,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
@@ -6122,7 +5914,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 10))
@@ -6154,7 +5946,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -6168,7 +5959,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 59))
@@ -6200,7 +5991,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
@@ -6214,7 +6004,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 48))
@@ -6246,7 +6036,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -6260,7 +6049,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 50))
@@ -6292,7 +6081,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
@@ -6306,7 +6094,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 9))
@@ -6338,7 +6126,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -6352,7 +6139,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 11))
@@ -6384,7 +6171,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -6395,8 +6181,8 @@ public class Pathfinder {
             if(bestMove != null) {
                 Profiler.end("bfs");
                 // indicate("bestMove: " + bestMove);
-                lastDist = 6;
-                indicate("bfs iterations: " + 6);
+                bug.lastDist = 6;
+                indicate("iters: " + 6);
                 makeMove(bestMove);
                 return;
             }
@@ -6429,9 +6215,9 @@ public class Pathfinder {
         d71 |= d61;
         // Profiler.end("bfs iteration");
         // {
-        //     if(amAfter(13427, 91)) {
-        //         // indicatorString = "";
-        //         CellTracker.printLocalMask(d70, d71);
+        //     if(amAfter(11360, 47)) {
+        //         indicatorString = "";
+        //         // CellTracker.printLocalMask(d70, d71);
         //         // CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
         //         // Clock.yield();
         //         // indicatorString = "";
@@ -6461,7 +6247,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 49))
@@ -6493,7 +6279,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -6507,7 +6292,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 0))
@@ -6539,7 +6324,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
@@ -6553,7 +6337,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 10))
@@ -6585,7 +6369,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -6599,7 +6382,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 59))
@@ -6631,7 +6414,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
@@ -6645,7 +6427,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 48))
@@ -6677,7 +6459,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -6691,7 +6472,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 50))
@@ -6723,7 +6504,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
@@ -6737,7 +6517,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 9))
@@ -6769,7 +6549,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -6783,7 +6562,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 11))
@@ -6815,7 +6594,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -6826,8 +6604,8 @@ public class Pathfinder {
             if(bestMove != null) {
                 Profiler.end("bfs");
                 // indicate("bestMove: " + bestMove);
-                lastDist = 7;
-                indicate("bfs iterations: " + 7);
+                bug.lastDist = 7;
+                indicate("iters: " + 7);
                 makeMove(bestMove);
                 return;
             }
@@ -6880,9 +6658,9 @@ public class Pathfinder {
             }
         }
         // {
-        //     if(amAfter(13427, 91)) {
-        //         // indicatorString = "";
-        //         CellTracker.printLocalMask(d80, d81);
+        //     if(amAfter(11360, 47)) {
+        //         indicatorString = "";
+        //         // CellTracker.printLocalMask(d80, d81);
         //         // CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
         //         // Clock.yield();
         //         // indicatorString = "";
@@ -6912,7 +6690,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 49))
@@ -6944,7 +6722,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -6958,7 +6735,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 0))
@@ -6990,7 +6767,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
@@ -7004,7 +6780,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 10))
@@ -7036,7 +6812,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -7050,7 +6825,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 59))
@@ -7082,7 +6857,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
@@ -7096,7 +6870,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 48))
@@ -7128,7 +6902,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -7142,7 +6915,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 50))
@@ -7174,7 +6947,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
@@ -7188,7 +6960,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 9))
@@ -7220,7 +6992,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -7234,7 +7005,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 11))
@@ -7266,7 +7037,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -7277,8 +7047,8 @@ public class Pathfinder {
             if(bestMove != null) {
                 Profiler.end("bfs");
                 // indicate("bestMove: " + bestMove);
-                lastDist = 8;
-                indicate("bfs iterations: " + 8);
+                bug.lastDist = 8;
+                indicate("iters: " + 8);
                 makeMove(bestMove);
                 return;
             }
@@ -7311,9 +7081,9 @@ public class Pathfinder {
         d91 |= d81;
         // Profiler.end("bfs iteration");
         // {
-        //     if(amAfter(13427, 91)) {
-        //         // indicatorString = "";
-        //         CellTracker.printLocalMask(d90, d91);
+        //     if(amAfter(11360, 47)) {
+        //         indicatorString = "";
+        //         // CellTracker.printLocalMask(d90, d91);
         //         // CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
         //         // Clock.yield();
         //         // indicatorString = "";
@@ -7343,7 +7113,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 49))
@@ -7375,7 +7145,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -7389,7 +7158,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 0))
@@ -7421,7 +7190,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
@@ -7435,7 +7203,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 10))
@@ -7467,7 +7235,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -7481,7 +7248,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 59))
@@ -7513,7 +7280,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
@@ -7527,7 +7293,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 48))
@@ -7559,7 +7325,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -7573,7 +7338,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 50))
@@ -7605,7 +7370,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
@@ -7619,7 +7383,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 9))
@@ -7651,7 +7415,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -7665,7 +7428,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 11))
@@ -7697,7 +7460,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -7708,8 +7470,8 @@ public class Pathfinder {
             if(bestMove != null) {
                 Profiler.end("bfs");
                 // indicate("bestMove: " + bestMove);
-                lastDist = 9;
-                indicate("bfs iterations: " + 9);
+                bug.lastDist = 9;
+                indicate("iters: " + 9);
                 makeMove(bestMove);
                 return;
             }
@@ -7762,9 +7524,9 @@ public class Pathfinder {
             }
         }
         // {
-        //     if(amAfter(13427, 91)) {
-        //         // indicatorString = "";
-        //         CellTracker.printLocalMask(d100, d101);
+        //     if(amAfter(11360, 47)) {
+        //         indicatorString = "";
+        //         // CellTracker.printLocalMask(d100, d101);
         //         // CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
         //         // Clock.yield();
         //         // indicatorString = "";
@@ -7794,7 +7556,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 49))
@@ -7826,7 +7588,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -7840,7 +7601,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 0))
@@ -7872,7 +7633,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
@@ -7886,7 +7646,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 10))
@@ -7918,7 +7678,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -7932,7 +7691,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 59))
@@ -7964,7 +7723,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
@@ -7978,7 +7736,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 48))
@@ -8010,7 +7768,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -8024,7 +7781,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 50))
@@ -8056,7 +7813,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
@@ -8070,7 +7826,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 9))
@@ -8102,7 +7858,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -8116,7 +7871,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 11))
@@ -8148,7 +7903,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -8159,8 +7913,8 @@ public class Pathfinder {
             if(bestMove != null) {
                 Profiler.end("bfs");
                 // indicate("bestMove: " + bestMove);
-                lastDist = 10;
-                indicate("bfs iterations: " + 10);
+                bug.lastDist = 10;
+                indicate("iters: " + 10);
                 makeMove(bestMove);
                 return;
             }
@@ -8193,9 +7947,9 @@ public class Pathfinder {
         d111 |= d101;
         // Profiler.end("bfs iteration");
         // {
-        //     if(amAfter(13427, 91)) {
-        //         // indicatorString = "";
-        //         CellTracker.printLocalMask(d110, d111);
+        //     if(amAfter(11360, 47)) {
+        //         indicatorString = "";
+        //         // CellTracker.printLocalMask(d110, d111);
         //         // CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
         //         // Clock.yield();
         //         // indicatorString = "";
@@ -8225,7 +7979,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 49))
@@ -8257,7 +8011,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -8271,7 +8024,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 0))
@@ -8303,7 +8056,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
@@ -8317,7 +8069,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 10))
@@ -8349,7 +8101,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -8363,7 +8114,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 59))
@@ -8395,7 +8146,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
@@ -8409,7 +8159,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 48))
@@ -8441,7 +8191,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -8455,7 +8204,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 50))
@@ -8487,7 +8236,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
@@ -8501,7 +8249,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 9))
@@ -8533,7 +8281,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -8547,7 +8294,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 11))
@@ -8579,7 +8326,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -8590,8 +8336,8 @@ public class Pathfinder {
             if(bestMove != null) {
                 Profiler.end("bfs");
                 // indicate("bestMove: " + bestMove);
-                lastDist = 11;
-                indicate("bfs iterations: " + 11);
+                bug.lastDist = 11;
+                indicate("iters: " + 11);
                 makeMove(bestMove);
                 return;
             }
@@ -8644,9 +8390,9 @@ public class Pathfinder {
             }
         }
         // {
-        //     if(amAfter(13427, 91)) {
-        //         // indicatorString = "";
-        //         CellTracker.printLocalMask(d120, d121);
+        //     if(amAfter(11360, 47)) {
+        //         indicatorString = "";
+        //         // CellTracker.printLocalMask(d120, d121);
         //         // CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
         //         // Clock.yield();
         //         // indicatorString = "";
@@ -8676,7 +8422,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 49))
@@ -8708,7 +8454,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -8722,7 +8467,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 0))
@@ -8754,7 +8499,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
@@ -8768,7 +8512,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 10))
@@ -8800,7 +8544,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -8814,7 +8557,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 59))
@@ -8846,7 +8589,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
@@ -8860,7 +8602,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 48))
@@ -8892,7 +8634,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -8906,7 +8647,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 50))
@@ -8938,7 +8679,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
@@ -8952,7 +8692,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 9))
@@ -8984,7 +8724,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -8998,7 +8737,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 11))
@@ -9030,7 +8769,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -9041,8 +8779,8 @@ public class Pathfinder {
             if(bestMove != null) {
                 Profiler.end("bfs");
                 // indicate("bestMove: " + bestMove);
-                lastDist = 12;
-                indicate("bfs iterations: " + 12);
+                bug.lastDist = 12;
+                indicate("iters: " + 12);
                 makeMove(bestMove);
                 return;
             }
@@ -9075,9 +8813,9 @@ public class Pathfinder {
         d131 |= d121;
         // Profiler.end("bfs iteration");
         // {
-        //     if(amAfter(13427, 91)) {
-        //         // indicatorString = "";
-        //         CellTracker.printLocalMask(d130, d131);
+        //     if(amAfter(11360, 47)) {
+        //         indicatorString = "";
+        //         // CellTracker.printLocalMask(d130, d131);
         //         // CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
         //         // Clock.yield();
         //         // indicatorString = "";
@@ -9107,7 +8845,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 49))
@@ -9139,7 +8877,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -9153,7 +8890,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 0))
@@ -9185,7 +8922,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
@@ -9199,7 +8935,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 10))
@@ -9231,7 +8967,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -9245,7 +8980,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 59))
@@ -9277,7 +9012,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
@@ -9291,7 +9025,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 48))
@@ -9323,7 +9057,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -9337,7 +9070,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 50))
@@ -9369,7 +9102,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
@@ -9383,7 +9115,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 9))
@@ -9415,7 +9147,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -9429,7 +9160,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 11))
@@ -9461,7 +9192,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -9472,8 +9202,8 @@ public class Pathfinder {
             if(bestMove != null) {
                 Profiler.end("bfs");
                 // indicate("bestMove: " + bestMove);
-                lastDist = 13;
-                indicate("bfs iterations: " + 13);
+                bug.lastDist = 13;
+                indicate("iters: " + 13);
                 makeMove(bestMove);
                 return;
             }
@@ -9526,9 +9256,9 @@ public class Pathfinder {
             }
         }
         // {
-        //     if(amAfter(13427, 91)) {
-        //         // indicatorString = "";
-        //         CellTracker.printLocalMask(d140, d141);
+        //     if(amAfter(11360, 47)) {
+        //         indicatorString = "";
+        //         // CellTracker.printLocalMask(d140, d141);
         //         // CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
         //         // Clock.yield();
         //         // indicatorString = "";
@@ -9558,7 +9288,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 49))
@@ -9590,7 +9320,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -9604,7 +9333,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 0))
@@ -9636,7 +9365,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
@@ -9650,7 +9378,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 10))
@@ -9682,7 +9410,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -9696,7 +9423,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 59))
@@ -9728,7 +9455,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
@@ -9742,7 +9468,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 48))
@@ -9774,7 +9500,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -9788,7 +9513,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent0 & (1l << 50))
@@ -9820,7 +9545,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
@@ -9834,7 +9558,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 9))
@@ -9866,7 +9590,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -9880,7 +9603,7 @@ public class Pathfinder {
                    || (isDirt = CellTracker.isDirt(nextLoc))
                    && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                    && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                    double score = nextLoc.distanceSquaredTo(bug.target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
                        (notWallAdjacent1 & (1l << 11))
@@ -9912,7 +9635,6 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -9923,8 +9645,8 @@ public class Pathfinder {
             if(bestMove != null) {
                 Profiler.end("bfs");
                 // indicate("bestMove: " + bestMove);
-                lastDist = 14;
-                indicate("bfs iterations: " + 14);
+                bug.lastDist = 14;
+                indicate("iters: " + 14);
                 makeMove(bestMove);
                 return;
             }
@@ -9974,13 +9696,11 @@ public class Pathfinder {
         if(rc.canMove(Direction.NORTHWEST)) dirs[dirCount++] = Direction.NORTHWEST;
         if(dirCount > 0) makeMove(dirs[Rng.mcg() % dirCount]);
 
-        lastDist = 0;
-        lastBugPos = lastLoc = secondLastBugPos = secondLastLoc = new MapLocation(-1, -1);
         bug.clearPath();
     }
 
     // returns a mask of good directions according to the default order
-    public static int[] multisourceBfs(MapLocation[] sources, int sourceCnt) throws GameActionException {
+    public static int[] multisourceBfs(MapLocation[] sources, int sourceCnt) {
         CellTracker.computeLocalBfsMasks();
         long reach0 = 0, reach1 = 0;
         for (int i = 0; i < sourceCnt; i++) {
@@ -10001,6 +9721,23 @@ public class Pathfinder {
         }
         var localPassable0 = CellTracker.localPassable0 & ~CellTracker.localDirt0;
         var localPassable1 = CellTracker.localPassable1 & ~CellTracker.localDirt1;
+        for(int i = RobotTracker.allyCount - 1; i >= 0; i--) {
+                    {
+            var pos = RobotTracker.allies[i];
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassable0 &= ~ (1l << idx);
+                } else {
+                    localPassable1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+        }
         if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
             indicate("loop 0");
             int res = 0;
@@ -10395,5 +10132,77 @@ public class Pathfinder {
             return new int[] {res, 6};
         }
         return new int[] {0, 1000};
+    }
+
+    public static long reach0, reach1;
+    public static void computeReachable() {
+        CellTracker.computeLocalBfsMasks();
+        reach0 = 0x807000000000000l & CellTracker.localPassable0;
+        reach1 = 0xe01 & CellTracker.localPassable1;
+            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
+    reach1 |= (reach1 & 0x7feffdffbff7fefl) << 1;
+    reach0 |= (reach0 & 0x1f7feffdffbff7fel) >> 1;
+    reach1 |= (reach1 & 0xffdffbff7feffdel) >> 1;
+
+    reach1 |= ((reach1 & 0x1ffffffffffffl) << 11) | (reach0 >> 50);
+    reach0 |= (reach0 & 0x3ffffffffffffl) << 11;
+    reach0 |= (reach0 >> 11) | ((reach1 & 0x7ffl) << 50);
+    reach1 |= reach1 >> 11;
+    reach0 &= CellTracker.localPassable0;
+    reach1 &= CellTracker.localPassable1;
+
+            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
+    reach1 |= (reach1 & 0x7feffdffbff7fefl) << 1;
+    reach0 |= (reach0 & 0x1f7feffdffbff7fel) >> 1;
+    reach1 |= (reach1 & 0xffdffbff7feffdel) >> 1;
+
+    reach1 |= ((reach1 & 0x1ffffffffffffl) << 11) | (reach0 >> 50);
+    reach0 |= (reach0 & 0x3ffffffffffffl) << 11;
+    reach0 |= (reach0 >> 11) | ((reach1 & 0x7ffl) << 50);
+    reach1 |= reach1 >> 11;
+    reach0 &= CellTracker.localPassable0;
+    reach1 &= CellTracker.localPassable1;
+
+            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
+    reach1 |= (reach1 & 0x7feffdffbff7fefl) << 1;
+    reach0 |= (reach0 & 0x1f7feffdffbff7fel) >> 1;
+    reach1 |= (reach1 & 0xffdffbff7feffdel) >> 1;
+
+    reach1 |= ((reach1 & 0x1ffffffffffffl) << 11) | (reach0 >> 50);
+    reach0 |= (reach0 & 0x3ffffffffffffl) << 11;
+    reach0 |= (reach0 >> 11) | ((reach1 & 0x7ffl) << 50);
+    reach1 |= reach1 >> 11;
+    reach0 &= CellTracker.localPassable0;
+    reach1 &= CellTracker.localPassable1;
+
+            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
+    reach1 |= (reach1 & 0x7feffdffbff7fefl) << 1;
+    reach0 |= (reach0 & 0x1f7feffdffbff7fel) >> 1;
+    reach1 |= (reach1 & 0xffdffbff7feffdel) >> 1;
+
+    reach1 |= ((reach1 & 0x1ffffffffffffl) << 11) | (reach0 >> 50);
+    reach0 |= (reach0 & 0x3ffffffffffffl) << 11;
+    reach0 |= (reach0 >> 11) | ((reach1 & 0x7ffl) << 50);
+    reach1 |= reach1 >> 11;
+    reach0 &= CellTracker.localPassable0;
+    reach1 &= CellTracker.localPassable1;
+
+            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
+    reach1 |= (reach1 & 0x7feffdffbff7fefl) << 1;
+    reach0 |= (reach0 & 0x1f7feffdffbff7fel) >> 1;
+    reach1 |= (reach1 & 0xffdffbff7feffdel) >> 1;
+
+    reach1 |= ((reach1 & 0x1ffffffffffffl) << 11) | (reach0 >> 50);
+    reach0 |= (reach0 & 0x3ffffffffffffl) << 11;
+    reach0 |= (reach0 >> 11) | ((reach1 & 0x7ffl) << 50);
+    reach1 |= reach1 >> 11;
+    reach0 &= CellTracker.localPassable0;
+    reach1 &= CellTracker.localPassable1;
+
     }
 }

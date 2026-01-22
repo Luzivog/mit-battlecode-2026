@@ -1,27 +1,21 @@
-package awubot.robot.rat;
+package awubot_mystery.robot.rat;
 
-import static awubot.Game.rc;
+import static awubot_mystery.Game.rc;
 
-import java.util.LinkedList;
 import java.util.List;
 
-import awubot.Pathfinder;
-import awubot.robot.Strategy;
-import awubot.util.Util;
+import awubot_mystery.Pathfinder;
+import awubot_mystery.robot.Strategy;
+import awubot_mystery.util.Util;
 import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
 
-public class AggroRoamStrategy extends Strategy {
+public class StrongAggroRoamStrategy extends Strategy {
     private MapLocation target;
     private List<MapLocation> targets;
 
-    public AggroRoamStrategy() throws GameActionException {
-        //assert (Game.origin != null) : "origin is null";
-        targets = new LinkedList<>();
-        for (int i = 0; i < 3; i++) {
-            targets.add(Util.genAggroTarget());
-        }
-        targets.add(Util.getEnemySpawnList().getFirst()); // fk it we go into their spawn
+    public StrongAggroRoamStrategy() throws GameActionException {
+        targets = Util.getEnemySpawnList();
         target = targets.getFirst();
     }
 

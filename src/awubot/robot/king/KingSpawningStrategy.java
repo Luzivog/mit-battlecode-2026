@@ -55,7 +55,7 @@ public class KingSpawningStrategy extends Strategy {
         if (target == null) target = new MapLocation(mapWidth / 2, mapHeight / 2);
         else {
             indicate("targeting enemy cluster at " + target + " with " + targetNeighbours + " neighbours");
-            thresh += 20;
+            thresh += 10;
         }
 
         //indicate(rc.getCurrentRatCost() + " current rat cost vs thresh " + thresh);

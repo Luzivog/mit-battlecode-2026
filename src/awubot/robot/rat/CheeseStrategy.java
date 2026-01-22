@@ -1,7 +1,6 @@
 package awubot.robot.rat;
 
 import battlecode.common.*;
-import awubot.Pathfinder;
 import awubot.robot.Strategy;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
@@ -41,7 +40,7 @@ public class CheeseStrategy extends Strategy {
             }
         }
         if(cheeseTarget != null && (traverseStrategy == null ||
-            !traverseStrategy.target.equals(cheeseTarget))) {
+            !traverseStrategy.bug.target.equals(cheeseTarget))) {
             traverseStrategy = new TraverseStrategy(cheeseTarget, 1);
         }
     }

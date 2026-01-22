@@ -1,16 +1,16 @@
-package awubot.robot.rat;
+package awubot_mystery.robot.rat;
 
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
 import battlecode.common.RobotInfo;
 import battlecode.common.UnitType;
-import awubot.CellTracker;
-import awubot.Pathfinder;
-import awubot.comms.GlobalArray;
-import awubot.robot.Strategy;
-import static awubot.Game.*;
-import static awubot.util.Util.*;
+import awubot_mystery.CellTracker;
+import awubot_mystery.Pathfinder;
+import awubot_mystery.comms.GlobalArray;
+import awubot_mystery.robot.Strategy;
+import static awubot_mystery.Game.*;
+import static awubot_mystery.util.Util.*;
 
 public class CatLuringStrategy extends Strategy {
     private static final int LURE_TTL = 40;

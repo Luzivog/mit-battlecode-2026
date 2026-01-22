@@ -9,6 +9,7 @@ import awubot.Pathfinder;
 import awubot.comms.GlobalArray;
 import awubot.comms.Squeaker;
 import awubot.robot.Strategy;
+import static awubot.robot.king.RatKing.*;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 
@@ -106,7 +107,7 @@ public class KingDefenseStrategy extends Strategy {
 
         for (Direction myDir : myPreferredDirs) {
             if (rc.canMove(myDir)) {
-                Pathfinder.makeMove(myDir);
+                rawMove(myDir);
                 return true;
             }
         }
@@ -117,7 +118,7 @@ public class KingDefenseStrategy extends Strategy {
 
         for (Direction myDir : myDesperateDirs) {
             if (rc.canMove(myDir)) {
-                Pathfinder.makeMove(myDir);
+                rawMove(myDir);
                 return true;
             }
         }
@@ -134,7 +135,7 @@ public class KingDefenseStrategy extends Strategy {
 
         for (Direction myDir : myTryDirs) {
             if (myDir != Direction.CENTER && rc.canMove(myDir)) {
-                Pathfinder.makeMove(myDir);
+                rawMove(myDir);
                 return true;
             }
         }

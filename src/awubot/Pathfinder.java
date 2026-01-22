@@ -3655,7 +3655,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 49))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -3700,7 +3700,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 0))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -3745,7 +3745,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 10))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -3790,7 +3790,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 59))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -3835,7 +3835,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 48))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -3880,7 +3880,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 50))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -3925,7 +3925,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 9))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -3970,7 +3970,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 11))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -4098,7 +4098,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 49))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -4143,7 +4143,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 0))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -4188,7 +4188,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 10))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -4233,7 +4233,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 59))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -4278,7 +4278,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 48))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -4323,7 +4323,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 50))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -4368,7 +4368,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 9))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -4413,7 +4413,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 11))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -4521,7 +4521,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 49))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -4566,7 +4566,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 0))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -4611,7 +4611,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 10))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -4656,7 +4656,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 59))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -4701,7 +4701,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 48))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -4746,7 +4746,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 50))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -4791,7 +4791,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 9))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -4836,7 +4836,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 11))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -4964,7 +4964,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 49))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -5009,7 +5009,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 0))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -5054,7 +5054,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 10))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -5099,7 +5099,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 59))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -5144,7 +5144,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 48))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -5189,7 +5189,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 50))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -5234,7 +5234,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 9))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -5279,7 +5279,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 11))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -5387,7 +5387,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 49))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -5432,7 +5432,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 0))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -5477,7 +5477,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 10))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -5522,7 +5522,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 59))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -5567,7 +5567,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 48))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -5612,7 +5612,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 50))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -5657,7 +5657,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 9))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -5702,7 +5702,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 11))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -5830,7 +5830,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 49))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -5875,7 +5875,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 0))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -5920,7 +5920,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 10))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -5965,7 +5965,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 59))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -6010,7 +6010,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 48))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -6055,7 +6055,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 50))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -6100,7 +6100,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 9))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -6145,7 +6145,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 11))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -6253,7 +6253,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 49))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -6298,7 +6298,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 0))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -6343,7 +6343,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 10))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -6388,7 +6388,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 59))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -6433,7 +6433,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 48))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -6478,7 +6478,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 50))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -6523,7 +6523,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 9))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -6568,7 +6568,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 11))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -6696,7 +6696,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 49))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -6741,7 +6741,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 0))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -6786,7 +6786,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 10))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -6831,7 +6831,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 59))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -6876,7 +6876,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 48))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -6921,7 +6921,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 50))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -6966,7 +6966,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 9))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -7011,7 +7011,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 11))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -7119,7 +7119,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 49))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -7164,7 +7164,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 0))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -7209,7 +7209,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 10))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -7254,7 +7254,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 59))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -7299,7 +7299,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 48))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -7344,7 +7344,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 50))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -7389,7 +7389,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 9))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -7434,7 +7434,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 11))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -7562,7 +7562,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 49))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -7607,7 +7607,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 0))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -7652,7 +7652,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 10))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -7697,7 +7697,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 59))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -7742,7 +7742,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 48))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -7787,7 +7787,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 50))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -7832,7 +7832,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 9))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -7877,7 +7877,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 11))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -7985,7 +7985,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 49))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -8030,7 +8030,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 0))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -8075,7 +8075,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 10))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -8120,7 +8120,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 59))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -8165,7 +8165,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 48))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -8210,7 +8210,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 50))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -8255,7 +8255,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 9))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -8300,7 +8300,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 11))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -8428,7 +8428,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 49))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -8473,7 +8473,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 0))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -8518,7 +8518,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 10))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -8563,7 +8563,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 59))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -8608,7 +8608,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 48))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -8653,7 +8653,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 50))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -8698,7 +8698,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 9))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -8743,7 +8743,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 11))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -8851,7 +8851,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 49))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -8896,7 +8896,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 0))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -8941,7 +8941,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 10))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -8986,7 +8986,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 59))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -9031,7 +9031,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 48))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -9076,7 +9076,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 50))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -9121,7 +9121,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 9))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -9166,7 +9166,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 11))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -9294,7 +9294,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 49))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -9339,7 +9339,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 0))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -9384,7 +9384,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 10))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -9429,7 +9429,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 59))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -9474,7 +9474,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 48))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -9519,7 +9519,7 @@ public class Pathfinder {
                        (notWallAdjacent0 & (1l << 50))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -9564,7 +9564,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 9))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(
@@ -9609,7 +9609,7 @@ public class Pathfinder {
                        (notWallAdjacent1 & (1l << 11))
                        != 0
                        ) {
-                        score /= 2;
+                        score -= 100;
                     }
                     // prefer getting closer to the target
                     if(

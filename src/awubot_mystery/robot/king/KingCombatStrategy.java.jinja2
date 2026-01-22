@@ -1,0 +1,96 @@
+package awubot_mystery.robot.king;
+
+import battlecode.common.*;
+import awubot_mystery.robot.Strategy;
+import awubot_mystery.RobotTracker;
+import awubot_mystery.Pathfinder;
+
+import static awubot_mystery.robot.king.RatKing.*;
+import static awubot_mystery.Game.*;
+import static awubot_mystery.util.Util.*;
+
+public class KingCombatStrategy extends Strategy {
+    @Override
+    public boolean runTick() throws GameActionException {
+        boolean hasThreat = (RobotTracker.numEnemies + RobotTracker.numCats) > 0;
+        if(!hasThreat) return false;
+        if(rc.isMovementReady()) {
+            {% for i in range(8) %}
+            var score{{i}} = 0;
+            {% endfor %}
+            for(int idx = 0; idx < RobotTracker.numEnemies; idx++) {
+                var robot = RobotTracker.sortedEnemies[idx];
+                if(robot == null) continue;
+                var weight = switch(robot.type) {
+                    case BABY_RAT -> 1;
+                    case RAT_KING -> 3;
+                    case CAT -> 5;
+                };
+                var dir = myLoc.directionTo(robot.location);
+                switch(dir.ordinal()) {
+                    {% for i in range(8) %}
+                    case {{i}} -> {
+                        score{{i}}           -= weight * 3;
+                        score{{(i + 7) % 8}} -= weight * 2;
+                        score{{(i + 1) % 8}} -= weight * 2;
+                        score{{(i + 3) % 8}} += weight;
+                        score{{(i + 4) % 8}} += weight;
+                        score{{(i + 5) % 8}} += weight;
+                    }
+                    {% endfor %}
+                    default -> {
+                        assert false : "unexpected direction";
+                    }
+                }
+            }
+            for(int idx = 0; idx < RobotTracker.numCats; idx++) {
+                var robot = RobotTracker.sortedCats[idx];
+                if(robot == null) continue;
+                var weight = 5;
+                var dir = myLoc.directionTo(robot.location);
+                switch(dir.ordinal()) {
+                    {% for i in range(8) %}
+                    case {{i}} -> {
+                        score{{i}}           -= weight * 3;
+                        score{{(i + 7) % 8}} -= weight * 2;
+                        score{{(i + 1) % 8}} -= weight * 2;
+                        score{{(i + 3) % 8}} += weight;
+                        score{{(i + 4) % 8}} += weight;
+                        score{{(i + 5) % 8}} += weight;
+                    }
+                    {% endfor %}
+                    default -> {
+                        assert false : "unexpected direction";
+                    }
+                }
+            }
+            int best = 0;
+            var move = Direction.CENTER;
+            {% for i in range(8) %}
+            if(score{{i}} > best && rc.canMove({{directions[i]}})) {
+                best = score{{i}};
+                move = {{directions[i]}};
+            }
+            {% endfor %}
+            indicate("evading");
+            if(move != Direction.CENTER) Pathfinder.makeMove(move);
+        }
+        if(rc.isActionReady()) {
+            RobotInfo best = null;
+            int bestHp = 1000000000;
+            for(int idx = 0; idx < RobotTracker.numEnemies; idx++) {
+                var robot = RobotTracker.sortedEnemies[idx];
+                if(robot == null) continue;
+                if(robot.location.distanceSquaredTo(myLoc) > 8) continue;
+                if(robot.health < bestHp) {
+                    best = robot;
+                    bestHp = robot.health;
+                }
+            }
+            if(best != null) {
+                rc.attack(best.location);
+            }
+        }
+        return true;
+    }
+}

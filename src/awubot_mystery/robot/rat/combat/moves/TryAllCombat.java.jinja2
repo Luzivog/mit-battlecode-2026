@@ -1,0 +1,370 @@
+package awubot_mystery.robot.rat.combat.moves;
+
+import battlecode.common.Clock;
+import battlecode.common.Direction;
+import battlecode.common.GameActionException;
+import battlecode.common.GameConstants;
+import battlecode.common.MapLocation;
+import battlecode.common.RobotInfo;
+import battlecode.common.UnitType;
+
+import awubot_mystery.robot.rat.combat.CombatCommon;
+import awubot_mystery.robot.rat.combat.CombatStrategy;
+import static awubot_mystery.Game.*;
+import static awubot_mystery.util.Util.*;
+import static awubot_mystery.robot.rat.BabyRat.*;
+import awubot_mystery.RobotTracker;
+import awubot_mystery.comms.Enemy;
+
+{% set wide_related_map = {
+    0: ["Direction.NORTH", "Direction.NORTHEAST", "Direction.NORTHWEST", "Direction.EAST", "Direction.WEST"],
+    1: ["Direction.NORTHEAST", "Direction.NORTH", "Direction.EAST", "Direction.NORTHWEST", "Direction.SOUTHEAST"],
+    2: ["Direction.EAST", "Direction.NORTHEAST", "Direction.SOUTHEAST", "Direction.NORTH", "Direction.SOUTH"],
+    3: ["Direction.SOUTHEAST", "Direction.SOUTH", "Direction.EAST", "Direction.NORTHEAST", "Direction.SOUTHWEST"],
+    4: ["Direction.SOUTH", "Direction.SOUTHEAST", "Direction.SOUTHWEST", "Direction.EAST", "Direction.WEST"],
+    5: ["Direction.SOUTHWEST", "Direction.SOUTH", "Direction.WEST", "Direction.NORTHWEST", "Direction.SOUTHEAST"],
+    6: ["Direction.WEST", "Direction.NORTHWEST", "Direction.SOUTHWEST", "Direction.NORTH", "Direction.SOUTH"],
+    7: ["Direction.NORTHWEST", "Direction.NORTH", "Direction.WEST", "Direction.NORTHEAST", "Direction.SOUTHWEST"],
+} %}
+{% set dir_short_map = {
+    "Direction.NORTH": "N",
+    "Direction.NORTHEAST": "NE",
+    "Direction.EAST": "E",
+    "Direction.SOUTHEAST": "SE",
+    "Direction.SOUTH": "S",
+    "Direction.SOUTHWEST": "SW",
+    "Direction.WEST": "W",
+    "Direction.NORTHWEST": "NW",
+    "Direction.CENTER": "C",
+} %}
+
+{% macro update_best(face_dir, mode, action_first, target_expr, damage_expr) -%}
+if (score > bestScore) {
+    bestScore = score;
+    bestMode = {{ mode }};
+    bestActionFirst = {{ action_first }};
+    bestMove = moveDir;
+    bestFacing = {{ face_dir }};
+    bestTarget = {{ target_expr }};
+    bestDamage = {{ damage_expr }};
+}
+{%- endmacro %}
+
+{% macro consider_enemy(face_dir) -%}
+{
+    int curCheb = chebyshevDistance(myLoc, info);
+    if (curCheb <= 2) {
+        boolean canRatnap = info.getType() == UnitType.BABY_RAT && info.getHealth() > GameConstants.RAT_BITE_DAMAGE;
+        boolean canAttack = CombatStrategy.shouldFight(info);
+        if (canRatnap || canAttack) {
+            t = info.location;
+            int currentDist2 = myLoc.distanceSquaredTo(t);
+
+            double cellScoreNoDamage = 0;
+            boolean cellScoreNoDamageComputed = false;
+            double cellScoreWithDamage = 0;
+            boolean cellScoreWithDamageComputed = false;
+
+            // RATNAP
+            if (canRatnap) {
+                dxToTarget = t.x - newLoc.x;
+                dyToTarget = t.y - newLoc.y;
+                if (dxToTarget * dxToTarget + dyToTarget * dyToTarget <= 2) {
+                    if (!(info.getHealth() >= myHealth && canSense(-dxToTarget, -dyToTarget, info.direction))) {
+                        if (!cellScoreNoDamageComputed) {
+                            cellScoreNoDamage = CombatStrategy.getCellScoreFor(moveDir, {{ face_dir }}, info);
+                            cellScoreNoDamageComputed = true;
+                        }
+                        score = 30;
+                        if (moveCost == 0) score -= strafePenalty;
+                        score += cellScoreNoDamage;
+                        if (turning) score += 2;
+                        {{ update_best(face_dir, "MODE_RATNAP", "false", "info", "0") }}
+                    }
+                }
+
+                if (currentDist2 <= 2 && info.getHealth() < myHealth) {
+                    if (!cellScoreNoDamageComputed) {
+                        cellScoreNoDamage = CombatStrategy.getCellScoreFor(moveDir, {{ face_dir }}, info);
+                        cellScoreNoDamageComputed = true;
+                    }
+                    score = 35;
+                    if (moveCost == 0) score -= strafePenalty;
+                    score += cellScoreNoDamage;
+                    if (turning) score *= 1.2;
+                    {{ update_best(face_dir, "MODE_RATNAP", "true", "info", "0") }}
+                }
+            }
+
+            // ATTACK
+            if (canAttack) {
+                int weight = 10;
+                if (info.getHealth() <= biteDamage) {
+                    weight += 30;
+                }
+
+                double attackCellScore;
+                if (attackUseDamage) {
+                    if (!cellScoreWithDamageComputed) {
+                        cellScoreWithDamage = CombatStrategy.getCellScoreFor(moveDir, {{ face_dir }}, info, biteDamage);
+                        cellScoreWithDamageComputed = true;
+                    }
+                    attackCellScore = cellScoreWithDamage;
+                } else {
+                    if (!cellScoreNoDamageComputed) {
+                        cellScoreNoDamage = CombatStrategy.getCellScoreFor(moveDir, {{ face_dir }}, info);
+                        cellScoreNoDamageComputed = true;
+                    }
+                    attackCellScore = cellScoreNoDamage;
+                }
+
+                if (chebyshevDistance(newLoc, info) <= 1) {
+                    score = weight;
+                    if (moveCost == 0) score -= strafePenalty;
+                    if (turning) score += 2;
+                    score += attackCellScore;
+                    {{ update_best(face_dir, "MODE_ATTACK", "false", "info", "biteDamage") }}
+                }
+
+                if (currentDist2 <= 2) {
+                    score = weight;
+                    if (moveCost == 0) score -= strafePenalty;
+                    if (turning) score += 2;
+                    score += attackCellScore;
+                    {{ update_best(face_dir, "MODE_ATTACK", "true", "info", "biteDamage") }}
+                }
+            }
+        }
+    }
+}
+{%- endmacro %}
+
+public final class TryAllCombat {
+    private TryAllCombat() {
+    }
+
+    public static final int MODE_NONE = 0;
+    public static final int MODE_RATNAP = 1;
+    public static final int MODE_ATTACK = 2;
+    public static final int MODE_FIGHT = 3;
+
+    public static int lastMode;
+
+    static Direction bestMove;
+    static Direction bestFacing;
+    static boolean bestActionFirst;
+    static double bestScore;
+    static int bestMode;
+    static RobotInfo bestTarget;
+    static int bestDamage;
+
+    static Enemy fightTarget;
+    static boolean canAct;
+    static int biteDamage;
+    static boolean attackUseDamage;
+    static boolean attackUseCat;
+    static RobotInfo catInfo;
+    static RobotInfo e0, e1, e2;
+    static int enemyCount;
+    static int myHealth;
+
+    static Direction moveDir;
+    static MapLocation newLoc;
+    static MapLocation t;
+    static RobotInfo info;
+    static int dxToTarget;
+    static int dyToTarget;
+    static double score;
+    static int bytecodeStart, bytecodeBudget;
+
+    public static boolean run() throws GameActionException {
+        // SHARED: reset state
+        bestMode = MODE_NONE;
+        bestScore = -1e9;
+        bestMove = null;
+        bestFacing = null;
+        bestActionFirst = false;
+        bestTarget = null;
+        bestDamage = 0;
+        lastMode = MODE_NONE;
+
+        canAct = rc.isActionReady();
+        myHealth = rc.getHealth();
+        biteDamage = CombatStrategy.getBiteDamage();
+        attackUseDamage = myHealth > 24;
+
+        // SHARED: choose fight target like TryFight
+        fightTarget = null;
+        if (RobotTracker.numEnemies > 0) {
+            fightTarget = new Enemy(RobotTracker.sortedEnemies[0]);
+        } else if (RobotTracker.numCats > 0) {
+            fightTarget = new Enemy(RobotTracker.sortedCats[0]);
+        } else if (CombatStrategy.funnyTarget != null) {
+            fightTarget = CombatStrategy.funnyTarget;
+        } else {
+            println("wtf ?????????????????????????????????????????????????????????");
+            assert(false);
+            return false;
+        }
+
+        // SHARED: preload up to 3 enemies for ratnap/attack
+        enemyCount = RobotTracker.numEnemies;
+        if (enemyCount > 3) enemyCount = 3;
+        e0 = null;
+        e1 = null;
+        e2 = null;
+        switch (enemyCount) {
+            case 3:
+                e2 = RobotTracker.sortedEnemies[2];
+            case 2:
+                e1 = RobotTracker.sortedEnemies[1];
+            case 1:
+                e0 = RobotTracker.sortedEnemies[0];
+            default:
+                break;
+        }
+
+        // ATTACK: only fall back to cat if no nearby enemy candidates
+        attackUseCat = false;
+        catInfo = null;
+        if (RobotTracker.numCats > 0) {
+            attackUseCat = true;
+            if (enemyCount >= 1 && CombatStrategy.shouldFight(e0) && chebyshevDistance(myLoc, e0) <= 2) attackUseCat = false;
+            if (enemyCount >= 2 && CombatStrategy.shouldFight(e1) && chebyshevDistance(myLoc, e1) <= 2) attackUseCat = false;
+            if (enemyCount >= 3 && CombatStrategy.shouldFight(e2) && chebyshevDistance(myLoc, e2) <= 2) attackUseCat = false;
+            if (attackUseCat) {
+                catInfo = RobotTracker.sortedCats[0];
+            }
+        }
+
+        bytecodeStart = Clock.getBytecodeNum();
+        bytecodeBudget = Math.min(3000, (int) (Clock.getBytecodesLeft() - 1000) / 2);
+
+        selectMoves();
+
+        if (bestMode == MODE_NONE) {
+            lastMode = MODE_NONE;
+            return false;
+        }
+        lastMode = bestMode;
+
+        // RATNAP
+        if (bestMode == MODE_RATNAP) {
+            if (bestActionFirst) {
+                ratnapTarget(bestTarget);
+                assert(CombatStrategy.performMoves(bestMove, bestFacing));
+            } else {
+                assert(CombatStrategy.performMoves(bestMove, bestFacing));
+                ratnapTarget(bestTarget);
+            }
+            println("!!!!!!!!!!!!!!!!!!!!!!! napped rat");
+            indicate("COMBAT STRAT: NAP");
+            return true;
+        }
+
+        // ATTACK
+        if (bestMode == MODE_ATTACK) {
+            if (bestActionFirst) {
+                attack(bestTarget, bestDamage);
+                assert(CombatStrategy.performMoves(bestMove, bestFacing));
+            } else {
+                assert(CombatStrategy.performMoves(bestMove, bestFacing));
+                attack(bestTarget, bestDamage);
+            }
+            println("!!!!!!!!!!!!!!!!!!!!!!! attacked rat");
+            indicate("COMBAT STRAT: ATTACK");
+            return true;
+        }
+
+        // FIGHT
+        CombatStrategy.performMoves(bestMove, bestFacing);
+        indicate("COMBAT STRAT: FIGHT");
+        return true;
+    }
+
+    private static void ratnapTarget(RobotInfo target) throws GameActionException {
+        if (rc.canCarryRat(target.location)) {
+            rc.carryRat(target.location);
+        } else {
+            attack(target);
+        }
+    }
+
+    private static void selectMoves() throws GameActionException {
+        {% for d in allDirections %}
+        move{{ dir_short_map[d] }}();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+        {% endfor %}
+    }
+
+    {% for move_dir in allDirections %}
+    private static void move{{ dir_short_map[move_dir] }}() throws GameActionException {
+        {% if move_dir != "Direction.CENTER" %}
+        if (!rc.isMovementReady()) return;
+        {% endif %}
+        if (!CombatCommon.canMove{{ dir_short_map[move_dir] }}) return;
+        moveDir = {{ move_dir }};
+        newLoc = myLoc.add(moveDir);
+        switch (myDir.ordinal()) {
+            {% for ord in range(8) %}
+            case {{ ord }} -> {
+                {% for facing in wide_related_map[ord] %}
+                face{{ dir_short_map[facing] }}();
+                {% endfor %}
+            }
+            {% endfor %}
+            default -> { }
+        }
+    }
+
+    {% endfor %}
+    {% for face_dir in directions %}
+    private static void face{{ dir_short_map[face_dir] }}() throws GameActionException {
+        // SHARED: pair feasibility + cached costs
+        int moveCost = CombatCommon.movementCost(moveDir, {{ face_dir }});
+        if (moveCost == -1) return;
+        int strafePenalty = (moveCost == 0) ? CombatCommon.strafeCost() : 0;
+        boolean turning = ({{ face_dir }} != myDir);
+
+        // FIGHT
+        if (fightTarget != null) {
+            dxToTarget = fightTarget.location.x - newLoc.x;
+            dyToTarget = fightTarget.location.y - newLoc.y;
+            score = CombatStrategy.getCellScoreFor(moveDir, {{ face_dir }});
+            if (moveCost == 1) score += 10;
+            if (!canSense(dxToTarget, dyToTarget, {{ face_dir }})) {
+                score -= 5;
+            }
+            if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) != 0) {
+                score += 30;
+            }
+            if (turning) {
+                score += 2;
+            }
+            {{ update_best(face_dir, "MODE_FIGHT", "false", "null", "0") }}
+        }
+
+        if (!canAct) return;
+
+        // RATNAP + ATTACK: per-target scoring (fallthrough switch)
+        switch (enemyCount) {
+            case 3:
+                info = e2;
+                {{ consider_enemy(face_dir) }}
+            case 2:
+                info = e1;
+                {{ consider_enemy(face_dir) }}
+            case 1:
+                info = e0;
+                {{ consider_enemy(face_dir) }}
+            default:
+                break;
+        }
+        if (attackUseCat) {
+            info = catInfo;
+            {{ consider_enemy(face_dir) }}
+        }
+    }
+
+    {% endfor %}
+}

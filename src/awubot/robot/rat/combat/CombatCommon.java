@@ -23,15 +23,15 @@ public final class CombatCommon {
     public static boolean canMoveC;
 
     public static void precomp() throws GameActionException {
-        canMoveN = canTraverse(Direction.NORTH);
-        canMoveNE = canTraverse(Direction.NORTHEAST);
-        canMoveE = canTraverse(Direction.EAST);
-        canMoveSE = canTraverse(Direction.SOUTHEAST);
-        canMoveS = canTraverse(Direction.SOUTH);
-        canMoveSW = canTraverse(Direction.SOUTHWEST);
-        canMoveW = canTraverse(Direction.WEST);
-        canMoveNW = canTraverse(Direction.NORTHWEST);
-        canMoveC = canTraverse(Direction.CENTER);
+        canMoveN = rc.canMove(Direction.NORTH);
+        canMoveNE = rc.canMove(Direction.NORTHEAST);
+        canMoveE = rc.canMove(Direction.EAST);
+        canMoveSE = rc.canMove(Direction.SOUTHEAST);
+        canMoveS = rc.canMove(Direction.SOUTH);
+        canMoveSW = rc.canMove(Direction.SOUTHWEST);
+        canMoveW = rc.canMove(Direction.WEST);
+        canMoveNW = rc.canMove(Direction.NORTHWEST);
+        canMoveC = true;
     }
 
     public static boolean canMove(Direction dir) {

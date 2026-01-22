@@ -9700,7 +9700,7 @@ public class Pathfinder {
     }
 
     // returns a mask of good directions according to the default order
-    public static int[] multisourceBfs(MapLocation[] sources, int sourceCnt) throws GameActionException {
+    public static int[] multisourceBfs(MapLocation[] sources, int sourceCnt) {
         CellTracker.computeLocalBfsMasks();
         long reach0 = 0, reach1 = 0;
         for (int i = 0; i < sourceCnt; i++) {
@@ -9721,6 +9721,23 @@ public class Pathfinder {
         }
         var localPassable0 = CellTracker.localPassable0 & ~CellTracker.localDirt0;
         var localPassable1 = CellTracker.localPassable1 & ~CellTracker.localDirt1;
+        for(int i = RobotTracker.allyCount - 1; i >= 0; i--) {
+                    {
+            var pos = RobotTracker.allies[i];
+            int xi = pos.x - myLoc.x + 5;
+            int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    localPassable0 &= ~ (1l << idx);
+                } else {
+                    localPassable1 &= ~ (1l << (idx - 61));
+                }
+            }
+        }
+
+        }
         if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
             indicate("loop 0");
             int res = 0;
@@ -10117,8 +10134,75 @@ public class Pathfinder {
         return new int[] {0, 1000};
     }
 
-    public static int reach0, reach1;
+    public static long reach0, reach1;
     public static void computeReachable() {
-        
+        CellTracker.computeLocalBfsMasks();
+        reach0 = 0x807000000000000l & CellTracker.localPassable0;
+        reach1 = 0xe01 & CellTracker.localPassable1;
+            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
+    reach1 |= (reach1 & 0x7feffdffbff7fefl) << 1;
+    reach0 |= (reach0 & 0x1f7feffdffbff7fel) >> 1;
+    reach1 |= (reach1 & 0xffdffbff7feffdel) >> 1;
+
+    reach1 |= ((reach1 & 0x1ffffffffffffl) << 11) | (reach0 >> 50);
+    reach0 |= (reach0 & 0x3ffffffffffffl) << 11;
+    reach0 |= (reach0 >> 11) | ((reach1 & 0x7ffl) << 50);
+    reach1 |= reach1 >> 11;
+    reach0 &= CellTracker.localPassable0;
+    reach1 &= CellTracker.localPassable1;
+
+            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
+    reach1 |= (reach1 & 0x7feffdffbff7fefl) << 1;
+    reach0 |= (reach0 & 0x1f7feffdffbff7fel) >> 1;
+    reach1 |= (reach1 & 0xffdffbff7feffdel) >> 1;
+
+    reach1 |= ((reach1 & 0x1ffffffffffffl) << 11) | (reach0 >> 50);
+    reach0 |= (reach0 & 0x3ffffffffffffl) << 11;
+    reach0 |= (reach0 >> 11) | ((reach1 & 0x7ffl) << 50);
+    reach1 |= reach1 >> 11;
+    reach0 &= CellTracker.localPassable0;
+    reach1 &= CellTracker.localPassable1;
+
+            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
+    reach1 |= (reach1 & 0x7feffdffbff7fefl) << 1;
+    reach0 |= (reach0 & 0x1f7feffdffbff7fel) >> 1;
+    reach1 |= (reach1 & 0xffdffbff7feffdel) >> 1;
+
+    reach1 |= ((reach1 & 0x1ffffffffffffl) << 11) | (reach0 >> 50);
+    reach0 |= (reach0 & 0x3ffffffffffffl) << 11;
+    reach0 |= (reach0 >> 11) | ((reach1 & 0x7ffl) << 50);
+    reach1 |= reach1 >> 11;
+    reach0 &= CellTracker.localPassable0;
+    reach1 &= CellTracker.localPassable1;
+
+            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
+    reach1 |= (reach1 & 0x7feffdffbff7fefl) << 1;
+    reach0 |= (reach0 & 0x1f7feffdffbff7fel) >> 1;
+    reach1 |= (reach1 & 0xffdffbff7feffdel) >> 1;
+
+    reach1 |= ((reach1 & 0x1ffffffffffffl) << 11) | (reach0 >> 50);
+    reach0 |= (reach0 & 0x3ffffffffffffl) << 11;
+    reach0 |= (reach0 >> 11) | ((reach1 & 0x7ffl) << 50);
+    reach1 |= reach1 >> 11;
+    reach0 &= CellTracker.localPassable0;
+    reach1 &= CellTracker.localPassable1;
+
+            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
+    reach1 |= (reach1 & 0x7feffdffbff7fefl) << 1;
+    reach0 |= (reach0 & 0x1f7feffdffbff7fel) >> 1;
+    reach1 |= (reach1 & 0xffdffbff7feffdel) >> 1;
+
+    reach1 |= ((reach1 & 0x1ffffffffffffl) << 11) | (reach0 >> 50);
+    reach0 |= (reach0 & 0x3ffffffffffffl) << 11;
+    reach0 |= (reach0 >> 11) | ((reach1 & 0x7ffl) << 50);
+    reach1 |= reach1 >> 11;
+    reach0 &= CellTracker.localPassable0;
+    reach1 &= CellTracker.localPassable1;
+
     }
 }

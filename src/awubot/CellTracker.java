@@ -11012,8 +11012,10 @@ public class CellTracker {
             for(int j = 0; j < 11; j++) {
                 s += ((row & (1 << j)) != 0 ? "X " : ". ");
             }
-            indicate(s);
+            // indicate(s);
+            System.out.println(s);
         }
+        System.out.println();
     }
 
     // symmetry checker

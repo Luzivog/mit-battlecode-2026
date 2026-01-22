@@ -54,6 +54,7 @@ public final class TryFight {
         // force this strategy
         // if (md == null) return false;
         CombatStrategy.performMoves(md, fd);
+        TryAttack.miniTick();
         indicate("COMBAT STRAT: FIGHT");
         // try to squeeze some juice out
         return true;

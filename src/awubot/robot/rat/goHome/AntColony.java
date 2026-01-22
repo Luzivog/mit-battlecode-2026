@@ -104,11 +104,12 @@ public class AntColony {
     public static void preTick() {
         for(int i = 0; i < 5; i++) {
             var kingLoc = GlobalArray.getRatKing(i);
-            if(lastKingLocs[i] == null || !kingLoc.isAdjacentTo(lastKingLocs[i])) {
+            if(lastKingLocs[i] == null && kingLoc != null || !kingLoc.isAdjacentTo(lastKingLocs[i])) {
                 // detected teleportation or first time, reset this king's marks
                 resetMarks(i);
             } else if(!kingLoc.equals(lastKingLocs[i])) {
                 // king moved, decrease base mark (equivalent to incrementing all existing marks)
+                mark[i][lastKingLocs[i].y].setCharAt(lastKingLocs[i].x, base[i]);
                 base[i]--;
             }
             lastKingLocs[i] = kingLoc;

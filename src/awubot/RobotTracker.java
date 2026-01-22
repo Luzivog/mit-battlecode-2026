@@ -2768,7 +2768,7 @@ import awubot.util.Profiler;public class RobotTracker {
 
     public static int allyCount = 0;
     public static MapLocation[] allies = new MapLocation[120];
-    public static FastMapLocationSet allySet, kingSet;
+    public static FastMapLocationSet allySet, kingSet, babySet;
     public static void addAlly(MapLocation loc) {
         if(!allySet.contains(loc)) {
             allies[allyCount++] = loc;
@@ -2781,9 +2781,11 @@ import awubot.util.Profiler;public class RobotTracker {
         allyCount = 0;
         allySet = new FastMapLocationSet();
         kingSet = new FastMapLocationSet();
+        babySet = new FastMapLocationSet();
         for(var robot : rc.senseNearbyRobots(-1, team)) {
             if(robot.type == UnitType.BABY_RAT) {
                 addAlly(robot.location);
+                babySet.add(robot.location);
             }
         }
         {

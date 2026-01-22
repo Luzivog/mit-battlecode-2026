@@ -434,7 +434,7 @@ private static final long hiddenNW = 0x0000ffffffffff00L;
     public static void loadThreatFromMap() throws GameActionException {
         int x = myLoc.x;
         int y = myLoc.y;
-t_m2_2 = (x >= 2 && y < mapHeight - 2) && CellTracker.mapData[x  + -2].charAt(y  + 2) != '\2';t_m1_2 = (x >= 1 && y < mapHeight - 2) && CellTracker.mapData[x  + -1].charAt(y  + 2) != '\2';t_0_2 = (y < mapHeight - 2) && CellTracker.mapData[x ].charAt(y  + 2) != '\2';t_1_2 = (x < mapWidth - 1 && y < mapHeight - 2) && CellTracker.mapData[x  + 1].charAt(y  + 2) != '\2';t_2_2 = (x < mapWidth - 2 && y < mapHeight - 2) && CellTracker.mapData[x  + 2].charAt(y  + 2) != '\2';t_m2_1 = (x >= 2 && y < mapHeight - 1) && CellTracker.mapData[x  + -2].charAt(y  + 1) != '\2';t_m1_1 = (x >= 1 && y < mapHeight - 1) && CellTracker.mapData[x  + -1].charAt(y  + 1) != '\2';t_0_1 = (y < mapHeight - 1) && CellTracker.mapData[x ].charAt(y  + 1) != '\2';t_1_1 = (x < mapWidth - 1 && y < mapHeight - 1) && CellTracker.mapData[x  + 1].charAt(y  + 1) != '\2';t_2_1 = (x < mapWidth - 2 && y < mapHeight - 1) && CellTracker.mapData[x  + 2].charAt(y  + 1) != '\2';t_m2_0 = (x >= 2) && CellTracker.mapData[x  + -2].charAt(y ) != '\2';t_m1_0 = (x >= 1) && CellTracker.mapData[x  + -1].charAt(y ) != '\2';        t_0_0 = true;t_1_0 = (x < mapWidth - 1) && CellTracker.mapData[x  + 1].charAt(y ) != '\2';t_2_0 = (x < mapWidth - 2) && CellTracker.mapData[x  + 2].charAt(y ) != '\2';t_m2_m1 = (x >= 2 && y >= 1) && CellTracker.mapData[x  + -2].charAt(y  + -1) != '\2';t_m1_m1 = (x >= 1 && y >= 1) && CellTracker.mapData[x  + -1].charAt(y  + -1) != '\2';t_0_m1 = (y >= 1) && CellTracker.mapData[x ].charAt(y  + -1) != '\2';t_1_m1 = (x < mapWidth - 1 && y >= 1) && CellTracker.mapData[x  + 1].charAt(y  + -1) != '\2';t_2_m1 = (x < mapWidth - 2 && y >= 1) && CellTracker.mapData[x  + 2].charAt(y  + -1) != '\2';t_m2_m2 = (x >= 2 && y >= 2) && CellTracker.mapData[x  + -2].charAt(y  + -2) != '\2';t_m1_m2 = (x >= 1 && y >= 2) && CellTracker.mapData[x  + -1].charAt(y  + -2) != '\2';t_0_m2 = (y >= 2) && CellTracker.mapData[x ].charAt(y  + -2) != '\2';t_1_m2 = (x < mapWidth - 1 && y >= 2) && CellTracker.mapData[x  + 1].charAt(y  + -2) != '\2';t_2_m2 = (x < mapWidth - 2 && y >= 2) && CellTracker.mapData[x  + 2].charAt(y  + -2) != '\2';    }
+t_m2_2 = (x >= 2 && y < mapHeight - 2) && CellTracker.mapData[y  + 2].charAt(x  + -2) != '\2';t_m1_2 = (x >= 1 && y < mapHeight - 2) && CellTracker.mapData[y  + 2].charAt(x  + -1) != '\2';t_0_2 = (y < mapHeight - 2) && CellTracker.mapData[y  + 2].charAt(x ) != '\2';t_1_2 = (x < mapWidth - 1 && y < mapHeight - 2) && CellTracker.mapData[y  + 2].charAt(x  + 1) != '\2';t_2_2 = (x < mapWidth - 2 && y < mapHeight - 2) && CellTracker.mapData[y  + 2].charAt(x  + 2) != '\2';t_m2_1 = (x >= 2 && y < mapHeight - 1) && CellTracker.mapData[y  + 1].charAt(x  + -2) != '\2';t_m1_1 = (x >= 1 && y < mapHeight - 1) && CellTracker.mapData[y  + 1].charAt(x  + -1) != '\2';t_0_1 = (y < mapHeight - 1) && CellTracker.mapData[y  + 1].charAt(x ) != '\2';t_1_1 = (x < mapWidth - 1 && y < mapHeight - 1) && CellTracker.mapData[y  + 1].charAt(x  + 1) != '\2';t_2_1 = (x < mapWidth - 2 && y < mapHeight - 1) && CellTracker.mapData[y  + 1].charAt(x  + 2) != '\2';t_m2_0 = (x >= 2) && CellTracker.mapData[y ].charAt(x  + -2) != '\2';t_m1_0 = (x >= 1) && CellTracker.mapData[y ].charAt(x  + -1) != '\2';        t_0_0 = true;t_1_0 = (x < mapWidth - 1) && CellTracker.mapData[y ].charAt(x  + 1) != '\2';t_2_0 = (x < mapWidth - 2) && CellTracker.mapData[y ].charAt(x  + 2) != '\2';t_m2_m1 = (x >= 2 && y >= 1) && CellTracker.mapData[y  + -1].charAt(x  + -2) != '\2';t_m1_m1 = (x >= 1 && y >= 1) && CellTracker.mapData[y  + -1].charAt(x  + -1) != '\2';t_0_m1 = (y >= 1) && CellTracker.mapData[y  + -1].charAt(x ) != '\2';t_1_m1 = (x < mapWidth - 1 && y >= 1) && CellTracker.mapData[y  + -1].charAt(x  + 1) != '\2';t_2_m1 = (x < mapWidth - 2 && y >= 1) && CellTracker.mapData[y  + -1].charAt(x  + 2) != '\2';t_m2_m2 = (x >= 2 && y >= 2) && CellTracker.mapData[y  + -2].charAt(x  + -2) != '\2';t_m1_m2 = (x >= 1 && y >= 2) && CellTracker.mapData[y  + -2].charAt(x  + -1) != '\2';t_0_m2 = (y >= 2) && CellTracker.mapData[y  + -2].charAt(x ) != '\2';t_1_m2 = (x < mapWidth - 1 && y >= 2) && CellTracker.mapData[y  + -2].charAt(x  + 1) != '\2';t_2_m2 = (x < mapWidth - 2 && y >= 2) && CellTracker.mapData[y  + -2].charAt(x  + 2) != '\2';    }
 
 
     public static void recomputeThreatMasks() {
@@ -453,9 +453,6 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
         int dx = info.location.x - myLocX;
         int dy = info.location.y - myLocY;
         boolean highHealth = info.health > rc.getHealth();
-        if (am(11908, 24)) {
-            println("combat tracker considered enemy " + info.location + " direction " + info.direction + " hp " + info.health);
-        }
         if (highHealth) {
             registerEnemyHigh(dx, dy, info.direction);
         } else {
@@ -9921,6 +9918,7 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
     }
 
     public static boolean hasThreat(Direction moveDir, Direction facing, RobotInfo target, int damage) {
+        println("hasThreat called for move " + moveDir + " facing " + facing + " against target " + (target != null ? target.location.toString() : "null") + " with damage " + damage);
         long base;
         switch (moveDir.ordinal()) {
             case 0 -> {
@@ -10045,16 +10043,22 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
         if (target == null) return base != 0L;
         if (target.getTeam() == rc.getTeam()) return base != 0L;
         if (target.getType() != UnitType.BABY_RAT) return base != 0L;
+        println("base threat mask: " + Long.toHexString(base));
         int enemyDx = target.location.x - myLocX;
         int enemyDy = target.location.y - myLocY;
         if (enemyDx < -3 || enemyDx > 3 || enemyDy < -3 || enemyDy > 3) return base != 0L;
         boolean beforeHigh = target.getHealth() > rc.getHealth();
         boolean afterHigh = (target.getHealth() - damage) > rc.getHealth();
         if (afterHigh != beforeHigh) {
+            println("health threshold crossed, recomputing threat mask");
             long sub = enemyMaskForMove(enemyDx, enemyDy, target.direction, moveDir);
             long threat = getMoveThreatMask(moveDir);
+            println("enemy mask: " + Long.toHexString(sub));
+            println("move threat mask: " + Long.toHexString(threat));
             base -= (sub & threat);
             base += (sub & getHiddenMask(facing) & threat);
+            println("new threat mask: " + Long.toHexString(base));
+            println("hidden mask : " + Long.toHexString(getHiddenMask(facing)));
         }
         return base != 0L;
     }

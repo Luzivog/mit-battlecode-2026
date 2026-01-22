@@ -364,16 +364,6 @@ public class Util {
         };
     }
 
-    // note: assumes you might turn + walk in this direction
-    public static boolean canTraverse(Direction to) throws GameActionException {
-        if (to == Direction.CENTER) return true;
-        if (rc.canMove(to)) return true;
-        if (!rc.isMovementReady()) return false;
-        MapLocation pos = myLoc.add(to);
-        if (!rc.canSenseLocation(pos)) return false;
-        return rc.senseMapInfo(pos).isPassable() && rc.senseRobotAtLocation(pos) == null;
-    }
-
     public static boolean isCellMaybePassable(MapLocation loc) throws GameActionException {
         if (rc.canSenseLocation(loc)) {
             return rc.senseMapInfo(loc).isPassable() && rc.senseRobotAtLocation(loc) == null;

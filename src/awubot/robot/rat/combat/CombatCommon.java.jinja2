@@ -20,7 +20,11 @@ public final class CombatCommon {
 
     public static void precomp() throws GameActionException {
         {% for idx in range(move_dirs|length) %}
-        canMove{{ move_short[idx] }} = canTraverse({{ move_dirs[idx] }});
+        {% if move_dirs[idx] == 'Direction.CENTER' %}
+        canMove{{ move_short[idx] }} = true;
+        {% else %}
+        canMove{{ move_short[idx] }} = rc.canMove({{ move_dirs[idx] }});
+        {% endif %}
         {% endfor %}
     }
 

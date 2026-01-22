@@ -2098,17 +2098,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_0_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_0_4;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -2230,17 +2227,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_3_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_3_4;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -2362,17 +2356,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_3_1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_3_1;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -2406,7 +2397,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -2511,17 +2502,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_3_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_3_m2;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -2555,7 +2543,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -2660,17 +2648,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_0_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_0_m2;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -2704,7 +2689,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -2738,7 +2723,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 11.333333333333334;
+                        score += 8.5;
                     }
                 }
             }
@@ -2826,17 +2811,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_m3_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_m3_m2;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -2870,7 +2852,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -2975,17 +2957,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_m3_1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_m3_1;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -3019,7 +2998,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -3124,17 +3103,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_m3_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_m3_4;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -3256,17 +3232,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_1_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_1_4;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -3388,17 +3361,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_4_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_4_4;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -3520,17 +3490,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_4_1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_4_1;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -3652,17 +3619,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_4_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_4_m2;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -3784,17 +3748,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_1_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_1_m2;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -3828,7 +3789,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -3862,7 +3823,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 11.333333333333334;
+                        score += 8.5;
                     }
                 }
             }
@@ -3950,17 +3911,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_m2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_m2_m2;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -3994,7 +3952,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -4028,7 +3986,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 11.333333333333334;
+                        score += 8.5;
                     }
                 }
             }
@@ -4116,17 +4074,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_m2_1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_m2_1;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -4160,7 +4115,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -4194,7 +4149,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 11.333333333333334;
+                        score += 8.5;
                     }
                 }
             }
@@ -4282,17 +4237,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_m2_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_m2_4;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -4414,17 +4366,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_1_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_1_3;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -4458,7 +4407,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -4563,17 +4512,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_4_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_4_3;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -4695,17 +4641,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_4_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_4_0;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -4827,17 +4770,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_4_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_4_m3;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -4959,17 +4899,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_1_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_1_m3;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -5003,7 +4940,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -5108,17 +5045,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_m2_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_m2_m3;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -5152,7 +5086,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -5257,17 +5191,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_m2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_m2_0;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -5301,7 +5232,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -5335,7 +5266,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 11.333333333333334;
+                        score += 8.5;
                     }
                 }
             }
@@ -5423,17 +5354,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_m2_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_m2_3;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -5467,7 +5395,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -5572,17 +5500,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_1_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_1_2;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -5616,7 +5541,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -5650,7 +5575,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 11.333333333333334;
+                        score += 8.5;
                     }
                 }
             }
@@ -5738,17 +5663,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_4_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_4_2;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -5870,17 +5792,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_4_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_4_m1;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -6002,17 +5921,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_4_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_4_m4;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -6134,17 +6050,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_1_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_1_m4;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -6266,17 +6179,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_m2_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_m2_m4;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -6398,17 +6308,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_m2_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_m2_m1;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -6442,7 +6349,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -6476,7 +6383,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 11.333333333333334;
+                        score += 8.5;
                     }
                 }
             }
@@ -6564,17 +6471,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_m2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_m2_2;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -6608,7 +6512,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -6642,7 +6546,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 11.333333333333334;
+                        score += 8.5;
                     }
                 }
             }
@@ -6730,17 +6634,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_0_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_0_2;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -6774,7 +6675,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -6808,7 +6709,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 11.333333333333334;
+                        score += 8.5;
                     }
                 }
             }
@@ -6896,17 +6797,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_3_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_3_2;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -6940,7 +6838,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -7045,17 +6943,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_3_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_3_m1;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -7089,7 +6984,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -7194,17 +7089,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_3_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_3_m4;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -7326,17 +7218,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_0_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_0_m4;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -7458,17 +7347,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_m3_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_m3_m4;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -7590,17 +7476,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_m3_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_m3_m1;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -7634,7 +7517,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -7739,17 +7622,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_m3_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_m3_2;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -7783,7 +7663,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -7888,17 +7768,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_m1_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_m1_2;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -7932,7 +7809,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -7966,7 +7843,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 11.333333333333334;
+                        score += 8.5;
                     }
                 }
             }
@@ -8054,17 +7931,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_2_2;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -8098,7 +7972,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -8132,7 +8006,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 11.333333333333334;
+                        score += 8.5;
                     }
                 }
             }
@@ -8220,17 +8094,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_2_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_2_m1;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -8264,7 +8135,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -8298,7 +8169,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 11.333333333333334;
+                        score += 8.5;
                     }
                 }
             }
@@ -8386,17 +8257,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_2_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_2_m4;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -8518,17 +8386,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_m1_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_m1_m4;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -8650,17 +8515,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_m4_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_m4_m4;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -8782,17 +8644,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_m4_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_m4_m1;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -8914,17 +8773,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_m4_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_m4_2;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -9046,17 +8902,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_m1_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_m1_3;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -9090,7 +8943,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -9195,17 +9048,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_2_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_2_3;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -9239,7 +9089,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -9344,17 +9194,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_2_0;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -9388,7 +9235,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -9422,7 +9269,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 11.333333333333334;
+                        score += 8.5;
                     }
                 }
             }
@@ -9510,17 +9357,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_2_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_2_m3;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -9554,7 +9398,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -9659,17 +9503,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_m1_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_m1_m3;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -9703,7 +9544,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -9808,17 +9649,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_m4_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_m4_m3;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -9940,17 +9778,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_m4_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_m4_0;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -10072,17 +9907,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_m4_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_m4_3;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -10204,17 +10036,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_m1_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_m1_4;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -10336,17 +10165,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_2_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_2_4;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -10468,17 +10294,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_2_1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_2_1;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -10512,7 +10335,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -10546,7 +10369,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 11.333333333333334;
+                        score += 8.5;
                     }
                 }
             }
@@ -10634,17 +10457,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_2_m2;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -10678,7 +10498,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -10712,7 +10532,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 11.333333333333334;
+                        score += 8.5;
                     }
                 }
             }
@@ -10800,17 +10620,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_m1_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_m1_m2;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -10844,7 +10661,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -10878,7 +10695,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 11.333333333333334;
+                        score += 8.5;
                     }
                 }
             }
@@ -10966,17 +10783,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_m4_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_m4_m2;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -11098,17 +10912,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_m4_1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_m4_1;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -11230,17 +11041,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_m4_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_m4_4;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -11362,17 +11170,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_0_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_0_3;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -11406,7 +11211,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -11511,17 +11316,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_3_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_3_3;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -11555,7 +11357,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -11660,17 +11462,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_3_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_3_0;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -11704,7 +11503,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -11809,17 +11608,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_3_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_3_m3;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -11853,7 +11649,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -11958,17 +11754,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_0_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_0_m3;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -12002,7 +11795,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -12107,17 +11900,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_m3_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_m3_m3;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -12151,7 +11941,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -12256,17 +12046,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_m3_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_m3_0;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -12300,7 +12087,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }
@@ -12405,17 +12192,14 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        score -= 32;
-                        break scan;
+                        score -= 16;
                     }
                 } else {
                     if (occ_m3_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 94;
-                        enemyHit = occ_m3_3;
-                        break scan;
+                        score += 21.0;
                     }
                 }
             }
@@ -12449,7 +12233,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 19.0;
+                        score += 12.666666666666666;
                     }
                 }
             }

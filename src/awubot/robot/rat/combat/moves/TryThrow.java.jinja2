@@ -361,7 +361,7 @@ public final class TryThrow {
                         score = -1000;
                         break scan;
                     } else {
-                        {% if loop.index0 <= 1 %}
+                        {% if loop.index0 == 0 %}
                         score -= {{ rem * 4 }};
                         break scan;
                         {% else %}
@@ -373,12 +373,12 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        {% if loop.index0 <= 1 %}
+                        {% if loop.index0 == 0 %}
                         score += {{ 2 * (10 + 4 * rem) + 10 }};
                         enemyHit = {{ occ_var(dx, dy) }};
                         break scan;
                         {% else %}
-                        score += {{ (10 + rem * 4) / (9 - rem) }};
+                        score += {{ (10 + rem * 4) / (10 - rem) }};
                         {% endif %}
                     }
                 }

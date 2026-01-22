@@ -52,24 +52,19 @@ public class RatKing {
         if(!rc.isActionReady()) return;
         if(rc.getAllCheese() < GameConstants.DIG_DIRT_CHEESE_COST) return;
 
-        indicate("stuck, trying to unbury");
 
         for (int dx = -2; dx <= 2; dx++) {
             for (int dy = -2; dy <= 2; dy++) {
                 
                 if (Math.max(Math.abs(dx), Math.abs(dy)) < 2) continue;
-                indicate("checking " + dx + ", " + dy);
 
                 var loc = new MapLocation(myLoc.x + dx, myLoc.y + dy);
                 if (!rc.onTheMap(loc) || !rc.canSenseLocation(loc)) continue;
 
                 MapInfo info = rc.senseMapInfo(loc);
                 if (info.isPassable()) {
-                    indicate(loc.toString() + " is passable, no need to remove dirt");
                     return;
                 }
-
-                indicate(loc.toString() + " is unpassable, trying to remove dirt");
             }
         }
 

@@ -200,6 +200,11 @@ public class GlobalArray {
 
     public static MapLocation getRatKing(int i) {
         try {
+            // Check if king is dead (turn counter bits == 0b11)
+            int turnCounters = rc.readSharedArray(RAT_KING_TURN_COUNTER);
+            int turnBits = (turnCounters >>> (2 * i)) & 0b11;
+            if (turnBits == 0b11) return null;
+
             int pos = rc.readSharedArray(i + RAT_KING_LOC);
             if (pos == 1023) return null;
             int lsbs = rc.readSharedArray(RAT_KING_LSBS);
@@ -384,5 +389,10 @@ public class GlobalArray {
             myTurnCounter >>= 2;
         }
         return myCount;
+    }
+
+    public static int countMines() throws GameActionException {
+        return Game.knownCheeseMines.size();
+        
     }
 }

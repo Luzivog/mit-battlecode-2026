@@ -16,9 +16,9 @@ import awubot.Game;
 public class KingFormationCoordinatorStrategy extends Strategy {
     private static final int[] CHEESE_THRESHOLDS = {800, 1000, 1200, 1800, 1000000000};
     private static final int UPGRADE_COST = 50;
-    private static final int MIN_DIST_FROM_KINGS_SQ = 64;
+    private static final int MIN_DIST_FROM_KINGS_SQ = 100;
     private static final int MAX_FORMATION_DIST_TO_MINE_SQ = 25;
-    private static final int COORDINATION_TIMEOUT = 200;
+    private static final int COORDINATION_TIMEOUT = 120;
     private static final int FORMATION_COOLDOWN = 150;
     private static final int MIN_TURN_FOR_FORMATION = 200;
 

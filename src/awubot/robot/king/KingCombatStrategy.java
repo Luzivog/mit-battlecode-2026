@@ -212,7 +212,7 @@ public class KingCombatStrategy extends Strategy {
                 move = Direction.NORTHWEST;
             }
             indicate("evading");
-            if(move != Direction.CENTER) Pathfinder.makeMove(move);
+            if(move != Direction.CENTER) rawMove(move);
         }
         if(rc.isActionReady()) {
             RobotInfo best = null;

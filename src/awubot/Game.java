@@ -32,6 +32,7 @@ public class Game {
     public static FastIndexedIntSet knownCheeseMines;
     public static MapLocation spawn;
     public static int carryStartTime;
+    public static boolean isFirstTurn = true;
 
     public static void _rawMove(Direction dir) throws GameActionException {
         rc.move(dir);
@@ -117,7 +118,7 @@ public class Game {
         StringBuilder sb = new StringBuilder();
         if (rc.getCarrying() == null) carryStartTime = -1;
 
-        // Profiler.begin();   
+        // Profiler.begin();
         // for (int i = nearbyRobots.length - 1; i >= 0; i--) {
         //     RobotInfo ri = nearbyRobots[i];
         // }
@@ -129,6 +130,7 @@ public class Game {
         myPreviousLoc = myLoc;
         if (rc.getCarrying() == null) carryStartTime = -1;
         else if (carryStartTime == -1) carryStartTime = time;
+        isFirstTurn = false;
         // Profiler.begin();
         // MapInfo info = rc.senseMapInfo(myLoc);
         // Profiler.end_print("sense");

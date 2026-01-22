@@ -1,14 +1,18 @@
-package awubot.robot.rat;
+package awubot.robot.rat.goHome;
 
 import battlecode.common.*;
 import awubot.Pathfinder;
 import awubot.comms.GlobalArray;
 import awubot.robot.Strategy;
+import awubot.robot.rat.TraverseStrategy;
+
 import static awubot.Game.*;
 import static awubot.util.Util.*;
+import static awubot.robot.rat.BabyRat.*;
 
 public class GoHomeStrategy extends Strategy {
     private int king;
+    private TraverseStrategy traverseStrategy = new TraverseStrategy(new MapLocation(0, 0), 0);
 
     public GoHomeStrategy() {
         king = GlobalArray.nearestRatKingId;
@@ -18,9 +22,13 @@ public class GoHomeStrategy extends Strategy {
     public boolean runTick() throws GameActionException {
         if(rc.getRawCheese() == 0) return false;
         indicate("going home");
-        
+        if (rc.canTurn() && chebyshevDistance(myLoc, GlobalArray.nearestRatKing) <= 2) {
+            turn(myLoc.directionTo(GlobalArray.nearestRatKing));
+            return false;
+        }
+
         var kingLoc = GlobalArray.getRatKing(king);
-        
+
         if (kingLoc == null) {
             // king died, try to find another king
             king = GlobalArray.nearestRatKingId;
@@ -29,14 +37,8 @@ public class GoHomeStrategy extends Strategy {
         }
 
         rc.setIndicatorLine(myLoc, kingLoc, 0, 255, 0);
-        Pathfinder.makeMove(kingLoc);
-
-        var dir = myLoc.directionTo(kingLoc);
-        var transferTarget = myLoc.add(dir);
-
-        if (rc.canTransferCheese(transferTarget, rc.getRawCheese())) {
-            rc.transferCheese(transferTarget, rc.getRawCheese());
-        }
+        traverseStrategy.updateTarget(kingLoc);
+        traverseStrategy.runTick();
         return true;
     }
 }

@@ -46,7 +46,7 @@ public class GlobalArray {
     private static final int FORMATION_MINE = 12;    // uses 2 slots: 12-13
     private static final int KING_MINE_ASSIGNMENT = 16;  // 5 slots for 5 kings (indices 16-20)
 
-    // layout: 
+    // layout:
     // lower bits: store target rat id modulo 255 (255 = null)
     // upper bits: strategy index (0 to 3)
     private static final int RAT_SPAWN_ROLE = 21;  // spam until MIN_CHEESE is hit
@@ -61,7 +61,7 @@ public class GlobalArray {
 
     public static void writeSharedArray(int i, int x) throws GameActionException {
         // if (i == 21) {
-            // println("WROTE TO " + i + " " + x);
+        // println("WROTE TO " + i + " " + x);
         // }
         rc.writeSharedArray(i, x);
     }
@@ -201,7 +201,10 @@ public class GlobalArray {
     public static MapLocation getRatKing(int i) {
         try {
             int pos = rc.readSharedArray(i + RAT_KING_LOC);
-            if (pos == 1023) return null;
+            // check if king is alive
+            if(((rc.readSharedArray(RAT_KING_TURN_COUNTER) >> (2 * i)) & 0b11) == 0b11) {
+                return null;
+            }
             int lsbs = rc.readSharedArray(RAT_KING_LSBS);
             int myLsb = (lsbs >>> (2 * i)) & 0b11;
             int x = ((pos & 0b11111) << 1) | (myLsb & 1);
@@ -250,7 +253,7 @@ public class GlobalArray {
             int x = rc.readSharedArray(i);
             int lo = x & 255;
             // println("read " + i + " for " + lo);
-            if (lo == id) { 
+            if (lo == id) {
                 println("read " + i + " counter " + ratCounter);
                 Game.myIndex = (ratCounter - (i - RAT_SPAWN_ROLE) - 1 + 1024) % 1024;
                 return x >>> 8; // retrieve role id

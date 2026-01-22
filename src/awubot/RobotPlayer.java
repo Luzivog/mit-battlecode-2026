@@ -39,7 +39,6 @@ public class RobotPlayer {
                 RobotTracker.preTick();
                 EnemyManager.preTick();
                 Squeaker.preTick();
-                CellTracker.storeVisibleCells();
 
                 if (!hasInitialisedRobot) {
                     if(isRatKing) {

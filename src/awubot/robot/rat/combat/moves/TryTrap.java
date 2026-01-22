@@ -67,8 +67,11 @@ public final class TryTrap {
         bytecodeStart = Clock.getBytecodeNum();
         bytecodeBudget = Math.min(3000, (int) (Clock.getBytecodesLeft() - 1000) / 2);
         Profiler.push();
-        computeWeights();
-        Profiler.pop("TryTrap.computeWeights");
+        try {
+            computeWeights();
+        } finally {
+            Profiler.pop("TryTrap.computeWeights");
+        }
         resetBest();
         selectMoves();
         if (best <= 0.5) return false;

@@ -84,20 +84,27 @@ public class CombatStrategy extends Strategy {
 
         // expensive
         Profiler.push();
-        CombatTracker.tick();
-        Profiler.pop("combat tracker");
-
+        try {
+            CombatTracker.tick();
+        } finally {
+            Profiler.pop("combat tracker");
+        }
 
         Profiler.push();
-        computeCellScores();
-        Profiler.pop("compute cell scores");
+        try {
+            computeCellScores();
+        } finally {
+            Profiler.pop("compute cell scores");
+        }
     }
 
     public boolean runTick() throws GameActionException {
         Profiler.push();
-        boolean res = _runTick();
-        Profiler.pop("combat strategy");
-        return res;
+        try {
+            return _runTick();
+        } finally {
+            Profiler.pop("combat strategy");
+        }
     }
 
     public static int moveMask, sourceCnt;
@@ -153,44 +160,69 @@ public class CombatStrategy extends Strategy {
         }
 
         Profiler.push();
-        precomp();
-        Profiler.pop("precomp");
+        try {
+            precomp();
+        } finally {
+            Profiler.pop("precomp");
+        }
 
         isLastMove = true;
         if (rc.getCarrying() != null) {
             Profiler.push();
-            boolean tryThrowRes = TryThrow.run();
-            Profiler.pop("try throw", 4000);
-            if (tryThrowRes) return true;
+            try {
+                boolean tryThrowRes = TryThrow.run();
+                if (tryThrowRes) return true;
+            } finally {
+                Profiler.pop("try throw", 4000);
+            }
             Profiler.push();
-            boolean tryPositionRes = TryPosition.run();
-            Profiler.pop("try position", 3000);
-            if (tryPositionRes) return true;
+            try {
+                boolean tryPositionRes = TryPosition.run();
+                if (tryPositionRes) return true;
+            } finally {
+                Profiler.pop("try position", 3000);
+            }
             return true; // bruh
         }
 
         Profiler.push();
-        boolean tryRatNapRes = TryRatNap.run();
-        Profiler.pop("try ratnap", 5000);
-        if (tryRatNapRes) return true;
+        try {
+            boolean tryRatNapRes = TryRatNap.run();
+            if (tryRatNapRes) return true;
+        } finally {
+            Profiler.pop("try ratnap", 5000);
+        }
 
         Profiler.push();
-        boolean tryTrapRes = TryTrap.run();
-        Profiler.pop("try trap", 5000);
-        if (tryTrapRes) return true;
+        try {
+            boolean tryTrapRes = TryTrap.run();
+            if (tryTrapRes) return true;
+        } finally {
+            Profiler.pop("try trap", 5000);
+        }
 
         Profiler.push();
-        boolean tryAttackRes = TryAttack.run();
-        Profiler.pop("try attack", 5000);
-        if (tryAttackRes) return true;
+        try {
+            boolean tryAttackRes = TryAttack.run();
+            if (tryAttackRes) return true;
+        } finally {
+            Profiler.pop("try attack", 5000);
+        }
 
         Profiler.push();
-        boolean tryFightRes = TryFight.run();
-        Profiler.pop("try fight");
+        boolean tryFightRes;
+        try {
+            tryFightRes = TryFight.run();
+        } finally {
+            Profiler.pop("try fight");
+        }
         if (tryFightRes) {
             Profiler.push();
-            miniTick();
-            Profiler.pop("mini tick", 500);
+            try {
+                miniTick();
+            } finally {
+                Profiler.pop("mini tick", 500);
+            }
             return true;
         }
         indicate("COMBAT STRAT: NONE");

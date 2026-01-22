@@ -6,11 +6,11 @@ import battlecode.common.MapLocation;
 import battlecode.common.RobotInfo;
 import battlecode.common.UnitType;
 import awubot.Game;
-import awubot.Pathfinder;
 import awubot.RobotPlayer;
 import awubot.RobotTracker;
 import awubot.comms.GlobalArray;
 import awubot.robot.Strategy;
+import static awubot.robot.rat.BabyRat.*;
 import static awubot.Game.*;
 import static awubot.util.Util.indicate;
 
@@ -19,9 +19,10 @@ import static awubot.util.Util.indicate;
 public class FormationStrategy extends Strategy {
     private static final int FORMATION_TIMEOUT = 100;
     private static final int MIN_ALLIES_FOR_FORMATION = 7;
-    private static final int MAX_DIST_TO_JOIN = 625; 
+    private static final int MAX_DIST_TO_JOIN = 625;
 
     private MapLocation formationTarget = null;
+    private TraverseStrategy traverseStrategy = new TraverseStrategy(new MapLocation(0, 0), 2);
     private int formationStartTurn = 0;
     private boolean active = false;
 
@@ -48,7 +49,7 @@ public class FormationStrategy extends Strategy {
             rc.becomeRatKing();
             Game.convertKing();
             GlobalArray.writeRatKing();
-            GlobalArray.clearFormation();  
+            GlobalArray.clearFormation();
             RobotPlayer.resetHasInitialisedRobot();
             return true;
         }
@@ -59,7 +60,7 @@ public class FormationStrategy extends Strategy {
                 return true;
             }
         }
-        Pathfinder.makeMove(formationTarget);
+        traverseStrategy.runTick();
         return true;
     }
 
@@ -83,6 +84,7 @@ public class FormationStrategy extends Strategy {
         }
 
         formationTarget = target;
+        traverseStrategy.updateTarget(formationTarget);
 
         if (active) return true;
 
@@ -98,15 +100,12 @@ public class FormationStrategy extends Strategy {
         if (!rc.isMovementReady()) return;
         if (myLoc.equals(formationTarget)) return;
 
-        if (myLoc.distanceSquaredTo(formationTarget) > 2) {
-            Pathfinder.makeMove(formationTarget);
-            return;
-        }
+        if(tryStrategy(traverseStrategy)) return;
 
         if (shouldBecomeCentre()) {
             Direction myDir = myLoc.directionTo(formationTarget);
             if (rc.canMove(myDir)) {
-                Pathfinder.makeMove(myDir);
+                makeMove(myDir);
             }
         }
     }

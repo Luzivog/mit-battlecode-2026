@@ -5,6 +5,7 @@ import battlecode.common.MapInfo;
 import battlecode.common.MapLocation;
 import awubot.Game;
 import awubot.Pathfinder;
+import awubot.Pathfinder.BugnavInstance;
 import awubot.comms.GlobalArray;
 import awubot.robot.Strategy;
 import static awubot.Game.*;
@@ -13,12 +14,12 @@ import static awubot.util.Util.*;
 // TODO: clean up
 
 public class KingMiningStrategy extends Strategy {
-    private static final int STUCK_THRESHOLD = 3;
 
     private MapLocation mineTarget = null;
     private MapLocation centerTarget;
     private boolean foundCheeseMine = false;
-    private int stuckCounter = 0;
+
+    private BugnavInstance bug;
 
     private final int tabooMinX;
     private final int tabooMaxX;
@@ -129,13 +130,19 @@ public class KingMiningStrategy extends Strategy {
     }
 
     private void moveTowardCenter() throws GameActionException {
-        Pathfinder.makeMove(centerTarget);
+        if(bug == null || !bug.target.equals(centerTarget)) {
+            bug = new BugnavInstance(centerTarget);
+        }
+        Pathfinder.makeMove(bug);
     }
 
     private void moveTowardMine() throws GameActionException {
         if (!rc.isMovementReady() || mineTarget == null) return;
         if (myLoc.distanceSquaredTo(mineTarget) <= 4) return;
-        Pathfinder.makeMove(mineTarget);
+        if(bug == null || bug.target.equals(mineTarget)) {
+            bug = new BugnavInstance(mineTarget);
+        }
+        Pathfinder.makeMove(bug);
     }
 
     private void selectFromKnownMines() throws GameActionException {

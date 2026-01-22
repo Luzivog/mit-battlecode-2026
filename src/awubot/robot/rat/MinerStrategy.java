@@ -1,11 +1,11 @@
 package awubot.robot.rat;
 
 import battlecode.common.*;
-import awubot.CellTracker;
 import awubot.Game;
 import awubot.robot.Strategy;
 import awubot.comms.GlobalArray;
 import awubot.util.Rng;
+import awubot.robot.rat.goHome.*;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 
@@ -39,7 +39,12 @@ public class MinerStrategy extends Strategy {
         if(tryStrategy(goHomeStrategy)) return true;
         if(tryStrategy(cheeseStrategy)) return true;
 
+        boolean firstTarget = goSomewhereStrategy == null;
         while(goSomewhereStrategy == null || !goSomewhereStrategy.runTick()) {
+            if(!firstTarget) {
+                // stop marking since we've retargeted and now the path will probably be suboptimal
+                AntColony.shouldMark = false;
+            }
             MapLocation target;
 
             if (Game.knownCheeseMines.set.length() < 3 || Rng.mcg() % 5 == 0) {

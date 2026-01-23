@@ -63,10 +63,10 @@ public final class TryTrap {
     static int bytecodeStart, bytecodeBudget;
 
     public static boolean shouldTrap() throws GameActionException {
-        if (!rc.isActionReady()) return false;
+        if (!rc.isActionReady() || !confirmCanPlace()) return false;
         if (rc.getAllCheese() > 3000) return true;
-        if (rc.getAllCheese() < 300 || rc.getRawCheese() < 20 || !confirmCanPlace()) return false;
-        return false;
+        if (rc.getAllCheese() < 300 || rc.getRawCheese() < 20) return false;
+        return true;
     }
 
     public static boolean run() throws GameActionException {

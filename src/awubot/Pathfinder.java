@@ -10092,6 +10092,7 @@ public class Pathfinder {
             var pos = sources[i];
             int xi = pos.x - myLoc.x + 5;
             int yi = pos.y - myLoc.y + 5;
+            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
             {
                 int idx = yi * 11 + xi;
                 if(idx < 61) {

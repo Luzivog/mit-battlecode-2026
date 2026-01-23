@@ -61,11 +61,17 @@ public class RobotPlayer {
                 GlobalArray.postTick();
                 Game.postTick();
             } catch (Exception e) {
-                if (!Game.DISABLE_OUTPUT) e.printStackTrace();
+                if (!Game.DISABLE_OUTPUT) {
+                    e.printStackTrace();
+                    rc.setTimelineMarker("RE " + rc.getID() + " " + rc.getLocation(), 255, 0, 0);
+                }
                 // rc.resign();
             } finally {
                 if (time != rc.getRoundNum()) {
                     println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! BYTECODE EXCEEDED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                    if (!Game.DISABLE_OUTPUT) {
+                        rc.setTimelineMarker("TLE " + rc.getID() + " " + rc.getLocation(), 0, 0, 255);
+                    }
                     // rc.resign();
                 }
                 rc.setIndicatorString(Util.indicatorString);

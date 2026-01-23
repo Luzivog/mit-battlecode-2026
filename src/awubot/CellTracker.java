@@ -3387,6 +3387,674 @@ public class CellTracker {
         }
     }
 
+    public static void storeCellKing(MapInfo info) throws GameActionException {
+        var loc = info.getMapLocation();
+        var locX = loc.x;
+        // rc.setIndicatorDot(loc, 255, 255, 0);
+        switch(loc.y) {
+            case 0 -> {
+                if(info.isDirt()) dirt0 |= 1l << locX;
+                else dirt0 &= ~(1l << locX);
+                if((seen0 & 1l << locX) == 0l) {
+                    seen0 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable0 |= 1l << locX;
+                    }
+                }
+            }
+            case 1 -> {
+                if(info.isDirt()) dirt1 |= 1l << locX;
+                else dirt1 &= ~(1l << locX);
+                if((seen1 & 1l << locX) == 0l) {
+                    seen1 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable1 |= 1l << locX;
+                    }
+                }
+            }
+            case 2 -> {
+                if(info.isDirt()) dirt2 |= 1l << locX;
+                else dirt2 &= ~(1l << locX);
+                if((seen2 & 1l << locX) == 0l) {
+                    seen2 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable2 |= 1l << locX;
+                    }
+                }
+            }
+            case 3 -> {
+                if(info.isDirt()) dirt3 |= 1l << locX;
+                else dirt3 &= ~(1l << locX);
+                if((seen3 & 1l << locX) == 0l) {
+                    seen3 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable3 |= 1l << locX;
+                    }
+                }
+            }
+            case 4 -> {
+                if(info.isDirt()) dirt4 |= 1l << locX;
+                else dirt4 &= ~(1l << locX);
+                if((seen4 & 1l << locX) == 0l) {
+                    seen4 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable4 |= 1l << locX;
+                    }
+                }
+            }
+            case 5 -> {
+                if(info.isDirt()) dirt5 |= 1l << locX;
+                else dirt5 &= ~(1l << locX);
+                if((seen5 & 1l << locX) == 0l) {
+                    seen5 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable5 |= 1l << locX;
+                    }
+                }
+            }
+            case 6 -> {
+                if(info.isDirt()) dirt6 |= 1l << locX;
+                else dirt6 &= ~(1l << locX);
+                if((seen6 & 1l << locX) == 0l) {
+                    seen6 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable6 |= 1l << locX;
+                    }
+                }
+            }
+            case 7 -> {
+                if(info.isDirt()) dirt7 |= 1l << locX;
+                else dirt7 &= ~(1l << locX);
+                if((seen7 & 1l << locX) == 0l) {
+                    seen7 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable7 |= 1l << locX;
+                    }
+                }
+            }
+            case 8 -> {
+                if(info.isDirt()) dirt8 |= 1l << locX;
+                else dirt8 &= ~(1l << locX);
+                if((seen8 & 1l << locX) == 0l) {
+                    seen8 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable8 |= 1l << locX;
+                    }
+                }
+            }
+            case 9 -> {
+                if(info.isDirt()) dirt9 |= 1l << locX;
+                else dirt9 &= ~(1l << locX);
+                if((seen9 & 1l << locX) == 0l) {
+                    seen9 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable9 |= 1l << locX;
+                    }
+                }
+            }
+            case 10 -> {
+                if(info.isDirt()) dirt10 |= 1l << locX;
+                else dirt10 &= ~(1l << locX);
+                if((seen10 & 1l << locX) == 0l) {
+                    seen10 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable10 |= 1l << locX;
+                    }
+                }
+            }
+            case 11 -> {
+                if(info.isDirt()) dirt11 |= 1l << locX;
+                else dirt11 &= ~(1l << locX);
+                if((seen11 & 1l << locX) == 0l) {
+                    seen11 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable11 |= 1l << locX;
+                    }
+                }
+            }
+            case 12 -> {
+                if(info.isDirt()) dirt12 |= 1l << locX;
+                else dirt12 &= ~(1l << locX);
+                if((seen12 & 1l << locX) == 0l) {
+                    seen12 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable12 |= 1l << locX;
+                    }
+                }
+            }
+            case 13 -> {
+                if(info.isDirt()) dirt13 |= 1l << locX;
+                else dirt13 &= ~(1l << locX);
+                if((seen13 & 1l << locX) == 0l) {
+                    seen13 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable13 |= 1l << locX;
+                    }
+                }
+            }
+            case 14 -> {
+                if(info.isDirt()) dirt14 |= 1l << locX;
+                else dirt14 &= ~(1l << locX);
+                if((seen14 & 1l << locX) == 0l) {
+                    seen14 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable14 |= 1l << locX;
+                    }
+                }
+            }
+            case 15 -> {
+                if(info.isDirt()) dirt15 |= 1l << locX;
+                else dirt15 &= ~(1l << locX);
+                if((seen15 & 1l << locX) == 0l) {
+                    seen15 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable15 |= 1l << locX;
+                    }
+                }
+            }
+            case 16 -> {
+                if(info.isDirt()) dirt16 |= 1l << locX;
+                else dirt16 &= ~(1l << locX);
+                if((seen16 & 1l << locX) == 0l) {
+                    seen16 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable16 |= 1l << locX;
+                    }
+                }
+            }
+            case 17 -> {
+                if(info.isDirt()) dirt17 |= 1l << locX;
+                else dirt17 &= ~(1l << locX);
+                if((seen17 & 1l << locX) == 0l) {
+                    seen17 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable17 |= 1l << locX;
+                    }
+                }
+            }
+            case 18 -> {
+                if(info.isDirt()) dirt18 |= 1l << locX;
+                else dirt18 &= ~(1l << locX);
+                if((seen18 & 1l << locX) == 0l) {
+                    seen18 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable18 |= 1l << locX;
+                    }
+                }
+            }
+            case 19 -> {
+                if(info.isDirt()) dirt19 |= 1l << locX;
+                else dirt19 &= ~(1l << locX);
+                if((seen19 & 1l << locX) == 0l) {
+                    seen19 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable19 |= 1l << locX;
+                    }
+                }
+            }
+            case 20 -> {
+                if(info.isDirt()) dirt20 |= 1l << locX;
+                else dirt20 &= ~(1l << locX);
+                if((seen20 & 1l << locX) == 0l) {
+                    seen20 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable20 |= 1l << locX;
+                    }
+                }
+            }
+            case 21 -> {
+                if(info.isDirt()) dirt21 |= 1l << locX;
+                else dirt21 &= ~(1l << locX);
+                if((seen21 & 1l << locX) == 0l) {
+                    seen21 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable21 |= 1l << locX;
+                    }
+                }
+            }
+            case 22 -> {
+                if(info.isDirt()) dirt22 |= 1l << locX;
+                else dirt22 &= ~(1l << locX);
+                if((seen22 & 1l << locX) == 0l) {
+                    seen22 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable22 |= 1l << locX;
+                    }
+                }
+            }
+            case 23 -> {
+                if(info.isDirt()) dirt23 |= 1l << locX;
+                else dirt23 &= ~(1l << locX);
+                if((seen23 & 1l << locX) == 0l) {
+                    seen23 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable23 |= 1l << locX;
+                    }
+                }
+            }
+            case 24 -> {
+                if(info.isDirt()) dirt24 |= 1l << locX;
+                else dirt24 &= ~(1l << locX);
+                if((seen24 & 1l << locX) == 0l) {
+                    seen24 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable24 |= 1l << locX;
+                    }
+                }
+            }
+            case 25 -> {
+                if(info.isDirt()) dirt25 |= 1l << locX;
+                else dirt25 &= ~(1l << locX);
+                if((seen25 & 1l << locX) == 0l) {
+                    seen25 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable25 |= 1l << locX;
+                    }
+                }
+            }
+            case 26 -> {
+                if(info.isDirt()) dirt26 |= 1l << locX;
+                else dirt26 &= ~(1l << locX);
+                if((seen26 & 1l << locX) == 0l) {
+                    seen26 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable26 |= 1l << locX;
+                    }
+                }
+            }
+            case 27 -> {
+                if(info.isDirt()) dirt27 |= 1l << locX;
+                else dirt27 &= ~(1l << locX);
+                if((seen27 & 1l << locX) == 0l) {
+                    seen27 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable27 |= 1l << locX;
+                    }
+                }
+            }
+            case 28 -> {
+                if(info.isDirt()) dirt28 |= 1l << locX;
+                else dirt28 &= ~(1l << locX);
+                if((seen28 & 1l << locX) == 0l) {
+                    seen28 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable28 |= 1l << locX;
+                    }
+                }
+            }
+            case 29 -> {
+                if(info.isDirt()) dirt29 |= 1l << locX;
+                else dirt29 &= ~(1l << locX);
+                if((seen29 & 1l << locX) == 0l) {
+                    seen29 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable29 |= 1l << locX;
+                    }
+                }
+            }
+            case 30 -> {
+                if(info.isDirt()) dirt30 |= 1l << locX;
+                else dirt30 &= ~(1l << locX);
+                if((seen30 & 1l << locX) == 0l) {
+                    seen30 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable30 |= 1l << locX;
+                    }
+                }
+            }
+            case 31 -> {
+                if(info.isDirt()) dirt31 |= 1l << locX;
+                else dirt31 &= ~(1l << locX);
+                if((seen31 & 1l << locX) == 0l) {
+                    seen31 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable31 |= 1l << locX;
+                    }
+                }
+            }
+            case 32 -> {
+                if(info.isDirt()) dirt32 |= 1l << locX;
+                else dirt32 &= ~(1l << locX);
+                if((seen32 & 1l << locX) == 0l) {
+                    seen32 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable32 |= 1l << locX;
+                    }
+                }
+            }
+            case 33 -> {
+                if(info.isDirt()) dirt33 |= 1l << locX;
+                else dirt33 &= ~(1l << locX);
+                if((seen33 & 1l << locX) == 0l) {
+                    seen33 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable33 |= 1l << locX;
+                    }
+                }
+            }
+            case 34 -> {
+                if(info.isDirt()) dirt34 |= 1l << locX;
+                else dirt34 &= ~(1l << locX);
+                if((seen34 & 1l << locX) == 0l) {
+                    seen34 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable34 |= 1l << locX;
+                    }
+                }
+            }
+            case 35 -> {
+                if(info.isDirt()) dirt35 |= 1l << locX;
+                else dirt35 &= ~(1l << locX);
+                if((seen35 & 1l << locX) == 0l) {
+                    seen35 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable35 |= 1l << locX;
+                    }
+                }
+            }
+            case 36 -> {
+                if(info.isDirt()) dirt36 |= 1l << locX;
+                else dirt36 &= ~(1l << locX);
+                if((seen36 & 1l << locX) == 0l) {
+                    seen36 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable36 |= 1l << locX;
+                    }
+                }
+            }
+            case 37 -> {
+                if(info.isDirt()) dirt37 |= 1l << locX;
+                else dirt37 &= ~(1l << locX);
+                if((seen37 & 1l << locX) == 0l) {
+                    seen37 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable37 |= 1l << locX;
+                    }
+                }
+            }
+            case 38 -> {
+                if(info.isDirt()) dirt38 |= 1l << locX;
+                else dirt38 &= ~(1l << locX);
+                if((seen38 & 1l << locX) == 0l) {
+                    seen38 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable38 |= 1l << locX;
+                    }
+                }
+            }
+            case 39 -> {
+                if(info.isDirt()) dirt39 |= 1l << locX;
+                else dirt39 &= ~(1l << locX);
+                if((seen39 & 1l << locX) == 0l) {
+                    seen39 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable39 |= 1l << locX;
+                    }
+                }
+            }
+            case 40 -> {
+                if(info.isDirt()) dirt40 |= 1l << locX;
+                else dirt40 &= ~(1l << locX);
+                if((seen40 & 1l << locX) == 0l) {
+                    seen40 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable40 |= 1l << locX;
+                    }
+                }
+            }
+            case 41 -> {
+                if(info.isDirt()) dirt41 |= 1l << locX;
+                else dirt41 &= ~(1l << locX);
+                if((seen41 & 1l << locX) == 0l) {
+                    seen41 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable41 |= 1l << locX;
+                    }
+                }
+            }
+            case 42 -> {
+                if(info.isDirt()) dirt42 |= 1l << locX;
+                else dirt42 &= ~(1l << locX);
+                if((seen42 & 1l << locX) == 0l) {
+                    seen42 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable42 |= 1l << locX;
+                    }
+                }
+            }
+            case 43 -> {
+                if(info.isDirt()) dirt43 |= 1l << locX;
+                else dirt43 &= ~(1l << locX);
+                if((seen43 & 1l << locX) == 0l) {
+                    seen43 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable43 |= 1l << locX;
+                    }
+                }
+            }
+            case 44 -> {
+                if(info.isDirt()) dirt44 |= 1l << locX;
+                else dirt44 &= ~(1l << locX);
+                if((seen44 & 1l << locX) == 0l) {
+                    seen44 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable44 |= 1l << locX;
+                    }
+                }
+            }
+            case 45 -> {
+                if(info.isDirt()) dirt45 |= 1l << locX;
+                else dirt45 &= ~(1l << locX);
+                if((seen45 & 1l << locX) == 0l) {
+                    seen45 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable45 |= 1l << locX;
+                    }
+                }
+            }
+            case 46 -> {
+                if(info.isDirt()) dirt46 |= 1l << locX;
+                else dirt46 &= ~(1l << locX);
+                if((seen46 & 1l << locX) == 0l) {
+                    seen46 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable46 |= 1l << locX;
+                    }
+                }
+            }
+            case 47 -> {
+                if(info.isDirt()) dirt47 |= 1l << locX;
+                else dirt47 &= ~(1l << locX);
+                if((seen47 & 1l << locX) == 0l) {
+                    seen47 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable47 |= 1l << locX;
+                    }
+                }
+            }
+            case 48 -> {
+                if(info.isDirt()) dirt48 |= 1l << locX;
+                else dirt48 &= ~(1l << locX);
+                if((seen48 & 1l << locX) == 0l) {
+                    seen48 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable48 |= 1l << locX;
+                    }
+                }
+            }
+            case 49 -> {
+                if(info.isDirt()) dirt49 |= 1l << locX;
+                else dirt49 &= ~(1l << locX);
+                if((seen49 & 1l << locX) == 0l) {
+                    seen49 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable49 |= 1l << locX;
+                    }
+                }
+            }
+            case 50 -> {
+                if(info.isDirt()) dirt50 |= 1l << locX;
+                else dirt50 &= ~(1l << locX);
+                if((seen50 & 1l << locX) == 0l) {
+                    seen50 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable50 |= 1l << locX;
+                    }
+                }
+            }
+            case 51 -> {
+                if(info.isDirt()) dirt51 |= 1l << locX;
+                else dirt51 &= ~(1l << locX);
+                if((seen51 & 1l << locX) == 0l) {
+                    seen51 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable51 |= 1l << locX;
+                    }
+                }
+            }
+            case 52 -> {
+                if(info.isDirt()) dirt52 |= 1l << locX;
+                else dirt52 &= ~(1l << locX);
+                if((seen52 & 1l << locX) == 0l) {
+                    seen52 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable52 |= 1l << locX;
+                    }
+                }
+            }
+            case 53 -> {
+                if(info.isDirt()) dirt53 |= 1l << locX;
+                else dirt53 &= ~(1l << locX);
+                if((seen53 & 1l << locX) == 0l) {
+                    seen53 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable53 |= 1l << locX;
+                    }
+                }
+            }
+            case 54 -> {
+                if(info.isDirt()) dirt54 |= 1l << locX;
+                else dirt54 &= ~(1l << locX);
+                if((seen54 & 1l << locX) == 0l) {
+                    seen54 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable54 |= 1l << locX;
+                    }
+                }
+            }
+            case 55 -> {
+                if(info.isDirt()) dirt55 |= 1l << locX;
+                else dirt55 &= ~(1l << locX);
+                if((seen55 & 1l << locX) == 0l) {
+                    seen55 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable55 |= 1l << locX;
+                    }
+                }
+            }
+            case 56 -> {
+                if(info.isDirt()) dirt56 |= 1l << locX;
+                else dirt56 &= ~(1l << locX);
+                if((seen56 & 1l << locX) == 0l) {
+                    seen56 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable56 |= 1l << locX;
+                    }
+                }
+            }
+            case 57 -> {
+                if(info.isDirt()) dirt57 |= 1l << locX;
+                else dirt57 &= ~(1l << locX);
+                if((seen57 & 1l << locX) == 0l) {
+                    seen57 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable57 |= 1l << locX;
+                    }
+                }
+            }
+            case 58 -> {
+                if(info.isDirt()) dirt58 |= 1l << locX;
+                else dirt58 &= ~(1l << locX);
+                if((seen58 & 1l << locX) == 0l) {
+                    seen58 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable58 |= 1l << locX;
+                    }
+                }
+            }
+            case 59 -> {
+                if(info.isDirt()) dirt59 |= 1l << locX;
+                else dirt59 &= ~(1l << locX);
+                if((seen59 & 1l << locX) == 0l) {
+                    seen59 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable59 |= 1l << locX;
+                    }
+                }
+            }
+        }
+    }
+
     public static void storeVisibleCells() throws GameActionException {
         Profiler.begin();
         int x = myLoc.x, y = myLoc.y;
@@ -4855,7 +5523,7 @@ public class CellTracker {
         // IF TLE: tone this down
         Profiler.begin();
         for(var info : rc.senseNearbyMapInfos()) {
-            CellTracker.storeCell(info);
+            CellTracker.storeCellKing(info);
         }
         Profiler.end("storeVisibleCellsKing");
     }

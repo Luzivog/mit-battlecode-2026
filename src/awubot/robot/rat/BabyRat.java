@@ -35,6 +35,8 @@ public class BabyRat {
         // indicate("cheesemines: " + GlobalArray.cheeseMines.set.length());
         shouldGlance = true;
 
+        CellTracker.storeVisibleCells();
+
         tryPickUpCheese();
         tryTransferCheese();
 

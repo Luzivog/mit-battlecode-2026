@@ -33,6 +33,10 @@ public class Game {
     public static MapLocation spawn;
     public static int carryStartTime;
 
+    public static int targetCheeseAmount() {
+        return 2600 - (int) (1.05 * time);
+    }
+
     public static void _rawMove(Direction dir) throws GameActionException {
         rc.move(dir);
         myLoc = rc.getLocation();

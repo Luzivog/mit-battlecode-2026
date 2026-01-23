@@ -6,6 +6,7 @@ import static awubot.robot.king.RatKing.*;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 
+import awubot.Game;
 import awubot.RobotTracker;
 import awubot.comms.GlobalArray;
 
@@ -16,10 +17,16 @@ public class KingSpawningStrategy extends Strategy {
     public boolean runTick() throws GameActionException {
         indicate("spawned " + numSpawned);
 
-        int numKings = Math.max(1, GlobalArray.countRatKings());
-        int extraPerKing = (rc.getGlobalCheese() / 1000) * (numKings - 1);
-        int maxRatCost = 40 * numKings + extraPerKing;
-        int thresh = Math.min(rc.getGlobalCheese() / 20 + 10, maxRatCost);
+        int thresh = 30;
+        if (time <= 300) {
+            thresh = 40;
+        } else {
+            if (rc.getAllCheese() >= Game.targetCheeseAmount()) {
+                thresh = 1000;
+            } else {
+                thresh = 20;
+            }
+        }
 
         if (RobotTracker.numCats > 0 && RobotTracker.numAllies == 0) {
             thresh += 10;

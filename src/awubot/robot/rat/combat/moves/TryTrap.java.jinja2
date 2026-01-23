@@ -18,7 +18,6 @@ import static awubot.robot.rat.BabyRat.*;
 import awubot.util.Profiler;
 import awubot.CellTracker;
 import awubot.RobotTracker;
-
 {% macro wvar(dx, dy) -%}
 w_{{ "m" if dx < 0 else "" }}{{ dx|abs }}_{{ "m" if dy < 0 else "" }}{{ dy|abs }}
 {%- endmacro %}
@@ -48,53 +47,99 @@ public final class TryTrap {
     {% endfor %}
     static MapLocation bestPlaceLoc;
     static Direction bestMoveDir;
+    static Direction bestSecondaryMoveDir;
     static Direction bestFacing;
     static double best;
     static MapLocation curMoveLoc;
     static MapLocation weightSource;
     static int weightCompTime;
     static int bytecodeStart, bytecodeBudget;
+    static boolean shouldDefRun;
 
-    public static boolean shouldTrap() throws GameActionException {
+    public static boolean verifyCanRun() throws GameActionException {
         if (!rc.isActionReady() || !confirmCanPlace()) return false;
-        if (rc.getAllCheese() > 3000) return true;
-        if (rc.getAllCheese() < 300 || rc.getRawCheese() < 20) return false;
         return true;
     }
 
+    public static boolean globalShouldRun() throws GameActionException {
+        // global
+        if (rc.getAllCheese() > 3000 || rc.getRawCheese() >= 20) return true;
+        return false;
+    }
+
+    public static boolean shouldTrap(RobotInfo info) throws GameActionException {
+        if (rc.getHealth() < 82 && info.getHealth() == 100) {
+            println("ACCEPEETD CONIDIOTOINIS A;PLOSDKJF;LKAJSDAF;LKJASDA;LKFJDSA;DLKFJSD;LKFJA;SLKDFJ;SLAKJDFL;K");
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean shouldRunEarlyExit() throws GameActionException {
+        for (int i = 0; i < RobotTracker.numEnemies && i < 3; i++) {
+            RobotInfo info = RobotTracker.sortedEnemies[i];
+            if (info.getType() != UnitType.BABY_RAT) continue;
+            if (shouldTrap(info)) return true;
+        }
+        return false;
+    }
+
     public static boolean run() throws GameActionException {
-        if (!shouldTrap()) return false;
+        if (!verifyCanRun()) return false;
+        shouldDefRun = globalShouldRun();
+        if (!shouldDefRun && !shouldRunEarlyExit()) return false;
+
         bytecodeStart = Clock.getBytecodeNum();
-        bytecodeBudget = Math.min(3000, (int) (Clock.getBytecodesLeft() - 1000) / 2);
+        bytecodeBudget = Math.min(5000, (int) (Clock.getBytecodesLeft() - 1000) / 2);
         Profiler.push();
         computeWeights();
         Profiler.pop("TryTrap.computeWeights");
         resetBest();
+        println("remainig bytecodee budget before selecting moves: " + (Clock.getBytecodeNum() - bytecodeStart));
         selectMoves();
+        selectSecondaryMoves();
         if (best <= 0.5) return false;
-        assert(CombatStrategy.performMoves(bestMoveDir, bestFacing));
-        if (!rc.canPlaceRatTrap(bestPlaceLoc)) {
-            {# println("huh cant place trap here  " + bestPlaceLoc);
-            for (int i = 0; i < CellTracker.numNearbyRatTraps; i++) {
-                println("nearby trap at " + CellTracker.nearbyRatTraps[i]);
-            } #}
-            {# rc.resign(); #}
+        if (bestMoveDir != null) {
+            assert(CombatStrategy.performMoves(bestMoveDir, bestFacing));
+            if (!rc.canPlaceRatTrap(bestPlaceLoc)) {
+                {# println("huh cant place trap here  " + bestPlaceLoc);
+                for (int i = 0; i < CellTracker.numNearbyRatTraps; i++) {
+                    println("nearby trap at " + CellTracker.nearbyRatTraps[i]);
+                } #}
+                {# rc.resign(); #}
+            }
+            rc.placeRatTrap(bestPlaceLoc);
+        } else {
+            if (!rc.canPlaceRatTrap(bestPlaceLoc)) {
+                {# println("huh cant place trap here  " + bestPlaceLoc);
+                for (int i = 0; i < CellTracker.numNearbyRatTraps; i++) {
+                    println("nearby trap at " + CellTracker.nearbyRatTraps[i]);
+                } #}
+                {# rc.resign(); #}
+            }
+            rc.placeRatTrap(bestPlaceLoc);
+            assert(CombatStrategy.performMoves(bestSecondaryMoveDir, bestFacing));
         }
-        rc.placeRatTrap(bestPlaceLoc);
         println("!!!!!!!!!! placed rat trap");
+        rc.setTimelineMarker("Placed Rat Trap", 0, 0, 0);
         indicate("COMBAT STRAT: TRAP");
         return true;
     }
 
     private static boolean confirmCanPlace() throws GameActionException {
-        confirmedCanPlace = false;
-        for (MapInfo info : rc.senseNearbyMapInfos(2)) {
-            if (rc.canPlaceRatTrap(info.getMapLocation())) {
-                confirmedCanPlace = true;
-                break;
+        switch (myDir.ordinal()) {
+            {% for ord in range(8) %}
+            case {{ ord }} -> {
+                {% for d in related_map[ord] %}
+                if (rc.canPlaceRatTrap(myLoc.add({{ d }}))) {
+                    return true;
+                }
+                {% endfor %}
             }
+            {% endfor %}
+            default -> { }
         }
-        return confirmedCanPlace;
+        return false;
     }
 
     // has room for optimisation if reallllyyy needed
@@ -134,7 +179,7 @@ public final class TryTrap {
         {% endfor %}
     }
 
-    private static void applyEnemyWeights() {
+    private static void applyEnemyWeights() throws GameActionException {
         for (int i = 0; i < RobotTracker.numEnemies && i < 5; i++) {
             RobotInfo info = RobotTracker.sortedEnemies[i];
             if (info.getType() != UnitType.BABY_RAT) continue;
@@ -160,8 +205,11 @@ public final class TryTrap {
         }
     }
 
-    private static void applyEnemyWeight(RobotInfo rinfo) {
-        if (rinfo.getHealth() <= 30) return;
+    private static void applyEnemyWeight(RobotInfo rinfo) throws GameActionException {
+        double mult = 1.0;
+        if (!shouldDefRun && !shouldTrap(rinfo)) {
+            mult = -0.5;
+        }
         int x = rinfo.location.x - myLocX;
         int y = rinfo.location.y - myLocY;
         switch (x) {
@@ -185,7 +233,7 @@ public final class TryTrap {
                                 {%- set diff = (f - dord) | abs -%}
                                 {%- set ang = diff if diff < 8 - diff else 8 - diff -%}
                                 {%- if ang <= 1 -%}
-                                {{ wvar(cx, cy) }} += {{ 3 - ang }};
+                                {{ wvar(cx, cy) }} += ({{ 3 - ang }}) * mult;
                                 {# println("incremented weight at " + (myLocX + {{cx}}) + ", " + (myLocY + {{cy}})); #}
                                 {%- endif -%}
                                 {%- endif -%}
@@ -254,6 +302,7 @@ public final class TryTrap {
     private static void resetBest() {
         bestPlaceLoc = null;
         bestMoveDir = null;
+        bestSecondaryMoveDir = null;
         bestFacing = null;
         best = -1;
     }
@@ -265,6 +314,54 @@ public final class TryTrap {
                 {% for d in wide_related_map[ord] %}
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 move{{ dir_short_map[d] }}();
+                {% endfor %}
+            }
+            {% endfor %}
+            default -> { }
+        }
+    }
+
+    private static void selectSecondaryMoves() throws GameActionException {
+        switch (myDir.ordinal()) {
+            {% for ord in range(8) %}
+            case {{ ord }} -> {
+                {% set related = related_map[ord] %}
+                {% for facing in related %}
+                {% for move_dir in related %}
+                considerSecondaryMove({{ dir_opposite_map[move_dir] }}, {{ facing }});
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                {% endfor %}
+                {% endfor %}
+            }
+            {% endfor %}
+            default -> { }
+        }
+    }
+
+    private static void considerSecondaryMove(Direction moveDir, Direction facing) throws GameActionException {
+        int moveCost = CombatCommon.movementCost(moveDir, facing);
+        if (moveCost == -1) return;
+        double moveScore = CombatStrategy.getCellScoreFor(moveDir, facing);
+        if (moveScore <= -100) return;
+        switch (facing.ordinal()) {
+            {% for f in range(8) %}
+            case {{ f }} -> {
+                {% for place_dir in related_map[f] %}
+                if (moveDir != {{ place_dir }}) {
+                    double score = {{ wvar(dir_dx[place_dir], dir_dy[place_dir]) }};
+                    if (score >= 0) {
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add({{ place_dir }});
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
                 {% endfor %}
             }
             {% endfor %}
@@ -303,6 +400,7 @@ public final class TryTrap {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add({{ place_dir }});
                 bestMoveDir = {{ move_dir }};
+                bestSecondaryMoveDir = null;
                 bestFacing = {{ facing }};
             }
         }
@@ -313,8 +411,8 @@ public final class TryTrap {
 
     
     public static boolean miniRun() throws GameActionException {
-        if (!rc.isActionReady()) return false;
-        if (!shouldTrap()) return false;
+        if (!verifyCanRun()) return false;
+        shouldDefRun = globalShouldRun();
         if (weightCompTime != time) {
             clearWeights();
             weightSource = myLoc;
@@ -331,6 +429,7 @@ public final class TryTrap {
                 {% endfor %}
                 for (int i = 0; i < RobotTracker.numEnemies && i < 2; i++) {
                     RobotInfo rinfo = RobotTracker.sortedEnemies[i];
+                    if (!shouldDefRun && !shouldTrap(rinfo)) continue;
                     if (rinfo.location.distanceSquaredTo(myLoc) > 2) break;
                     MapLocation eloc = rinfo.location;
                     {

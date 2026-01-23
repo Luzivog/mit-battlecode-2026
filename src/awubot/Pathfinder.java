@@ -2050,31 +2050,32 @@ public class Pathfinder {
         }
         int shade = 255;
         // Profiler.begin();
+        int start_bytecodes = Clock.getBytecodeNum();
         if((!isRatKing || myLoc.equals(bug.pos)) && (lastDist < 3 || RobotTracker.allySet.contains(bug.pos))) {
             bugLoop: {
                 rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
-                Profiler.begin();
-                if(!bug.advance() || isRatKing) break bugLoop;
+                // Profiler.begin();
+                if(!bug.advance() || isRatKing || Clock.getBytecodeNum() > start_bytecodes + 1500) break bugLoop;
                 lastDist++;
                 // Profiler.end("bug");
                 rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
-                Profiler.begin();
-                if(!bug.advance() || isRatKing) break bugLoop;
+                // Profiler.begin();
+                if(!bug.advance() || isRatKing || Clock.getBytecodeNum() > start_bytecodes + 1500) break bugLoop;
                 lastDist++;
                 // Profiler.end("bug");
                 rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
-                Profiler.begin();
-                if(!bug.advance() || isRatKing) break bugLoop;
+                // Profiler.begin();
+                if(!bug.advance() || isRatKing || Clock.getBytecodeNum() > start_bytecodes + 1500) break bugLoop;
                 lastDist++;
                 // Profiler.end("bug");
                 rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
-                Profiler.begin();
-                if(!bug.advance() || isRatKing) break bugLoop;
+                // Profiler.begin();
+                if(!bug.advance() || isRatKing || Clock.getBytecodeNum() > start_bytecodes + 1500) break bugLoop;
                 lastDist++;
                 // Profiler.end("bug");
                 rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
-                Profiler.begin();
-                if(!bug.advance() || isRatKing) break bugLoop;
+                // Profiler.begin();
+                if(!bug.advance() || isRatKing || Clock.getBytecodeNum() > start_bytecodes + 1500) break bugLoop;
                 lastDist++;
                 // Profiler.end("bug");
             }

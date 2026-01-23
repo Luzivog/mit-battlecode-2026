@@ -61,7 +61,6 @@ public class KingSpawningStrategy extends Strategy {
                     if (rc.canBuildRat(loc)) {
                         if (best == null || best.distanceSquaredTo(target) > loc.distanceSquaredTo(target))
                         best = loc;
-                        break;
                     }
                 }
             }

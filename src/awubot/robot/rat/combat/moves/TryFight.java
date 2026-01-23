@@ -8,6 +8,7 @@ import battlecode.common.RobotInfo;
 
 import awubot.robot.rat.combat.CombatCommon;
 import awubot.robot.rat.combat.CombatStrategy;
+import awubot.robot.rat.combat.moves.TryAttack;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 import static awubot.robot.rat.BabyRat.*;
@@ -54,6 +55,7 @@ public final class TryFight {
         // force this strategy
         // if (md == null) return false;
         CombatStrategy.performMoves(md, fd);
+        TryAttack.miniRun();
         indicate("COMBAT STRAT: FIGHT");
         // try to squeeze some juice out
         return true;

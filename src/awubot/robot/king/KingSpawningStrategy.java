@@ -68,6 +68,8 @@ public class KingSpawningStrategy extends Strategy {
         if (best != null) {
             rc.turn(best.directionTo(target));
             rc.buildRat(best);
+            GlobalArray.ratSpawnedID = rc.senseRobotAtLocation(best).getID();
+            println("Spawned rat ID " + GlobalArray.ratSpawnedID + " at " + best);
             numSpawned++;
         }
     }

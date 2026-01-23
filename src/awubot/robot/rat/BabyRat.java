@@ -28,6 +28,9 @@ public class BabyRat {
     }
 
     public static void run() throws GameActionException {
+        if (!isRatKing) {
+            indicate("my index " + myIndex);
+        }
         isLastMove = false;
         // indicate("cheesemines: " + GlobalArray.cheeseMines.set.length());
         shouldGlance = true;

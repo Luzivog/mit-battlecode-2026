@@ -915,7 +915,7 @@ public class Pathfinder {
         CellTracker.computeLocalBfsMasks();
         long reach0 = 0, reach1 = 0;
         for (int i = 0; i < sourceCnt; i++) {
-            {{ writePos("sources[i]", "reach", 1, False) }}
+            {{ writePos("sources[i]", "reach", 1, True) }}
         }
         var localPassable0 = CellTracker.localPassable0 & ~CellTracker.localDirt0;
         var localPassable1 = CellTracker.localPassable1 & ~CellTracker.localDirt1;

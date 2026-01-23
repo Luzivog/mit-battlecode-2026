@@ -11,7 +11,7 @@ import static awubot.robot.rat.BabyRat.*; // TODO: make pathfinder compatible wi
 // IF TLE: lower these constants (especially MAX_BUG_ITERS)
 
 class Config {
-    private static boolean dirtAllowed = false;
+    private static boolean dirtAllowed = true;
     public static boolean allowDirt() {
         if(dirtAllowed) return true;
         var globalCheese = rc.getGlobalCheese();

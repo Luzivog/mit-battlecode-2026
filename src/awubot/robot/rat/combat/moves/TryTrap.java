@@ -62,8 +62,15 @@ public final class TryTrap {
     static int weightCompTime;
     static int bytecodeStart, bytecodeBudget;
 
-    public static boolean run() throws GameActionException {
+    public static boolean shouldTrap() throws GameActionException {
+        if (!rc.isActionReady()) return false;
+        if (rc.getAllCheese() > 3000) return true;
         if (rc.getAllCheese() < 300 || rc.getRawCheese() < 20 || !confirmCanPlace()) return false;
+        return false;
+    }
+
+    public static boolean run() throws GameActionException {
+        if (!shouldTrap()) return false;
         bytecodeStart = Clock.getBytecodeNum();
         bytecodeBudget = Math.min(3000, (int) (Clock.getBytecodesLeft() - 1000) / 2);
         Profiler.push();
@@ -4029,7 +4036,7 @@ private static void placeSWWNW() {
     
     public static boolean miniRun() throws GameActionException {
         if (!rc.isActionReady()) return false;
-        if (rc.getAllCheese() < 300 || rc.getRawCheese() < 20 || !confirmCanPlace()) return false;
+        if (!shouldTrap()) return false;
         if (weightCompTime != time) {
             clearWeights();
             weightSource = myLoc;

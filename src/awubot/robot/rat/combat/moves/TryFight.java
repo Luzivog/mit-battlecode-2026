@@ -40,7 +40,6 @@ public final class TryFight {
         fd = null;
         isCat = false;
         best = -1e9;
-        curCatDist = catDist(myLoc);
         if (RobotTracker.numEnemies > 0) {
             target = new Enemy(RobotTracker.sortedEnemies[0]);
         } else if (RobotTracker.numCats > 0) {
@@ -48,6 +47,7 @@ public final class TryFight {
                 return false;
             }
             target = new Enemy(RobotTracker.sortedCats[0]);
+            curCatDist = catDist(myLoc);
             isCat = true;
         } else if (CombatStrategy.funnyTarget != null) {
             target = CombatStrategy.funnyTarget;

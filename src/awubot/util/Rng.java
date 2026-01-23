@@ -28,6 +28,10 @@ public class Rng {
         return s0 >>> 1;
     }
 
+    public static int mcg(int lo, int hi) {
+        return lo + mcg() % (hi - lo + 1);
+    }
+
     /**
      * 11 bytecode
      * @return a pseudo-random integer in the range [0, 2^31 - 1]

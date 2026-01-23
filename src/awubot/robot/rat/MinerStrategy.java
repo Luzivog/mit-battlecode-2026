@@ -9,8 +9,7 @@ import awubot.util.Rng;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 
-import java.util.ArrayList;
-import java.util.List;
+
 
 public class MinerStrategy extends Strategy {
     private static final int CRITICAL_HP = 20;
@@ -24,6 +23,37 @@ public class MinerStrategy extends Strategy {
         formationStrategy = new FormationStrategy();
         goHomeStrategy = new GoHomeStrategy();
         cheeseStrategy = new CheeseStrategy();
+    }
+
+    public static boolean deterministicRand(int p, int q) {
+        return myIndex % q < p;
+    }
+
+    public static boolean shouldExplore() {
+        int p, q;
+        int numKnownMines = Game.knownCheeseMines.set.length();
+        int perim = mapWidth + mapHeight;
+        if (numKnownMines == 0) {
+            p = 1; 
+            q = 1;
+        } else if (time < 2 * perim) {
+            p = 3;
+            q = 4;
+        } else if (time < 4 * perim) {
+            p = 2;
+            q = 3;
+        } else {
+            p = 1;
+            q = 2;
+        }
+        return deterministicRand(p, q);
+    }
+
+    public static MapLocation pickExploreTarget() {
+        return new MapLocation(
+            Rng.mcg(5, mapWidth - 5),
+            Rng.mcg(5, mapHeight - 5)
+        );
     }
 
     @Override
@@ -45,11 +75,8 @@ public class MinerStrategy extends Strategy {
         while(goSomewhereStrategy == null || !goSomewhereStrategy.runTick()) {
             MapLocation target;
 
-            if (Game.knownCheeseMines.set.length() < 3 || Rng.mcg() % 5 == 0) {
-                target = new MapLocation(
-                    Math.abs(Rng.mcg()) % mapWidth,
-                    Math.abs(Rng.mcg()) % mapHeight
-                );
+            if (shouldExplore()) {
+                target = pickExploreTarget();
             } else {
                 target = pickSeenMine();
             }
@@ -60,19 +87,22 @@ public class MinerStrategy extends Strategy {
     }
 
     private MapLocation pickSeenMine() {
-        List<Double> weights = new ArrayList<>();
+        int mineCount = Game.knownCheeseMines.set.length();
+        double[] weights = new double[mineCount];
+        int weightCount = 0;
         double totalWeight = 0;
-        for (int i = 0; i < Game.knownCheeseMines.set.length(); i++) {
-            weights.add(1.0 / (double) myLoc.distanceSquaredTo(decode2x2(Game.knownCheeseMines.at(i))));
-            totalWeight += weights.get(weights.size() - 1);
+        for (int i = 0; i < mineCount; i++) {
+            double weight = 1.0 / (double) myLoc.distanceSquaredTo(decode2x2(Game.knownCheeseMines.at(i)));
+            weights[weightCount++] = weight;
+            totalWeight += weight;
         }
         double rnd = (((double) Rng.mcg() / ((1 << 31) - 1)) * totalWeight);
         double pref = 0;
-        for (int i = 0; i < Game.knownCheeseMines.set.length(); i++) {
-            pref += weights.get(i);
+        for (int i = 0; i < weightCount; i++) {
+            pref += weights[i];
             if (rnd <= pref) return decode2x2(Game.knownCheeseMines.at(i));
         }
-        return decode2x2(Game.knownCheeseMines.at(Game.knownCheeseMines.set.length() - 1));
+        return decode2x2(Game.knownCheeseMines.at(mineCount - 1));
     }
 
     private boolean shouldGoHome() {

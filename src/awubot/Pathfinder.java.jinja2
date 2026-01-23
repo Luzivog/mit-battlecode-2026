@@ -665,7 +665,6 @@ public class Pathfinder {
         }
         nearCat0 = nearCat1 = 0;
         for(int i = 0; i < 4; i++) {
-            indicate("N " + RobotTracker.catHistNum[i]);
             catLoop:
             for(int j = RobotTracker.catHistNum[i] - 1; j >= 0; j--) {
                 var cat = RobotTracker.catHist[i][j];
@@ -857,7 +856,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate({{dir}} + " " + score);
+                    // indicate({{dir}} + " " + score);
                     if(score < bestScore) {
                         bestMove = {{dir}};
                         bestScore = score;

@@ -37,14 +37,14 @@ public class MinerStrategy extends Strategy {
             p = 1; 
             q = 1;
         } else if (time < 2 * perim) {
-            p = 3;
-            q = 4;
-        } else if (time < 4 * perim) {
-            p = 2;
-            q = 3;
-        } else {
             p = 1;
             q = 2;
+        } else if (time < 4 * perim) {
+            p = 1;
+            q = 2;
+        } else {
+            p = 1;
+            q = 3;
         }
         return deterministicRand(p, q);
     }
@@ -59,6 +59,11 @@ public class MinerStrategy extends Strategy {
     @Override
     public boolean runTick() throws GameActionException {
         // RECOMMENT TO ENABLE
+
+        // indicate all known cheese mines
+        // for (int i = 0; i < Game.knownCheeseMines.set.length(); i++) {
+        //     indicate(decode2x2(Game.knownCheeseMines.at(i)));
+        // }
         
         if(rc.getRawCheese() == 0) {
             goHomeStrategy = null;
@@ -87,22 +92,22 @@ public class MinerStrategy extends Strategy {
     }
 
     private MapLocation pickSeenMine() {
-        int mineCount = Game.knownCheeseMines.set.length();
-        double[] weights = new double[mineCount];
-        int weightCount = 0;
-        double totalWeight = 0;
-        for (int i = 0; i < mineCount; i++) {
-            double weight = 1.0 / (double) myLoc.distanceSquaredTo(decode2x2(Game.knownCheeseMines.at(i)));
-            weights[weightCount++] = weight;
-            totalWeight += weight;
-        }
-        double rnd = (((double) Rng.mcg() / ((1 << 31) - 1)) * totalWeight);
-        double pref = 0;
-        for (int i = 0; i < weightCount; i++) {
-            pref += weights[i];
-            if (rnd <= pref) return decode2x2(Game.knownCheeseMines.at(i));
-        }
-        return decode2x2(Game.knownCheeseMines.at(mineCount - 1));
+        // int mineCount = Game.knownCheeseMines.set.length();
+        // double[] weights = new double[mineCount];
+        // int weightCount = 0;
+        // double totalWeight = 0;
+        // for (int i = 0; i < mineCount; i++) {
+        //     double weight = 1.0 / (double) myLoc.distanceSquaredTo(decode2x2(Game.knownCheeseMines.at(i)));
+        //     weights[weightCount++] = weight;
+        //     totalWeight += weight;
+        // }
+        // double rnd = (((double) Rng.mcg() / ((1 << 31) - 1)) * totalWeight);
+        // double pref = 0;
+        // for (int i = 0; i < weightCount; i++) {
+        //     pref += weights[i];
+        //     if (rnd <= pref) return decode2x2(Game.knownCheeseMines.at(i));
+        // }
+        return decode2x2(Game.knownCheeseMines.at(Rng.mcg(0, Game.knownCheeseMines.set.length() - 1)));
     }
 
     private boolean shouldGoHome() {

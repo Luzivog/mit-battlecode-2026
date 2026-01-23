@@ -28,6 +28,11 @@ SCRIM_TEAMS = [
     "Bruteforcer"
 ]
 
+# "?" = alternate
+# "+" = requester first
+# "-" = requester last
+ORDER = "+"
+
 def get_teams(start_page=1, end_page=1):
     page = 1
     teams = []
@@ -102,7 +107,7 @@ if __name__ == "__main__":
     srim_url = f"{API_BASE}/compete/{EPISODE}/request/"
     for team in selected_teams:
         for map_group in (maps1, maps2):
-            payload = {"is_ranked":False,"requested_to":team['id'],"player_order":"?","map_names":map_group}
+            payload = {"is_ranked":False,"requested_to":team['id'],"player_order":ORDER,"map_names":map_group}
             print(payload)
             response = requests.post(srim_url, json=payload, headers={"Authorization": f"Bearer {token}"})
             print(response.json())

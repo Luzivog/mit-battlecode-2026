@@ -39,7 +39,8 @@ public class KingFormationCoordinatorStrategy extends Strategy {
 
     private enum FormationState {
         IDLE,
-        COORDINATING
+        COORDINATING,
+        MONITORING
     }
 
     public KingFormationCoordinatorStrategy(ThreatContext aContext, KingMiningStrategy aMiningStrategy) {
@@ -75,7 +76,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         int myKingCount = GlobalArray.countRatKings();
         int numRats = (rc.getCurrentRatCost() - 10) * 2 / 5;
 
-        if (myKingCount >= 5 || (myKingCount >= 2 && time >= 1100) || numRats < 15 * myKingCount) {
+        if (myKingCount >= 5 || time >= 1100 || numRats < 15 * myKingCount) {
             abortFormation();
             kingCount = myKingCount;
             return true;
@@ -100,6 +101,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
                 tryStartFormation();
                 break;
             case COORDINATING:
+            case MONITORING:
                 monitorFormation();
                 break;
         }
@@ -130,7 +132,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         state = FormationState.COORDINATING;
 
         GlobalArray.writeFormationTarget(formationTarget, targetMine, kingId);
-        GlobalArray.writeKingMineAssignment(kingId, miningStrategy.getMineTarget());
+        GlobalArray.writeKingMineAssignment(kingId + 1, miningStrategy.getMineTarget());
 
         indicate("FORMATION: coordinating at " + formationTarget);
     }
@@ -281,21 +283,9 @@ public class KingFormationCoordinatorStrategy extends Strategy {
             return;
         }
 
-        if (!GlobalArray.isFormationCoordinatorAlive()) {
-            GlobalArray.clearFormation();
-            state = FormationState.IDLE;
-            formationTarget = null;
-            targetMine = null;
-            lastFormationTurn = time;
-            indicate("FORMATION: coordinator died, clearing");
-            return;
-        }
-
         MapLocation myCurrentTarget = GlobalArray.getFormationTarget();
         if (myCurrentTarget == null) {
             state = FormationState.IDLE;
-            formationTarget = null;
-            targetMine = null;
             lastFormationTurn = time;
             indicate("FORMATION: completed or cleared");
             return;

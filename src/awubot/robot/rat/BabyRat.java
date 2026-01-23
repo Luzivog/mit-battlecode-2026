@@ -20,6 +20,7 @@ public class BabyRat {
     public static boolean shouldGlance;
     public static Strategy primaryStrategy;
     public static CombatStrategy combatStrategy;
+    public static int MAX_CHEESE = 150;
 
     public static void init() throws GameActionException {
         // GlobalArray.readSpawnStrategy();
@@ -81,7 +82,8 @@ public class BabyRat {
         for(var dir : dirs) {
             var loc = myLoc.add(dir);
             if(rc.canPickUpCheese(loc)) {
-                rc.pickUpCheese(loc);
+                int amt = Math.min(rc.senseMapInfo(loc).getCheeseAmount(), MAX_CHEESE - rc.getRawCheese());
+                rc.pickUpCheese(loc, amt);
             }
         }
     }

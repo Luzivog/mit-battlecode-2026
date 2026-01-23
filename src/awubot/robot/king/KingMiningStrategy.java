@@ -26,17 +26,21 @@ public class KingMiningStrategy extends Strategy {
     private final int tabooMaxY;
 
     public KingMiningStrategy() {
-        boolean myIsSmallMap = mapWidth < 45 && mapHeight < 45;
-        if (myIsSmallMap) {
+        if (mapWidth < 40 && mapHeight < 40) {
             tabooMinX = mapWidth / 3;
             tabooMaxX = 2 * mapWidth / 3;
             tabooMinY = mapHeight / 3;
             tabooMaxY = 2 * mapHeight / 3;
+        } else if (mapWidth < 50 && mapHeight < 50) {
+            tabooMinX = 3 * mapWidth / 7;
+            tabooMaxX = 4 * mapWidth / 7;
+            tabooMinY = 3 * mapHeight / 7;
+            tabooMaxY = 4 * mapHeight / 7;
         } else {
-            tabooMinX = 3 * mapWidth / 8;
-            tabooMaxX = 5 * mapWidth / 8;
-            tabooMinY = 3 * mapHeight / 8;
-            tabooMaxY = 5 * mapHeight / 8;
+            tabooMinX = 4 * mapWidth / 9;
+            tabooMaxX = 5 * mapWidth / 9;
+            tabooMinY = 4 * mapHeight / 9;
+            tabooMaxY = 5 * mapHeight / 9;
         }
 
         centerTarget = selectSafeCenterTarget();

@@ -87,6 +87,7 @@ public class MinerStrategy extends Strategy {
         else if(distSq <= 400) thresh = 60;
         else if(distSq <= 900) thresh = 80;
         else thresh = 105;
+        
         if (cheese >= thresh) return true;
         if (cheese * 2 >= thresh && cheeseStrategy.lastSeenCheese < time - 3) return true;
 

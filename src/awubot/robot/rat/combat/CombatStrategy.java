@@ -149,7 +149,7 @@ public class CombatStrategy extends Strategy {
             int[] bfsResult = Pathfinder.multisourceBfs(sources, sourceCnt);
             moveMask = bfsResult[0];    
             int bfsIters = bfsResult[1];
-            println("BFS iters: " + bfsIters);
+            // println("BFS iters: " + bfsIters);
             // Profiler.pop("combat bfs");
             indicate("MOVEMASK: " + Integer.toBinaryString(moveMask));
             if (moveMask == 0) return false; // no enemies nearby

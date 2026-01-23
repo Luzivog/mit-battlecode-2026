@@ -55,48 +55,168 @@ public final class TryTrap {
     static double w_2_m2;
     static MapLocation bestPlaceLoc;
     static Direction bestMoveDir;
+    static Direction bestSecondaryMoveDir;
     static Direction bestFacing;
     static double best;
     static MapLocation curMoveLoc;
     static MapLocation weightSource;
     static int weightCompTime;
     static int bytecodeStart, bytecodeBudget;
+    static boolean shouldDefRun;
 
-    public static boolean shouldTrap() throws GameActionException {
+    public static boolean verifyCanRun() throws GameActionException {
         if (!rc.isActionReady() || !confirmCanPlace()) return false;
-        if (rc.getAllCheese() > 3000) return true;
-        if (rc.getAllCheese() < 300 || rc.getRawCheese() < 20) return false;
         return true;
     }
 
+    public static boolean globalShouldRun() throws GameActionException {
+        // global
+        if (rc.getAllCheese() > 3000 || rc.getRawCheese() >= 20) return true;
+        return false;
+    }
+
+    public static boolean shouldTrap(RobotInfo info) throws GameActionException {
+        if (rc.getHealth() < 82 && info.getHealth() == 100) {
+            println("ACCEPEETD CONIDIOTOINIS A;PLOSDKJF;LKAJSDAF;LKJASDA;LKFJDSA;DLKFJSD;LKFJA;SLKDFJ;SLAKJDFL;K");
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean shouldRunEarlyExit() throws GameActionException {
+        for (int i = 0; i < RobotTracker.numEnemies && i < 3; i++) {
+            RobotInfo info = RobotTracker.sortedEnemies[i];
+            if (info.getType() != UnitType.BABY_RAT) continue;
+            if (shouldTrap(info)) return true;
+        }
+        return false;
+    }
+
     public static boolean run() throws GameActionException {
-        if (!shouldTrap()) return false;
+        if (!verifyCanRun()) return false;
+        shouldDefRun = globalShouldRun();
+        if (!shouldDefRun && !shouldRunEarlyExit()) return false;
+
         bytecodeStart = Clock.getBytecodeNum();
-        bytecodeBudget = Math.min(3000, (int) (Clock.getBytecodesLeft() - 1000) / 2);
+        bytecodeBudget = Math.min(5000, (int) (Clock.getBytecodesLeft() - 1000) / 2);
         Profiler.push();
         computeWeights();
         Profiler.pop("TryTrap.computeWeights");
         resetBest();
+        println("remainig bytecodee budget before selecting moves: " + (Clock.getBytecodeNum() - bytecodeStart));
         selectMoves();
+        selectSecondaryMoves();
         if (best <= 0.5) return false;
-        assert(CombatStrategy.performMoves(bestMoveDir, bestFacing));
-        if (!rc.canPlaceRatTrap(bestPlaceLoc)) {
+        if (bestMoveDir != null) {
+            assert(CombatStrategy.performMoves(bestMoveDir, bestFacing));
+            if (!rc.canPlaceRatTrap(bestPlaceLoc)) {
+            }
+            rc.placeRatTrap(bestPlaceLoc);
+        } else {
+            if (!rc.canPlaceRatTrap(bestPlaceLoc)) {
+            }
+            rc.placeRatTrap(bestPlaceLoc);
+            assert(CombatStrategy.performMoves(bestSecondaryMoveDir, bestFacing));
         }
-        rc.placeRatTrap(bestPlaceLoc);
         println("!!!!!!!!!! placed rat trap");
+        rc.setTimelineMarker("Placed Rat Trap", 0, 0, 0);
         indicate("COMBAT STRAT: TRAP");
         return true;
     }
 
     private static boolean confirmCanPlace() throws GameActionException {
-        confirmedCanPlace = false;
-        for (MapInfo info : rc.senseNearbyMapInfos(2)) {
-            if (rc.canPlaceRatTrap(info.getMapLocation())) {
-                confirmedCanPlace = true;
-                break;
+        switch (myDir.ordinal()) {
+            case 0 -> {
+                if (rc.canPlaceRatTrap(myLoc.add(Direction.NORTH))) {
+                    return true;
+                }
+                if (rc.canPlaceRatTrap(myLoc.add(Direction.NORTHEAST))) {
+                    return true;
+                }
+                if (rc.canPlaceRatTrap(myLoc.add(Direction.NORTHWEST))) {
+                    return true;
+                }
             }
+            case 1 -> {
+                if (rc.canPlaceRatTrap(myLoc.add(Direction.NORTHEAST))) {
+                    return true;
+                }
+                if (rc.canPlaceRatTrap(myLoc.add(Direction.NORTH))) {
+                    return true;
+                }
+                if (rc.canPlaceRatTrap(myLoc.add(Direction.EAST))) {
+                    return true;
+                }
+            }
+            case 2 -> {
+                if (rc.canPlaceRatTrap(myLoc.add(Direction.EAST))) {
+                    return true;
+                }
+                if (rc.canPlaceRatTrap(myLoc.add(Direction.NORTHEAST))) {
+                    return true;
+                }
+                if (rc.canPlaceRatTrap(myLoc.add(Direction.SOUTHEAST))) {
+                    return true;
+                }
+            }
+            case 3 -> {
+                if (rc.canPlaceRatTrap(myLoc.add(Direction.SOUTHEAST))) {
+                    return true;
+                }
+                if (rc.canPlaceRatTrap(myLoc.add(Direction.SOUTH))) {
+                    return true;
+                }
+                if (rc.canPlaceRatTrap(myLoc.add(Direction.EAST))) {
+                    return true;
+                }
+            }
+            case 4 -> {
+                if (rc.canPlaceRatTrap(myLoc.add(Direction.SOUTH))) {
+                    return true;
+                }
+                if (rc.canPlaceRatTrap(myLoc.add(Direction.SOUTHEAST))) {
+                    return true;
+                }
+                if (rc.canPlaceRatTrap(myLoc.add(Direction.SOUTHWEST))) {
+                    return true;
+                }
+            }
+            case 5 -> {
+                if (rc.canPlaceRatTrap(myLoc.add(Direction.SOUTHWEST))) {
+                    return true;
+                }
+                if (rc.canPlaceRatTrap(myLoc.add(Direction.SOUTH))) {
+                    return true;
+                }
+                if (rc.canPlaceRatTrap(myLoc.add(Direction.WEST))) {
+                    return true;
+                }
+            }
+            case 6 -> {
+                if (rc.canPlaceRatTrap(myLoc.add(Direction.WEST))) {
+                    return true;
+                }
+                if (rc.canPlaceRatTrap(myLoc.add(Direction.NORTHWEST))) {
+                    return true;
+                }
+                if (rc.canPlaceRatTrap(myLoc.add(Direction.SOUTHWEST))) {
+                    return true;
+                }
+            }
+            case 7 -> {
+                if (rc.canPlaceRatTrap(myLoc.add(Direction.NORTHWEST))) {
+                    return true;
+                }
+                if (rc.canPlaceRatTrap(myLoc.add(Direction.NORTH))) {
+                    return true;
+                }
+                if (rc.canPlaceRatTrap(myLoc.add(Direction.WEST))) {
+                    return true;
+                }
+            }
+            default -> { }
         }
-        return confirmedCanPlace;
+        return false;
     }
 
     // has room for optimisation if reallllyyy needed
@@ -462,7 +582,7 @@ public final class TryTrap {
         w_2_m2 = 0;
     }
 
-    private static void applyEnemyWeights() {
+    private static void applyEnemyWeights() throws GameActionException {
         for (int i = 0; i < RobotTracker.numEnemies && i < 5; i++) {
             RobotInfo info = RobotTracker.sortedEnemies[i];
             if (info.getType() != UnitType.BABY_RAT) continue;
@@ -576,8 +696,11 @@ public final class TryTrap {
         }
     }
 
-    private static void applyEnemyWeight(RobotInfo rinfo) {
-        if (rinfo.getHealth() <= 30) return;
+    private static void applyEnemyWeight(RobotInfo rinfo) throws GameActionException {
+        double mult = 1.0;
+        if (!shouldDefRun && !shouldTrap(rinfo)) {
+            mult = -0.5;
+        }
         int x = rinfo.location.x - myLocX;
         int y = rinfo.location.y - myLocY;
         switch (x) {
@@ -588,17 +711,17 @@ public final class TryTrap {
 
                             case 0 -> {
 
-w_m2_m2 += 2;
+w_m2_m2 += (2) * mult;
 }
 
                             case 1 -> {
 
-w_m2_m2 += 3;
+w_m2_m2 += (3) * mult;
 }
 
                             case 2 -> {
 
-w_m2_m2 += 2;
+w_m2_m2 += (2) * mult;
 }
 
                             case 3 -> {
@@ -626,14 +749,14 @@ w_m2_m2 += 2;
 
                             case 1 -> {
 
-w_m2_m2 += 2;
-w_m2_m1 += 3;
+w_m2_m2 += (2) * mult;
+w_m2_m1 += (3) * mult;
 }
 
                             case 2 -> {
 
-w_m2_m2 += 3;
-w_m2_m1 += 2;
+w_m2_m2 += (3) * mult;
+w_m2_m1 += (2) * mult;
 }
 
                             case 3 -> {
@@ -661,15 +784,15 @@ w_m2_m1 += 2;
 
                             case 1 -> {
 
-w_m2_m1 += 2;
-w_m2_0 += 3;
+w_m2_m1 += (2) * mult;
+w_m2_0 += (3) * mult;
 }
 
                             case 2 -> {
 
-w_m2_m2 += 2;
-w_m2_m1 += 3;
-w_m2_0 += 2;
+w_m2_m2 += (2) * mult;
+w_m2_m1 += (3) * mult;
+w_m2_0 += (2) * mult;
 }
 
                             case 3 -> {
@@ -697,21 +820,21 @@ w_m2_0 += 2;
 
                             case 1 -> {
 
-w_m2_0 += 2;
-w_m2_1 += 3;
+w_m2_0 += (2) * mult;
+w_m2_1 += (3) * mult;
 }
 
                             case 2 -> {
 
-w_m2_m1 += 2;
-w_m2_0 += 3;
-w_m2_1 += 2;
+w_m2_m1 += (2) * mult;
+w_m2_0 += (3) * mult;
+w_m2_1 += (2) * mult;
 }
 
                             case 3 -> {
 
-w_m2_m1 += 3;
-w_m2_0 += 2;
+w_m2_m1 += (3) * mult;
+w_m2_0 += (2) * mult;
 }
 
                             case 4 -> {
@@ -739,15 +862,15 @@ w_m2_0 += 2;
 
                             case 2 -> {
 
-w_m2_0 += 2;
-w_m2_1 += 3;
-w_m2_2 += 2;
+w_m2_0 += (2) * mult;
+w_m2_1 += (3) * mult;
+w_m2_2 += (2) * mult;
 }
 
                             case 3 -> {
 
-w_m2_0 += 3;
-w_m2_1 += 2;
+w_m2_0 += (3) * mult;
+w_m2_1 += (2) * mult;
 }
 
                             case 4 -> {
@@ -775,14 +898,14 @@ w_m2_1 += 2;
 
                             case 2 -> {
 
-w_m2_1 += 2;
-w_m2_2 += 3;
+w_m2_1 += (2) * mult;
+w_m2_2 += (3) * mult;
 }
 
                             case 3 -> {
 
-w_m2_1 += 3;
-w_m2_2 += 2;
+w_m2_1 += (3) * mult;
+w_m2_2 += (2) * mult;
 }
 
                             case 4 -> {
@@ -810,17 +933,17 @@ w_m2_2 += 2;
 
                             case 2 -> {
 
-w_m2_2 += 2;
+w_m2_2 += (2) * mult;
 }
 
                             case 3 -> {
 
-w_m2_2 += 3;
+w_m2_2 += (3) * mult;
 }
 
                             case 4 -> {
 
-w_m2_2 += 2;
+w_m2_2 += (2) * mult;
 }
 
                             case 5 -> {
@@ -844,14 +967,14 @@ w_m2_2 += 2;
 
                             case 0 -> {
 
-w_m2_m2 += 3;
-w_m1_m2 += 2;
+w_m2_m2 += (3) * mult;
+w_m1_m2 += (2) * mult;
 }
 
                             case 1 -> {
 
-w_m2_m2 += 2;
-w_m1_m2 += 3;
+w_m2_m2 += (2) * mult;
+w_m1_m2 += (3) * mult;
 }
 
                             case 2 -> {
@@ -879,21 +1002,21 @@ w_m1_m2 += 3;
 
                             case 0 -> {
 
-w_m2_m1 += 3;
-w_m1_m1 += 2;
+w_m2_m1 += (3) * mult;
+w_m1_m1 += (2) * mult;
 }
 
                             case 1 -> {
 
-w_m2_m1 += 2;
-w_m1_m2 += 2;
-w_m1_m1 += 3;
+w_m2_m1 += (2) * mult;
+w_m1_m2 += (2) * mult;
+w_m1_m1 += (3) * mult;
 }
 
                             case 2 -> {
 
-w_m1_m2 += 3;
-w_m1_m1 += 2;
+w_m1_m2 += (3) * mult;
+w_m1_m1 += (2) * mult;
 }
 
                             case 3 -> {
@@ -921,16 +1044,16 @@ w_m1_m1 += 2;
 
                             case 1 -> {
 
-w_m2_0 += 2;
-w_m1_m1 += 2;
-w_m1_0 += 3;
+w_m2_0 += (2) * mult;
+w_m1_m1 += (2) * mult;
+w_m1_0 += (3) * mult;
 }
 
                             case 2 -> {
 
-w_m1_m2 += 2;
-w_m1_m1 += 3;
-w_m1_0 += 2;
+w_m1_m2 += (2) * mult;
+w_m1_m1 += (3) * mult;
+w_m1_0 += (2) * mult;
 }
 
                             case 3 -> {
@@ -958,23 +1081,23 @@ w_m1_0 += 2;
 
                             case 1 -> {
 
-w_m2_1 += 2;
-w_m1_0 += 2;
-w_m1_1 += 3;
+w_m2_1 += (2) * mult;
+w_m1_0 += (2) * mult;
+w_m1_1 += (3) * mult;
 }
 
                             case 2 -> {
 
-w_m1_m1 += 2;
-w_m1_0 += 3;
-w_m1_1 += 2;
+w_m1_m1 += (2) * mult;
+w_m1_0 += (3) * mult;
+w_m1_1 += (2) * mult;
 }
 
                             case 3 -> {
 
-w_m2_m1 += 2;
-w_m1_m1 += 3;
-w_m1_0 += 2;
+w_m2_m1 += (2) * mult;
+w_m1_m1 += (3) * mult;
+w_m1_0 += (2) * mult;
 }
 
                             case 4 -> {
@@ -1002,16 +1125,16 @@ w_m1_0 += 2;
 
                             case 2 -> {
 
-w_m1_0 += 2;
-w_m1_1 += 3;
-w_m1_2 += 2;
+w_m1_0 += (2) * mult;
+w_m1_1 += (3) * mult;
+w_m1_2 += (2) * mult;
 }
 
                             case 3 -> {
 
-w_m2_0 += 2;
-w_m1_0 += 3;
-w_m1_1 += 2;
+w_m2_0 += (2) * mult;
+w_m1_0 += (3) * mult;
+w_m1_1 += (2) * mult;
 }
 
                             case 4 -> {
@@ -1039,21 +1162,21 @@ w_m1_1 += 2;
 
                             case 2 -> {
 
-w_m1_1 += 2;
-w_m1_2 += 3;
+w_m1_1 += (2) * mult;
+w_m1_2 += (3) * mult;
 }
 
                             case 3 -> {
 
-w_m2_1 += 2;
-w_m1_1 += 3;
-w_m1_2 += 2;
+w_m2_1 += (2) * mult;
+w_m1_1 += (3) * mult;
+w_m1_2 += (2) * mult;
 }
 
                             case 4 -> {
 
-w_m2_1 += 3;
-w_m1_1 += 2;
+w_m2_1 += (3) * mult;
+w_m1_1 += (2) * mult;
 }
 
                             case 5 -> {
@@ -1081,14 +1204,14 @@ w_m1_1 += 2;
 
                             case 3 -> {
 
-w_m2_2 += 2;
-w_m1_2 += 3;
+w_m2_2 += (2) * mult;
+w_m1_2 += (3) * mult;
 }
 
                             case 4 -> {
 
-w_m2_2 += 3;
-w_m1_2 += 2;
+w_m2_2 += (3) * mult;
+w_m1_2 += (2) * mult;
 }
 
                             case 5 -> {
@@ -1112,15 +1235,15 @@ w_m1_2 += 2;
 
                             case 0 -> {
 
-w_m2_m2 += 2;
-w_m1_m2 += 3;
-w_0_m2 += 2;
+w_m2_m2 += (2) * mult;
+w_m1_m2 += (3) * mult;
+w_0_m2 += (2) * mult;
 }
 
                             case 1 -> {
 
-w_m1_m2 += 2;
-w_0_m2 += 3;
+w_m1_m2 += (2) * mult;
+w_0_m2 += (3) * mult;
 }
 
                             case 2 -> {
@@ -1148,16 +1271,16 @@ w_0_m2 += 3;
 
                             case 0 -> {
 
-w_m2_m1 += 2;
-w_m1_m1 += 3;
-w_0_m1 += 2;
+w_m2_m1 += (2) * mult;
+w_m1_m1 += (3) * mult;
+w_0_m1 += (2) * mult;
 }
 
                             case 1 -> {
 
-w_m1_m1 += 2;
-w_0_m2 += 2;
-w_0_m1 += 3;
+w_m1_m1 += (2) * mult;
+w_0_m2 += (2) * mult;
+w_0_m1 += (3) * mult;
 }
 
                             case 2 -> {
@@ -1185,23 +1308,23 @@ w_0_m1 += 3;
 
                             case 0 -> {
 
-w_m2_0 += 2;
-w_m1_0 += 3;
-w_0_0 += 2;
+w_m2_0 += (2) * mult;
+w_m1_0 += (3) * mult;
+w_0_0 += (2) * mult;
 }
 
                             case 1 -> {
 
-w_m1_0 += 2;
-w_0_m1 += 2;
-w_0_0 += 3;
+w_m1_0 += (2) * mult;
+w_0_m1 += (2) * mult;
+w_0_0 += (3) * mult;
 }
 
                             case 2 -> {
 
-w_0_m2 += 2;
-w_0_m1 += 3;
-w_0_0 += 2;
+w_0_m2 += (2) * mult;
+w_0_m1 += (3) * mult;
+w_0_0 += (2) * mult;
 }
 
                             case 3 -> {
@@ -1229,23 +1352,23 @@ w_0_0 += 2;
 
                             case 1 -> {
 
-w_m1_1 += 2;
-w_0_0 += 2;
-w_0_1 += 3;
+w_m1_1 += (2) * mult;
+w_0_0 += (2) * mult;
+w_0_1 += (3) * mult;
 }
 
                             case 2 -> {
 
-w_0_m1 += 2;
-w_0_0 += 3;
-w_0_1 += 2;
+w_0_m1 += (2) * mult;
+w_0_0 += (3) * mult;
+w_0_1 += (2) * mult;
 }
 
                             case 3 -> {
 
-w_m1_m1 += 2;
-w_0_m1 += 3;
-w_0_0 += 2;
+w_m1_m1 += (2) * mult;
+w_0_m1 += (3) * mult;
+w_0_0 += (2) * mult;
 }
 
                             case 4 -> {
@@ -1273,23 +1396,23 @@ w_0_0 += 2;
 
                             case 2 -> {
 
-w_0_0 += 2;
-w_0_1 += 3;
-w_0_2 += 2;
+w_0_0 += (2) * mult;
+w_0_1 += (3) * mult;
+w_0_2 += (2) * mult;
 }
 
                             case 3 -> {
 
-w_m1_0 += 2;
-w_0_0 += 3;
-w_0_1 += 2;
+w_m1_0 += (2) * mult;
+w_0_0 += (3) * mult;
+w_0_1 += (2) * mult;
 }
 
                             case 4 -> {
 
-w_m2_0 += 2;
-w_m1_0 += 3;
-w_0_0 += 2;
+w_m2_0 += (2) * mult;
+w_m1_0 += (3) * mult;
+w_0_0 += (2) * mult;
 }
 
                             case 5 -> {
@@ -1317,16 +1440,16 @@ w_0_0 += 2;
 
                             case 3 -> {
 
-w_m1_1 += 2;
-w_0_1 += 3;
-w_0_2 += 2;
+w_m1_1 += (2) * mult;
+w_0_1 += (3) * mult;
+w_0_2 += (2) * mult;
 }
 
                             case 4 -> {
 
-w_m2_1 += 2;
-w_m1_1 += 3;
-w_0_1 += 2;
+w_m2_1 += (2) * mult;
+w_m1_1 += (3) * mult;
+w_0_1 += (2) * mult;
 }
 
                             case 5 -> {
@@ -1354,15 +1477,15 @@ w_0_1 += 2;
 
                             case 3 -> {
 
-w_m1_2 += 2;
-w_0_2 += 3;
+w_m1_2 += (2) * mult;
+w_0_2 += (3) * mult;
 }
 
                             case 4 -> {
 
-w_m2_2 += 2;
-w_m1_2 += 3;
-w_0_2 += 2;
+w_m2_2 += (2) * mult;
+w_m1_2 += (3) * mult;
+w_0_2 += (2) * mult;
 }
 
                             case 5 -> {
@@ -1386,15 +1509,15 @@ w_0_2 += 2;
 
                             case 0 -> {
 
-w_m1_m2 += 2;
-w_0_m2 += 3;
-w_1_m2 += 2;
+w_m1_m2 += (2) * mult;
+w_0_m2 += (3) * mult;
+w_1_m2 += (2) * mult;
 }
 
                             case 1 -> {
 
-w_0_m2 += 2;
-w_1_m2 += 3;
+w_0_m2 += (2) * mult;
+w_1_m2 += (3) * mult;
 }
 
                             case 2 -> {
@@ -1414,8 +1537,8 @@ w_1_m2 += 3;
 
                             case 7 -> {
 
-w_m1_m2 += 3;
-w_0_m2 += 2;
+w_m1_m2 += (3) * mult;
+w_0_m2 += (2) * mult;
 }
                             default -> { }
                         }
@@ -1425,16 +1548,16 @@ w_0_m2 += 2;
 
                             case 0 -> {
 
-w_m1_m1 += 2;
-w_0_m1 += 3;
-w_1_m1 += 2;
+w_m1_m1 += (2) * mult;
+w_0_m1 += (3) * mult;
+w_1_m1 += (2) * mult;
 }
 
                             case 1 -> {
 
-w_0_m1 += 2;
-w_1_m2 += 2;
-w_1_m1 += 3;
+w_0_m1 += (2) * mult;
+w_1_m2 += (2) * mult;
+w_1_m1 += (3) * mult;
 }
 
                             case 2 -> {
@@ -1454,9 +1577,9 @@ w_1_m1 += 3;
 
                             case 7 -> {
 
-w_m1_m2 += 2;
-w_m1_m1 += 3;
-w_0_m1 += 2;
+w_m1_m2 += (2) * mult;
+w_m1_m1 += (3) * mult;
+w_0_m1 += (2) * mult;
 }
                             default -> { }
                         }
@@ -1466,16 +1589,16 @@ w_0_m1 += 2;
 
                             case 0 -> {
 
-w_m1_0 += 2;
-w_0_0 += 3;
-w_1_0 += 2;
+w_m1_0 += (2) * mult;
+w_0_0 += (3) * mult;
+w_1_0 += (2) * mult;
 }
 
                             case 1 -> {
 
-w_0_0 += 2;
-w_1_m1 += 2;
-w_1_0 += 3;
+w_0_0 += (2) * mult;
+w_1_m1 += (2) * mult;
+w_1_0 += (3) * mult;
 }
 
                             case 2 -> {
@@ -1495,9 +1618,9 @@ w_1_0 += 3;
 
                             case 7 -> {
 
-w_m1_m1 += 2;
-w_m1_0 += 3;
-w_0_0 += 2;
+w_m1_m1 += (2) * mult;
+w_m1_0 += (3) * mult;
+w_0_0 += (2) * mult;
 }
                             default -> { }
                         }
@@ -1507,58 +1630,58 @@ w_0_0 += 2;
 
                             case 0 -> {
 
-w_m1_1 += 2;
-w_0_1 += 3;
-w_1_1 += 2;
+w_m1_1 += (2) * mult;
+w_0_1 += (3) * mult;
+w_1_1 += (2) * mult;
 }
 
                             case 1 -> {
 
-w_0_1 += 2;
-w_1_0 += 2;
-w_1_1 += 3;
+w_0_1 += (2) * mult;
+w_1_0 += (2) * mult;
+w_1_1 += (3) * mult;
 }
 
                             case 2 -> {
 
-w_1_m1 += 2;
-w_1_0 += 3;
-w_1_1 += 2;
+w_1_m1 += (2) * mult;
+w_1_0 += (3) * mult;
+w_1_1 += (2) * mult;
 }
 
                             case 3 -> {
 
-w_0_m1 += 2;
-w_1_m1 += 3;
-w_1_0 += 2;
+w_0_m1 += (2) * mult;
+w_1_m1 += (3) * mult;
+w_1_0 += (2) * mult;
 }
 
                             case 4 -> {
 
-w_m1_m1 += 2;
-w_0_m1 += 3;
-w_1_m1 += 2;
+w_m1_m1 += (2) * mult;
+w_0_m1 += (3) * mult;
+w_1_m1 += (2) * mult;
 }
 
                             case 5 -> {
 
-w_m1_m1 += 3;
-w_m1_0 += 2;
-w_0_m1 += 2;
+w_m1_m1 += (3) * mult;
+w_m1_0 += (2) * mult;
+w_0_m1 += (2) * mult;
 }
 
                             case 6 -> {
 
-w_m1_m1 += 2;
-w_m1_0 += 3;
-w_m1_1 += 2;
+w_m1_m1 += (2) * mult;
+w_m1_0 += (3) * mult;
+w_m1_1 += (2) * mult;
 }
 
                             case 7 -> {
 
-w_m1_0 += 2;
-w_m1_1 += 3;
-w_0_1 += 2;
+w_m1_0 += (2) * mult;
+w_m1_1 += (3) * mult;
+w_0_1 += (2) * mult;
 }
                             default -> { }
                         }
@@ -1577,23 +1700,23 @@ w_0_1 += 2;
 
                             case 3 -> {
 
-w_0_0 += 2;
-w_1_0 += 3;
-w_1_1 += 2;
+w_0_0 += (2) * mult;
+w_1_0 += (3) * mult;
+w_1_1 += (2) * mult;
 }
 
                             case 4 -> {
 
-w_m1_0 += 2;
-w_0_0 += 3;
-w_1_0 += 2;
+w_m1_0 += (2) * mult;
+w_0_0 += (3) * mult;
+w_1_0 += (2) * mult;
 }
 
                             case 5 -> {
 
-w_m1_0 += 3;
-w_m1_1 += 2;
-w_0_0 += 2;
+w_m1_0 += (3) * mult;
+w_m1_1 += (2) * mult;
+w_0_0 += (2) * mult;
 }
 
                             case 6 -> {
@@ -1618,23 +1741,23 @@ w_0_0 += 2;
 
                             case 3 -> {
 
-w_0_1 += 2;
-w_1_1 += 3;
-w_1_2 += 2;
+w_0_1 += (2) * mult;
+w_1_1 += (3) * mult;
+w_1_2 += (2) * mult;
 }
 
                             case 4 -> {
 
-w_m1_1 += 2;
-w_0_1 += 3;
-w_1_1 += 2;
+w_m1_1 += (2) * mult;
+w_0_1 += (3) * mult;
+w_1_1 += (2) * mult;
 }
 
                             case 5 -> {
 
-w_m1_1 += 3;
-w_m1_2 += 2;
-w_0_1 += 2;
+w_m1_1 += (3) * mult;
+w_m1_2 += (2) * mult;
+w_0_1 += (2) * mult;
 }
 
                             case 6 -> {
@@ -1659,21 +1782,21 @@ w_0_1 += 2;
 
                             case 3 -> {
 
-w_0_2 += 2;
-w_1_2 += 3;
+w_0_2 += (2) * mult;
+w_1_2 += (3) * mult;
 }
 
                             case 4 -> {
 
-w_m1_2 += 2;
-w_0_2 += 3;
-w_1_2 += 2;
+w_m1_2 += (2) * mult;
+w_0_2 += (3) * mult;
+w_1_2 += (2) * mult;
 }
 
                             case 5 -> {
 
-w_m1_2 += 3;
-w_0_2 += 2;
+w_m1_2 += (3) * mult;
+w_0_2 += (2) * mult;
 }
 
                             case 6 -> {
@@ -1694,9 +1817,9 @@ w_0_2 += 2;
 
                             case 0 -> {
 
-w_0_m2 += 2;
-w_1_m2 += 3;
-w_2_m2 += 2;
+w_0_m2 += (2) * mult;
+w_1_m2 += (3) * mult;
+w_2_m2 += (2) * mult;
 }
 
                             case 1 -> {
@@ -1719,8 +1842,8 @@ w_2_m2 += 2;
 
                             case 7 -> {
 
-w_0_m2 += 3;
-w_1_m2 += 2;
+w_0_m2 += (3) * mult;
+w_1_m2 += (2) * mult;
 }
                             default -> { }
                         }
@@ -1730,9 +1853,9 @@ w_1_m2 += 2;
 
                             case 0 -> {
 
-w_0_m1 += 2;
-w_1_m1 += 3;
-w_2_m1 += 2;
+w_0_m1 += (2) * mult;
+w_1_m1 += (3) * mult;
+w_2_m1 += (2) * mult;
 }
 
                             case 1 -> {
@@ -1755,9 +1878,9 @@ w_2_m1 += 2;
 
                             case 7 -> {
 
-w_0_m2 += 2;
-w_0_m1 += 3;
-w_1_m1 += 2;
+w_0_m2 += (2) * mult;
+w_0_m1 += (3) * mult;
+w_1_m1 += (2) * mult;
 }
                             default -> { }
                         }
@@ -1767,9 +1890,9 @@ w_1_m1 += 2;
 
                             case 0 -> {
 
-w_0_0 += 2;
-w_1_0 += 3;
-w_2_0 += 2;
+w_0_0 += (2) * mult;
+w_1_0 += (3) * mult;
+w_2_0 += (2) * mult;
 }
 
                             case 1 -> {
@@ -1789,16 +1912,16 @@ w_2_0 += 2;
 
                             case 6 -> {
 
-w_0_m2 += 2;
-w_0_m1 += 3;
-w_0_0 += 2;
+w_0_m2 += (2) * mult;
+w_0_m1 += (3) * mult;
+w_0_0 += (2) * mult;
 }
 
                             case 7 -> {
 
-w_0_m1 += 2;
-w_0_0 += 3;
-w_1_0 += 2;
+w_0_m1 += (2) * mult;
+w_0_0 += (3) * mult;
+w_1_0 += (2) * mult;
 }
                             default -> { }
                         }
@@ -1823,23 +1946,23 @@ w_1_0 += 2;
 
                             case 5 -> {
 
-w_0_m1 += 3;
-w_0_0 += 2;
-w_1_m1 += 2;
+w_0_m1 += (3) * mult;
+w_0_0 += (2) * mult;
+w_1_m1 += (2) * mult;
 }
 
                             case 6 -> {
 
-w_0_m1 += 2;
-w_0_0 += 3;
-w_0_1 += 2;
+w_0_m1 += (2) * mult;
+w_0_0 += (3) * mult;
+w_0_1 += (2) * mult;
 }
 
                             case 7 -> {
 
-w_0_0 += 2;
-w_0_1 += 3;
-w_1_1 += 2;
+w_0_0 += (2) * mult;
+w_0_1 += (3) * mult;
+w_1_1 += (2) * mult;
 }
                             default -> { }
                         }
@@ -1861,23 +1984,23 @@ w_1_1 += 2;
 
                             case 4 -> {
 
-w_0_0 += 2;
-w_1_0 += 3;
-w_2_0 += 2;
+w_0_0 += (2) * mult;
+w_1_0 += (3) * mult;
+w_2_0 += (2) * mult;
 }
 
                             case 5 -> {
 
-w_0_0 += 3;
-w_0_1 += 2;
-w_1_0 += 2;
+w_0_0 += (3) * mult;
+w_0_1 += (2) * mult;
+w_1_0 += (2) * mult;
 }
 
                             case 6 -> {
 
-w_0_0 += 2;
-w_0_1 += 3;
-w_0_2 += 2;
+w_0_0 += (2) * mult;
+w_0_1 += (3) * mult;
+w_0_2 += (2) * mult;
 }
 
                             case 7 -> {
@@ -1902,16 +2025,16 @@ w_0_2 += 2;
 
                             case 4 -> {
 
-w_0_1 += 2;
-w_1_1 += 3;
-w_2_1 += 2;
+w_0_1 += (2) * mult;
+w_1_1 += (3) * mult;
+w_2_1 += (2) * mult;
 }
 
                             case 5 -> {
 
-w_0_1 += 3;
-w_0_2 += 2;
-w_1_1 += 2;
+w_0_1 += (3) * mult;
+w_0_2 += (2) * mult;
+w_1_1 += (2) * mult;
 }
 
                             case 6 -> {
@@ -1939,15 +2062,15 @@ w_1_1 += 2;
 
                             case 4 -> {
 
-w_0_2 += 2;
-w_1_2 += 3;
-w_2_2 += 2;
+w_0_2 += (2) * mult;
+w_1_2 += (3) * mult;
+w_2_2 += (2) * mult;
 }
 
                             case 5 -> {
 
-w_0_2 += 3;
-w_1_2 += 2;
+w_0_2 += (3) * mult;
+w_1_2 += (2) * mult;
 }
 
                             case 6 -> {
@@ -1968,8 +2091,8 @@ w_1_2 += 2;
 
                             case 0 -> {
 
-w_1_m2 += 2;
-w_2_m2 += 3;
+w_1_m2 += (2) * mult;
+w_2_m2 += (3) * mult;
 }
 
                             case 1 -> {
@@ -1992,8 +2115,8 @@ w_2_m2 += 3;
 
                             case 7 -> {
 
-w_1_m2 += 3;
-w_2_m2 += 2;
+w_1_m2 += (3) * mult;
+w_2_m2 += (2) * mult;
 }
                             default -> { }
                         }
@@ -2003,8 +2126,8 @@ w_2_m2 += 2;
 
                             case 0 -> {
 
-w_1_m1 += 2;
-w_2_m1 += 3;
+w_1_m1 += (2) * mult;
+w_2_m1 += (3) * mult;
 }
 
                             case 1 -> {
@@ -2024,15 +2147,15 @@ w_2_m1 += 3;
 
                             case 6 -> {
 
-w_1_m2 += 3;
-w_1_m1 += 2;
+w_1_m2 += (3) * mult;
+w_1_m1 += (2) * mult;
 }
 
                             case 7 -> {
 
-w_1_m2 += 2;
-w_1_m1 += 3;
-w_2_m1 += 2;
+w_1_m2 += (2) * mult;
+w_1_m1 += (3) * mult;
+w_2_m1 += (2) * mult;
 }
                             default -> { }
                         }
@@ -2060,16 +2183,16 @@ w_2_m1 += 2;
 
                             case 6 -> {
 
-w_1_m2 += 2;
-w_1_m1 += 3;
-w_1_0 += 2;
+w_1_m2 += (2) * mult;
+w_1_m1 += (3) * mult;
+w_1_0 += (2) * mult;
 }
 
                             case 7 -> {
 
-w_1_m1 += 2;
-w_1_0 += 3;
-w_2_0 += 2;
+w_1_m1 += (2) * mult;
+w_1_0 += (3) * mult;
+w_2_0 += (2) * mult;
 }
                             default -> { }
                         }
@@ -2094,23 +2217,23 @@ w_2_0 += 2;
 
                             case 5 -> {
 
-w_1_m1 += 3;
-w_1_0 += 2;
-w_2_m1 += 2;
+w_1_m1 += (3) * mult;
+w_1_0 += (2) * mult;
+w_2_m1 += (2) * mult;
 }
 
                             case 6 -> {
 
-w_1_m1 += 2;
-w_1_0 += 3;
-w_1_1 += 2;
+w_1_m1 += (2) * mult;
+w_1_0 += (3) * mult;
+w_1_1 += (2) * mult;
 }
 
                             case 7 -> {
 
-w_1_0 += 2;
-w_1_1 += 3;
-w_2_1 += 2;
+w_1_0 += (2) * mult;
+w_1_1 += (3) * mult;
+w_2_1 += (2) * mult;
 }
                             default -> { }
                         }
@@ -2135,16 +2258,16 @@ w_2_1 += 2;
 
                             case 5 -> {
 
-w_1_0 += 3;
-w_1_1 += 2;
-w_2_0 += 2;
+w_1_0 += (3) * mult;
+w_1_1 += (2) * mult;
+w_2_0 += (2) * mult;
 }
 
                             case 6 -> {
 
-w_1_0 += 2;
-w_1_1 += 3;
-w_1_2 += 2;
+w_1_0 += (2) * mult;
+w_1_1 += (3) * mult;
+w_1_2 += (2) * mult;
 }
 
                             case 7 -> {
@@ -2169,21 +2292,21 @@ w_1_2 += 2;
 
                             case 4 -> {
 
-w_1_1 += 2;
-w_2_1 += 3;
+w_1_1 += (2) * mult;
+w_2_1 += (3) * mult;
 }
 
                             case 5 -> {
 
-w_1_1 += 3;
-w_1_2 += 2;
-w_2_1 += 2;
+w_1_1 += (3) * mult;
+w_1_2 += (2) * mult;
+w_2_1 += (2) * mult;
 }
 
                             case 6 -> {
 
-w_1_1 += 2;
-w_1_2 += 3;
+w_1_1 += (2) * mult;
+w_1_2 += (3) * mult;
 }
 
                             case 7 -> {
@@ -2208,14 +2331,14 @@ w_1_2 += 3;
 
                             case 4 -> {
 
-w_1_2 += 2;
-w_2_2 += 3;
+w_1_2 += (2) * mult;
+w_2_2 += (3) * mult;
 }
 
                             case 5 -> {
 
-w_1_2 += 3;
-w_2_2 += 2;
+w_1_2 += (3) * mult;
+w_2_2 += (2) * mult;
 }
 
                             case 6 -> {
@@ -2236,7 +2359,7 @@ w_2_2 += 2;
 
                             case 0 -> {
 
-w_2_m2 += 2;
+w_2_m2 += (2) * mult;
 }
 
                             case 1 -> {
@@ -2256,12 +2379,12 @@ w_2_m2 += 2;
 
                             case 6 -> {
 
-w_2_m2 += 2;
+w_2_m2 += (2) * mult;
 }
 
                             case 7 -> {
 
-w_2_m2 += 3;
+w_2_m2 += (3) * mult;
 }
                             default -> { }
                         }
@@ -2289,14 +2412,14 @@ w_2_m2 += 3;
 
                             case 6 -> {
 
-w_2_m2 += 3;
-w_2_m1 += 2;
+w_2_m2 += (3) * mult;
+w_2_m1 += (2) * mult;
 }
 
                             case 7 -> {
 
-w_2_m2 += 2;
-w_2_m1 += 3;
+w_2_m2 += (2) * mult;
+w_2_m1 += (3) * mult;
 }
                             default -> { }
                         }
@@ -2324,15 +2447,15 @@ w_2_m1 += 3;
 
                             case 6 -> {
 
-w_2_m2 += 2;
-w_2_m1 += 3;
-w_2_0 += 2;
+w_2_m2 += (2) * mult;
+w_2_m1 += (3) * mult;
+w_2_0 += (2) * mult;
 }
 
                             case 7 -> {
 
-w_2_m1 += 2;
-w_2_0 += 3;
+w_2_m1 += (2) * mult;
+w_2_0 += (3) * mult;
 }
                             default -> { }
                         }
@@ -2357,21 +2480,21 @@ w_2_0 += 3;
 
                             case 5 -> {
 
-w_2_m1 += 3;
-w_2_0 += 2;
+w_2_m1 += (3) * mult;
+w_2_0 += (2) * mult;
 }
 
                             case 6 -> {
 
-w_2_m1 += 2;
-w_2_0 += 3;
-w_2_1 += 2;
+w_2_m1 += (2) * mult;
+w_2_0 += (3) * mult;
+w_2_1 += (2) * mult;
 }
 
                             case 7 -> {
 
-w_2_0 += 2;
-w_2_1 += 3;
+w_2_0 += (2) * mult;
+w_2_1 += (3) * mult;
 }
                             default -> { }
                         }
@@ -2396,15 +2519,15 @@ w_2_1 += 3;
 
                             case 5 -> {
 
-w_2_0 += 3;
-w_2_1 += 2;
+w_2_0 += (3) * mult;
+w_2_1 += (2) * mult;
 }
 
                             case 6 -> {
 
-w_2_0 += 2;
-w_2_1 += 3;
-w_2_2 += 2;
+w_2_0 += (2) * mult;
+w_2_1 += (3) * mult;
+w_2_2 += (2) * mult;
 }
 
                             case 7 -> {
@@ -2432,14 +2555,14 @@ w_2_2 += 2;
 
                             case 5 -> {
 
-w_2_1 += 3;
-w_2_2 += 2;
+w_2_1 += (3) * mult;
+w_2_2 += (2) * mult;
 }
 
                             case 6 -> {
 
-w_2_1 += 2;
-w_2_2 += 3;
+w_2_1 += (2) * mult;
+w_2_2 += (3) * mult;
 }
 
                             case 7 -> {
@@ -2464,17 +2587,17 @@ w_2_2 += 3;
 
                             case 4 -> {
 
-w_2_2 += 2;
+w_2_2 += (2) * mult;
 }
 
                             case 5 -> {
 
-w_2_2 += 3;
+w_2_2 += (3) * mult;
 }
 
                             case 6 -> {
 
-w_2_2 += 2;
+w_2_2 += (2) * mult;
 }
 
                             case 7 -> {
@@ -2758,6 +2881,7 @@ w_2_2 += 2;
     private static void resetBest() {
         bestPlaceLoc = null;
         bestMoveDir = null;
+        bestSecondaryMoveDir = null;
         bestFacing = null;
         best = -1;
     }
@@ -2864,6 +2988,558 @@ w_2_2 += 2;
         }
     }
 
+    private static void selectSecondaryMoves() throws GameActionException {
+        switch (myDir.ordinal()) {
+            case 0 -> {
+                considerSecondaryMove(Direction.SOUTH, Direction.NORTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTH, Direction.NORTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTH, Direction.NORTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 1 -> {
+                considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTH, Direction.NORTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.WEST, Direction.NORTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTH, Direction.NORTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.WEST, Direction.NORTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTHWEST, Direction.EAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTH, Direction.EAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.WEST, Direction.EAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 2 -> {
+                considerSecondaryMove(Direction.WEST, Direction.EAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTHWEST, Direction.EAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTHWEST, Direction.EAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.WEST, Direction.NORTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTHWEST, Direction.NORTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.WEST, Direction.SOUTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTHWEST, Direction.SOUTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 3 -> {
+                considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTH, Direction.SOUTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.WEST, Direction.SOUTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTH, Direction.SOUTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.WEST, Direction.SOUTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTHWEST, Direction.EAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTH, Direction.EAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.WEST, Direction.EAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 4 -> {
+                considerSecondaryMove(Direction.NORTH, Direction.SOUTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTH, Direction.SOUTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTHEAST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTH, Direction.SOUTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 5 -> {
+                considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTH, Direction.SOUTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.EAST, Direction.SOUTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTH, Direction.SOUTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.EAST, Direction.SOUTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTHEAST, Direction.WEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTH, Direction.WEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.EAST, Direction.WEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 6 -> {
+                considerSecondaryMove(Direction.EAST, Direction.WEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTHEAST, Direction.WEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTHEAST, Direction.WEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.EAST, Direction.NORTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTHEAST, Direction.NORTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.EAST, Direction.SOUTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTHEAST, Direction.SOUTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 7 -> {
+                considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTH, Direction.NORTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.EAST, Direction.NORTHWEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTH, Direction.NORTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.EAST, Direction.NORTH);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTHEAST, Direction.WEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.SOUTH, Direction.WEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                considerSecondaryMove(Direction.EAST, Direction.WEST);
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            default -> { }
+        }
+    }
+
+    private static void considerSecondaryMove(Direction moveDir, Direction facing) throws GameActionException {
+        int moveCost = CombatCommon.movementCost(moveDir, facing);
+        if (moveCost == -1) return;
+        double moveScore = CombatStrategy.getCellScoreFor(moveDir, facing);
+        if (moveScore <= -100) return;
+        switch (facing.ordinal()) {
+            case 0 -> {
+                if (moveDir != Direction.NORTH) {
+                    double score = w_0_1;
+                    if (score >= 0) {
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTHEAST) {
+                    double score = w_1_1;
+                    if (score >= 0) {
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTHWEST) {
+                    double score = w_m1_1;
+                    if (score >= 0) {
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 1 -> {
+                if (moveDir != Direction.NORTHEAST) {
+                    double score = w_1_1;
+                    if (score >= 0) {
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTH) {
+                    double score = w_0_1;
+                    if (score >= 0) {
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.EAST) {
+                    double score = w_1_0;
+                    if (score >= 0) {
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.EAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 2 -> {
+                if (moveDir != Direction.EAST) {
+                    double score = w_1_0;
+                    if (score >= 0) {
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.EAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTHEAST) {
+                    double score = w_1_1;
+                    if (score >= 0) {
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTHEAST) {
+                    double score = w_1_m1;
+                    if (score >= 0) {
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 3 -> {
+                if (moveDir != Direction.SOUTHEAST) {
+                    double score = w_1_m1;
+                    if (score >= 0) {
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTH) {
+                    double score = w_0_m1;
+                    if (score >= 0) {
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.EAST) {
+                    double score = w_1_0;
+                    if (score >= 0) {
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.EAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 4 -> {
+                if (moveDir != Direction.SOUTH) {
+                    double score = w_0_m1;
+                    if (score >= 0) {
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTHEAST) {
+                    double score = w_1_m1;
+                    if (score >= 0) {
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTHWEST) {
+                    double score = w_m1_m1;
+                    if (score >= 0) {
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 5 -> {
+                if (moveDir != Direction.SOUTHWEST) {
+                    double score = w_m1_m1;
+                    if (score >= 0) {
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTH) {
+                    double score = w_0_m1;
+                    if (score >= 0) {
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.WEST) {
+                    double score = w_m1_0;
+                    if (score >= 0) {
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.WEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 6 -> {
+                if (moveDir != Direction.WEST) {
+                    double score = w_m1_0;
+                    if (score >= 0) {
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.WEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTHWEST) {
+                    double score = w_m1_1;
+                    if (score >= 0) {
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTHWEST) {
+                    double score = w_m1_m1;
+                    if (score >= 0) {
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 7 -> {
+                if (moveDir != Direction.NORTHWEST) {
+                    double score = w_m1_1;
+                    if (score >= 0) {
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTH) {
+                    double score = w_0_1;
+                    if (score >= 0) {
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.WEST) {
+                    double score = w_m1_0;
+                    if (score >= 0) {
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.WEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            default -> { }
+        }
+    }
+
     private static void moveN() throws GameActionException {
         if (!CombatCommon.canMoveN) return;
         curMoveLoc = myLoc.add(Direction.NORTH);
@@ -2892,6 +3568,7 @@ private static void placeNNN() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTH);
                 bestMoveDir = Direction.NORTH;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.NORTH;
             }
         }
@@ -2904,6 +3581,7 @@ private static void placeNENN() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTHEAST);
                 bestMoveDir = Direction.NORTH;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.NORTH;
             }
         }
@@ -2916,6 +3594,7 @@ private static void placeNWNN() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTHWEST);
                 bestMoveDir = Direction.NORTH;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.NORTH;
             }
         }
@@ -2937,6 +3616,7 @@ private static void placeNENEN() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTHEAST);
                 bestMoveDir = Direction.NORTH;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.NORTHEAST;
             }
         }
@@ -2949,6 +3629,7 @@ private static void placeNNEN() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTH);
                 bestMoveDir = Direction.NORTH;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.NORTHEAST;
             }
         }
@@ -2961,6 +3642,7 @@ private static void placeENEN() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.EAST);
                 bestMoveDir = Direction.NORTH;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.NORTHEAST;
             }
         }
@@ -2982,6 +3664,7 @@ private static void placeNWNWN() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTHWEST);
                 bestMoveDir = Direction.NORTH;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.NORTHWEST;
             }
         }
@@ -2994,6 +3677,7 @@ private static void placeNNWN() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTH);
                 bestMoveDir = Direction.NORTH;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.NORTHWEST;
             }
         }
@@ -3006,6 +3690,7 @@ private static void placeWNWN() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.WEST);
                 bestMoveDir = Direction.NORTH;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.NORTHWEST;
             }
         }
@@ -3038,6 +3723,7 @@ private static void placeNENENE() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTHEAST);
                 bestMoveDir = Direction.NORTHEAST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.NORTHEAST;
             }
         }
@@ -3050,6 +3736,7 @@ private static void placeNNENE() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTH);
                 bestMoveDir = Direction.NORTHEAST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.NORTHEAST;
             }
         }
@@ -3062,6 +3749,7 @@ private static void placeENENE() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.EAST);
                 bestMoveDir = Direction.NORTHEAST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.NORTHEAST;
             }
         }
@@ -3083,6 +3771,7 @@ private static void placeNNNE() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTH);
                 bestMoveDir = Direction.NORTHEAST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.NORTH;
             }
         }
@@ -3095,6 +3784,7 @@ private static void placeNENNE() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTHEAST);
                 bestMoveDir = Direction.NORTHEAST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.NORTH;
             }
         }
@@ -3107,6 +3797,7 @@ private static void placeNWNNE() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTHWEST);
                 bestMoveDir = Direction.NORTHEAST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.NORTH;
             }
         }
@@ -3128,6 +3819,7 @@ private static void placeEENE() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.EAST);
                 bestMoveDir = Direction.NORTHEAST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.EAST;
             }
         }
@@ -3140,6 +3832,7 @@ private static void placeNEENE() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTHEAST);
                 bestMoveDir = Direction.NORTHEAST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.EAST;
             }
         }
@@ -3152,6 +3845,7 @@ private static void placeSEENE() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTHEAST);
                 bestMoveDir = Direction.NORTHEAST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.EAST;
             }
         }
@@ -3184,6 +3878,7 @@ private static void placeEEE() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.EAST);
                 bestMoveDir = Direction.EAST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.EAST;
             }
         }
@@ -3196,6 +3891,7 @@ private static void placeNEEE() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTHEAST);
                 bestMoveDir = Direction.EAST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.EAST;
             }
         }
@@ -3208,6 +3904,7 @@ private static void placeSEEE() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTHEAST);
                 bestMoveDir = Direction.EAST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.EAST;
             }
         }
@@ -3229,6 +3926,7 @@ private static void placeNENEE() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTHEAST);
                 bestMoveDir = Direction.EAST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.NORTHEAST;
             }
         }
@@ -3241,6 +3939,7 @@ private static void placeNNEE() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTH);
                 bestMoveDir = Direction.EAST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.NORTHEAST;
             }
         }
@@ -3253,6 +3952,7 @@ private static void placeENEE() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.EAST);
                 bestMoveDir = Direction.EAST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.NORTHEAST;
             }
         }
@@ -3274,6 +3974,7 @@ private static void placeSESEE() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTHEAST);
                 bestMoveDir = Direction.EAST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.SOUTHEAST;
             }
         }
@@ -3286,6 +3987,7 @@ private static void placeSSEE() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTH);
                 bestMoveDir = Direction.EAST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.SOUTHEAST;
             }
         }
@@ -3298,6 +4000,7 @@ private static void placeESEE() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.EAST);
                 bestMoveDir = Direction.EAST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.SOUTHEAST;
             }
         }
@@ -3330,6 +4033,7 @@ private static void placeSESESE() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTHEAST);
                 bestMoveDir = Direction.SOUTHEAST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.SOUTHEAST;
             }
         }
@@ -3342,6 +4046,7 @@ private static void placeSSESE() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTH);
                 bestMoveDir = Direction.SOUTHEAST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.SOUTHEAST;
             }
         }
@@ -3354,6 +4059,7 @@ private static void placeESESE() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.EAST);
                 bestMoveDir = Direction.SOUTHEAST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.SOUTHEAST;
             }
         }
@@ -3375,6 +4081,7 @@ private static void placeSSSE() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTH);
                 bestMoveDir = Direction.SOUTHEAST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.SOUTH;
             }
         }
@@ -3387,6 +4094,7 @@ private static void placeSESSE() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTHEAST);
                 bestMoveDir = Direction.SOUTHEAST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.SOUTH;
             }
         }
@@ -3399,6 +4107,7 @@ private static void placeSWSSE() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTHWEST);
                 bestMoveDir = Direction.SOUTHEAST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.SOUTH;
             }
         }
@@ -3420,6 +4129,7 @@ private static void placeEESE() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.EAST);
                 bestMoveDir = Direction.SOUTHEAST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.EAST;
             }
         }
@@ -3432,6 +4142,7 @@ private static void placeNEESE() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTHEAST);
                 bestMoveDir = Direction.SOUTHEAST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.EAST;
             }
         }
@@ -3444,6 +4155,7 @@ private static void placeSEESE() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTHEAST);
                 bestMoveDir = Direction.SOUTHEAST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.EAST;
             }
         }
@@ -3476,6 +4188,7 @@ private static void placeSSS() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTH);
                 bestMoveDir = Direction.SOUTH;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.SOUTH;
             }
         }
@@ -3488,6 +4201,7 @@ private static void placeSESS() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTHEAST);
                 bestMoveDir = Direction.SOUTH;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.SOUTH;
             }
         }
@@ -3500,6 +4214,7 @@ private static void placeSWSS() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTHWEST);
                 bestMoveDir = Direction.SOUTH;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.SOUTH;
             }
         }
@@ -3521,6 +4236,7 @@ private static void placeSESES() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTHEAST);
                 bestMoveDir = Direction.SOUTH;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.SOUTHEAST;
             }
         }
@@ -3533,6 +4249,7 @@ private static void placeSSES() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTH);
                 bestMoveDir = Direction.SOUTH;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.SOUTHEAST;
             }
         }
@@ -3545,6 +4262,7 @@ private static void placeESES() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.EAST);
                 bestMoveDir = Direction.SOUTH;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.SOUTHEAST;
             }
         }
@@ -3566,6 +4284,7 @@ private static void placeSWSWS() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTHWEST);
                 bestMoveDir = Direction.SOUTH;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.SOUTHWEST;
             }
         }
@@ -3578,6 +4297,7 @@ private static void placeSSWS() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTH);
                 bestMoveDir = Direction.SOUTH;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.SOUTHWEST;
             }
         }
@@ -3590,6 +4310,7 @@ private static void placeWSWS() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.WEST);
                 bestMoveDir = Direction.SOUTH;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.SOUTHWEST;
             }
         }
@@ -3622,6 +4343,7 @@ private static void placeSWSWSW() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTHWEST);
                 bestMoveDir = Direction.SOUTHWEST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.SOUTHWEST;
             }
         }
@@ -3634,6 +4356,7 @@ private static void placeSSWSW() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTH);
                 bestMoveDir = Direction.SOUTHWEST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.SOUTHWEST;
             }
         }
@@ -3646,6 +4369,7 @@ private static void placeWSWSW() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.WEST);
                 bestMoveDir = Direction.SOUTHWEST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.SOUTHWEST;
             }
         }
@@ -3667,6 +4391,7 @@ private static void placeSSSW() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTH);
                 bestMoveDir = Direction.SOUTHWEST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.SOUTH;
             }
         }
@@ -3679,6 +4404,7 @@ private static void placeSESSW() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTHEAST);
                 bestMoveDir = Direction.SOUTHWEST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.SOUTH;
             }
         }
@@ -3691,6 +4417,7 @@ private static void placeSWSSW() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTHWEST);
                 bestMoveDir = Direction.SOUTHWEST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.SOUTH;
             }
         }
@@ -3712,6 +4439,7 @@ private static void placeWWSW() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.WEST);
                 bestMoveDir = Direction.SOUTHWEST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.WEST;
             }
         }
@@ -3724,6 +4452,7 @@ private static void placeNWWSW() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTHWEST);
                 bestMoveDir = Direction.SOUTHWEST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.WEST;
             }
         }
@@ -3736,6 +4465,7 @@ private static void placeSWWSW() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTHWEST);
                 bestMoveDir = Direction.SOUTHWEST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.WEST;
             }
         }
@@ -3768,6 +4498,7 @@ private static void placeWWW() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.WEST);
                 bestMoveDir = Direction.WEST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.WEST;
             }
         }
@@ -3780,6 +4511,7 @@ private static void placeNWWW() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTHWEST);
                 bestMoveDir = Direction.WEST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.WEST;
             }
         }
@@ -3792,6 +4524,7 @@ private static void placeSWWW() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTHWEST);
                 bestMoveDir = Direction.WEST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.WEST;
             }
         }
@@ -3813,6 +4546,7 @@ private static void placeNWNWW() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTHWEST);
                 bestMoveDir = Direction.WEST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.NORTHWEST;
             }
         }
@@ -3825,6 +4559,7 @@ private static void placeNNWW() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTH);
                 bestMoveDir = Direction.WEST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.NORTHWEST;
             }
         }
@@ -3837,6 +4572,7 @@ private static void placeWNWW() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.WEST);
                 bestMoveDir = Direction.WEST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.NORTHWEST;
             }
         }
@@ -3858,6 +4594,7 @@ private static void placeSWSWW() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTHWEST);
                 bestMoveDir = Direction.WEST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.SOUTHWEST;
             }
         }
@@ -3870,6 +4607,7 @@ private static void placeSSWW() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTH);
                 bestMoveDir = Direction.WEST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.SOUTHWEST;
             }
         }
@@ -3882,6 +4620,7 @@ private static void placeWSWW() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.WEST);
                 bestMoveDir = Direction.WEST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.SOUTHWEST;
             }
         }
@@ -3914,6 +4653,7 @@ private static void placeNWNWNW() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTHWEST);
                 bestMoveDir = Direction.NORTHWEST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.NORTHWEST;
             }
         }
@@ -3926,6 +4666,7 @@ private static void placeNNWNW() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTH);
                 bestMoveDir = Direction.NORTHWEST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.NORTHWEST;
             }
         }
@@ -3938,6 +4679,7 @@ private static void placeWNWNW() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.WEST);
                 bestMoveDir = Direction.NORTHWEST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.NORTHWEST;
             }
         }
@@ -3959,6 +4701,7 @@ private static void placeNNNW() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTH);
                 bestMoveDir = Direction.NORTHWEST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.NORTH;
             }
         }
@@ -3971,6 +4714,7 @@ private static void placeNENNW() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTHEAST);
                 bestMoveDir = Direction.NORTHWEST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.NORTH;
             }
         }
@@ -3983,6 +4727,7 @@ private static void placeNWNNW() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTHWEST);
                 bestMoveDir = Direction.NORTHWEST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.NORTH;
             }
         }
@@ -4004,6 +4749,7 @@ private static void placeWWNW() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.WEST);
                 bestMoveDir = Direction.NORTHWEST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.WEST;
             }
         }
@@ -4016,6 +4762,7 @@ private static void placeNWWNW() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTHWEST);
                 bestMoveDir = Direction.NORTHWEST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.WEST;
             }
         }
@@ -4028,6 +4775,7 @@ private static void placeSWWNW() {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTHWEST);
                 bestMoveDir = Direction.NORTHWEST;
+                bestSecondaryMoveDir = null;
                 bestFacing = Direction.WEST;
             }
         }
@@ -4035,8 +4783,8 @@ private static void placeSWWNW() {
 
     
     public static boolean miniRun() throws GameActionException {
-        if (!rc.isActionReady()) return false;
-        if (!shouldTrap()) return false;
+        if (!verifyCanRun()) return false;
+        shouldDefRun = globalShouldRun();
         if (weightCompTime != time) {
             clearWeights();
             weightSource = myLoc;
@@ -4053,6 +4801,7 @@ private static void placeSWWNW() {
                 double s2 = getWeight(loc2.x - weightSource.x, loc2.y - weightSource.y);
                 for (int i = 0; i < RobotTracker.numEnemies && i < 2; i++) {
                     RobotInfo rinfo = RobotTracker.sortedEnemies[i];
+                    if (!shouldDefRun && !shouldTrap(rinfo)) continue;
                     if (rinfo.location.distanceSquaredTo(myLoc) > 2) break;
                     MapLocation eloc = rinfo.location;
                     {
@@ -4103,6 +4852,7 @@ private static void placeSWWNW() {
                 double s2 = getWeight(loc2.x - weightSource.x, loc2.y - weightSource.y);
                 for (int i = 0; i < RobotTracker.numEnemies && i < 2; i++) {
                     RobotInfo rinfo = RobotTracker.sortedEnemies[i];
+                    if (!shouldDefRun && !shouldTrap(rinfo)) continue;
                     if (rinfo.location.distanceSquaredTo(myLoc) > 2) break;
                     MapLocation eloc = rinfo.location;
                     {
@@ -4153,6 +4903,7 @@ private static void placeSWWNW() {
                 double s2 = getWeight(loc2.x - weightSource.x, loc2.y - weightSource.y);
                 for (int i = 0; i < RobotTracker.numEnemies && i < 2; i++) {
                     RobotInfo rinfo = RobotTracker.sortedEnemies[i];
+                    if (!shouldDefRun && !shouldTrap(rinfo)) continue;
                     if (rinfo.location.distanceSquaredTo(myLoc) > 2) break;
                     MapLocation eloc = rinfo.location;
                     {
@@ -4203,6 +4954,7 @@ private static void placeSWWNW() {
                 double s2 = getWeight(loc2.x - weightSource.x, loc2.y - weightSource.y);
                 for (int i = 0; i < RobotTracker.numEnemies && i < 2; i++) {
                     RobotInfo rinfo = RobotTracker.sortedEnemies[i];
+                    if (!shouldDefRun && !shouldTrap(rinfo)) continue;
                     if (rinfo.location.distanceSquaredTo(myLoc) > 2) break;
                     MapLocation eloc = rinfo.location;
                     {
@@ -4253,6 +5005,7 @@ private static void placeSWWNW() {
                 double s2 = getWeight(loc2.x - weightSource.x, loc2.y - weightSource.y);
                 for (int i = 0; i < RobotTracker.numEnemies && i < 2; i++) {
                     RobotInfo rinfo = RobotTracker.sortedEnemies[i];
+                    if (!shouldDefRun && !shouldTrap(rinfo)) continue;
                     if (rinfo.location.distanceSquaredTo(myLoc) > 2) break;
                     MapLocation eloc = rinfo.location;
                     {
@@ -4303,6 +5056,7 @@ private static void placeSWWNW() {
                 double s2 = getWeight(loc2.x - weightSource.x, loc2.y - weightSource.y);
                 for (int i = 0; i < RobotTracker.numEnemies && i < 2; i++) {
                     RobotInfo rinfo = RobotTracker.sortedEnemies[i];
+                    if (!shouldDefRun && !shouldTrap(rinfo)) continue;
                     if (rinfo.location.distanceSquaredTo(myLoc) > 2) break;
                     MapLocation eloc = rinfo.location;
                     {
@@ -4353,6 +5107,7 @@ private static void placeSWWNW() {
                 double s2 = getWeight(loc2.x - weightSource.x, loc2.y - weightSource.y);
                 for (int i = 0; i < RobotTracker.numEnemies && i < 2; i++) {
                     RobotInfo rinfo = RobotTracker.sortedEnemies[i];
+                    if (!shouldDefRun && !shouldTrap(rinfo)) continue;
                     if (rinfo.location.distanceSquaredTo(myLoc) > 2) break;
                     MapLocation eloc = rinfo.location;
                     {
@@ -4403,6 +5158,7 @@ private static void placeSWWNW() {
                 double s2 = getWeight(loc2.x - weightSource.x, loc2.y - weightSource.y);
                 for (int i = 0; i < RobotTracker.numEnemies && i < 2; i++) {
                     RobotInfo rinfo = RobotTracker.sortedEnemies[i];
+                    if (!shouldDefRun && !shouldTrap(rinfo)) continue;
                     if (rinfo.location.distanceSquaredTo(myLoc) > 2) break;
                     MapLocation eloc = rinfo.location;
                     {

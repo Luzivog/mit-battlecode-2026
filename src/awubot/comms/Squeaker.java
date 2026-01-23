@@ -143,6 +143,12 @@ public class Squeaker {
     }
 
     public static void postTick() throws GameActionException {
+        if (!isRatKing) {
+            if (RobotTracker.catHistNum[0] > 0 || RobotTracker.catHistNum[1] > 0 || RobotTracker.catHistNum[2] > 0 || RobotTracker.catHistNum[3] > 0) {
+                // dont squeak anything if cats are around
+                return;
+            }
+        }
         if (nearRatKing()) {
             indicate("NEAR RAT KING");
             if (GlobalArray.peepSymmetry() == CellTracker.Symmetry.Unknown && CellTracker.isSymmetryKnown()) {

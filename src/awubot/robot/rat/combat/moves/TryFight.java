@@ -30,16 +30,25 @@ public final class TryFight {
     static int dxToTarget;
     static int dyToTarget;
     static int bytecodeStart, bytecodeBudget;
+    static boolean isCat;
+    static int catFightCooldown = -1;
+    static int curCatDist;
 
     public static boolean run() throws GameActionException {
         // Profiler.push();
         md = null;
         fd = null;
+        isCat = false;
         best = -1e9;
+        curCatDist = catDist(myLoc);
         if (RobotTracker.numEnemies > 0) {
             target = new Enemy(RobotTracker.sortedEnemies[0]);
         } else if (RobotTracker.numCats > 0) {
+            if (time - catFightCooldown < 10) {
+                return false;
+            }
             target = new Enemy(RobotTracker.sortedCats[0]);
+            isCat = true;
         } else if (CombatStrategy.funnyTarget != null) {
             target = CombatStrategy.funnyTarget;
         } else {
@@ -50,6 +59,12 @@ public final class TryFight {
         bytecodeStart = Clock.getBytecodeNum();
         bytecodeBudget = Clock.getBytecodesLeft() - 1500;
         selectMoves();
+        if (isCat) {
+            if (md == null) {
+                catFightCooldown = time;
+                return false;
+            }
+        }
         // Profiler.pop("try fight");
         // force this strategy
         // if (md == null) return false;
@@ -87,8 +102,18 @@ public final class TryFight {
         if (!CombatCommon.canMoveN) return;
         moveDir = Direction.NORTH;
         newLoc = myLoc.add(moveDir);
+        if (isCat) {
+            if (catDist(newLoc) >= curCatDist) {
+                return;
+            }
+        }
         dxToTarget = target.location.x - newLoc.x;
         dyToTarget = target.location.y - newLoc.y;
+        if (isCat) {
+            if (canCatSense(-dxToTarget, -dyToTarget, target.direction)) {
+                return; 
+            }
+        }
         switch (newLoc.directionTo(target.location).ordinal()) {
             case 0 -> {
                 faceN();
@@ -163,8 +188,18 @@ public final class TryFight {
         if (!CombatCommon.canMoveNE) return;
         moveDir = Direction.NORTHEAST;
         newLoc = myLoc.add(moveDir);
+        if (isCat) {
+            if (catDist(newLoc) >= curCatDist) {
+                return;
+            }
+        }
         dxToTarget = target.location.x - newLoc.x;
         dyToTarget = target.location.y - newLoc.y;
+        if (isCat) {
+            if (canCatSense(-dxToTarget, -dyToTarget, target.direction)) {
+                return; 
+            }
+        }
         switch (newLoc.directionTo(target.location).ordinal()) {
             case 0 -> {
                 faceN();
@@ -239,8 +274,18 @@ public final class TryFight {
         if (!CombatCommon.canMoveE) return;
         moveDir = Direction.EAST;
         newLoc = myLoc.add(moveDir);
+        if (isCat) {
+            if (catDist(newLoc) >= curCatDist) {
+                return;
+            }
+        }
         dxToTarget = target.location.x - newLoc.x;
         dyToTarget = target.location.y - newLoc.y;
+        if (isCat) {
+            if (canCatSense(-dxToTarget, -dyToTarget, target.direction)) {
+                return; 
+            }
+        }
         switch (newLoc.directionTo(target.location).ordinal()) {
             case 0 -> {
                 faceN();
@@ -315,8 +360,18 @@ public final class TryFight {
         if (!CombatCommon.canMoveSE) return;
         moveDir = Direction.SOUTHEAST;
         newLoc = myLoc.add(moveDir);
+        if (isCat) {
+            if (catDist(newLoc) >= curCatDist) {
+                return;
+            }
+        }
         dxToTarget = target.location.x - newLoc.x;
         dyToTarget = target.location.y - newLoc.y;
+        if (isCat) {
+            if (canCatSense(-dxToTarget, -dyToTarget, target.direction)) {
+                return; 
+            }
+        }
         switch (newLoc.directionTo(target.location).ordinal()) {
             case 0 -> {
                 faceN();
@@ -391,8 +446,18 @@ public final class TryFight {
         if (!CombatCommon.canMoveS) return;
         moveDir = Direction.SOUTH;
         newLoc = myLoc.add(moveDir);
+        if (isCat) {
+            if (catDist(newLoc) >= curCatDist) {
+                return;
+            }
+        }
         dxToTarget = target.location.x - newLoc.x;
         dyToTarget = target.location.y - newLoc.y;
+        if (isCat) {
+            if (canCatSense(-dxToTarget, -dyToTarget, target.direction)) {
+                return; 
+            }
+        }
         switch (newLoc.directionTo(target.location).ordinal()) {
             case 0 -> {
                 faceN();
@@ -467,8 +532,18 @@ public final class TryFight {
         if (!CombatCommon.canMoveSW) return;
         moveDir = Direction.SOUTHWEST;
         newLoc = myLoc.add(moveDir);
+        if (isCat) {
+            if (catDist(newLoc) >= curCatDist) {
+                return;
+            }
+        }
         dxToTarget = target.location.x - newLoc.x;
         dyToTarget = target.location.y - newLoc.y;
+        if (isCat) {
+            if (canCatSense(-dxToTarget, -dyToTarget, target.direction)) {
+                return; 
+            }
+        }
         switch (newLoc.directionTo(target.location).ordinal()) {
             case 0 -> {
                 faceN();
@@ -543,8 +618,18 @@ public final class TryFight {
         if (!CombatCommon.canMoveW) return;
         moveDir = Direction.WEST;
         newLoc = myLoc.add(moveDir);
+        if (isCat) {
+            if (catDist(newLoc) >= curCatDist) {
+                return;
+            }
+        }
         dxToTarget = target.location.x - newLoc.x;
         dyToTarget = target.location.y - newLoc.y;
+        if (isCat) {
+            if (canCatSense(-dxToTarget, -dyToTarget, target.direction)) {
+                return; 
+            }
+        }
         switch (newLoc.directionTo(target.location).ordinal()) {
             case 0 -> {
                 faceN();
@@ -619,8 +704,18 @@ public final class TryFight {
         if (!CombatCommon.canMoveNW) return;
         moveDir = Direction.NORTHWEST;
         newLoc = myLoc.add(moveDir);
+        if (isCat) {
+            if (catDist(newLoc) >= curCatDist) {
+                return;
+            }
+        }
         dxToTarget = target.location.x - newLoc.x;
         dyToTarget = target.location.y - newLoc.y;
+        if (isCat) {
+            if (canCatSense(-dxToTarget, -dyToTarget, target.direction)) {
+                return; 
+            }
+        }
         switch (newLoc.directionTo(target.location).ordinal()) {
             case 0 -> {
                 faceN();
@@ -694,8 +789,18 @@ public final class TryFight {
         if (!CombatCommon.canMoveC) return;
         moveDir = Direction.CENTER;
         newLoc = myLoc.add(moveDir);
+        if (isCat) {
+            if (catDist(newLoc) >= curCatDist) {
+                return;
+            }
+        }
         dxToTarget = target.location.x - newLoc.x;
         dyToTarget = target.location.y - newLoc.y;
+        if (isCat) {
+            if (canCatSense(-dxToTarget, -dyToTarget, target.direction)) {
+                return; 
+            }
+        }
         switch (newLoc.directionTo(target.location).ordinal()) {
             case 0 -> {
                 faceN();
@@ -949,4 +1054,12 @@ public final class TryFight {
         }
     }
 
+
+    private static int catDist(MapLocation loc) {
+        int catX = 2 * target.location.x + 1;
+        int catY = 2 * target.location.y + 1;
+        int dx = catX - 2 * loc.x;
+        int dy = catY - 2 * loc.y;
+        return dx * dx + dy * dy;
+    }
 }

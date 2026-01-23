@@ -74,6 +74,7 @@ public final class TryAttack {
     static MapLocation newLoc;
     static double score;
     static int bytecodeStart, bytecodeBudget;
+    public static boolean isCat;
 
     public static boolean run() throws GameActionException {
         if (!rc.isActionReady()) return false;
@@ -85,6 +86,7 @@ public final class TryAttack {
         bestScore = -1;
         bytecodeStart = Clock.getBytecodeNum();
         bytecodeBudget = Math.min(3000, (int) (Clock.getBytecodesLeft() - 1000) / 2);
+        isCat = false;
         for (int i = 0; i < RobotTracker.numEnemies && i < 3; i++) {
             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
             info = RobotTracker.sortedEnemies[i];
@@ -94,6 +96,7 @@ public final class TryAttack {
             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget);
             else {
                 info = RobotTracker.sortedCats[0];
+                isCat = true;
                 considerEnemy();
             }
         }
@@ -149,6 +152,13 @@ public final class TryAttack {
         moveDir = {{ move_dir }};
         newLoc = myLoc.add({{ move_dir }});
         if (chebyshevDistance(newLoc, info) > 1) return;
+        if (isCat) {
+            int dxToTarget = info.location.x - newLoc.x;
+            int dyToTarget = info.location.y - newLoc.y;
+            if (canCatSense(-dxToTarget, -dyToTarget, info.direction)) {
+                return; 
+            }
+        }
         switch (newLoc.directionTo(t).ordinal()) {
             {% for ord in range(8) %}
             case {{ ord }} -> {
@@ -218,6 +228,13 @@ public final class TryAttack {
             score += CombatStrategy.getCellScoreFor(moveDir, facing, info);
         } else {
             score += CombatStrategy.getCellScoreFor(moveDir, facing, info, CombatStrategy.getBiteDamage());
+        }
+        if (isCat) {
+            int dxToTarget = info.location.x - (myLocX + moveDir.dx);
+            int dyToTarget = info.location.y - (myLocY + moveDir.dy);
+            if (canCatSense(-dxToTarget, -dyToTarget, info.direction)) {
+                return; 
+            }
         }
         if (score > bestScore) {
             bestScore = score;

@@ -278,7 +278,7 @@ public class CombatStrategy extends Strategy {
         }
         // TODO: deal with cats (maybe naman's job?)
         // return false;
-        return true;
+        return false;
     }
 
     public boolean miniTick() throws GameActionException {
@@ -466,7 +466,7 @@ public class CombatStrategy extends Strategy {
     */
     public static boolean shouldFight(RobotInfo enemy) {
         if (enemy.getType() == UnitType.CAT) {
-            return time > 1000 && rc.getAllCheese() > 1000 && RobotTracker.numEnemies == 0 && rc.getHealth() > 50 && rc.getRawCheese() == 0 && myIndex % 5 == 0 && GlobalArray.numberOfRatsAlive >= 16;
+            return time > 500 && rc.getAllCheese() > 1000 && RobotTracker.numEnemies == 0 && rc.getRawCheese() == 0 && GlobalArray.numberOfRatsAlive >= 16;
         }
         if (enemy.getType() == UnitType.RAT_KING) return true;
         if (enemy.getHealth() - getBiteDamage() <= rc.getHealth()) return true;

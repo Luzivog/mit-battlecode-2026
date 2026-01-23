@@ -25,6 +25,7 @@ public class RatKingStrategy extends Strategy {
     @Override
     public boolean runTick() throws GameActionException {
         threatContext.scanThreats();
+        threatContext.scanAllies();
         threatContext.updateDefenseState();
         spawningStrategy.runTick();
         combatStrategy.runTick();

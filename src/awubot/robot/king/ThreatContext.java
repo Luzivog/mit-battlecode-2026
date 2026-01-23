@@ -15,6 +15,9 @@ public class ThreatContext {
     public static final int CAT_DANGER_DIST_SQ = 36;
     public static final int CRITICAL_HP = 150;
     public static final int MAX_TRACKED_CATS = 4;
+    public static final int SWARM_RADIUS_SQ = 25;
+    public static final int SWARM_THRESHOLD = 3;
+    public static final int ALLY_SUPPORT_RADIUS_SQ = 16;
 
     public RobotInfo nearestCat = null;
     public RobotInfo nearestEnemyRat = null;
@@ -28,6 +31,9 @@ public class ThreatContext {
     public int threatVectorX = 0;
     public int threatVectorY = 0;
 
+    public int nearbyEnemyRatCount = 0;
+    public int nearbyAllyCount = 0;
+
     public DefenseState defenseState = DefenseState.NORMAL;
 
     public void reset() {
@@ -40,6 +46,8 @@ public class ThreatContext {
         enemyRatKingDistSq = Integer.MAX_VALUE;
         threatVectorX = 0;
         threatVectorY = 0;
+        nearbyEnemyRatCount = 0;
+        nearbyAllyCount = 0;
     }
 
     public void scanThreats() throws GameActionException {
@@ -75,15 +83,28 @@ public class ThreatContext {
                     enemyRatDistSq = myDistSq;
                     nearestEnemyRat = myEnemy;
                 }
+                if (myDistSq <= SWARM_RADIUS_SQ) {
+                    nearbyEnemyRatCount++;
+                }
             }
         }
 
         computeThreatVector();
     }
 
-    public void computeThreatVector() {
-        if (trackedCatCount == 0) return;
+    public void scanAllies() {
+        for (int i = 0; i < RobotTracker.numAllies && i < RobotTracker.sortedAllies.length; i++) {
+            RobotInfo myAlly = RobotTracker.sortedAllies[i];
+            if (myAlly == null) continue;
+            if (myAlly.getType() != UnitType.BABY_RAT) continue;
+            int myDistSq = myLoc.distanceSquaredTo(myAlly.location);
+            if (myDistSq <= ALLY_SUPPORT_RADIUS_SQ) {
+                nearbyAllyCount++;
+            }
+        }
+    }
 
+    public void computeThreatVector() {
         int myWeightedX = 0;
         int myWeightedY = 0;
         int myTotalWeight = 0;
@@ -91,10 +112,23 @@ public class ThreatContext {
         for (int i = 0; i < trackedCatCount; i++) {
             MapLocation myCatLoc = trackedCats[i].location;
             int myDistSq = myLoc.distanceSquaredTo(myCatLoc);
-            int myWeight = 10000 / (myDistSq + 1);
-
+            int myWeight = 50000 / (myDistSq + 1);
             myWeightedX += (myCatLoc.x - myLoc.x) * myWeight;
             myWeightedY += (myCatLoc.y - myLoc.y) * myWeight;
+            myTotalWeight += myWeight;
+        }
+
+        if (nearestEnemyRatKing != null && enemyRatKingDistSq <= 36) {
+            int myWeight = 20000 / (enemyRatKingDistSq + 1);
+            myWeightedX += (nearestEnemyRatKing.location.x - myLoc.x) * myWeight;
+            myWeightedY += (nearestEnemyRatKing.location.y - myLoc.y) * myWeight;
+            myTotalWeight += myWeight;
+        }
+
+        if (nearbyEnemyRatCount >= SWARM_THRESHOLD && nearestEnemyRat != null) {
+            int myWeight = 5000 * nearbyEnemyRatCount / (enemyRatDistSq + 1);
+            myWeightedX += (nearestEnemyRat.location.x - myLoc.x) * myWeight;
+            myWeightedY += (nearestEnemyRat.location.y - myLoc.y) * myWeight;
             myTotalWeight += myWeight;
         }
 
@@ -112,10 +146,21 @@ public class ThreatContext {
 
         int myHp = rc.getHealth();
 
-        if (myHp <= CRITICAL_HP || catDistSq <= CAT_CRITICAL_DIST_SQ) {
+        int myHpFactor = 300 - myHp;
+        int myScaledCriticalDistSq = CAT_CRITICAL_DIST_SQ + (myHpFactor * CAT_CRITICAL_DIST_SQ) / 300;
+        int myScaledDangerDistSq = CAT_DANGER_DIST_SQ + (myHpFactor * CAT_DANGER_DIST_SQ) / 300;
+
+        if (nearbyAllyCount >= 4) {
+            myScaledDangerDistSq = myScaledDangerDistSq * 2 / 3;  // 33% reduction
+        }
+
+        boolean isSwarmThreat = (nearbyEnemyRatCount >= SWARM_THRESHOLD && enemyRatDistSq <= 16);
+
+        if (myHp <= CRITICAL_HP || catDistSq <= myScaledCriticalDistSq) {
             defenseState = DefenseState.CRITICAL;
-        } else if (catDistSq <= CAT_DANGER_DIST_SQ ||
-                   (enemyRatDistSq <= 8 && myHp <= 250)) {
+        } else if (catDistSq <= myScaledDangerDistSq ||
+                   (enemyRatDistSq <= 8 && myHp <= 250) ||
+                   isSwarmThreat) {
             defenseState = DefenseState.EVADING;
         } else if (nearestCat != null || nearestEnemyRat != null) {
             defenseState = DefenseState.ALERT;

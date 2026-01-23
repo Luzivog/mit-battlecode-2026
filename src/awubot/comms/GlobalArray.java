@@ -335,6 +335,14 @@ public class GlobalArray {
         return rc.readSharedArray(FORMATION_COORDINATOR);
     }
 
+    public static boolean isFormationCoordinatorAlive() throws GameActionException {
+        int myCoordinator = getFormationCoordinator();
+        if (myCoordinator < 0 || myCoordinator >= 5) return false;
+        int myTurnCounters = rc.readSharedArray(RAT_KING_TURN_COUNTER);
+        int myTurnBits = (myTurnCounters >>> (2 * myCoordinator)) & 0b11;
+        return myTurnBits != 0b11;
+    }
+
     public static void clearFormation() throws GameActionException {
         writeSharedArray(FORMATION_COORDINATOR, 0);
         writeSharedArray(FORMATION_TARGET, 0);

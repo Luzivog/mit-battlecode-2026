@@ -41,12 +41,13 @@ public class BabyRat {
             return;
         }
 
-        // indicate("before combat strat: " + Clock.getBytecodeNum());
+        indicate("before combat strat: " + Clock.getBytecodeNum());
         if (combatStrategy.runTick()) {
             return;
         }
 
         // all nonessential systems go here, only run if we are not in combat
+        RobotTracker.reset();
         CellTracker.checkSymmetry();
         RobotTracker.updateHistoricalCatLocs();
 

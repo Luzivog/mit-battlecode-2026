@@ -2182,7 +2182,6 @@ public class Pathfinder {
         }
         nearCat0 = nearCat1 = 0;
         for(int i = 0; i < 4; i++) {
-            indicate("N " + RobotTracker.catHistNum[i]);
             catLoop:
             for(int j = RobotTracker.catHistNum[i] - 1; j >= 0; j--) {
                 var cat = RobotTracker.catHist[i][j];
@@ -3951,7 +3950,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTH + " " + score);
+                    // indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -3997,7 +3996,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.EAST + " " + score);
+                    // indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
@@ -4043,7 +4042,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTH + " " + score);
+                    // indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -4089,7 +4088,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.WEST + " " + score);
+                    // indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
@@ -4135,7 +4134,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHWEST + " " + score);
+                    // indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -4181,7 +4180,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHEAST + " " + score);
+                    // indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
@@ -4227,7 +4226,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHWEST + " " + score);
+                    // indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -4273,7 +4272,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHEAST + " " + score);
+                    // indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -4402,7 +4401,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTH + " " + score);
+                    // indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -4448,7 +4447,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.EAST + " " + score);
+                    // indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
@@ -4494,7 +4493,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTH + " " + score);
+                    // indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -4540,7 +4539,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.WEST + " " + score);
+                    // indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
@@ -4586,7 +4585,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHWEST + " " + score);
+                    // indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -4632,7 +4631,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHEAST + " " + score);
+                    // indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
@@ -4678,7 +4677,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHWEST + " " + score);
+                    // indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -4724,7 +4723,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHEAST + " " + score);
+                    // indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -4833,7 +4832,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTH + " " + score);
+                    // indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -4879,7 +4878,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.EAST + " " + score);
+                    // indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
@@ -4925,7 +4924,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTH + " " + score);
+                    // indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -4971,7 +4970,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.WEST + " " + score);
+                    // indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
@@ -5017,7 +5016,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHWEST + " " + score);
+                    // indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -5063,7 +5062,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHEAST + " " + score);
+                    // indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
@@ -5109,7 +5108,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHWEST + " " + score);
+                    // indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -5155,7 +5154,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHEAST + " " + score);
+                    // indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -5284,7 +5283,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTH + " " + score);
+                    // indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -5330,7 +5329,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.EAST + " " + score);
+                    // indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
@@ -5376,7 +5375,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTH + " " + score);
+                    // indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -5422,7 +5421,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.WEST + " " + score);
+                    // indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
@@ -5468,7 +5467,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHWEST + " " + score);
+                    // indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -5514,7 +5513,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHEAST + " " + score);
+                    // indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
@@ -5560,7 +5559,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHWEST + " " + score);
+                    // indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -5606,7 +5605,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHEAST + " " + score);
+                    // indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -5715,7 +5714,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTH + " " + score);
+                    // indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -5761,7 +5760,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.EAST + " " + score);
+                    // indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
@@ -5807,7 +5806,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTH + " " + score);
+                    // indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -5853,7 +5852,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.WEST + " " + score);
+                    // indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
@@ -5899,7 +5898,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHWEST + " " + score);
+                    // indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -5945,7 +5944,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHEAST + " " + score);
+                    // indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
@@ -5991,7 +5990,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHWEST + " " + score);
+                    // indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -6037,7 +6036,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHEAST + " " + score);
+                    // indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -6166,7 +6165,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTH + " " + score);
+                    // indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -6212,7 +6211,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.EAST + " " + score);
+                    // indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
@@ -6258,7 +6257,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTH + " " + score);
+                    // indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -6304,7 +6303,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.WEST + " " + score);
+                    // indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
@@ -6350,7 +6349,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHWEST + " " + score);
+                    // indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -6396,7 +6395,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHEAST + " " + score);
+                    // indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
@@ -6442,7 +6441,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHWEST + " " + score);
+                    // indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -6488,7 +6487,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHEAST + " " + score);
+                    // indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -6597,7 +6596,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTH + " " + score);
+                    // indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -6643,7 +6642,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.EAST + " " + score);
+                    // indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
@@ -6689,7 +6688,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTH + " " + score);
+                    // indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -6735,7 +6734,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.WEST + " " + score);
+                    // indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
@@ -6781,7 +6780,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHWEST + " " + score);
+                    // indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -6827,7 +6826,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHEAST + " " + score);
+                    // indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
@@ -6873,7 +6872,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHWEST + " " + score);
+                    // indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -6919,7 +6918,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHEAST + " " + score);
+                    // indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -7048,7 +7047,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTH + " " + score);
+                    // indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -7094,7 +7093,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.EAST + " " + score);
+                    // indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
@@ -7140,7 +7139,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTH + " " + score);
+                    // indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -7186,7 +7185,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.WEST + " " + score);
+                    // indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
@@ -7232,7 +7231,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHWEST + " " + score);
+                    // indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -7278,7 +7277,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHEAST + " " + score);
+                    // indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
@@ -7324,7 +7323,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHWEST + " " + score);
+                    // indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -7370,7 +7369,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHEAST + " " + score);
+                    // indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -7479,7 +7478,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTH + " " + score);
+                    // indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -7525,7 +7524,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.EAST + " " + score);
+                    // indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
@@ -7571,7 +7570,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTH + " " + score);
+                    // indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -7617,7 +7616,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.WEST + " " + score);
+                    // indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
@@ -7663,7 +7662,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHWEST + " " + score);
+                    // indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -7709,7 +7708,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHEAST + " " + score);
+                    // indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
@@ -7755,7 +7754,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHWEST + " " + score);
+                    // indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -7801,7 +7800,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHEAST + " " + score);
+                    // indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -7930,7 +7929,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTH + " " + score);
+                    // indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -7976,7 +7975,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.EAST + " " + score);
+                    // indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
@@ -8022,7 +8021,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTH + " " + score);
+                    // indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -8068,7 +8067,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.WEST + " " + score);
+                    // indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
@@ -8114,7 +8113,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHWEST + " " + score);
+                    // indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -8160,7 +8159,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHEAST + " " + score);
+                    // indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
@@ -8206,7 +8205,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHWEST + " " + score);
+                    // indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -8252,7 +8251,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHEAST + " " + score);
+                    // indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -8361,7 +8360,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTH + " " + score);
+                    // indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -8407,7 +8406,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.EAST + " " + score);
+                    // indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
@@ -8453,7 +8452,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTH + " " + score);
+                    // indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -8499,7 +8498,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.WEST + " " + score);
+                    // indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
@@ -8545,7 +8544,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHWEST + " " + score);
+                    // indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -8591,7 +8590,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHEAST + " " + score);
+                    // indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
@@ -8637,7 +8636,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHWEST + " " + score);
+                    // indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -8683,7 +8682,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHEAST + " " + score);
+                    // indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -8812,7 +8811,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTH + " " + score);
+                    // indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -8858,7 +8857,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.EAST + " " + score);
+                    // indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
@@ -8904,7 +8903,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTH + " " + score);
+                    // indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -8950,7 +8949,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.WEST + " " + score);
+                    // indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
@@ -8996,7 +8995,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHWEST + " " + score);
+                    // indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -9042,7 +9041,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHEAST + " " + score);
+                    // indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
@@ -9088,7 +9087,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHWEST + " " + score);
+                    // indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -9134,7 +9133,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHEAST + " " + score);
+                    // indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -9243,7 +9242,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTH + " " + score);
+                    // indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -9289,7 +9288,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.EAST + " " + score);
+                    // indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
@@ -9335,7 +9334,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTH + " " + score);
+                    // indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -9381,7 +9380,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.WEST + " " + score);
+                    // indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
@@ -9427,7 +9426,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHWEST + " " + score);
+                    // indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -9473,7 +9472,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHEAST + " " + score);
+                    // indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
@@ -9519,7 +9518,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHWEST + " " + score);
+                    // indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -9565,7 +9564,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHEAST + " " + score);
+                    // indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;
@@ -9694,7 +9693,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTH + " " + score);
+                    // indicate(Direction.SOUTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTH;
                         bestScore = score;
@@ -9740,7 +9739,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.EAST + " " + score);
+                    // indicate(Direction.EAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.EAST;
                         bestScore = score;
@@ -9786,7 +9785,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTH + " " + score);
+                    // indicate(Direction.NORTH + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTH;
                         bestScore = score;
@@ -9832,7 +9831,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.WEST + " " + score);
+                    // indicate(Direction.WEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.WEST;
                         bestScore = score;
@@ -9878,7 +9877,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHWEST + " " + score);
+                    // indicate(Direction.SOUTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHWEST;
                         bestScore = score;
@@ -9924,7 +9923,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.SOUTHEAST + " " + score);
+                    // indicate(Direction.SOUTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.SOUTHEAST;
                         bestScore = score;
@@ -9970,7 +9969,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHWEST + " " + score);
+                    // indicate(Direction.NORTHWEST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHWEST;
                         bestScore = score;
@@ -10016,7 +10015,7 @@ public class Pathfinder {
                         score -= 500;
                     }
                     score += catPenalty(nextLoc);
-                    indicate(Direction.NORTHEAST + " " + score);
+                    // indicate(Direction.NORTHEAST + " " + score);
                     if(score < bestScore) {
                         bestMove = Direction.NORTHEAST;
                         bestScore = score;

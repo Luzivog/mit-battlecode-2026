@@ -153,6 +153,27 @@ public class CellTracker {
         }
     }
 
+    public static void storeCellKing(MapInfo info) throws GameActionException {
+        var loc = info.getMapLocation();
+        var locX = loc.x;
+        // rc.setIndicatorDot(loc, 255, 255, 0);
+        switch(loc.y) {
+            {% for i in range(MAX_MAP_SIZE) %}
+            case {{i}} -> {
+                if(info.isDirt()) dirt{{i}} |= 1l << locX;
+                else dirt{{i}} &= ~(1l << locX);
+                if((seen{{i}} & 1l << locX) == 0l) {
+                    seen{{i}} |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable{{i}} |= 1l << locX;
+                    }
+                }
+            }
+            {% endfor %}
+        }
+    }
+
     public static void storeVisibleCells() throws GameActionException {
         Profiler.begin();
         int x = myLoc.x, y = myLoc.y;
@@ -225,7 +246,7 @@ public class CellTracker {
         // IF TLE: tone this down
         Profiler.begin();
         for(var info : rc.senseNearbyMapInfos()) {
-            CellTracker.storeCell(info);
+            CellTracker.storeCellKing(info);
         }
         Profiler.end("storeVisibleCellsKing");
     }

@@ -25,6 +25,8 @@ public class RatKing {
         tryPickUpCheese();
         tryUnburyIfStuck();
 
+        indicate("before primary strat: " + Clock.getBytecodeNum());
+
         primaryStrategy.runTick();
     }
 

@@ -6,20 +6,21 @@ from dotenv import load_dotenv
 load_dotenv()
 
 API_BASE = os.getenv("BC_API_BASE", "https://api.battlecode.org/api")
-EPISODE = os.getenv("BC_EPISODE", "bc26java")
+EPISODE = os.getenv("BC_EPISODE", "bc26")
 USERNAME = os.getenv("BC_USERNAME")
 PASSWORD = os.getenv("BC_PASSWORD")
 TEAM_PAGE_START = int(os.getenv("BC_TEAM_PAGE_START", "1"))
-TEAM_PAGE_END = int(os.getenv("BC_TEAM_PAGE_END", "1"))
+TEAM_PAGE_END = int(os.getenv("BC_TEAM_PAGE_END", "2"))
 ONLY_US_TEAMS = os.getenv("BC_ONLY_US", "false").strip().lower() in ("1", "true", "yes")
 REQUEST_SLEEP = float(os.getenv("BC_REQUEST_SLEEP", "0.1"))
+MAPS_PER_SCRIM = 10
 
 # Fill these lists with the exact map names/team names you want to scrim.
 MAPS1 = [
-    "dirtfulcat", "arrows", "dirtpassageway", "meow", "starvation", "thunderdome", "trapped", "DefaultMedium", "DefaultSmall", "evileye"
+    "dirtfulcat", "arrows", "dirtpassageway", "Meow", "starvation", "thunderdome", "trapped", "DefaultMedium", "DefaultSmall", "evileye"
 ]
 MAPS2 = [
-    "cheesefarm", "keepout", "pipes", "rift", "wallsofparadis", "ZeroDay", "sittingducks", "cheeseguardians", "DefaultLarge", "nofreecheese"
+    "cheesefarm", "keepout", "pipes", "rift", "wallsofparadis", "ZeroDay", "sittingducks", "cheeseguardians", "DefaultLarge", "Nofreecheese"
 ]
 SCRIM_TEAMS = [
     "Old But Gold",
@@ -106,7 +107,7 @@ if __name__ == "__main__":
 
     srim_url = f"{API_BASE}/compete/{EPISODE}/request/"
     for team in selected_teams:
-        for map_group in (maps1, maps2):
+        for map_group in [maps1, maps2]:
             payload = {"is_ranked":False,"requested_to":team['id'],"player_order":ORDER,"map_names":map_group}
             print(payload)
             response = requests.post(srim_url, json=payload, headers={"Authorization": f"Bearer {token}"})

@@ -402,7 +402,7 @@ public class Pathfinder {
         {% macro tryDirs(turnDir, reverseDir) %}
         private boolean tryDirs{{turnDir}}() throws GameActionException {
             var tryDir = topDir.rotate{{reverseDir}}().rotate{{reverseDir}}();
-            {% for turns in range(-2, 6) %}
+            {% for turns in range(-2, 7) %}
             {% if turns < 0 %}
             if(stackSize + {{turns}} >= 0
                // only try -2 for diagonals

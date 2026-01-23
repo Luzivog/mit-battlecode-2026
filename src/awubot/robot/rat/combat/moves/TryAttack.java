@@ -34,6 +34,7 @@ public final class TryAttack {
     static double score;
     static int bytecodeStart, bytecodeBudget;
     public static boolean isCat;
+    public static int maxBite, enemyHealth, myHealth;
 
     public static boolean run() throws GameActionException {
         if (!rc.isActionReady()) return false;
@@ -45,6 +46,8 @@ public final class TryAttack {
         bestScore = -1;
         bytecodeStart = Clock.getBytecodeNum();
         bytecodeBudget = Math.min(3000, (int) (Clock.getBytecodesLeft() - 1000) / 2);
+        maxBite = CombatStrategy.getMaxBiteDamage();
+        myHealth = rc.getHealth();
         isCat = false;
         for (int i = 0; i < RobotTracker.numEnemies && i < 3; i++) {
             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
@@ -81,8 +84,9 @@ public final class TryAttack {
         if (chebyshevDistance(myLoc, info) > 2) return;
 
         t = info.location;
+        enemyHealth = info.getHealth();
         weight = 10;
-        if (info.getHealth() <= CombatStrategy.getBiteDamage()) {
+        if (info.getHealth() <= CombatStrategy.getMaxBiteDamage()) {
             weight += 30; // prefer one tapping
         }
 
@@ -939,17 +943,28 @@ public final class TryAttack {
         if (Direction.NORTH != myDir) {
             score += 2; // prefer turning
         }
-        if (rc.getHealth() <= 24) {
+        int damageToDeal = 10;
+        if (myHealth <= 24) {
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTH, info);
+        } else if (enemyHealth <= maxBite) {
+            damageToDeal = enemyHealth;
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTH, info);
         } else {
-            score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTH, info, CombatStrategy.getBiteDamage());
+            if (enemyHealth - maxBite < myHealth) {
+                damageToDeal = Math.max(10, enemyHealth - myHealth + 1);
+            } else if (enemyHealth - maxBite == myHealth) {
+                damageToDeal = maxBite;
+            } else {
+                damageToDeal = 10;
+            }
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTH, info, damageToDeal);
         }
         if (score > bestScore) {
             bestScore = score;
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.NORTH;
-            bestDamage = CombatStrategy.getBiteDamage();
+            bestDamage = damageToDeal;
         }
     }
     private static void faceNE() throws GameActionException {
@@ -961,17 +976,28 @@ public final class TryAttack {
         if (Direction.NORTHEAST != myDir) {
             score += 2; // prefer turning
         }
-        if (rc.getHealth() <= 24) {
+        int damageToDeal = 10;
+        if (myHealth <= 24) {
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHEAST, info);
+        } else if (enemyHealth <= maxBite) {
+            damageToDeal = enemyHealth;
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHEAST, info);
         } else {
-            score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHEAST, info, CombatStrategy.getBiteDamage());
+            if (enemyHealth - maxBite < myHealth) {
+                damageToDeal = Math.max(10, enemyHealth - myHealth + 1);
+            } else if (enemyHealth - maxBite == myHealth) {
+                damageToDeal = maxBite;
+            } else {
+                damageToDeal = 10;
+            }
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHEAST, info, damageToDeal);
         }
         if (score > bestScore) {
             bestScore = score;
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.NORTHEAST;
-            bestDamage = CombatStrategy.getBiteDamage();
+            bestDamage = damageToDeal;
         }
     }
     private static void faceE() throws GameActionException {
@@ -983,17 +1009,28 @@ public final class TryAttack {
         if (Direction.EAST != myDir) {
             score += 2; // prefer turning
         }
-        if (rc.getHealth() <= 24) {
+        int damageToDeal = 10;
+        if (myHealth <= 24) {
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.EAST, info);
+        } else if (enemyHealth <= maxBite) {
+            damageToDeal = enemyHealth;
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.EAST, info);
         } else {
-            score += CombatStrategy.getCellScoreFor(moveDir, Direction.EAST, info, CombatStrategy.getBiteDamage());
+            if (enemyHealth - maxBite < myHealth) {
+                damageToDeal = Math.max(10, enemyHealth - myHealth + 1);
+            } else if (enemyHealth - maxBite == myHealth) {
+                damageToDeal = maxBite;
+            } else {
+                damageToDeal = 10;
+            }
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.EAST, info, damageToDeal);
         }
         if (score > bestScore) {
             bestScore = score;
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.EAST;
-            bestDamage = CombatStrategy.getBiteDamage();
+            bestDamage = damageToDeal;
         }
     }
     private static void faceSE() throws GameActionException {
@@ -1005,17 +1042,28 @@ public final class TryAttack {
         if (Direction.SOUTHEAST != myDir) {
             score += 2; // prefer turning
         }
-        if (rc.getHealth() <= 24) {
+        int damageToDeal = 10;
+        if (myHealth <= 24) {
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHEAST, info);
+        } else if (enemyHealth <= maxBite) {
+            damageToDeal = enemyHealth;
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHEAST, info);
         } else {
-            score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHEAST, info, CombatStrategy.getBiteDamage());
+            if (enemyHealth - maxBite < myHealth) {
+                damageToDeal = Math.max(10, enemyHealth - myHealth + 1);
+            } else if (enemyHealth - maxBite == myHealth) {
+                damageToDeal = maxBite;
+            } else {
+                damageToDeal = 10;
+            }
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHEAST, info, damageToDeal);
         }
         if (score > bestScore) {
             bestScore = score;
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.SOUTHEAST;
-            bestDamage = CombatStrategy.getBiteDamage();
+            bestDamage = damageToDeal;
         }
     }
     private static void faceS() throws GameActionException {
@@ -1027,17 +1075,28 @@ public final class TryAttack {
         if (Direction.SOUTH != myDir) {
             score += 2; // prefer turning
         }
-        if (rc.getHealth() <= 24) {
+        int damageToDeal = 10;
+        if (myHealth <= 24) {
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTH, info);
+        } else if (enemyHealth <= maxBite) {
+            damageToDeal = enemyHealth;
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTH, info);
         } else {
-            score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTH, info, CombatStrategy.getBiteDamage());
+            if (enemyHealth - maxBite < myHealth) {
+                damageToDeal = Math.max(10, enemyHealth - myHealth + 1);
+            } else if (enemyHealth - maxBite == myHealth) {
+                damageToDeal = maxBite;
+            } else {
+                damageToDeal = 10;
+            }
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTH, info, damageToDeal);
         }
         if (score > bestScore) {
             bestScore = score;
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.SOUTH;
-            bestDamage = CombatStrategy.getBiteDamage();
+            bestDamage = damageToDeal;
         }
     }
     private static void faceSW() throws GameActionException {
@@ -1049,17 +1108,28 @@ public final class TryAttack {
         if (Direction.SOUTHWEST != myDir) {
             score += 2; // prefer turning
         }
-        if (rc.getHealth() <= 24) {
+        int damageToDeal = 10;
+        if (myHealth <= 24) {
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHWEST, info);
+        } else if (enemyHealth <= maxBite) {
+            damageToDeal = enemyHealth;
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHWEST, info);
         } else {
-            score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHWEST, info, CombatStrategy.getBiteDamage());
+            if (enemyHealth - maxBite < myHealth) {
+                damageToDeal = Math.max(10, enemyHealth - myHealth + 1);
+            } else if (enemyHealth - maxBite == myHealth) {
+                damageToDeal = maxBite;
+            } else {
+                damageToDeal = 10;
+            }
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHWEST, info, damageToDeal);
         }
         if (score > bestScore) {
             bestScore = score;
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.SOUTHWEST;
-            bestDamage = CombatStrategy.getBiteDamage();
+            bestDamage = damageToDeal;
         }
     }
     private static void faceW() throws GameActionException {
@@ -1071,17 +1141,28 @@ public final class TryAttack {
         if (Direction.WEST != myDir) {
             score += 2; // prefer turning
         }
-        if (rc.getHealth() <= 24) {
+        int damageToDeal = 10;
+        if (myHealth <= 24) {
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.WEST, info);
+        } else if (enemyHealth <= maxBite) {
+            damageToDeal = enemyHealth;
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.WEST, info);
         } else {
-            score += CombatStrategy.getCellScoreFor(moveDir, Direction.WEST, info, CombatStrategy.getBiteDamage());
+            if (enemyHealth - maxBite < myHealth) {
+                damageToDeal = Math.max(10, enemyHealth - myHealth + 1);
+            } else if (enemyHealth - maxBite == myHealth) {
+                damageToDeal = maxBite;
+            } else {
+                damageToDeal = 10;
+            }
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.WEST, info, damageToDeal);
         }
         if (score > bestScore) {
             bestScore = score;
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.WEST;
-            bestDamage = CombatStrategy.getBiteDamage();
+            bestDamage = damageToDeal;
         }
     }
     private static void faceNW() throws GameActionException {
@@ -1093,17 +1174,28 @@ public final class TryAttack {
         if (Direction.NORTHWEST != myDir) {
             score += 2; // prefer turning
         }
-        if (rc.getHealth() <= 24) {
+        int damageToDeal = 10;
+        if (myHealth <= 24) {
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHWEST, info);
+        } else if (enemyHealth <= maxBite) {
+            damageToDeal = enemyHealth;
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHWEST, info);
         } else {
-            score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHWEST, info, CombatStrategy.getBiteDamage());
+            if (enemyHealth - maxBite < myHealth) {
+                damageToDeal = Math.max(10, enemyHealth - myHealth + 1);
+            } else if (enemyHealth - maxBite == myHealth) {
+                damageToDeal = maxBite;
+            } else {
+                damageToDeal = 10;
+            }
+            score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHWEST, info, damageToDeal);
         }
         if (score > bestScore) {
             bestScore = score;
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.NORTHWEST;
-            bestDamage = CombatStrategy.getBiteDamage();
+            bestDamage = damageToDeal;
         }
     }
 
@@ -1282,10 +1374,21 @@ public final class TryAttack {
         if (facing != myDir) {
             score += 2; // prefer turning
         }
-        if (rc.getHealth() <= 24) {
+        int damageToDeal = 10;
+        if (myHealth <= 24) {
+            score += CombatStrategy.getCellScoreFor(moveDir, facing, info);
+        } else if (enemyHealth <= maxBite) {
+            damageToDeal = enemyHealth;
             score += CombatStrategy.getCellScoreFor(moveDir, facing, info);
         } else {
-            score += CombatStrategy.getCellScoreFor(moveDir, facing, info, CombatStrategy.getBiteDamage());
+            if (enemyHealth - maxBite < myHealth) {
+                damageToDeal = Math.max(10, enemyHealth - myHealth + 1);
+            } else if (enemyHealth - maxBite == myHealth) {
+                damageToDeal = maxBite;
+            } else {
+                damageToDeal = 10;
+            }
+            score += CombatStrategy.getCellScoreFor(moveDir, facing, info, damageToDeal);
         }
         if (isCat) {
             int dxToTarget = info.location.x - (myLocX + moveDir.dx);
@@ -1300,22 +1403,463 @@ public final class TryAttack {
             bestMove = null;
             bestSecondaryMove = moveDir;
             bestFacing = facing;
-            bestDamage = CombatStrategy.getBiteDamage();
+            bestDamage = damageToDeal;
         }
     }
 
-    // TODO: optimise and add cat attack
     public static boolean miniRun() throws GameActionException {
         if (!rc.isActionReady()) return false;
-        for (int i = 0; i < RobotTracker.numEnemies && i < 2; i++) {
-            RobotInfo ri = RobotTracker.sortedEnemies[i];
-            if (chebyshevDistance(myLoc, ri) > 1) break;
-            attack(ri, CombatStrategy.getBiteDamage());
-            println("!!!!!!!!!!!!!!mini attacked!!");
-            indicate("accepted mini attack");
-            return true;
+        switch (myDir.ordinal()) {
+            case 0 -> {
+                {
+                    RobotInfo ri = rc.senseRobotAtLocation(myLoc.add(Direction.NORTH));
+                    if (ri != null && ri.getTeam() != team) {
+                        int damageToDeal;
+                        enemyHealth = ri.getHealth();
+                        if (enemyHealth - maxBite < myHealth) {
+                            damageToDeal = Math.max(10, enemyHealth - myHealth + 1);
+                        } else if (enemyHealth - maxBite == myHealth) {
+                            damageToDeal = maxBite;
+                        } else {
+                            damageToDeal = 10;
+                        }
+                        attack(ri, damageToDeal);
+                        println("!!!!!!!!!!!!!!mini attacked!!");
+                        indicate("accepted mini attack");
+                        return true;
+                    }
+                }
+                {
+                    RobotInfo ri = rc.senseRobotAtLocation(myLoc.add(Direction.NORTHEAST));
+                    if (ri != null && ri.getTeam() != team) {
+                        int damageToDeal;
+                        enemyHealth = ri.getHealth();
+                        if (enemyHealth - maxBite < myHealth) {
+                            damageToDeal = Math.max(10, enemyHealth - myHealth + 1);
+                        } else if (enemyHealth - maxBite == myHealth) {
+                            damageToDeal = maxBite;
+                        } else {
+                            damageToDeal = 10;
+                        }
+                        attack(ri, damageToDeal);
+                        println("!!!!!!!!!!!!!!mini attacked!!");
+                        indicate("accepted mini attack");
+                        return true;
+                    }
+                }
+                {
+                    RobotInfo ri = rc.senseRobotAtLocation(myLoc.add(Direction.NORTHWEST));
+                    if (ri != null && ri.getTeam() != team) {
+                        int damageToDeal;
+                        enemyHealth = ri.getHealth();
+                        if (enemyHealth - maxBite < myHealth) {
+                            damageToDeal = Math.max(10, enemyHealth - myHealth + 1);
+                        } else if (enemyHealth - maxBite == myHealth) {
+                            damageToDeal = maxBite;
+                        } else {
+                            damageToDeal = 10;
+                        }
+                        attack(ri, damageToDeal);
+                        println("!!!!!!!!!!!!!!mini attacked!!");
+                        indicate("accepted mini attack");
+                        return true;
+                    }
+                }
+            }
+            case 1 -> {
+                {
+                    RobotInfo ri = rc.senseRobotAtLocation(myLoc.add(Direction.NORTHEAST));
+                    if (ri != null && ri.getTeam() != team) {
+                        int damageToDeal;
+                        enemyHealth = ri.getHealth();
+                        if (enemyHealth - maxBite < myHealth) {
+                            damageToDeal = Math.max(10, enemyHealth - myHealth + 1);
+                        } else if (enemyHealth - maxBite == myHealth) {
+                            damageToDeal = maxBite;
+                        } else {
+                            damageToDeal = 10;
+                        }
+                        attack(ri, damageToDeal);
+                        println("!!!!!!!!!!!!!!mini attacked!!");
+                        indicate("accepted mini attack");
+                        return true;
+                    }
+                }
+                {
+                    RobotInfo ri = rc.senseRobotAtLocation(myLoc.add(Direction.NORTH));
+                    if (ri != null && ri.getTeam() != team) {
+                        int damageToDeal;
+                        enemyHealth = ri.getHealth();
+                        if (enemyHealth - maxBite < myHealth) {
+                            damageToDeal = Math.max(10, enemyHealth - myHealth + 1);
+                        } else if (enemyHealth - maxBite == myHealth) {
+                            damageToDeal = maxBite;
+                        } else {
+                            damageToDeal = 10;
+                        }
+                        attack(ri, damageToDeal);
+                        println("!!!!!!!!!!!!!!mini attacked!!");
+                        indicate("accepted mini attack");
+                        return true;
+                    }
+                }
+                {
+                    RobotInfo ri = rc.senseRobotAtLocation(myLoc.add(Direction.EAST));
+                    if (ri != null && ri.getTeam() != team) {
+                        int damageToDeal;
+                        enemyHealth = ri.getHealth();
+                        if (enemyHealth - maxBite < myHealth) {
+                            damageToDeal = Math.max(10, enemyHealth - myHealth + 1);
+                        } else if (enemyHealth - maxBite == myHealth) {
+                            damageToDeal = maxBite;
+                        } else {
+                            damageToDeal = 10;
+                        }
+                        attack(ri, damageToDeal);
+                        println("!!!!!!!!!!!!!!mini attacked!!");
+                        indicate("accepted mini attack");
+                        return true;
+                    }
+                }
+            }
+            case 2 -> {
+                {
+                    RobotInfo ri = rc.senseRobotAtLocation(myLoc.add(Direction.EAST));
+                    if (ri != null && ri.getTeam() != team) {
+                        int damageToDeal;
+                        enemyHealth = ri.getHealth();
+                        if (enemyHealth - maxBite < myHealth) {
+                            damageToDeal = Math.max(10, enemyHealth - myHealth + 1);
+                        } else if (enemyHealth - maxBite == myHealth) {
+                            damageToDeal = maxBite;
+                        } else {
+                            damageToDeal = 10;
+                        }
+                        attack(ri, damageToDeal);
+                        println("!!!!!!!!!!!!!!mini attacked!!");
+                        indicate("accepted mini attack");
+                        return true;
+                    }
+                }
+                {
+                    RobotInfo ri = rc.senseRobotAtLocation(myLoc.add(Direction.NORTHEAST));
+                    if (ri != null && ri.getTeam() != team) {
+                        int damageToDeal;
+                        enemyHealth = ri.getHealth();
+                        if (enemyHealth - maxBite < myHealth) {
+                            damageToDeal = Math.max(10, enemyHealth - myHealth + 1);
+                        } else if (enemyHealth - maxBite == myHealth) {
+                            damageToDeal = maxBite;
+                        } else {
+                            damageToDeal = 10;
+                        }
+                        attack(ri, damageToDeal);
+                        println("!!!!!!!!!!!!!!mini attacked!!");
+                        indicate("accepted mini attack");
+                        return true;
+                    }
+                }
+                {
+                    RobotInfo ri = rc.senseRobotAtLocation(myLoc.add(Direction.SOUTHEAST));
+                    if (ri != null && ri.getTeam() != team) {
+                        int damageToDeal;
+                        enemyHealth = ri.getHealth();
+                        if (enemyHealth - maxBite < myHealth) {
+                            damageToDeal = Math.max(10, enemyHealth - myHealth + 1);
+                        } else if (enemyHealth - maxBite == myHealth) {
+                            damageToDeal = maxBite;
+                        } else {
+                            damageToDeal = 10;
+                        }
+                        attack(ri, damageToDeal);
+                        println("!!!!!!!!!!!!!!mini attacked!!");
+                        indicate("accepted mini attack");
+                        return true;
+                    }
+                }
+            }
+            case 3 -> {
+                {
+                    RobotInfo ri = rc.senseRobotAtLocation(myLoc.add(Direction.SOUTHEAST));
+                    if (ri != null && ri.getTeam() != team) {
+                        int damageToDeal;
+                        enemyHealth = ri.getHealth();
+                        if (enemyHealth - maxBite < myHealth) {
+                            damageToDeal = Math.max(10, enemyHealth - myHealth + 1);
+                        } else if (enemyHealth - maxBite == myHealth) {
+                            damageToDeal = maxBite;
+                        } else {
+                            damageToDeal = 10;
+                        }
+                        attack(ri, damageToDeal);
+                        println("!!!!!!!!!!!!!!mini attacked!!");
+                        indicate("accepted mini attack");
+                        return true;
+                    }
+                }
+                {
+                    RobotInfo ri = rc.senseRobotAtLocation(myLoc.add(Direction.SOUTH));
+                    if (ri != null && ri.getTeam() != team) {
+                        int damageToDeal;
+                        enemyHealth = ri.getHealth();
+                        if (enemyHealth - maxBite < myHealth) {
+                            damageToDeal = Math.max(10, enemyHealth - myHealth + 1);
+                        } else if (enemyHealth - maxBite == myHealth) {
+                            damageToDeal = maxBite;
+                        } else {
+                            damageToDeal = 10;
+                        }
+                        attack(ri, damageToDeal);
+                        println("!!!!!!!!!!!!!!mini attacked!!");
+                        indicate("accepted mini attack");
+                        return true;
+                    }
+                }
+                {
+                    RobotInfo ri = rc.senseRobotAtLocation(myLoc.add(Direction.EAST));
+                    if (ri != null && ri.getTeam() != team) {
+                        int damageToDeal;
+                        enemyHealth = ri.getHealth();
+                        if (enemyHealth - maxBite < myHealth) {
+                            damageToDeal = Math.max(10, enemyHealth - myHealth + 1);
+                        } else if (enemyHealth - maxBite == myHealth) {
+                            damageToDeal = maxBite;
+                        } else {
+                            damageToDeal = 10;
+                        }
+                        attack(ri, damageToDeal);
+                        println("!!!!!!!!!!!!!!mini attacked!!");
+                        indicate("accepted mini attack");
+                        return true;
+                    }
+                }
+            }
+            case 4 -> {
+                {
+                    RobotInfo ri = rc.senseRobotAtLocation(myLoc.add(Direction.SOUTH));
+                    if (ri != null && ri.getTeam() != team) {
+                        int damageToDeal;
+                        enemyHealth = ri.getHealth();
+                        if (enemyHealth - maxBite < myHealth) {
+                            damageToDeal = Math.max(10, enemyHealth - myHealth + 1);
+                        } else if (enemyHealth - maxBite == myHealth) {
+                            damageToDeal = maxBite;
+                        } else {
+                            damageToDeal = 10;
+                        }
+                        attack(ri, damageToDeal);
+                        println("!!!!!!!!!!!!!!mini attacked!!");
+                        indicate("accepted mini attack");
+                        return true;
+                    }
+                }
+                {
+                    RobotInfo ri = rc.senseRobotAtLocation(myLoc.add(Direction.SOUTHEAST));
+                    if (ri != null && ri.getTeam() != team) {
+                        int damageToDeal;
+                        enemyHealth = ri.getHealth();
+                        if (enemyHealth - maxBite < myHealth) {
+                            damageToDeal = Math.max(10, enemyHealth - myHealth + 1);
+                        } else if (enemyHealth - maxBite == myHealth) {
+                            damageToDeal = maxBite;
+                        } else {
+                            damageToDeal = 10;
+                        }
+                        attack(ri, damageToDeal);
+                        println("!!!!!!!!!!!!!!mini attacked!!");
+                        indicate("accepted mini attack");
+                        return true;
+                    }
+                }
+                {
+                    RobotInfo ri = rc.senseRobotAtLocation(myLoc.add(Direction.SOUTHWEST));
+                    if (ri != null && ri.getTeam() != team) {
+                        int damageToDeal;
+                        enemyHealth = ri.getHealth();
+                        if (enemyHealth - maxBite < myHealth) {
+                            damageToDeal = Math.max(10, enemyHealth - myHealth + 1);
+                        } else if (enemyHealth - maxBite == myHealth) {
+                            damageToDeal = maxBite;
+                        } else {
+                            damageToDeal = 10;
+                        }
+                        attack(ri, damageToDeal);
+                        println("!!!!!!!!!!!!!!mini attacked!!");
+                        indicate("accepted mini attack");
+                        return true;
+                    }
+                }
+            }
+            case 5 -> {
+                {
+                    RobotInfo ri = rc.senseRobotAtLocation(myLoc.add(Direction.SOUTHWEST));
+                    if (ri != null && ri.getTeam() != team) {
+                        int damageToDeal;
+                        enemyHealth = ri.getHealth();
+                        if (enemyHealth - maxBite < myHealth) {
+                            damageToDeal = Math.max(10, enemyHealth - myHealth + 1);
+                        } else if (enemyHealth - maxBite == myHealth) {
+                            damageToDeal = maxBite;
+                        } else {
+                            damageToDeal = 10;
+                        }
+                        attack(ri, damageToDeal);
+                        println("!!!!!!!!!!!!!!mini attacked!!");
+                        indicate("accepted mini attack");
+                        return true;
+                    }
+                }
+                {
+                    RobotInfo ri = rc.senseRobotAtLocation(myLoc.add(Direction.SOUTH));
+                    if (ri != null && ri.getTeam() != team) {
+                        int damageToDeal;
+                        enemyHealth = ri.getHealth();
+                        if (enemyHealth - maxBite < myHealth) {
+                            damageToDeal = Math.max(10, enemyHealth - myHealth + 1);
+                        } else if (enemyHealth - maxBite == myHealth) {
+                            damageToDeal = maxBite;
+                        } else {
+                            damageToDeal = 10;
+                        }
+                        attack(ri, damageToDeal);
+                        println("!!!!!!!!!!!!!!mini attacked!!");
+                        indicate("accepted mini attack");
+                        return true;
+                    }
+                }
+                {
+                    RobotInfo ri = rc.senseRobotAtLocation(myLoc.add(Direction.WEST));
+                    if (ri != null && ri.getTeam() != team) {
+                        int damageToDeal;
+                        enemyHealth = ri.getHealth();
+                        if (enemyHealth - maxBite < myHealth) {
+                            damageToDeal = Math.max(10, enemyHealth - myHealth + 1);
+                        } else if (enemyHealth - maxBite == myHealth) {
+                            damageToDeal = maxBite;
+                        } else {
+                            damageToDeal = 10;
+                        }
+                        attack(ri, damageToDeal);
+                        println("!!!!!!!!!!!!!!mini attacked!!");
+                        indicate("accepted mini attack");
+                        return true;
+                    }
+                }
+            }
+            case 6 -> {
+                {
+                    RobotInfo ri = rc.senseRobotAtLocation(myLoc.add(Direction.WEST));
+                    if (ri != null && ri.getTeam() != team) {
+                        int damageToDeal;
+                        enemyHealth = ri.getHealth();
+                        if (enemyHealth - maxBite < myHealth) {
+                            damageToDeal = Math.max(10, enemyHealth - myHealth + 1);
+                        } else if (enemyHealth - maxBite == myHealth) {
+                            damageToDeal = maxBite;
+                        } else {
+                            damageToDeal = 10;
+                        }
+                        attack(ri, damageToDeal);
+                        println("!!!!!!!!!!!!!!mini attacked!!");
+                        indicate("accepted mini attack");
+                        return true;
+                    }
+                }
+                {
+                    RobotInfo ri = rc.senseRobotAtLocation(myLoc.add(Direction.NORTHWEST));
+                    if (ri != null && ri.getTeam() != team) {
+                        int damageToDeal;
+                        enemyHealth = ri.getHealth();
+                        if (enemyHealth - maxBite < myHealth) {
+                            damageToDeal = Math.max(10, enemyHealth - myHealth + 1);
+                        } else if (enemyHealth - maxBite == myHealth) {
+                            damageToDeal = maxBite;
+                        } else {
+                            damageToDeal = 10;
+                        }
+                        attack(ri, damageToDeal);
+                        println("!!!!!!!!!!!!!!mini attacked!!");
+                        indicate("accepted mini attack");
+                        return true;
+                    }
+                }
+                {
+                    RobotInfo ri = rc.senseRobotAtLocation(myLoc.add(Direction.SOUTHWEST));
+                    if (ri != null && ri.getTeam() != team) {
+                        int damageToDeal;
+                        enemyHealth = ri.getHealth();
+                        if (enemyHealth - maxBite < myHealth) {
+                            damageToDeal = Math.max(10, enemyHealth - myHealth + 1);
+                        } else if (enemyHealth - maxBite == myHealth) {
+                            damageToDeal = maxBite;
+                        } else {
+                            damageToDeal = 10;
+                        }
+                        attack(ri, damageToDeal);
+                        println("!!!!!!!!!!!!!!mini attacked!!");
+                        indicate("accepted mini attack");
+                        return true;
+                    }
+                }
+            }
+            case 7 -> {
+                {
+                    RobotInfo ri = rc.senseRobotAtLocation(myLoc.add(Direction.NORTHWEST));
+                    if (ri != null && ri.getTeam() != team) {
+                        int damageToDeal;
+                        enemyHealth = ri.getHealth();
+                        if (enemyHealth - maxBite < myHealth) {
+                            damageToDeal = Math.max(10, enemyHealth - myHealth + 1);
+                        } else if (enemyHealth - maxBite == myHealth) {
+                            damageToDeal = maxBite;
+                        } else {
+                            damageToDeal = 10;
+                        }
+                        attack(ri, damageToDeal);
+                        println("!!!!!!!!!!!!!!mini attacked!!");
+                        indicate("accepted mini attack");
+                        return true;
+                    }
+                }
+                {
+                    RobotInfo ri = rc.senseRobotAtLocation(myLoc.add(Direction.NORTH));
+                    if (ri != null && ri.getTeam() != team) {
+                        int damageToDeal;
+                        enemyHealth = ri.getHealth();
+                        if (enemyHealth - maxBite < myHealth) {
+                            damageToDeal = Math.max(10, enemyHealth - myHealth + 1);
+                        } else if (enemyHealth - maxBite == myHealth) {
+                            damageToDeal = maxBite;
+                        } else {
+                            damageToDeal = 10;
+                        }
+                        attack(ri, damageToDeal);
+                        println("!!!!!!!!!!!!!!mini attacked!!");
+                        indicate("accepted mini attack");
+                        return true;
+                    }
+                }
+                {
+                    RobotInfo ri = rc.senseRobotAtLocation(myLoc.add(Direction.WEST));
+                    if (ri != null && ri.getTeam() != team) {
+                        int damageToDeal;
+                        enemyHealth = ri.getHealth();
+                        if (enemyHealth - maxBite < myHealth) {
+                            damageToDeal = Math.max(10, enemyHealth - myHealth + 1);
+                        } else if (enemyHealth - maxBite == myHealth) {
+                            damageToDeal = maxBite;
+                        } else {
+                            damageToDeal = 10;
+                        }
+                        attack(ri, damageToDeal);
+                        println("!!!!!!!!!!!!!!mini attacked!!");
+                        indicate("accepted mini attack");
+                        return true;
+                    }
+                }
+            }
+            default -> { }
         }
-        indicate("rejected mini attac");
         return false;
     }
 }

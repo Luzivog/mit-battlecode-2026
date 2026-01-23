@@ -451,7 +451,7 @@ public class CombatStrategy extends Strategy {
         }
     }
 
-    public static int getBiteDamage() {
+    public static int getMaxBiteDamage() {
         if (rc.getAllCheese() < 300) return 10;
         else return 12;
     }
@@ -469,29 +469,11 @@ public class CombatStrategy extends Strategy {
             return time > 500 && rc.getAllCheese() > 1000 && RobotTracker.numEnemies == 0 && rc.getRawCheese() == 0 && GlobalArray.numberOfRatsAlive >= 16 && (rc.getID() % 3 == 0 || time >= 1800);
         }
         if (enemy.getType() == UnitType.RAT_KING) return true;
-        if (enemy.getHealth() - getBiteDamage() <= rc.getHealth()) return true;
+        if (enemy.getHealth() - getMaxBiteDamage() <= rc.getHealth()) return true;
         if (!canSense(enemy.location, myLoc, enemy.direction)) return true;
         if (GlobalArray.nearestRatKing != null && GlobalArray.nearestRatKing.distanceSquaredTo(myLoc) <= 36) return true;
         if (RobotTracker.numAllies > RobotTracker.numEnemies) return true;
         return false;
-    }
-
-    // currently given arbitrary weights
-    public double scoreEnemy(RobotInfo info) {
-        if (info.getType() == UnitType.RAT_KING) return 5;
-        // one tap this guy
-        if (info.getHealth() - GameConstants.RAT_BITE_DAMAGE <= 0) {
-            return 3.0;
-        }
-        if (info.getHealth() <= 30) {
-            // try to get rid of low hp rats
-            return 1.3;
-        }
-        if (info.getHealth() >= rc.getHealth()) {
-            // try to bring enemy rats into napping distance
-            return 1.2;
-        }
-        return 1;
     }
 
     public static int getCheeseNeeded(int damageBuff) {

@@ -125,6 +125,7 @@ public class GlobalArray {
             if (t == time % 3) isFirstKingInRound = false;
             if (t == (time + 2) % 3) {
                 writeSharedArray(RAT_KING_TURN_COUNTER, rc.readSharedArray(RAT_KING_TURN_COUNTER) | (0b11 << (2 * j)));
+                writeSharedArray(RAT_KING_LOC + j, 1023);
             }
         }
         if (isFirstKingInRound) {

@@ -44,6 +44,7 @@ public class GlobalArray {
     private static final int FORMATION_COORDINATOR = 9;
     private static final int FORMATION_TARGET = 10;  // uses 2 slots: 10-11
     private static final int FORMATION_MINE = 12;    // uses 2 slots: 12-13
+    private static final int ALIVE_RAT_COUNT = 14;
     private static final int KING_MINE_ASSIGNMENT = 16;  // 5 slots for 5 kings (indices 16-20)
 
     // layout: 
@@ -55,6 +56,7 @@ public class GlobalArray {
     public static MapLocation nearestRatKing;
     public static int nearestRatKingId;
     public static int ratCounter;
+    public static int numberOfRatsAlive;
 
     private static boolean isFirstKingInRound;
     private static List<Integer> strategyQueue = new ArrayList<>();
@@ -86,6 +88,7 @@ public class GlobalArray {
 
     public static void preTick() throws GameActionException {
         ratCounter = rc.readSharedArray(COUNTER);
+        numberOfRatsAlive = rc.readSharedArray(ALIVE_RAT_COUNT);
         if (isRatKing) {
             updateRatKingTurnCounters();
             if (isFirstKingInRound) {
@@ -109,6 +112,7 @@ public class GlobalArray {
             writeCheeseMines();
             writeRatLoc(kingId);
             rc.writeSharedArray(COUNTER, ratCounter);
+            rc.writeSharedArray(ALIVE_RAT_COUNT, (rc.getCurrentRatCost() - 10) * 2 / 5);
         }
     }
 

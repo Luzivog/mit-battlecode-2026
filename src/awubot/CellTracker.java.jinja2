@@ -112,11 +112,11 @@ public class CellTracker {
             case {{i}} -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable{{i}}     & ~dirt{{i}}
-                        & passable{{i - 1}} & ~dirt{{i - 1}}
-                        & passable{{i + 1}} & ~dirt{{i + 1}}
-                        & passable{{i - 2}} & ~dirt{{i - 2}}
-                        & passable{{i + 2}} & ~dirt{{i + 2}}) == rowMask;
+                        & passable{{i}}
+                        & passable{{i - 1}}
+                        & passable{{i + 1}}
+                        & passable{{i - 2}}
+                        & passable{{i + 2}}) == rowMask;
             }
             {% endfor %}
             default -> {

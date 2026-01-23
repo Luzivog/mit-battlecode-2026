@@ -924,7 +924,7 @@ public class Pathfinder {
         return new int[] {0, 1000};
     }
 
-    public static int reach0, reach1;
+    public static long reach0, reach1;
     public static void computeReachable() {
         CellTracker.computeLocalBfsMasks();
         var localPassable0 = CellTracker.localPassable0;
@@ -938,6 +938,9 @@ public class Pathfinder {
         reach1 = 0xe01 & CellTracker.localPassable1;
         {% for i in range(5) %}
         {{ bfsIteration("reach", "CellTracker.localPassable") }}
+        if(amAfter(11859, 194)) {
+            CellTracker.printLocalMask(reach0, reach1);
+        }
         {% endfor %}
     }
 }

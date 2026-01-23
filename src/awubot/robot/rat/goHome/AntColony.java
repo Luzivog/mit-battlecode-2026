@@ -84,12 +84,13 @@ public class AntColony {
     public static void init() {
         mark = new StringBuilder[5][60];
         resetMarks(0);
-        curMark = base[0];
+        curMark = (char)(base[0] + 2);
     }
     public static void reachedHome() {
         curKing = GlobalArray.nearestRatKingId;
         shouldMark = true;
-        curMark = base[curKing];
+        curMark = (char)(base[curKing] + 2);
+        indicate("reached home " + GlobalArray.nearestRatKing);
     }
     public static void markCurrent() {
         if(!shouldMark) {
@@ -104,15 +105,20 @@ public class AntColony {
     public static void preTick() {
         for(int i = 0; i < 5; i++) {
             var kingLoc = GlobalArray.getRatKing(i);
-            if(lastKingLocs[i] == null && kingLoc != null || !kingLoc.isAdjacentTo(lastKingLocs[i])) {
-                // detected teleportation or first time, reset this king's marks
-                resetMarks(i);
-            } else if(!kingLoc.equals(lastKingLocs[i])) {
-                // king moved, decrease base mark (equivalent to incrementing all existing marks)
-                mark[i][lastKingLocs[i].y].setCharAt(lastKingLocs[i].x, base[i]);
-                base[i]--;
+            if(kingLoc != null) {
+                if(lastKingLocs[i] == null || !kingLoc.isAdjacentTo(lastKingLocs[i])) {
+                    // detected teleportation or first time, reset this king's marks
+                    resetMarks(i);
+                } else if(!kingLoc.equals(lastKingLocs[i])) {
+                    // king moved, decrease base mark (equivalent to incrementing all existing marks)
+                    mark[i][lastKingLocs[i].y + -1].setCharAt(lastKingLocs[i].x + -1, base[i]);
+                    mark[i][lastKingLocs[i].y + 1].setCharAt(lastKingLocs[i].x + -1, base[i]);
+                    mark[i][lastKingLocs[i].y + -1].setCharAt(lastKingLocs[i].x + 1, base[i]);
+                    mark[i][lastKingLocs[i].y + 1].setCharAt(lastKingLocs[i].x + 1, base[i]);
+                    base[i]--;
+                }
+                lastKingLocs[i] = kingLoc;
             }
-            lastKingLocs[i] = kingLoc;
         }
     }
 }

@@ -699,6 +699,7 @@ class BugnavInstance {
 
     // false = halt bug
     boolean advance() throws GameActionException {
+        indicate("ADVANCE");
         if(leftBug != null) {
             // we are currently in the middle of a lookahead
             return doLookahead();
@@ -768,11 +769,13 @@ class BugnavInstance {
         }
         // indicate("winding number " + windingNumber);
         // indicate("direction " + pos + " " + topDir + " " + bottomDir + " " + leftTurn);
+        indicate("ss" + stackSize);
 
         MapLocation greedyLoc = pos.add(bottomDir);
         if(stackSize <= 1) {
             var greedyGood = possiblyPassable(greedyLoc);
             if(greedyGood) {
+                indicate("greedyGood");
                             if(isPassable(greedyLoc) && chebyshevDistance(myLoc, greedyLoc) <= 5) {
                 // indicate("greedyLoc " + greedyLoc);
                 pos = greedyLoc;
@@ -793,6 +796,7 @@ class BugnavInstance {
             var leftGood = possiblyPassable(leftLoc);
             var rightGood = possiblyPassable(rightLoc);
             if(leftGood && !rightGood) {
+                indicate("leftGood");
                             if(isPassable(leftLoc) && chebyshevDistance(myLoc, leftLoc) <= 5) {
                 // indicate("leftLoc " + leftLoc);
                 pos = leftLoc;
@@ -809,6 +813,7 @@ class BugnavInstance {
 
             }
             if(!leftGood && rightGood) {
+                indicate("rightGood");
                             if(isPassable(rightLoc) && chebyshevDistance(myLoc, rightLoc) <= 5) {
                 // indicate("rightLoc " + rightLoc);
                 pos = rightLoc;
@@ -825,6 +830,7 @@ class BugnavInstance {
 
             }
             if(leftGood && rightGood) {
+                indicate("both");
                 if(leftLoc.distanceSquaredTo(target) < rightLoc.distanceSquaredTo(target)) {
                                 if(isPassable(leftLoc) && chebyshevDistance(myLoc, leftLoc) <= 5) {
                 // indicate("leftLoc " + leftLoc);
@@ -895,6 +901,7 @@ class BugnavInstance {
                 emptyStackTurns = 0;
             }
         }
+        indicate("HEREHERE");
         if(leftTurn) {
             return tryDirsLeft();
         } else {
@@ -908,7 +915,7 @@ class BugnavInstance {
            && Math.abs(topDir.dx + topDir.dy) != 1
            )
         {
-            // System.out.println("T " + tryDir);
+            indicate("T " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
@@ -963,7 +970,7 @@ class BugnavInstance {
            // only try -2 for diagonals
            )
         {
-            // System.out.println("T " + tryDir);
+            indicate("T " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
@@ -1015,7 +1022,7 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotateLeft();
         {
-            // System.out.println("T " + tryDir);
+            indicate("T " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
@@ -1066,7 +1073,7 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotateLeft();
         {
-            // System.out.println("T " + tryDir);
+            indicate("T " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
@@ -1118,7 +1125,7 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotateLeft();
         {
-            // System.out.println("T " + tryDir);
+            indicate("T " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
@@ -1170,7 +1177,7 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotateLeft();
         {
-            // System.out.println("T " + tryDir);
+            indicate("T " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
@@ -1222,7 +1229,7 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotateLeft();
         {
-            // System.out.println("T " + tryDir);
+            indicate("T " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
@@ -1274,7 +1281,7 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotateLeft();
         {
-            // System.out.println("T " + tryDir);
+            indicate("T " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
@@ -1336,7 +1343,7 @@ class BugnavInstance {
            && Math.abs(topDir.dx + topDir.dy) != 1
            )
         {
-            // System.out.println("T " + tryDir);
+            indicate("T " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
@@ -1391,7 +1398,7 @@ class BugnavInstance {
            // only try -2 for diagonals
            )
         {
-            // System.out.println("T " + tryDir);
+            indicate("T " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
@@ -1443,7 +1450,7 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotateRight();
         {
-            // System.out.println("T " + tryDir);
+            indicate("T " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
@@ -1494,7 +1501,7 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotateRight();
         {
-            // System.out.println("T " + tryDir);
+            indicate("T " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
@@ -1546,7 +1553,7 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotateRight();
         {
-            // System.out.println("T " + tryDir);
+            indicate("T " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
@@ -1598,7 +1605,7 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotateRight();
         {
-            // System.out.println("T " + tryDir);
+            indicate("T " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
@@ -1650,7 +1657,7 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotateRight();
         {
-            // System.out.println("T " + tryDir);
+            indicate("T " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
@@ -1702,7 +1709,7 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotateRight();
         {
-            // System.out.println("T " + tryDir);
+            indicate("T " + tryDir);
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
@@ -1946,7 +1953,9 @@ public class Pathfinder {
         }
         int shade = 255;
         // Profiler.begin();
+        indicate("lastDist " + lastDist);
         if((!isRatKing || myLoc.equals(bug.pos)) && (lastDist < 3 || RobotTracker.allySet.contains(bug.pos))) {
+            indicate("HERE");
             bugLoop: {
                 rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
                 Profiler.begin();

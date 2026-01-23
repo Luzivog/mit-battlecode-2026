@@ -46,6 +46,7 @@ public class GoHomeStrategy extends Strategy {
             int bestX = -1, bestY = -1;
             var x = myLocX - 5;
             var y = myLocY - 5;
+            System.out.println("start " + x + " " + y);
             {
                 if(y >= 0 && y < mapHeight) {
                     var row = g[y];
@@ -205,7 +206,7 @@ public class GoHomeStrategy extends Strategy {
                     y++;
                 } else {
                     y++;
-                    x = 10 - x;
+                    x += 10;
                 }
             }
             {
@@ -367,7 +368,7 @@ public class GoHomeStrategy extends Strategy {
                     y++;
                 } else {
                     y++;
-                    x = 10 - x;
+                    x -= 10;
                 }
             }
             {
@@ -529,7 +530,7 @@ public class GoHomeStrategy extends Strategy {
                     y++;
                 } else {
                     y++;
-                    x = 10 - x;
+                    x += 10;
                 }
             }
             {
@@ -691,7 +692,7 @@ public class GoHomeStrategy extends Strategy {
                     y++;
                 } else {
                     y++;
-                    x = 10 - x;
+                    x -= 10;
                 }
             }
             {
@@ -853,7 +854,7 @@ public class GoHomeStrategy extends Strategy {
                     y++;
                 } else {
                     y++;
-                    x = 10 - x;
+                    x += 10;
                 }
             }
             {
@@ -1002,7 +1003,7 @@ public class GoHomeStrategy extends Strategy {
                     y++;
                 } else {
                     y++;
-                    x = 10 - x;
+                    x -= 10;
                 }
             }
             {
@@ -1164,7 +1165,7 @@ public class GoHomeStrategy extends Strategy {
                     y++;
                 } else {
                     y++;
-                    x = 10 - x;
+                    x += 10;
                 }
             }
             {
@@ -1326,7 +1327,7 @@ public class GoHomeStrategy extends Strategy {
                     y++;
                 } else {
                     y++;
-                    x = 10 - x;
+                    x -= 10;
                 }
             }
             {
@@ -1488,7 +1489,7 @@ public class GoHomeStrategy extends Strategy {
                     y++;
                 } else {
                     y++;
-                    x = 10 - x;
+                    x += 10;
                 }
             }
             {
@@ -1650,7 +1651,7 @@ public class GoHomeStrategy extends Strategy {
                     y++;
                 } else {
                     y++;
-                    x = 10 - x;
+                    x -= 10;
                 }
             }
             {
@@ -1811,17 +1812,19 @@ public class GoHomeStrategy extends Strategy {
                     }
                 } else {
                     y++;
-                    x = 10 - x;
+                    x += 10;
                 }
             }
             Profiler.end("rmq");
 
+            indicate("best " + (int)best);
             if(best == '\uFFFF') {
                 traverseStrategy.updateTarget(kingLoc);
                 traverseStrategy.runTick();
             } else {
                 var bestLoc = new MapLocation(bestX, bestY);
                 Pathfinder.doBfs(bestLoc);
+                indicate("bestLoc = " + bestLoc);
                 rc.setIndicatorLine(myLoc, bestLoc, 0, 0, 255);
             }
         }

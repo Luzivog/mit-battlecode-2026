@@ -16446,7 +16446,7 @@ public class Pathfinder {
         return new int[] {0, 1000};
     }
 
-    public static int reach0, reach1;
+    public static long reach0, reach1;
     public static void computeReachable() {
         CellTracker.computeLocalBfsMasks();
         var localPassable0 = CellTracker.localPassable0;
@@ -16485,6 +16485,9 @@ public class Pathfinder {
     reach0 &= CellTracker.localPassable0;
     reach1 &= CellTracker.localPassable1;
 
+        if(amAfter(11859, 194)) {
+            CellTracker.printLocalMask(reach0, reach1);
+        }
             // we don't need to worry about the "seam" here because it's at the cell we are standing on
     reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
     reach1 |= (reach1 & 0x7feffdffbff7fefl) << 1;
@@ -16498,6 +16501,9 @@ public class Pathfinder {
     reach0 &= CellTracker.localPassable0;
     reach1 &= CellTracker.localPassable1;
 
+        if(amAfter(11859, 194)) {
+            CellTracker.printLocalMask(reach0, reach1);
+        }
             // we don't need to worry about the "seam" here because it's at the cell we are standing on
     reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
     reach1 |= (reach1 & 0x7feffdffbff7fefl) << 1;
@@ -16511,6 +16517,9 @@ public class Pathfinder {
     reach0 &= CellTracker.localPassable0;
     reach1 &= CellTracker.localPassable1;
 
+        if(amAfter(11859, 194)) {
+            CellTracker.printLocalMask(reach0, reach1);
+        }
             // we don't need to worry about the "seam" here because it's at the cell we are standing on
     reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
     reach1 |= (reach1 & 0x7feffdffbff7fefl) << 1;
@@ -16524,6 +16533,9 @@ public class Pathfinder {
     reach0 &= CellTracker.localPassable0;
     reach1 &= CellTracker.localPassable1;
 
+        if(amAfter(11859, 194)) {
+            CellTracker.printLocalMask(reach0, reach1);
+        }
             // we don't need to worry about the "seam" here because it's at the cell we are standing on
     reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
     reach1 |= (reach1 & 0x7feffdffbff7fefl) << 1;
@@ -16537,5 +16549,8 @@ public class Pathfinder {
     reach0 &= CellTracker.localPassable0;
     reach1 &= CellTracker.localPassable1;
 
+        if(amAfter(11859, 194)) {
+            CellTracker.printLocalMask(reach0, reach1);
+        }
     }
 }

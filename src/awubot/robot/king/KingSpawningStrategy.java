@@ -12,19 +12,13 @@ import awubot.comms.GlobalArray;
 public class KingSpawningStrategy extends Strategy {
     private static int numSpawned = 0;
 
-    private static int maxRats(int cheese) {
-        if (cheese < 2700) return 16;
-        if (cheese < 3500) return 24;
-        if (cheese < 5000) return 32;
-        return 48;
-    }
-
     @Override
     public boolean runTick() throws GameActionException {
         indicate("spawned " + numSpawned);
 
-        int maxRatCost = maxRats(rc.getGlobalCheese()) / 4 * 10 + 10;
-        maxRatCost += (GlobalArray.countActiveKings() - 1) * 10;
+        int numKings = Math.max(1, GlobalArray.countRatKings());
+        int extraPerKing = (rc.getGlobalCheese() / 1000) * (numKings - 1);
+        int maxRatCost = 40 * numKings + extraPerKing;
         int thresh = Math.min(rc.getGlobalCheese() / 20 + 10, maxRatCost);
 
         if (RobotTracker.numCats > 0 && RobotTracker.numAllies == 0) {

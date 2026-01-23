@@ -488,6 +488,421 @@ public class Util {
         }
     }
 
+    // a cat on cell (x, y) is actually "centered" on (x + 0.5, y + 0.5) since they have size 2x2
+    // they can see up to sqrt(17) away from their center
+    // they can see an inclusive 180 degree around their facing direction
+    public static boolean canCatSense(int dx, int dy, Direction dir) {
+        switch(dir.ordinal()) {
+            case 0 -> {
+                switch(dx) {
+                    case -3 -> {
+                        switch(dy) {
+                            case 1, 2 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case -2 -> {
+                        switch(dy) {
+                            case 1, 2, 3 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case -1 -> {
+                        switch(dy) {
+                            case 1, 2, 3, 4 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case 0 -> {
+                        switch(dy) {
+                            case 1, 2, 3, 4 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case 1 -> {
+                        switch(dy) {
+                            case 1, 2, 3, 4 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case 2 -> {
+                        switch(dy) {
+                            case 1, 2, 3, 4 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case 3 -> {
+                        switch(dy) {
+                            case 1, 2, 3 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case 4 -> {
+                        switch(dy) {
+                            case 1, 2 -> {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                return false;
+            }
+            case 1 -> {
+                switch(dx) {
+                    case -2 -> {
+                        switch(dy) {
+                            case 3 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case -1 -> {
+                        switch(dy) {
+                            case 2, 3, 4 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case 0 -> {
+                        switch(dy) {
+                            case 1, 2, 3, 4 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case 1 -> {
+                        switch(dy) {
+                            case 0, 1, 2, 3, 4 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case 2 -> {
+                        switch(dy) {
+                            case -1, 0, 1, 2, 3, 4 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case 3 -> {
+                        switch(dy) {
+                            case -2, -1, 0, 1, 2, 3 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case 4 -> {
+                        switch(dy) {
+                            case -1, 0, 1, 2 -> {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                return false;
+            }
+            case 2 -> {
+                switch(dx) {
+                    case 1 -> {
+                        switch(dy) {
+                            case -3, -2, -1, 0, 1, 2, 3, 4 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case 2 -> {
+                        switch(dy) {
+                            case -3, -2, -1, 0, 1, 2, 3, 4 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case 3 -> {
+                        switch(dy) {
+                            case -2, -1, 0, 1, 2, 3 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case 4 -> {
+                        switch(dy) {
+                            case -1, 0, 1, 2 -> {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                return false;
+            }
+            case 3 -> {
+                switch(dx) {
+                    case -2 -> {
+                        switch(dy) {
+                            case -2 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case -1 -> {
+                        switch(dy) {
+                            case -3, -2, -1 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case 0 -> {
+                        switch(dy) {
+                            case -3, -2, -1, 0 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case 1 -> {
+                        switch(dy) {
+                            case -3, -2, -1, 0, 1 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case 2 -> {
+                        switch(dy) {
+                            case -3, -2, -1, 0, 1, 2 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case 3 -> {
+                        switch(dy) {
+                            case -2, -1, 0, 1, 2, 3 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case 4 -> {
+                        switch(dy) {
+                            case -1, 0, 1, 2 -> {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                return false;
+            }
+            case 4 -> {
+                switch(dx) {
+                    case -3 -> {
+                        switch(dy) {
+                            case -1, 0 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case -2 -> {
+                        switch(dy) {
+                            case -2, -1, 0 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case -1 -> {
+                        switch(dy) {
+                            case -3, -2, -1, 0 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case 0 -> {
+                        switch(dy) {
+                            case -3, -2, -1, 0 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case 1 -> {
+                        switch(dy) {
+                            case -3, -2, -1, 0 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case 2 -> {
+                        switch(dy) {
+                            case -3, -2, -1, 0 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case 3 -> {
+                        switch(dy) {
+                            case -2, -1, 0 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case 4 -> {
+                        switch(dy) {
+                            case -1, 0 -> {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                return false;
+            }
+            case 5 -> {
+                switch(dx) {
+                    case -3 -> {
+                        switch(dy) {
+                            case -1, 0, 1, 2 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case -2 -> {
+                        switch(dy) {
+                            case -2, -1, 0, 1, 2, 3 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case -1 -> {
+                        switch(dy) {
+                            case -3, -2, -1, 0, 1, 2 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case 0 -> {
+                        switch(dy) {
+                            case -3, -2, -1, 0, 1 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case 1 -> {
+                        switch(dy) {
+                            case -3, -2, -1, 0 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case 2 -> {
+                        switch(dy) {
+                            case -3, -2, -1 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case 3 -> {
+                        switch(dy) {
+                            case -2 -> {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                return false;
+            }
+            case 6 -> {
+                switch(dx) {
+                    case -3 -> {
+                        switch(dy) {
+                            case -1, 0, 1, 2 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case -2 -> {
+                        switch(dy) {
+                            case -2, -1, 0, 1, 2, 3 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case -1 -> {
+                        switch(dy) {
+                            case -3, -2, -1, 0, 1, 2, 3, 4 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case 0 -> {
+                        switch(dy) {
+                            case -3, -2, -1, 0, 1, 2, 3, 4 -> {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                return false;
+            }
+            case 7 -> {
+                switch(dx) {
+                    case -3 -> {
+                        switch(dy) {
+                            case -1, 0, 1, 2 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case -2 -> {
+                        switch(dy) {
+                            case -2, -1, 0, 1, 2, 3 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case -1 -> {
+                        switch(dy) {
+                            case -1, 0, 1, 2, 3, 4 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case 0 -> {
+                        switch(dy) {
+                            case 0, 1, 2, 3, 4 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case 1 -> {
+                        switch(dy) {
+                            case 1, 2, 3, 4 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case 2 -> {
+                        switch(dy) {
+                            case 2, 3, 4 -> {
+                                return true;
+                            }
+                        }
+                    }
+                    case 3 -> {
+                        switch(dy) {
+                            case 3 -> {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                return false;
+            }
+            default -> {
+                return false;
+            }
+        }
+    }
+
     public static boolean canHardSense(int dx, int dy, Direction dir) {
         switch(dir.ordinal()) {
             case 0 -> {

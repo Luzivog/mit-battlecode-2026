@@ -26,7 +26,7 @@ public class MinerStrategy extends Strategy {
     }
 
     public static boolean deterministicRand(int p, int q) {
-        return myIndex % q < p;
+        return rc.getID() % q < p;
     }
 
     public static boolean shouldExplore() {

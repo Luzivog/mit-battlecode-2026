@@ -200,11 +200,6 @@ public class GlobalArray {
 
     public static MapLocation getRatKing(int i) {
         try {
-
-            int turnCounters = rc.readSharedArray(RAT_KING_TURN_COUNTER);
-            int turnBits = (turnCounters >>> (2 * i)) & 0b11;
-            if (turnBits == 0b11) return null;
-
             int pos = rc.readSharedArray(i + RAT_KING_LOC);
             if (pos == 1023) return null;
             int lsbs = rc.readSharedArray(RAT_KING_LSBS);
@@ -332,24 +327,15 @@ public class GlobalArray {
     }
 
     public static int getFormationCoordinator() throws GameActionException {
-        int myValue = rc.readSharedArray(FORMATION_COORDINATOR);
-        return myValue == 1023 ? -1 : myValue;
+        return rc.readSharedArray(FORMATION_COORDINATOR);
     }
 
     public static void clearFormation() throws GameActionException {
-        writeSharedArray(FORMATION_COORDINATOR, 1023);
+        writeSharedArray(FORMATION_COORDINATOR, 0);
         writeSharedArray(FORMATION_TARGET, 0);
         writeSharedArray(FORMATION_TARGET + 1, 0);
         writeSharedArray(FORMATION_MINE, 0);
         writeSharedArray(FORMATION_MINE + 1, 0);
-    }
-
-    public static boolean isFormationCoordinatorAlive() throws GameActionException {
-        int myCoordinator = getFormationCoordinator();
-        if (myCoordinator < 0) return false;
-        int myTurnCounters = rc.readSharedArray(RAT_KING_TURN_COUNTER);
-        int myTurnBits = (myTurnCounters >>> (2 * myCoordinator)) & 0b11;
-        return myTurnBits != 0b11;
     }
 
     private static int[] encodeExact(MapLocation aLoc) {
@@ -398,9 +384,5 @@ public class GlobalArray {
             myTurnCounter >>= 2;
         }
         return myCount;
-    }
-
-    public static int countMines() throws GameActionException {
-        return Game.knownCheeseMines.size();
     }
 }

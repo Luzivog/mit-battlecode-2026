@@ -111,8 +111,8 @@ public class Util {
     }
 
     public static int chebyshevDistance(MapLocation loc, RobotInfo info) {
-        int dx = loc.x - info.location.x;
-        int dy = loc.y - info.location.y;
+        int dx = info.location.x - loc.x;
+        int dy = info.location.y - loc.y;
         switch (info.getType().ordinal()) {
             case 0:
                 return max(abs(dx), abs(dy));

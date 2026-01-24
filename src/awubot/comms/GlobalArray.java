@@ -3,6 +3,8 @@ package awubot.comms;
 import battlecode.common.*;
 import static awubot.util.Util.*;
 
+import javax.management.RuntimeErrorException;
+
 import awubot.CellTracker;
 import awubot.Game;
 import awubot.util.Profiler;
@@ -103,29 +105,47 @@ public class GlobalArray {
     }
 
     public static int loadSpawnInfo() throws GameActionException {
-        int i = RAT_SPAWN_INFO;
-        while (i < MIN_CHEESE) {
+        MapLocation nearestLoc = null;
+        int nearestPayload = -1;
+        int nearestIndex = -1;
+
+        int deadPayload = -1;
+        int deadIndex = -1;
+
+        for (int i = RAT_SPAWN_INFO; i < MIN_CHEESE; i += 2) {
             int x1 = rc.readSharedArray(i);
-            if (x1 == 1023) throw new RuntimeException("didnt find rat king!");
+            if (x1 == 1023) break;
             int marker = x1 & 127;
             int offInd = marker >>> 3, kingId = marker & 7;
             MapLocation loc = getRatKing(kingId);
+            int lo = rc.readSharedArray(i + 1);
+            int hi = x1 >>> 7;
             if (loc == null) {
                 println("rat king must have died sadge");
-                // assume that this is you
+                deadPayload = (hi << 10) | lo;
+                int indexInList = (i - RAT_SPAWN_INFO) / 2;
+                deadIndex = (ratCounter - indexInList - 1 + 1024) % 1024;
             } else {
                 int dx = offX[offInd], dy = offY[offInd];
                 MapLocation ratLoc = new MapLocation(loc.x + dx, loc.y + dy);
-                if (!ratLoc.equals(myLoc)) continue; // not the guy
+                if (nearestLoc == null || nearestLoc.distanceSquaredTo(myLoc) > ratLoc.distanceSquaredTo(myLoc)) {
+                    nearestLoc = ratLoc;
+                    int indexInList = (i - RAT_SPAWN_INFO) / 2;
+                    nearestIndex = (ratCounter - indexInList - 1 + 1024) % 1024;
+                    nearestPayload = (hi << 10) | lo;
+                }
             }
-            int indexInList = (i - RAT_SPAWN_INFO) / 2;
-            myIndex = (ratCounter - indexInList - 1 + 1024) % 1024;
-            // println("set index to " + myIndex + " for rat at " + myLoc + " from slots " + i + " and " + (i + 1));
-            int hi = x1 >>> 7;
-            int lo = rc.readSharedArray(i + 1);
-            return (hi << 10) | lo;
         }
-        throw new RuntimeException("didnt find rat king!");
+        if (nearestLoc == null) {
+            if (deadPayload == -1) throw new RuntimeException("didnt find comm");
+            myIndex = deadIndex; 
+            return deadPayload;
+        }
+        if (nearestLoc == null || myLoc.distanceSquaredTo(nearestLoc) > 2) {
+            throw new RuntimeException("didnt find comm");
+        }
+        myIndex = nearestIndex;
+        return nearestPayload;
     }
 
     public static void writeSharedArray(int i, int x) throws GameActionException {

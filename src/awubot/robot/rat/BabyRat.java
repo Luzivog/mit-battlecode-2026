@@ -23,7 +23,7 @@ public class BabyRat {
 
     public static void init() throws GameActionException {
         int payload = GlobalArray.loadSpawnInfo();
-        println("BabyRat payload: " + payload + " id " + rc.getID());
+        println("BabyRat payload: " + payload + " id " + rc.getID() + " index " + myIndex);
         primaryStrategy = new MinerStrategy();
         combatStrategy = new CombatStrategy();
     }

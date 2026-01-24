@@ -60,10 +60,10 @@ public class GlobalArray {
 
     private static int ratIdToSpawn = -1;
 
-    private static int[] offX = {-2, -1,  0,  1, -2, 
-                                  2,             -2, 
-                                  2,             -2, 
-                                  2,             -2, 
+    private static int[] offX = {-2, -1,  0,  1,  2, 
+                                 -2,              2, 
+                                 -2,              2, 
+                                 -2,              2, 
                                  -2, -1,  0,  1,  2};
     private static int[] offY = { 2,  2,  2,  2,  2, 
                                   1,              1, 

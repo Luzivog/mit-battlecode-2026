@@ -194,22 +194,14 @@ public class CombatStrategy extends Strategy {
 
         isLastMove = true;
         if (rc.getCarrying() != null) {
-            try {
-                boolean tryThrowRes = TryThrow.run();
-                if (tryThrowRes) return true;
-            } finally {
-                Profiler.pop("try throw", 4000);
-            }
+            boolean tryThrowRes = TryThrow.run();
+            if (tryThrowRes) return true;
             
             boolean tryAttackRes = TryAttack.run();
             if (tryAttackRes) return true;
 
-            try {
-                boolean tryPositionRes = TryPosition.run();
-                if (tryPositionRes) return true;
-            } finally {
-                Profiler.pop("try position", 3000);
-            }
+            boolean tryPositionRes = TryPosition.run();
+            if (tryPositionRes) return true;
             return true; // bruh
         }
 

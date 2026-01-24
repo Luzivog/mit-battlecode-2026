@@ -22,7 +22,6 @@ import awubot.CellTracker;
 import awubot.RobotTracker;
 
 
-
 public final class TryTrap {
     private TryTrap() {
     }
@@ -76,7 +75,7 @@ public final class TryTrap {
     }
 
     public static boolean shouldTrap(RobotInfo info) throws GameActionException {
-        if (rc.getHealth() < 82 && info.getHealth() == 100) {
+        if (info.getHealth() == 100) {
             println("ACCEPEETD CONIDIOTOINIS A;PLOSDKJF;LKAJSDAF;LKJASDA;LKFJDSA;DLKFJSD;LKFJA;SLKDFJ;SLAKJDFL;K");
             return true;
         }
@@ -106,12 +105,8 @@ public final class TryTrap {
         if (best <= 0.5) return false;
         if (bestMoveDir != null) {
             assert(CombatStrategy.performMoves(bestMoveDir, bestFacing));
-            if (!rc.canPlaceRatTrap(bestPlaceLoc)) {
-            }
             rc.placeRatTrap(bestPlaceLoc);
         } else {
-            if (!rc.canPlaceRatTrap(bestPlaceLoc)) {
-            }
             rc.placeRatTrap(bestPlaceLoc);
             assert(CombatStrategy.performMoves(bestSecondaryMoveDir, bestFacing));
         }

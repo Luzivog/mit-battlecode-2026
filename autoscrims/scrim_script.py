@@ -1,3 +1,4 @@
+import argparse
 import time
 import requests
 import os
@@ -35,6 +36,11 @@ SCRIM_TEAMS = [
 # "-" = requester last
 ORDER = "+"
 
+MAP_GROUPS = {
+    "micro": MAPS1,
+    "macro": MAPS2,
+}
+
 def get_teams(start_page=1, end_page=1):
     page = 1
     teams = []
@@ -62,7 +68,48 @@ def _validate_map_list(list_name, maps):
     if len(maps) > MAPS_PER_SCRIM:
         raise SystemExit(f"{list_name} has {len(maps)} maps; max is {MAPS_PER_SCRIM}.")
 
+def _parse_csv(value):
+    return [item.strip() for item in value.split(",") if item.strip()]
+
+def _select_map_groups(maps_arg):
+    requested = _parse_csv(maps_arg)
+    if not requested:
+        raise SystemExit("--maps is empty. Use micro, macro, or both.")
+    groups = []
+    invalid = []
+    for name in requested:
+        key = name.lower()
+        if key in MAP_GROUPS:
+            groups.append((key, _clean_list(MAP_GROUPS[key])))
+        else:
+            invalid.append(name)
+    if invalid:
+        raise SystemExit(f"Unknown --maps value(s): {', '.join(invalid)}. Use micro and/or macro.")
+    return groups
+
+def _select_orders(sides_arg):
+    requested = _parse_csv(sides_arg)
+    if not requested:
+        raise SystemExit("--sides is empty. Use +, -, or ?.")
+    invalid = [side for side in requested if side not in ("+", "-", "?")]
+    if invalid:
+        raise SystemExit(f"Unknown --sides value(s): {', '.join(invalid)}. Use +, -, or ?.")
+    return requested
+
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--maps",
+        default="micro,macro",
+        help="Which map groups to use: micro, macro, or comma-separated list (default: micro,macro).",
+    )
+    parser.add_argument(
+        "--sides",
+        default="+",
+        help='Player order: "+", "-", "?" or comma-separated list (default: +).',
+    )
+    args = parser.parse_args()
+
     if not USERNAME or not PASSWORD:
         raise SystemExit("Set BC_USERNAME and BC_PASSWORD in your environment or .env file.")
 
@@ -74,13 +121,14 @@ if __name__ == "__main__":
     response = requests.post(url, data=payload)
     token = response.json()['access']
 
-    maps1 = _clean_list(MAPS1)
-    maps2 = _clean_list(MAPS2)
+    map_groups = _select_map_groups(args.maps)
     scrim_names = _clean_list(SCRIM_TEAMS)
     if len(scrim_names) == 0:
         raise SystemExit("SCRIM_TEAMS is empty. Add team names to scrim.")
-    _validate_map_list("MAPS1", maps1)
-    _validate_map_list("MAPS2", maps2)
+    for group_name, maps in map_groups:
+        _validate_map_list(group_name, maps)
+
+    orders = _select_orders(args.sides)
 
     teams = get_us_teams(TEAM_PAGE_START, TEAM_PAGE_END) if ONLY_US_TEAMS else get_teams(TEAM_PAGE_START, TEAM_PAGE_END)
     teams_by_name = {_normalize_name(team['name']): team for team in teams}
@@ -108,9 +156,15 @@ if __name__ == "__main__":
 
     srim_url = f"{API_BASE}/compete/{EPISODE}/request/"
     for team in selected_teams:
-        for map_group in [maps1, maps2]:
-            payload = {"is_ranked":False,"requested_to":team['id'],"player_order":ORDER,"map_names":map_group}
-            print(payload)
-            response = requests.post(srim_url, json=payload, headers={"Authorization": f"Bearer {token}"})
-            print(response.json())
-            time.sleep(REQUEST_SLEEP)
+        for group_name, map_group in map_groups:
+            for order in orders:
+                payload = {
+                    "is_ranked": False,
+                    "requested_to": team['id'],
+                    "player_order": order,
+                    "map_names": map_group,
+                }
+                print(payload)
+                response = requests.post(srim_url, json=payload, headers={"Authorization": f"Bearer {token}"})
+                print(response.json())
+                time.sleep(REQUEST_SLEEP)

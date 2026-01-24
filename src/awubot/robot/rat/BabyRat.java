@@ -93,15 +93,19 @@ public class BabyRat {
     private static void tryTransferCheese() throws GameActionException {
         int myCheese = rc.getRawCheese();
         if (myCheese <= 0) return;
-        if (chebyshevDistance(myLoc, GlobalArray.nearestRatKing) > 2) return;
-        // try all possible directions
-        var dir = myDir.rotateLeft();
-        for(int i = 2; i >= 0; i--) {
-            var kingLoc = myLoc.add(dir);
-            if (rc.canTransferCheese(kingLoc, myCheese)) {
-                rc.transferCheese(kingLoc, myCheese);
+        for(int i = 0; i < 5; i++) {
+            var kingLoc = GlobalArray.getRatKing(i);
+            if(kingLoc != null && kingLoc.distanceSquaredTo(myLoc) <= 18) {
+                var dir = kingLoc.directionTo(myLoc).rotateLeft();
+                for(int j = 0; j < 3; j++) {
+                    var loc = kingLoc.add(dir);
+                    if(rc.canTransferCheese(loc, myCheese)) {
+                        rc.transferCheese(loc, myCheese);
+                        return;
+                    }
+                    dir = dir.rotateRight();
+                }
             }
-            dir = dir.rotateRight();
         }
     }
 

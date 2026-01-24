@@ -21,6 +21,18 @@ public class Enemy {
         this.health = health;
     }
 
+    public MapLocation getLocation() {
+        return location;
+    }
+
+    public Direction getDirection() {
+        return direction;
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
     public int hashCode() {
         return (location.hashCode() ^ (direction.ordinal() * 67) ^ (health * health)) & ((1 << 16) - 1);
     }

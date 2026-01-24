@@ -17,6 +17,7 @@ import awubot.util.Util;
 
 public class Game {
     public static boolean DISABLE_OUTPUT = false;
+    public static boolean ALLOW_ALLY_THROWING = true;
 
     public static RobotController rc;
     public static int mapWidth, mapHeight;
@@ -26,7 +27,7 @@ public class Game {
     public static int myLocX, myLocY;
     public static int time;
     public static Direction myDir;
-    public static Team team;
+    public static Team team, enemyTeam;
     public static int myIndex; // estimate of rat index
     public static MapLocation myPreviousLoc;
     public static FastIndexedIntSet knownCheeseMines;
@@ -67,6 +68,8 @@ public class Game {
         time = rc.getRoundNum();
         isRatKing = (rc.getType() == UnitType.RAT_KING);
         team = rc.getTeam();
+        if (team == Team.A) enemyTeam = Team.B;
+        else enemyTeam = Team.A;
         spawn = myLoc;
         knownCheeseMines = new FastIndexedIntSet();
         carryStartTime = -1;

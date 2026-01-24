@@ -81,9 +81,6 @@ public final class TryPosition {
         if ({{ face_dir }} != myDir) {
             score += 2;
         }
-        if (am(11908, 24)) {
-            println("considered pos move " + moveDir + " face " + {{ face_dir }} + " score " + score);
-        }
         if (score > bestScore) {
             bestScore = score;
             bestMove = moveDir;

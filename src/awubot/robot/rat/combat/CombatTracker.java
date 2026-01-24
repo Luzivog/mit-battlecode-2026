@@ -10047,11 +10047,19 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
         if (enemyDx < -3 || enemyDx > 3 || enemyDy < -3 || enemyDy > 3) return base != 0L;
         boolean beforeHigh = target.getHealth() > rc.getHealth();
         boolean afterHigh = (target.getHealth() - damage) > rc.getHealth();
-        if (afterHigh != beforeHigh) {
+        if (rc.getHealth() <= damage || afterHigh != beforeHigh) {
             long sub = enemyMaskForMove(enemyDx, enemyDy, target.direction, moveDir);
             long threat = getMoveThreatMask(moveDir);
-            base -= (sub & threat);
-            base += (sub & getHiddenMask(facing) & threat);
+            if (rc.getHealth() <= damage) {
+                if (beforeHigh) {
+                    base -= (sub & threat);
+                } else {
+                    base -= (sub & getHiddenMask(facing) & threat);
+                }
+            } else {
+                base -= (sub & threat);
+                base += (sub & getHiddenMask(facing) & threat);
+            }
         }
         return base != 0L;
     }

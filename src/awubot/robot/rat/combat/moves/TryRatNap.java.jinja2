@@ -14,6 +14,8 @@ import static awubot.Game.*;
 import static awubot.util.Util.*;
 import static awubot.robot.rat.BabyRat.*;
 import awubot.RobotTracker;
+import awubot.comms.Enemy;
+import awubot.comms.GlobalArray;
 
 public final class TryRatNap {
     private TryRatNap() {
@@ -47,17 +49,41 @@ public final class TryRatNap {
         bestSecondaryMove = null;
         bestScore = -1;
         for (int i = 0; i < RobotTracker.numEnemies && i < 3; i++) {
+            RobotInfo enemy = RobotTracker.sortedEnemies[i];
             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
-            info = RobotTracker.sortedEnemies[i];
+            if (enemy.getType() != UnitType.BABY_RAT) continue;
+            info = enemy;
             t = info.location;
             if (chebyshevDistance(myLoc, t) > 2) continue;
-            if (info.getHealth() <= GameConstants.RAT_BITE_DAMAGE) continue; // just kill
-            if (info.getType() != UnitType.BABY_RAT) continue;
+            if (info.health <= GameConstants.RAT_BITE_DAMAGE) continue; // just kill
             // double weight = scoreEnemy(info);
             weight = 30;
             selectMoves();
             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
             selectSecondaryMoves();
+
+            // allow allies
+            if (Game.ALLOW_ALLY_THROWING && i == 0 && GlobalArray.numberOfRatsAlive >= 12) {
+                int enemyMaxHP = 0;
+                for (int k = 0; k < RobotTracker.numEnemies; k++) {
+                    RobotInfo enemy2 = RobotTracker.sortedEnemies[k];
+                    enemyMaxHP = Math.max(enemyMaxHP, enemy2.getHealth());
+                }
+                if (enemyMaxHP < 40) continue;
+
+                for (int j = 0; j < RobotTracker.numAllies; j++) {
+                    RobotInfo ally = RobotTracker.sortedAllies[j];
+                    if (ally.getType() != UnitType.BABY_RAT) continue;
+                    if (chebyshevDistance(myLoc, ally) > 2) continue;
+                    if (ally.getHealth() >= 30) continue;
+                    info = ally;
+                    t = info.location;
+                    weight = 10;
+                    selectMoves();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
+                    selectSecondaryMoves();
+                }
+            }
         }
         if (bestScore < 0.5) return false;
         if (bestMove != null) {
@@ -77,6 +103,9 @@ public final class TryRatNap {
                 attack(target);
             }
             assert(CombatStrategy.performMoves(bestSecondaryMove, bestFacing));
+        }
+        if (rc.getCarrying() != null && rc.getCarrying().team == team) {
+            rc.setTimelineMarker("COMBAT STRAT: NAP ALLY " + myLoc, 0, 255, 0);
         }
         println("!!!!!!!!!!!!!!!!!!!!!!! napped rat");
         indicate("COMBAT STRAT: NAP");

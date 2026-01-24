@@ -170,14 +170,16 @@ public class CombatStrategy extends Strategy {
 
         isLastMove = true;
         if (rc.getCarrying() != null) {
-            Profiler.push();
             try {
                 boolean tryThrowRes = TryThrow.run();
                 if (tryThrowRes) return true;
             } finally {
                 Profiler.pop("try throw", 4000);
             }
-            Profiler.push();
+            
+            boolean tryAttackRes = TryAttack.run();
+            if (tryAttackRes) return true;
+
             try {
                 boolean tryPositionRes = TryPosition.run();
                 if (tryPositionRes) return true;
@@ -353,19 +355,19 @@ public class CombatStrategy extends Strategy {
     }
 
     public static double getCellScoreFor(Direction moveDir, Direction facing, RobotInfo target, int damage) throws GameActionException {
-        if (CombatTracker.hasThreat(moveDir, facing, target, damage)) return -100;
+        if (CombatTracker.hasThreat(moveDir, facing, target, damage)) return -200;
         return 0;
         // return cellScore[moveDir.ordinal()] - readCellScore(target, moveDir);
     }
 
     public static double getCellScoreFor(Direction moveDir, Direction facing, RobotInfo target) throws GameActionException {
-        if (CombatTracker.hasThreat(moveDir, facing, target)) return -100;
+        if (CombatTracker.hasThreat(moveDir, facing, target)) return -200;
         return 0;
         // return cellScore[moveDir.ordinal()] - readCellScore(target, moveDir);
     }
 
     public static double getCellScoreFor(Direction moveDir, Direction facing) throws GameActionException {
-        if (CombatTracker.hasThreat(moveDir, facing)) return -100;
+        if (CombatTracker.hasThreat(moveDir, facing)) return -200;
         return 0;
         // return cellScore[moveDir.ordinal()];
     }

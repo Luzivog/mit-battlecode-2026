@@ -72,7 +72,7 @@ public final class TryThrow {
     public static boolean run() throws GameActionException {
         if (!rc.isActionReady()) return false;
         bytecodeStart = Clock.getBytecodeNum();
-        bytecodeBudget = Math.min(9000, Clock.getBytecodesLeft() - 2000);
+        bytecodeBudget = Math.min(7000, Clock.getBytecodesLeft() - 4000);
         md = null;
         td = null;
         best = -1e9;
@@ -80,10 +80,10 @@ public final class TryThrow {
         populateThrowGrid();
         selectMoves();
         if (md == null || td == null) {
-            debugThrowFail();
+            // debugThrowFail();
             return true;
         }
-        if (best < 0) {
+        if (best < 0.1) {
             println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TryThrow found no good throws (best=" + best + ")");
             // debugThrowFail();
         }
@@ -106,16 +106,30 @@ public final class TryThrow {
     {% for move_dir in allDirections %}
     private static void move{{ dir_short_map[move_dir] }}() throws GameActionException {
         if (!CombatCommon.canMove{{dir_short_map[move_dir] }}) return;
-        switch (myDir.ordinal()) {
-            {% for ord in range(8) %}
-            case {{ ord }} -> {
-                {% for d in related_map[ord] %}
-                tryThrow{{ dir_short_map[move_dir] }}{{ dir_short_map[d] }}();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+        if (rc.getCarrying().getTeam() == team) {
+            switch (myDir.ordinal()) {
+                {% for ord in range(8) %}
+                case {{ ord }} -> {
+                    {% for d in related_map[ord] %}
+                    tryThrowAlly{{ dir_short_map[move_dir] }}{{ dir_short_map[d] }}();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    {% endfor %}
+                }
                 {% endfor %}
+                default -> { }
             }
-            {% endfor %}
-            default -> { }
+        } else {
+            switch (myDir.ordinal()) {
+                {% for ord in range(8) %}
+                case {{ ord }} -> {
+                    {% for d in related_map[ord] %}
+                    tryThrow{{ dir_short_map[move_dir] }}{{ dir_short_map[d] }}();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    {% endfor %}
+                }
+                {% endfor %}
+                default -> { }
+            }
         }
     }
     {% endfor %}
@@ -355,9 +369,37 @@ public final class TryThrow {
         }
         {% if debug %} println("score for {{ dir_short_map[move_dir] }} then {{ dir_short_map[throw_dir] }}: " + score); {% endif %}
         {% if debug %} println("enemy hit : " + enemyHit); {% endif %}
-        // if (score <= 0.1) return;
         if (score > best) {
             {% if debug %} println("accepted throw {{ dir_short_map[move_dir] }} then {{ dir_short_map[throw_dir] }} with score " + score); {% endif %}
+            best = score;
+            md = {{ move_dir }};
+            td = {{ throw_dir }};
+        }
+    }
+    {% endfor %}
+    {% endfor %}
+
+    {% for move_dir in allDirections %}
+    {% for throw_dir in directions %}
+    private static void tryThrowAlly{{ dir_short_map[move_dir] }}{{ dir_short_map[throw_dir] }}() throws GameActionException {
+        {% set base_dx = dir_dx[move_dir] + dir_dx[throw_dir] %}
+        {% set base_dy = dir_dy[move_dir] + dir_dy[throw_dir] %}
+        MapLocation throwTarget = new MapLocation({{ coord_x(base_dx) }}, {{ coord_y(base_dy) }});
+        if (!rc.canSenseLocation(throwTarget)) return;
+        int moveCost = CombatCommon.movementCost({{ move_dir }}, {{ throw_dir }});
+        if (moveCost == -1) return;
+        if ({{ occ_var(base_dx, base_dy) }} != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        {% set dx = dir_dx[move_dir] + 2 * dir_dx[throw_dir] %}
+        {% set dy = dir_dy[move_dir] + 2 * dir_dy[throw_dir] %}
+        if ({{ occ_var(dx, dy) }} == null || {{ occ_var(dx, dy) }}.getTeam() != enemyTeam) return;
+        if ({{ occ_var(dx, dy) }}.getType() != UnitType.BABY_RAT && {{ occ_var(dx, dy) }}.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        score += {{ occ_var(dx, dy) }}.getHealth() / 10.0;
+        score += CombatStrategy.getCellScoreFor({{ move_dir }}, {{ throw_dir }}, {{ occ_var(dx, dy) }}, 42);
+        if (score > best) {
             best = score;
             md = {{ move_dir }};
             td = {{ throw_dir }};

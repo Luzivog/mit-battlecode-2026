@@ -27,7 +27,7 @@ SCRIM_TEAMS = [
     "Old But Gold",
     "Sloppy Joe Pirates",
     "The Complex Merlin",
-    "muscallonge",
+    # "muscallonge",
     "Blue Dragon"
 ]
 

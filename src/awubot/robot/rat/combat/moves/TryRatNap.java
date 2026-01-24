@@ -13,6 +13,7 @@ import battlecode.common.UnitType;
 import awubot.robot.rat.combat.CombatCommon;
 import awubot.robot.rat.combat.CombatStrategy;
 import static awubot.Game.*;
+import awubot.Game;
 import static awubot.util.Util.*;
 import static awubot.robot.rat.BabyRat.*;
 import awubot.RobotTracker;

@@ -133,7 +133,7 @@ public final class TryThrow {
             // debugThrowFail();
             return true;
         }
-        if (best < 0.1) {
+        if (best < 0.1 && best > -100) { // hack for the case where you cant escape
             println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TryThrow found no good throws (best=" + best + ")");
             // debugThrowFail();
         }

@@ -2,6 +2,7 @@ package awubot.robot.rat;
 
 import battlecode.common.*;
 import awubot.CellTracker;
+import awubot.Pathfinder;
 import awubot.RobotTracker;
 import awubot.comms.GlobalArray;
 import awubot.comms.Squeaker;
@@ -26,6 +27,7 @@ public class BabyRat {
         println("BabyRat payload: " + payload + " id " + rc.getID() + " index " + myIndex);
         primaryStrategy = new MinerStrategy();
         combatStrategy = new CombatStrategy();
+        Pathfinder.init();
     }
 
     public static void run() throws GameActionException {

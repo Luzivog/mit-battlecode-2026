@@ -138,7 +138,22 @@ public class KingMiningStrategy extends Strategy {
 
     private void moveTowardMine() throws GameActionException {
         if (!rc.isMovementReady() || mineTarget == null) return;
-        if (myLoc.distanceSquaredTo(mineTarget) <= 4) return;
+        if (myLoc.distanceSquaredTo(mineTarget) <= 9) {
+            int bestDist = Integer.MAX_VALUE;
+            MapInfo bestInfo = null;
+            for (MapInfo info : rc.senseNearbyMapInfos()) {
+                if (info.getCheeseAmount() > 0) {
+                    int dist = myLoc.distanceSquaredTo(info.getMapLocation());
+                    if (dist < bestDist || (dist == bestDist && info.getCheeseAmount() > bestInfo.getCheeseAmount())) {
+                        bestDist = dist;
+                        bestInfo = info;
+                    }
+                }
+            }
+            if (bestInfo != null) {
+                mineTarget = bestInfo.getMapLocation();
+            }
+        }
         Pathfinder.makeMove(mineTarget);
     }
 

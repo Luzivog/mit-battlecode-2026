@@ -1,3 +1,5 @@
+
+
 package awubot.robot.rat.combat;
 
 import battlecode.common.Direction;

@@ -7,16 +7,6 @@ import java.util.*;
 
 import awubot.CellTracker;
 import awubot.Game;
-{% set related_map = {
-    0: ["Direction.NORTH", "Direction.NORTHEAST", "Direction.NORTHWEST"],
-    1: ["Direction.NORTHEAST", "Direction.NORTH", "Direction.EAST"],
-    2: ["Direction.EAST", "Direction.NORTHEAST", "Direction.SOUTHEAST"],
-    3: ["Direction.SOUTHEAST", "Direction.SOUTH", "Direction.EAST"],
-    4: ["Direction.SOUTH", "Direction.SOUTHEAST", "Direction.SOUTHWEST"],
-    5: ["Direction.SOUTHWEST", "Direction.SOUTH", "Direction.WEST"],
-    6: ["Direction.WEST", "Direction.NORTHWEST", "Direction.SOUTHWEST"],
-    7: ["Direction.NORTHWEST", "Direction.NORTH", "Direction.WEST"],
-} %}
 {% macro can_sense_angle(dir, x, y) -%}
 {%- if dir == "Direction.NORTH" -%}{{- 1 if y >= (x|abs) else 0 -}}
 {%- elif dir == "Direction.NORTHEAST" -%}{{- 1 if x >= 0 and y >= 0 else 0 -}}

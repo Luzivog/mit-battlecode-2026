@@ -34,33 +34,12 @@ import awubot.RobotTracker;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-{% set related_map = {
-        0: ["NORTH", "NORTHEAST", "NORTHWEST"],
-        1: ["NORTHEAST", "NORTH", "EAST"],
-        2: ["EAST", "NORTHEAST", "SOUTHEAST"],
-        3: ["SOUTHEAST", "SOUTH", "EAST"],
-        4: ["SOUTH", "SOUTHEAST", "SOUTHWEST"],
-        5: ["SOUTHWEST", "SOUTH", "WEST"],
-        6: ["WEST", "NORTHWEST", "SOUTHWEST"],
-        7: ["NORTHWEST", "NORTH", "WEST"],
-    } %}
-{% set wide_related_map = {
-        0: ["NORTH", "NORTHEAST", "NORTHWEST", "EAST", "WEST"],
-        1: ["NORTHEAST", "NORTH", "EAST", "NORTHWEST", "SOUTHEAST"],
-        2: ["EAST", "NORTHEAST", "SOUTHEAST", "NORTH", "SOUTH"],
-        3: ["SOUTHEAST", "SOUTH", "EAST", "NORTHEAST", "SOUTHWEST"],
-        4: ["SOUTH", "SOUTHEAST", "SOUTHWEST", "EAST", "WEST"],
-        5: ["SOUTHWEST", "SOUTH", "WEST", "NORTHWEST", "SOUTHEAST"],
-        6: ["WEST", "NORTHWEST", "SOUTHWEST", "NORTH", "SOUTH"],
-        7: ["NORTHWEST", "NORTH", "WEST", "NORTHEAST", "SOUTHWEST"],
-    } %}
-
 {% macro for_related(dir_expr) -%}
 switch ({{dir_expr}}.ordinal()) {
     {% for ord in range(8) %}
     case {{ord}} -> {
         {% for d in related_map[ord] %}
-        {{ caller("Direction." + d) }}
+        {{ caller(d) }}
         {% endfor %}
     }
     {% endfor %}
@@ -73,7 +52,7 @@ switch ({{dir_expr}}.ordinal()) {
     {% for ord in range(8) %}
     case {{ord}} -> {
         {% for d in wide_related_map[ord] %}
-        {{ caller("Direction." + d) }}
+        {{ caller(d) }}
         {% endfor %}
     }
     {% endfor %}

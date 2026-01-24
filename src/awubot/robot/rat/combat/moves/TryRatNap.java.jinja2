@@ -15,48 +15,6 @@ import static awubot.util.Util.*;
 import static awubot.robot.rat.BabyRat.*;
 import awubot.RobotTracker;
 
-{% set related_map = {
-    0: ["Direction.NORTH", "Direction.NORTHEAST", "Direction.NORTHWEST"],
-    1: ["Direction.NORTHEAST", "Direction.NORTH", "Direction.EAST"],
-    2: ["Direction.EAST", "Direction.NORTHEAST", "Direction.SOUTHEAST"],
-    3: ["Direction.SOUTHEAST", "Direction.SOUTH", "Direction.EAST"],
-    4: ["Direction.SOUTH", "Direction.SOUTHEAST", "Direction.SOUTHWEST"],
-    5: ["Direction.SOUTHWEST", "Direction.SOUTH", "Direction.WEST"],
-    6: ["Direction.WEST", "Direction.NORTHWEST", "Direction.SOUTHWEST"],
-    7: ["Direction.NORTHWEST", "Direction.NORTH", "Direction.WEST"],
-} %}
-{% set wide_related_map = {
-    0: ["Direction.NORTH", "Direction.NORTHEAST", "Direction.NORTHWEST", "Direction.EAST", "Direction.WEST"],
-    1: ["Direction.NORTHEAST", "Direction.NORTH", "Direction.EAST", "Direction.NORTHWEST", "Direction.SOUTHEAST"],
-    2: ["Direction.EAST", "Direction.NORTHEAST", "Direction.SOUTHEAST", "Direction.NORTH", "Direction.SOUTH"],
-    3: ["Direction.SOUTHEAST", "Direction.SOUTH", "Direction.EAST", "Direction.NORTHEAST", "Direction.SOUTHWEST"],
-    4: ["Direction.SOUTH", "Direction.SOUTHEAST", "Direction.SOUTHWEST", "Direction.EAST", "Direction.WEST"],
-    5: ["Direction.SOUTHWEST", "Direction.SOUTH", "Direction.WEST", "Direction.NORTHWEST", "Direction.SOUTHEAST"],
-    6: ["Direction.WEST", "Direction.NORTHWEST", "Direction.SOUTHWEST", "Direction.NORTH", "Direction.SOUTH"],
-    7: ["Direction.NORTHWEST", "Direction.NORTH", "Direction.WEST", "Direction.NORTHEAST", "Direction.SOUTHWEST"],
-} %}
-{% set dir_short_map = {
-    "Direction.NORTH": "N",
-    "Direction.NORTHEAST": "NE",
-    "Direction.EAST": "E",
-    "Direction.SOUTHEAST": "SE",
-    "Direction.SOUTH": "S",
-    "Direction.SOUTHWEST": "SW",
-    "Direction.WEST": "W",
-    "Direction.NORTHWEST": "NW",
-    "Direction.CENTER": "C",
-} %}
-{% set dir_opposite_map = {
-    "Direction.NORTH": "Direction.SOUTH",
-    "Direction.NORTHEAST": "Direction.SOUTHWEST",
-    "Direction.EAST": "Direction.WEST",
-    "Direction.SOUTHEAST": "Direction.NORTHWEST",
-    "Direction.SOUTH": "Direction.NORTH",
-    "Direction.SOUTHWEST": "Direction.NORTHEAST",
-    "Direction.WEST": "Direction.EAST",
-    "Direction.NORTHWEST": "Direction.SOUTHEAST",
-} %}
-
 public final class TryRatNap {
     private TryRatNap() {
     }

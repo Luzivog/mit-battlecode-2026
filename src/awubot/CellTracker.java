@@ -1,3 +1,5 @@
+
+
 package awubot;
 
 import battlecode.common.*;

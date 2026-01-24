@@ -1,3 +1,5 @@
+
+
 package awubot.robot.rat.combat.moves;
 
 import battlecode.common.Clock;
@@ -18,8 +20,6 @@ import static awubot.robot.rat.BabyRat.*;
 import awubot.util.Profiler;
 import awubot.CellTracker;
 import awubot.RobotTracker;
-
-
 
 
 

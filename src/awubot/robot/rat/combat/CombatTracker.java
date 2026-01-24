@@ -1,3 +1,5 @@
+
+
 package awubot.robot.rat.combat;
 
 import battlecode.common.Direction;
@@ -18,8 +20,6 @@ import awubot.comms.EnemyManager;
 
 public class CombatTracker {
     private static final int GRID_RADIUS = 2;
-
-
 
 
 

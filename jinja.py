@@ -64,6 +64,19 @@ def radialMask(rsqr, cx, cy):
                 mask0 |= 1 << (9 * y + x)
     return (mask0, mask1)
 
+directions_list = [
+    'Direction.NORTH',
+    'Direction.NORTHEAST',
+    'Direction.EAST',
+    'Direction.SOUTHEAST',
+    'Direction.SOUTH',
+    'Direction.SOUTHWEST',
+    'Direction.WEST',
+    'Direction.NORTHWEST',
+]
+short_directions_list = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']
+all_directions_list = directions_list + ['Direction.CENTER']
+
 
 def make_env():
     env = Environment(
@@ -81,17 +94,31 @@ def make_env():
         "capitalise": capitalise,
         "radialMask": radialMask,
         "MAX_MAP_SIZE": 60,
+        "directions": directions_list,
+        "shortDirections": short_directions_list,
+        "allDirections": all_directions_list,
     })
     return env
 
 
 ENV = make_env()
 ALLOWED_ROOT = Path("src/awubot").resolve()
+TEMPLATES_DIR = (ALLOWED_ROOT / "templates").resolve()
+GLOBAL_EXPORTS = set()
+GLOBAL_EXPORTS_READY = False
 
 
 def _in_allowed_root(path: Path) -> bool:
     try:
         path.resolve().relative_to(ALLOWED_ROOT)
+    except ValueError:
+        return False
+    return True
+
+
+def _is_templates_path(path: Path) -> bool:
+    try:
+        path.resolve().relative_to(TEMPLATES_DIR)
     except ValueError:
         return False
     return True
@@ -112,6 +139,47 @@ def _red(text: str) -> str:
     return text
 
 
+def _global_template_names():
+    if not TEMPLATES_DIR.exists():
+        return []
+    names = []
+    for path in sorted(TEMPLATES_DIR.rglob("*.jinja2")):
+        if path.name.startswith("."):
+            continue
+        name = _template_name(path)
+        if name:
+            names.append(name)
+    return names
+
+
+def _refresh_global_exports():
+    global GLOBAL_EXPORTS_READY
+    for key in list(GLOBAL_EXPORTS):
+        ENV.globals.pop(key, None)
+    GLOBAL_EXPORTS.clear()
+
+    for name in _global_template_names():
+        module = ENV.get_template(name).module
+        for key, val in module.__dict__.items():
+            if key.startswith("_"):
+                continue
+            ENV.globals[key] = val
+            GLOBAL_EXPORTS.add(key)
+
+    GLOBAL_EXPORTS_READY = True
+
+
+def _wrap_with_globals(template_name: str):
+    global_templates = _global_template_names()
+    if not global_templates:
+        return ENV.get_template(template_name)
+    parts = []
+    for name in global_templates:
+        parts.append(f"{{% include '{name}' %}}")
+    parts.append(f"{{% include '{template_name}' %}}")
+    return ENV.from_string("\n".join(parts))
+
+
 def compile_template(path: Path, debug: bool):
     if not path.name.endswith(".jinja2"):
         return
@@ -119,48 +187,36 @@ def compile_template(path: Path, debug: bool):
         return
     if not _in_allowed_root(path):
         return  # skip other directories
+    if _is_templates_path(path):
+        return  # skip global templates
     template_name = _template_name(path)
     if not template_name:
         return
 
     try:
+        if not GLOBAL_EXPORTS_READY:
+            _refresh_global_exports()
         output_path = path.with_suffix("")
-        template = ENV.get_template(template_name)
+        template = _wrap_with_globals(template_name)
 
         rendered = template.render(
-            directions=[
-                'Direction.NORTH',
-                'Direction.NORTHEAST',
-                'Direction.EAST',
-                'Direction.SOUTHEAST',
-                'Direction.SOUTH',
-                'Direction.SOUTHWEST',
-                'Direction.WEST',
-                'Direction.NORTHWEST'
-            ],
-            shortDirections=['N','NE','E','SE','S','SW','W','NW'],
-            allDirections=[
-                'Direction.NORTH',
-                'Direction.NORTHEAST',
-                'Direction.EAST',
-                'Direction.SOUTHEAST',
-                'Direction.SOUTH',
-                'Direction.SOUTHWEST',
-                'Direction.WEST',
-                'Direction.NORTHWEST',
-                'Direction.CENTER'
-            ],
+            directions=directions_list,
+            shortDirections=short_directions_list,
+            allDirections=all_directions_list,
             debug=debug
         )
 
         output_path.write_text(rendered)
-        print(f"[compiled] {path} → {output_path}")
+        print(f"[compiled] {path} -> {output_path}")
 
     except Exception as e:
         print(_red(f"[error] {path}: {e}"))
 
 
 def compile_all(debug: bool):
+    global GLOBAL_EXPORTS_READY
+    GLOBAL_EXPORTS_READY = False
+    _refresh_global_exports()
     for path in ALLOWED_ROOT.rglob("*.jinja2"):
         compile_template(path, debug)
 
@@ -175,15 +231,31 @@ class JinjaWatchHandler(FileSystemEventHandler):
 
     def on_modified(self, event):
         if not event.is_directory:
-            compile_template(Path(event.src_path), self.debug)
+            path = Path(event.src_path)
+            if _is_templates_path(path):
+                ENV.cache.clear()
+                compile_all(self.debug)
+                return
+            compile_template(path, self.debug)
 
     def on_created(self, event):
         if not event.is_directory:
-            compile_template(Path(event.src_path), self.debug)
+            path = Path(event.src_path)
+            if _is_templates_path(path):
+                ENV.cache.clear()
+                compile_all(self.debug)
+                return
+            compile_template(path, self.debug)
 
     def on_moved(self, event):
         if not event.is_directory:
-            compile_template(Path(event.dest_path), self.debug)
+            src_path = Path(event.src_path)
+            dest_path = Path(event.dest_path)
+            if _is_templates_path(src_path) or _is_templates_path(dest_path):
+                ENV.cache.clear()
+                compile_all(self.debug)
+                return
+            compile_template(dest_path, self.debug)
 
 
 # =====================

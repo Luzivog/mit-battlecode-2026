@@ -99,11 +99,8 @@ public final class TryTrap {
 
         bytecodeStart = Clock.getBytecodeNum();
         bytecodeBudget = Math.min(5000, (int) (Clock.getBytecodesLeft() - 1000) / 2);
-        Profiler.push();
         computeWeights();
-        Profiler.pop("TryTrap.computeWeights");
         resetBest();
-        println("remainig bytecodee budget before selecting moves: " + (Clock.getBytecodeNum() - bytecodeStart));
         selectMoves();
         selectSecondaryMoves();
         if (best <= 0.5) return false;

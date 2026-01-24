@@ -612,12 +612,10 @@ public class Pathfinder {
     }
 
     private static long localPassableExceptAllies0, localPassableExceptAllies1;
-    private static boolean dirtAllowed;
     private static long nearCat0, nearCat1;
     private static void prepareBfsMasks() throws GameActionException {
         Profiler.begin();
         CellTracker.computeLocalBfsMasks();
-        dirtAllowed = Config.allowDirt();
         {% macro writePos(pos, mask, val, boundsCheck) %}
         {% set op = "|=" if val else "&= ~" %}
         {
@@ -770,11 +768,11 @@ public class Pathfinder {
         }
         {% endif %}
         // {
-        //     if(amAfter(13427, 91)) {
-        //         // indicatorString = "";
-        //         CellTracker.printLocalMask(d{{i}}0, d{{i}}1);
-        //         // CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
-        //         // Clock.yield();
+        //     if(amAfter(11068, 9)) {
+        //         indicatorString = "";
+        //         // CellTracker.printLocalMask(d{{i}}0, d{{i}}1);
+        //         CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
+        //         Clock.yield();
         //         // indicatorString = "";
         //         // CellTracker.printLocalMask(nearCat0, nearCat1);
         //         // Clock.yield();
@@ -811,8 +809,7 @@ public class Pathfinder {
                 boolean isDirt = false;
                 if(rc.canMove({{dir}})
                    || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
-                   && (Config.allowDirt() || CellTracker.isWallAdjacent(nextLoc))) {
+                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
                     double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                     // prefer staying away from walls, this helps when changing direction
                     if(
@@ -882,10 +879,8 @@ public class Pathfinder {
         {{ bfsIteration("d%s" % i, "localPassableExceptAllies") }}
         long d{{i + 2}}0 = 0l;
         long d{{i + 2}}1 = 0l;
-        if(dirtAllowed) {
-            d{{i + 2}}0 = d{{i}}0;
-            d{{i + 2}}1 = d{{i}}1;
-        }
+        d{{i + 2}}0 = d{{i}}0;
+        d{{i + 2}}1 = d{{i}}1;
         d{{i}}0 &= ~CellTracker.localDirt0;
         d{{i}}1 &= ~CellTracker.localDirt1;
         d{{i + 1}}0 |= d{{i}}0;

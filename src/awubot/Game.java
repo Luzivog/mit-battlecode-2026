@@ -49,11 +49,11 @@ public class Game {
     }
 
     public static boolean isRatKing;
-    public static int kingId;
+    public static int kingId = -1;
 
     public static void convertKing() throws GameActionException {
         isRatKing = true;
-        kingId = GlobalArray.countRatKings();
+        GlobalArray.initRatKing();
     }
 
     public static void init(RobotController rc) throws GameActionException {

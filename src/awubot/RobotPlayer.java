@@ -26,7 +26,7 @@ public class RobotPlayer {
         Rng.seed();
         Rng.init();
         EnemyManager.init();
-        GlobalArray.initGlobalArray();
+        GlobalArray.init();
         CellTracker.init();
 
         while (true) {

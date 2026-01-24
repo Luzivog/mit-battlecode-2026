@@ -58,101 +58,62 @@ public class GlobalArray {
     public static int ratCounter;
     public static int numberOfRatsAlive;
 
-    private static int ratIdToSpawn = -1;
-
-    private static int[] offX = {-2, -1,  0,  1,  2, 
-                                 -2,              2, 
-                                 -2,              2, 
-                                 -2,              2, 
-                                 -2, -1,  0,  1,  2};
-    private static int[] offY = { 2,  2,  2,  2,  2, 
-                                  1,              1, 
-                                  0,              0, 
-                                 -1,             -1, 
-                                 -2, -2, -2, -2, -2};
-    
-
-    private static MapLocation toSpawn = null;
-    private static int pendingPayload = -1;
+    private static MapLocation toSpawn0 = null, toSpawn1 = null;
+    private static int pendingPayload0 = -1, pendingPayload1 = -1;
 
     public static void registerSpawnedRat(MapLocation loc, int payload) throws GameActionException {
-        // println("prepared rat to spawn at " + loc + " with payload " + payload);
-        toSpawn = loc;
-        pendingPayload = payload;
+        println("prepared rat to spawn at " + loc + " with payload " + payload);
+        toSpawn1 = loc;
+        pendingPayload1 = payload;
     }
 
     private static void _registerSpawnedRat(MapLocation loc, int payload) throws GameActionException {
         // println("actually registering spawned rat at " + loc + " with payload " + payload);
         assert(0 <= payload && payload < 8192);
-        int dx = loc.x - myLocX;
-        int dy = loc.y - myLocY;
-        int offInd = 0;
-        while (offInd < 16 && !(offX[offInd] == dx && offY[offInd] == dy)) offInd++;
-        assert(offInd < 16);
-        int marker = (offInd << 3) | (kingId); // width 7
+        int dx = loc.x - myLocX + 4;
+        assert(0 <= dx && dx < 9);
+        int dy = loc.y - myLocY + 4;
+        assert(0 <= dy && dy < 9);
+        int marker = (dx * 9) + dy;
 
         int lo = payload & 1023, hi = payload >>> 10;
         assert(0 <= hi && hi < 8);
         assert(0 <= lo && lo < 1024);
 
-        int i = RAT_SPAWN_INFO;
-        while (i < MIN_CHEESE && rc.readSharedArray(i) != 1023) i += 2;
-        assert(i < MIN_CHEESE);
-        writeSharedArray(i, (hi << 7) | marker);
-        writeSharedArray(i + 1, lo);
-        // println("registered spawned rat at " + loc + " with payload " + payload + " into slots " + i + " and " + (i + 1));
+        writeSharedArray(RAT_SPAWN_INFO + kingId * 2, (hi << 7) | marker);
+        writeSharedArray(RAT_SPAWN_INFO + kingId * 2 + 1, lo);
+        // println("registered spawned rat at " + loc + " with payload " + payload + " into slots " + (RAT_SPAWN_INFO + kingId * 2) + " and " + (RAT_SPAWN_INFO + kingId * 2 + 1));
         ratCounter++;
     }
 
     public static int loadSpawnInfo() throws GameActionException {
-        MapLocation nearestLoc = null;
-        int nearestPayload = -1;
-        int nearestIndex = -1;
-
-        int deadPayload = -1;
-        int deadIndex = -1;
-
-        for (int i = RAT_SPAWN_INFO; i < MIN_CHEESE; i += 2) {
-            int x1 = rc.readSharedArray(i);
-            if (x1 == 1023) break;
-            int marker = x1 & 127;
-            int offInd = marker >>> 3, kingId = marker & 7;
-            MapLocation loc = getRatKing(kingId);
+        for (int i = RAT_SPAWN_INFO, king = 0; i < MIN_CHEESE; i += 2, king++) {
+            int x = rc.readSharedArray(i);
+            // println("looking for spawn info in slot " + i + ": " + x);
+            if (x == 1023) continue;
+            int marker = x & 127;
+            MapLocation loc = getRatKing(king);
+            // println("location: " + loc);
+            if (loc == null) continue;
+            int dx = (marker / 9) - 4;
+            int dy = (marker % 9) - 4;
+            // println("dx, dy: " + dx + ", " + dy);
+            if (!loc.translate(dx, dy).equals(myLoc)) continue;
             int lo = rc.readSharedArray(i + 1);
-            int hi = x1 >>> 7;
-            if (loc == null) {
-                println("rat king must have died sadge");
-                deadPayload = (hi << 10) | lo;
-                int indexInList = (i - RAT_SPAWN_INFO) / 2;
-                deadIndex = (ratCounter - indexInList - 1 + 1024) % 1024;
-            } else {
-                int dx = offX[offInd], dy = offY[offInd];
-                MapLocation ratLoc = new MapLocation(loc.x + dx, loc.y + dy);
-                if (nearestLoc == null || nearestLoc.distanceSquaredTo(myLoc) > ratLoc.distanceSquaredTo(myLoc)) {
-                    nearestLoc = ratLoc;
-                    int indexInList = (i - RAT_SPAWN_INFO) / 2;
-                    nearestIndex = (ratCounter - indexInList - 1 + 1024) % 1024;
-                    nearestPayload = (hi << 10) | lo;
-                }
-            }
+            int hi = x >>> 7;
+            int indexInList = (i - RAT_SPAWN_INFO) / 2;
+            myIndex = (ratCounter - 1 - indexInList + 1024) % 1024;
+            return (hi << 10) | lo;
         }
-        if (nearestLoc == null) {
-            if (deadPayload == -1) throw new RuntimeException("didnt find comm");
-            myIndex = deadIndex; 
-            return deadPayload;
-        }
-        if (nearestLoc == null || myLoc.distanceSquaredTo(nearestLoc) > 2) {
-            throw new RuntimeException("didnt find comm");
-        }
-        myIndex = nearestIndex;
-        return nearestPayload;
+        println("FAILED TO FIND MY SPAWN INFO");
+        return -1;
     }
 
     public static void writeSharedArray(int i, int x) throws GameActionException {
         rc.writeSharedArray(i, x);
     }
 
-    public static void initGlobalArray() throws GameActionException {
+    public static void init() throws GameActionException {
         if (isRatKing && time == 1) {
             writeSharedArray(RAT_KING_TURN_COUNTER, 1023);
             writeSharedArray(RAT_KING_LSBS, 0);
@@ -160,14 +121,13 @@ public class GlobalArray {
             for (int i = 0; i < 5; i++) {
                 writeSharedArray(i + RAT_KING_LOC, 1023);
             }
+            initRatKing();
         }
+    }
 
-        if (isRatKing) {
-            int i = findRatKingSlot();
-            kingId = i;
-        } else {
-            kingId = -1;
-        }
+    public static void initRatKing() throws GameActionException {
+        int i = findRatKingSlot();
+        kingId = i;
     }
 
     public static void preTick() throws GameActionException {
@@ -179,13 +139,11 @@ public class GlobalArray {
                     writeSharedArray(i, 1023);
                 }
             }
-            if (toSpawn != null) {
-                assert(pendingPayload != -1);
-                _registerSpawnedRat(toSpawn, pendingPayload);
-                toSpawn = null;
-                pendingPayload = -1;
-            }
-            markKingAlive(kingId);
+            toSpawn0 = toSpawn1;
+            pendingPayload0 = pendingPayload1;
+            toSpawn1 = null;
+            pendingPayload1 = -1;
+            markKingAlive();
             updateRatKingTurnCounters();
         }
         checkSymmetry();
@@ -208,9 +166,14 @@ public class GlobalArray {
                 writeSharedArray(SYMMETRY, CellTracker.getSymmetry().ordinal());
             }
             writeCheeseMines();
-            writeRatLoc(kingId);
+            writeMyLoc();
+            if (toSpawn0 != null) {
+                assert(pendingPayload0 != -1);
+                _registerSpawnedRat(toSpawn0, pendingPayload0);
+            }
             rc.writeSharedArray(COUNTER, ratCounter);
             rc.writeSharedArray(ALIVE_RAT_COUNT, (rc.getCurrentRatCost() - 10) * 2 / 5);
+
         }
     }
 
@@ -241,16 +204,6 @@ public class GlobalArray {
         }
         if (nearestRatKing == null) {
             println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! DIDNT FIND ANY RAT KING!!");
-        }
-    }
-
-    public static void writeRatKing() throws GameActionException {
-        for (int i = 0; i < 5; i++) {
-            MapLocation king = getRatKing(i);
-            if (king == null) {
-                writeRatLoc(i);
-                return;
-            }
         }
     }
 
@@ -321,45 +274,37 @@ public class GlobalArray {
         return CellTracker.Symmetry.values()[cur_sym];
     }
 
-    public static void markKingAlive(int i) throws GameActionException {
+    public static void markKingAlive() throws GameActionException {
         // cycle counter
         int x = rc.readSharedArray(RAT_KING_TURN_COUNTER);
         int t = time % 3;
-        x &= ~(0b11 << (2 * i));
-        x |= t << (2 * i);
+        x &= ~(0b11 << (2 * kingId));
+        x |= t << (2 * kingId);
         writeSharedArray(RAT_KING_TURN_COUNTER, x);
     }
 
-    public static void writeRatLoc(int i) {
-        try {
-            writeSharedArray(i + RAT_KING_LOC, encode2x2());
-            // write LSBs for exact position
-            int lsbs = rc.readSharedArray(RAT_KING_LSBS);
-            int myLsb = (myLocX & 1) | ((myLocY & 1) << 1);
-            lsbs &= ~(0b11 << (2 * i));
-            lsbs |= myLsb << (2 * i);
-            writeSharedArray(RAT_KING_LSBS, lsbs);
-        } catch (GameActionException e) {
-            e.printStackTrace();
-        }
+    public static void writeMyLoc() throws GameActionException {
+        println("wrote my loc as rat king: " + myLoc);
+        writeSharedArray(kingId + RAT_KING_LOC, encode2x2());
+        // write LSBs for exact position
+        int lsbs = rc.readSharedArray(RAT_KING_LSBS);
+        int myLsb = (myLocX & 1) | ((myLocY & 1) << 1);
+        lsbs &= ~(0b11 << (2 * kingId));
+        lsbs |= myLsb << (2 * kingId);
+        writeSharedArray(RAT_KING_LSBS, lsbs);
     }
 
-    public static int findRatKingSlot() {
-        try {
-            int x = rc.readSharedArray(RAT_KING_TURN_COUNTER);
-            int i = 0;
-            while (i < 5) {
-                if ((x & 0b11) == 0b11) {
-                    return i;
-                }
-                x >>= 2;
-                i++;
+    public static int findRatKingSlot() throws GameActionException {
+        int x = rc.readSharedArray(RAT_KING_TURN_COUNTER);
+        int i = 0;
+        while (i < 5) {
+            if ((x & 0b11) == 0b11) {
+                return i;
             }
-            return i;
-        } catch (GameActionException e) {
-            e.printStackTrace();
-            return -1;
+            x >>= 2;
+            i++;
         }
+        return i;
     }
 
     // FORMATION

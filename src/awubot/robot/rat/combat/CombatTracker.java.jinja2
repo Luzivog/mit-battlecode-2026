@@ -238,30 +238,50 @@ public class CombatTracker {
     public static void loadThreatFromMap() throws GameActionException {
         int x = myLoc.x;
         int y = myLoc.y;
-        {% for dy in range(2, -3, -1) %}
-        {% for dx in range(-2, 3) %}
-        {%- if dx == 0 and dy == 0 %}
-        {{ cell_var(dx, dy) }} = true;
-        {%- else %}
-        {%- set ns = namespace(conds=[]) -%}
-        {%- if dx < 0 -%}
-        {%- set ns.conds = ns.conds + ["x >= " ~ (-dx)] -%}
-        {%- elif dx > 0 -%}
-        {%- set ns.conds = ns.conds + ["x < mapWidth - " ~ dx] -%}
-        {%- endif -%}
-        {%- if dy < 0 -%}
-        {%- set ns.conds = ns.conds + ["y >= " ~ (-dy)] -%}
-        {%- elif dy > 0 -%}
-        {%- set ns.conds = ns.conds + ["y < mapHeight - " ~ dy] -%}
-        {%- endif -%}
-        {%- if ns.conds|length > 0 -%}
-        {{ cell_var(dx, dy) }} = ({{ ns.conds | join(" && ") }}) && CellTracker.mapData[y {% if dy %} + {{dy}}{% endif %}].charAt(x {% if dx %} + {{dx}}{% endif %}) != '\2';
-        {%- else -%}
-        {{ cell_var(dx, dy) }} = CellTracker.mapData[y {% if dy %} + {{dy}}{% endif %}].charAt(x {% if dx %} + {{dx}}{% endif %}) != '\2';
-        {%- endif -%}
-        {%- endif %}
-        {% endfor %}
-        {% endfor %}
+        switch (myDir.ordinal()) {
+            {% for faceIdx in range(directions|length) %}
+            case {{ faceIdx }} -> {
+                {% for dy in range(2, -3, -1) %}
+                {% for dx in range(-2, 3) %}
+                {%- if dx == 0 and dy == 0 %}
+                {{ cell_var(dx, dy) }} = true;
+                {%- else %}
+                {%- set ns = namespace(conds=[]) -%}
+                {%- if dx < 0 -%}
+                {%- set ns.conds = ns.conds + ["x >= " ~ (-dx)] -%}
+                {%- elif dx > 0 -%}
+                {%- set ns.conds = ns.conds + ["x < mapWidth - " ~ dx] -%}
+                {%- endif -%}
+                {%- if dy < 0 -%}
+                {%- set ns.conds = ns.conds + ["y >= " ~ (-dy)] -%}
+                {%- elif dy > 0 -%}
+                {%- set ns.conds = ns.conds + ["y < mapHeight - " ~ dy] -%}
+                {%- endif -%}
+
+                {% if can_see(faceIdx, dx, dy) == "true" %}
+
+                {%- if ns.conds|length > 0 -%}
+                {{ cell_var(dx, dy) }} = ({{ ns.conds | join(" && ") }}) && CellTracker.mapData[y {% if dy %} + {{dy}}{% endif %}].charAt(x {% if dx %} + {{dx}}{% endif %}) != '\2' && !CellTracker.isDirt(x {% if dx %} + {{dx}}{% endif %}, y {% if dy %} + {{dy}}{% endif %});
+                {%- else -%}
+                {{ cell_var(dx, dy) }} = CellTracker.mapData[y {% if dy %} + {{dy}}{% endif %}].charAt(x {% if dx %} + {{dx}}{% endif %}) != '\2' && !CellTracker.isDirt(x {% if dx %} + {{dx}}{% endif %}, y {% if dy %} + {{dy}}{% endif %});
+                {%- endif -%}
+
+                {% else %}
+
+                {%- if ns.conds|length > 0 -%}
+                {{ cell_var(dx, dy) }} = ({{ ns.conds | join(" && ") }}) && CellTracker.mapData[y {% if dy %} + {{dy}}{% endif %}].charAt(x {% if dx %} + {{dx}}{% endif %}) != '\2';
+                {%- else -%}
+                {{ cell_var(dx, dy) }} = CellTracker.mapData[y {% if dy %} + {{dy}}{% endif %}].charAt(x {% if dx %} + {{dx}}{% endif %}) != '\2';
+                {%- endif -%}
+
+                {% endif %}
+
+                {%- endif %}
+                {% endfor %}
+                {% endfor %}
+            }
+            {% endfor %}
+        }
     }
 
     {# public static void registerTrap(int dx, int dy) {

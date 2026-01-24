@@ -177,7 +177,7 @@ public class KingCombatStrategy extends Strategy {
                     }
                 }
             }
-            int best = 0;
+            int best = -1;
             var move = Direction.CENTER;
             if(score0 > best && rc.canMove(Direction.NORTH)) {
                 best = score0;

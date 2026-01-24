@@ -64,7 +64,7 @@ public class KingCombatStrategy extends Strategy {
                     }
                 }
             }
-            int best = 0;
+            int best = -1;
             var move = Direction.CENTER;
             {% for i in range(8) %}
             if(score{{i}} > best && rc.canMove({{directions[i]}})) {

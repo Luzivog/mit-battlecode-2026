@@ -161,7 +161,7 @@ class BugnavInstance {
             lastLoc = myLoc;
             lastDir = myDir;
             leftDone = leftBug.hitEdge || leftBug.nextPathIndex == {{MAX_PATH - 1}};
-            rightDone = rightBug.hitEdge || leftBug.nextPathIndex == {{MAX_PATH - 1}};
+            rightDone = rightBug.hitEdge || rightBug.nextPathIndex == {{MAX_PATH - 1}};
         }
 
         if(!(leftDone && rightDone)) {

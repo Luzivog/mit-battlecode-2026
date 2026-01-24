@@ -75,7 +75,7 @@ public final class TryTrap {
     }
 
     public static boolean shouldTrap(RobotInfo info) throws GameActionException {
-        if (info.getHealth() >= 80 && info.getHealth() >= rc.getHealth()) {
+        if (info.getHealth() >= 80 && info.getHealth() >= rc.getHealth() + CombatStrategy.getBiteDamage() || info.getHealth() == 100) {
             println("ACCEPEETD CONIDIOTOINIS A;PLOSDKJF;LKAJSDAF;LKJASDA;LKFJDSA;DLKFJSD;LKFJA;SLKDFJ;SLAKJDFL;K");
             return true;
         }
@@ -691,7 +691,7 @@ public final class TryTrap {
     private static void applyEnemyWeight(RobotInfo rinfo) throws GameActionException {
         double mult = 1.0;
         if (!shouldDefRun && !shouldTrap(rinfo)) {
-            mult = -0.5;
+            mult = -1.0;
         }
         int x = rinfo.location.x - myLocX;
         int y = rinfo.location.y - myLocY;

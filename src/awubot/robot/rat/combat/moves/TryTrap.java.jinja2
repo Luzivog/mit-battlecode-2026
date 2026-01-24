@@ -186,32 +186,15 @@ public final class TryTrap {
 
         bytecodeStart = Clock.getBytecodeNum();
         bytecodeBudget = Math.min(5000, (int) (Clock.getBytecodesLeft() - 1000) / 2);
-        Profiler.push();
         computeWeights();
-        Profiler.pop("TryTrap.computeWeights");
         resetBest();
-        println("remainig bytecodee budget before selecting moves: " + (Clock.getBytecodeNum() - bytecodeStart));
         selectMoves();
         selectSecondaryMoves();
         if (best <= 0.5) return false;
         if (bestMoveDir != null) {
             assert(CombatStrategy.performMoves(bestMoveDir, bestFacing));
-            if (!rc.canPlaceRatTrap(bestPlaceLoc)) {
-                {# println("huh cant place trap here  " + bestPlaceLoc);
-                for (int i = 0; i < CellTracker.numNearbyRatTraps; i++) {
-                    println("nearby trap at " + CellTracker.nearbyRatTraps[i]);
-                } #}
-                {# rc.resign(); #}
-            }
             rc.placeRatTrap(bestPlaceLoc);
         } else {
-            if (!rc.canPlaceRatTrap(bestPlaceLoc)) {
-                {# println("huh cant place trap here  " + bestPlaceLoc);
-                for (int i = 0; i < CellTracker.numNearbyRatTraps; i++) {
-                    println("nearby trap at " + CellTracker.nearbyRatTraps[i]);
-                } #}
-                {# rc.resign(); #}
-            }
             rc.placeRatTrap(bestPlaceLoc);
             assert(CombatStrategy.performMoves(bestSecondaryMoveDir, bestFacing));
         }

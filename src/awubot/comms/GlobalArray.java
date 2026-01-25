@@ -50,6 +50,7 @@ public class GlobalArray {
     // layout: 
     // lower bits: store target rat id modulo 255 (255 = null)
     // upper bits: strategy index (0 to 3)
+    private static final int KING_EXPAND = 21;
     private static final int RAT_SPAWN_INFO = 22;  // spam until MIN_CHEESE is hit
     private static final int MIN_CHEESE = 32;
     public static FastIndexedIntSet globalCheeseMines = new FastIndexedIntSet();
@@ -84,6 +85,23 @@ public class GlobalArray {
         writeSharedArray(RAT_SPAWN_INFO + kingId * 2 + 1, lo);
         // println("registered spawned rat at " + loc + " with payload " + payload + " into slots " + (RAT_SPAWN_INFO + kingId * 2) + " and " + (RAT_SPAWN_INFO + kingId * 2 + 1));
         ratCounter++;
+    }
+
+    public static void expandKing() throws GameActionException {
+        int x = rc.readSharedArray(KING_EXPAND);
+        x |= (1 << kingId);
+        rc.writeSharedArray(KING_EXPAND, x);
+    }
+
+    public static void contractKing() throws GameActionException {
+        int x = rc.readSharedArray(KING_EXPAND);
+        x &= ~(1 << kingId);
+        rc.writeSharedArray(KING_EXPAND, x);
+    }
+
+    public static boolean isKingExpanded(int i) throws GameActionException {
+        int x = rc.readSharedArray(KING_EXPAND);
+        return (1 & x >> kingId) != 0;
     }
 
     public static int loadSpawnInfo() throws GameActionException {

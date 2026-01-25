@@ -6,6 +6,7 @@ import awubot.Game;
 import awubot.robot.Strategy;
 import awubot.comms.GlobalArray;
 import awubot.util.Rng;
+import awubot.util.string.FastIndexedIntSet;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 
@@ -20,6 +21,8 @@ public class MinerStrategy extends Strategy {
     private CheeseStrategy cheeseStrategy;
     private TraverseStrategy goSomewhereStrategy; // either go to a mine or explore; TODO: make the mine strategy smarter
 
+    private FastIndexedIntSet bannedMines;
+
     public MinerStrategy() {
         formationStrategy = new FormationStrategy();
         goHomeStrategy = new GoHomeStrategy();
@@ -28,8 +31,9 @@ public class MinerStrategy extends Strategy {
 
     @Override
     public boolean runTick() throws GameActionException {
-        // RECOMMENT TO ENABLE
-        
+        if(GlobalArray.nearestRatKing.distanceSquaredTo(myLoc) <= 25) {
+            bannedMines = new FastIndexedIntSet();
+        }
         if(rc.getRawCheese() == 0) {
             goHomeStrategy = null;
         } else if(goHomeStrategy == null && shouldGoHome()) {
@@ -45,13 +49,16 @@ public class MinerStrategy extends Strategy {
         while(goSomewhereStrategy == null || !goSomewhereStrategy.runTick()) {
             MapLocation target;
 
-            if (Game.knownCheeseMines.set.length() < 3 || Rng.mcg() % 5 == 0) {
-                target = new MapLocation(
-                    Math.abs(Rng.mcg()) % mapWidth,
-                    Math.abs(Rng.mcg()) % mapHeight
-                );
+            int knownMines = Game.knownCheeseMines.set.length();
+            if(knownMines == 0
+               || knownMines <= 2 && time <= mapWidth * mapHeight / 8) {
+                target = pickExplorationTarget();
             } else {
-                target = pickSeenMine();
+                if(Rng.mcg() < Math.exp(-12.0 * time / (mapWidth * mapHeight)) * (1 << 31)) { // funny function
+                    target = pickExplorationTarget();
+                } else {
+                    target = pickSeenMine();
+                }
             }
             goSomewhereStrategy = new TraverseStrategy(target, 2);
         }
@@ -60,19 +67,51 @@ public class MinerStrategy extends Strategy {
     }
 
     private MapLocation pickSeenMine() {
-        List<Double> weights = new ArrayList<>();
-        double totalWeight = 0;
-        for (int i = 0; i < Game.knownCheeseMines.set.length(); i++) {
-            weights.add(1.0 / (double) myLoc.distanceSquaredTo(decode2x2(Game.knownCheeseMines.at(i))));
-            totalWeight += weights.get(weights.size() - 1);
+        boolean nearKing = GlobalArray.nearestRatKing.distanceSquaredTo(myLoc) <= 25;
+        var mines = new StringBuilder();
+        outerLoop:
+        for(int i = Game.knownCheeseMines.set.length() - 1; i >= 0; i--) {
+            var iloc = Game.knownCheeseMines.at(i);
+            var loc = decode2x2(iloc);
+            if(canSense(myLoc, loc, myDir)) continue;
+            if(bannedMines.contains(iloc)) continue;
+            for(int j = 0; j < 5; j++) {
+                var kingLoc = GlobalArray.getRatKing(j);
+                if(kingLoc != null && kingLoc.distanceSquaredTo(loc) <= 16) {
+                    continue outerLoop;
+                }
+            }
+            if(nearKing) {
+                mines.append((char)iloc);
+            } else {
+                mines.repeat(iloc, (int)(100 / chebyshevDistance(myLoc, loc)));
+            }
         }
-        double rnd = (((double) Rng.mcg() / ((1 << 31) - 1)) * totalWeight);
-        double pref = 0;
-        for (int i = 0; i < Game.knownCheeseMines.set.length(); i++) {
-            pref += weights.get(i);
-            if (rnd <= pref) return decode2x2(Game.knownCheeseMines.at(i));
+        if(mines.length() == 0) {
+            return pickExplorationTarget();
         }
-        return decode2x2(Game.knownCheeseMines.at(Game.knownCheeseMines.set.length() - 1));
+        var chosen = mines.charAt(Rng.mcg() % mines.length());
+        bannedMines.add(chosen);
+        return decode2x2(chosen);
+    }
+
+    private MapLocation pickExplorationTarget() {
+        MapLocation target = null;
+        outerLoop:
+        for(int i = 5; i >= 0; i--) { // tle guard
+            target = new MapLocation(Rng.mcg() % mapWidth, Rng.mcg() % mapHeight);
+            // not seen
+            if(CellTracker.isSeen(target)) continue;
+            // not too close to a king
+            for(int j = 0; j < 5; j++) {
+                var kingLoc = GlobalArray.getRatKing(j);
+                if(kingLoc != null && kingLoc.distanceSquaredTo(target) <= 36) {
+                    continue outerLoop;
+                }
+            }
+            return target;
+        }
+        return target;
     }
 
     private boolean shouldGoHome() {

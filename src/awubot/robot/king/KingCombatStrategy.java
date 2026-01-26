@@ -61,6 +61,7 @@ public class KingCombatStrategy extends Strategy {
 
     }
 
+    // TODO: only dig if we havent seen the cat in some time
     private boolean digSurroundingDirt() throws GameActionException {
         if (!rc.isActionReady()) return false;
         for (int dx = -2; dx <= 2; dx++) {

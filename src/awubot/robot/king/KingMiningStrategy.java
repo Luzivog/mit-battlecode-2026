@@ -99,8 +99,21 @@ public class KingMiningStrategy extends Strategy {
             moveTowardMine();
         }
 
+        tryCollectCheese();
+
         indicate("mine target: " + mineTarget);
         return true;
+    }
+
+    public boolean tryCollectCheese() throws GameActionException {
+        for (var dir : allDirections) {
+            var loc = myLoc.add(dir);
+            if (rc.canPickUpCheese(loc)) {
+                rc.pickUpCheese(loc);
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean scanForCheeseMines() throws GameActionException {
@@ -138,7 +151,23 @@ public class KingMiningStrategy extends Strategy {
 
     private void moveTowardMine() throws GameActionException {
         if (!rc.isMovementReady() || mineTarget == null) return;
-        if (myLoc.distanceSquaredTo(mineTarget) <= 4) return;
+        if (myLoc.distanceSquaredTo(mineTarget) < 5) {
+            // find nearest cheese
+            int closestDist = Integer.MAX_VALUE;
+            MapLocation closestLoc = null;
+            for (MapInfo info : rc.senseNearbyMapInfos(mineTarget, 13)) {
+                if (info.getCheeseAmount() > 0) {
+                    int dist = myLoc.distanceSquaredTo(info.getMapLocation());
+                    if (dist < closestDist) {
+                        closestDist = dist;
+                        closestLoc = info.getMapLocation();
+                    }
+                }
+            }
+            if (closestLoc == null) return;
+            Pathfinder.makeMove(closestLoc);
+            return;
+        }
         Pathfinder.makeMove(mineTarget);
     }
 

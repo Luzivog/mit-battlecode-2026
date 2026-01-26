@@ -30,12 +30,12 @@ public class CheeseStrategy extends Strategy {
     private void refreshCheeseTarget() throws GameActionException {
         if (cheeseTarget != null
             && rc.canSenseLocation(cheeseTarget)
-            && rc.senseMapInfo(cheeseTarget).getCheeseAmount() == 0) {
+            && (rc.senseMapInfo(cheeseTarget).getCheeseAmount() == 0)) {
             cheeseTarget = null;
         }
         int bestAmount = 0;
         for (var info : rc.senseNearbyMapInfos()) {
-            if(cheeseTarget == null && info.getCheeseAmount() > bestAmount) {
+            if(cheeseTarget == null && info.getCheeseAmount() > bestAmount)  {
                 cheeseTarget = info.getMapLocation();
                 bestAmount = info.getCheeseAmount();
             }

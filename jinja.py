@@ -77,6 +77,34 @@ directions_list = [
 short_directions_list = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']
 all_directions_list = directions_list + ['Direction.CENTER']
 
+try_ord = [0, 4, 1, -1, 3, -3, 2, -2]
+
+wide_related_map_center = {
+    0: ["Direction.CENTER", "Direction.NORTH", "Direction.NORTHEAST", "Direction.NORTHWEST", "Direction.EAST", "Direction.WEST"],
+    1: ["Direction.CENTER", "Direction.NORTHEAST", "Direction.NORTH", "Direction.EAST", "Direction.NORTHWEST", "Direction.SOUTHEAST"],
+    2: ["Direction.CENTER", "Direction.EAST", "Direction.NORTHEAST", "Direction.SOUTHEAST", "Direction.NORTH", "Direction.SOUTH"],
+    3: ["Direction.CENTER", "Direction.SOUTHEAST", "Direction.SOUTH", "Direction.EAST", "Direction.NORTHEAST", "Direction.SOUTHWEST"],
+    4: ["Direction.CENTER", "Direction.SOUTH", "Direction.SOUTHEAST", "Direction.SOUTHWEST", "Direction.EAST", "Direction.WEST"],
+    5: ["Direction.CENTER", "Direction.SOUTHWEST", "Direction.SOUTH", "Direction.WEST", "Direction.NORTHWEST", "Direction.SOUTHEAST"],
+    6: ["Direction.CENTER", "Direction.WEST", "Direction.NORTHWEST", "Direction.SOUTHWEST", "Direction.NORTH", "Direction.SOUTH"],
+    7: ["Direction.CENTER", "Direction.NORTHWEST", "Direction.NORTH", "Direction.WEST", "Direction.NORTHEAST", "Direction.SOUTHWEST"],
+}
+
+
+def _build_movement_table():
+    table = {}
+    for idx, facing in enumerate(directions_list):
+        highlight_set = set(wide_related_map_center[idx])
+        ordered_dirs = ["Direction.CENTER"]
+        for offset in try_ord:
+            candidate_idx = (idx + offset + 8) % 8
+            ordered_dirs.append(directions_list[candidate_idx])
+        table[facing] = [(d, d in highlight_set) for d in ordered_dirs]
+    table["Direction.CENTER"] = [("Direction.CENTER", True)]
+    return table
+
+movement_table = _build_movement_table()
+
 
 def make_env():
     env = Environment(
@@ -97,6 +125,9 @@ def make_env():
         "directions": directions_list,
         "shortDirections": short_directions_list,
         "allDirections": all_directions_list,
+        "try_ord": try_ord,
+        "movement_table": movement_table,
+        "get_movements": movement_table.__getitem__,
     })
     return env
 

@@ -59,9 +59,9 @@ public final class TryRatNap {
             weight = 30;
             selectMoves();
             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
-            selectSecondaryMoves();
         }
         if (bestScore < 0.5) return false;
+        println("target " + t);
         if (bestMove != null) {
             if (!CombatStrategy.performMoves(bestMove, bestFacing)) {
                 println(bestMove + " " + bestFacing);
@@ -86,118 +86,313 @@ public final class TryRatNap {
     }
 
     private static void selectMoves() throws GameActionException {
+        int dx = t.x - myLocX;
+        int dy = t.y - myLocY;
+        boolean canPerformSecondary = myLoc.distanceSquaredTo(t) <= 2 && (rc.getHealth() > info.getHealth() || !canSense(-dx, -dy, info.direction));
         switch (myDir.ordinal()) {
             case 0 -> {
-                moveN();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveNE();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveNW();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveE();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveW();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveC();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        moveC();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        moveN();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    if (canPerformSecondary) {
+                            considerSecondaryMove(Direction.NORTH, Direction.NORTH);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.NORTH, Direction.NORTHEAST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.NORTH, Direction.NORTHWEST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    }
+                        moveNE();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        moveNW();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    if (canPerformSecondary) {
+                            considerSecondaryMove(Direction.NORTHWEST, Direction.NORTH);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.NORTHWEST, Direction.NORTHEAST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.NORTHWEST, Direction.NORTHWEST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    }
+                    if (canPerformSecondary) {
+                            considerSecondaryMove(Direction.NORTHEAST, Direction.NORTH);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.NORTHEAST, Direction.NORTHEAST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.NORTHEAST, Direction.NORTHWEST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    }
+                        moveE();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        moveW();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 1 -> {
-                moveNE();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveN();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveE();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveNW();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveSE();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveC();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        moveC();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        moveNE();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    if (canPerformSecondary) {
+                            considerSecondaryMove(Direction.NORTHEAST, Direction.NORTHEAST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.NORTHEAST, Direction.NORTH);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.NORTHEAST, Direction.EAST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    }
+                        moveE();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        moveN();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    if (canPerformSecondary) {
+                            considerSecondaryMove(Direction.NORTH, Direction.NORTHEAST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.NORTH, Direction.NORTH);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.NORTH, Direction.EAST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    }
+                    if (canPerformSecondary) {
+                            considerSecondaryMove(Direction.EAST, Direction.NORTHEAST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.EAST, Direction.NORTH);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.EAST, Direction.EAST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    }
+                        moveSE();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        moveNW();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 2 -> {
-                moveE();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveNE();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveSE();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveN();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveS();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveC();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        moveC();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        moveE();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    if (canPerformSecondary) {
+                            considerSecondaryMove(Direction.EAST, Direction.EAST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.EAST, Direction.NORTHEAST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.EAST, Direction.SOUTHEAST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    }
+                        moveSE();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        moveNE();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    if (canPerformSecondary) {
+                            considerSecondaryMove(Direction.NORTHEAST, Direction.EAST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.NORTHEAST, Direction.NORTHEAST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTHEAST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    }
+                    if (canPerformSecondary) {
+                            considerSecondaryMove(Direction.SOUTHEAST, Direction.EAST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTHEAST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.SOUTHEAST, Direction.SOUTHEAST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    }
+                        moveS();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        moveN();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 3 -> {
-                moveSE();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveS();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveE();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveNE();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveSW();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveC();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        moveC();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        moveSE();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    if (canPerformSecondary) {
+                            considerSecondaryMove(Direction.SOUTHEAST, Direction.SOUTHEAST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.SOUTHEAST, Direction.SOUTH);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.SOUTHEAST, Direction.EAST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    }
+                        moveS();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        moveE();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    if (canPerformSecondary) {
+                            considerSecondaryMove(Direction.EAST, Direction.SOUTHEAST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.EAST, Direction.SOUTH);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.EAST, Direction.EAST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    }
+                    if (canPerformSecondary) {
+                            considerSecondaryMove(Direction.SOUTH, Direction.SOUTHEAST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.SOUTH, Direction.SOUTH);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.SOUTH, Direction.EAST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    }
+                        moveSW();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        moveNE();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 4 -> {
-                moveS();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveSE();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveSW();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveE();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveW();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveC();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        moveC();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        moveS();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    if (canPerformSecondary) {
+                            considerSecondaryMove(Direction.SOUTH, Direction.SOUTH);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.SOUTH, Direction.SOUTHEAST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.SOUTH, Direction.SOUTHWEST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    }
+                        moveSW();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        moveSE();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    if (canPerformSecondary) {
+                            considerSecondaryMove(Direction.SOUTHEAST, Direction.SOUTH);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.SOUTHEAST, Direction.SOUTHEAST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.SOUTHEAST, Direction.SOUTHWEST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    }
+                    if (canPerformSecondary) {
+                            considerSecondaryMove(Direction.SOUTHWEST, Direction.SOUTH);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.SOUTHWEST, Direction.SOUTHEAST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.SOUTHWEST, Direction.SOUTHWEST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    }
+                        moveW();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        moveE();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 5 -> {
-                moveSW();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveS();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveW();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveNW();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveSE();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveC();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        moveC();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        moveSW();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    if (canPerformSecondary) {
+                            considerSecondaryMove(Direction.SOUTHWEST, Direction.SOUTHWEST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.SOUTHWEST, Direction.SOUTH);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.SOUTHWEST, Direction.WEST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    }
+                        moveW();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        moveS();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    if (canPerformSecondary) {
+                            considerSecondaryMove(Direction.SOUTH, Direction.SOUTHWEST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.SOUTH, Direction.SOUTH);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.SOUTH, Direction.WEST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    }
+                    if (canPerformSecondary) {
+                            considerSecondaryMove(Direction.WEST, Direction.SOUTHWEST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.WEST, Direction.SOUTH);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.WEST, Direction.WEST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    }
+                        moveNW();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        moveSE();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 6 -> {
-                moveW();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveNW();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveSW();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveN();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveS();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveC();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        moveC();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        moveW();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    if (canPerformSecondary) {
+                            considerSecondaryMove(Direction.WEST, Direction.WEST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.WEST, Direction.NORTHWEST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.WEST, Direction.SOUTHWEST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    }
+                        moveNW();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        moveSW();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    if (canPerformSecondary) {
+                            considerSecondaryMove(Direction.SOUTHWEST, Direction.WEST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTHWEST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.SOUTHWEST, Direction.SOUTHWEST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    }
+                    if (canPerformSecondary) {
+                            considerSecondaryMove(Direction.NORTHWEST, Direction.WEST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.NORTHWEST, Direction.NORTHWEST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTHWEST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    }
+                        moveN();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        moveS();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 7 -> {
-                moveNW();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveN();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveW();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveNE();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveSW();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                moveC();
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        moveC();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        moveNW();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    if (canPerformSecondary) {
+                            considerSecondaryMove(Direction.NORTHWEST, Direction.NORTHWEST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.NORTHWEST, Direction.NORTH);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.NORTHWEST, Direction.WEST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    }
+                        moveN();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        moveW();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    if (canPerformSecondary) {
+                            considerSecondaryMove(Direction.WEST, Direction.NORTHWEST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.WEST, Direction.NORTH);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.WEST, Direction.WEST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    }
+                    if (canPerformSecondary) {
+                            considerSecondaryMove(Direction.NORTH, Direction.NORTHWEST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.NORTH, Direction.NORTH);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                            considerSecondaryMove(Direction.NORTH, Direction.WEST);
+                            if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    }
+                        moveNE();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        moveSW();
+                        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             default -> { }
         }
@@ -1056,183 +1251,15 @@ public final class TryRatNap {
         }
     }
 
-    private static void selectSecondaryMoves() throws GameActionException {
-        if (myLoc.distanceSquaredTo(t) > 2) return;
-        if (info.getHealth() >= rc.getHealth()) return; // can i ratnap this guy
-        switch (myDir.ordinal()) {
-            case 0 -> {
-                considerSecondaryMove(Direction.SOUTH, Direction.NORTH);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTH);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTH);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.SOUTH, Direction.NORTHEAST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTHEAST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTHEAST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.SOUTH, Direction.NORTHWEST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTHWEST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTHWEST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-            }
-            case 1 -> {
-                considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTHEAST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.SOUTH, Direction.NORTHEAST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.WEST, Direction.NORTHEAST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTH);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.SOUTH, Direction.NORTH);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.WEST, Direction.NORTH);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.SOUTHWEST, Direction.EAST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.SOUTH, Direction.EAST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.WEST, Direction.EAST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-            }
-            case 2 -> {
-                considerSecondaryMove(Direction.WEST, Direction.EAST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.SOUTHWEST, Direction.EAST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.NORTHWEST, Direction.EAST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.WEST, Direction.NORTHEAST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTHEAST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.NORTHWEST, Direction.NORTHEAST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.WEST, Direction.SOUTHEAST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.SOUTHWEST, Direction.SOUTHEAST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTHEAST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-            }
-            case 3 -> {
-                considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTHEAST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.NORTH, Direction.SOUTHEAST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.WEST, Direction.SOUTHEAST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTH);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.NORTH, Direction.SOUTH);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.WEST, Direction.SOUTH);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.NORTHWEST, Direction.EAST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.NORTH, Direction.EAST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.WEST, Direction.EAST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-            }
-            case 4 -> {
-                considerSecondaryMove(Direction.NORTH, Direction.SOUTH);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTH);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTH);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.NORTH, Direction.SOUTHEAST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTHEAST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTHEAST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.NORTH, Direction.SOUTHWEST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTHWEST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTHWEST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-            }
-            case 5 -> {
-                considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTHWEST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.NORTH, Direction.SOUTHWEST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.EAST, Direction.SOUTHWEST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTH);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.NORTH, Direction.SOUTH);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.EAST, Direction.SOUTH);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.NORTHEAST, Direction.WEST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.NORTH, Direction.WEST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.EAST, Direction.WEST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-            }
-            case 6 -> {
-                considerSecondaryMove(Direction.EAST, Direction.WEST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.SOUTHEAST, Direction.WEST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.NORTHEAST, Direction.WEST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.EAST, Direction.NORTHWEST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTHWEST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.NORTHEAST, Direction.NORTHWEST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.EAST, Direction.SOUTHWEST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.SOUTHEAST, Direction.SOUTHWEST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTHWEST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-            }
-            case 7 -> {
-                considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTHWEST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.SOUTH, Direction.NORTHWEST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.EAST, Direction.NORTHWEST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTH);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.SOUTH, Direction.NORTH);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.EAST, Direction.NORTH);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.SOUTHEAST, Direction.WEST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.SOUTH, Direction.WEST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                considerSecondaryMove(Direction.EAST, Direction.WEST);
-                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-            }
-            default -> { }
-        }
-    }
 
     private static void considerSecondaryMove(Direction moveDir, Direction facing) throws GameActionException {
         int moveCost = CombatCommon.movementCost(moveDir, facing);
         if (moveCost == -1) return;
         double score = weight + 5;
-        if (moveCost == 0) score -= CombatCommon.strafeCost();
         score += CombatStrategy.getCellScoreFor(moveDir, facing, info);
         if (score <= 0.5) return;
         if (facing != myDir) {
-            score *= 1.2; // prefer turning
+            score += 2;
         }
         if (score > bestScore) {
             bestScore = score;

@@ -1,3 +1,5 @@
+
+
 package awubot_us.robot.rat.combat;
 
 import battlecode.common.Clock;
@@ -17,8 +19,8 @@ import awubot_us.comms.Squeaker;
 import awubot_us.comms.Enemy;
 import awubot_us.comms.EnemyManager;
 import awubot_us.robot.Strategy;
-import awubot_us.robot.rat.combat.moves.TryAttack;
 import awubot_us.robot.rat.combat.moves.TryFight;
+import awubot_us.robot.rat.combat.moves.TryAttack;
 import awubot_us.robot.rat.combat.moves.TryRatNap;
 import awubot_us.robot.rat.combat.moves.TryPosition;
 import awubot_us.robot.rat.combat.moves.TryThrow;
@@ -33,7 +35,6 @@ import awubot_us.RobotTracker;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-
 
 
 
@@ -109,7 +110,7 @@ public class CombatStrategy extends Strategy {
     }
 
     public static int moveMask, sourceCnt;
-    public MapLocation[] sources = new MapLocation[9];
+    public MapLocation[] sources = new MapLocation[35];
     public static Enemy funnyTarget;
 
     // idek why this is returning. check if can move anyways after to squeeze out some juice
@@ -149,7 +150,7 @@ public class CombatStrategy extends Strategy {
             int[] bfsResult = Pathfinder.multisourceBfs(sources, sourceCnt);
             moveMask = bfsResult[0];    
             int bfsIters = bfsResult[1];
-            println("BFS iters: " + bfsIters);
+            // println("BFS iters: " + bfsIters);
             // Profiler.pop("combat bfs");
             indicate("MOVEMASK: " + Integer.toBinaryString(moveMask));
             if (moveMask == 0) return false; // no enemies nearby
@@ -232,7 +233,7 @@ public class CombatStrategy extends Strategy {
         }
         // TODO: deal with cats (maybe naman's job?)
         // return false;
-        return true;
+        return false;
     }
 
     public boolean miniTick() throws GameActionException {
@@ -353,17 +354,20 @@ public class CombatStrategy extends Strategy {
 
     public static double getCellScoreFor(Direction moveDir, Direction facing, RobotInfo target, int damage) throws GameActionException {
         if (CombatTracker.hasThreat(moveDir, facing, target, damage)) return -100;
-        return cellScore[moveDir.ordinal()] - readCellScore(target, moveDir);
+        return 0;
+        // return cellScore[moveDir.ordinal()] - readCellScore(target, moveDir);
     }
 
     public static double getCellScoreFor(Direction moveDir, Direction facing, RobotInfo target) throws GameActionException {
         if (CombatTracker.hasThreat(moveDir, facing, target)) return -100;
-        return cellScore[moveDir.ordinal()] - readCellScore(target, moveDir);
+        return 0;
+        // return cellScore[moveDir.ordinal()] - readCellScore(target, moveDir);
     }
 
     public static double getCellScoreFor(Direction moveDir, Direction facing) throws GameActionException {
         if (CombatTracker.hasThreat(moveDir, facing)) return -100;
-        return cellScore[moveDir.ordinal()];
+        return 0;
+        // return cellScore[moveDir.ordinal()];
     }
 
     // TODO: cache this function
@@ -436,7 +440,7 @@ public class CombatStrategy extends Strategy {
     */
     public static boolean shouldFight(RobotInfo enemy) {
         if (enemy.getType() == UnitType.CAT) {
-            return time > 1000 && rc.getAllCheese() > 300 && RobotTracker.numEnemies == 0 && rc.getHealth() > 50 && rc.getRawCheese() == 0;
+            return time > 500 && rc.getAllCheese() > 1000 && RobotTracker.numEnemies == 0 && rc.getRawCheese() == 0 && GlobalArray.numberOfRatsAlive >= 16 && (rc.getID() % 3 == 0 || time >= 1800);
         }
         if (enemy.getType() == UnitType.RAT_KING) return true;
         if (enemy.getHealth() - getBiteDamage() <= rc.getHealth()) return true;

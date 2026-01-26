@@ -1,3 +1,5 @@
+
+
 package awubot_us.robot.king;
 
 import battlecode.common.*;
@@ -10,6 +12,71 @@ import static awubot_us.Game.*;
 import static awubot_us.util.Util.*;
 
 public class KingCombatStrategy extends Strategy {
+
+    private boolean placeDefensiveDirt() throws GameActionException {
+        if (!rc.isActionReady()) return false;
+        if (RobotTracker.numCats == 0) return false;
+
+        RobotInfo nearestCat = RobotTracker.sortedCats[0];
+        MapLocation catLoc = nearestCat.location;
+        if (nearestCat == null) return false;
+        if (catLoc.distanceSquaredTo(myLoc) >= 20) return false;
+
+        int bestScore = -1000000;
+        MapLocation bestLoc = null;
+
+        for (MapInfo info: rc.senseNearbyMapInfos()) {
+            MapLocation loc = info.getMapLocation();
+            if (!rc.canPlaceDirt(loc)) continue;
+            if (loc.distanceSquaredTo(catLoc) > myLoc.distanceSquaredTo(catLoc)) continue;
+
+            int numDirts = 0;
+            for (int dx = -1; dx <= 1; dx++) {
+                for (int dy = -1; dy <= 1; dy++) {
+                    MapInfo checkInfo = rc.senseMapInfo(new MapLocation(loc.x + dx, loc.y + dy));
+                    if (checkInfo.isDirt()) {
+                        numDirts++;
+                    }
+                }
+            }
+
+            // i tested this with thresh = 4 
+            // it performs basically the same
+            if (numDirts >= 2) continue;
+            
+            int score = -loc.distanceSquaredTo(catLoc);
+
+            if (score > bestScore) {
+                bestScore = score;
+                bestLoc = loc;
+            }
+        }
+
+        if (bestLoc != null) {
+            rc.placeDirt(bestLoc);
+            return true;
+        }
+
+        return false;
+
+    }
+
+    // TODO: only dig if we havent seen the cat in some time
+    private boolean digSurroundingDirt() throws GameActionException {
+        if (!rc.isActionReady()) return false;
+        for (int dx = -2; dx <= 2; dx++) {
+            for (int dy = -2; dy <= 2; dy++) {
+                if (Math.max(Math.abs(dx), Math.abs(dy)) < 2) continue;
+                MapLocation checkLoc = new MapLocation(myLoc.x + dx, myLoc.y + dy);
+                if (rc.canRemoveDirt(checkLoc) && rc.getGlobalCheese() >= 100) {
+                    rc.removeDirt(checkLoc);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     @Override
     public boolean runTick() throws GameActionException {
         boolean hasThreat = (RobotTracker.numEnemies + RobotTracker.numCats) > 0;
@@ -177,7 +244,7 @@ public class KingCombatStrategy extends Strategy {
                     }
                 }
             }
-            int best = 0;
+            int best = -1;
             var move = Direction.CENTER;
             if(score0 > best && rc.canMove(Direction.NORTH)) {
                 best = score0;
@@ -213,6 +280,11 @@ public class KingCombatStrategy extends Strategy {
             }
             indicate("evading");
             if(move != Direction.CENTER) Pathfinder.makeMove(move);
+        }
+        if (RobotTracker.numCats > 0) {
+            placeDefensiveDirt();
+        } else {
+            digSurroundingDirt();
         }
         if(rc.isActionReady()) {
             RobotInfo best = null;

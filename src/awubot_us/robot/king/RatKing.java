@@ -25,6 +25,8 @@ public class RatKing {
         tryPickUpCheese();
         tryUnburyIfStuck();
 
+        indicate("before primary strat: " + Clock.getBytecodeNum());
+
         primaryStrategy.runTick();
     }
 
@@ -47,25 +49,102 @@ public class RatKing {
     }
 
     private static void tryUnburyIfStuck() throws GameActionException {
-
-
         if(!rc.isActionReady()) return;
-        if(rc.getAllCheese() < GameConstants.DIG_DIRT_CHEESE_COST) return;
+        
+        // indicate("hi");
 
+        int numRats = (rc.getCurrentRatCost() - 10) * 2/5;
 
+        boolean completelyStuck = true;
         for (int dx = -2; dx <= 2; dx++) {
             for (int dy = -2; dy <= 2; dy++) {
-                
                 if (Math.max(Math.abs(dx), Math.abs(dy)) < 2) continue;
-
-                var loc = new MapLocation(myLoc.x + dx, myLoc.y + dy);
-                if (!rc.onTheMap(loc) || !rc.canSenseLocation(loc)) continue;
-
-                MapInfo info = rc.senseMapInfo(loc);
-                if (info.isPassable()) {
-                    return;
+                MapLocation checkLoc = new MapLocation(myLoc.x + dx, myLoc.y + dy);
+                if (!rc.onTheMap(checkLoc) || !rc.canSenseLocation(checkLoc)) continue;
+                MapInfo info = rc.senseMapInfo(checkLoc);
+                if (info.isPassable() && !info.isDirt()) {
+                    // if (info != null) {
+                    //     indicate("x: " + info.getMapLocation().x + ", y: " + info.getMapLocation().y);
+                    // }
+                    completelyStuck = false;
+                    break;
                 }
             }
+        }
+
+        
+
+        //indicate("numRats: " + numRats + ", completelyStuck: " + completelyStuck);
+        
+        
+        
+        if(numRats <= 10 && !completelyStuck) return;
+
+        int midVertDir = myLoc.y < mapHeight / 2 ? 1 : -1;
+        int midHorzDir = myLoc.x < mapWidth / 2 ? 1 : -1;
+
+
+        int vertDirtCount = 0;
+        boolean vertValid = true;
+        MapLocation vertDirtTarget = null;
+        outer_vert:
+        for (int dist = 2; dist <= 3; dist++) {
+            int y = myLoc.y + dist * midVertDir;
+            for (int dx = -1; dx <= 1; dx++) {
+                MapLocation loc = new MapLocation(myLoc.x + dx, y);
+                if (!rc.onTheMap(loc) || !rc.canSenseLocation(loc)) {
+                    vertValid = false;
+                    break outer_vert;
+                }
+                MapInfo info = rc.senseMapInfo(loc);
+                if (info.isDirt()) {
+                    vertDirtCount++;
+                    if (vertDirtTarget == null && rc.canRemoveDirt(loc)) {
+                        vertDirtTarget = loc;
+                    }
+                } else if (!info.isPassable()) {
+                    vertValid = false;
+                    break outer_vert;
+                }
+            }
+        }
+
+        int horzDirtCount = 0;
+        boolean horzValid = true;
+        MapLocation horzDirtTarget = null;
+        outer_horz:
+        for (int dist = 2; dist <= 3; dist++) {
+            int x = myLoc.x + dist * midHorzDir;
+            for (int dy = -1; dy <= 1; dy++) {
+                MapLocation loc = new MapLocation(x, myLoc.y + dy);
+                if (!rc.onTheMap(loc) || !rc.canSenseLocation(loc)) {
+                    horzValid = false;
+                    break outer_horz;
+                }
+                MapInfo info = rc.senseMapInfo(loc);
+                if (info.isDirt()) {
+                    horzDirtCount++;
+                    if (horzDirtTarget == null && rc.canRemoveDirt(loc)) {
+                        horzDirtTarget = loc;
+                    }
+                } else if (!info.isPassable()) {
+                    horzValid = false;
+                    break outer_horz;
+                }
+            }
+        }
+
+        MapLocation targetDirt = null;
+        if (vertValid && vertDirtTarget != null && (!horzValid || horzDirtTarget == null || vertDirtCount <= horzDirtCount)) {
+            targetDirt = vertDirtTarget;
+        } else if (horzValid && horzDirtTarget != null) {
+            targetDirt = horzDirtTarget;
+        }
+
+        if (targetDirt != null) {
+            rc.removeDirt(targetDirt);
+            CellTracker.storeVisibleCellsKing();
+            return;
         }
 
         MapLocation best = null;
@@ -73,7 +152,7 @@ public class RatKing {
 
         for(int dx = -2; dx <= 2; dx++) {
             for(int dy = -2; dy <= 2; dy++) {
-                if(Math.max(Math.abs(dx), Math.abs(dy)) > 2) continue;
+                if(Math.max(Math.abs(dx), Math.abs(dy)) < 2) continue;
 
                 var loc = new MapLocation(myLoc.x + dx, myLoc.y + dy);
                 if(!rc.onTheMap(loc) || !rc.canSenseLocation(loc)) continue;
@@ -89,28 +168,25 @@ public class RatKing {
                         score += 25;
                     }
                 }
-                
+
                 if(CellTracker.isWallAdjacent(loc)) {
                     score += 200;
                 }
 
                 score -= 10 * myLoc.distanceSquaredTo(loc);
 
-                // check how close it is to free space
                 int minDistToFree = Integer.MAX_VALUE;
                 for(int ddx = -3; ddx <= 3; ddx++) {
                     for(int ddy = -3; ddy <= 3; ddy++) {
                         var checkLoc = new MapLocation(loc.x + ddx, loc.y + ddy);
                         if(!rc.onTheMap(checkLoc) || !rc.canSenseLocation(checkLoc))
                             continue;
-                        
-                        // make sure euclidean dist^2 with rat king is > 2
-                        
+
                         int newx = ddx + dx;
                         int newy = ddy + dy;
                         if (newx * newx + newy * newy <= 2)
                             continue;
-                        
+
                         MapInfo checkInfo = rc.senseMapInfo(checkLoc);
                         if(checkInfo.isPassable()) {
                             int dist = ddx * ddx + ddy * ddy;

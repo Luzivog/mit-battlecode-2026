@@ -112,11 +112,11 @@ public class CellTracker {
             case {{i}} -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable{{i}}     & ~dirt{{i}}
-                        & passable{{i - 1}} & ~dirt{{i - 1}}
-                        & passable{{i + 1}} & ~dirt{{i + 1}}
-                        & passable{{i - 2}} & ~dirt{{i - 2}}
-                        & passable{{i + 2}} & ~dirt{{i + 2}}) == rowMask;
+                        & passable{{i}}
+                        & passable{{i - 1}}
+                        & passable{{i + 1}}
+                        & passable{{i - 2}}
+                        & passable{{i + 2}}) == rowMask;
             }
             {% endfor %}
             default -> {
@@ -134,13 +134,32 @@ public class CellTracker {
             case {{i}} -> {
                 if(info.isDirt()) dirt{{i}} |= 1l << locX;
                 else dirt{{i}} &= ~(1l << locX);
-                if (mapData[{{i}}].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[{{i}}].setCharAt(locX, '\2');
-                    } else {
-                        mapData[{{i}}].setCharAt(locX, '\1');
+                if (info.isWall()) {
+                    mapData[{{i}}].setCharAt(locX, '\2');
+                } else {
+                    mapData[{{i}}].setCharAt(locX, '\1');
+                }
+                if((seen{{i}} & 1l << locX) == 0l) {
+                    seen{{i}} |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable{{i}} |= 1l << locX;
                     }
                 }
+            }
+            {% endfor %}
+        }
+    }
+
+    public static void storeCellKing(MapInfo info) throws GameActionException {
+        var loc = info.getMapLocation();
+        var locX = loc.x;
+        // rc.setIndicatorDot(loc, 255, 255, 0);
+        switch(loc.y) {
+            {% for i in range(MAX_MAP_SIZE) %}
+            case {{i}} -> {
+                if(info.isDirt()) dirt{{i}} |= 1l << locX;
+                else dirt{{i}} &= ~(1l << locX);
                 if((seen{{i}} & 1l << locX) == 0l) {
                     seen{{i}} |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
@@ -225,7 +244,7 @@ public class CellTracker {
         // IF TLE: tone this down
         Profiler.begin();
         for(var info : rc.senseNearbyMapInfos()) {
-            CellTracker.storeCell(info);
+            CellTracker.storeCellKing(info);
         }
         Profiler.end("storeVisibleCellsKing");
     }

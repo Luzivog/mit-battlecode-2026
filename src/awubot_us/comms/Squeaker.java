@@ -5,6 +5,7 @@ import static awubot_us.util.Util.*;
 
 import awubot_us.CellTracker;
 import awubot_us.Game;
+import awubot_us.util.Profiler;
 import awubot_us.util.string.FastIndexedIntSet;
 
 import static awubot_us.Game.*;
@@ -53,7 +54,6 @@ public class Squeaker {
     }
 
     private static void processMessage(Message msg) {
-        squeaksSinceLastTurn++;
         RobotTracker.addAlly(msg.getSource());
         // println(rc.getID() + " received from " + msg.getSenderID() + " content " + msg.getBytes());
         int bytes = msg.getBytes();
@@ -118,17 +118,19 @@ public class Squeaker {
     // messages come in chronological order
     // there is currently a bug where fat units get sent the same message multiple times
     private static int lastMessageCount = 0;
-    public static int squeaksSinceLastTurn = 0;
     public static void preTick() {
-        squeaksSinceLastTurn = 0;
-        Message[] msgs = rc.readSqueaks(time - 1);
-        for (int i = lastMessageCount; i < msgs.length; i++) {
-            processMessage(msgs[i]);
-        }
-        msgs = rc.readSqueaks(time);
+        Message[] msgs = rc.readSqueaks(time);
+        var oldLastMessageCount = lastMessageCount;
         lastMessageCount = msgs.length;
-        for (Message m : msgs) {
-            processMessage(m);
+        int j = 4;
+        for (int i = msgs.length - 1; i >= 0; i--) {
+            processMessage(msgs[i]);
+            if(j-- == 0) return;
+        }
+        msgs = rc.readSqueaks(time - 1);
+        for (int i = msgs.length - 1; i >= oldLastMessageCount; i--) {
+            processMessage(msgs[i]);
+            if(j-- == 0) return;
         }
     }
 
@@ -143,6 +145,12 @@ public class Squeaker {
     }
 
     public static void postTick() throws GameActionException {
+        if (!isRatKing) {
+            if (RobotTracker.catHistNum[0] > 0 || RobotTracker.catHistNum[1] > 0 || RobotTracker.catHistNum[2] > 0 || RobotTracker.catHistNum[3] > 0) {
+                // dont squeak anything if cats are around
+                return;
+            }
+        }
         if (nearRatKing()) {
             indicate("NEAR RAT KING");
             if (GlobalArray.peepSymmetry() == CellTracker.Symmetry.Unknown && CellTracker.isSymmetryKnown()) {

@@ -18,91 +18,6 @@ import static awubot_us.robot.rat.BabyRat.*;
 import awubot_us.util.Profiler;
 import awubot_us.CellTracker;
 import awubot_us.RobotTracker;
-
-{% set related_map = {
-    0: ["Direction.NORTH", "Direction.NORTHEAST", "Direction.NORTHWEST"],
-    1: ["Direction.NORTHEAST", "Direction.NORTH", "Direction.EAST"],
-    2: ["Direction.EAST", "Direction.NORTHEAST", "Direction.SOUTHEAST"],
-    3: ["Direction.SOUTHEAST", "Direction.SOUTH", "Direction.EAST"],
-    4: ["Direction.SOUTH", "Direction.SOUTHEAST", "Direction.SOUTHWEST"],
-    5: ["Direction.SOUTHWEST", "Direction.SOUTH", "Direction.WEST"],
-    6: ["Direction.WEST", "Direction.NORTHWEST", "Direction.SOUTHWEST"],
-    7: ["Direction.NORTHWEST", "Direction.NORTH", "Direction.WEST"],
-} %}
-{% set wide_related_map = {
-    0: ["Direction.NORTH", "Direction.NORTHEAST", "Direction.NORTHWEST", "Direction.EAST", "Direction.WEST"],
-    1: ["Direction.NORTHEAST", "Direction.NORTH", "Direction.EAST", "Direction.NORTHWEST", "Direction.SOUTHEAST"],
-    2: ["Direction.EAST", "Direction.NORTHEAST", "Direction.SOUTHEAST", "Direction.NORTH", "Direction.SOUTH"],
-    3: ["Direction.SOUTHEAST", "Direction.SOUTH", "Direction.EAST", "Direction.NORTHEAST", "Direction.SOUTHWEST"],
-    4: ["Direction.SOUTH", "Direction.SOUTHEAST", "Direction.SOUTHWEST", "Direction.EAST", "Direction.WEST"],
-    5: ["Direction.SOUTHWEST", "Direction.SOUTH", "Direction.WEST", "Direction.NORTHWEST", "Direction.SOUTHEAST"],
-    6: ["Direction.WEST", "Direction.NORTHWEST", "Direction.SOUTHWEST", "Direction.NORTH", "Direction.SOUTH"],
-    7: ["Direction.NORTHWEST", "Direction.NORTH", "Direction.WEST", "Direction.NORTHEAST", "Direction.SOUTHWEST"],
-} %}
-{% set dir_short_map = {
-    "Direction.NORTH": "N",
-    "Direction.NORTHEAST": "NE",
-    "Direction.EAST": "E",
-    "Direction.SOUTHEAST": "SE",
-    "Direction.SOUTH": "S",
-    "Direction.SOUTHWEST": "SW",
-    "Direction.WEST": "W",
-    "Direction.NORTHWEST": "NW",
-} %}
-{% set dir_ord_map = {
-    "Direction.NORTH": 0,
-    "Direction.NORTHEAST": 1,
-    "Direction.EAST": 2,
-    "Direction.SOUTHEAST": 3,
-    "Direction.SOUTH": 4,
-    "Direction.SOUTHWEST": 5,
-    "Direction.WEST": 6,
-    "Direction.NORTHWEST": 7,
-} %}
-{% set dir_dx = {
-    "Direction.NORTH": 0,
-    "Direction.NORTHEAST": 1,
-    "Direction.EAST": 1,
-    "Direction.SOUTHEAST": 1,
-    "Direction.SOUTH": 0,
-    "Direction.SOUTHWEST": -1,
-    "Direction.WEST": -1,
-    "Direction.NORTHWEST": -1,
-} %}
-{% set dir_dy = {
-    "Direction.NORTH": 1,
-    "Direction.NORTHEAST": 1,
-    "Direction.EAST": 0,
-    "Direction.SOUTHEAST": -1,
-    "Direction.SOUTH": -1,
-    "Direction.SOUTHWEST": -1,
-    "Direction.WEST": 0,
-    "Direction.NORTHWEST": 1,
-} %}
-
-{% macro can_see(facing_idx, dx, dy) -%}
-{%- set facing = directions[facing_idx] -%}
-{%- if facing == "Direction.NORTH" -%}
-{{ "true" if dy >= (dx | abs) else "false" }}
-{%- elif facing == "Direction.NORTHEAST" -%}
-{{ "true" if dx >= 0 and dy >= 0 else "false" }}
-{%- elif facing == "Direction.EAST" -%}
-{{ "true" if dx >= (dy | abs) else "false" }}
-{%- elif facing == "Direction.SOUTHEAST" -%}
-{{ "true" if dx >= 0 and dy <= 0 else "false" }}
-{%- elif facing == "Direction.SOUTH" -%}
-{{ "true" if dy <= -(dx | abs) else "false" }}
-{%- elif facing == "Direction.SOUTHWEST" -%}
-{{ "true" if dx <= 0 and dy <= 0 else "false" }}
-{%- elif facing == "Direction.WEST" -%}
-{{ "true" if dx <= -(dy | abs) else "false" }}
-{%- elif facing == "Direction.NORTHWEST" -%}
-{{ "true" if dx <= 0 and dy >= 0 else "false" }}
-{%- else -%}
-false
-{%- endif -%}
-{%- endmacro %}
-
 {% macro wvar(dx, dy) -%}
 w_{{ "m" if dx < 0 else "" }}{{ dx|abs }}_{{ "m" if dy < 0 else "" }}{{ dy|abs }}
 {%- endmacro %}
@@ -132,49 +47,82 @@ public final class TryTrap {
     {% endfor %}
     static MapLocation bestPlaceLoc;
     static Direction bestMoveDir;
+    static Direction bestSecondaryMoveDir;
     static Direction bestFacing;
     static double best;
     static MapLocation curMoveLoc;
     static MapLocation weightSource;
     static int weightCompTime;
     static int bytecodeStart, bytecodeBudget;
+    static boolean shouldDefRun;
+
+    public static boolean verifyCanRun() throws GameActionException {
+        if (!rc.isActionReady() || !confirmCanPlace()) return false;
+        return true;
+    }
+
+    public static boolean globalShouldRun() throws GameActionException {
+        // global
+        if (rc.getAllCheese() > 3000 || rc.getRawCheese() >= 20) return true;
+        return false;
+    }
+
+    public static boolean shouldTrap(RobotInfo info) throws GameActionException {
+        if (info.getHealth() >= 80 && info.getHealth() >= rc.getHealth() + CombatStrategy.getBiteDamage() || info.getHealth() == 100) {
+            println("ACCEPEETD CONIDIOTOINIS A;PLOSDKJF;LKAJSDAF;LKJASDA;LKFJDSA;DLKFJSD;LKFJA;SLKDFJ;SLAKJDFL;K");
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean shouldRunEarlyExit() throws GameActionException {
+        for (int i = 0; i < RobotTracker.numEnemies && i < 3; i++) {
+            RobotInfo info = RobotTracker.sortedEnemies[i];
+            if (info.getType() != UnitType.BABY_RAT) continue;
+            if (shouldTrap(info)) return true;
+        }
+        return false;
+    }
 
     public static boolean run() throws GameActionException {
-        if (rc.getAllCheese() < 300 || rc.getRawCheese() < 20 || !confirmCanPlace()) return false;
+        if (!verifyCanRun()) return false;
+        shouldDefRun = globalShouldRun();
+        if (!shouldDefRun && !shouldRunEarlyExit()) return false;
+
         bytecodeStart = Clock.getBytecodeNum();
-        bytecodeBudget = Math.min(3000, (int) (Clock.getBytecodesLeft() - 1000) / 2);
-        Profiler.push();
-        try {
-            computeWeights();
-        } finally {
-            Profiler.pop("TryTrap.computeWeights");
-        }
+        bytecodeBudget = Math.min(5000, (int) (Clock.getBytecodesLeft() - 1000) / 2);
+        computeWeights();
         resetBest();
         selectMoves();
+        selectSecondaryMoves();
         if (best <= 0.5) return false;
-        assert(CombatStrategy.performMoves(bestMoveDir, bestFacing));
-        if (!rc.canPlaceRatTrap(bestPlaceLoc)) {
-            {# println("huh cant place trap here  " + bestPlaceLoc);
-            for (int i = 0; i < CellTracker.numNearbyRatTraps; i++) {
-                println("nearby trap at " + CellTracker.nearbyRatTraps[i]);
-            } #}
-            {# rc.resign(); #}
+        if (bestMoveDir != null) {
+            assert(CombatStrategy.performMoves(bestMoveDir, bestFacing));
+            rc.placeRatTrap(bestPlaceLoc);
+        } else {
+            rc.placeRatTrap(bestPlaceLoc);
+            assert(CombatStrategy.performMoves(bestSecondaryMoveDir, bestFacing));
         }
-        rc.placeRatTrap(bestPlaceLoc);
         println("!!!!!!!!!! placed rat trap");
+        rc.setTimelineMarker("Placed Rat Trap", 0, 0, 0);
         indicate("COMBAT STRAT: TRAP");
         return true;
     }
 
     private static boolean confirmCanPlace() throws GameActionException {
-        confirmedCanPlace = false;
-        for (MapInfo info : rc.senseNearbyMapInfos(2)) {
-            if (rc.canPlaceRatTrap(info.getMapLocation())) {
-                confirmedCanPlace = true;
-                break;
+        switch (myDir.ordinal()) {
+            {% for ord in range(8) %}
+            case {{ ord }} -> {
+                {% for d in related_map[ord] %}
+                if (rc.canPlaceRatTrap(myLoc.add({{ d }}))) {
+                    return true;
+                }
+                {% endfor %}
             }
+            {% endfor %}
+            default -> { }
         }
-        return confirmedCanPlace;
+        return false;
     }
 
     // has room for optimisation if reallllyyy needed
@@ -214,7 +162,7 @@ public final class TryTrap {
         {% endfor %}
     }
 
-    private static void applyEnemyWeights() {
+    private static void applyEnemyWeights() throws GameActionException {
         for (int i = 0; i < RobotTracker.numEnemies && i < 5; i++) {
             RobotInfo info = RobotTracker.sortedEnemies[i];
             if (info.getType() != UnitType.BABY_RAT) continue;
@@ -240,8 +188,11 @@ public final class TryTrap {
         }
     }
 
-    private static void applyEnemyWeight(RobotInfo rinfo) {
-        if (rinfo.getHealth() <= 30) return;
+    private static void applyEnemyWeight(RobotInfo rinfo) throws GameActionException {
+        double mult = 1.0;
+        if (!shouldDefRun && !shouldTrap(rinfo)) {
+            mult = -1.0;
+        }
         int x = rinfo.location.x - myLocX;
         int y = rinfo.location.y - myLocY;
         switch (x) {
@@ -265,7 +216,7 @@ public final class TryTrap {
                                 {%- set diff = (f - dord) | abs -%}
                                 {%- set ang = diff if diff < 8 - diff else 8 - diff -%}
                                 {%- if ang <= 1 -%}
-                                {{ wvar(cx, cy) }} += {{ 3 - ang }};
+                                {{ wvar(cx, cy) }} += ({{ 3 - ang }}) * mult;
                                 {# println("incremented weight at " + (myLocX + {{cx}}) + ", " + (myLocY + {{cy}})); #}
                                 {%- endif -%}
                                 {%- endif -%}
@@ -334,6 +285,7 @@ public final class TryTrap {
     private static void resetBest() {
         bestPlaceLoc = null;
         bestMoveDir = null;
+        bestSecondaryMoveDir = null;
         bestFacing = null;
         best = -1;
     }
@@ -345,6 +297,54 @@ public final class TryTrap {
                 {% for d in wide_related_map[ord] %}
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 move{{ dir_short_map[d] }}();
+                {% endfor %}
+            }
+            {% endfor %}
+            default -> { }
+        }
+    }
+
+    private static void selectSecondaryMoves() throws GameActionException {
+        switch (myDir.ordinal()) {
+            {% for ord in range(8) %}
+            case {{ ord }} -> {
+                {% set related = related_map[ord] %}
+                {% for facing in related %}
+                {% for move_dir in related %}
+                considerSecondaryMove({{ dir_opposite_map[move_dir] }}, {{ facing }});
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                {% endfor %}
+                {% endfor %}
+            }
+            {% endfor %}
+            default -> { }
+        }
+    }
+
+    private static void considerSecondaryMove(Direction moveDir, Direction facing) throws GameActionException {
+        int moveCost = CombatCommon.movementCost(moveDir, facing);
+        if (moveCost == -1) return;
+        double moveScore = CombatStrategy.getCellScoreFor(moveDir, facing);
+        if (moveScore <= -100) return;
+        switch (facing.ordinal()) {
+            {% for f in range(8) %}
+            case {{ f }} -> {
+                {% for place_dir in related_map[f] %}
+                if (moveDir != {{ place_dir }}) {
+                    double score = {{ wvar(dir_dx[place_dir], dir_dy[place_dir]) }};
+                    if (score >= 0) {
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add({{ place_dir }});
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
                 {% endfor %}
             }
             {% endfor %}
@@ -383,6 +383,7 @@ public final class TryTrap {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add({{ place_dir }});
                 bestMoveDir = {{ move_dir }};
+                bestSecondaryMoveDir = null;
                 bestFacing = {{ facing }};
             }
         }
@@ -393,8 +394,8 @@ public final class TryTrap {
 
     
     public static boolean miniRun() throws GameActionException {
-        if (!rc.isActionReady()) return false;
-        if (rc.getAllCheese() < 300 || rc.getRawCheese() < 20 || !confirmCanPlace()) return false;
+        if (!verifyCanRun()) return false;
+        shouldDefRun = globalShouldRun();
         if (weightCompTime != time) {
             clearWeights();
             weightSource = myLoc;
@@ -411,6 +412,7 @@ public final class TryTrap {
                 {% endfor %}
                 for (int i = 0; i < RobotTracker.numEnemies && i < 2; i++) {
                     RobotInfo rinfo = RobotTracker.sortedEnemies[i];
+                    if (!shouldDefRun && !shouldTrap(rinfo)) continue;
                     if (rinfo.location.distanceSquaredTo(myLoc) > 2) break;
                     MapLocation eloc = rinfo.location;
                     {

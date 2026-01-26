@@ -1,3 +1,5 @@
+
+
 package awubot_us;
 
 import battlecode.common.*;
@@ -1792,506 +1794,506 @@ public class CellTracker {
             case 2 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable2     & ~dirt2
-                        & passable1 & ~dirt1
-                        & passable3 & ~dirt3
-                        & passable0 & ~dirt0
-                        & passable4 & ~dirt4) == rowMask;
+                        & passable2
+                        & passable1
+                        & passable3
+                        & passable0
+                        & passable4) == rowMask;
             }
             case 3 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable3     & ~dirt3
-                        & passable2 & ~dirt2
-                        & passable4 & ~dirt4
-                        & passable1 & ~dirt1
-                        & passable5 & ~dirt5) == rowMask;
+                        & passable3
+                        & passable2
+                        & passable4
+                        & passable1
+                        & passable5) == rowMask;
             }
             case 4 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable4     & ~dirt4
-                        & passable3 & ~dirt3
-                        & passable5 & ~dirt5
-                        & passable2 & ~dirt2
-                        & passable6 & ~dirt6) == rowMask;
+                        & passable4
+                        & passable3
+                        & passable5
+                        & passable2
+                        & passable6) == rowMask;
             }
             case 5 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable5     & ~dirt5
-                        & passable4 & ~dirt4
-                        & passable6 & ~dirt6
-                        & passable3 & ~dirt3
-                        & passable7 & ~dirt7) == rowMask;
+                        & passable5
+                        & passable4
+                        & passable6
+                        & passable3
+                        & passable7) == rowMask;
             }
             case 6 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable6     & ~dirt6
-                        & passable5 & ~dirt5
-                        & passable7 & ~dirt7
-                        & passable4 & ~dirt4
-                        & passable8 & ~dirt8) == rowMask;
+                        & passable6
+                        & passable5
+                        & passable7
+                        & passable4
+                        & passable8) == rowMask;
             }
             case 7 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable7     & ~dirt7
-                        & passable6 & ~dirt6
-                        & passable8 & ~dirt8
-                        & passable5 & ~dirt5
-                        & passable9 & ~dirt9) == rowMask;
+                        & passable7
+                        & passable6
+                        & passable8
+                        & passable5
+                        & passable9) == rowMask;
             }
             case 8 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable8     & ~dirt8
-                        & passable7 & ~dirt7
-                        & passable9 & ~dirt9
-                        & passable6 & ~dirt6
-                        & passable10 & ~dirt10) == rowMask;
+                        & passable8
+                        & passable7
+                        & passable9
+                        & passable6
+                        & passable10) == rowMask;
             }
             case 9 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable9     & ~dirt9
-                        & passable8 & ~dirt8
-                        & passable10 & ~dirt10
-                        & passable7 & ~dirt7
-                        & passable11 & ~dirt11) == rowMask;
+                        & passable9
+                        & passable8
+                        & passable10
+                        & passable7
+                        & passable11) == rowMask;
             }
             case 10 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable10     & ~dirt10
-                        & passable9 & ~dirt9
-                        & passable11 & ~dirt11
-                        & passable8 & ~dirt8
-                        & passable12 & ~dirt12) == rowMask;
+                        & passable10
+                        & passable9
+                        & passable11
+                        & passable8
+                        & passable12) == rowMask;
             }
             case 11 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable11     & ~dirt11
-                        & passable10 & ~dirt10
-                        & passable12 & ~dirt12
-                        & passable9 & ~dirt9
-                        & passable13 & ~dirt13) == rowMask;
+                        & passable11
+                        & passable10
+                        & passable12
+                        & passable9
+                        & passable13) == rowMask;
             }
             case 12 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable12     & ~dirt12
-                        & passable11 & ~dirt11
-                        & passable13 & ~dirt13
-                        & passable10 & ~dirt10
-                        & passable14 & ~dirt14) == rowMask;
+                        & passable12
+                        & passable11
+                        & passable13
+                        & passable10
+                        & passable14) == rowMask;
             }
             case 13 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable13     & ~dirt13
-                        & passable12 & ~dirt12
-                        & passable14 & ~dirt14
-                        & passable11 & ~dirt11
-                        & passable15 & ~dirt15) == rowMask;
+                        & passable13
+                        & passable12
+                        & passable14
+                        & passable11
+                        & passable15) == rowMask;
             }
             case 14 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable14     & ~dirt14
-                        & passable13 & ~dirt13
-                        & passable15 & ~dirt15
-                        & passable12 & ~dirt12
-                        & passable16 & ~dirt16) == rowMask;
+                        & passable14
+                        & passable13
+                        & passable15
+                        & passable12
+                        & passable16) == rowMask;
             }
             case 15 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable15     & ~dirt15
-                        & passable14 & ~dirt14
-                        & passable16 & ~dirt16
-                        & passable13 & ~dirt13
-                        & passable17 & ~dirt17) == rowMask;
+                        & passable15
+                        & passable14
+                        & passable16
+                        & passable13
+                        & passable17) == rowMask;
             }
             case 16 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable16     & ~dirt16
-                        & passable15 & ~dirt15
-                        & passable17 & ~dirt17
-                        & passable14 & ~dirt14
-                        & passable18 & ~dirt18) == rowMask;
+                        & passable16
+                        & passable15
+                        & passable17
+                        & passable14
+                        & passable18) == rowMask;
             }
             case 17 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable17     & ~dirt17
-                        & passable16 & ~dirt16
-                        & passable18 & ~dirt18
-                        & passable15 & ~dirt15
-                        & passable19 & ~dirt19) == rowMask;
+                        & passable17
+                        & passable16
+                        & passable18
+                        & passable15
+                        & passable19) == rowMask;
             }
             case 18 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable18     & ~dirt18
-                        & passable17 & ~dirt17
-                        & passable19 & ~dirt19
-                        & passable16 & ~dirt16
-                        & passable20 & ~dirt20) == rowMask;
+                        & passable18
+                        & passable17
+                        & passable19
+                        & passable16
+                        & passable20) == rowMask;
             }
             case 19 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable19     & ~dirt19
-                        & passable18 & ~dirt18
-                        & passable20 & ~dirt20
-                        & passable17 & ~dirt17
-                        & passable21 & ~dirt21) == rowMask;
+                        & passable19
+                        & passable18
+                        & passable20
+                        & passable17
+                        & passable21) == rowMask;
             }
             case 20 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable20     & ~dirt20
-                        & passable19 & ~dirt19
-                        & passable21 & ~dirt21
-                        & passable18 & ~dirt18
-                        & passable22 & ~dirt22) == rowMask;
+                        & passable20
+                        & passable19
+                        & passable21
+                        & passable18
+                        & passable22) == rowMask;
             }
             case 21 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable21     & ~dirt21
-                        & passable20 & ~dirt20
-                        & passable22 & ~dirt22
-                        & passable19 & ~dirt19
-                        & passable23 & ~dirt23) == rowMask;
+                        & passable21
+                        & passable20
+                        & passable22
+                        & passable19
+                        & passable23) == rowMask;
             }
             case 22 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable22     & ~dirt22
-                        & passable21 & ~dirt21
-                        & passable23 & ~dirt23
-                        & passable20 & ~dirt20
-                        & passable24 & ~dirt24) == rowMask;
+                        & passable22
+                        & passable21
+                        & passable23
+                        & passable20
+                        & passable24) == rowMask;
             }
             case 23 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable23     & ~dirt23
-                        & passable22 & ~dirt22
-                        & passable24 & ~dirt24
-                        & passable21 & ~dirt21
-                        & passable25 & ~dirt25) == rowMask;
+                        & passable23
+                        & passable22
+                        & passable24
+                        & passable21
+                        & passable25) == rowMask;
             }
             case 24 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable24     & ~dirt24
-                        & passable23 & ~dirt23
-                        & passable25 & ~dirt25
-                        & passable22 & ~dirt22
-                        & passable26 & ~dirt26) == rowMask;
+                        & passable24
+                        & passable23
+                        & passable25
+                        & passable22
+                        & passable26) == rowMask;
             }
             case 25 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable25     & ~dirt25
-                        & passable24 & ~dirt24
-                        & passable26 & ~dirt26
-                        & passable23 & ~dirt23
-                        & passable27 & ~dirt27) == rowMask;
+                        & passable25
+                        & passable24
+                        & passable26
+                        & passable23
+                        & passable27) == rowMask;
             }
             case 26 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable26     & ~dirt26
-                        & passable25 & ~dirt25
-                        & passable27 & ~dirt27
-                        & passable24 & ~dirt24
-                        & passable28 & ~dirt28) == rowMask;
+                        & passable26
+                        & passable25
+                        & passable27
+                        & passable24
+                        & passable28) == rowMask;
             }
             case 27 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable27     & ~dirt27
-                        & passable26 & ~dirt26
-                        & passable28 & ~dirt28
-                        & passable25 & ~dirt25
-                        & passable29 & ~dirt29) == rowMask;
+                        & passable27
+                        & passable26
+                        & passable28
+                        & passable25
+                        & passable29) == rowMask;
             }
             case 28 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable28     & ~dirt28
-                        & passable27 & ~dirt27
-                        & passable29 & ~dirt29
-                        & passable26 & ~dirt26
-                        & passable30 & ~dirt30) == rowMask;
+                        & passable28
+                        & passable27
+                        & passable29
+                        & passable26
+                        & passable30) == rowMask;
             }
             case 29 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable29     & ~dirt29
-                        & passable28 & ~dirt28
-                        & passable30 & ~dirt30
-                        & passable27 & ~dirt27
-                        & passable31 & ~dirt31) == rowMask;
+                        & passable29
+                        & passable28
+                        & passable30
+                        & passable27
+                        & passable31) == rowMask;
             }
             case 30 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable30     & ~dirt30
-                        & passable29 & ~dirt29
-                        & passable31 & ~dirt31
-                        & passable28 & ~dirt28
-                        & passable32 & ~dirt32) == rowMask;
+                        & passable30
+                        & passable29
+                        & passable31
+                        & passable28
+                        & passable32) == rowMask;
             }
             case 31 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable31     & ~dirt31
-                        & passable30 & ~dirt30
-                        & passable32 & ~dirt32
-                        & passable29 & ~dirt29
-                        & passable33 & ~dirt33) == rowMask;
+                        & passable31
+                        & passable30
+                        & passable32
+                        & passable29
+                        & passable33) == rowMask;
             }
             case 32 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable32     & ~dirt32
-                        & passable31 & ~dirt31
-                        & passable33 & ~dirt33
-                        & passable30 & ~dirt30
-                        & passable34 & ~dirt34) == rowMask;
+                        & passable32
+                        & passable31
+                        & passable33
+                        & passable30
+                        & passable34) == rowMask;
             }
             case 33 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable33     & ~dirt33
-                        & passable32 & ~dirt32
-                        & passable34 & ~dirt34
-                        & passable31 & ~dirt31
-                        & passable35 & ~dirt35) == rowMask;
+                        & passable33
+                        & passable32
+                        & passable34
+                        & passable31
+                        & passable35) == rowMask;
             }
             case 34 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable34     & ~dirt34
-                        & passable33 & ~dirt33
-                        & passable35 & ~dirt35
-                        & passable32 & ~dirt32
-                        & passable36 & ~dirt36) == rowMask;
+                        & passable34
+                        & passable33
+                        & passable35
+                        & passable32
+                        & passable36) == rowMask;
             }
             case 35 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable35     & ~dirt35
-                        & passable34 & ~dirt34
-                        & passable36 & ~dirt36
-                        & passable33 & ~dirt33
-                        & passable37 & ~dirt37) == rowMask;
+                        & passable35
+                        & passable34
+                        & passable36
+                        & passable33
+                        & passable37) == rowMask;
             }
             case 36 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable36     & ~dirt36
-                        & passable35 & ~dirt35
-                        & passable37 & ~dirt37
-                        & passable34 & ~dirt34
-                        & passable38 & ~dirt38) == rowMask;
+                        & passable36
+                        & passable35
+                        & passable37
+                        & passable34
+                        & passable38) == rowMask;
             }
             case 37 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable37     & ~dirt37
-                        & passable36 & ~dirt36
-                        & passable38 & ~dirt38
-                        & passable35 & ~dirt35
-                        & passable39 & ~dirt39) == rowMask;
+                        & passable37
+                        & passable36
+                        & passable38
+                        & passable35
+                        & passable39) == rowMask;
             }
             case 38 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable38     & ~dirt38
-                        & passable37 & ~dirt37
-                        & passable39 & ~dirt39
-                        & passable36 & ~dirt36
-                        & passable40 & ~dirt40) == rowMask;
+                        & passable38
+                        & passable37
+                        & passable39
+                        & passable36
+                        & passable40) == rowMask;
             }
             case 39 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable39     & ~dirt39
-                        & passable38 & ~dirt38
-                        & passable40 & ~dirt40
-                        & passable37 & ~dirt37
-                        & passable41 & ~dirt41) == rowMask;
+                        & passable39
+                        & passable38
+                        & passable40
+                        & passable37
+                        & passable41) == rowMask;
             }
             case 40 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable40     & ~dirt40
-                        & passable39 & ~dirt39
-                        & passable41 & ~dirt41
-                        & passable38 & ~dirt38
-                        & passable42 & ~dirt42) == rowMask;
+                        & passable40
+                        & passable39
+                        & passable41
+                        & passable38
+                        & passable42) == rowMask;
             }
             case 41 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable41     & ~dirt41
-                        & passable40 & ~dirt40
-                        & passable42 & ~dirt42
-                        & passable39 & ~dirt39
-                        & passable43 & ~dirt43) == rowMask;
+                        & passable41
+                        & passable40
+                        & passable42
+                        & passable39
+                        & passable43) == rowMask;
             }
             case 42 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable42     & ~dirt42
-                        & passable41 & ~dirt41
-                        & passable43 & ~dirt43
-                        & passable40 & ~dirt40
-                        & passable44 & ~dirt44) == rowMask;
+                        & passable42
+                        & passable41
+                        & passable43
+                        & passable40
+                        & passable44) == rowMask;
             }
             case 43 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable43     & ~dirt43
-                        & passable42 & ~dirt42
-                        & passable44 & ~dirt44
-                        & passable41 & ~dirt41
-                        & passable45 & ~dirt45) == rowMask;
+                        & passable43
+                        & passable42
+                        & passable44
+                        & passable41
+                        & passable45) == rowMask;
             }
             case 44 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable44     & ~dirt44
-                        & passable43 & ~dirt43
-                        & passable45 & ~dirt45
-                        & passable42 & ~dirt42
-                        & passable46 & ~dirt46) == rowMask;
+                        & passable44
+                        & passable43
+                        & passable45
+                        & passable42
+                        & passable46) == rowMask;
             }
             case 45 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable45     & ~dirt45
-                        & passable44 & ~dirt44
-                        & passable46 & ~dirt46
-                        & passable43 & ~dirt43
-                        & passable47 & ~dirt47) == rowMask;
+                        & passable45
+                        & passable44
+                        & passable46
+                        & passable43
+                        & passable47) == rowMask;
             }
             case 46 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable46     & ~dirt46
-                        & passable45 & ~dirt45
-                        & passable47 & ~dirt47
-                        & passable44 & ~dirt44
-                        & passable48 & ~dirt48) == rowMask;
+                        & passable46
+                        & passable45
+                        & passable47
+                        & passable44
+                        & passable48) == rowMask;
             }
             case 47 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable47     & ~dirt47
-                        & passable46 & ~dirt46
-                        & passable48 & ~dirt48
-                        & passable45 & ~dirt45
-                        & passable49 & ~dirt49) == rowMask;
+                        & passable47
+                        & passable46
+                        & passable48
+                        & passable45
+                        & passable49) == rowMask;
             }
             case 48 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable48     & ~dirt48
-                        & passable47 & ~dirt47
-                        & passable49 & ~dirt49
-                        & passable46 & ~dirt46
-                        & passable50 & ~dirt50) == rowMask;
+                        & passable48
+                        & passable47
+                        & passable49
+                        & passable46
+                        & passable50) == rowMask;
             }
             case 49 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable49     & ~dirt49
-                        & passable48 & ~dirt48
-                        & passable50 & ~dirt50
-                        & passable47 & ~dirt47
-                        & passable51 & ~dirt51) == rowMask;
+                        & passable49
+                        & passable48
+                        & passable50
+                        & passable47
+                        & passable51) == rowMask;
             }
             case 50 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable50     & ~dirt50
-                        & passable49 & ~dirt49
-                        & passable51 & ~dirt51
-                        & passable48 & ~dirt48
-                        & passable52 & ~dirt52) == rowMask;
+                        & passable50
+                        & passable49
+                        & passable51
+                        & passable48
+                        & passable52) == rowMask;
             }
             case 51 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable51     & ~dirt51
-                        & passable50 & ~dirt50
-                        & passable52 & ~dirt52
-                        & passable49 & ~dirt49
-                        & passable53 & ~dirt53) == rowMask;
+                        & passable51
+                        & passable50
+                        & passable52
+                        & passable49
+                        & passable53) == rowMask;
             }
             case 52 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable52     & ~dirt52
-                        & passable51 & ~dirt51
-                        & passable53 & ~dirt53
-                        & passable50 & ~dirt50
-                        & passable54 & ~dirt54) == rowMask;
+                        & passable52
+                        & passable51
+                        & passable53
+                        & passable50
+                        & passable54) == rowMask;
             }
             case 53 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable53     & ~dirt53
-                        & passable52 & ~dirt52
-                        & passable54 & ~dirt54
-                        & passable51 & ~dirt51
-                        & passable55 & ~dirt55) == rowMask;
+                        & passable53
+                        & passable52
+                        & passable54
+                        & passable51
+                        & passable55) == rowMask;
             }
             case 54 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable54     & ~dirt54
-                        & passable53 & ~dirt53
-                        & passable55 & ~dirt55
-                        & passable52 & ~dirt52
-                        & passable56 & ~dirt56) == rowMask;
+                        & passable54
+                        & passable53
+                        & passable55
+                        & passable52
+                        & passable56) == rowMask;
             }
             case 55 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable55     & ~dirt55
-                        & passable54 & ~dirt54
-                        & passable56 & ~dirt56
-                        & passable53 & ~dirt53
-                        & passable57 & ~dirt57) == rowMask;
+                        & passable55
+                        & passable54
+                        & passable56
+                        & passable53
+                        & passable57) == rowMask;
             }
             case 56 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable56     & ~dirt56
-                        & passable55 & ~dirt55
-                        & passable57 & ~dirt57
-                        & passable54 & ~dirt54
-                        & passable58 & ~dirt58) == rowMask;
+                        & passable56
+                        & passable55
+                        & passable57
+                        & passable54
+                        & passable58) == rowMask;
             }
             case 57 -> {
                 var rowMask = 0x1fl << (loc.x - 2);
                 return (rowMask
-                        & passable57     & ~dirt57
-                        & passable56 & ~dirt56
-                        & passable58 & ~dirt58
-                        & passable55 & ~dirt55
-                        & passable59 & ~dirt59) == rowMask;
+                        & passable57
+                        & passable56
+                        & passable58
+                        & passable55
+                        & passable59) == rowMask;
             }
             default -> {
                 return false;
@@ -2307,12 +2309,10 @@ public class CellTracker {
             case 0 -> {
                 if(info.isDirt()) dirt0 |= 1l << locX;
                 else dirt0 &= ~(1l << locX);
-                if (mapData[0].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[0].setCharAt(locX, '\2');
-                    } else {
-                        mapData[0].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[0].setCharAt(locX, '\2');
+                } else {
+                    mapData[0].setCharAt(locX, '\1');
                 }
                 if((seen0 & 1l << locX) == 0l) {
                     seen0 |= 1l << locX;
@@ -2325,12 +2325,10 @@ public class CellTracker {
             case 1 -> {
                 if(info.isDirt()) dirt1 |= 1l << locX;
                 else dirt1 &= ~(1l << locX);
-                if (mapData[1].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[1].setCharAt(locX, '\2');
-                    } else {
-                        mapData[1].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[1].setCharAt(locX, '\2');
+                } else {
+                    mapData[1].setCharAt(locX, '\1');
                 }
                 if((seen1 & 1l << locX) == 0l) {
                     seen1 |= 1l << locX;
@@ -2343,12 +2341,10 @@ public class CellTracker {
             case 2 -> {
                 if(info.isDirt()) dirt2 |= 1l << locX;
                 else dirt2 &= ~(1l << locX);
-                if (mapData[2].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[2].setCharAt(locX, '\2');
-                    } else {
-                        mapData[2].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[2].setCharAt(locX, '\2');
+                } else {
+                    mapData[2].setCharAt(locX, '\1');
                 }
                 if((seen2 & 1l << locX) == 0l) {
                     seen2 |= 1l << locX;
@@ -2361,12 +2357,10 @@ public class CellTracker {
             case 3 -> {
                 if(info.isDirt()) dirt3 |= 1l << locX;
                 else dirt3 &= ~(1l << locX);
-                if (mapData[3].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[3].setCharAt(locX, '\2');
-                    } else {
-                        mapData[3].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[3].setCharAt(locX, '\2');
+                } else {
+                    mapData[3].setCharAt(locX, '\1');
                 }
                 if((seen3 & 1l << locX) == 0l) {
                     seen3 |= 1l << locX;
@@ -2379,12 +2373,10 @@ public class CellTracker {
             case 4 -> {
                 if(info.isDirt()) dirt4 |= 1l << locX;
                 else dirt4 &= ~(1l << locX);
-                if (mapData[4].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[4].setCharAt(locX, '\2');
-                    } else {
-                        mapData[4].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[4].setCharAt(locX, '\2');
+                } else {
+                    mapData[4].setCharAt(locX, '\1');
                 }
                 if((seen4 & 1l << locX) == 0l) {
                     seen4 |= 1l << locX;
@@ -2397,12 +2389,10 @@ public class CellTracker {
             case 5 -> {
                 if(info.isDirt()) dirt5 |= 1l << locX;
                 else dirt5 &= ~(1l << locX);
-                if (mapData[5].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[5].setCharAt(locX, '\2');
-                    } else {
-                        mapData[5].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[5].setCharAt(locX, '\2');
+                } else {
+                    mapData[5].setCharAt(locX, '\1');
                 }
                 if((seen5 & 1l << locX) == 0l) {
                     seen5 |= 1l << locX;
@@ -2415,12 +2405,10 @@ public class CellTracker {
             case 6 -> {
                 if(info.isDirt()) dirt6 |= 1l << locX;
                 else dirt6 &= ~(1l << locX);
-                if (mapData[6].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[6].setCharAt(locX, '\2');
-                    } else {
-                        mapData[6].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[6].setCharAt(locX, '\2');
+                } else {
+                    mapData[6].setCharAt(locX, '\1');
                 }
                 if((seen6 & 1l << locX) == 0l) {
                     seen6 |= 1l << locX;
@@ -2433,12 +2421,10 @@ public class CellTracker {
             case 7 -> {
                 if(info.isDirt()) dirt7 |= 1l << locX;
                 else dirt7 &= ~(1l << locX);
-                if (mapData[7].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[7].setCharAt(locX, '\2');
-                    } else {
-                        mapData[7].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[7].setCharAt(locX, '\2');
+                } else {
+                    mapData[7].setCharAt(locX, '\1');
                 }
                 if((seen7 & 1l << locX) == 0l) {
                     seen7 |= 1l << locX;
@@ -2451,12 +2437,10 @@ public class CellTracker {
             case 8 -> {
                 if(info.isDirt()) dirt8 |= 1l << locX;
                 else dirt8 &= ~(1l << locX);
-                if (mapData[8].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[8].setCharAt(locX, '\2');
-                    } else {
-                        mapData[8].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[8].setCharAt(locX, '\2');
+                } else {
+                    mapData[8].setCharAt(locX, '\1');
                 }
                 if((seen8 & 1l << locX) == 0l) {
                     seen8 |= 1l << locX;
@@ -2469,12 +2453,10 @@ public class CellTracker {
             case 9 -> {
                 if(info.isDirt()) dirt9 |= 1l << locX;
                 else dirt9 &= ~(1l << locX);
-                if (mapData[9].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[9].setCharAt(locX, '\2');
-                    } else {
-                        mapData[9].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[9].setCharAt(locX, '\2');
+                } else {
+                    mapData[9].setCharAt(locX, '\1');
                 }
                 if((seen9 & 1l << locX) == 0l) {
                     seen9 |= 1l << locX;
@@ -2487,12 +2469,10 @@ public class CellTracker {
             case 10 -> {
                 if(info.isDirt()) dirt10 |= 1l << locX;
                 else dirt10 &= ~(1l << locX);
-                if (mapData[10].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[10].setCharAt(locX, '\2');
-                    } else {
-                        mapData[10].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[10].setCharAt(locX, '\2');
+                } else {
+                    mapData[10].setCharAt(locX, '\1');
                 }
                 if((seen10 & 1l << locX) == 0l) {
                     seen10 |= 1l << locX;
@@ -2505,12 +2485,10 @@ public class CellTracker {
             case 11 -> {
                 if(info.isDirt()) dirt11 |= 1l << locX;
                 else dirt11 &= ~(1l << locX);
-                if (mapData[11].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[11].setCharAt(locX, '\2');
-                    } else {
-                        mapData[11].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[11].setCharAt(locX, '\2');
+                } else {
+                    mapData[11].setCharAt(locX, '\1');
                 }
                 if((seen11 & 1l << locX) == 0l) {
                     seen11 |= 1l << locX;
@@ -2523,12 +2501,10 @@ public class CellTracker {
             case 12 -> {
                 if(info.isDirt()) dirt12 |= 1l << locX;
                 else dirt12 &= ~(1l << locX);
-                if (mapData[12].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[12].setCharAt(locX, '\2');
-                    } else {
-                        mapData[12].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[12].setCharAt(locX, '\2');
+                } else {
+                    mapData[12].setCharAt(locX, '\1');
                 }
                 if((seen12 & 1l << locX) == 0l) {
                     seen12 |= 1l << locX;
@@ -2541,12 +2517,10 @@ public class CellTracker {
             case 13 -> {
                 if(info.isDirt()) dirt13 |= 1l << locX;
                 else dirt13 &= ~(1l << locX);
-                if (mapData[13].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[13].setCharAt(locX, '\2');
-                    } else {
-                        mapData[13].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[13].setCharAt(locX, '\2');
+                } else {
+                    mapData[13].setCharAt(locX, '\1');
                 }
                 if((seen13 & 1l << locX) == 0l) {
                     seen13 |= 1l << locX;
@@ -2559,12 +2533,10 @@ public class CellTracker {
             case 14 -> {
                 if(info.isDirt()) dirt14 |= 1l << locX;
                 else dirt14 &= ~(1l << locX);
-                if (mapData[14].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[14].setCharAt(locX, '\2');
-                    } else {
-                        mapData[14].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[14].setCharAt(locX, '\2');
+                } else {
+                    mapData[14].setCharAt(locX, '\1');
                 }
                 if((seen14 & 1l << locX) == 0l) {
                     seen14 |= 1l << locX;
@@ -2577,12 +2549,10 @@ public class CellTracker {
             case 15 -> {
                 if(info.isDirt()) dirt15 |= 1l << locX;
                 else dirt15 &= ~(1l << locX);
-                if (mapData[15].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[15].setCharAt(locX, '\2');
-                    } else {
-                        mapData[15].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[15].setCharAt(locX, '\2');
+                } else {
+                    mapData[15].setCharAt(locX, '\1');
                 }
                 if((seen15 & 1l << locX) == 0l) {
                     seen15 |= 1l << locX;
@@ -2595,12 +2565,10 @@ public class CellTracker {
             case 16 -> {
                 if(info.isDirt()) dirt16 |= 1l << locX;
                 else dirt16 &= ~(1l << locX);
-                if (mapData[16].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[16].setCharAt(locX, '\2');
-                    } else {
-                        mapData[16].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[16].setCharAt(locX, '\2');
+                } else {
+                    mapData[16].setCharAt(locX, '\1');
                 }
                 if((seen16 & 1l << locX) == 0l) {
                     seen16 |= 1l << locX;
@@ -2613,12 +2581,10 @@ public class CellTracker {
             case 17 -> {
                 if(info.isDirt()) dirt17 |= 1l << locX;
                 else dirt17 &= ~(1l << locX);
-                if (mapData[17].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[17].setCharAt(locX, '\2');
-                    } else {
-                        mapData[17].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[17].setCharAt(locX, '\2');
+                } else {
+                    mapData[17].setCharAt(locX, '\1');
                 }
                 if((seen17 & 1l << locX) == 0l) {
                     seen17 |= 1l << locX;
@@ -2631,12 +2597,10 @@ public class CellTracker {
             case 18 -> {
                 if(info.isDirt()) dirt18 |= 1l << locX;
                 else dirt18 &= ~(1l << locX);
-                if (mapData[18].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[18].setCharAt(locX, '\2');
-                    } else {
-                        mapData[18].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[18].setCharAt(locX, '\2');
+                } else {
+                    mapData[18].setCharAt(locX, '\1');
                 }
                 if((seen18 & 1l << locX) == 0l) {
                     seen18 |= 1l << locX;
@@ -2649,12 +2613,10 @@ public class CellTracker {
             case 19 -> {
                 if(info.isDirt()) dirt19 |= 1l << locX;
                 else dirt19 &= ~(1l << locX);
-                if (mapData[19].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[19].setCharAt(locX, '\2');
-                    } else {
-                        mapData[19].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[19].setCharAt(locX, '\2');
+                } else {
+                    mapData[19].setCharAt(locX, '\1');
                 }
                 if((seen19 & 1l << locX) == 0l) {
                     seen19 |= 1l << locX;
@@ -2667,12 +2629,10 @@ public class CellTracker {
             case 20 -> {
                 if(info.isDirt()) dirt20 |= 1l << locX;
                 else dirt20 &= ~(1l << locX);
-                if (mapData[20].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[20].setCharAt(locX, '\2');
-                    } else {
-                        mapData[20].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[20].setCharAt(locX, '\2');
+                } else {
+                    mapData[20].setCharAt(locX, '\1');
                 }
                 if((seen20 & 1l << locX) == 0l) {
                     seen20 |= 1l << locX;
@@ -2685,12 +2645,10 @@ public class CellTracker {
             case 21 -> {
                 if(info.isDirt()) dirt21 |= 1l << locX;
                 else dirt21 &= ~(1l << locX);
-                if (mapData[21].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[21].setCharAt(locX, '\2');
-                    } else {
-                        mapData[21].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[21].setCharAt(locX, '\2');
+                } else {
+                    mapData[21].setCharAt(locX, '\1');
                 }
                 if((seen21 & 1l << locX) == 0l) {
                     seen21 |= 1l << locX;
@@ -2703,12 +2661,10 @@ public class CellTracker {
             case 22 -> {
                 if(info.isDirt()) dirt22 |= 1l << locX;
                 else dirt22 &= ~(1l << locX);
-                if (mapData[22].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[22].setCharAt(locX, '\2');
-                    } else {
-                        mapData[22].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[22].setCharAt(locX, '\2');
+                } else {
+                    mapData[22].setCharAt(locX, '\1');
                 }
                 if((seen22 & 1l << locX) == 0l) {
                     seen22 |= 1l << locX;
@@ -2721,12 +2677,10 @@ public class CellTracker {
             case 23 -> {
                 if(info.isDirt()) dirt23 |= 1l << locX;
                 else dirt23 &= ~(1l << locX);
-                if (mapData[23].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[23].setCharAt(locX, '\2');
-                    } else {
-                        mapData[23].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[23].setCharAt(locX, '\2');
+                } else {
+                    mapData[23].setCharAt(locX, '\1');
                 }
                 if((seen23 & 1l << locX) == 0l) {
                     seen23 |= 1l << locX;
@@ -2739,12 +2693,10 @@ public class CellTracker {
             case 24 -> {
                 if(info.isDirt()) dirt24 |= 1l << locX;
                 else dirt24 &= ~(1l << locX);
-                if (mapData[24].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[24].setCharAt(locX, '\2');
-                    } else {
-                        mapData[24].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[24].setCharAt(locX, '\2');
+                } else {
+                    mapData[24].setCharAt(locX, '\1');
                 }
                 if((seen24 & 1l << locX) == 0l) {
                     seen24 |= 1l << locX;
@@ -2757,12 +2709,10 @@ public class CellTracker {
             case 25 -> {
                 if(info.isDirt()) dirt25 |= 1l << locX;
                 else dirt25 &= ~(1l << locX);
-                if (mapData[25].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[25].setCharAt(locX, '\2');
-                    } else {
-                        mapData[25].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[25].setCharAt(locX, '\2');
+                } else {
+                    mapData[25].setCharAt(locX, '\1');
                 }
                 if((seen25 & 1l << locX) == 0l) {
                     seen25 |= 1l << locX;
@@ -2775,12 +2725,10 @@ public class CellTracker {
             case 26 -> {
                 if(info.isDirt()) dirt26 |= 1l << locX;
                 else dirt26 &= ~(1l << locX);
-                if (mapData[26].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[26].setCharAt(locX, '\2');
-                    } else {
-                        mapData[26].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[26].setCharAt(locX, '\2');
+                } else {
+                    mapData[26].setCharAt(locX, '\1');
                 }
                 if((seen26 & 1l << locX) == 0l) {
                     seen26 |= 1l << locX;
@@ -2793,12 +2741,10 @@ public class CellTracker {
             case 27 -> {
                 if(info.isDirt()) dirt27 |= 1l << locX;
                 else dirt27 &= ~(1l << locX);
-                if (mapData[27].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[27].setCharAt(locX, '\2');
-                    } else {
-                        mapData[27].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[27].setCharAt(locX, '\2');
+                } else {
+                    mapData[27].setCharAt(locX, '\1');
                 }
                 if((seen27 & 1l << locX) == 0l) {
                     seen27 |= 1l << locX;
@@ -2811,12 +2757,10 @@ public class CellTracker {
             case 28 -> {
                 if(info.isDirt()) dirt28 |= 1l << locX;
                 else dirt28 &= ~(1l << locX);
-                if (mapData[28].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[28].setCharAt(locX, '\2');
-                    } else {
-                        mapData[28].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[28].setCharAt(locX, '\2');
+                } else {
+                    mapData[28].setCharAt(locX, '\1');
                 }
                 if((seen28 & 1l << locX) == 0l) {
                     seen28 |= 1l << locX;
@@ -2829,12 +2773,10 @@ public class CellTracker {
             case 29 -> {
                 if(info.isDirt()) dirt29 |= 1l << locX;
                 else dirt29 &= ~(1l << locX);
-                if (mapData[29].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[29].setCharAt(locX, '\2');
-                    } else {
-                        mapData[29].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[29].setCharAt(locX, '\2');
+                } else {
+                    mapData[29].setCharAt(locX, '\1');
                 }
                 if((seen29 & 1l << locX) == 0l) {
                     seen29 |= 1l << locX;
@@ -2847,12 +2789,10 @@ public class CellTracker {
             case 30 -> {
                 if(info.isDirt()) dirt30 |= 1l << locX;
                 else dirt30 &= ~(1l << locX);
-                if (mapData[30].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[30].setCharAt(locX, '\2');
-                    } else {
-                        mapData[30].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[30].setCharAt(locX, '\2');
+                } else {
+                    mapData[30].setCharAt(locX, '\1');
                 }
                 if((seen30 & 1l << locX) == 0l) {
                     seen30 |= 1l << locX;
@@ -2865,12 +2805,10 @@ public class CellTracker {
             case 31 -> {
                 if(info.isDirt()) dirt31 |= 1l << locX;
                 else dirt31 &= ~(1l << locX);
-                if (mapData[31].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[31].setCharAt(locX, '\2');
-                    } else {
-                        mapData[31].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[31].setCharAt(locX, '\2');
+                } else {
+                    mapData[31].setCharAt(locX, '\1');
                 }
                 if((seen31 & 1l << locX) == 0l) {
                     seen31 |= 1l << locX;
@@ -2883,12 +2821,10 @@ public class CellTracker {
             case 32 -> {
                 if(info.isDirt()) dirt32 |= 1l << locX;
                 else dirt32 &= ~(1l << locX);
-                if (mapData[32].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[32].setCharAt(locX, '\2');
-                    } else {
-                        mapData[32].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[32].setCharAt(locX, '\2');
+                } else {
+                    mapData[32].setCharAt(locX, '\1');
                 }
                 if((seen32 & 1l << locX) == 0l) {
                     seen32 |= 1l << locX;
@@ -2901,12 +2837,10 @@ public class CellTracker {
             case 33 -> {
                 if(info.isDirt()) dirt33 |= 1l << locX;
                 else dirt33 &= ~(1l << locX);
-                if (mapData[33].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[33].setCharAt(locX, '\2');
-                    } else {
-                        mapData[33].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[33].setCharAt(locX, '\2');
+                } else {
+                    mapData[33].setCharAt(locX, '\1');
                 }
                 if((seen33 & 1l << locX) == 0l) {
                     seen33 |= 1l << locX;
@@ -2919,12 +2853,10 @@ public class CellTracker {
             case 34 -> {
                 if(info.isDirt()) dirt34 |= 1l << locX;
                 else dirt34 &= ~(1l << locX);
-                if (mapData[34].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[34].setCharAt(locX, '\2');
-                    } else {
-                        mapData[34].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[34].setCharAt(locX, '\2');
+                } else {
+                    mapData[34].setCharAt(locX, '\1');
                 }
                 if((seen34 & 1l << locX) == 0l) {
                     seen34 |= 1l << locX;
@@ -2937,12 +2869,10 @@ public class CellTracker {
             case 35 -> {
                 if(info.isDirt()) dirt35 |= 1l << locX;
                 else dirt35 &= ~(1l << locX);
-                if (mapData[35].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[35].setCharAt(locX, '\2');
-                    } else {
-                        mapData[35].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[35].setCharAt(locX, '\2');
+                } else {
+                    mapData[35].setCharAt(locX, '\1');
                 }
                 if((seen35 & 1l << locX) == 0l) {
                     seen35 |= 1l << locX;
@@ -2955,12 +2885,10 @@ public class CellTracker {
             case 36 -> {
                 if(info.isDirt()) dirt36 |= 1l << locX;
                 else dirt36 &= ~(1l << locX);
-                if (mapData[36].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[36].setCharAt(locX, '\2');
-                    } else {
-                        mapData[36].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[36].setCharAt(locX, '\2');
+                } else {
+                    mapData[36].setCharAt(locX, '\1');
                 }
                 if((seen36 & 1l << locX) == 0l) {
                     seen36 |= 1l << locX;
@@ -2973,12 +2901,10 @@ public class CellTracker {
             case 37 -> {
                 if(info.isDirt()) dirt37 |= 1l << locX;
                 else dirt37 &= ~(1l << locX);
-                if (mapData[37].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[37].setCharAt(locX, '\2');
-                    } else {
-                        mapData[37].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[37].setCharAt(locX, '\2');
+                } else {
+                    mapData[37].setCharAt(locX, '\1');
                 }
                 if((seen37 & 1l << locX) == 0l) {
                     seen37 |= 1l << locX;
@@ -2991,12 +2917,10 @@ public class CellTracker {
             case 38 -> {
                 if(info.isDirt()) dirt38 |= 1l << locX;
                 else dirt38 &= ~(1l << locX);
-                if (mapData[38].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[38].setCharAt(locX, '\2');
-                    } else {
-                        mapData[38].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[38].setCharAt(locX, '\2');
+                } else {
+                    mapData[38].setCharAt(locX, '\1');
                 }
                 if((seen38 & 1l << locX) == 0l) {
                     seen38 |= 1l << locX;
@@ -3009,12 +2933,10 @@ public class CellTracker {
             case 39 -> {
                 if(info.isDirt()) dirt39 |= 1l << locX;
                 else dirt39 &= ~(1l << locX);
-                if (mapData[39].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[39].setCharAt(locX, '\2');
-                    } else {
-                        mapData[39].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[39].setCharAt(locX, '\2');
+                } else {
+                    mapData[39].setCharAt(locX, '\1');
                 }
                 if((seen39 & 1l << locX) == 0l) {
                     seen39 |= 1l << locX;
@@ -3027,12 +2949,10 @@ public class CellTracker {
             case 40 -> {
                 if(info.isDirt()) dirt40 |= 1l << locX;
                 else dirt40 &= ~(1l << locX);
-                if (mapData[40].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[40].setCharAt(locX, '\2');
-                    } else {
-                        mapData[40].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[40].setCharAt(locX, '\2');
+                } else {
+                    mapData[40].setCharAt(locX, '\1');
                 }
                 if((seen40 & 1l << locX) == 0l) {
                     seen40 |= 1l << locX;
@@ -3045,12 +2965,10 @@ public class CellTracker {
             case 41 -> {
                 if(info.isDirt()) dirt41 |= 1l << locX;
                 else dirt41 &= ~(1l << locX);
-                if (mapData[41].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[41].setCharAt(locX, '\2');
-                    } else {
-                        mapData[41].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[41].setCharAt(locX, '\2');
+                } else {
+                    mapData[41].setCharAt(locX, '\1');
                 }
                 if((seen41 & 1l << locX) == 0l) {
                     seen41 |= 1l << locX;
@@ -3063,12 +2981,10 @@ public class CellTracker {
             case 42 -> {
                 if(info.isDirt()) dirt42 |= 1l << locX;
                 else dirt42 &= ~(1l << locX);
-                if (mapData[42].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[42].setCharAt(locX, '\2');
-                    } else {
-                        mapData[42].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[42].setCharAt(locX, '\2');
+                } else {
+                    mapData[42].setCharAt(locX, '\1');
                 }
                 if((seen42 & 1l << locX) == 0l) {
                     seen42 |= 1l << locX;
@@ -3081,12 +2997,10 @@ public class CellTracker {
             case 43 -> {
                 if(info.isDirt()) dirt43 |= 1l << locX;
                 else dirt43 &= ~(1l << locX);
-                if (mapData[43].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[43].setCharAt(locX, '\2');
-                    } else {
-                        mapData[43].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[43].setCharAt(locX, '\2');
+                } else {
+                    mapData[43].setCharAt(locX, '\1');
                 }
                 if((seen43 & 1l << locX) == 0l) {
                     seen43 |= 1l << locX;
@@ -3099,12 +3013,10 @@ public class CellTracker {
             case 44 -> {
                 if(info.isDirt()) dirt44 |= 1l << locX;
                 else dirt44 &= ~(1l << locX);
-                if (mapData[44].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[44].setCharAt(locX, '\2');
-                    } else {
-                        mapData[44].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[44].setCharAt(locX, '\2');
+                } else {
+                    mapData[44].setCharAt(locX, '\1');
                 }
                 if((seen44 & 1l << locX) == 0l) {
                     seen44 |= 1l << locX;
@@ -3117,12 +3029,10 @@ public class CellTracker {
             case 45 -> {
                 if(info.isDirt()) dirt45 |= 1l << locX;
                 else dirt45 &= ~(1l << locX);
-                if (mapData[45].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[45].setCharAt(locX, '\2');
-                    } else {
-                        mapData[45].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[45].setCharAt(locX, '\2');
+                } else {
+                    mapData[45].setCharAt(locX, '\1');
                 }
                 if((seen45 & 1l << locX) == 0l) {
                     seen45 |= 1l << locX;
@@ -3135,12 +3045,10 @@ public class CellTracker {
             case 46 -> {
                 if(info.isDirt()) dirt46 |= 1l << locX;
                 else dirt46 &= ~(1l << locX);
-                if (mapData[46].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[46].setCharAt(locX, '\2');
-                    } else {
-                        mapData[46].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[46].setCharAt(locX, '\2');
+                } else {
+                    mapData[46].setCharAt(locX, '\1');
                 }
                 if((seen46 & 1l << locX) == 0l) {
                     seen46 |= 1l << locX;
@@ -3153,12 +3061,10 @@ public class CellTracker {
             case 47 -> {
                 if(info.isDirt()) dirt47 |= 1l << locX;
                 else dirt47 &= ~(1l << locX);
-                if (mapData[47].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[47].setCharAt(locX, '\2');
-                    } else {
-                        mapData[47].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[47].setCharAt(locX, '\2');
+                } else {
+                    mapData[47].setCharAt(locX, '\1');
                 }
                 if((seen47 & 1l << locX) == 0l) {
                     seen47 |= 1l << locX;
@@ -3171,12 +3077,10 @@ public class CellTracker {
             case 48 -> {
                 if(info.isDirt()) dirt48 |= 1l << locX;
                 else dirt48 &= ~(1l << locX);
-                if (mapData[48].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[48].setCharAt(locX, '\2');
-                    } else {
-                        mapData[48].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[48].setCharAt(locX, '\2');
+                } else {
+                    mapData[48].setCharAt(locX, '\1');
                 }
                 if((seen48 & 1l << locX) == 0l) {
                     seen48 |= 1l << locX;
@@ -3189,12 +3093,10 @@ public class CellTracker {
             case 49 -> {
                 if(info.isDirt()) dirt49 |= 1l << locX;
                 else dirt49 &= ~(1l << locX);
-                if (mapData[49].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[49].setCharAt(locX, '\2');
-                    } else {
-                        mapData[49].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[49].setCharAt(locX, '\2');
+                } else {
+                    mapData[49].setCharAt(locX, '\1');
                 }
                 if((seen49 & 1l << locX) == 0l) {
                     seen49 |= 1l << locX;
@@ -3207,12 +3109,10 @@ public class CellTracker {
             case 50 -> {
                 if(info.isDirt()) dirt50 |= 1l << locX;
                 else dirt50 &= ~(1l << locX);
-                if (mapData[50].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[50].setCharAt(locX, '\2');
-                    } else {
-                        mapData[50].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[50].setCharAt(locX, '\2');
+                } else {
+                    mapData[50].setCharAt(locX, '\1');
                 }
                 if((seen50 & 1l << locX) == 0l) {
                     seen50 |= 1l << locX;
@@ -3225,12 +3125,10 @@ public class CellTracker {
             case 51 -> {
                 if(info.isDirt()) dirt51 |= 1l << locX;
                 else dirt51 &= ~(1l << locX);
-                if (mapData[51].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[51].setCharAt(locX, '\2');
-                    } else {
-                        mapData[51].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[51].setCharAt(locX, '\2');
+                } else {
+                    mapData[51].setCharAt(locX, '\1');
                 }
                 if((seen51 & 1l << locX) == 0l) {
                     seen51 |= 1l << locX;
@@ -3243,12 +3141,10 @@ public class CellTracker {
             case 52 -> {
                 if(info.isDirt()) dirt52 |= 1l << locX;
                 else dirt52 &= ~(1l << locX);
-                if (mapData[52].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[52].setCharAt(locX, '\2');
-                    } else {
-                        mapData[52].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[52].setCharAt(locX, '\2');
+                } else {
+                    mapData[52].setCharAt(locX, '\1');
                 }
                 if((seen52 & 1l << locX) == 0l) {
                     seen52 |= 1l << locX;
@@ -3261,12 +3157,10 @@ public class CellTracker {
             case 53 -> {
                 if(info.isDirt()) dirt53 |= 1l << locX;
                 else dirt53 &= ~(1l << locX);
-                if (mapData[53].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[53].setCharAt(locX, '\2');
-                    } else {
-                        mapData[53].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[53].setCharAt(locX, '\2');
+                } else {
+                    mapData[53].setCharAt(locX, '\1');
                 }
                 if((seen53 & 1l << locX) == 0l) {
                     seen53 |= 1l << locX;
@@ -3279,12 +3173,10 @@ public class CellTracker {
             case 54 -> {
                 if(info.isDirt()) dirt54 |= 1l << locX;
                 else dirt54 &= ~(1l << locX);
-                if (mapData[54].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[54].setCharAt(locX, '\2');
-                    } else {
-                        mapData[54].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[54].setCharAt(locX, '\2');
+                } else {
+                    mapData[54].setCharAt(locX, '\1');
                 }
                 if((seen54 & 1l << locX) == 0l) {
                     seen54 |= 1l << locX;
@@ -3297,12 +3189,10 @@ public class CellTracker {
             case 55 -> {
                 if(info.isDirt()) dirt55 |= 1l << locX;
                 else dirt55 &= ~(1l << locX);
-                if (mapData[55].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[55].setCharAt(locX, '\2');
-                    } else {
-                        mapData[55].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[55].setCharAt(locX, '\2');
+                } else {
+                    mapData[55].setCharAt(locX, '\1');
                 }
                 if((seen55 & 1l << locX) == 0l) {
                     seen55 |= 1l << locX;
@@ -3315,12 +3205,10 @@ public class CellTracker {
             case 56 -> {
                 if(info.isDirt()) dirt56 |= 1l << locX;
                 else dirt56 &= ~(1l << locX);
-                if (mapData[56].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[56].setCharAt(locX, '\2');
-                    } else {
-                        mapData[56].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[56].setCharAt(locX, '\2');
+                } else {
+                    mapData[56].setCharAt(locX, '\1');
                 }
                 if((seen56 & 1l << locX) == 0l) {
                     seen56 |= 1l << locX;
@@ -3333,12 +3221,10 @@ public class CellTracker {
             case 57 -> {
                 if(info.isDirt()) dirt57 |= 1l << locX;
                 else dirt57 &= ~(1l << locX);
-                if (mapData[57].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[57].setCharAt(locX, '\2');
-                    } else {
-                        mapData[57].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[57].setCharAt(locX, '\2');
+                } else {
+                    mapData[57].setCharAt(locX, '\1');
                 }
                 if((seen57 & 1l << locX) == 0l) {
                     seen57 |= 1l << locX;
@@ -3351,12 +3237,10 @@ public class CellTracker {
             case 58 -> {
                 if(info.isDirt()) dirt58 |= 1l << locX;
                 else dirt58 &= ~(1l << locX);
-                if (mapData[58].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[58].setCharAt(locX, '\2');
-                    } else {
-                        mapData[58].setCharAt(locX, '\1');
-                    }
+                if (info.isWall()) {
+                    mapData[58].setCharAt(locX, '\2');
+                } else {
+                    mapData[58].setCharAt(locX, '\1');
                 }
                 if((seen58 & 1l << locX) == 0l) {
                     seen58 |= 1l << locX;
@@ -3369,13 +3253,679 @@ public class CellTracker {
             case 59 -> {
                 if(info.isDirt()) dirt59 |= 1l << locX;
                 else dirt59 &= ~(1l << locX);
-                if (mapData[59].charAt(locX) == '\0') {
-                    if (info.isWall()) {
-                        mapData[59].setCharAt(locX, '\2');
-                    } else {
-                        mapData[59].setCharAt(locX, '\1');
+                if (info.isWall()) {
+                    mapData[59].setCharAt(locX, '\2');
+                } else {
+                    mapData[59].setCharAt(locX, '\1');
+                }
+                if((seen59 & 1l << locX) == 0l) {
+                    seen59 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable59 |= 1l << locX;
                     }
                 }
+            }
+        }
+    }
+
+    public static void storeCellKing(MapInfo info) throws GameActionException {
+        var loc = info.getMapLocation();
+        var locX = loc.x;
+        // rc.setIndicatorDot(loc, 255, 255, 0);
+        switch(loc.y) {
+            case 0 -> {
+                if(info.isDirt()) dirt0 |= 1l << locX;
+                else dirt0 &= ~(1l << locX);
+                if((seen0 & 1l << locX) == 0l) {
+                    seen0 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable0 |= 1l << locX;
+                    }
+                }
+            }
+            case 1 -> {
+                if(info.isDirt()) dirt1 |= 1l << locX;
+                else dirt1 &= ~(1l << locX);
+                if((seen1 & 1l << locX) == 0l) {
+                    seen1 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable1 |= 1l << locX;
+                    }
+                }
+            }
+            case 2 -> {
+                if(info.isDirt()) dirt2 |= 1l << locX;
+                else dirt2 &= ~(1l << locX);
+                if((seen2 & 1l << locX) == 0l) {
+                    seen2 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable2 |= 1l << locX;
+                    }
+                }
+            }
+            case 3 -> {
+                if(info.isDirt()) dirt3 |= 1l << locX;
+                else dirt3 &= ~(1l << locX);
+                if((seen3 & 1l << locX) == 0l) {
+                    seen3 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable3 |= 1l << locX;
+                    }
+                }
+            }
+            case 4 -> {
+                if(info.isDirt()) dirt4 |= 1l << locX;
+                else dirt4 &= ~(1l << locX);
+                if((seen4 & 1l << locX) == 0l) {
+                    seen4 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable4 |= 1l << locX;
+                    }
+                }
+            }
+            case 5 -> {
+                if(info.isDirt()) dirt5 |= 1l << locX;
+                else dirt5 &= ~(1l << locX);
+                if((seen5 & 1l << locX) == 0l) {
+                    seen5 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable5 |= 1l << locX;
+                    }
+                }
+            }
+            case 6 -> {
+                if(info.isDirt()) dirt6 |= 1l << locX;
+                else dirt6 &= ~(1l << locX);
+                if((seen6 & 1l << locX) == 0l) {
+                    seen6 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable6 |= 1l << locX;
+                    }
+                }
+            }
+            case 7 -> {
+                if(info.isDirt()) dirt7 |= 1l << locX;
+                else dirt7 &= ~(1l << locX);
+                if((seen7 & 1l << locX) == 0l) {
+                    seen7 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable7 |= 1l << locX;
+                    }
+                }
+            }
+            case 8 -> {
+                if(info.isDirt()) dirt8 |= 1l << locX;
+                else dirt8 &= ~(1l << locX);
+                if((seen8 & 1l << locX) == 0l) {
+                    seen8 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable8 |= 1l << locX;
+                    }
+                }
+            }
+            case 9 -> {
+                if(info.isDirt()) dirt9 |= 1l << locX;
+                else dirt9 &= ~(1l << locX);
+                if((seen9 & 1l << locX) == 0l) {
+                    seen9 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable9 |= 1l << locX;
+                    }
+                }
+            }
+            case 10 -> {
+                if(info.isDirt()) dirt10 |= 1l << locX;
+                else dirt10 &= ~(1l << locX);
+                if((seen10 & 1l << locX) == 0l) {
+                    seen10 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable10 |= 1l << locX;
+                    }
+                }
+            }
+            case 11 -> {
+                if(info.isDirt()) dirt11 |= 1l << locX;
+                else dirt11 &= ~(1l << locX);
+                if((seen11 & 1l << locX) == 0l) {
+                    seen11 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable11 |= 1l << locX;
+                    }
+                }
+            }
+            case 12 -> {
+                if(info.isDirt()) dirt12 |= 1l << locX;
+                else dirt12 &= ~(1l << locX);
+                if((seen12 & 1l << locX) == 0l) {
+                    seen12 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable12 |= 1l << locX;
+                    }
+                }
+            }
+            case 13 -> {
+                if(info.isDirt()) dirt13 |= 1l << locX;
+                else dirt13 &= ~(1l << locX);
+                if((seen13 & 1l << locX) == 0l) {
+                    seen13 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable13 |= 1l << locX;
+                    }
+                }
+            }
+            case 14 -> {
+                if(info.isDirt()) dirt14 |= 1l << locX;
+                else dirt14 &= ~(1l << locX);
+                if((seen14 & 1l << locX) == 0l) {
+                    seen14 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable14 |= 1l << locX;
+                    }
+                }
+            }
+            case 15 -> {
+                if(info.isDirt()) dirt15 |= 1l << locX;
+                else dirt15 &= ~(1l << locX);
+                if((seen15 & 1l << locX) == 0l) {
+                    seen15 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable15 |= 1l << locX;
+                    }
+                }
+            }
+            case 16 -> {
+                if(info.isDirt()) dirt16 |= 1l << locX;
+                else dirt16 &= ~(1l << locX);
+                if((seen16 & 1l << locX) == 0l) {
+                    seen16 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable16 |= 1l << locX;
+                    }
+                }
+            }
+            case 17 -> {
+                if(info.isDirt()) dirt17 |= 1l << locX;
+                else dirt17 &= ~(1l << locX);
+                if((seen17 & 1l << locX) == 0l) {
+                    seen17 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable17 |= 1l << locX;
+                    }
+                }
+            }
+            case 18 -> {
+                if(info.isDirt()) dirt18 |= 1l << locX;
+                else dirt18 &= ~(1l << locX);
+                if((seen18 & 1l << locX) == 0l) {
+                    seen18 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable18 |= 1l << locX;
+                    }
+                }
+            }
+            case 19 -> {
+                if(info.isDirt()) dirt19 |= 1l << locX;
+                else dirt19 &= ~(1l << locX);
+                if((seen19 & 1l << locX) == 0l) {
+                    seen19 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable19 |= 1l << locX;
+                    }
+                }
+            }
+            case 20 -> {
+                if(info.isDirt()) dirt20 |= 1l << locX;
+                else dirt20 &= ~(1l << locX);
+                if((seen20 & 1l << locX) == 0l) {
+                    seen20 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable20 |= 1l << locX;
+                    }
+                }
+            }
+            case 21 -> {
+                if(info.isDirt()) dirt21 |= 1l << locX;
+                else dirt21 &= ~(1l << locX);
+                if((seen21 & 1l << locX) == 0l) {
+                    seen21 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable21 |= 1l << locX;
+                    }
+                }
+            }
+            case 22 -> {
+                if(info.isDirt()) dirt22 |= 1l << locX;
+                else dirt22 &= ~(1l << locX);
+                if((seen22 & 1l << locX) == 0l) {
+                    seen22 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable22 |= 1l << locX;
+                    }
+                }
+            }
+            case 23 -> {
+                if(info.isDirt()) dirt23 |= 1l << locX;
+                else dirt23 &= ~(1l << locX);
+                if((seen23 & 1l << locX) == 0l) {
+                    seen23 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable23 |= 1l << locX;
+                    }
+                }
+            }
+            case 24 -> {
+                if(info.isDirt()) dirt24 |= 1l << locX;
+                else dirt24 &= ~(1l << locX);
+                if((seen24 & 1l << locX) == 0l) {
+                    seen24 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable24 |= 1l << locX;
+                    }
+                }
+            }
+            case 25 -> {
+                if(info.isDirt()) dirt25 |= 1l << locX;
+                else dirt25 &= ~(1l << locX);
+                if((seen25 & 1l << locX) == 0l) {
+                    seen25 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable25 |= 1l << locX;
+                    }
+                }
+            }
+            case 26 -> {
+                if(info.isDirt()) dirt26 |= 1l << locX;
+                else dirt26 &= ~(1l << locX);
+                if((seen26 & 1l << locX) == 0l) {
+                    seen26 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable26 |= 1l << locX;
+                    }
+                }
+            }
+            case 27 -> {
+                if(info.isDirt()) dirt27 |= 1l << locX;
+                else dirt27 &= ~(1l << locX);
+                if((seen27 & 1l << locX) == 0l) {
+                    seen27 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable27 |= 1l << locX;
+                    }
+                }
+            }
+            case 28 -> {
+                if(info.isDirt()) dirt28 |= 1l << locX;
+                else dirt28 &= ~(1l << locX);
+                if((seen28 & 1l << locX) == 0l) {
+                    seen28 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable28 |= 1l << locX;
+                    }
+                }
+            }
+            case 29 -> {
+                if(info.isDirt()) dirt29 |= 1l << locX;
+                else dirt29 &= ~(1l << locX);
+                if((seen29 & 1l << locX) == 0l) {
+                    seen29 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable29 |= 1l << locX;
+                    }
+                }
+            }
+            case 30 -> {
+                if(info.isDirt()) dirt30 |= 1l << locX;
+                else dirt30 &= ~(1l << locX);
+                if((seen30 & 1l << locX) == 0l) {
+                    seen30 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable30 |= 1l << locX;
+                    }
+                }
+            }
+            case 31 -> {
+                if(info.isDirt()) dirt31 |= 1l << locX;
+                else dirt31 &= ~(1l << locX);
+                if((seen31 & 1l << locX) == 0l) {
+                    seen31 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable31 |= 1l << locX;
+                    }
+                }
+            }
+            case 32 -> {
+                if(info.isDirt()) dirt32 |= 1l << locX;
+                else dirt32 &= ~(1l << locX);
+                if((seen32 & 1l << locX) == 0l) {
+                    seen32 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable32 |= 1l << locX;
+                    }
+                }
+            }
+            case 33 -> {
+                if(info.isDirt()) dirt33 |= 1l << locX;
+                else dirt33 &= ~(1l << locX);
+                if((seen33 & 1l << locX) == 0l) {
+                    seen33 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable33 |= 1l << locX;
+                    }
+                }
+            }
+            case 34 -> {
+                if(info.isDirt()) dirt34 |= 1l << locX;
+                else dirt34 &= ~(1l << locX);
+                if((seen34 & 1l << locX) == 0l) {
+                    seen34 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable34 |= 1l << locX;
+                    }
+                }
+            }
+            case 35 -> {
+                if(info.isDirt()) dirt35 |= 1l << locX;
+                else dirt35 &= ~(1l << locX);
+                if((seen35 & 1l << locX) == 0l) {
+                    seen35 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable35 |= 1l << locX;
+                    }
+                }
+            }
+            case 36 -> {
+                if(info.isDirt()) dirt36 |= 1l << locX;
+                else dirt36 &= ~(1l << locX);
+                if((seen36 & 1l << locX) == 0l) {
+                    seen36 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable36 |= 1l << locX;
+                    }
+                }
+            }
+            case 37 -> {
+                if(info.isDirt()) dirt37 |= 1l << locX;
+                else dirt37 &= ~(1l << locX);
+                if((seen37 & 1l << locX) == 0l) {
+                    seen37 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable37 |= 1l << locX;
+                    }
+                }
+            }
+            case 38 -> {
+                if(info.isDirt()) dirt38 |= 1l << locX;
+                else dirt38 &= ~(1l << locX);
+                if((seen38 & 1l << locX) == 0l) {
+                    seen38 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable38 |= 1l << locX;
+                    }
+                }
+            }
+            case 39 -> {
+                if(info.isDirt()) dirt39 |= 1l << locX;
+                else dirt39 &= ~(1l << locX);
+                if((seen39 & 1l << locX) == 0l) {
+                    seen39 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable39 |= 1l << locX;
+                    }
+                }
+            }
+            case 40 -> {
+                if(info.isDirt()) dirt40 |= 1l << locX;
+                else dirt40 &= ~(1l << locX);
+                if((seen40 & 1l << locX) == 0l) {
+                    seen40 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable40 |= 1l << locX;
+                    }
+                }
+            }
+            case 41 -> {
+                if(info.isDirt()) dirt41 |= 1l << locX;
+                else dirt41 &= ~(1l << locX);
+                if((seen41 & 1l << locX) == 0l) {
+                    seen41 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable41 |= 1l << locX;
+                    }
+                }
+            }
+            case 42 -> {
+                if(info.isDirt()) dirt42 |= 1l << locX;
+                else dirt42 &= ~(1l << locX);
+                if((seen42 & 1l << locX) == 0l) {
+                    seen42 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable42 |= 1l << locX;
+                    }
+                }
+            }
+            case 43 -> {
+                if(info.isDirt()) dirt43 |= 1l << locX;
+                else dirt43 &= ~(1l << locX);
+                if((seen43 & 1l << locX) == 0l) {
+                    seen43 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable43 |= 1l << locX;
+                    }
+                }
+            }
+            case 44 -> {
+                if(info.isDirt()) dirt44 |= 1l << locX;
+                else dirt44 &= ~(1l << locX);
+                if((seen44 & 1l << locX) == 0l) {
+                    seen44 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable44 |= 1l << locX;
+                    }
+                }
+            }
+            case 45 -> {
+                if(info.isDirt()) dirt45 |= 1l << locX;
+                else dirt45 &= ~(1l << locX);
+                if((seen45 & 1l << locX) == 0l) {
+                    seen45 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable45 |= 1l << locX;
+                    }
+                }
+            }
+            case 46 -> {
+                if(info.isDirt()) dirt46 |= 1l << locX;
+                else dirt46 &= ~(1l << locX);
+                if((seen46 & 1l << locX) == 0l) {
+                    seen46 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable46 |= 1l << locX;
+                    }
+                }
+            }
+            case 47 -> {
+                if(info.isDirt()) dirt47 |= 1l << locX;
+                else dirt47 &= ~(1l << locX);
+                if((seen47 & 1l << locX) == 0l) {
+                    seen47 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable47 |= 1l << locX;
+                    }
+                }
+            }
+            case 48 -> {
+                if(info.isDirt()) dirt48 |= 1l << locX;
+                else dirt48 &= ~(1l << locX);
+                if((seen48 & 1l << locX) == 0l) {
+                    seen48 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable48 |= 1l << locX;
+                    }
+                }
+            }
+            case 49 -> {
+                if(info.isDirt()) dirt49 |= 1l << locX;
+                else dirt49 &= ~(1l << locX);
+                if((seen49 & 1l << locX) == 0l) {
+                    seen49 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable49 |= 1l << locX;
+                    }
+                }
+            }
+            case 50 -> {
+                if(info.isDirt()) dirt50 |= 1l << locX;
+                else dirt50 &= ~(1l << locX);
+                if((seen50 & 1l << locX) == 0l) {
+                    seen50 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable50 |= 1l << locX;
+                    }
+                }
+            }
+            case 51 -> {
+                if(info.isDirt()) dirt51 |= 1l << locX;
+                else dirt51 &= ~(1l << locX);
+                if((seen51 & 1l << locX) == 0l) {
+                    seen51 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable51 |= 1l << locX;
+                    }
+                }
+            }
+            case 52 -> {
+                if(info.isDirt()) dirt52 |= 1l << locX;
+                else dirt52 &= ~(1l << locX);
+                if((seen52 & 1l << locX) == 0l) {
+                    seen52 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable52 |= 1l << locX;
+                    }
+                }
+            }
+            case 53 -> {
+                if(info.isDirt()) dirt53 |= 1l << locX;
+                else dirt53 &= ~(1l << locX);
+                if((seen53 & 1l << locX) == 0l) {
+                    seen53 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable53 |= 1l << locX;
+                    }
+                }
+            }
+            case 54 -> {
+                if(info.isDirt()) dirt54 |= 1l << locX;
+                else dirt54 &= ~(1l << locX);
+                if((seen54 & 1l << locX) == 0l) {
+                    seen54 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable54 |= 1l << locX;
+                    }
+                }
+            }
+            case 55 -> {
+                if(info.isDirt()) dirt55 |= 1l << locX;
+                else dirt55 &= ~(1l << locX);
+                if((seen55 & 1l << locX) == 0l) {
+                    seen55 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable55 |= 1l << locX;
+                    }
+                }
+            }
+            case 56 -> {
+                if(info.isDirt()) dirt56 |= 1l << locX;
+                else dirt56 &= ~(1l << locX);
+                if((seen56 & 1l << locX) == 0l) {
+                    seen56 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable56 |= 1l << locX;
+                    }
+                }
+            }
+            case 57 -> {
+                if(info.isDirt()) dirt57 |= 1l << locX;
+                else dirt57 &= ~(1l << locX);
+                if((seen57 & 1l << locX) == 0l) {
+                    seen57 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable57 |= 1l << locX;
+                    }
+                }
+            }
+            case 58 -> {
+                if(info.isDirt()) dirt58 |= 1l << locX;
+                else dirt58 &= ~(1l << locX);
+                if((seen58 & 1l << locX) == 0l) {
+                    seen58 |= 1l << locX;
+                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(!info.isWall()) {
+                        passable58 |= 1l << locX;
+                    }
+                }
+            }
+            case 59 -> {
+                if(info.isDirt()) dirt59 |= 1l << locX;
+                else dirt59 &= ~(1l << locX);
                 if((seen59 & 1l << locX) == 0l) {
                     seen59 |= 1l << locX;
                     if(info.hasCheeseMine()) Squeaker.registerMine(loc);
@@ -4855,7 +5405,7 @@ public class CellTracker {
         // IF TLE: tone this down
         Profiler.begin();
         for(var info : rc.senseNearbyMapInfos()) {
-            CellTracker.storeCell(info);
+            CellTracker.storeCellKing(info);
         }
         Profiler.end("storeVisibleCellsKing");
     }

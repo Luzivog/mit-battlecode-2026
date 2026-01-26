@@ -47,17 +47,21 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         context = aContext;
         miningStrategy = aMiningStrategy;
 
-        boolean myIsSmallMap = mapWidth < 45 && mapHeight < 45;
-        if (myIsSmallMap) {
+        if (mapWidth < 40 && mapHeight < 40) {
             tabooMinX = mapWidth / 3;
             tabooMaxX = 2 * mapWidth / 3;
             tabooMinY = mapHeight / 3;
             tabooMaxY = 2 * mapHeight / 3;
+        } else if (mapWidth < 50 && mapHeight < 50) {
+            tabooMinX = 3 * mapWidth / 7;
+            tabooMaxX = 4 * mapWidth / 7;
+            tabooMinY = 3 * mapHeight / 7;
+            tabooMaxY = 4 * mapHeight / 7;
         } else {
-            tabooMinX = 3 * mapWidth / 8;
-            tabooMaxX = 5 * mapWidth / 8;
-            tabooMinY = 3 * mapHeight / 8;
-            tabooMaxY = 5 * mapHeight / 8;
+            tabooMinX = 4 * mapWidth / 9;
+            tabooMaxX = 5 * mapWidth / 9;
+            tabooMinY = 4 * mapHeight / 9;
+            tabooMaxY = 5 * mapHeight / 9;
         }
     }
 
@@ -76,12 +80,11 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         int myKingCount = GlobalArray.countRatKings();
         int numRats = (rc.getCurrentRatCost() - 10) * 2 / 5;
 
-        if (myKingCount >= 5 || (myKingCount >= 2 && time >= 1100) || numRats < 15 * myKingCount) {
+        if (myKingCount >= 5 || time >= 1100 || numRats < 15 * myKingCount) {
             abortFormation();
             kingCount = myKingCount;
             return true;
         }
-
 
         if (myKingCount > kingCount) {
             abortFormation();
@@ -110,23 +113,14 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     }
 
     private void tryStartFormation() throws GameActionException {
-        
         if (time < MIN_TURN_FOR_FORMATION) return;
-        indicate("time ok");
-
-
         int myGlobalCheese = rc.getGlobalCheese();
-        
         if (time - lastFormationTurn < FORMATION_COOLDOWN) return;
-        indicate("time since last formation ok");
         int myKingCount = GlobalArray.countRatKings();
         if (myKingCount == 5) return;
-        indicate("king count ok");
         if (myGlobalCheese < getCheeseThreshold(myKingCount) + UPGRADE_COST) return;
-        indicate("cheese ok");
         int numRats = (rc.getCurrentRatCost() - 10) * 2 / 5;
         if (numRats < 15 * myKingCount) return;
-        indicate("rat count ok");
 
         if (GlobalArray.getFormationTarget() != null) return;
 

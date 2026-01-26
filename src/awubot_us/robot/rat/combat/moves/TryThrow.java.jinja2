@@ -18,49 +18,6 @@ import static awubot_us.Game.*;
 import static awubot_us.util.Util.*;
 import static awubot_us.robot.rat.BabyRat.*;
 
-{% set related_map = {
-    0: ["Direction.NORTH", "Direction.NORTHEAST", "Direction.NORTHWEST"],
-    1: ["Direction.NORTHEAST", "Direction.NORTH", "Direction.EAST"],
-    2: ["Direction.EAST", "Direction.NORTHEAST", "Direction.SOUTHEAST"],
-    3: ["Direction.SOUTHEAST", "Direction.SOUTH", "Direction.EAST"],
-    4: ["Direction.SOUTH", "Direction.SOUTHEAST", "Direction.SOUTHWEST"],
-    5: ["Direction.SOUTHWEST", "Direction.SOUTH", "Direction.WEST"],
-    6: ["Direction.WEST", "Direction.NORTHWEST", "Direction.SOUTHWEST"],
-    7: ["Direction.NORTHWEST", "Direction.NORTH", "Direction.WEST"],
-} %}
-{% set dir_short_map = {
-    "Direction.NORTH": "N",
-    "Direction.NORTHEAST": "NE",
-    "Direction.EAST": "E",
-    "Direction.SOUTHEAST": "SE",
-    "Direction.SOUTH": "S",
-    "Direction.SOUTHWEST": "SW",
-    "Direction.WEST": "W",
-    "Direction.NORTHWEST": "NW",
-    "Direction.CENTER": "C",
-} %}
-{% set dir_dx = {
-    "Direction.NORTH": 0,
-    "Direction.NORTHEAST": 1,
-    "Direction.EAST": 1,
-    "Direction.SOUTHEAST": 1,
-    "Direction.SOUTH": 0,
-    "Direction.SOUTHWEST": -1,
-    "Direction.WEST": -1,
-    "Direction.NORTHWEST": -1,
-    "Direction.CENTER": 0,
-} %}
-{% set dir_dy = {
-    "Direction.NORTH": 1,
-    "Direction.NORTHEAST": 1,
-    "Direction.EAST": 0,
-    "Direction.SOUTHEAST": -1,
-    "Direction.SOUTH": -1,
-    "Direction.SOUTHWEST": -1,
-    "Direction.WEST": 0,
-    "Direction.NORTHWEST": 1,
-    "Direction.CENTER": 0,
-} %}
 {% set grid_radius = 4 %}
 
 {% macro occ_var(dx, dy) -%}

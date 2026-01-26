@@ -70,6 +70,11 @@ public class RobotTracker {
     {% for myTeam in ['A', 'B'] %}
     {% set enemy = 'B' if myTeam == 'A' else 'A' %}
     public static void updateRobots{{myTeam}}() {
+        // kind of a hack job
+        allyCount = 0;
+        allySet = new FastMapLocationSet();
+        kingSet = new FastMapLocationSet();
+
         // Profiler.begin();
         StringBuilder sb = new StringBuilder(baseString);
         RobotInfo[] nearbyRobots = rc.senseNearbyRobots();
@@ -157,9 +162,6 @@ public class RobotTracker {
 
     // IF TLE: optimise this
     public static void reset() throws GameActionException {
-        allyCount = 0;
-        allySet = new FastMapLocationSet();
-        kingSet = new FastMapLocationSet();
         for(var robot : rc.senseNearbyRobots(-1, team)) {
             if(robot.type == UnitType.BABY_RAT) {
                 addAlly(robot.location);

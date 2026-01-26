@@ -47,7 +47,6 @@ public class FormationStrategy extends Strategy {
             indicate("FORM: BECOMING KING!");
             rc.becomeRatKing();
             Game.convertKing();
-            GlobalArray.writeRatKing();
             GlobalArray.clearFormation();  
             RobotPlayer.resetHasInitialisedRobot();
             return true;

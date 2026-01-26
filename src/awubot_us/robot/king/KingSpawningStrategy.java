@@ -2,37 +2,32 @@ package awubot_us.robot.king;
 
 import battlecode.common.*;
 import awubot_us.robot.Strategy;
+import awubot_us.util.Rng;
+
 import static awubot_us.robot.king.RatKing.*;
 import static awubot_us.Game.*;
 import static awubot_us.util.Util.*;
 
-import awubot_us.Game;
 import awubot_us.RobotTracker;
 import awubot_us.comms.GlobalArray;
 
 public class KingSpawningStrategy extends Strategy {
     private static int numSpawned = 0;
 
+    public static int threshForNumRats(int x) {
+        return ((x - 1) / 4) * 10 + 10;
+    }
+
     @Override
     public boolean runTick() throws GameActionException {
-        //indicate("spawned " + numSpawned);
+        indicate("spawned " + numSpawned);
 
-        int numKings = Math.max(1, GlobalArray.countRatKings());
-
-        int numMines = GlobalArray.countMines();
-        //indicate(numMines + " known mines");
-
-
-        int extraPerKing = (rc.getGlobalCheese() / 1000) * (numKings - 1);
-        int maxRatCost = 40 * numKings + extraPerKing;
-
-        if (numMines > 8) {
-            maxRatCost += (numMines - 8) * 10;
+        int thresh = Math.min(rc.getGlobalCheese() / 20 + 10, 40);
+        if (rc.getGlobalCheese() >= 3000 - Math.max(0, time - 1000)) {
+            thresh = 1000;
+        } else if (rc.getGlobalCheese() >= 2000 - Math.max(0, time - 1000) && time >= 100) {
+            thresh = threshForNumRats(32);
         }
-
-
-        int thresh = Math.min(rc.getGlobalCheese() / 20 + 10, maxRatCost);
-        //indicate(rc.getGlobalCheese() / 20 + 10 + " cheese-based thresh, max rat cost " + maxRatCost);
 
         if (RobotTracker.numCats > 0 && RobotTracker.numAllies == 0) {
             thresh += 10;
@@ -55,15 +50,12 @@ public class KingSpawningStrategy extends Strategy {
         if (target == null) target = new MapLocation(mapWidth / 2, mapHeight / 2);
         else {
             indicate("targeting enemy cluster at " + target + " with " + targetNeighbours + " neighbours");
-            thresh += 10;
+            thresh += 20;
         }
-
-        //indicate(rc.getCurrentRatCost() + " current rat cost vs thresh " + thresh);
 
         if (rc.getCurrentRatCost() <= thresh && (rc.getGlobalCheese() >= 100 || rc.getCurrentRatCost() == 10)) {
             trySpawn(target);
         }
-
         return true;
     }
 
@@ -77,7 +69,6 @@ public class KingSpawningStrategy extends Strategy {
                     if (rc.canBuildRat(loc)) {
                         if (best == null || best.distanceSquaredTo(target) > loc.distanceSquaredTo(target))
                         best = loc;
-                        break;
                     }
                 }
             }
@@ -85,6 +76,7 @@ public class KingSpawningStrategy extends Strategy {
         if (best != null) {
             rc.turn(best.directionTo(target));
             rc.buildRat(best);
+            GlobalArray.registerSpawnedRat(best, Rng.mcg() & ((1 << 13) - 1));
             numSpawned++;
         }
     }

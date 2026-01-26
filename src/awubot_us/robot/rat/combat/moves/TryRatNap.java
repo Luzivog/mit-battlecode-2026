@@ -1,3 +1,5 @@
+
+
 package awubot_us.robot.rat.combat.moves;
 
 import battlecode.common.Clock;
@@ -14,7 +16,6 @@ import static awubot_us.Game.*;
 import static awubot_us.util.Util.*;
 import static awubot_us.robot.rat.BabyRat.*;
 import awubot_us.RobotTracker;
-
 
 public final class TryRatNap {
     private TryRatNap() {

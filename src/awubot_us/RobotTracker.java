@@ -2,6 +2,8 @@
 
 
 
+
+
 package awubot_us;
 
 import awubot_us.util.string.FastMapLocationSet;
@@ -37,6 +39,11 @@ import awubot_us.util.Profiler;public class RobotTracker {
     }
 
     public static void updateRobotsA() {
+        // kind of a hack job
+        allyCount = 0;
+        allySet = new FastMapLocationSet();
+        kingSet = new FastMapLocationSet();
+
         // Profiler.begin();
         StringBuilder sb = new StringBuilder(baseString);
         RobotInfo[] nearbyRobots = rc.senseNearbyRobots();
@@ -1397,6 +1404,11 @@ import awubot_us.util.Profiler;public class RobotTracker {
         // Profiler.end_print("updateRobots");
     }
     public static void updateRobotsB() {
+        // kind of a hack job
+        allyCount = 0;
+        allySet = new FastMapLocationSet();
+        kingSet = new FastMapLocationSet();
+
         // Profiler.begin();
         StringBuilder sb = new StringBuilder(baseString);
         RobotInfo[] nearbyRobots = rc.senseNearbyRobots();
@@ -2778,9 +2790,6 @@ import awubot_us.util.Profiler;public class RobotTracker {
 
     // IF TLE: optimise this
     public static void reset() throws GameActionException {
-        allyCount = 0;
-        allySet = new FastMapLocationSet();
-        kingSet = new FastMapLocationSet();
         for(var robot : rc.senseNearbyRobots(-1, team)) {
             if(robot.type == UnitType.BABY_RAT) {
                 addAlly(robot.location);

@@ -7,16 +7,6 @@ import java.util.*;
 
 import awubot_us.CellTracker;
 import awubot_us.Game;
-{% set related_map = {
-    0: ["Direction.NORTH", "Direction.NORTHEAST", "Direction.NORTHWEST"],
-    1: ["Direction.NORTHEAST", "Direction.NORTH", "Direction.EAST"],
-    2: ["Direction.EAST", "Direction.NORTHEAST", "Direction.SOUTHEAST"],
-    3: ["Direction.SOUTHEAST", "Direction.SOUTH", "Direction.EAST"],
-    4: ["Direction.SOUTH", "Direction.SOUTHEAST", "Direction.SOUTHWEST"],
-    5: ["Direction.SOUTHWEST", "Direction.SOUTH", "Direction.WEST"],
-    6: ["Direction.WEST", "Direction.NORTHWEST", "Direction.SOUTHWEST"],
-    7: ["Direction.NORTHWEST", "Direction.NORTH", "Direction.WEST"],
-} %}
 {% macro can_sense_angle(dir, x, y) -%}
 {%- if dir == "Direction.NORTH" -%}{{- 1 if y >= (x|abs) else 0 -}}
 {%- elif dir == "Direction.NORTHEAST" -%}{{- 1 if x >= 0 and y >= 0 else 0 -}}
@@ -31,6 +21,21 @@ import awubot_us.Game;
 {%- endmacro %}
 {% macro can_sense_distance(x, y) -%}
 {{- 1 if x * x + y * y <= 20 else 0 -}}
+{%- endmacro %}
+{% macro can_cat_sense_angle(dir, x, y) -%}
+{%- if dir == "Direction.NORTH" -%}{{- 1 if y >= 1 else 0 -}}
+{%- elif dir == "Direction.NORTHEAST" -%}{{- 1 if x + y >= 1 else 0 -}}
+{%- elif dir == "Direction.EAST" -%}{{- 1 if x >= 1 else 0 -}}
+{%- elif dir == "Direction.SOUTHEAST" -%}{{- 1 if x >= y else 0 -}}
+{%- elif dir == "Direction.SOUTH" -%}{{- 1 if y <= 0 else 0 -}}
+{%- elif dir == "Direction.SOUTHWEST" -%}{{- 1 if x + y <= 1 else 0 -}}
+{%- elif dir == "Direction.WEST" -%}{{- 1 if x <= 0 else 0 -}}
+{%- elif dir == "Direction.NORTHWEST" -%}{{- 1 if y >= x else 0 -}}
+{%- else -%}{{- 0 -}}
+{%- endif -%}
+{%- endmacro %}
+{% macro can_cat_sense_distance(x, y) -%}
+{{- 1 if (2 * x - 1) * (2 * x - 1) + (2 * y - 1) * (2 * y - 1) <= 68 else 0 -}}
 {%- endmacro %}
 import static java.lang.Math.*;
 
@@ -118,8 +123,8 @@ public class Util {
     }
 
     public static int chebyshevDistance(RobotInfo info) {
-        int dx = myLoc.x - info.location.x;
-        int dy = myLoc.y - info.location.y;
+        int dx = info.location.x - myLocX;
+        int dy = info.location.y - myLocY;
         switch (info.getType().ordinal()) {
             case 0:
                 return max(abs(dx), abs(dy));
@@ -136,8 +141,8 @@ public class Util {
     }
 
     public static int chebyshevDistance(MapLocation loc, RobotInfo info) {
-        int dx = loc.x - info.location.x;
-        int dy = loc.y - info.location.y;
+        int dx = info.location.x - loc.x;
+        int dy = info.location.y - loc.y;
         switch (info.getType().ordinal()) {
             case 0:
                 return max(abs(dx), abs(dy));
@@ -168,6 +173,44 @@ public class Util {
                     {% for y in range(-4, 5) %}
                     {% set visible = can_sense_angle(dir, x, y) | int %}
                     {% set in_range = can_sense_distance(x, y) | int %}
+                    {% if in_range and visible %}
+                    {% set ns.dys = ns.dys + [y] %}
+                    {% endif %}
+                    {% endfor %}
+                    {% if ns.dys %}
+                    case {{x}} -> {
+                        switch(dy) {
+                            case {{ns.dys|join(", ")}} -> {
+                                return true;
+                            }
+                        }
+                    }
+                    {% endif %}
+                    {% endfor %}
+                }
+                return false;
+            }
+            {% endfor %}
+            default -> {
+                return false;
+            }
+        }
+    }
+
+    // a cat on cell (x, y) is actually "centered" on (x + 0.5, y + 0.5) since they have size 2x2
+    // they can see up to sqrt(17) away from their center
+    // they can see an inclusive 180 degree around their facing direction
+    public static boolean canCatSense(int dx, int dy, Direction dir) {
+        switch(dir.ordinal()) {
+            {% for i in range(8) %}
+            {% set dir = directions[i] %}
+            case {{i}} -> {
+                switch(dx) {
+                    {% for x in range(-3, 5) %}
+                    {% set ns = namespace(dys=[]) %}
+                    {% for y in range(-3, 5) %}
+                    {% set visible = can_cat_sense_angle(dir, x, y) | int %}
+                    {% set in_range = can_cat_sense_distance(x, y) | int %}
                     {% if in_range and visible %}
                     {% set ns.dys = ns.dys + [y] %}
                     {% endif %}

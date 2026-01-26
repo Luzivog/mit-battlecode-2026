@@ -1,3 +1,5 @@
+
+
 package awubot_us.robot.rat.combat.moves;
 
 import battlecode.common.Clock;
@@ -14,7 +16,6 @@ import static awubot_us.Game.*;
 import static awubot_us.util.Util.*;
 import static awubot_us.robot.rat.BabyRat.*;
 import awubot_us.RobotTracker;
-
 
 public final class TryAttack {
     private TryAttack() {
@@ -33,6 +34,7 @@ public final class TryAttack {
     static MapLocation newLoc;
     static double score;
     static int bytecodeStart, bytecodeBudget;
+    public static boolean isCat;
 
     public static boolean run() throws GameActionException {
         if (!rc.isActionReady()) return false;
@@ -44,6 +46,7 @@ public final class TryAttack {
         bestScore = -1;
         bytecodeStart = Clock.getBytecodeNum();
         bytecodeBudget = Math.min(3000, (int) (Clock.getBytecodesLeft() - 1000) / 2);
+        isCat = false;
         for (int i = 0; i < RobotTracker.numEnemies && i < 3; i++) {
             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
             info = RobotTracker.sortedEnemies[i];
@@ -53,6 +56,7 @@ public final class TryAttack {
             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget);
             else {
                 info = RobotTracker.sortedCats[0];
+                isCat = true;
                 considerEnemy();
             }
         }
@@ -211,6 +215,13 @@ public final class TryAttack {
         moveDir = Direction.NORTH;
         newLoc = myLoc.add(Direction.NORTH);
         if (chebyshevDistance(newLoc, info) > 1) return;
+        if (isCat) {
+            int dxToTarget = info.location.x - newLoc.x;
+            int dyToTarget = info.location.y - newLoc.y;
+            if (canCatSense(-dxToTarget, -dyToTarget, info.direction)) {
+                return; 
+            }
+        }
         switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
                 faceN();
@@ -284,6 +295,13 @@ public final class TryAttack {
         moveDir = Direction.NORTHEAST;
         newLoc = myLoc.add(Direction.NORTHEAST);
         if (chebyshevDistance(newLoc, info) > 1) return;
+        if (isCat) {
+            int dxToTarget = info.location.x - newLoc.x;
+            int dyToTarget = info.location.y - newLoc.y;
+            if (canCatSense(-dxToTarget, -dyToTarget, info.direction)) {
+                return; 
+            }
+        }
         switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
                 faceN();
@@ -357,6 +375,13 @@ public final class TryAttack {
         moveDir = Direction.EAST;
         newLoc = myLoc.add(Direction.EAST);
         if (chebyshevDistance(newLoc, info) > 1) return;
+        if (isCat) {
+            int dxToTarget = info.location.x - newLoc.x;
+            int dyToTarget = info.location.y - newLoc.y;
+            if (canCatSense(-dxToTarget, -dyToTarget, info.direction)) {
+                return; 
+            }
+        }
         switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
                 faceN();
@@ -430,6 +455,13 @@ public final class TryAttack {
         moveDir = Direction.SOUTHEAST;
         newLoc = myLoc.add(Direction.SOUTHEAST);
         if (chebyshevDistance(newLoc, info) > 1) return;
+        if (isCat) {
+            int dxToTarget = info.location.x - newLoc.x;
+            int dyToTarget = info.location.y - newLoc.y;
+            if (canCatSense(-dxToTarget, -dyToTarget, info.direction)) {
+                return; 
+            }
+        }
         switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
                 faceN();
@@ -503,6 +535,13 @@ public final class TryAttack {
         moveDir = Direction.SOUTH;
         newLoc = myLoc.add(Direction.SOUTH);
         if (chebyshevDistance(newLoc, info) > 1) return;
+        if (isCat) {
+            int dxToTarget = info.location.x - newLoc.x;
+            int dyToTarget = info.location.y - newLoc.y;
+            if (canCatSense(-dxToTarget, -dyToTarget, info.direction)) {
+                return; 
+            }
+        }
         switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
                 faceN();
@@ -576,6 +615,13 @@ public final class TryAttack {
         moveDir = Direction.SOUTHWEST;
         newLoc = myLoc.add(Direction.SOUTHWEST);
         if (chebyshevDistance(newLoc, info) > 1) return;
+        if (isCat) {
+            int dxToTarget = info.location.x - newLoc.x;
+            int dyToTarget = info.location.y - newLoc.y;
+            if (canCatSense(-dxToTarget, -dyToTarget, info.direction)) {
+                return; 
+            }
+        }
         switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
                 faceN();
@@ -649,6 +695,13 @@ public final class TryAttack {
         moveDir = Direction.WEST;
         newLoc = myLoc.add(Direction.WEST);
         if (chebyshevDistance(newLoc, info) > 1) return;
+        if (isCat) {
+            int dxToTarget = info.location.x - newLoc.x;
+            int dyToTarget = info.location.y - newLoc.y;
+            if (canCatSense(-dxToTarget, -dyToTarget, info.direction)) {
+                return; 
+            }
+        }
         switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
                 faceN();
@@ -722,6 +775,13 @@ public final class TryAttack {
         moveDir = Direction.NORTHWEST;
         newLoc = myLoc.add(Direction.NORTHWEST);
         if (chebyshevDistance(newLoc, info) > 1) return;
+        if (isCat) {
+            int dxToTarget = info.location.x - newLoc.x;
+            int dyToTarget = info.location.y - newLoc.y;
+            if (canCatSense(-dxToTarget, -dyToTarget, info.direction)) {
+                return; 
+            }
+        }
         switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
                 faceN();
@@ -795,6 +855,13 @@ public final class TryAttack {
         moveDir = Direction.CENTER;
         newLoc = myLoc.add(Direction.CENTER);
         if (chebyshevDistance(newLoc, info) > 1) return;
+        if (isCat) {
+            int dxToTarget = info.location.x - newLoc.x;
+            int dyToTarget = info.location.y - newLoc.y;
+            if (canCatSense(-dxToTarget, -dyToTarget, info.direction)) {
+                return; 
+            }
+        }
         switch (newLoc.directionTo(t).ordinal()) {
             case 0 -> {
                 faceN();
@@ -1220,6 +1287,13 @@ public final class TryAttack {
             score += CombatStrategy.getCellScoreFor(moveDir, facing, info);
         } else {
             score += CombatStrategy.getCellScoreFor(moveDir, facing, info, CombatStrategy.getBiteDamage());
+        }
+        if (isCat) {
+            int dxToTarget = info.location.x - (myLocX + moveDir.dx);
+            int dyToTarget = info.location.y - (myLocY + moveDir.dy);
+            if (canCatSense(-dxToTarget, -dyToTarget, info.direction)) {
+                return; 
+            }
         }
         if (score > bestScore) {
             bestScore = score;

@@ -2057,32 +2057,31 @@ public class Pathfinder {
         }
         int shade = 255;
         // Profiler.begin();
-        int start_bytecodes = Clock.getBytecodeNum();
         if((!isRatKing || myLoc.equals(bug.pos)) && (lastDist < 3 || RobotTracker.allySet.contains(bug.pos))) {
             bugLoop: {
                 rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
                 // Profiler.begin();
-                if(!bug.advance() || isRatKing || Clock.getBytecodeNum() > start_bytecodes + 1500) break bugLoop;
+                if(!bug.advance() || isRatKing || Clock.getBytecodesLeft() < 6000) break bugLoop;
                 lastDist++;
                 // Profiler.end("bug");
                 rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
                 // Profiler.begin();
-                if(!bug.advance() || isRatKing || Clock.getBytecodeNum() > start_bytecodes + 1500) break bugLoop;
+                if(!bug.advance() || isRatKing || Clock.getBytecodesLeft() < 6000) break bugLoop;
                 lastDist++;
                 // Profiler.end("bug");
                 rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
                 // Profiler.begin();
-                if(!bug.advance() || isRatKing || Clock.getBytecodeNum() > start_bytecodes + 1500) break bugLoop;
+                if(!bug.advance() || isRatKing || Clock.getBytecodesLeft() < 6000) break bugLoop;
                 lastDist++;
                 // Profiler.end("bug");
                 rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
                 // Profiler.begin();
-                if(!bug.advance() || isRatKing || Clock.getBytecodeNum() > start_bytecodes + 1500) break bugLoop;
+                if(!bug.advance() || isRatKing || Clock.getBytecodesLeft() < 6000) break bugLoop;
                 lastDist++;
                 // Profiler.end("bug");
                 rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
                 // Profiler.begin();
-                if(!bug.advance() || isRatKing || Clock.getBytecodeNum() > start_bytecodes + 1500) break bugLoop;
+                if(!bug.advance() || isRatKing || Clock.getBytecodesLeft() < 6000) break bugLoop;
                 lastDist++;
                 // Profiler.end("bug");
             }
@@ -2091,6 +2090,7 @@ public class Pathfinder {
 
         // deal with the edge case of moving immediately out of sight
         if(myLoc.equals(bug.pos)) {
+            lastDist = 0;
             var loc = bug.outOfSightLoc;
             bug.outOfSightLoc = null;
             if(loc == null || loc.equals(myLoc)) return;
@@ -2137,7 +2137,6 @@ public class Pathfinder {
                 return;
             }
         }
-        // TODO: what if location == bug.pos?
 
         doBugnavBfs(target);
     }
@@ -3833,10 +3832,14 @@ public class Pathfinder {
         long d00 = 0, d01 = 0;
         long d10 = 0, d11 = 0;
 
-        {
-            var bugPos = bug.getRecentPos(0 / 2);
-            if(!bugPos.equals(myLoc)) {
-                        {
+        bfsLoop: {
+            {
+                var bugPos = bug.getRecentPos(0 / 2);
+                if(bugPos.equals(myLoc)) {
+                    // we are completely stuck
+                    break bfsLoop;
+                } else {
+                            {
             var pos = bugPos;
             int xi = pos.x - myLoc.x + 5;
             int yi = pos.y - myLoc.y + 5;
@@ -3851,23 +3854,23 @@ public class Pathfinder {
             }
         }
 
+                }
             }
-        }
-        // {
-        //     if(amAfter(11068, 9)) {
-        //         indicatorString = "";
-        //         // CellTracker.printLocalMask(d00, d01);
-        //         CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
-        //         Clock.yield();
-        //         // indicatorString = "";
-        //         // CellTracker.printLocalMask(nearCat0, nearCat1);
-        //         // Clock.yield();
-        //     }
-        // }
+            // {
+            //     if(amAfter(11068, 9)) {
+            //         indicatorString = "";
+            //         // CellTracker.printLocalMask(d00, d01);
+            //         CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
+            //         Clock.yield();
+            //         // indicatorString = "";
+            //         // CellTracker.printLocalMask(nearCat0, nearCat1);
+            //         // Clock.yield();
+            //     }
+            // }
 
-        // Profiler.begin();
+            // Profiler.begin();
 
-            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d00 |= (d00 & 0xfbff7feffdffbffl) << 1;
     d01 |= (d01 & 0x7feffdffbff7fefl) << 1;
     d00 |= (d00 & 0x1f7feffdffbff7fel) >> 1;
@@ -3880,415 +3883,415 @@ public class Pathfinder {
     d00 &= localPassableExceptAllies0;
     d01 &= localPassableExceptAllies1;
 
-        long d20 = 0l;
-        long d21 = 0l;
-        d20 = d00;
-        d21 = d01;
-        d00 &= ~CellTracker.localDirt0;
-        d01 &= ~CellTracker.localDirt1;
-        d10 |= d00;
-        d11 |= d01;
-        // Profiler.end("bfs iteration");
-        // {
-        //     if(amAfter(11068, 9)) {
-        //         indicatorString = "";
-        //         // CellTracker.printLocalMask(d10, d11);
-        //         CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
-        //         Clock.yield();
-        //         // indicatorString = "";
-        //         // CellTracker.printLocalMask(nearCat0, nearCat1);
-        //         // Clock.yield();
-        //     }
-        // }
-        if((d10 & 0x807000000000000l) != 0 || (d11 & 0xe01) != 0) {
+            long d20 = 0l;
+            long d21 = 0l;
+            d20 = d00;
+            d21 = d01;
+            d00 &= ~CellTracker.localDirt0;
+            d01 &= ~CellTracker.localDirt1;
+            d10 |= d00;
+            d11 |= d01;
+            // Profiler.end("bfs iteration");
+            // {
+            //     if(amAfter(11068, 9)) {
+            //         indicatorString = "";
+            //         // CellTracker.printLocalMask(d10, d11);
+            //         CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
+            //         Clock.yield();
+            //         // indicatorString = "";
+            //         // CellTracker.printLocalMask(nearCat0, nearCat1);
+            //         // Clock.yield();
+            //     }
+            // }
+            if((d10 & 0x807000000000000l) != 0 || (d11 & 0xe01) != 0) {
+                // Profiler.begin();
+                // this is sloppy since we only care about tiles <= 2 chebyshev distance away
+                long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
+                notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
+                notWallAdjacent0 &= notWallAdjacent0 << 1;
+                notWallAdjacent0 &= (notWallAdjacent0 >> 1) | ((notWallAdjacent1 & 1l) << 60);
+                notWallAdjacent1 &= notWallAdjacent1 >> 1;
+                notWallAdjacent1 &= (notWallAdjacent1 << 11) | (notWallAdjacent0 >> 50);
+                notWallAdjacent0 &= notWallAdjacent0 << 11;
+                notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
+                notWallAdjacent1 &= notWallAdjacent1 >> 11;
+
+                Direction bestMove = null;
+                double bestScore = 1e18;
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTH);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTH)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 49))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d10 & (1l << 49))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 49))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTH == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTH + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTH;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.EAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.EAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 0))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d11 & (1l << 0))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 0))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.EAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.EAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.EAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTH);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTH)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 10))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d11 & (1l << 10))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 10))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTH == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTH + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTH;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.WEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.WEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 59))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d10 & (1l << 59))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 59))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.WEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.WEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.WEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTHWEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTHWEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 48))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d10 & (1l << 48))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 48))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTHWEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTHWEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTHEAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTHEAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 50))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d10 & (1l << 50))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 50))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTHEAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTHEAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTHWEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTHWEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 9))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d11 & (1l << 9))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 9))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTHWEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTHWEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTHEAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTHEAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 11))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d11 & (1l << 11))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 11))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTHEAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTHEAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                // Profiler.end("bfs best move");
+                if(bestMove != null) {
+                    Profiler.end("bfs");
+                    // indicate("bestMove: " + bestMove);
+                    lastDist = 1;
+                    indicate("bfs iterations: " + 1);
+                    makeMove(bestMove);
+                    return;
+                }
+            }
+
             // Profiler.begin();
-            // this is sloppy since we only care about tiles <= 2 chebyshev distance away
-            long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
-            notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
-            notWallAdjacent0 &= notWallAdjacent0 << 1;
-            notWallAdjacent0 &= (notWallAdjacent0 >> 1) | ((notWallAdjacent1 & 1l) << 60);
-            notWallAdjacent1 &= notWallAdjacent1 >> 1;
-            notWallAdjacent1 &= (notWallAdjacent1 << 11) | (notWallAdjacent0 >> 50);
-            notWallAdjacent0 &= notWallAdjacent0 << 11;
-            notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
-            notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
-            Direction bestMove = null;
-            double bestScore = 1e18;
-            {
-                var nextLoc = myLoc.add(Direction.SOUTH);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 49))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d10 & (1l << 49))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 49))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTH + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTH;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.EAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.EAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 0))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d11 & (1l << 0))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 0))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.EAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.EAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTH);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 10))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d11 & (1l << 10))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 10))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTH + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTH;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.WEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.WEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 59))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d10 & (1l << 59))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 59))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.WEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.WEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.SOUTHWEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 48))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d10 & (1l << 48))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 48))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTHWEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTHWEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.SOUTHEAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 50))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d10 & (1l << 50))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 50))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTHEAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTHEAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTHWEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 9))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d11 & (1l << 9))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 9))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTHWEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTHWEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTHEAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 11))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d11 & (1l << 11))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 11))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTHEAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTHEAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            // Profiler.end("bfs best move");
-            if(bestMove != null) {
-                Profiler.end("bfs");
-                // indicate("bestMove: " + bestMove);
-                lastDist = 1;
-                indicate("bfs iterations: " + 1);
-                makeMove(bestMove);
-                return;
-            }
-        }
-
-        // Profiler.begin();
-
-            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d10 |= (d10 & 0xfbff7feffdffbffl) << 1;
     d11 |= (d11 & 0x7feffdffbff7fefl) << 1;
     d10 |= (d10 & 0x1f7feffdffbff7fel) >> 1;
@@ -4301,19 +4304,22 @@ public class Pathfinder {
     d10 &= localPassableExceptAllies0;
     d11 &= localPassableExceptAllies1;
 
-        long d30 = 0l;
-        long d31 = 0l;
-        d30 = d10;
-        d31 = d11;
-        d10 &= ~CellTracker.localDirt0;
-        d11 &= ~CellTracker.localDirt1;
-        d20 |= d10;
-        d21 |= d11;
-        // Profiler.end("bfs iteration");
-        {
-            var bugPos = bug.getRecentPos(2 / 2);
-            if(!bugPos.equals(myLoc)) {
-                        {
+            long d30 = 0l;
+            long d31 = 0l;
+            d30 = d10;
+            d31 = d11;
+            d10 &= ~CellTracker.localDirt0;
+            d11 &= ~CellTracker.localDirt1;
+            d20 |= d10;
+            d21 |= d11;
+            // Profiler.end("bfs iteration");
+            {
+                var bugPos = bug.getRecentPos(2 / 2);
+                if(bugPos.equals(myLoc)) {
+                    // we are completely stuck
+                    break bfsLoop;
+                } else {
+                            {
             var pos = bugPos;
             int xi = pos.x - myLoc.x + 5;
             int yi = pos.y - myLoc.y + 5;
@@ -4328,408 +4334,408 @@ public class Pathfinder {
             }
         }
 
+                }
             }
-        }
-        // {
-        //     if(amAfter(11068, 9)) {
-        //         indicatorString = "";
-        //         // CellTracker.printLocalMask(d20, d21);
-        //         CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
-        //         Clock.yield();
-        //         // indicatorString = "";
-        //         // CellTracker.printLocalMask(nearCat0, nearCat1);
-        //         // Clock.yield();
-        //     }
-        // }
-        if((d20 & 0x807000000000000l) != 0 || (d21 & 0xe01) != 0) {
+            // {
+            //     if(amAfter(11068, 9)) {
+            //         indicatorString = "";
+            //         // CellTracker.printLocalMask(d20, d21);
+            //         CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
+            //         Clock.yield();
+            //         // indicatorString = "";
+            //         // CellTracker.printLocalMask(nearCat0, nearCat1);
+            //         // Clock.yield();
+            //     }
+            // }
+            if((d20 & 0x807000000000000l) != 0 || (d21 & 0xe01) != 0) {
+                // Profiler.begin();
+                // this is sloppy since we only care about tiles <= 2 chebyshev distance away
+                long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
+                notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
+                notWallAdjacent0 &= notWallAdjacent0 << 1;
+                notWallAdjacent0 &= (notWallAdjacent0 >> 1) | ((notWallAdjacent1 & 1l) << 60);
+                notWallAdjacent1 &= notWallAdjacent1 >> 1;
+                notWallAdjacent1 &= (notWallAdjacent1 << 11) | (notWallAdjacent0 >> 50);
+                notWallAdjacent0 &= notWallAdjacent0 << 11;
+                notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
+                notWallAdjacent1 &= notWallAdjacent1 >> 11;
+
+                Direction bestMove = null;
+                double bestScore = 1e18;
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTH);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTH)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 49))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d20 & (1l << 49))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 49))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTH == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTH + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTH;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.EAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.EAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 0))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d21 & (1l << 0))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 0))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.EAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.EAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.EAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTH);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTH)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 10))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d21 & (1l << 10))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 10))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTH == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTH + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTH;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.WEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.WEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 59))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d20 & (1l << 59))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 59))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.WEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.WEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.WEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTHWEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTHWEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 48))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d20 & (1l << 48))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 48))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTHWEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTHWEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTHEAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTHEAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 50))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d20 & (1l << 50))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 50))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTHEAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTHEAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTHWEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTHWEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 9))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d21 & (1l << 9))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 9))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTHWEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTHWEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTHEAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTHEAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 11))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d21 & (1l << 11))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 11))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTHEAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTHEAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                // Profiler.end("bfs best move");
+                if(bestMove != null) {
+                    Profiler.end("bfs");
+                    // indicate("bestMove: " + bestMove);
+                    lastDist = 2;
+                    indicate("bfs iterations: " + 2);
+                    makeMove(bestMove);
+                    return;
+                }
+            }
+
             // Profiler.begin();
-            // this is sloppy since we only care about tiles <= 2 chebyshev distance away
-            long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
-            notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
-            notWallAdjacent0 &= notWallAdjacent0 << 1;
-            notWallAdjacent0 &= (notWallAdjacent0 >> 1) | ((notWallAdjacent1 & 1l) << 60);
-            notWallAdjacent1 &= notWallAdjacent1 >> 1;
-            notWallAdjacent1 &= (notWallAdjacent1 << 11) | (notWallAdjacent0 >> 50);
-            notWallAdjacent0 &= notWallAdjacent0 << 11;
-            notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
-            notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
-            Direction bestMove = null;
-            double bestScore = 1e18;
-            {
-                var nextLoc = myLoc.add(Direction.SOUTH);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 49))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d20 & (1l << 49))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 49))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTH + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTH;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.EAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.EAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 0))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d21 & (1l << 0))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 0))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.EAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.EAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTH);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 10))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d21 & (1l << 10))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 10))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTH + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTH;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.WEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.WEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 59))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d20 & (1l << 59))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 59))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.WEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.WEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.SOUTHWEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 48))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d20 & (1l << 48))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 48))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTHWEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTHWEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.SOUTHEAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 50))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d20 & (1l << 50))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 50))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTHEAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTHEAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTHWEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 9))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d21 & (1l << 9))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 9))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTHWEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTHWEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTHEAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 11))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d21 & (1l << 11))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 11))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTHEAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTHEAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            // Profiler.end("bfs best move");
-            if(bestMove != null) {
-                Profiler.end("bfs");
-                // indicate("bestMove: " + bestMove);
-                lastDist = 2;
-                indicate("bfs iterations: " + 2);
-                makeMove(bestMove);
-                return;
-            }
-        }
-
-        // Profiler.begin();
-
-            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d20 |= (d20 & 0xfbff7feffdffbffl) << 1;
     d21 |= (d21 & 0x7feffdffbff7fefl) << 1;
     d20 |= (d20 & 0x1f7feffdffbff7fel) >> 1;
@@ -4742,415 +4748,415 @@ public class Pathfinder {
     d20 &= localPassableExceptAllies0;
     d21 &= localPassableExceptAllies1;
 
-        long d40 = 0l;
-        long d41 = 0l;
-        d40 = d20;
-        d41 = d21;
-        d20 &= ~CellTracker.localDirt0;
-        d21 &= ~CellTracker.localDirt1;
-        d30 |= d20;
-        d31 |= d21;
-        // Profiler.end("bfs iteration");
-        // {
-        //     if(amAfter(11068, 9)) {
-        //         indicatorString = "";
-        //         // CellTracker.printLocalMask(d30, d31);
-        //         CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
-        //         Clock.yield();
-        //         // indicatorString = "";
-        //         // CellTracker.printLocalMask(nearCat0, nearCat1);
-        //         // Clock.yield();
-        //     }
-        // }
-        if((d30 & 0x807000000000000l) != 0 || (d31 & 0xe01) != 0) {
+            long d40 = 0l;
+            long d41 = 0l;
+            d40 = d20;
+            d41 = d21;
+            d20 &= ~CellTracker.localDirt0;
+            d21 &= ~CellTracker.localDirt1;
+            d30 |= d20;
+            d31 |= d21;
+            // Profiler.end("bfs iteration");
+            // {
+            //     if(amAfter(11068, 9)) {
+            //         indicatorString = "";
+            //         // CellTracker.printLocalMask(d30, d31);
+            //         CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
+            //         Clock.yield();
+            //         // indicatorString = "";
+            //         // CellTracker.printLocalMask(nearCat0, nearCat1);
+            //         // Clock.yield();
+            //     }
+            // }
+            if((d30 & 0x807000000000000l) != 0 || (d31 & 0xe01) != 0) {
+                // Profiler.begin();
+                // this is sloppy since we only care about tiles <= 2 chebyshev distance away
+                long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
+                notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
+                notWallAdjacent0 &= notWallAdjacent0 << 1;
+                notWallAdjacent0 &= (notWallAdjacent0 >> 1) | ((notWallAdjacent1 & 1l) << 60);
+                notWallAdjacent1 &= notWallAdjacent1 >> 1;
+                notWallAdjacent1 &= (notWallAdjacent1 << 11) | (notWallAdjacent0 >> 50);
+                notWallAdjacent0 &= notWallAdjacent0 << 11;
+                notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
+                notWallAdjacent1 &= notWallAdjacent1 >> 11;
+
+                Direction bestMove = null;
+                double bestScore = 1e18;
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTH);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTH)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 49))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d30 & (1l << 49))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 49))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTH == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTH + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTH;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.EAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.EAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 0))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d31 & (1l << 0))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 0))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.EAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.EAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.EAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTH);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTH)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 10))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d31 & (1l << 10))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 10))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTH == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTH + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTH;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.WEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.WEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 59))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d30 & (1l << 59))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 59))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.WEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.WEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.WEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTHWEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTHWEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 48))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d30 & (1l << 48))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 48))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTHWEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTHWEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTHEAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTHEAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 50))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d30 & (1l << 50))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 50))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTHEAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTHEAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTHWEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTHWEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 9))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d31 & (1l << 9))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 9))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTHWEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTHWEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTHEAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTHEAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 11))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d31 & (1l << 11))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 11))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTHEAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTHEAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                // Profiler.end("bfs best move");
+                if(bestMove != null) {
+                    Profiler.end("bfs");
+                    // indicate("bestMove: " + bestMove);
+                    lastDist = 3;
+                    indicate("bfs iterations: " + 3);
+                    makeMove(bestMove);
+                    return;
+                }
+            }
+
             // Profiler.begin();
-            // this is sloppy since we only care about tiles <= 2 chebyshev distance away
-            long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
-            notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
-            notWallAdjacent0 &= notWallAdjacent0 << 1;
-            notWallAdjacent0 &= (notWallAdjacent0 >> 1) | ((notWallAdjacent1 & 1l) << 60);
-            notWallAdjacent1 &= notWallAdjacent1 >> 1;
-            notWallAdjacent1 &= (notWallAdjacent1 << 11) | (notWallAdjacent0 >> 50);
-            notWallAdjacent0 &= notWallAdjacent0 << 11;
-            notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
-            notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
-            Direction bestMove = null;
-            double bestScore = 1e18;
-            {
-                var nextLoc = myLoc.add(Direction.SOUTH);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 49))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d30 & (1l << 49))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 49))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTH + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTH;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.EAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.EAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 0))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d31 & (1l << 0))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 0))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.EAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.EAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTH);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 10))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d31 & (1l << 10))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 10))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTH + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTH;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.WEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.WEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 59))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d30 & (1l << 59))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 59))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.WEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.WEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.SOUTHWEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 48))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d30 & (1l << 48))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 48))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTHWEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTHWEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.SOUTHEAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 50))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d30 & (1l << 50))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 50))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTHEAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTHEAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTHWEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 9))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d31 & (1l << 9))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 9))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTHWEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTHWEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTHEAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 11))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d31 & (1l << 11))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 11))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTHEAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTHEAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            // Profiler.end("bfs best move");
-            if(bestMove != null) {
-                Profiler.end("bfs");
-                // indicate("bestMove: " + bestMove);
-                lastDist = 3;
-                indicate("bfs iterations: " + 3);
-                makeMove(bestMove);
-                return;
-            }
-        }
-
-        // Profiler.begin();
-
-            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d30 |= (d30 & 0xfbff7feffdffbffl) << 1;
     d31 |= (d31 & 0x7feffdffbff7fefl) << 1;
     d30 |= (d30 & 0x1f7feffdffbff7fel) >> 1;
@@ -5163,19 +5169,22 @@ public class Pathfinder {
     d30 &= localPassableExceptAllies0;
     d31 &= localPassableExceptAllies1;
 
-        long d50 = 0l;
-        long d51 = 0l;
-        d50 = d30;
-        d51 = d31;
-        d30 &= ~CellTracker.localDirt0;
-        d31 &= ~CellTracker.localDirt1;
-        d40 |= d30;
-        d41 |= d31;
-        // Profiler.end("bfs iteration");
-        {
-            var bugPos = bug.getRecentPos(4 / 2);
-            if(!bugPos.equals(myLoc)) {
-                        {
+            long d50 = 0l;
+            long d51 = 0l;
+            d50 = d30;
+            d51 = d31;
+            d30 &= ~CellTracker.localDirt0;
+            d31 &= ~CellTracker.localDirt1;
+            d40 |= d30;
+            d41 |= d31;
+            // Profiler.end("bfs iteration");
+            {
+                var bugPos = bug.getRecentPos(4 / 2);
+                if(bugPos.equals(myLoc)) {
+                    // we are completely stuck
+                    break bfsLoop;
+                } else {
+                            {
             var pos = bugPos;
             int xi = pos.x - myLoc.x + 5;
             int yi = pos.y - myLoc.y + 5;
@@ -5190,408 +5199,408 @@ public class Pathfinder {
             }
         }
 
+                }
             }
-        }
-        // {
-        //     if(amAfter(11068, 9)) {
-        //         indicatorString = "";
-        //         // CellTracker.printLocalMask(d40, d41);
-        //         CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
-        //         Clock.yield();
-        //         // indicatorString = "";
-        //         // CellTracker.printLocalMask(nearCat0, nearCat1);
-        //         // Clock.yield();
-        //     }
-        // }
-        if((d40 & 0x807000000000000l) != 0 || (d41 & 0xe01) != 0) {
+            // {
+            //     if(amAfter(11068, 9)) {
+            //         indicatorString = "";
+            //         // CellTracker.printLocalMask(d40, d41);
+            //         CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
+            //         Clock.yield();
+            //         // indicatorString = "";
+            //         // CellTracker.printLocalMask(nearCat0, nearCat1);
+            //         // Clock.yield();
+            //     }
+            // }
+            if((d40 & 0x807000000000000l) != 0 || (d41 & 0xe01) != 0) {
+                // Profiler.begin();
+                // this is sloppy since we only care about tiles <= 2 chebyshev distance away
+                long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
+                notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
+                notWallAdjacent0 &= notWallAdjacent0 << 1;
+                notWallAdjacent0 &= (notWallAdjacent0 >> 1) | ((notWallAdjacent1 & 1l) << 60);
+                notWallAdjacent1 &= notWallAdjacent1 >> 1;
+                notWallAdjacent1 &= (notWallAdjacent1 << 11) | (notWallAdjacent0 >> 50);
+                notWallAdjacent0 &= notWallAdjacent0 << 11;
+                notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
+                notWallAdjacent1 &= notWallAdjacent1 >> 11;
+
+                Direction bestMove = null;
+                double bestScore = 1e18;
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTH);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTH)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 49))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d40 & (1l << 49))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 49))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTH == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTH + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTH;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.EAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.EAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 0))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d41 & (1l << 0))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 0))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.EAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.EAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.EAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTH);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTH)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 10))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d41 & (1l << 10))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 10))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTH == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTH + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTH;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.WEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.WEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 59))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d40 & (1l << 59))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 59))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.WEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.WEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.WEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTHWEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTHWEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 48))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d40 & (1l << 48))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 48))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTHWEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTHWEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTHEAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTHEAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 50))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d40 & (1l << 50))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 50))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTHEAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTHEAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTHWEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTHWEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 9))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d41 & (1l << 9))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 9))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTHWEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTHWEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTHEAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTHEAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 11))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d41 & (1l << 11))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 11))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTHEAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTHEAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                // Profiler.end("bfs best move");
+                if(bestMove != null) {
+                    Profiler.end("bfs");
+                    // indicate("bestMove: " + bestMove);
+                    lastDist = 4;
+                    indicate("bfs iterations: " + 4);
+                    makeMove(bestMove);
+                    return;
+                }
+            }
+
             // Profiler.begin();
-            // this is sloppy since we only care about tiles <= 2 chebyshev distance away
-            long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
-            notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
-            notWallAdjacent0 &= notWallAdjacent0 << 1;
-            notWallAdjacent0 &= (notWallAdjacent0 >> 1) | ((notWallAdjacent1 & 1l) << 60);
-            notWallAdjacent1 &= notWallAdjacent1 >> 1;
-            notWallAdjacent1 &= (notWallAdjacent1 << 11) | (notWallAdjacent0 >> 50);
-            notWallAdjacent0 &= notWallAdjacent0 << 11;
-            notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
-            notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
-            Direction bestMove = null;
-            double bestScore = 1e18;
-            {
-                var nextLoc = myLoc.add(Direction.SOUTH);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 49))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d40 & (1l << 49))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 49))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTH + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTH;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.EAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.EAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 0))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d41 & (1l << 0))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 0))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.EAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.EAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTH);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 10))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d41 & (1l << 10))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 10))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTH + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTH;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.WEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.WEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 59))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d40 & (1l << 59))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 59))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.WEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.WEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.SOUTHWEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 48))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d40 & (1l << 48))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 48))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTHWEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTHWEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.SOUTHEAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 50))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d40 & (1l << 50))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 50))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTHEAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTHEAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTHWEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 9))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d41 & (1l << 9))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 9))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTHWEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTHWEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTHEAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 11))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d41 & (1l << 11))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 11))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTHEAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTHEAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            // Profiler.end("bfs best move");
-            if(bestMove != null) {
-                Profiler.end("bfs");
-                // indicate("bestMove: " + bestMove);
-                lastDist = 4;
-                indicate("bfs iterations: " + 4);
-                makeMove(bestMove);
-                return;
-            }
-        }
-
-        // Profiler.begin();
-
-            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d40 |= (d40 & 0xfbff7feffdffbffl) << 1;
     d41 |= (d41 & 0x7feffdffbff7fefl) << 1;
     d40 |= (d40 & 0x1f7feffdffbff7fel) >> 1;
@@ -5604,415 +5613,415 @@ public class Pathfinder {
     d40 &= localPassableExceptAllies0;
     d41 &= localPassableExceptAllies1;
 
-        long d60 = 0l;
-        long d61 = 0l;
-        d60 = d40;
-        d61 = d41;
-        d40 &= ~CellTracker.localDirt0;
-        d41 &= ~CellTracker.localDirt1;
-        d50 |= d40;
-        d51 |= d41;
-        // Profiler.end("bfs iteration");
-        // {
-        //     if(amAfter(11068, 9)) {
-        //         indicatorString = "";
-        //         // CellTracker.printLocalMask(d50, d51);
-        //         CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
-        //         Clock.yield();
-        //         // indicatorString = "";
-        //         // CellTracker.printLocalMask(nearCat0, nearCat1);
-        //         // Clock.yield();
-        //     }
-        // }
-        if((d50 & 0x807000000000000l) != 0 || (d51 & 0xe01) != 0) {
+            long d60 = 0l;
+            long d61 = 0l;
+            d60 = d40;
+            d61 = d41;
+            d40 &= ~CellTracker.localDirt0;
+            d41 &= ~CellTracker.localDirt1;
+            d50 |= d40;
+            d51 |= d41;
+            // Profiler.end("bfs iteration");
+            // {
+            //     if(amAfter(11068, 9)) {
+            //         indicatorString = "";
+            //         // CellTracker.printLocalMask(d50, d51);
+            //         CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
+            //         Clock.yield();
+            //         // indicatorString = "";
+            //         // CellTracker.printLocalMask(nearCat0, nearCat1);
+            //         // Clock.yield();
+            //     }
+            // }
+            if((d50 & 0x807000000000000l) != 0 || (d51 & 0xe01) != 0) {
+                // Profiler.begin();
+                // this is sloppy since we only care about tiles <= 2 chebyshev distance away
+                long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
+                notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
+                notWallAdjacent0 &= notWallAdjacent0 << 1;
+                notWallAdjacent0 &= (notWallAdjacent0 >> 1) | ((notWallAdjacent1 & 1l) << 60);
+                notWallAdjacent1 &= notWallAdjacent1 >> 1;
+                notWallAdjacent1 &= (notWallAdjacent1 << 11) | (notWallAdjacent0 >> 50);
+                notWallAdjacent0 &= notWallAdjacent0 << 11;
+                notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
+                notWallAdjacent1 &= notWallAdjacent1 >> 11;
+
+                Direction bestMove = null;
+                double bestScore = 1e18;
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTH);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTH)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 49))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d50 & (1l << 49))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 49))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTH == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTH + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTH;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.EAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.EAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 0))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d51 & (1l << 0))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 0))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.EAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.EAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.EAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTH);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTH)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 10))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d51 & (1l << 10))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 10))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTH == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTH + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTH;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.WEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.WEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 59))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d50 & (1l << 59))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 59))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.WEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.WEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.WEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTHWEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTHWEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 48))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d50 & (1l << 48))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 48))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTHWEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTHWEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTHEAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTHEAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 50))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d50 & (1l << 50))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 50))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTHEAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTHEAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTHWEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTHWEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 9))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d51 & (1l << 9))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 9))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTHWEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTHWEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTHEAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTHEAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 11))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d51 & (1l << 11))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 11))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTHEAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTHEAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                // Profiler.end("bfs best move");
+                if(bestMove != null) {
+                    Profiler.end("bfs");
+                    // indicate("bestMove: " + bestMove);
+                    lastDist = 5;
+                    indicate("bfs iterations: " + 5);
+                    makeMove(bestMove);
+                    return;
+                }
+            }
+
             // Profiler.begin();
-            // this is sloppy since we only care about tiles <= 2 chebyshev distance away
-            long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
-            notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
-            notWallAdjacent0 &= notWallAdjacent0 << 1;
-            notWallAdjacent0 &= (notWallAdjacent0 >> 1) | ((notWallAdjacent1 & 1l) << 60);
-            notWallAdjacent1 &= notWallAdjacent1 >> 1;
-            notWallAdjacent1 &= (notWallAdjacent1 << 11) | (notWallAdjacent0 >> 50);
-            notWallAdjacent0 &= notWallAdjacent0 << 11;
-            notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
-            notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
-            Direction bestMove = null;
-            double bestScore = 1e18;
-            {
-                var nextLoc = myLoc.add(Direction.SOUTH);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 49))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d50 & (1l << 49))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 49))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTH + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTH;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.EAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.EAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 0))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d51 & (1l << 0))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 0))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.EAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.EAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTH);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 10))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d51 & (1l << 10))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 10))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTH + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTH;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.WEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.WEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 59))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d50 & (1l << 59))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 59))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.WEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.WEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.SOUTHWEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 48))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d50 & (1l << 48))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 48))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTHWEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTHWEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.SOUTHEAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 50))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d50 & (1l << 50))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 50))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTHEAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTHEAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTHWEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 9))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d51 & (1l << 9))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 9))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTHWEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTHWEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTHEAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 11))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d51 & (1l << 11))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 11))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTHEAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTHEAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            // Profiler.end("bfs best move");
-            if(bestMove != null) {
-                Profiler.end("bfs");
-                // indicate("bestMove: " + bestMove);
-                lastDist = 5;
-                indicate("bfs iterations: " + 5);
-                makeMove(bestMove);
-                return;
-            }
-        }
-
-        // Profiler.begin();
-
-            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d50 |= (d50 & 0xfbff7feffdffbffl) << 1;
     d51 |= (d51 & 0x7feffdffbff7fefl) << 1;
     d50 |= (d50 & 0x1f7feffdffbff7fel) >> 1;
@@ -6025,19 +6034,22 @@ public class Pathfinder {
     d50 &= localPassableExceptAllies0;
     d51 &= localPassableExceptAllies1;
 
-        long d70 = 0l;
-        long d71 = 0l;
-        d70 = d50;
-        d71 = d51;
-        d50 &= ~CellTracker.localDirt0;
-        d51 &= ~CellTracker.localDirt1;
-        d60 |= d50;
-        d61 |= d51;
-        // Profiler.end("bfs iteration");
-        {
-            var bugPos = bug.getRecentPos(6 / 2);
-            if(!bugPos.equals(myLoc)) {
-                        {
+            long d70 = 0l;
+            long d71 = 0l;
+            d70 = d50;
+            d71 = d51;
+            d50 &= ~CellTracker.localDirt0;
+            d51 &= ~CellTracker.localDirt1;
+            d60 |= d50;
+            d61 |= d51;
+            // Profiler.end("bfs iteration");
+            {
+                var bugPos = bug.getRecentPos(6 / 2);
+                if(bugPos.equals(myLoc)) {
+                    // we are completely stuck
+                    break bfsLoop;
+                } else {
+                            {
             var pos = bugPos;
             int xi = pos.x - myLoc.x + 5;
             int yi = pos.y - myLoc.y + 5;
@@ -6052,408 +6064,408 @@ public class Pathfinder {
             }
         }
 
+                }
             }
-        }
-        // {
-        //     if(amAfter(11068, 9)) {
-        //         indicatorString = "";
-        //         // CellTracker.printLocalMask(d60, d61);
-        //         CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
-        //         Clock.yield();
-        //         // indicatorString = "";
-        //         // CellTracker.printLocalMask(nearCat0, nearCat1);
-        //         // Clock.yield();
-        //     }
-        // }
-        if((d60 & 0x807000000000000l) != 0 || (d61 & 0xe01) != 0) {
+            // {
+            //     if(amAfter(11068, 9)) {
+            //         indicatorString = "";
+            //         // CellTracker.printLocalMask(d60, d61);
+            //         CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
+            //         Clock.yield();
+            //         // indicatorString = "";
+            //         // CellTracker.printLocalMask(nearCat0, nearCat1);
+            //         // Clock.yield();
+            //     }
+            // }
+            if((d60 & 0x807000000000000l) != 0 || (d61 & 0xe01) != 0) {
+                // Profiler.begin();
+                // this is sloppy since we only care about tiles <= 2 chebyshev distance away
+                long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
+                notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
+                notWallAdjacent0 &= notWallAdjacent0 << 1;
+                notWallAdjacent0 &= (notWallAdjacent0 >> 1) | ((notWallAdjacent1 & 1l) << 60);
+                notWallAdjacent1 &= notWallAdjacent1 >> 1;
+                notWallAdjacent1 &= (notWallAdjacent1 << 11) | (notWallAdjacent0 >> 50);
+                notWallAdjacent0 &= notWallAdjacent0 << 11;
+                notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
+                notWallAdjacent1 &= notWallAdjacent1 >> 11;
+
+                Direction bestMove = null;
+                double bestScore = 1e18;
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTH);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTH)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 49))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d60 & (1l << 49))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 49))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTH == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTH + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTH;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.EAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.EAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 0))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d61 & (1l << 0))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 0))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.EAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.EAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.EAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTH);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTH)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 10))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d61 & (1l << 10))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 10))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTH == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTH + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTH;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.WEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.WEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 59))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d60 & (1l << 59))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 59))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.WEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.WEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.WEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTHWEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTHWEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 48))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d60 & (1l << 48))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 48))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTHWEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTHWEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTHEAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTHEAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 50))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d60 & (1l << 50))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 50))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTHEAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTHEAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTHWEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTHWEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 9))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d61 & (1l << 9))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 9))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTHWEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTHWEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTHEAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTHEAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 11))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d61 & (1l << 11))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 11))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTHEAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTHEAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                // Profiler.end("bfs best move");
+                if(bestMove != null) {
+                    Profiler.end("bfs");
+                    // indicate("bestMove: " + bestMove);
+                    lastDist = 6;
+                    indicate("bfs iterations: " + 6);
+                    makeMove(bestMove);
+                    return;
+                }
+            }
+
             // Profiler.begin();
-            // this is sloppy since we only care about tiles <= 2 chebyshev distance away
-            long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
-            notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
-            notWallAdjacent0 &= notWallAdjacent0 << 1;
-            notWallAdjacent0 &= (notWallAdjacent0 >> 1) | ((notWallAdjacent1 & 1l) << 60);
-            notWallAdjacent1 &= notWallAdjacent1 >> 1;
-            notWallAdjacent1 &= (notWallAdjacent1 << 11) | (notWallAdjacent0 >> 50);
-            notWallAdjacent0 &= notWallAdjacent0 << 11;
-            notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
-            notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
-            Direction bestMove = null;
-            double bestScore = 1e18;
-            {
-                var nextLoc = myLoc.add(Direction.SOUTH);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 49))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d60 & (1l << 49))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 49))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTH + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTH;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.EAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.EAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 0))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d61 & (1l << 0))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 0))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.EAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.EAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTH);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 10))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d61 & (1l << 10))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 10))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTH + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTH;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.WEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.WEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 59))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d60 & (1l << 59))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 59))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.WEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.WEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.SOUTHWEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 48))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d60 & (1l << 48))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 48))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTHWEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTHWEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.SOUTHEAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 50))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d60 & (1l << 50))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 50))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTHEAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTHEAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTHWEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 9))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d61 & (1l << 9))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 9))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTHWEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTHWEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTHEAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 11))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d61 & (1l << 11))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 11))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTHEAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTHEAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            // Profiler.end("bfs best move");
-            if(bestMove != null) {
-                Profiler.end("bfs");
-                // indicate("bestMove: " + bestMove);
-                lastDist = 6;
-                indicate("bfs iterations: " + 6);
-                makeMove(bestMove);
-                return;
-            }
-        }
-
-        // Profiler.begin();
-
-            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d60 |= (d60 & 0xfbff7feffdffbffl) << 1;
     d61 |= (d61 & 0x7feffdffbff7fefl) << 1;
     d60 |= (d60 & 0x1f7feffdffbff7fel) >> 1;
@@ -6466,415 +6478,415 @@ public class Pathfinder {
     d60 &= localPassableExceptAllies0;
     d61 &= localPassableExceptAllies1;
 
-        long d80 = 0l;
-        long d81 = 0l;
-        d80 = d60;
-        d81 = d61;
-        d60 &= ~CellTracker.localDirt0;
-        d61 &= ~CellTracker.localDirt1;
-        d70 |= d60;
-        d71 |= d61;
-        // Profiler.end("bfs iteration");
-        // {
-        //     if(amAfter(11068, 9)) {
-        //         indicatorString = "";
-        //         // CellTracker.printLocalMask(d70, d71);
-        //         CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
-        //         Clock.yield();
-        //         // indicatorString = "";
-        //         // CellTracker.printLocalMask(nearCat0, nearCat1);
-        //         // Clock.yield();
-        //     }
-        // }
-        if((d70 & 0x807000000000000l) != 0 || (d71 & 0xe01) != 0) {
+            long d80 = 0l;
+            long d81 = 0l;
+            d80 = d60;
+            d81 = d61;
+            d60 &= ~CellTracker.localDirt0;
+            d61 &= ~CellTracker.localDirt1;
+            d70 |= d60;
+            d71 |= d61;
+            // Profiler.end("bfs iteration");
+            // {
+            //     if(amAfter(11068, 9)) {
+            //         indicatorString = "";
+            //         // CellTracker.printLocalMask(d70, d71);
+            //         CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
+            //         Clock.yield();
+            //         // indicatorString = "";
+            //         // CellTracker.printLocalMask(nearCat0, nearCat1);
+            //         // Clock.yield();
+            //     }
+            // }
+            if((d70 & 0x807000000000000l) != 0 || (d71 & 0xe01) != 0) {
+                // Profiler.begin();
+                // this is sloppy since we only care about tiles <= 2 chebyshev distance away
+                long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
+                notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
+                notWallAdjacent0 &= notWallAdjacent0 << 1;
+                notWallAdjacent0 &= (notWallAdjacent0 >> 1) | ((notWallAdjacent1 & 1l) << 60);
+                notWallAdjacent1 &= notWallAdjacent1 >> 1;
+                notWallAdjacent1 &= (notWallAdjacent1 << 11) | (notWallAdjacent0 >> 50);
+                notWallAdjacent0 &= notWallAdjacent0 << 11;
+                notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
+                notWallAdjacent1 &= notWallAdjacent1 >> 11;
+
+                Direction bestMove = null;
+                double bestScore = 1e18;
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTH);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTH)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 49))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d70 & (1l << 49))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 49))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTH == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTH + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTH;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.EAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.EAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 0))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d71 & (1l << 0))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 0))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.EAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.EAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.EAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTH);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTH)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 10))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d71 & (1l << 10))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 10))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTH == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTH + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTH;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.WEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.WEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 59))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d70 & (1l << 59))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 59))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.WEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.WEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.WEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTHWEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTHWEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 48))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d70 & (1l << 48))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 48))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTHWEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTHWEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTHEAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTHEAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 50))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d70 & (1l << 50))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 50))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTHEAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTHEAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTHWEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTHWEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 9))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d71 & (1l << 9))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 9))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTHWEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTHWEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTHEAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTHEAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 11))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d71 & (1l << 11))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 11))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTHEAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTHEAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                // Profiler.end("bfs best move");
+                if(bestMove != null) {
+                    Profiler.end("bfs");
+                    // indicate("bestMove: " + bestMove);
+                    lastDist = 7;
+                    indicate("bfs iterations: " + 7);
+                    makeMove(bestMove);
+                    return;
+                }
+            }
+
             // Profiler.begin();
-            // this is sloppy since we only care about tiles <= 2 chebyshev distance away
-            long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
-            notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
-            notWallAdjacent0 &= notWallAdjacent0 << 1;
-            notWallAdjacent0 &= (notWallAdjacent0 >> 1) | ((notWallAdjacent1 & 1l) << 60);
-            notWallAdjacent1 &= notWallAdjacent1 >> 1;
-            notWallAdjacent1 &= (notWallAdjacent1 << 11) | (notWallAdjacent0 >> 50);
-            notWallAdjacent0 &= notWallAdjacent0 << 11;
-            notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
-            notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
-            Direction bestMove = null;
-            double bestScore = 1e18;
-            {
-                var nextLoc = myLoc.add(Direction.SOUTH);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 49))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d70 & (1l << 49))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 49))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTH + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTH;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.EAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.EAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 0))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d71 & (1l << 0))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 0))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.EAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.EAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTH);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 10))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d71 & (1l << 10))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 10))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTH + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTH;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.WEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.WEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 59))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d70 & (1l << 59))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 59))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.WEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.WEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.SOUTHWEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 48))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d70 & (1l << 48))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 48))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTHWEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTHWEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.SOUTHEAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 50))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d70 & (1l << 50))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 50))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTHEAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTHEAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTHWEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 9))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d71 & (1l << 9))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 9))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTHWEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTHWEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTHEAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 11))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d71 & (1l << 11))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 11))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTHEAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTHEAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            // Profiler.end("bfs best move");
-            if(bestMove != null) {
-                Profiler.end("bfs");
-                // indicate("bestMove: " + bestMove);
-                lastDist = 7;
-                indicate("bfs iterations: " + 7);
-                makeMove(bestMove);
-                return;
-            }
-        }
-
-        // Profiler.begin();
-
-            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d70 |= (d70 & 0xfbff7feffdffbffl) << 1;
     d71 |= (d71 & 0x7feffdffbff7fefl) << 1;
     d70 |= (d70 & 0x1f7feffdffbff7fel) >> 1;
@@ -6887,19 +6899,22 @@ public class Pathfinder {
     d70 &= localPassableExceptAllies0;
     d71 &= localPassableExceptAllies1;
 
-        long d90 = 0l;
-        long d91 = 0l;
-        d90 = d70;
-        d91 = d71;
-        d70 &= ~CellTracker.localDirt0;
-        d71 &= ~CellTracker.localDirt1;
-        d80 |= d70;
-        d81 |= d71;
-        // Profiler.end("bfs iteration");
-        {
-            var bugPos = bug.getRecentPos(8 / 2);
-            if(!bugPos.equals(myLoc)) {
-                        {
+            long d90 = 0l;
+            long d91 = 0l;
+            d90 = d70;
+            d91 = d71;
+            d70 &= ~CellTracker.localDirt0;
+            d71 &= ~CellTracker.localDirt1;
+            d80 |= d70;
+            d81 |= d71;
+            // Profiler.end("bfs iteration");
+            {
+                var bugPos = bug.getRecentPos(8 / 2);
+                if(bugPos.equals(myLoc)) {
+                    // we are completely stuck
+                    break bfsLoop;
+                } else {
+                            {
             var pos = bugPos;
             int xi = pos.x - myLoc.x + 5;
             int yi = pos.y - myLoc.y + 5;
@@ -6914,408 +6929,408 @@ public class Pathfinder {
             }
         }
 
+                }
             }
-        }
-        // {
-        //     if(amAfter(11068, 9)) {
-        //         indicatorString = "";
-        //         // CellTracker.printLocalMask(d80, d81);
-        //         CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
-        //         Clock.yield();
-        //         // indicatorString = "";
-        //         // CellTracker.printLocalMask(nearCat0, nearCat1);
-        //         // Clock.yield();
-        //     }
-        // }
-        if((d80 & 0x807000000000000l) != 0 || (d81 & 0xe01) != 0) {
+            // {
+            //     if(amAfter(11068, 9)) {
+            //         indicatorString = "";
+            //         // CellTracker.printLocalMask(d80, d81);
+            //         CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
+            //         Clock.yield();
+            //         // indicatorString = "";
+            //         // CellTracker.printLocalMask(nearCat0, nearCat1);
+            //         // Clock.yield();
+            //     }
+            // }
+            if((d80 & 0x807000000000000l) != 0 || (d81 & 0xe01) != 0) {
+                // Profiler.begin();
+                // this is sloppy since we only care about tiles <= 2 chebyshev distance away
+                long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
+                notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
+                notWallAdjacent0 &= notWallAdjacent0 << 1;
+                notWallAdjacent0 &= (notWallAdjacent0 >> 1) | ((notWallAdjacent1 & 1l) << 60);
+                notWallAdjacent1 &= notWallAdjacent1 >> 1;
+                notWallAdjacent1 &= (notWallAdjacent1 << 11) | (notWallAdjacent0 >> 50);
+                notWallAdjacent0 &= notWallAdjacent0 << 11;
+                notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
+                notWallAdjacent1 &= notWallAdjacent1 >> 11;
+
+                Direction bestMove = null;
+                double bestScore = 1e18;
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTH);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTH)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 49))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d80 & (1l << 49))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 49))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTH == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTH + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTH;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.EAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.EAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 0))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d81 & (1l << 0))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 0))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.EAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.EAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.EAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTH);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTH)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 10))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d81 & (1l << 10))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 10))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTH == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTH + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTH;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.WEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.WEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 59))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d80 & (1l << 59))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 59))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.WEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.WEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.WEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTHWEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTHWEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 48))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d80 & (1l << 48))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 48))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTHWEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTHWEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTHEAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTHEAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 50))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d80 & (1l << 50))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 50))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTHEAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTHEAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTHWEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTHWEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 9))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d81 & (1l << 9))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 9))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTHWEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTHWEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTHEAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTHEAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 11))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d81 & (1l << 11))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 11))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTHEAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTHEAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                // Profiler.end("bfs best move");
+                if(bestMove != null) {
+                    Profiler.end("bfs");
+                    // indicate("bestMove: " + bestMove);
+                    lastDist = 8;
+                    indicate("bfs iterations: " + 8);
+                    makeMove(bestMove);
+                    return;
+                }
+            }
+
             // Profiler.begin();
-            // this is sloppy since we only care about tiles <= 2 chebyshev distance away
-            long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
-            notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
-            notWallAdjacent0 &= notWallAdjacent0 << 1;
-            notWallAdjacent0 &= (notWallAdjacent0 >> 1) | ((notWallAdjacent1 & 1l) << 60);
-            notWallAdjacent1 &= notWallAdjacent1 >> 1;
-            notWallAdjacent1 &= (notWallAdjacent1 << 11) | (notWallAdjacent0 >> 50);
-            notWallAdjacent0 &= notWallAdjacent0 << 11;
-            notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
-            notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
-            Direction bestMove = null;
-            double bestScore = 1e18;
-            {
-                var nextLoc = myLoc.add(Direction.SOUTH);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 49))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d80 & (1l << 49))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 49))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTH + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTH;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.EAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.EAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 0))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d81 & (1l << 0))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 0))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.EAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.EAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTH);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 10))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d81 & (1l << 10))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 10))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTH + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTH;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.WEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.WEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 59))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d80 & (1l << 59))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 59))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.WEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.WEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.SOUTHWEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 48))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d80 & (1l << 48))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 48))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTHWEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTHWEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.SOUTHEAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 50))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d80 & (1l << 50))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 50))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTHEAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTHEAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTHWEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 9))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d81 & (1l << 9))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 9))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTHWEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTHWEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTHEAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 11))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d81 & (1l << 11))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 11))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTHEAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTHEAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            // Profiler.end("bfs best move");
-            if(bestMove != null) {
-                Profiler.end("bfs");
-                // indicate("bestMove: " + bestMove);
-                lastDist = 8;
-                indicate("bfs iterations: " + 8);
-                makeMove(bestMove);
-                return;
-            }
-        }
-
-        // Profiler.begin();
-
-            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d80 |= (d80 & 0xfbff7feffdffbffl) << 1;
     d81 |= (d81 & 0x7feffdffbff7fefl) << 1;
     d80 |= (d80 & 0x1f7feffdffbff7fel) >> 1;
@@ -7328,415 +7343,415 @@ public class Pathfinder {
     d80 &= localPassableExceptAllies0;
     d81 &= localPassableExceptAllies1;
 
-        long d100 = 0l;
-        long d101 = 0l;
-        d100 = d80;
-        d101 = d81;
-        d80 &= ~CellTracker.localDirt0;
-        d81 &= ~CellTracker.localDirt1;
-        d90 |= d80;
-        d91 |= d81;
-        // Profiler.end("bfs iteration");
-        // {
-        //     if(amAfter(11068, 9)) {
-        //         indicatorString = "";
-        //         // CellTracker.printLocalMask(d90, d91);
-        //         CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
-        //         Clock.yield();
-        //         // indicatorString = "";
-        //         // CellTracker.printLocalMask(nearCat0, nearCat1);
-        //         // Clock.yield();
-        //     }
-        // }
-        if((d90 & 0x807000000000000l) != 0 || (d91 & 0xe01) != 0) {
+            long d100 = 0l;
+            long d101 = 0l;
+            d100 = d80;
+            d101 = d81;
+            d80 &= ~CellTracker.localDirt0;
+            d81 &= ~CellTracker.localDirt1;
+            d90 |= d80;
+            d91 |= d81;
+            // Profiler.end("bfs iteration");
+            // {
+            //     if(amAfter(11068, 9)) {
+            //         indicatorString = "";
+            //         // CellTracker.printLocalMask(d90, d91);
+            //         CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
+            //         Clock.yield();
+            //         // indicatorString = "";
+            //         // CellTracker.printLocalMask(nearCat0, nearCat1);
+            //         // Clock.yield();
+            //     }
+            // }
+            if((d90 & 0x807000000000000l) != 0 || (d91 & 0xe01) != 0) {
+                // Profiler.begin();
+                // this is sloppy since we only care about tiles <= 2 chebyshev distance away
+                long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
+                notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
+                notWallAdjacent0 &= notWallAdjacent0 << 1;
+                notWallAdjacent0 &= (notWallAdjacent0 >> 1) | ((notWallAdjacent1 & 1l) << 60);
+                notWallAdjacent1 &= notWallAdjacent1 >> 1;
+                notWallAdjacent1 &= (notWallAdjacent1 << 11) | (notWallAdjacent0 >> 50);
+                notWallAdjacent0 &= notWallAdjacent0 << 11;
+                notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
+                notWallAdjacent1 &= notWallAdjacent1 >> 11;
+
+                Direction bestMove = null;
+                double bestScore = 1e18;
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTH);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTH)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 49))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d90 & (1l << 49))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 49))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTH == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTH + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTH;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.EAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.EAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 0))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d91 & (1l << 0))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 0))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.EAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.EAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.EAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTH);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTH)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 10))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d91 & (1l << 10))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 10))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTH == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTH + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTH;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.WEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.WEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 59))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d90 & (1l << 59))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 59))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.WEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.WEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.WEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTHWEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTHWEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 48))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d90 & (1l << 48))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 48))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTHWEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTHWEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTHEAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTHEAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 50))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d90 & (1l << 50))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 50))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTHEAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTHEAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTHWEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTHWEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 9))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d91 & (1l << 9))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 9))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTHWEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTHWEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTHEAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTHEAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 11))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d91 & (1l << 11))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 11))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTHEAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTHEAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                // Profiler.end("bfs best move");
+                if(bestMove != null) {
+                    Profiler.end("bfs");
+                    // indicate("bestMove: " + bestMove);
+                    lastDist = 9;
+                    indicate("bfs iterations: " + 9);
+                    makeMove(bestMove);
+                    return;
+                }
+            }
+
             // Profiler.begin();
-            // this is sloppy since we only care about tiles <= 2 chebyshev distance away
-            long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
-            notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
-            notWallAdjacent0 &= notWallAdjacent0 << 1;
-            notWallAdjacent0 &= (notWallAdjacent0 >> 1) | ((notWallAdjacent1 & 1l) << 60);
-            notWallAdjacent1 &= notWallAdjacent1 >> 1;
-            notWallAdjacent1 &= (notWallAdjacent1 << 11) | (notWallAdjacent0 >> 50);
-            notWallAdjacent0 &= notWallAdjacent0 << 11;
-            notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
-            notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
-            Direction bestMove = null;
-            double bestScore = 1e18;
-            {
-                var nextLoc = myLoc.add(Direction.SOUTH);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 49))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d90 & (1l << 49))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 49))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTH + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTH;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.EAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.EAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 0))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d91 & (1l << 0))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 0))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.EAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.EAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTH);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 10))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d91 & (1l << 10))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 10))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTH + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTH;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.WEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.WEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 59))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d90 & (1l << 59))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 59))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.WEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.WEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.SOUTHWEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 48))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d90 & (1l << 48))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 48))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTHWEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTHWEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.SOUTHEAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 50))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d90 & (1l << 50))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 50))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTHEAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTHEAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTHWEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 9))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d91 & (1l << 9))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 9))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTHWEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTHWEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTHEAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 11))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d91 & (1l << 11))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 11))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTHEAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTHEAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            // Profiler.end("bfs best move");
-            if(bestMove != null) {
-                Profiler.end("bfs");
-                // indicate("bestMove: " + bestMove);
-                lastDist = 9;
-                indicate("bfs iterations: " + 9);
-                makeMove(bestMove);
-                return;
-            }
-        }
-
-        // Profiler.begin();
-
-            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d90 |= (d90 & 0xfbff7feffdffbffl) << 1;
     d91 |= (d91 & 0x7feffdffbff7fefl) << 1;
     d90 |= (d90 & 0x1f7feffdffbff7fel) >> 1;
@@ -7749,19 +7764,22 @@ public class Pathfinder {
     d90 &= localPassableExceptAllies0;
     d91 &= localPassableExceptAllies1;
 
-        long d110 = 0l;
-        long d111 = 0l;
-        d110 = d90;
-        d111 = d91;
-        d90 &= ~CellTracker.localDirt0;
-        d91 &= ~CellTracker.localDirt1;
-        d100 |= d90;
-        d101 |= d91;
-        // Profiler.end("bfs iteration");
-        {
-            var bugPos = bug.getRecentPos(10 / 2);
-            if(!bugPos.equals(myLoc)) {
-                        {
+            long d110 = 0l;
+            long d111 = 0l;
+            d110 = d90;
+            d111 = d91;
+            d90 &= ~CellTracker.localDirt0;
+            d91 &= ~CellTracker.localDirt1;
+            d100 |= d90;
+            d101 |= d91;
+            // Profiler.end("bfs iteration");
+            {
+                var bugPos = bug.getRecentPos(10 / 2);
+                if(bugPos.equals(myLoc)) {
+                    // we are completely stuck
+                    break bfsLoop;
+                } else {
+                            {
             var pos = bugPos;
             int xi = pos.x - myLoc.x + 5;
             int yi = pos.y - myLoc.y + 5;
@@ -7776,408 +7794,408 @@ public class Pathfinder {
             }
         }
 
+                }
             }
-        }
-        // {
-        //     if(amAfter(11068, 9)) {
-        //         indicatorString = "";
-        //         // CellTracker.printLocalMask(d100, d101);
-        //         CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
-        //         Clock.yield();
-        //         // indicatorString = "";
-        //         // CellTracker.printLocalMask(nearCat0, nearCat1);
-        //         // Clock.yield();
-        //     }
-        // }
-        if((d100 & 0x807000000000000l) != 0 || (d101 & 0xe01) != 0) {
+            // {
+            //     if(amAfter(11068, 9)) {
+            //         indicatorString = "";
+            //         // CellTracker.printLocalMask(d100, d101);
+            //         CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
+            //         Clock.yield();
+            //         // indicatorString = "";
+            //         // CellTracker.printLocalMask(nearCat0, nearCat1);
+            //         // Clock.yield();
+            //     }
+            // }
+            if((d100 & 0x807000000000000l) != 0 || (d101 & 0xe01) != 0) {
+                // Profiler.begin();
+                // this is sloppy since we only care about tiles <= 2 chebyshev distance away
+                long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
+                notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
+                notWallAdjacent0 &= notWallAdjacent0 << 1;
+                notWallAdjacent0 &= (notWallAdjacent0 >> 1) | ((notWallAdjacent1 & 1l) << 60);
+                notWallAdjacent1 &= notWallAdjacent1 >> 1;
+                notWallAdjacent1 &= (notWallAdjacent1 << 11) | (notWallAdjacent0 >> 50);
+                notWallAdjacent0 &= notWallAdjacent0 << 11;
+                notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
+                notWallAdjacent1 &= notWallAdjacent1 >> 11;
+
+                Direction bestMove = null;
+                double bestScore = 1e18;
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTH);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTH)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 49))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d100 & (1l << 49))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 49))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTH == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTH + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTH;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.EAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.EAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 0))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d101 & (1l << 0))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 0))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.EAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.EAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.EAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTH);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTH)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 10))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d101 & (1l << 10))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 10))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTH == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTH + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTH;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.WEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.WEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 59))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d100 & (1l << 59))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 59))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.WEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.WEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.WEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTHWEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTHWEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 48))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d100 & (1l << 48))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 48))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTHWEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTHWEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTHEAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTHEAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 50))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d100 & (1l << 50))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 50))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTHEAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTHEAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTHWEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTHWEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 9))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d101 & (1l << 9))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 9))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTHWEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTHWEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTHEAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTHEAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 11))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d101 & (1l << 11))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 11))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTHEAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTHEAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                // Profiler.end("bfs best move");
+                if(bestMove != null) {
+                    Profiler.end("bfs");
+                    // indicate("bestMove: " + bestMove);
+                    lastDist = 10;
+                    indicate("bfs iterations: " + 10);
+                    makeMove(bestMove);
+                    return;
+                }
+            }
+
             // Profiler.begin();
-            // this is sloppy since we only care about tiles <= 2 chebyshev distance away
-            long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
-            notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
-            notWallAdjacent0 &= notWallAdjacent0 << 1;
-            notWallAdjacent0 &= (notWallAdjacent0 >> 1) | ((notWallAdjacent1 & 1l) << 60);
-            notWallAdjacent1 &= notWallAdjacent1 >> 1;
-            notWallAdjacent1 &= (notWallAdjacent1 << 11) | (notWallAdjacent0 >> 50);
-            notWallAdjacent0 &= notWallAdjacent0 << 11;
-            notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
-            notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
-            Direction bestMove = null;
-            double bestScore = 1e18;
-            {
-                var nextLoc = myLoc.add(Direction.SOUTH);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 49))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d100 & (1l << 49))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 49))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTH + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTH;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.EAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.EAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 0))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d101 & (1l << 0))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 0))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.EAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.EAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTH);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 10))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d101 & (1l << 10))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 10))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTH + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTH;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.WEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.WEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 59))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d100 & (1l << 59))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 59))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.WEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.WEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.SOUTHWEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 48))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d100 & (1l << 48))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 48))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTHWEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTHWEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.SOUTHEAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 50))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d100 & (1l << 50))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 50))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTHEAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTHEAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTHWEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 9))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d101 & (1l << 9))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 9))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTHWEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTHWEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTHEAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 11))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d101 & (1l << 11))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 11))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTHEAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTHEAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            // Profiler.end("bfs best move");
-            if(bestMove != null) {
-                Profiler.end("bfs");
-                // indicate("bestMove: " + bestMove);
-                lastDist = 10;
-                indicate("bfs iterations: " + 10);
-                makeMove(bestMove);
-                return;
-            }
-        }
-
-        // Profiler.begin();
-
-            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d100 |= (d100 & 0xfbff7feffdffbffl) << 1;
     d101 |= (d101 & 0x7feffdffbff7fefl) << 1;
     d100 |= (d100 & 0x1f7feffdffbff7fel) >> 1;
@@ -8190,415 +8208,415 @@ public class Pathfinder {
     d100 &= localPassableExceptAllies0;
     d101 &= localPassableExceptAllies1;
 
-        long d120 = 0l;
-        long d121 = 0l;
-        d120 = d100;
-        d121 = d101;
-        d100 &= ~CellTracker.localDirt0;
-        d101 &= ~CellTracker.localDirt1;
-        d110 |= d100;
-        d111 |= d101;
-        // Profiler.end("bfs iteration");
-        // {
-        //     if(amAfter(11068, 9)) {
-        //         indicatorString = "";
-        //         // CellTracker.printLocalMask(d110, d111);
-        //         CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
-        //         Clock.yield();
-        //         // indicatorString = "";
-        //         // CellTracker.printLocalMask(nearCat0, nearCat1);
-        //         // Clock.yield();
-        //     }
-        // }
-        if((d110 & 0x807000000000000l) != 0 || (d111 & 0xe01) != 0) {
+            long d120 = 0l;
+            long d121 = 0l;
+            d120 = d100;
+            d121 = d101;
+            d100 &= ~CellTracker.localDirt0;
+            d101 &= ~CellTracker.localDirt1;
+            d110 |= d100;
+            d111 |= d101;
+            // Profiler.end("bfs iteration");
+            // {
+            //     if(amAfter(11068, 9)) {
+            //         indicatorString = "";
+            //         // CellTracker.printLocalMask(d110, d111);
+            //         CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
+            //         Clock.yield();
+            //         // indicatorString = "";
+            //         // CellTracker.printLocalMask(nearCat0, nearCat1);
+            //         // Clock.yield();
+            //     }
+            // }
+            if((d110 & 0x807000000000000l) != 0 || (d111 & 0xe01) != 0) {
+                // Profiler.begin();
+                // this is sloppy since we only care about tiles <= 2 chebyshev distance away
+                long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
+                notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
+                notWallAdjacent0 &= notWallAdjacent0 << 1;
+                notWallAdjacent0 &= (notWallAdjacent0 >> 1) | ((notWallAdjacent1 & 1l) << 60);
+                notWallAdjacent1 &= notWallAdjacent1 >> 1;
+                notWallAdjacent1 &= (notWallAdjacent1 << 11) | (notWallAdjacent0 >> 50);
+                notWallAdjacent0 &= notWallAdjacent0 << 11;
+                notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
+                notWallAdjacent1 &= notWallAdjacent1 >> 11;
+
+                Direction bestMove = null;
+                double bestScore = 1e18;
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTH);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTH)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 49))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d110 & (1l << 49))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 49))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTH == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTH + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTH;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.EAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.EAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 0))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d111 & (1l << 0))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 0))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.EAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.EAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.EAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTH);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTH)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 10))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d111 & (1l << 10))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 10))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTH == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTH + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTH;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.WEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.WEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 59))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d110 & (1l << 59))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 59))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.WEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.WEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.WEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTHWEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTHWEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 48))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d110 & (1l << 48))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 48))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTHWEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTHWEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTHEAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTHEAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 50))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d110 & (1l << 50))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 50))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTHEAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTHEAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTHWEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTHWEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 9))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d111 & (1l << 9))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 9))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTHWEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTHWEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTHEAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTHEAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 11))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d111 & (1l << 11))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 11))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTHEAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTHEAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                // Profiler.end("bfs best move");
+                if(bestMove != null) {
+                    Profiler.end("bfs");
+                    // indicate("bestMove: " + bestMove);
+                    lastDist = 11;
+                    indicate("bfs iterations: " + 11);
+                    makeMove(bestMove);
+                    return;
+                }
+            }
+
             // Profiler.begin();
-            // this is sloppy since we only care about tiles <= 2 chebyshev distance away
-            long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
-            notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
-            notWallAdjacent0 &= notWallAdjacent0 << 1;
-            notWallAdjacent0 &= (notWallAdjacent0 >> 1) | ((notWallAdjacent1 & 1l) << 60);
-            notWallAdjacent1 &= notWallAdjacent1 >> 1;
-            notWallAdjacent1 &= (notWallAdjacent1 << 11) | (notWallAdjacent0 >> 50);
-            notWallAdjacent0 &= notWallAdjacent0 << 11;
-            notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
-            notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
-            Direction bestMove = null;
-            double bestScore = 1e18;
-            {
-                var nextLoc = myLoc.add(Direction.SOUTH);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 49))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d110 & (1l << 49))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 49))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTH + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTH;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.EAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.EAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 0))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d111 & (1l << 0))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 0))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.EAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.EAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTH);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 10))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d111 & (1l << 10))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 10))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTH + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTH;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.WEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.WEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 59))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d110 & (1l << 59))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 59))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.WEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.WEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.SOUTHWEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 48))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d110 & (1l << 48))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 48))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTHWEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTHWEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.SOUTHEAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 50))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d110 & (1l << 50))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 50))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTHEAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTHEAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTHWEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 9))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d111 & (1l << 9))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 9))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTHWEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTHWEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTHEAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 11))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d111 & (1l << 11))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 11))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTHEAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTHEAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            // Profiler.end("bfs best move");
-            if(bestMove != null) {
-                Profiler.end("bfs");
-                // indicate("bestMove: " + bestMove);
-                lastDist = 11;
-                indicate("bfs iterations: " + 11);
-                makeMove(bestMove);
-                return;
-            }
-        }
-
-        // Profiler.begin();
-
-            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d110 |= (d110 & 0xfbff7feffdffbffl) << 1;
     d111 |= (d111 & 0x7feffdffbff7fefl) << 1;
     d110 |= (d110 & 0x1f7feffdffbff7fel) >> 1;
@@ -8611,19 +8629,22 @@ public class Pathfinder {
     d110 &= localPassableExceptAllies0;
     d111 &= localPassableExceptAllies1;
 
-        long d130 = 0l;
-        long d131 = 0l;
-        d130 = d110;
-        d131 = d111;
-        d110 &= ~CellTracker.localDirt0;
-        d111 &= ~CellTracker.localDirt1;
-        d120 |= d110;
-        d121 |= d111;
-        // Profiler.end("bfs iteration");
-        {
-            var bugPos = bug.getRecentPos(12 / 2);
-            if(!bugPos.equals(myLoc)) {
-                        {
+            long d130 = 0l;
+            long d131 = 0l;
+            d130 = d110;
+            d131 = d111;
+            d110 &= ~CellTracker.localDirt0;
+            d111 &= ~CellTracker.localDirt1;
+            d120 |= d110;
+            d121 |= d111;
+            // Profiler.end("bfs iteration");
+            {
+                var bugPos = bug.getRecentPos(12 / 2);
+                if(bugPos.equals(myLoc)) {
+                    // we are completely stuck
+                    break bfsLoop;
+                } else {
+                            {
             var pos = bugPos;
             int xi = pos.x - myLoc.x + 5;
             int yi = pos.y - myLoc.y + 5;
@@ -8638,408 +8659,408 @@ public class Pathfinder {
             }
         }
 
+                }
             }
-        }
-        // {
-        //     if(amAfter(11068, 9)) {
-        //         indicatorString = "";
-        //         // CellTracker.printLocalMask(d120, d121);
-        //         CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
-        //         Clock.yield();
-        //         // indicatorString = "";
-        //         // CellTracker.printLocalMask(nearCat0, nearCat1);
-        //         // Clock.yield();
-        //     }
-        // }
-        if((d120 & 0x807000000000000l) != 0 || (d121 & 0xe01) != 0) {
+            // {
+            //     if(amAfter(11068, 9)) {
+            //         indicatorString = "";
+            //         // CellTracker.printLocalMask(d120, d121);
+            //         CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
+            //         Clock.yield();
+            //         // indicatorString = "";
+            //         // CellTracker.printLocalMask(nearCat0, nearCat1);
+            //         // Clock.yield();
+            //     }
+            // }
+            if((d120 & 0x807000000000000l) != 0 || (d121 & 0xe01) != 0) {
+                // Profiler.begin();
+                // this is sloppy since we only care about tiles <= 2 chebyshev distance away
+                long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
+                notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
+                notWallAdjacent0 &= notWallAdjacent0 << 1;
+                notWallAdjacent0 &= (notWallAdjacent0 >> 1) | ((notWallAdjacent1 & 1l) << 60);
+                notWallAdjacent1 &= notWallAdjacent1 >> 1;
+                notWallAdjacent1 &= (notWallAdjacent1 << 11) | (notWallAdjacent0 >> 50);
+                notWallAdjacent0 &= notWallAdjacent0 << 11;
+                notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
+                notWallAdjacent1 &= notWallAdjacent1 >> 11;
+
+                Direction bestMove = null;
+                double bestScore = 1e18;
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTH);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTH)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 49))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d120 & (1l << 49))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 49))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTH == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTH + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTH;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.EAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.EAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 0))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d121 & (1l << 0))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 0))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.EAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.EAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.EAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTH);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTH)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 10))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d121 & (1l << 10))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 10))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTH == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTH + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTH;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.WEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.WEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 59))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d120 & (1l << 59))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 59))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.WEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.WEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.WEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTHWEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTHWEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 48))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d120 & (1l << 48))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 48))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTHWEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTHWEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTHEAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTHEAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 50))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d120 & (1l << 50))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 50))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTHEAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTHEAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTHWEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTHWEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 9))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d121 & (1l << 9))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 9))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTHWEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTHWEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTHEAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTHEAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 11))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d121 & (1l << 11))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 11))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTHEAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTHEAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                // Profiler.end("bfs best move");
+                if(bestMove != null) {
+                    Profiler.end("bfs");
+                    // indicate("bestMove: " + bestMove);
+                    lastDist = 12;
+                    indicate("bfs iterations: " + 12);
+                    makeMove(bestMove);
+                    return;
+                }
+            }
+
             // Profiler.begin();
-            // this is sloppy since we only care about tiles <= 2 chebyshev distance away
-            long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
-            notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
-            notWallAdjacent0 &= notWallAdjacent0 << 1;
-            notWallAdjacent0 &= (notWallAdjacent0 >> 1) | ((notWallAdjacent1 & 1l) << 60);
-            notWallAdjacent1 &= notWallAdjacent1 >> 1;
-            notWallAdjacent1 &= (notWallAdjacent1 << 11) | (notWallAdjacent0 >> 50);
-            notWallAdjacent0 &= notWallAdjacent0 << 11;
-            notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
-            notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
-            Direction bestMove = null;
-            double bestScore = 1e18;
-            {
-                var nextLoc = myLoc.add(Direction.SOUTH);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 49))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d120 & (1l << 49))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 49))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTH + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTH;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.EAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.EAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 0))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d121 & (1l << 0))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 0))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.EAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.EAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTH);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 10))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d121 & (1l << 10))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 10))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTH + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTH;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.WEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.WEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 59))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d120 & (1l << 59))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 59))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.WEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.WEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.SOUTHWEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 48))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d120 & (1l << 48))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 48))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTHWEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTHWEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.SOUTHEAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 50))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d120 & (1l << 50))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 50))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTHEAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTHEAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTHWEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 9))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d121 & (1l << 9))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 9))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTHWEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTHWEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTHEAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 11))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d121 & (1l << 11))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 11))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTHEAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTHEAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            // Profiler.end("bfs best move");
-            if(bestMove != null) {
-                Profiler.end("bfs");
-                // indicate("bestMove: " + bestMove);
-                lastDist = 12;
-                indicate("bfs iterations: " + 12);
-                makeMove(bestMove);
-                return;
-            }
-        }
-
-        // Profiler.begin();
-
-            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d120 |= (d120 & 0xfbff7feffdffbffl) << 1;
     d121 |= (d121 & 0x7feffdffbff7fefl) << 1;
     d120 |= (d120 & 0x1f7feffdffbff7fel) >> 1;
@@ -9052,415 +9073,415 @@ public class Pathfinder {
     d120 &= localPassableExceptAllies0;
     d121 &= localPassableExceptAllies1;
 
-        long d140 = 0l;
-        long d141 = 0l;
-        d140 = d120;
-        d141 = d121;
-        d120 &= ~CellTracker.localDirt0;
-        d121 &= ~CellTracker.localDirt1;
-        d130 |= d120;
-        d131 |= d121;
-        // Profiler.end("bfs iteration");
-        // {
-        //     if(amAfter(11068, 9)) {
-        //         indicatorString = "";
-        //         // CellTracker.printLocalMask(d130, d131);
-        //         CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
-        //         Clock.yield();
-        //         // indicatorString = "";
-        //         // CellTracker.printLocalMask(nearCat0, nearCat1);
-        //         // Clock.yield();
-        //     }
-        // }
-        if((d130 & 0x807000000000000l) != 0 || (d131 & 0xe01) != 0) {
+            long d140 = 0l;
+            long d141 = 0l;
+            d140 = d120;
+            d141 = d121;
+            d120 &= ~CellTracker.localDirt0;
+            d121 &= ~CellTracker.localDirt1;
+            d130 |= d120;
+            d131 |= d121;
+            // Profiler.end("bfs iteration");
+            // {
+            //     if(amAfter(11068, 9)) {
+            //         indicatorString = "";
+            //         // CellTracker.printLocalMask(d130, d131);
+            //         CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
+            //         Clock.yield();
+            //         // indicatorString = "";
+            //         // CellTracker.printLocalMask(nearCat0, nearCat1);
+            //         // Clock.yield();
+            //     }
+            // }
+            if((d130 & 0x807000000000000l) != 0 || (d131 & 0xe01) != 0) {
+                // Profiler.begin();
+                // this is sloppy since we only care about tiles <= 2 chebyshev distance away
+                long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
+                notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
+                notWallAdjacent0 &= notWallAdjacent0 << 1;
+                notWallAdjacent0 &= (notWallAdjacent0 >> 1) | ((notWallAdjacent1 & 1l) << 60);
+                notWallAdjacent1 &= notWallAdjacent1 >> 1;
+                notWallAdjacent1 &= (notWallAdjacent1 << 11) | (notWallAdjacent0 >> 50);
+                notWallAdjacent0 &= notWallAdjacent0 << 11;
+                notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
+                notWallAdjacent1 &= notWallAdjacent1 >> 11;
+
+                Direction bestMove = null;
+                double bestScore = 1e18;
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTH);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTH)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 49))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d130 & (1l << 49))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 49))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTH == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTH + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTH;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.EAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.EAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 0))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d131 & (1l << 0))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 0))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.EAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.EAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.EAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTH);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTH)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 10))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d131 & (1l << 10))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 10))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTH == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTH + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTH;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.WEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.WEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 59))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d130 & (1l << 59))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 59))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.WEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.WEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.WEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTHWEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTHWEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 48))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d130 & (1l << 48))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 48))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTHWEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTHWEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTHEAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTHEAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 50))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d130 & (1l << 50))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 50))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTHEAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTHEAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTHWEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTHWEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 9))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d131 & (1l << 9))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 9))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTHWEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTHWEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTHEAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTHEAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 11))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d131 & (1l << 11))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 11))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTHEAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTHEAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                // Profiler.end("bfs best move");
+                if(bestMove != null) {
+                    Profiler.end("bfs");
+                    // indicate("bestMove: " + bestMove);
+                    lastDist = 13;
+                    indicate("bfs iterations: " + 13);
+                    makeMove(bestMove);
+                    return;
+                }
+            }
+
             // Profiler.begin();
-            // this is sloppy since we only care about tiles <= 2 chebyshev distance away
-            long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
-            notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
-            notWallAdjacent0 &= notWallAdjacent0 << 1;
-            notWallAdjacent0 &= (notWallAdjacent0 >> 1) | ((notWallAdjacent1 & 1l) << 60);
-            notWallAdjacent1 &= notWallAdjacent1 >> 1;
-            notWallAdjacent1 &= (notWallAdjacent1 << 11) | (notWallAdjacent0 >> 50);
-            notWallAdjacent0 &= notWallAdjacent0 << 11;
-            notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
-            notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
-            Direction bestMove = null;
-            double bestScore = 1e18;
-            {
-                var nextLoc = myLoc.add(Direction.SOUTH);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 49))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d130 & (1l << 49))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 49))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTH + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTH;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.EAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.EAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 0))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d131 & (1l << 0))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 0))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.EAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.EAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTH);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 10))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d131 & (1l << 10))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 10))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTH + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTH;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.WEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.WEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 59))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d130 & (1l << 59))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 59))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.WEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.WEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.SOUTHWEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 48))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d130 & (1l << 48))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 48))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTHWEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTHWEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.SOUTHEAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 50))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d130 & (1l << 50))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 50))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTHEAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTHEAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTHWEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 9))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d131 & (1l << 9))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 9))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTHWEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTHWEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTHEAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 11))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d131 & (1l << 11))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 11))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTHEAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTHEAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            // Profiler.end("bfs best move");
-            if(bestMove != null) {
-                Profiler.end("bfs");
-                // indicate("bestMove: " + bestMove);
-                lastDist = 13;
-                indicate("bfs iterations: " + 13);
-                makeMove(bestMove);
-                return;
-            }
-        }
-
-        // Profiler.begin();
-
-            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d130 |= (d130 & 0xfbff7feffdffbffl) << 1;
     d131 |= (d131 & 0x7feffdffbff7fefl) << 1;
     d130 |= (d130 & 0x1f7feffdffbff7fel) >> 1;
@@ -9473,19 +9494,22 @@ public class Pathfinder {
     d130 &= localPassableExceptAllies0;
     d131 &= localPassableExceptAllies1;
 
-        long d150 = 0l;
-        long d151 = 0l;
-        d150 = d130;
-        d151 = d131;
-        d130 &= ~CellTracker.localDirt0;
-        d131 &= ~CellTracker.localDirt1;
-        d140 |= d130;
-        d141 |= d131;
-        // Profiler.end("bfs iteration");
-        {
-            var bugPos = bug.getRecentPos(14 / 2);
-            if(!bugPos.equals(myLoc)) {
-                        {
+            long d150 = 0l;
+            long d151 = 0l;
+            d150 = d130;
+            d151 = d131;
+            d130 &= ~CellTracker.localDirt0;
+            d131 &= ~CellTracker.localDirt1;
+            d140 |= d130;
+            d141 |= d131;
+            // Profiler.end("bfs iteration");
+            {
+                var bugPos = bug.getRecentPos(14 / 2);
+                if(bugPos.equals(myLoc)) {
+                    // we are completely stuck
+                    break bfsLoop;
+                } else {
+                            {
             var pos = bugPos;
             int xi = pos.x - myLoc.x + 5;
             int yi = pos.y - myLoc.y + 5;
@@ -9500,408 +9524,408 @@ public class Pathfinder {
             }
         }
 
+                }
             }
-        }
-        // {
-        //     if(amAfter(11068, 9)) {
-        //         indicatorString = "";
-        //         // CellTracker.printLocalMask(d140, d141);
-        //         CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
-        //         Clock.yield();
-        //         // indicatorString = "";
-        //         // CellTracker.printLocalMask(nearCat0, nearCat1);
-        //         // Clock.yield();
-        //     }
-        // }
-        if((d140 & 0x807000000000000l) != 0 || (d141 & 0xe01) != 0) {
+            // {
+            //     if(amAfter(11068, 9)) {
+            //         indicatorString = "";
+            //         // CellTracker.printLocalMask(d140, d141);
+            //         CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
+            //         Clock.yield();
+            //         // indicatorString = "";
+            //         // CellTracker.printLocalMask(nearCat0, nearCat1);
+            //         // Clock.yield();
+            //     }
+            // }
+            if((d140 & 0x807000000000000l) != 0 || (d141 & 0xe01) != 0) {
+                // Profiler.begin();
+                // this is sloppy since we only care about tiles <= 2 chebyshev distance away
+                long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
+                notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
+                notWallAdjacent0 &= notWallAdjacent0 << 1;
+                notWallAdjacent0 &= (notWallAdjacent0 >> 1) | ((notWallAdjacent1 & 1l) << 60);
+                notWallAdjacent1 &= notWallAdjacent1 >> 1;
+                notWallAdjacent1 &= (notWallAdjacent1 << 11) | (notWallAdjacent0 >> 50);
+                notWallAdjacent0 &= notWallAdjacent0 << 11;
+                notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
+                notWallAdjacent1 &= notWallAdjacent1 >> 11;
+
+                Direction bestMove = null;
+                double bestScore = 1e18;
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTH);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTH)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 49))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d140 & (1l << 49))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 49))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTH == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTH + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTH;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.EAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.EAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 0))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d141 & (1l << 0))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 0))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.EAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.EAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.EAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTH);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTH)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 10))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d141 & (1l << 10))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 10))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTH == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTH + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTH;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.WEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.WEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 59))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d140 & (1l << 59))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 59))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.WEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.WEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.WEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTHWEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTHWEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 48))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d140 & (1l << 48))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 48))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTHWEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTHWEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.SOUTHEAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.SOUTHEAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent0 & (1l << 50))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d140 & (1l << 50))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat0 & (1l << 50))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.SOUTHEAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.SOUTHEAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTHWEST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTHWEST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 9))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d141 & (1l << 9))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 9))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTHWEST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTHWEST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                {
+                    var nextLoc = myLoc.add(Direction.NORTHEAST);
+                    boolean isDirt = false;
+                    if(rc.canMove(Direction.NORTHEAST)
+                       || (isDirt = CellTracker.isDirt(nextLoc))
+                       && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
+                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        // prefer staying away from walls, this helps when changing direction
+                        if(
+                           (notWallAdjacent1 & (1l << 11))
+                           != 0
+                           ) {
+                            score -= 100;
+                        }
+                        // prefer getting closer to the target
+                        if(
+                           (d141 & (1l << 11))
+                           != 0
+                           ) {
+                            score -= 1200;
+                        }
+                        // strongly prefer avoiding adjacent squares to historical cat locations
+                        if(
+                           (nearCat1 & (1l << 11))
+                           != 0
+                           ) {
+                            score += 2700;
+                        }
+                        // prefer definitely empty squares over possibly dirt
+                        if(isDirt) {
+                            score += 1000;
+                        }
+                        // if we can't turn, then prefer moving straight
+                        // however, we still prefer strafing to moving forward into dirt
+                        if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
+                            score -= 500;
+                        }
+                        score += catPenalty(nextLoc);
+                        // indicate(Direction.NORTHEAST + " " + score);
+                        if(score < bestScore) {
+                            bestMove = Direction.NORTHEAST;
+                            bestScore = score;
+                        }
+                    }
+                }
+                // Profiler.end("bfs best move");
+                if(bestMove != null) {
+                    Profiler.end("bfs");
+                    // indicate("bestMove: " + bestMove);
+                    lastDist = 14;
+                    indicate("bfs iterations: " + 14);
+                    makeMove(bestMove);
+                    return;
+                }
+            }
+
             // Profiler.begin();
-            // this is sloppy since we only care about tiles <= 2 chebyshev distance away
-            long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
-            notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
-            notWallAdjacent0 &= notWallAdjacent0 << 1;
-            notWallAdjacent0 &= (notWallAdjacent0 >> 1) | ((notWallAdjacent1 & 1l) << 60);
-            notWallAdjacent1 &= notWallAdjacent1 >> 1;
-            notWallAdjacent1 &= (notWallAdjacent1 << 11) | (notWallAdjacent0 >> 50);
-            notWallAdjacent0 &= notWallAdjacent0 << 11;
-            notWallAdjacent0 &= (notWallAdjacent0 >> 11) | ((notWallAdjacent1 & 0x7ffl) << 50);
-            notWallAdjacent1 &= notWallAdjacent1 >> 11;
 
-            Direction bestMove = null;
-            double bestScore = 1e18;
-            {
-                var nextLoc = myLoc.add(Direction.SOUTH);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTH)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 49))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d140 & (1l << 49))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 49))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTH == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTH + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTH;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.EAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.EAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 0))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d141 & (1l << 0))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 0))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.EAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.EAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.EAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTH);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTH)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 10))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d141 & (1l << 10))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 10))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTH == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTH + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTH;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.WEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.WEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 59))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d140 & (1l << 59))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 59))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.WEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.WEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.WEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.SOUTHWEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHWEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 48))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d140 & (1l << 48))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 48))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHWEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTHWEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTHWEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.SOUTHEAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.SOUTHEAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent0 & (1l << 50))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d140 & (1l << 50))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat0 & (1l << 50))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.SOUTHEAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.SOUTHEAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.SOUTHEAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTHWEST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHWEST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 9))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d141 & (1l << 9))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 9))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHWEST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTHWEST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTHWEST;
-                        bestScore = score;
-                    }
-                }
-            }
-            {
-                var nextLoc = myLoc.add(Direction.NORTHEAST);
-                boolean isDirt = false;
-                if(rc.canMove(Direction.NORTHEAST)
-                   || (isDirt = CellTracker.isDirt(nextLoc))
-                   && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST) {
-                    double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
-                    // prefer staying away from walls, this helps when changing direction
-                    if(
-                       (notWallAdjacent1 & (1l << 11))
-                       != 0
-                       ) {
-                        score -= 100;
-                    }
-                    // prefer getting closer to the target
-                    if(
-                       (d141 & (1l << 11))
-                       != 0
-                       ) {
-                        score -= 1200;
-                    }
-                    // strongly prefer avoiding adjacent squares to historical cat locations
-                    if(
-                       (nearCat1 & (1l << 11))
-                       != 0
-                       ) {
-                        score += 2700;
-                    }
-                    // prefer definitely empty squares over possibly dirt
-                    if(isDirt) {
-                        score += 1000;
-                    }
-                    // if we can't turn, then prefer moving straight
-                    // however, we still prefer strafing to moving forward into dirt
-                    if(!rc.canTurn() && Direction.NORTHEAST == myDir) {
-                        score -= 500;
-                    }
-                    score += catPenalty(nextLoc);
-                    // indicate(Direction.NORTHEAST + " " + score);
-                    if(score < bestScore) {
-                        bestMove = Direction.NORTHEAST;
-                        bestScore = score;
-                    }
-                }
-            }
-            // Profiler.end("bfs best move");
-            if(bestMove != null) {
-                Profiler.end("bfs");
-                // indicate("bestMove: " + bestMove);
-                lastDist = 14;
-                indicate("bfs iterations: " + 14);
-                makeMove(bestMove);
-                return;
-            }
-        }
-
-        // Profiler.begin();
-
-            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d140 |= (d140 & 0xfbff7feffdffbffl) << 1;
     d141 |= (d141 & 0x7feffdffbff7fefl) << 1;
     d140 |= (d140 & 0x1f7feffdffbff7fel) >> 1;
@@ -9914,15 +9938,16 @@ public class Pathfinder {
     d140 &= localPassableExceptAllies0;
     d141 &= localPassableExceptAllies1;
 
-        long d160 = 0l;
-        long d161 = 0l;
-        d160 = d140;
-        d161 = d141;
-        d140 &= ~CellTracker.localDirt0;
-        d141 &= ~CellTracker.localDirt1;
-        d150 |= d140;
-        d151 |= d141;
-        // Profiler.end("bfs iteration");
+            long d160 = 0l;
+            long d161 = 0l;
+            d160 = d140;
+            d161 = d141;
+            d140 &= ~CellTracker.localDirt0;
+            d141 &= ~CellTracker.localDirt1;
+            d150 |= d140;
+            d151 |= d141;
+            // Profiler.end("bfs iteration");
+        }
         Profiler.end("bfs");
 
         println("fallback when bfs can't find path");

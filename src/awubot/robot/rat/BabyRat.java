@@ -126,8 +126,8 @@ public class BabyRat {
         tryTransferCheese();
         // IF TLE: optimise this
         if (!isLastMove) {
-            CellTracker.storeVisibleCells();
             RobotTracker.updateRobots();
+            if(Clock.getBytecodesLeft() >= 3000) CellTracker.storeVisibleCells();
         }
     }
 
@@ -137,8 +137,8 @@ public class BabyRat {
         tryPickUpCheese();
         tryTransferCheese();
         if (!isLastMove) {
-            CellTracker.storeVisibleCells();
             RobotTracker.updateRobots();
+            if(Clock.getBytecodesLeft() >= 3000) CellTracker.storeVisibleCells();
         }
     }
 
@@ -147,8 +147,8 @@ public class BabyRat {
         tryPickUpCheese();
         tryTransferCheese();
         if (!isLastMove) {
-            CellTracker.storeVisibleCellsPostMoveForward();
             RobotTracker.updateRobots();
+            if(Clock.getBytecodesLeft() >= 2000) CellTracker.storeVisibleCellsPostMoveForward();
         }
     }
 

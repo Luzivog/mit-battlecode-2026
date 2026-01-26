@@ -164,6 +164,7 @@ public final class TryRatNap {
         double score = weight + 20;
         score += CombatStrategy.getCellScoreFor(moveDir, facing, info);
         if (score <= 0.5) return;
+        if (moveCost == 1) score += 3;
         if (facing != myDir) {
             score += 2;
         }

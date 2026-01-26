@@ -11247,6 +11247,129 @@ moveThreatC = (t_0_1 ? 0x00000000000000ffL : 0L) | (t_1_1 ? 0x000000000000ff00L 
         }
     }
 
+    public static boolean hasThreatAssumingLowHP(Direction moveDir, Direction facing) {
+        switch (moveDir.ordinal()) {
+            case 0 -> {
+                switch (facing.ordinal()) {
+                    case 0 -> { return (threatNN & hiddenN) != 0L; }
+                    case 1 -> { return (threatNNE & hiddenNE) != 0L; }
+                    case 2 -> { return (threatNE & hiddenE) != 0L; }
+                    case 3 -> { return (threatNSE & hiddenSE) != 0L; }
+                    case 4 -> { return (threatNS & hiddenS) != 0L; }
+                    case 5 -> { return (threatNSW & hiddenSW) != 0L; }
+                    case 6 -> { return (threatNW & hiddenW) != 0L; }
+                    case 7 -> { return (threatNNW & hiddenNW) != 0L; }
+                    default -> { return false; }
+                }
+            }
+            case 1 -> {
+                switch (facing.ordinal()) {
+                    case 0 -> { return (threatNEN & hiddenN) != 0L; }
+                    case 1 -> { return (threatNENE & hiddenNE) != 0L; }
+                    case 2 -> { return (threatNEE & hiddenE) != 0L; }
+                    case 3 -> { return (threatNESE & hiddenSE) != 0L; }
+                    case 4 -> { return (threatNES & hiddenS) != 0L; }
+                    case 5 -> { return (threatNESW & hiddenSW) != 0L; }
+                    case 6 -> { return (threatNEW & hiddenW) != 0L; }
+                    case 7 -> { return (threatNENW & hiddenNW) != 0L; }
+                    default -> { return false; }
+                }
+            }
+            case 2 -> {
+                switch (facing.ordinal()) {
+                    case 0 -> { return (threatEN & hiddenN) != 0L; }
+                    case 1 -> { return (threatENE & hiddenNE) != 0L; }
+                    case 2 -> { return (threatEE & hiddenE) != 0L; }
+                    case 3 -> { return (threatESE & hiddenSE) != 0L; }
+                    case 4 -> { return (threatES & hiddenS) != 0L; }
+                    case 5 -> { return (threatESW & hiddenSW) != 0L; }
+                    case 6 -> { return (threatEW & hiddenW) != 0L; }
+                    case 7 -> { return (threatENW & hiddenNW) != 0L; }
+                    default -> { return false; }
+                }
+            }
+            case 3 -> {
+                switch (facing.ordinal()) {
+                    case 0 -> { return (threatSEN & hiddenN) != 0L; }
+                    case 1 -> { return (threatSENE & hiddenNE) != 0L; }
+                    case 2 -> { return (threatSEE & hiddenE) != 0L; }
+                    case 3 -> { return (threatSESE & hiddenSE) != 0L; }
+                    case 4 -> { return (threatSES & hiddenS) != 0L; }
+                    case 5 -> { return (threatSESW & hiddenSW) != 0L; }
+                    case 6 -> { return (threatSEW & hiddenW) != 0L; }
+                    case 7 -> { return (threatSENW & hiddenNW) != 0L; }
+                    default -> { return false; }
+                }
+            }
+            case 4 -> {
+                switch (facing.ordinal()) {
+                    case 0 -> { return (threatSN & hiddenN) != 0L; }
+                    case 1 -> { return (threatSNE & hiddenNE) != 0L; }
+                    case 2 -> { return (threatSE & hiddenE) != 0L; }
+                    case 3 -> { return (threatSSE & hiddenSE) != 0L; }
+                    case 4 -> { return (threatSS & hiddenS) != 0L; }
+                    case 5 -> { return (threatSSW & hiddenSW) != 0L; }
+                    case 6 -> { return (threatSW & hiddenW) != 0L; }
+                    case 7 -> { return (threatSNW & hiddenNW) != 0L; }
+                    default -> { return false; }
+                }
+            }
+            case 5 -> {
+                switch (facing.ordinal()) {
+                    case 0 -> { return (threatSWN & hiddenN) != 0L; }
+                    case 1 -> { return (threatSWNE & hiddenNE) != 0L; }
+                    case 2 -> { return (threatSWE & hiddenE) != 0L; }
+                    case 3 -> { return (threatSWSE & hiddenSE) != 0L; }
+                    case 4 -> { return (threatSWS & hiddenS) != 0L; }
+                    case 5 -> { return (threatSWSW & hiddenSW) != 0L; }
+                    case 6 -> { return (threatSWW & hiddenW) != 0L; }
+                    case 7 -> { return (threatSWNW & hiddenNW) != 0L; }
+                    default -> { return false; }
+                }
+            }
+            case 6 -> {
+                switch (facing.ordinal()) {
+                    case 0 -> { return (threatWN & hiddenN) != 0L; }
+                    case 1 -> { return (threatWNE & hiddenNE) != 0L; }
+                    case 2 -> { return (threatWE & hiddenE) != 0L; }
+                    case 3 -> { return (threatWSE & hiddenSE) != 0L; }
+                    case 4 -> { return (threatWS & hiddenS) != 0L; }
+                    case 5 -> { return (threatWSW & hiddenSW) != 0L; }
+                    case 6 -> { return (threatWW & hiddenW) != 0L; }
+                    case 7 -> { return (threatWNW & hiddenNW) != 0L; }
+                    default -> { return false; }
+                }
+            }
+            case 7 -> {
+                switch (facing.ordinal()) {
+                    case 0 -> { return (threatNWN & hiddenN) != 0L; }
+                    case 1 -> { return (threatNWNE & hiddenNE) != 0L; }
+                    case 2 -> { return (threatNWE & hiddenE) != 0L; }
+                    case 3 -> { return (threatNWSE & hiddenSE) != 0L; }
+                    case 4 -> { return (threatNWS & hiddenS) != 0L; }
+                    case 5 -> { return (threatNWSW & hiddenSW) != 0L; }
+                    case 6 -> { return (threatNWW & hiddenW) != 0L; }
+                    case 7 -> { return (threatNWNW & hiddenNW) != 0L; }
+                    default -> { return false; }
+                }
+            }
+            case 8 -> {
+                switch (facing.ordinal()) {
+                    case 0 -> { return (threatCN & hiddenN) != 0L; }
+                    case 1 -> { return (threatCNE & hiddenNE) != 0L; }
+                    case 2 -> { return (threatCE & hiddenE) != 0L; }
+                    case 3 -> { return (threatCSE & hiddenSE) != 0L; }
+                    case 4 -> { return (threatCS & hiddenS) != 0L; }
+                    case 5 -> { return (threatCSW & hiddenSW) != 0L; }
+                    case 6 -> { return (threatCW & hiddenW) != 0L; }
+                    case 7 -> { return (threatCNW & hiddenNW) != 0L; }
+                    default -> { return false; }
+                }
+            }
+            default -> { return false; }
+        }
+    }
+
     public static boolean hasThreat(Direction moveDir, Direction facing, RobotInfo target) {
         long base;
         switch (moveDir.ordinal()) {

@@ -3150,7 +3150,8 @@ w_2_2 += (2) * mult;
     private static void considerSecondaryMove(Direction moveDir, Direction facing) throws GameActionException {
         int moveCost = CombatCommon.movementCost(moveDir, facing);
         if (moveCost == -1) return;
-        double moveScore = CombatStrategy.getCellScoreFor(moveDir, facing);
+        // double moveScore = CombatStrategy.getCellScoreFor(moveDir, facing);
+        double moveScore = (CombatTracker.hasThreatAssumingLowHP(moveDir, facing) ? -200 : 0);
         if (moveScore <= -100) return;
         switch (facing.ordinal()) {
             case 0 -> {

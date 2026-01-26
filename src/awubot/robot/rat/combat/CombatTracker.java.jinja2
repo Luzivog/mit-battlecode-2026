@@ -361,6 +361,22 @@ public class CombatTracker {
         }
     }
 
+    public static boolean hasThreatAssumingLowHP(Direction moveDir, Direction facing) {
+        switch (moveDir.ordinal()) {
+            {% for mi in range(moveShort|length) %}
+            case {{ mi }} -> {
+                switch (facing.ordinal()) {
+                    {% for fi in range(shortDirections|length) %}
+                    case {{ fi }} -> { return (threat{{ moveShort[mi] }}{{ shortDirections[fi] }} & hidden{{ shortDirections[fi] }}) != 0L; }
+                    {% endfor %}
+                    default -> { return false; }
+                }
+            }
+            {% endfor %}
+            default -> { return false; }
+        }
+    }
+
     public static boolean hasThreat(Direction moveDir, Direction facing, RobotInfo target) {
         long base;
         switch (moveDir.ordinal()) {

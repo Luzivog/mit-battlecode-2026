@@ -57,6 +57,7 @@ public final class TryTrap {
     static Direction bestSecondaryMoveDir;
     static Direction bestFacing;
     static double best;
+    static double baseScore;
     static MapLocation curMoveLoc;
     static MapLocation weightSource;
     static int weightCompTime;
@@ -3547,6 +3548,7 @@ w_2_2 += (2) * mult;
         if (CombatTracker.threatNN != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTH, Direction.NORTH);
         if (moveCost == -1) return;
+        baseScore = CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.NORTH);
         placeNNN();
         placeNENN();
         placeNWNN();
@@ -3554,7 +3556,7 @@ w_2_2 += (2) * mult;
 
 private static void placeNNN() {
         if (w_0_2 >= 0) {
-            double score = w_0_2;
+            double score = baseScore + w_0_2;
             if (Direction.NORTH != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -3567,7 +3569,7 @@ private static void placeNNN() {
     }
 private static void placeNENN() {
         if (w_1_2 >= 0) {
-            double score = w_1_2;
+            double score = baseScore + w_1_2;
             if (Direction.NORTH != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -3580,7 +3582,7 @@ private static void placeNENN() {
     }
 private static void placeNWNN() {
         if (w_m1_2 >= 0) {
-            double score = w_m1_2;
+            double score = baseScore + w_m1_2;
             if (Direction.NORTH != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -3595,6 +3597,7 @@ private static void placeNWNN() {
         if (CombatTracker.threatNNE != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTH, Direction.NORTHEAST);
         if (moveCost == -1) return;
+        baseScore = CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.NORTHEAST);
         placeNENEN();
         placeNNEN();
         placeENEN();
@@ -3602,7 +3605,7 @@ private static void placeNWNN() {
 
 private static void placeNENEN() {
         if (w_1_2 >= 0) {
-            double score = w_1_2;
+            double score = baseScore + w_1_2;
             if (Direction.NORTHEAST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -3615,7 +3618,7 @@ private static void placeNENEN() {
     }
 private static void placeNNEN() {
         if (w_0_2 >= 0) {
-            double score = w_0_2;
+            double score = baseScore + w_0_2;
             if (Direction.NORTHEAST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -3628,7 +3631,7 @@ private static void placeNNEN() {
     }
 private static void placeENEN() {
         if (w_1_1 >= 0) {
-            double score = w_1_1;
+            double score = baseScore + w_1_1;
             if (Direction.NORTHEAST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -3643,6 +3646,7 @@ private static void placeENEN() {
         if (CombatTracker.threatNNW != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTH, Direction.NORTHWEST);
         if (moveCost == -1) return;
+        baseScore = CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.NORTHWEST);
         placeNWNWN();
         placeNNWN();
         placeWNWN();
@@ -3650,7 +3654,7 @@ private static void placeENEN() {
 
 private static void placeNWNWN() {
         if (w_m1_2 >= 0) {
-            double score = w_m1_2;
+            double score = baseScore + w_m1_2;
             if (Direction.NORTHWEST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -3663,7 +3667,7 @@ private static void placeNWNWN() {
     }
 private static void placeNNWN() {
         if (w_0_2 >= 0) {
-            double score = w_0_2;
+            double score = baseScore + w_0_2;
             if (Direction.NORTHWEST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -3676,7 +3680,7 @@ private static void placeNNWN() {
     }
 private static void placeWNWN() {
         if (w_m1_1 >= 0) {
-            double score = w_m1_1;
+            double score = baseScore + w_m1_1;
             if (Direction.NORTHWEST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -3702,6 +3706,7 @@ private static void placeWNWN() {
         if (CombatTracker.threatNENE != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTHEAST, Direction.NORTHEAST);
         if (moveCost == -1) return;
+        baseScore = CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.NORTHEAST);
         placeNENENE();
         placeNNENE();
         placeENENE();
@@ -3709,7 +3714,7 @@ private static void placeWNWN() {
 
 private static void placeNENENE() {
         if (w_2_2 >= 0) {
-            double score = w_2_2;
+            double score = baseScore + w_2_2;
             if (Direction.NORTHEAST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -3722,7 +3727,7 @@ private static void placeNENENE() {
     }
 private static void placeNNENE() {
         if (w_1_2 >= 0) {
-            double score = w_1_2;
+            double score = baseScore + w_1_2;
             if (Direction.NORTHEAST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -3735,7 +3740,7 @@ private static void placeNNENE() {
     }
 private static void placeENENE() {
         if (w_2_1 >= 0) {
-            double score = w_2_1;
+            double score = baseScore + w_2_1;
             if (Direction.NORTHEAST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -3750,6 +3755,7 @@ private static void placeENENE() {
         if (CombatTracker.threatNEN != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTHEAST, Direction.NORTH);
         if (moveCost == -1) return;
+        baseScore = CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.NORTH);
         placeNNNE();
         placeNENNE();
         placeNWNNE();
@@ -3757,7 +3763,7 @@ private static void placeENENE() {
 
 private static void placeNNNE() {
         if (w_1_2 >= 0) {
-            double score = w_1_2;
+            double score = baseScore + w_1_2;
             if (Direction.NORTH != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -3770,7 +3776,7 @@ private static void placeNNNE() {
     }
 private static void placeNENNE() {
         if (w_2_2 >= 0) {
-            double score = w_2_2;
+            double score = baseScore + w_2_2;
             if (Direction.NORTH != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -3783,7 +3789,7 @@ private static void placeNENNE() {
     }
 private static void placeNWNNE() {
         if (w_0_2 >= 0) {
-            double score = w_0_2;
+            double score = baseScore + w_0_2;
             if (Direction.NORTH != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -3798,6 +3804,7 @@ private static void placeNWNNE() {
         if (CombatTracker.threatNEE != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTHEAST, Direction.EAST);
         if (moveCost == -1) return;
+        baseScore = CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.EAST);
         placeEENE();
         placeNEENE();
         placeSEENE();
@@ -3805,7 +3812,7 @@ private static void placeNWNNE() {
 
 private static void placeEENE() {
         if (w_2_1 >= 0) {
-            double score = w_2_1;
+            double score = baseScore + w_2_1;
             if (Direction.EAST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -3818,7 +3825,7 @@ private static void placeEENE() {
     }
 private static void placeNEENE() {
         if (w_2_2 >= 0) {
-            double score = w_2_2;
+            double score = baseScore + w_2_2;
             if (Direction.EAST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -3831,7 +3838,7 @@ private static void placeNEENE() {
     }
 private static void placeSEENE() {
         if (w_2_0 >= 0) {
-            double score = w_2_0;
+            double score = baseScore + w_2_0;
             if (Direction.EAST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -3857,6 +3864,7 @@ private static void placeSEENE() {
         if (CombatTracker.threatEE != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.EAST, Direction.EAST);
         if (moveCost == -1) return;
+        baseScore = CombatStrategy.getCellScoreFor(Direction.EAST, Direction.EAST);
         placeEEE();
         placeNEEE();
         placeSEEE();
@@ -3864,7 +3872,7 @@ private static void placeSEENE() {
 
 private static void placeEEE() {
         if (w_2_0 >= 0) {
-            double score = w_2_0;
+            double score = baseScore + w_2_0;
             if (Direction.EAST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -3877,7 +3885,7 @@ private static void placeEEE() {
     }
 private static void placeNEEE() {
         if (w_2_1 >= 0) {
-            double score = w_2_1;
+            double score = baseScore + w_2_1;
             if (Direction.EAST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -3890,7 +3898,7 @@ private static void placeNEEE() {
     }
 private static void placeSEEE() {
         if (w_2_m1 >= 0) {
-            double score = w_2_m1;
+            double score = baseScore + w_2_m1;
             if (Direction.EAST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -3905,6 +3913,7 @@ private static void placeSEEE() {
         if (CombatTracker.threatENE != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.EAST, Direction.NORTHEAST);
         if (moveCost == -1) return;
+        baseScore = CombatStrategy.getCellScoreFor(Direction.EAST, Direction.NORTHEAST);
         placeNENEE();
         placeNNEE();
         placeENEE();
@@ -3912,7 +3921,7 @@ private static void placeSEEE() {
 
 private static void placeNENEE() {
         if (w_2_1 >= 0) {
-            double score = w_2_1;
+            double score = baseScore + w_2_1;
             if (Direction.NORTHEAST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -3925,7 +3934,7 @@ private static void placeNENEE() {
     }
 private static void placeNNEE() {
         if (w_1_1 >= 0) {
-            double score = w_1_1;
+            double score = baseScore + w_1_1;
             if (Direction.NORTHEAST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -3938,7 +3947,7 @@ private static void placeNNEE() {
     }
 private static void placeENEE() {
         if (w_2_0 >= 0) {
-            double score = w_2_0;
+            double score = baseScore + w_2_0;
             if (Direction.NORTHEAST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -3953,6 +3962,7 @@ private static void placeENEE() {
         if (CombatTracker.threatESE != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.EAST, Direction.SOUTHEAST);
         if (moveCost == -1) return;
+        baseScore = CombatStrategy.getCellScoreFor(Direction.EAST, Direction.SOUTHEAST);
         placeSESEE();
         placeSSEE();
         placeESEE();
@@ -3960,7 +3970,7 @@ private static void placeENEE() {
 
 private static void placeSESEE() {
         if (w_2_m1 >= 0) {
-            double score = w_2_m1;
+            double score = baseScore + w_2_m1;
             if (Direction.SOUTHEAST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -3973,7 +3983,7 @@ private static void placeSESEE() {
     }
 private static void placeSSEE() {
         if (w_1_m1 >= 0) {
-            double score = w_1_m1;
+            double score = baseScore + w_1_m1;
             if (Direction.SOUTHEAST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -3986,7 +3996,7 @@ private static void placeSSEE() {
     }
 private static void placeESEE() {
         if (w_2_0 >= 0) {
-            double score = w_2_0;
+            double score = baseScore + w_2_0;
             if (Direction.SOUTHEAST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4012,6 +4022,7 @@ private static void placeESEE() {
         if (CombatTracker.threatSESE != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTHEAST, Direction.SOUTHEAST);
         if (moveCost == -1) return;
+        baseScore = CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.SOUTHEAST);
         placeSESESE();
         placeSSESE();
         placeESESE();
@@ -4019,7 +4030,7 @@ private static void placeESEE() {
 
 private static void placeSESESE() {
         if (w_2_m2 >= 0) {
-            double score = w_2_m2;
+            double score = baseScore + w_2_m2;
             if (Direction.SOUTHEAST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4032,7 +4043,7 @@ private static void placeSESESE() {
     }
 private static void placeSSESE() {
         if (w_1_m2 >= 0) {
-            double score = w_1_m2;
+            double score = baseScore + w_1_m2;
             if (Direction.SOUTHEAST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4045,7 +4056,7 @@ private static void placeSSESE() {
     }
 private static void placeESESE() {
         if (w_2_m1 >= 0) {
-            double score = w_2_m1;
+            double score = baseScore + w_2_m1;
             if (Direction.SOUTHEAST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4060,6 +4071,7 @@ private static void placeESESE() {
         if (CombatTracker.threatSES != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTHEAST, Direction.SOUTH);
         if (moveCost == -1) return;
+        baseScore = CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.SOUTH);
         placeSSSE();
         placeSESSE();
         placeSWSSE();
@@ -4067,7 +4079,7 @@ private static void placeESESE() {
 
 private static void placeSSSE() {
         if (w_1_m2 >= 0) {
-            double score = w_1_m2;
+            double score = baseScore + w_1_m2;
             if (Direction.SOUTH != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4080,7 +4092,7 @@ private static void placeSSSE() {
     }
 private static void placeSESSE() {
         if (w_2_m2 >= 0) {
-            double score = w_2_m2;
+            double score = baseScore + w_2_m2;
             if (Direction.SOUTH != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4093,7 +4105,7 @@ private static void placeSESSE() {
     }
 private static void placeSWSSE() {
         if (w_0_m2 >= 0) {
-            double score = w_0_m2;
+            double score = baseScore + w_0_m2;
             if (Direction.SOUTH != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4108,6 +4120,7 @@ private static void placeSWSSE() {
         if (CombatTracker.threatSEE != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTHEAST, Direction.EAST);
         if (moveCost == -1) return;
+        baseScore = CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.EAST);
         placeEESE();
         placeNEESE();
         placeSEESE();
@@ -4115,7 +4128,7 @@ private static void placeSWSSE() {
 
 private static void placeEESE() {
         if (w_2_m1 >= 0) {
-            double score = w_2_m1;
+            double score = baseScore + w_2_m1;
             if (Direction.EAST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4128,7 +4141,7 @@ private static void placeEESE() {
     }
 private static void placeNEESE() {
         if (w_2_0 >= 0) {
-            double score = w_2_0;
+            double score = baseScore + w_2_0;
             if (Direction.EAST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4141,7 +4154,7 @@ private static void placeNEESE() {
     }
 private static void placeSEESE() {
         if (w_2_m2 >= 0) {
-            double score = w_2_m2;
+            double score = baseScore + w_2_m2;
             if (Direction.EAST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4167,6 +4180,7 @@ private static void placeSEESE() {
         if (CombatTracker.threatSS != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTH, Direction.SOUTH);
         if (moveCost == -1) return;
+        baseScore = CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.SOUTH);
         placeSSS();
         placeSESS();
         placeSWSS();
@@ -4174,7 +4188,7 @@ private static void placeSEESE() {
 
 private static void placeSSS() {
         if (w_0_m2 >= 0) {
-            double score = w_0_m2;
+            double score = baseScore + w_0_m2;
             if (Direction.SOUTH != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4187,7 +4201,7 @@ private static void placeSSS() {
     }
 private static void placeSESS() {
         if (w_1_m2 >= 0) {
-            double score = w_1_m2;
+            double score = baseScore + w_1_m2;
             if (Direction.SOUTH != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4200,7 +4214,7 @@ private static void placeSESS() {
     }
 private static void placeSWSS() {
         if (w_m1_m2 >= 0) {
-            double score = w_m1_m2;
+            double score = baseScore + w_m1_m2;
             if (Direction.SOUTH != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4215,6 +4229,7 @@ private static void placeSWSS() {
         if (CombatTracker.threatSSE != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTH, Direction.SOUTHEAST);
         if (moveCost == -1) return;
+        baseScore = CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.SOUTHEAST);
         placeSESES();
         placeSSES();
         placeESES();
@@ -4222,7 +4237,7 @@ private static void placeSWSS() {
 
 private static void placeSESES() {
         if (w_1_m2 >= 0) {
-            double score = w_1_m2;
+            double score = baseScore + w_1_m2;
             if (Direction.SOUTHEAST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4235,7 +4250,7 @@ private static void placeSESES() {
     }
 private static void placeSSES() {
         if (w_0_m2 >= 0) {
-            double score = w_0_m2;
+            double score = baseScore + w_0_m2;
             if (Direction.SOUTHEAST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4248,7 +4263,7 @@ private static void placeSSES() {
     }
 private static void placeESES() {
         if (w_1_m1 >= 0) {
-            double score = w_1_m1;
+            double score = baseScore + w_1_m1;
             if (Direction.SOUTHEAST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4263,6 +4278,7 @@ private static void placeESES() {
         if (CombatTracker.threatSSW != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTH, Direction.SOUTHWEST);
         if (moveCost == -1) return;
+        baseScore = CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.SOUTHWEST);
         placeSWSWS();
         placeSSWS();
         placeWSWS();
@@ -4270,7 +4286,7 @@ private static void placeESES() {
 
 private static void placeSWSWS() {
         if (w_m1_m2 >= 0) {
-            double score = w_m1_m2;
+            double score = baseScore + w_m1_m2;
             if (Direction.SOUTHWEST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4283,7 +4299,7 @@ private static void placeSWSWS() {
     }
 private static void placeSSWS() {
         if (w_0_m2 >= 0) {
-            double score = w_0_m2;
+            double score = baseScore + w_0_m2;
             if (Direction.SOUTHWEST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4296,7 +4312,7 @@ private static void placeSSWS() {
     }
 private static void placeWSWS() {
         if (w_m1_m1 >= 0) {
-            double score = w_m1_m1;
+            double score = baseScore + w_m1_m1;
             if (Direction.SOUTHWEST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4322,6 +4338,7 @@ private static void placeWSWS() {
         if (CombatTracker.threatSWSW != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTHWEST, Direction.SOUTHWEST);
         if (moveCost == -1) return;
+        baseScore = CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.SOUTHWEST);
         placeSWSWSW();
         placeSSWSW();
         placeWSWSW();
@@ -4329,7 +4346,7 @@ private static void placeWSWS() {
 
 private static void placeSWSWSW() {
         if (w_m2_m2 >= 0) {
-            double score = w_m2_m2;
+            double score = baseScore + w_m2_m2;
             if (Direction.SOUTHWEST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4342,7 +4359,7 @@ private static void placeSWSWSW() {
     }
 private static void placeSSWSW() {
         if (w_m1_m2 >= 0) {
-            double score = w_m1_m2;
+            double score = baseScore + w_m1_m2;
             if (Direction.SOUTHWEST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4355,7 +4372,7 @@ private static void placeSSWSW() {
     }
 private static void placeWSWSW() {
         if (w_m2_m1 >= 0) {
-            double score = w_m2_m1;
+            double score = baseScore + w_m2_m1;
             if (Direction.SOUTHWEST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4370,6 +4387,7 @@ private static void placeWSWSW() {
         if (CombatTracker.threatSWS != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTHWEST, Direction.SOUTH);
         if (moveCost == -1) return;
+        baseScore = CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.SOUTH);
         placeSSSW();
         placeSESSW();
         placeSWSSW();
@@ -4377,7 +4395,7 @@ private static void placeWSWSW() {
 
 private static void placeSSSW() {
         if (w_m1_m2 >= 0) {
-            double score = w_m1_m2;
+            double score = baseScore + w_m1_m2;
             if (Direction.SOUTH != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4390,7 +4408,7 @@ private static void placeSSSW() {
     }
 private static void placeSESSW() {
         if (w_0_m2 >= 0) {
-            double score = w_0_m2;
+            double score = baseScore + w_0_m2;
             if (Direction.SOUTH != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4403,7 +4421,7 @@ private static void placeSESSW() {
     }
 private static void placeSWSSW() {
         if (w_m2_m2 >= 0) {
-            double score = w_m2_m2;
+            double score = baseScore + w_m2_m2;
             if (Direction.SOUTH != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4418,6 +4436,7 @@ private static void placeSWSSW() {
         if (CombatTracker.threatSWW != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTHWEST, Direction.WEST);
         if (moveCost == -1) return;
+        baseScore = CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.WEST);
         placeWWSW();
         placeNWWSW();
         placeSWWSW();
@@ -4425,7 +4444,7 @@ private static void placeSWSSW() {
 
 private static void placeWWSW() {
         if (w_m2_m1 >= 0) {
-            double score = w_m2_m1;
+            double score = baseScore + w_m2_m1;
             if (Direction.WEST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4438,7 +4457,7 @@ private static void placeWWSW() {
     }
 private static void placeNWWSW() {
         if (w_m2_0 >= 0) {
-            double score = w_m2_0;
+            double score = baseScore + w_m2_0;
             if (Direction.WEST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4451,7 +4470,7 @@ private static void placeNWWSW() {
     }
 private static void placeSWWSW() {
         if (w_m2_m2 >= 0) {
-            double score = w_m2_m2;
+            double score = baseScore + w_m2_m2;
             if (Direction.WEST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4477,6 +4496,7 @@ private static void placeSWWSW() {
         if (CombatTracker.threatWW != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.WEST, Direction.WEST);
         if (moveCost == -1) return;
+        baseScore = CombatStrategy.getCellScoreFor(Direction.WEST, Direction.WEST);
         placeWWW();
         placeNWWW();
         placeSWWW();
@@ -4484,7 +4504,7 @@ private static void placeSWWSW() {
 
 private static void placeWWW() {
         if (w_m2_0 >= 0) {
-            double score = w_m2_0;
+            double score = baseScore + w_m2_0;
             if (Direction.WEST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4497,7 +4517,7 @@ private static void placeWWW() {
     }
 private static void placeNWWW() {
         if (w_m2_1 >= 0) {
-            double score = w_m2_1;
+            double score = baseScore + w_m2_1;
             if (Direction.WEST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4510,7 +4530,7 @@ private static void placeNWWW() {
     }
 private static void placeSWWW() {
         if (w_m2_m1 >= 0) {
-            double score = w_m2_m1;
+            double score = baseScore + w_m2_m1;
             if (Direction.WEST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4525,6 +4545,7 @@ private static void placeSWWW() {
         if (CombatTracker.threatWNW != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.WEST, Direction.NORTHWEST);
         if (moveCost == -1) return;
+        baseScore = CombatStrategy.getCellScoreFor(Direction.WEST, Direction.NORTHWEST);
         placeNWNWW();
         placeNNWW();
         placeWNWW();
@@ -4532,7 +4553,7 @@ private static void placeSWWW() {
 
 private static void placeNWNWW() {
         if (w_m2_1 >= 0) {
-            double score = w_m2_1;
+            double score = baseScore + w_m2_1;
             if (Direction.NORTHWEST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4545,7 +4566,7 @@ private static void placeNWNWW() {
     }
 private static void placeNNWW() {
         if (w_m1_1 >= 0) {
-            double score = w_m1_1;
+            double score = baseScore + w_m1_1;
             if (Direction.NORTHWEST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4558,7 +4579,7 @@ private static void placeNNWW() {
     }
 private static void placeWNWW() {
         if (w_m2_0 >= 0) {
-            double score = w_m2_0;
+            double score = baseScore + w_m2_0;
             if (Direction.NORTHWEST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4573,6 +4594,7 @@ private static void placeWNWW() {
         if (CombatTracker.threatWSW != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.WEST, Direction.SOUTHWEST);
         if (moveCost == -1) return;
+        baseScore = CombatStrategy.getCellScoreFor(Direction.WEST, Direction.SOUTHWEST);
         placeSWSWW();
         placeSSWW();
         placeWSWW();
@@ -4580,7 +4602,7 @@ private static void placeWNWW() {
 
 private static void placeSWSWW() {
         if (w_m2_m1 >= 0) {
-            double score = w_m2_m1;
+            double score = baseScore + w_m2_m1;
             if (Direction.SOUTHWEST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4593,7 +4615,7 @@ private static void placeSWSWW() {
     }
 private static void placeSSWW() {
         if (w_m1_m1 >= 0) {
-            double score = w_m1_m1;
+            double score = baseScore + w_m1_m1;
             if (Direction.SOUTHWEST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4606,7 +4628,7 @@ private static void placeSSWW() {
     }
 private static void placeWSWW() {
         if (w_m2_0 >= 0) {
-            double score = w_m2_0;
+            double score = baseScore + w_m2_0;
             if (Direction.SOUTHWEST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4632,6 +4654,7 @@ private static void placeWSWW() {
         if (CombatTracker.threatNWNW != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTHWEST, Direction.NORTHWEST);
         if (moveCost == -1) return;
+        baseScore = CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.NORTHWEST);
         placeNWNWNW();
         placeNNWNW();
         placeWNWNW();
@@ -4639,7 +4662,7 @@ private static void placeWSWW() {
 
 private static void placeNWNWNW() {
         if (w_m2_2 >= 0) {
-            double score = w_m2_2;
+            double score = baseScore + w_m2_2;
             if (Direction.NORTHWEST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4652,7 +4675,7 @@ private static void placeNWNWNW() {
     }
 private static void placeNNWNW() {
         if (w_m1_2 >= 0) {
-            double score = w_m1_2;
+            double score = baseScore + w_m1_2;
             if (Direction.NORTHWEST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4665,7 +4688,7 @@ private static void placeNNWNW() {
     }
 private static void placeWNWNW() {
         if (w_m2_1 >= 0) {
-            double score = w_m2_1;
+            double score = baseScore + w_m2_1;
             if (Direction.NORTHWEST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4680,6 +4703,7 @@ private static void placeWNWNW() {
         if (CombatTracker.threatNWN != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTHWEST, Direction.NORTH);
         if (moveCost == -1) return;
+        baseScore = CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.NORTH);
         placeNNNW();
         placeNENNW();
         placeNWNNW();
@@ -4687,7 +4711,7 @@ private static void placeWNWNW() {
 
 private static void placeNNNW() {
         if (w_m1_2 >= 0) {
-            double score = w_m1_2;
+            double score = baseScore + w_m1_2;
             if (Direction.NORTH != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4700,7 +4724,7 @@ private static void placeNNNW() {
     }
 private static void placeNENNW() {
         if (w_0_2 >= 0) {
-            double score = w_0_2;
+            double score = baseScore + w_0_2;
             if (Direction.NORTH != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4713,7 +4737,7 @@ private static void placeNENNW() {
     }
 private static void placeNWNNW() {
         if (w_m2_2 >= 0) {
-            double score = w_m2_2;
+            double score = baseScore + w_m2_2;
             if (Direction.NORTH != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4728,6 +4752,7 @@ private static void placeNWNNW() {
         if (CombatTracker.threatNWW != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTHWEST, Direction.WEST);
         if (moveCost == -1) return;
+        baseScore = CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.WEST);
         placeWWNW();
         placeNWWNW();
         placeSWWNW();
@@ -4735,7 +4760,7 @@ private static void placeNWNNW() {
 
 private static void placeWWNW() {
         if (w_m2_1 >= 0) {
-            double score = w_m2_1;
+            double score = baseScore + w_m2_1;
             if (Direction.WEST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4748,7 +4773,7 @@ private static void placeWWNW() {
     }
 private static void placeNWWNW() {
         if (w_m2_2 >= 0) {
-            double score = w_m2_2;
+            double score = baseScore + w_m2_2;
             if (Direction.WEST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;
@@ -4761,7 +4786,7 @@ private static void placeNWWNW() {
     }
 private static void placeSWWNW() {
         if (w_m2_0 >= 0) {
-            double score = w_m2_0;
+            double score = baseScore + w_m2_0;
             if (Direction.WEST != myDir) score *= 1.1;
             if (score > best) {
                 best = score;

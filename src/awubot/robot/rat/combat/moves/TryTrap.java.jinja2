@@ -50,6 +50,7 @@ public final class TryTrap {
     static Direction bestSecondaryMoveDir;
     static Direction bestFacing;
     static double best;
+    static double baseScore;
     static MapLocation curMoveLoc;
     static MapLocation weightSource;
     static int weightCompTime;
@@ -367,6 +368,7 @@ public final class TryTrap {
         if (CombatTracker.threat{{ dir_short_map[move_dir] }}{{ dir_short_map[facing] }} != 0L) return;
         int moveCost = CombatCommon.movementCost({{ move_dir }}, {{ facing }});
         if (moveCost == -1) return;
+        baseScore = CombatStrategy.getCellScoreFor({{ move_dir }}, {{ facing }});
         {% for place_dir in related_map[dir_ord_map[facing]] %}
         place{{ dir_short_map[place_dir] }}{{ dir_short_map[facing] }}{{ dir_short_map[move_dir] }}();
         {% endfor %}
@@ -377,7 +379,7 @@ public final class TryTrap {
     {%- set dy_total = dir_dy[move_dir] + dir_dy[place_dir] -%}
     private static void place{{ dir_short_map[place_dir] }}{{ dir_short_map[facing] }}{{ dir_short_map[move_dir] }}() {
         if ({{ wvar(dx_total, dy_total) }} >= 0) {
-            double score = {{ wvar(dx_total, dy_total) }};
+            double score = baseScore + {{ wvar(dx_total, dy_total) }};
             if ({{ facing }} != myDir) score *= 1.1;
             if (score > best) {
                 best = score;

@@ -83,6 +83,9 @@ public class BabyRat {
 
     // IF TLE: unroll
     public static void tryPickUpCheese() throws GameActionException {
+        if(rc.canPickUpCheese(myLoc)) {
+            rc.pickUpCheese(myLoc);
+        }
         var dirs = relatedDirections(myDir);
         for(var dir : dirs) {
             var loc = myLoc.add(dir);

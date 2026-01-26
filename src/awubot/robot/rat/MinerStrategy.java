@@ -27,6 +27,7 @@ public class MinerStrategy extends Strategy {
         formationStrategy = new FormationStrategy();
         goHomeStrategy = new GoHomeStrategy();
         cheeseStrategy = new CheeseStrategy();
+        bannedMines = new FastIndexedIntSet();
     }
 
     @Override

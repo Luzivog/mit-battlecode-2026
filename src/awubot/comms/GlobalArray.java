@@ -191,7 +191,6 @@ public class GlobalArray {
             }
             rc.writeSharedArray(COUNTER, ratCounter);
             rc.writeSharedArray(ALIVE_RAT_COUNT, (rc.getCurrentRatCost() - 10) * 2 / 5);
-
         }
     }
 

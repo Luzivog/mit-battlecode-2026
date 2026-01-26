@@ -110,7 +110,7 @@ public class CombatStrategy extends Strategy {
     }
 
     public static int moveMask, sourceCnt;
-    public MapLocation[] sources = new MapLocation[9];
+    public MapLocation[] sources = new MapLocation[30];
     public static Enemy funnyTarget;
 
     // idek why this is returning. check if can move anyways after to squeeze out some juice

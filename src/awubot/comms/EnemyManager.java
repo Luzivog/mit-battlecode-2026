@@ -24,15 +24,36 @@ public class EnemyManager {
     public static int numKnownEnemies;
     public static Enemy[] knownEnemies;
 
+    public static boolean hasBeganCombat;
+
     public static void init() {
+        hasBeganCombat = false;
         knownEnemiesSet = new FastIndexedIntSet();
         knownEnemies = new Enemy[100];
         numKnownEnemies = 0;
     }
+
+    private static final int counterHistoryLen = 20;
+    private static int[] counterHistory = new int[20];   
+
+    public static int getCounterAt(int dt) {
+        assert(-counterHistoryLen <= dt && dt < 0);
+        return counterHistory[(time + counterHistoryLen + dt) % counterHistoryLen];
+    }
  
     public static void preTick() {
+        // questionable check
+        if (GlobalArray.ratCounter - Math.min(time, 16) - getCounterAt(-15) >= 4) {
+            hasBeganCombat = true;
+            indicate("cur " + (GlobalArray.ratCounter - Math.min(time, 16)) + " before " + getCounterAt(-15));
+        }
+        indicate("has begin combat " + hasBeganCombat);
         knownEnemiesSet.clear();
         numKnownEnemies = 0;
+    }
+
+    public static void postTick() {
+        counterHistory[time % counterHistoryLen] = GlobalArray.ratCounter - Math.min(time, 16);
     }
 
     public static void registerPacket(int data, MapLocation src) {
@@ -41,6 +62,7 @@ public class EnemyManager {
             return;
         }
         if (!rc.canSenseLocation(enemy.location) && knownEnemiesSet.add_and_ret(enemy.hashCode())) {
+            hasBeganCombat = true;
             indicate("enemy recv " + enemy.location + " dir " + enemy.direction + " hp " + enemy.health);
             knownEnemies[numKnownEnemies++] = enemy;
         }
@@ -132,11 +154,6 @@ public class EnemyManager {
         if (dx > 2 * VIEW_RADIUS) dx--;
         if (dy > 2 * VIEW_RADIUS) dy--;
         int encLoc = dx * (2 * VIEW_RADIUS + 1) + dy;
-        if (!(encLoc >= 0 && encLoc < (1 << LOCATION))) {
-            println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-            println("ERROR: cannot encode enemy location " + enemy.location + " from " + myLoc + " dx " + dx + " dy " + dy + " encLoc " + encLoc);
-            println("tried encoding " + enemy.location + " from " + myLoc);
-        }
         int encDir = enemy.direction.ordinal();
         int encHP = encodeHealth(enemy.health);
         assert(encLoc >= 0 && encLoc < (1 << LOCATION)) : "encLoc overflow " + encLoc;

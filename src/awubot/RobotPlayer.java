@@ -59,6 +59,7 @@ public class RobotPlayer {
                     Util.indicate("skipped squeaker");
                 }
                 GlobalArray.postTick();
+                EnemyManager.postTick();
                 Game.postTick();
             } catch (Exception e) {
                 if (!Game.DISABLE_OUTPUT) {

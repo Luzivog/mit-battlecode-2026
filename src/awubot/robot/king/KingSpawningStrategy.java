@@ -9,6 +9,7 @@ import static awubot.Game.*;
 import static awubot.util.Util.*;
 
 import awubot.RobotTracker;
+import awubot.comms.EnemyManager;
 import awubot.comms.GlobalArray;
 
 public class KingSpawningStrategy extends Strategy {
@@ -33,16 +34,24 @@ public class KingSpawningStrategy extends Strategy {
             thresh += 10;
         }
 
+        if (EnemyManager.hasBeganCombat && rc.getAllCheese() >= 20) {
+            if (thresh < 40) thresh = 40;
+        }
+
         MapLocation target = null;
         int targetNeighbours = 0;
         for (int i = 0; i < RobotTracker.numEnemies; i++) {
             RobotInfo robot = RobotTracker.sortedEnemies[i];
             MapLocation loc = robot.getLocation();
             int cnt = 0;
+            boolean hasHighHP = false;
             for (RobotInfo info : rc.senseNearbyRobots(loc, 4, team == Team.A ? Team.B : Team.A)) {
-                if (info.getTeam() == team) cnt++;
+                if (info.getTeam() == team) {
+                    cnt++;
+                    if (info.getHealth() > robot.getHealth() + 20) hasHighHP = true;
+                }
             }
-            if (cnt <= 1 && (target == null || cnt > targetNeighbours)) {
+            if ((cnt <= 1 && !hasHighHP) && (target == null || cnt > targetNeighbours)) {
                 target = loc;
                 targetNeighbours = cnt;
             }
@@ -50,7 +59,7 @@ public class KingSpawningStrategy extends Strategy {
         if (target == null) target = new MapLocation(mapWidth / 2, mapHeight / 2);
         else {
             indicate("targeting enemy cluster at " + target + " with " + targetNeighbours + " neighbours");
-            thresh += 20;
+            thresh += 10;
         }
 
         if (rc.getCurrentRatCost() <= thresh && (rc.getGlobalCheese() >= 100 || rc.getCurrentRatCost() == 10)) {

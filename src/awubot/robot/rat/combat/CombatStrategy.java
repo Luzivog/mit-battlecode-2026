@@ -426,7 +426,7 @@ public class CombatStrategy extends Strategy {
     }
 
     public static int getBiteDamage() {
-        if (rc.getAllCheese() < 300) return 10;
+        if (rc.getAllCheese() < 300 || (rc.getRawCheese() % 20 == 0 && rc.getRawCheese() > 0)) return 10;
         else return 11;
     }
     

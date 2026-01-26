@@ -21,8 +21,11 @@ public class KingSpawningStrategy extends Strategy {
     @Override
     public boolean runTick() throws GameActionException {
         indicate("spawned " + numSpawned);
-
-        int thresh = Math.min(rc.getGlobalCheese() / 20 + 10, 40);
+        int defaultThresh = 40;
+        if (mapWidth * mapHeight <= 900 && time < 400) {
+            defaultThresh = 30;
+        }
+        int thresh = Math.min(rc.getGlobalCheese() / 20 + 10, defaultThresh);
         if (rc.getGlobalCheese() >= 3000 - Math.max(0, time - 1000)) {
             thresh = 1000;
         } else if (rc.getGlobalCheese() >= 2000 - Math.max(0, time - 1000) && time >= 100) {

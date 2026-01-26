@@ -18,10 +18,10 @@ MAPS_PER_SCRIM = 10
 
 # Fill these lists with the exact map names/team names you want to scrim.
 MAPS1 = [
-    "dirtfulcat", "arrows", "dirtpassageway", "Meow", "starvation", "thunderdome", "DefaultMedium", "DefaultSmall", "evileye", "popthecork"
+    "dirtfulcat", "arrows", "dirtpassageway", "Meow", "starvation", "thunderdome", "trapped", "DefaultMedium", "DefaultSmall", "evileye"
 ]
 MAPS2 = [
-    "cheesefarm", "keepout", "pipes", "rift", "wallsofparadis", "ZeroDay", "sittingducks", "trapped", "DefaultLarge", "Nofreecheese"
+    "cheesefarm", "keepout", "pipes", "rift", "wallsofparadis", "ZeroDay", "sittingducks", "popthecork", "DefaultLarge", "Nofreecheese"
 ]
 SCRIM_TEAMS = [
     "Old But Gold",

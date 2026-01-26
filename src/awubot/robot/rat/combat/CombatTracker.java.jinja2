@@ -73,6 +73,17 @@ public class CombatTracker {
     {%- endif -%}
     {%- endmacro %}
 
+    {% macro clear_guarded(dx_a, dy_a, facing_idx) -%}
+    {%- for i in range(8) -%}
+    {%- set dir = directions[i] -%}
+    {%- set nx = dx_a + dir_dx[dir] -%}
+    {%- set ny = dy_a + dir_dy[dir] -%}
+    {%- if nx >= -2 and nx <= 2 and ny >= -2 and ny <= 2 and can_see(facing_idx, dir_dx[dir], dir_dy[dir]) == "true" -%}
+    {{ cell_var(nx, ny) }} = false;
+    {%- endif -%}
+    {%- endfor -%}
+    {%- endmacro %}
+
     // isThreat flags for the 5x5 around the player.
     {% for dy in range(2, -3, -1) %}
     {% for dx in range(-2, 3) %}
@@ -204,6 +215,36 @@ public class CombatTracker {
         {%- endif %}
         {% endfor %}
         {% endfor %}
+
+        // Clear threats guarded by allies (adjacent cells in their vision cone).
+        for (int i = 0; i < RobotTracker.numAllies; i++) {
+            RobotInfo info = RobotTracker.sortedAllies[i];
+            if (info.getType() != UnitType.BABY_RAT) continue;
+            int dx = info.location.x - myLocX;
+            int dy = info.location.y - myLocY;
+            switch (dx) {
+                {% for dx in range(-3, 4) %}
+                case {{ dx }} -> {
+                    switch (dy) {
+                        {% for dy in range(-3, 4) %}
+                        case {{ dy }} -> {
+                            switch (info.direction.ordinal()) {
+                                {% for fi in range(directions|length) %}
+                                case {{ fi }} -> {
+                                    {{ clear_guarded(dx, dy, fi) }}
+                                }
+                                {% endfor %}
+                                default -> { }
+                            }
+                        }
+                        {% endfor %}
+                        default -> { }
+                    }
+                }
+                {% endfor %}
+                default -> { }
+            }
+        }
     }
 
     {# public static void registerTrap(int dx, int dy) {

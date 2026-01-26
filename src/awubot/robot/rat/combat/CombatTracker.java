@@ -26,6 +26,7 @@ public class CombatTracker {
 
 
 
+
     // isThreat flags for the 5x5 around the player.
     private static boolean t_m2_2;
     private static boolean t_m1_2;
@@ -434,7 +435,1474 @@ private static final long hiddenNW = 0x0000ffffffffff00L;
     public static void loadThreatFromMap() throws GameActionException {
         int x = myLoc.x;
         int y = myLoc.y;
-t_m2_2 = (x >= 2 && y < mapHeight - 2) && CellTracker.mapData[y  + 2].charAt(x  + -2) != '\2';t_m1_2 = (x >= 1 && y < mapHeight - 2) && CellTracker.mapData[y  + 2].charAt(x  + -1) != '\2';t_0_2 = (y < mapHeight - 2) && CellTracker.mapData[y  + 2].charAt(x ) != '\2';t_1_2 = (x < mapWidth - 1 && y < mapHeight - 2) && CellTracker.mapData[y  + 2].charAt(x  + 1) != '\2';t_2_2 = (x < mapWidth - 2 && y < mapHeight - 2) && CellTracker.mapData[y  + 2].charAt(x  + 2) != '\2';t_m2_1 = (x >= 2 && y < mapHeight - 1) && CellTracker.mapData[y  + 1].charAt(x  + -2) != '\2';t_m1_1 = (x >= 1 && y < mapHeight - 1) && CellTracker.mapData[y  + 1].charAt(x  + -1) != '\2';t_0_1 = (y < mapHeight - 1) && CellTracker.mapData[y  + 1].charAt(x ) != '\2';t_1_1 = (x < mapWidth - 1 && y < mapHeight - 1) && CellTracker.mapData[y  + 1].charAt(x  + 1) != '\2';t_2_1 = (x < mapWidth - 2 && y < mapHeight - 1) && CellTracker.mapData[y  + 1].charAt(x  + 2) != '\2';t_m2_0 = (x >= 2) && CellTracker.mapData[y ].charAt(x  + -2) != '\2';t_m1_0 = (x >= 1) && CellTracker.mapData[y ].charAt(x  + -1) != '\2';        t_0_0 = true;t_1_0 = (x < mapWidth - 1) && CellTracker.mapData[y ].charAt(x  + 1) != '\2';t_2_0 = (x < mapWidth - 2) && CellTracker.mapData[y ].charAt(x  + 2) != '\2';t_m2_m1 = (x >= 2 && y >= 1) && CellTracker.mapData[y  + -1].charAt(x  + -2) != '\2';t_m1_m1 = (x >= 1 && y >= 1) && CellTracker.mapData[y  + -1].charAt(x  + -1) != '\2';t_0_m1 = (y >= 1) && CellTracker.mapData[y  + -1].charAt(x ) != '\2';t_1_m1 = (x < mapWidth - 1 && y >= 1) && CellTracker.mapData[y  + -1].charAt(x  + 1) != '\2';t_2_m1 = (x < mapWidth - 2 && y >= 1) && CellTracker.mapData[y  + -1].charAt(x  + 2) != '\2';t_m2_m2 = (x >= 2 && y >= 2) && CellTracker.mapData[y  + -2].charAt(x  + -2) != '\2';t_m1_m2 = (x >= 1 && y >= 2) && CellTracker.mapData[y  + -2].charAt(x  + -1) != '\2';t_0_m2 = (y >= 2) && CellTracker.mapData[y  + -2].charAt(x ) != '\2';t_1_m2 = (x < mapWidth - 1 && y >= 2) && CellTracker.mapData[y  + -2].charAt(x  + 1) != '\2';t_2_m2 = (x < mapWidth - 2 && y >= 2) && CellTracker.mapData[y  + -2].charAt(x  + 2) != '\2';    }
+t_m2_2 = (x >= 2 && y < mapHeight - 2) && CellTracker.mapData[y  + 2].charAt(x  + -2) != '\2';t_m1_2 = (x >= 1 && y < mapHeight - 2) && CellTracker.mapData[y  + 2].charAt(x  + -1) != '\2';t_0_2 = (y < mapHeight - 2) && CellTracker.mapData[y  + 2].charAt(x ) != '\2';t_1_2 = (x < mapWidth - 1 && y < mapHeight - 2) && CellTracker.mapData[y  + 2].charAt(x  + 1) != '\2';t_2_2 = (x < mapWidth - 2 && y < mapHeight - 2) && CellTracker.mapData[y  + 2].charAt(x  + 2) != '\2';t_m2_1 = (x >= 2 && y < mapHeight - 1) && CellTracker.mapData[y  + 1].charAt(x  + -2) != '\2';t_m1_1 = (x >= 1 && y < mapHeight - 1) && CellTracker.mapData[y  + 1].charAt(x  + -1) != '\2';t_0_1 = (y < mapHeight - 1) && CellTracker.mapData[y  + 1].charAt(x ) != '\2';t_1_1 = (x < mapWidth - 1 && y < mapHeight - 1) && CellTracker.mapData[y  + 1].charAt(x  + 1) != '\2';t_2_1 = (x < mapWidth - 2 && y < mapHeight - 1) && CellTracker.mapData[y  + 1].charAt(x  + 2) != '\2';t_m2_0 = (x >= 2) && CellTracker.mapData[y ].charAt(x  + -2) != '\2';t_m1_0 = (x >= 1) && CellTracker.mapData[y ].charAt(x  + -1) != '\2';        t_0_0 = true;t_1_0 = (x < mapWidth - 1) && CellTracker.mapData[y ].charAt(x  + 1) != '\2';t_2_0 = (x < mapWidth - 2) && CellTracker.mapData[y ].charAt(x  + 2) != '\2';t_m2_m1 = (x >= 2 && y >= 1) && CellTracker.mapData[y  + -1].charAt(x  + -2) != '\2';t_m1_m1 = (x >= 1 && y >= 1) && CellTracker.mapData[y  + -1].charAt(x  + -1) != '\2';t_0_m1 = (y >= 1) && CellTracker.mapData[y  + -1].charAt(x ) != '\2';t_1_m1 = (x < mapWidth - 1 && y >= 1) && CellTracker.mapData[y  + -1].charAt(x  + 1) != '\2';t_2_m1 = (x < mapWidth - 2 && y >= 1) && CellTracker.mapData[y  + -1].charAt(x  + 2) != '\2';t_m2_m2 = (x >= 2 && y >= 2) && CellTracker.mapData[y  + -2].charAt(x  + -2) != '\2';t_m1_m2 = (x >= 1 && y >= 2) && CellTracker.mapData[y  + -2].charAt(x  + -1) != '\2';t_0_m2 = (y >= 2) && CellTracker.mapData[y  + -2].charAt(x ) != '\2';t_1_m2 = (x < mapWidth - 1 && y >= 2) && CellTracker.mapData[y  + -2].charAt(x  + 1) != '\2';t_2_m2 = (x < mapWidth - 2 && y >= 2) && CellTracker.mapData[y  + -2].charAt(x  + 2) != '\2';
+        // Clear threats guarded by allies (adjacent cells in their vision cone).
+        for (int i = 0; i < RobotTracker.numAllies; i++) {
+            RobotInfo info = RobotTracker.sortedAllies[i];
+            if (info.getType() != UnitType.BABY_RAT) continue;
+            int dx = info.location.x - myLocX;
+            int dy = info.location.y - myLocY;
+            switch (dx) {
+                case -3 -> {
+                    switch (dy) {
+                        case -3 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    t_m2_m2 = false;
+                                }
+                                case 1 -> {
+                                    t_m2_m2 = false;
+                                }
+                                case 2 -> {
+                                    t_m2_m2 = false;
+                                }
+                                case 3 -> {
+                                    
+                                }
+                                case 4 -> {
+                                    
+                                }
+                                case 5 -> {
+                                    
+                                }
+                                case 6 -> {
+                                    
+                                }
+                                case 7 -> {
+                                    
+                                }
+                                default -> { }
+                            }
+                        }
+                        case -2 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    t_m2_m1 = false;
+                                }
+                                case 1 -> {
+                                    t_m2_m1 = false;t_m2_m2 = false;
+                                }
+                                case 2 -> {
+                                    t_m2_m1 = false;t_m2_m2 = false;
+                                }
+                                case 3 -> {
+                                    t_m2_m2 = false;
+                                }
+                                case 4 -> {
+                                    
+                                }
+                                case 5 -> {
+                                    
+                                }
+                                case 6 -> {
+                                    
+                                }
+                                case 7 -> {
+                                    
+                                }
+                                default -> { }
+                            }
+                        }
+                        case -1 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    t_m2_0 = false;
+                                }
+                                case 1 -> {
+                                    t_m2_0 = false;t_m2_m1 = false;
+                                }
+                                case 2 -> {
+                                    t_m2_0 = false;t_m2_m1 = false;t_m2_m2 = false;
+                                }
+                                case 3 -> {
+                                    t_m2_m1 = false;t_m2_m2 = false;
+                                }
+                                case 4 -> {
+                                    t_m2_m2 = false;
+                                }
+                                case 5 -> {
+                                    
+                                }
+                                case 6 -> {
+                                    
+                                }
+                                case 7 -> {
+                                    
+                                }
+                                default -> { }
+                            }
+                        }
+                        case 0 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    t_m2_1 = false;
+                                }
+                                case 1 -> {
+                                    t_m2_1 = false;t_m2_0 = false;
+                                }
+                                case 2 -> {
+                                    t_m2_1 = false;t_m2_0 = false;t_m2_m1 = false;
+                                }
+                                case 3 -> {
+                                    t_m2_0 = false;t_m2_m1 = false;
+                                }
+                                case 4 -> {
+                                    t_m2_m1 = false;
+                                }
+                                case 5 -> {
+                                    
+                                }
+                                case 6 -> {
+                                    
+                                }
+                                case 7 -> {
+                                    
+                                }
+                                default -> { }
+                            }
+                        }
+                        case 1 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    t_m2_2 = false;
+                                }
+                                case 1 -> {
+                                    t_m2_2 = false;t_m2_1 = false;
+                                }
+                                case 2 -> {
+                                    t_m2_2 = false;t_m2_1 = false;t_m2_0 = false;
+                                }
+                                case 3 -> {
+                                    t_m2_1 = false;t_m2_0 = false;
+                                }
+                                case 4 -> {
+                                    t_m2_0 = false;
+                                }
+                                case 5 -> {
+                                    
+                                }
+                                case 6 -> {
+                                    
+                                }
+                                case 7 -> {
+                                    
+                                }
+                                default -> { }
+                            }
+                        }
+                        case 2 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    
+                                }
+                                case 1 -> {
+                                    t_m2_2 = false;
+                                }
+                                case 2 -> {
+                                    t_m2_2 = false;t_m2_1 = false;
+                                }
+                                case 3 -> {
+                                    t_m2_2 = false;t_m2_1 = false;
+                                }
+                                case 4 -> {
+                                    t_m2_1 = false;
+                                }
+                                case 5 -> {
+                                    
+                                }
+                                case 6 -> {
+                                    
+                                }
+                                case 7 -> {
+                                    
+                                }
+                                default -> { }
+                            }
+                        }
+                        case 3 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    
+                                }
+                                case 1 -> {
+                                    
+                                }
+                                case 2 -> {
+                                    t_m2_2 = false;
+                                }
+                                case 3 -> {
+                                    t_m2_2 = false;
+                                }
+                                case 4 -> {
+                                    t_m2_2 = false;
+                                }
+                                case 5 -> {
+                                    
+                                }
+                                case 6 -> {
+                                    
+                                }
+                                case 7 -> {
+                                    
+                                }
+                                default -> { }
+                            }
+                        }
+                        default -> { }
+                    }
+                }
+                case -2 -> {
+                    switch (dy) {
+                        case -3 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    t_m2_m2 = false;t_m1_m2 = false;
+                                }
+                                case 1 -> {
+                                    t_m2_m2 = false;t_m1_m2 = false;
+                                }
+                                case 2 -> {
+                                    t_m1_m2 = false;
+                                }
+                                case 3 -> {
+                                    
+                                }
+                                case 4 -> {
+                                    
+                                }
+                                case 5 -> {
+                                    
+                                }
+                                case 6 -> {
+                                    
+                                }
+                                case 7 -> {
+                                    t_m2_m2 = false;
+                                }
+                                default -> { }
+                            }
+                        }
+                        case -2 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    t_m2_m1 = false;t_m1_m1 = false;
+                                }
+                                case 1 -> {
+                                    t_m2_m1 = false;t_m1_m1 = false;t_m1_m2 = false;
+                                }
+                                case 2 -> {
+                                    t_m1_m1 = false;t_m1_m2 = false;
+                                }
+                                case 3 -> {
+                                    t_m1_m2 = false;
+                                }
+                                case 4 -> {
+                                    
+                                }
+                                case 5 -> {
+                                    
+                                }
+                                case 6 -> {
+                                    
+                                }
+                                case 7 -> {
+                                    t_m2_m1 = false;
+                                }
+                                default -> { }
+                            }
+                        }
+                        case -1 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    t_m2_0 = false;t_m1_0 = false;
+                                }
+                                case 1 -> {
+                                    t_m2_0 = false;t_m1_0 = false;t_m1_m1 = false;
+                                }
+                                case 2 -> {
+                                    t_m1_0 = false;t_m1_m1 = false;t_m1_m2 = false;
+                                }
+                                case 3 -> {
+                                    t_m1_m1 = false;t_m1_m2 = false;t_m2_m2 = false;
+                                }
+                                case 4 -> {
+                                    t_m1_m2 = false;t_m2_m2 = false;
+                                }
+                                case 5 -> {
+                                    t_m2_m2 = false;
+                                }
+                                case 6 -> {
+                                    
+                                }
+                                case 7 -> {
+                                    t_m2_0 = false;
+                                }
+                                default -> { }
+                            }
+                        }
+                        case 0 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    t_m2_1 = false;t_m1_1 = false;
+                                }
+                                case 1 -> {
+                                    t_m2_1 = false;t_m1_1 = false;t_m1_0 = false;
+                                }
+                                case 2 -> {
+                                    t_m1_1 = false;t_m1_0 = false;t_m1_m1 = false;
+                                }
+                                case 3 -> {
+                                    t_m1_0 = false;t_m1_m1 = false;t_m2_m1 = false;
+                                }
+                                case 4 -> {
+                                    t_m1_m1 = false;t_m2_m1 = false;
+                                }
+                                case 5 -> {
+                                    t_m2_m1 = false;
+                                }
+                                case 6 -> {
+                                    
+                                }
+                                case 7 -> {
+                                    t_m2_1 = false;
+                                }
+                                default -> { }
+                            }
+                        }
+                        case 1 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    t_m2_2 = false;t_m1_2 = false;
+                                }
+                                case 1 -> {
+                                    t_m2_2 = false;t_m1_2 = false;t_m1_1 = false;
+                                }
+                                case 2 -> {
+                                    t_m1_2 = false;t_m1_1 = false;t_m1_0 = false;
+                                }
+                                case 3 -> {
+                                    t_m1_1 = false;t_m1_0 = false;t_m2_0 = false;
+                                }
+                                case 4 -> {
+                                    t_m1_0 = false;t_m2_0 = false;
+                                }
+                                case 5 -> {
+                                    t_m2_0 = false;
+                                }
+                                case 6 -> {
+                                    
+                                }
+                                case 7 -> {
+                                    t_m2_2 = false;
+                                }
+                                default -> { }
+                            }
+                        }
+                        case 2 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    
+                                }
+                                case 1 -> {
+                                    t_m1_2 = false;
+                                }
+                                case 2 -> {
+                                    t_m1_2 = false;t_m1_1 = false;
+                                }
+                                case 3 -> {
+                                    t_m1_2 = false;t_m1_1 = false;t_m2_1 = false;
+                                }
+                                case 4 -> {
+                                    t_m1_1 = false;t_m2_1 = false;
+                                }
+                                case 5 -> {
+                                    t_m2_1 = false;
+                                }
+                                case 6 -> {
+                                    
+                                }
+                                case 7 -> {
+                                    
+                                }
+                                default -> { }
+                            }
+                        }
+                        case 3 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    
+                                }
+                                case 1 -> {
+                                    
+                                }
+                                case 2 -> {
+                                    t_m1_2 = false;
+                                }
+                                case 3 -> {
+                                    t_m1_2 = false;t_m2_2 = false;
+                                }
+                                case 4 -> {
+                                    t_m1_2 = false;t_m2_2 = false;
+                                }
+                                case 5 -> {
+                                    t_m2_2 = false;
+                                }
+                                case 6 -> {
+                                    
+                                }
+                                case 7 -> {
+                                    
+                                }
+                                default -> { }
+                            }
+                        }
+                        default -> { }
+                    }
+                }
+                case -1 -> {
+                    switch (dy) {
+                        case -3 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    t_m1_m2 = false;t_0_m2 = false;t_m2_m2 = false;
+                                }
+                                case 1 -> {
+                                    t_m1_m2 = false;t_0_m2 = false;
+                                }
+                                case 2 -> {
+                                    t_0_m2 = false;
+                                }
+                                case 3 -> {
+                                    
+                                }
+                                case 4 -> {
+                                    
+                                }
+                                case 5 -> {
+                                    
+                                }
+                                case 6 -> {
+                                    t_m2_m2 = false;
+                                }
+                                case 7 -> {
+                                    t_m1_m2 = false;t_m2_m2 = false;
+                                }
+                                default -> { }
+                            }
+                        }
+                        case -2 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    t_m1_m1 = false;t_0_m1 = false;t_m2_m1 = false;
+                                }
+                                case 1 -> {
+                                    t_m1_m1 = false;t_0_m1 = false;t_0_m2 = false;
+                                }
+                                case 2 -> {
+                                    t_0_m1 = false;t_0_m2 = false;
+                                }
+                                case 3 -> {
+                                    t_0_m2 = false;
+                                }
+                                case 4 -> {
+                                    
+                                }
+                                case 5 -> {
+                                    t_m2_m2 = false;
+                                }
+                                case 6 -> {
+                                    t_m2_m2 = false;t_m2_m1 = false;
+                                }
+                                case 7 -> {
+                                    t_m1_m1 = false;t_m2_m2 = false;t_m2_m1 = false;
+                                }
+                                default -> { }
+                            }
+                        }
+                        case -1 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    t_m1_0 = false;t_0_0 = false;t_m2_0 = false;
+                                }
+                                case 1 -> {
+                                    t_m1_0 = false;t_0_0 = false;t_0_m1 = false;
+                                }
+                                case 2 -> {
+                                    t_0_0 = false;t_0_m1 = false;t_0_m2 = false;
+                                }
+                                case 3 -> {
+                                    t_0_m1 = false;t_0_m2 = false;t_m1_m2 = false;
+                                }
+                                case 4 -> {
+                                    t_0_m2 = false;t_m1_m2 = false;t_m2_m2 = false;
+                                }
+                                case 5 -> {
+                                    t_m1_m2 = false;t_m2_m2 = false;t_m2_m1 = false;
+                                }
+                                case 6 -> {
+                                    t_m2_m2 = false;t_m2_m1 = false;t_m2_0 = false;
+                                }
+                                case 7 -> {
+                                    t_m1_0 = false;t_m2_m1 = false;t_m2_0 = false;
+                                }
+                                default -> { }
+                            }
+                        }
+                        case 0 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    t_m1_1 = false;t_0_1 = false;t_m2_1 = false;
+                                }
+                                case 1 -> {
+                                    t_m1_1 = false;t_0_1 = false;t_0_0 = false;
+                                }
+                                case 2 -> {
+                                    t_0_1 = false;t_0_0 = false;t_0_m1 = false;
+                                }
+                                case 3 -> {
+                                    t_0_0 = false;t_0_m1 = false;t_m1_m1 = false;
+                                }
+                                case 4 -> {
+                                    t_0_m1 = false;t_m1_m1 = false;t_m2_m1 = false;
+                                }
+                                case 5 -> {
+                                    t_m1_m1 = false;t_m2_m1 = false;t_m2_0 = false;
+                                }
+                                case 6 -> {
+                                    t_m2_m1 = false;t_m2_0 = false;t_m2_1 = false;
+                                }
+                                case 7 -> {
+                                    t_m1_1 = false;t_m2_0 = false;t_m2_1 = false;
+                                }
+                                default -> { }
+                            }
+                        }
+                        case 1 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    t_m1_2 = false;t_0_2 = false;t_m2_2 = false;
+                                }
+                                case 1 -> {
+                                    t_m1_2 = false;t_0_2 = false;t_0_1 = false;
+                                }
+                                case 2 -> {
+                                    t_0_2 = false;t_0_1 = false;t_0_0 = false;
+                                }
+                                case 3 -> {
+                                    t_0_1 = false;t_0_0 = false;t_m1_0 = false;
+                                }
+                                case 4 -> {
+                                    t_0_0 = false;t_m1_0 = false;t_m2_0 = false;
+                                }
+                                case 5 -> {
+                                    t_m1_0 = false;t_m2_0 = false;t_m2_1 = false;
+                                }
+                                case 6 -> {
+                                    t_m2_0 = false;t_m2_1 = false;t_m2_2 = false;
+                                }
+                                case 7 -> {
+                                    t_m1_2 = false;t_m2_1 = false;t_m2_2 = false;
+                                }
+                                default -> { }
+                            }
+                        }
+                        case 2 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    
+                                }
+                                case 1 -> {
+                                    t_0_2 = false;
+                                }
+                                case 2 -> {
+                                    t_0_2 = false;t_0_1 = false;
+                                }
+                                case 3 -> {
+                                    t_0_2 = false;t_0_1 = false;t_m1_1 = false;
+                                }
+                                case 4 -> {
+                                    t_0_1 = false;t_m1_1 = false;t_m2_1 = false;
+                                }
+                                case 5 -> {
+                                    t_m1_1 = false;t_m2_1 = false;t_m2_2 = false;
+                                }
+                                case 6 -> {
+                                    t_m2_1 = false;t_m2_2 = false;
+                                }
+                                case 7 -> {
+                                    t_m2_2 = false;
+                                }
+                                default -> { }
+                            }
+                        }
+                        case 3 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    
+                                }
+                                case 1 -> {
+                                    
+                                }
+                                case 2 -> {
+                                    t_0_2 = false;
+                                }
+                                case 3 -> {
+                                    t_0_2 = false;t_m1_2 = false;
+                                }
+                                case 4 -> {
+                                    t_0_2 = false;t_m1_2 = false;t_m2_2 = false;
+                                }
+                                case 5 -> {
+                                    t_m1_2 = false;t_m2_2 = false;
+                                }
+                                case 6 -> {
+                                    t_m2_2 = false;
+                                }
+                                case 7 -> {
+                                    
+                                }
+                                default -> { }
+                            }
+                        }
+                        default -> { }
+                    }
+                }
+                case 0 -> {
+                    switch (dy) {
+                        case -3 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    t_0_m2 = false;t_1_m2 = false;t_m1_m2 = false;
+                                }
+                                case 1 -> {
+                                    t_0_m2 = false;t_1_m2 = false;
+                                }
+                                case 2 -> {
+                                    t_1_m2 = false;
+                                }
+                                case 3 -> {
+                                    
+                                }
+                                case 4 -> {
+                                    
+                                }
+                                case 5 -> {
+                                    
+                                }
+                                case 6 -> {
+                                    t_m1_m2 = false;
+                                }
+                                case 7 -> {
+                                    t_0_m2 = false;t_m1_m2 = false;
+                                }
+                                default -> { }
+                            }
+                        }
+                        case -2 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    t_0_m1 = false;t_1_m1 = false;t_m1_m1 = false;
+                                }
+                                case 1 -> {
+                                    t_0_m1 = false;t_1_m1 = false;t_1_m2 = false;
+                                }
+                                case 2 -> {
+                                    t_1_m1 = false;t_1_m2 = false;
+                                }
+                                case 3 -> {
+                                    t_1_m2 = false;
+                                }
+                                case 4 -> {
+                                    
+                                }
+                                case 5 -> {
+                                    t_m1_m2 = false;
+                                }
+                                case 6 -> {
+                                    t_m1_m2 = false;t_m1_m1 = false;
+                                }
+                                case 7 -> {
+                                    t_0_m1 = false;t_m1_m2 = false;t_m1_m1 = false;
+                                }
+                                default -> { }
+                            }
+                        }
+                        case -1 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    t_0_0 = false;t_1_0 = false;t_m1_0 = false;
+                                }
+                                case 1 -> {
+                                    t_0_0 = false;t_1_0 = false;t_1_m1 = false;
+                                }
+                                case 2 -> {
+                                    t_1_0 = false;t_1_m1 = false;t_1_m2 = false;
+                                }
+                                case 3 -> {
+                                    t_1_m1 = false;t_1_m2 = false;t_0_m2 = false;
+                                }
+                                case 4 -> {
+                                    t_1_m2 = false;t_0_m2 = false;t_m1_m2 = false;
+                                }
+                                case 5 -> {
+                                    t_0_m2 = false;t_m1_m2 = false;t_m1_m1 = false;
+                                }
+                                case 6 -> {
+                                    t_m1_m2 = false;t_m1_m1 = false;t_m1_0 = false;
+                                }
+                                case 7 -> {
+                                    t_0_0 = false;t_m1_m1 = false;t_m1_0 = false;
+                                }
+                                default -> { }
+                            }
+                        }
+                        case 0 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    t_0_1 = false;t_1_1 = false;t_m1_1 = false;
+                                }
+                                case 1 -> {
+                                    t_0_1 = false;t_1_1 = false;t_1_0 = false;
+                                }
+                                case 2 -> {
+                                    t_1_1 = false;t_1_0 = false;t_1_m1 = false;
+                                }
+                                case 3 -> {
+                                    t_1_0 = false;t_1_m1 = false;t_0_m1 = false;
+                                }
+                                case 4 -> {
+                                    t_1_m1 = false;t_0_m1 = false;t_m1_m1 = false;
+                                }
+                                case 5 -> {
+                                    t_0_m1 = false;t_m1_m1 = false;t_m1_0 = false;
+                                }
+                                case 6 -> {
+                                    t_m1_m1 = false;t_m1_0 = false;t_m1_1 = false;
+                                }
+                                case 7 -> {
+                                    t_0_1 = false;t_m1_0 = false;t_m1_1 = false;
+                                }
+                                default -> { }
+                            }
+                        }
+                        case 1 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    t_0_2 = false;t_1_2 = false;t_m1_2 = false;
+                                }
+                                case 1 -> {
+                                    t_0_2 = false;t_1_2 = false;t_1_1 = false;
+                                }
+                                case 2 -> {
+                                    t_1_2 = false;t_1_1 = false;t_1_0 = false;
+                                }
+                                case 3 -> {
+                                    t_1_1 = false;t_1_0 = false;t_0_0 = false;
+                                }
+                                case 4 -> {
+                                    t_1_0 = false;t_0_0 = false;t_m1_0 = false;
+                                }
+                                case 5 -> {
+                                    t_0_0 = false;t_m1_0 = false;t_m1_1 = false;
+                                }
+                                case 6 -> {
+                                    t_m1_0 = false;t_m1_1 = false;t_m1_2 = false;
+                                }
+                                case 7 -> {
+                                    t_0_2 = false;t_m1_1 = false;t_m1_2 = false;
+                                }
+                                default -> { }
+                            }
+                        }
+                        case 2 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    
+                                }
+                                case 1 -> {
+                                    t_1_2 = false;
+                                }
+                                case 2 -> {
+                                    t_1_2 = false;t_1_1 = false;
+                                }
+                                case 3 -> {
+                                    t_1_2 = false;t_1_1 = false;t_0_1 = false;
+                                }
+                                case 4 -> {
+                                    t_1_1 = false;t_0_1 = false;t_m1_1 = false;
+                                }
+                                case 5 -> {
+                                    t_0_1 = false;t_m1_1 = false;t_m1_2 = false;
+                                }
+                                case 6 -> {
+                                    t_m1_1 = false;t_m1_2 = false;
+                                }
+                                case 7 -> {
+                                    t_m1_2 = false;
+                                }
+                                default -> { }
+                            }
+                        }
+                        case 3 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    
+                                }
+                                case 1 -> {
+                                    
+                                }
+                                case 2 -> {
+                                    t_1_2 = false;
+                                }
+                                case 3 -> {
+                                    t_1_2 = false;t_0_2 = false;
+                                }
+                                case 4 -> {
+                                    t_1_2 = false;t_0_2 = false;t_m1_2 = false;
+                                }
+                                case 5 -> {
+                                    t_0_2 = false;t_m1_2 = false;
+                                }
+                                case 6 -> {
+                                    t_m1_2 = false;
+                                }
+                                case 7 -> {
+                                    
+                                }
+                                default -> { }
+                            }
+                        }
+                        default -> { }
+                    }
+                }
+                case 1 -> {
+                    switch (dy) {
+                        case -3 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    t_1_m2 = false;t_2_m2 = false;t_0_m2 = false;
+                                }
+                                case 1 -> {
+                                    t_1_m2 = false;t_2_m2 = false;
+                                }
+                                case 2 -> {
+                                    t_2_m2 = false;
+                                }
+                                case 3 -> {
+                                    
+                                }
+                                case 4 -> {
+                                    
+                                }
+                                case 5 -> {
+                                    
+                                }
+                                case 6 -> {
+                                    t_0_m2 = false;
+                                }
+                                case 7 -> {
+                                    t_1_m2 = false;t_0_m2 = false;
+                                }
+                                default -> { }
+                            }
+                        }
+                        case -2 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    t_1_m1 = false;t_2_m1 = false;t_0_m1 = false;
+                                }
+                                case 1 -> {
+                                    t_1_m1 = false;t_2_m1 = false;t_2_m2 = false;
+                                }
+                                case 2 -> {
+                                    t_2_m1 = false;t_2_m2 = false;
+                                }
+                                case 3 -> {
+                                    t_2_m2 = false;
+                                }
+                                case 4 -> {
+                                    
+                                }
+                                case 5 -> {
+                                    t_0_m2 = false;
+                                }
+                                case 6 -> {
+                                    t_0_m2 = false;t_0_m1 = false;
+                                }
+                                case 7 -> {
+                                    t_1_m1 = false;t_0_m2 = false;t_0_m1 = false;
+                                }
+                                default -> { }
+                            }
+                        }
+                        case -1 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    t_1_0 = false;t_2_0 = false;t_0_0 = false;
+                                }
+                                case 1 -> {
+                                    t_1_0 = false;t_2_0 = false;t_2_m1 = false;
+                                }
+                                case 2 -> {
+                                    t_2_0 = false;t_2_m1 = false;t_2_m2 = false;
+                                }
+                                case 3 -> {
+                                    t_2_m1 = false;t_2_m2 = false;t_1_m2 = false;
+                                }
+                                case 4 -> {
+                                    t_2_m2 = false;t_1_m2 = false;t_0_m2 = false;
+                                }
+                                case 5 -> {
+                                    t_1_m2 = false;t_0_m2 = false;t_0_m1 = false;
+                                }
+                                case 6 -> {
+                                    t_0_m2 = false;t_0_m1 = false;t_0_0 = false;
+                                }
+                                case 7 -> {
+                                    t_1_0 = false;t_0_m1 = false;t_0_0 = false;
+                                }
+                                default -> { }
+                            }
+                        }
+                        case 0 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    t_1_1 = false;t_2_1 = false;t_0_1 = false;
+                                }
+                                case 1 -> {
+                                    t_1_1 = false;t_2_1 = false;t_2_0 = false;
+                                }
+                                case 2 -> {
+                                    t_2_1 = false;t_2_0 = false;t_2_m1 = false;
+                                }
+                                case 3 -> {
+                                    t_2_0 = false;t_2_m1 = false;t_1_m1 = false;
+                                }
+                                case 4 -> {
+                                    t_2_m1 = false;t_1_m1 = false;t_0_m1 = false;
+                                }
+                                case 5 -> {
+                                    t_1_m1 = false;t_0_m1 = false;t_0_0 = false;
+                                }
+                                case 6 -> {
+                                    t_0_m1 = false;t_0_0 = false;t_0_1 = false;
+                                }
+                                case 7 -> {
+                                    t_1_1 = false;t_0_0 = false;t_0_1 = false;
+                                }
+                                default -> { }
+                            }
+                        }
+                        case 1 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    t_1_2 = false;t_2_2 = false;t_0_2 = false;
+                                }
+                                case 1 -> {
+                                    t_1_2 = false;t_2_2 = false;t_2_1 = false;
+                                }
+                                case 2 -> {
+                                    t_2_2 = false;t_2_1 = false;t_2_0 = false;
+                                }
+                                case 3 -> {
+                                    t_2_1 = false;t_2_0 = false;t_1_0 = false;
+                                }
+                                case 4 -> {
+                                    t_2_0 = false;t_1_0 = false;t_0_0 = false;
+                                }
+                                case 5 -> {
+                                    t_1_0 = false;t_0_0 = false;t_0_1 = false;
+                                }
+                                case 6 -> {
+                                    t_0_0 = false;t_0_1 = false;t_0_2 = false;
+                                }
+                                case 7 -> {
+                                    t_1_2 = false;t_0_1 = false;t_0_2 = false;
+                                }
+                                default -> { }
+                            }
+                        }
+                        case 2 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    
+                                }
+                                case 1 -> {
+                                    t_2_2 = false;
+                                }
+                                case 2 -> {
+                                    t_2_2 = false;t_2_1 = false;
+                                }
+                                case 3 -> {
+                                    t_2_2 = false;t_2_1 = false;t_1_1 = false;
+                                }
+                                case 4 -> {
+                                    t_2_1 = false;t_1_1 = false;t_0_1 = false;
+                                }
+                                case 5 -> {
+                                    t_1_1 = false;t_0_1 = false;t_0_2 = false;
+                                }
+                                case 6 -> {
+                                    t_0_1 = false;t_0_2 = false;
+                                }
+                                case 7 -> {
+                                    t_0_2 = false;
+                                }
+                                default -> { }
+                            }
+                        }
+                        case 3 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    
+                                }
+                                case 1 -> {
+                                    
+                                }
+                                case 2 -> {
+                                    t_2_2 = false;
+                                }
+                                case 3 -> {
+                                    t_2_2 = false;t_1_2 = false;
+                                }
+                                case 4 -> {
+                                    t_2_2 = false;t_1_2 = false;t_0_2 = false;
+                                }
+                                case 5 -> {
+                                    t_1_2 = false;t_0_2 = false;
+                                }
+                                case 6 -> {
+                                    t_0_2 = false;
+                                }
+                                case 7 -> {
+                                    
+                                }
+                                default -> { }
+                            }
+                        }
+                        default -> { }
+                    }
+                }
+                case 2 -> {
+                    switch (dy) {
+                        case -3 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    t_2_m2 = false;t_1_m2 = false;
+                                }
+                                case 1 -> {
+                                    t_2_m2 = false;
+                                }
+                                case 2 -> {
+                                    
+                                }
+                                case 3 -> {
+                                    
+                                }
+                                case 4 -> {
+                                    
+                                }
+                                case 5 -> {
+                                    
+                                }
+                                case 6 -> {
+                                    t_1_m2 = false;
+                                }
+                                case 7 -> {
+                                    t_2_m2 = false;t_1_m2 = false;
+                                }
+                                default -> { }
+                            }
+                        }
+                        case -2 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    t_2_m1 = false;t_1_m1 = false;
+                                }
+                                case 1 -> {
+                                    t_2_m1 = false;
+                                }
+                                case 2 -> {
+                                    
+                                }
+                                case 3 -> {
+                                    
+                                }
+                                case 4 -> {
+                                    
+                                }
+                                case 5 -> {
+                                    t_1_m2 = false;
+                                }
+                                case 6 -> {
+                                    t_1_m2 = false;t_1_m1 = false;
+                                }
+                                case 7 -> {
+                                    t_2_m1 = false;t_1_m2 = false;t_1_m1 = false;
+                                }
+                                default -> { }
+                            }
+                        }
+                        case -1 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    t_2_0 = false;t_1_0 = false;
+                                }
+                                case 1 -> {
+                                    t_2_0 = false;
+                                }
+                                case 2 -> {
+                                    
+                                }
+                                case 3 -> {
+                                    t_2_m2 = false;
+                                }
+                                case 4 -> {
+                                    t_2_m2 = false;t_1_m2 = false;
+                                }
+                                case 5 -> {
+                                    t_2_m2 = false;t_1_m2 = false;t_1_m1 = false;
+                                }
+                                case 6 -> {
+                                    t_1_m2 = false;t_1_m1 = false;t_1_0 = false;
+                                }
+                                case 7 -> {
+                                    t_2_0 = false;t_1_m1 = false;t_1_0 = false;
+                                }
+                                default -> { }
+                            }
+                        }
+                        case 0 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    t_2_1 = false;t_1_1 = false;
+                                }
+                                case 1 -> {
+                                    t_2_1 = false;
+                                }
+                                case 2 -> {
+                                    
+                                }
+                                case 3 -> {
+                                    t_2_m1 = false;
+                                }
+                                case 4 -> {
+                                    t_2_m1 = false;t_1_m1 = false;
+                                }
+                                case 5 -> {
+                                    t_2_m1 = false;t_1_m1 = false;t_1_0 = false;
+                                }
+                                case 6 -> {
+                                    t_1_m1 = false;t_1_0 = false;t_1_1 = false;
+                                }
+                                case 7 -> {
+                                    t_2_1 = false;t_1_0 = false;t_1_1 = false;
+                                }
+                                default -> { }
+                            }
+                        }
+                        case 1 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    t_2_2 = false;t_1_2 = false;
+                                }
+                                case 1 -> {
+                                    t_2_2 = false;
+                                }
+                                case 2 -> {
+                                    
+                                }
+                                case 3 -> {
+                                    t_2_0 = false;
+                                }
+                                case 4 -> {
+                                    t_2_0 = false;t_1_0 = false;
+                                }
+                                case 5 -> {
+                                    t_2_0 = false;t_1_0 = false;t_1_1 = false;
+                                }
+                                case 6 -> {
+                                    t_1_0 = false;t_1_1 = false;t_1_2 = false;
+                                }
+                                case 7 -> {
+                                    t_2_2 = false;t_1_1 = false;t_1_2 = false;
+                                }
+                                default -> { }
+                            }
+                        }
+                        case 2 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    
+                                }
+                                case 1 -> {
+                                    
+                                }
+                                case 2 -> {
+                                    
+                                }
+                                case 3 -> {
+                                    t_2_1 = false;
+                                }
+                                case 4 -> {
+                                    t_2_1 = false;t_1_1 = false;
+                                }
+                                case 5 -> {
+                                    t_2_1 = false;t_1_1 = false;t_1_2 = false;
+                                }
+                                case 6 -> {
+                                    t_1_1 = false;t_1_2 = false;
+                                }
+                                case 7 -> {
+                                    t_1_2 = false;
+                                }
+                                default -> { }
+                            }
+                        }
+                        case 3 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    
+                                }
+                                case 1 -> {
+                                    
+                                }
+                                case 2 -> {
+                                    
+                                }
+                                case 3 -> {
+                                    t_2_2 = false;
+                                }
+                                case 4 -> {
+                                    t_2_2 = false;t_1_2 = false;
+                                }
+                                case 5 -> {
+                                    t_2_2 = false;t_1_2 = false;
+                                }
+                                case 6 -> {
+                                    t_1_2 = false;
+                                }
+                                case 7 -> {
+                                    
+                                }
+                                default -> { }
+                            }
+                        }
+                        default -> { }
+                    }
+                }
+                case 3 -> {
+                    switch (dy) {
+                        case -3 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    t_2_m2 = false;
+                                }
+                                case 1 -> {
+                                    
+                                }
+                                case 2 -> {
+                                    
+                                }
+                                case 3 -> {
+                                    
+                                }
+                                case 4 -> {
+                                    
+                                }
+                                case 5 -> {
+                                    
+                                }
+                                case 6 -> {
+                                    t_2_m2 = false;
+                                }
+                                case 7 -> {
+                                    t_2_m2 = false;
+                                }
+                                default -> { }
+                            }
+                        }
+                        case -2 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    t_2_m1 = false;
+                                }
+                                case 1 -> {
+                                    
+                                }
+                                case 2 -> {
+                                    
+                                }
+                                case 3 -> {
+                                    
+                                }
+                                case 4 -> {
+                                    
+                                }
+                                case 5 -> {
+                                    t_2_m2 = false;
+                                }
+                                case 6 -> {
+                                    t_2_m2 = false;t_2_m1 = false;
+                                }
+                                case 7 -> {
+                                    t_2_m2 = false;t_2_m1 = false;
+                                }
+                                default -> { }
+                            }
+                        }
+                        case -1 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    t_2_0 = false;
+                                }
+                                case 1 -> {
+                                    
+                                }
+                                case 2 -> {
+                                    
+                                }
+                                case 3 -> {
+                                    
+                                }
+                                case 4 -> {
+                                    t_2_m2 = false;
+                                }
+                                case 5 -> {
+                                    t_2_m2 = false;t_2_m1 = false;
+                                }
+                                case 6 -> {
+                                    t_2_m2 = false;t_2_m1 = false;t_2_0 = false;
+                                }
+                                case 7 -> {
+                                    t_2_m1 = false;t_2_0 = false;
+                                }
+                                default -> { }
+                            }
+                        }
+                        case 0 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    t_2_1 = false;
+                                }
+                                case 1 -> {
+                                    
+                                }
+                                case 2 -> {
+                                    
+                                }
+                                case 3 -> {
+                                    
+                                }
+                                case 4 -> {
+                                    t_2_m1 = false;
+                                }
+                                case 5 -> {
+                                    t_2_m1 = false;t_2_0 = false;
+                                }
+                                case 6 -> {
+                                    t_2_m1 = false;t_2_0 = false;t_2_1 = false;
+                                }
+                                case 7 -> {
+                                    t_2_0 = false;t_2_1 = false;
+                                }
+                                default -> { }
+                            }
+                        }
+                        case 1 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    t_2_2 = false;
+                                }
+                                case 1 -> {
+                                    
+                                }
+                                case 2 -> {
+                                    
+                                }
+                                case 3 -> {
+                                    
+                                }
+                                case 4 -> {
+                                    t_2_0 = false;
+                                }
+                                case 5 -> {
+                                    t_2_0 = false;t_2_1 = false;
+                                }
+                                case 6 -> {
+                                    t_2_0 = false;t_2_1 = false;t_2_2 = false;
+                                }
+                                case 7 -> {
+                                    t_2_1 = false;t_2_2 = false;
+                                }
+                                default -> { }
+                            }
+                        }
+                        case 2 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    
+                                }
+                                case 1 -> {
+                                    
+                                }
+                                case 2 -> {
+                                    
+                                }
+                                case 3 -> {
+                                    
+                                }
+                                case 4 -> {
+                                    t_2_1 = false;
+                                }
+                                case 5 -> {
+                                    t_2_1 = false;t_2_2 = false;
+                                }
+                                case 6 -> {
+                                    t_2_1 = false;t_2_2 = false;
+                                }
+                                case 7 -> {
+                                    t_2_2 = false;
+                                }
+                                default -> { }
+                            }
+                        }
+                        case 3 -> {
+                            switch (info.direction.ordinal()) {
+                                case 0 -> {
+                                    
+                                }
+                                case 1 -> {
+                                    
+                                }
+                                case 2 -> {
+                                    
+                                }
+                                case 3 -> {
+                                    
+                                }
+                                case 4 -> {
+                                    t_2_2 = false;
+                                }
+                                case 5 -> {
+                                    t_2_2 = false;
+                                }
+                                case 6 -> {
+                                    t_2_2 = false;
+                                }
+                                case 7 -> {
+                                    
+                                }
+                                default -> { }
+                            }
+                        }
+                        default -> { }
+                    }
+                }
+                default -> { }
+            }
+        }
+    }
 
 
     public static void recomputeThreatMasks() {

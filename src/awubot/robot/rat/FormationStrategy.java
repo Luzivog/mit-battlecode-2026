@@ -107,11 +107,8 @@ public class FormationStrategy extends Strategy {
         
         if (rc.canSenseRobotAtLocation(formationTarget)) {
             RobotInfo robotAtCentre = rc.senseRobotAtLocation(formationTarget);
+            if (robotAtCentre != null) return false;
         } else {
-            return false;
-        }
-        
-        if (robotAtCentre != null) {
             return false;
         }
 

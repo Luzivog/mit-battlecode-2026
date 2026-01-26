@@ -427,7 +427,7 @@ public class CombatStrategy extends Strategy {
 
     public static int getBiteDamage() {
         if (rc.getAllCheese() < 300) return 10;
-        else return 12;
+        else return 11;
     }
     
     /*

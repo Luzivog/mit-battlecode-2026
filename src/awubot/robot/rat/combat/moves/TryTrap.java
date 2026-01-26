@@ -3452,7 +3452,6 @@ w_2_2 += (20) * mult;
     }
 
     private static void faceNN() throws GameActionException {
-        if (CombatTracker.threatNN != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTH, Direction.NORTH);
         if (moveCost == -1) return;
         baseScore = 0;
@@ -3504,7 +3503,6 @@ private static void placeNWNN() {
         }
     }
     private static void faceNEN() throws GameActionException {
-        if (CombatTracker.threatNNE != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTH, Direction.NORTHEAST);
         if (moveCost == -1) return;
         baseScore = 0;
@@ -3556,7 +3554,6 @@ private static void placeENEN() {
         }
     }
     private static void faceNWN() throws GameActionException {
-        if (CombatTracker.threatNNW != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTH, Direction.NORTHWEST);
         if (moveCost == -1) return;
         baseScore = 0;
@@ -3619,7 +3616,6 @@ private static void placeWNWN() {
     }
 
     private static void faceNENE() throws GameActionException {
-        if (CombatTracker.threatNENE != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTHEAST, Direction.NORTHEAST);
         if (moveCost == -1) return;
         baseScore = 0;
@@ -3671,7 +3667,6 @@ private static void placeENENE() {
         }
     }
     private static void faceNNE() throws GameActionException {
-        if (CombatTracker.threatNEN != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTHEAST, Direction.NORTH);
         if (moveCost == -1) return;
         baseScore = 0;
@@ -3723,7 +3718,6 @@ private static void placeNWNNE() {
         }
     }
     private static void faceENE() throws GameActionException {
-        if (CombatTracker.threatNEE != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTHEAST, Direction.EAST);
         if (moveCost == -1) return;
         baseScore = 0;
@@ -3786,7 +3780,6 @@ private static void placeSEENE() {
     }
 
     private static void faceEE() throws GameActionException {
-        if (CombatTracker.threatEE != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.EAST, Direction.EAST);
         if (moveCost == -1) return;
         baseScore = 0;
@@ -3838,7 +3831,6 @@ private static void placeSEEE() {
         }
     }
     private static void faceNEE() throws GameActionException {
-        if (CombatTracker.threatENE != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.EAST, Direction.NORTHEAST);
         if (moveCost == -1) return;
         baseScore = 0;
@@ -3890,7 +3882,6 @@ private static void placeENEE() {
         }
     }
     private static void faceSEE() throws GameActionException {
-        if (CombatTracker.threatESE != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.EAST, Direction.SOUTHEAST);
         if (moveCost == -1) return;
         baseScore = 0;
@@ -3953,7 +3944,6 @@ private static void placeESEE() {
     }
 
     private static void faceSESE() throws GameActionException {
-        if (CombatTracker.threatSESE != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTHEAST, Direction.SOUTHEAST);
         if (moveCost == -1) return;
         baseScore = 0;
@@ -4005,7 +3995,6 @@ private static void placeESESE() {
         }
     }
     private static void faceSSE() throws GameActionException {
-        if (CombatTracker.threatSES != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTHEAST, Direction.SOUTH);
         if (moveCost == -1) return;
         baseScore = 0;
@@ -4057,7 +4046,6 @@ private static void placeSWSSE() {
         }
     }
     private static void faceESE() throws GameActionException {
-        if (CombatTracker.threatSEE != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTHEAST, Direction.EAST);
         if (moveCost == -1) return;
         baseScore = 0;
@@ -4120,7 +4108,6 @@ private static void placeSEESE() {
     }
 
     private static void faceSS() throws GameActionException {
-        if (CombatTracker.threatSS != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTH, Direction.SOUTH);
         if (moveCost == -1) return;
         baseScore = 0;
@@ -4172,7 +4159,6 @@ private static void placeSWSS() {
         }
     }
     private static void faceSES() throws GameActionException {
-        if (CombatTracker.threatSSE != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTH, Direction.SOUTHEAST);
         if (moveCost == -1) return;
         baseScore = 0;
@@ -4224,7 +4210,6 @@ private static void placeESES() {
         }
     }
     private static void faceSWS() throws GameActionException {
-        if (CombatTracker.threatSSW != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTH, Direction.SOUTHWEST);
         if (moveCost == -1) return;
         baseScore = 0;
@@ -4287,7 +4272,6 @@ private static void placeWSWS() {
     }
 
     private static void faceSWSW() throws GameActionException {
-        if (CombatTracker.threatSWSW != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTHWEST, Direction.SOUTHWEST);
         if (moveCost == -1) return;
         baseScore = 0;
@@ -4339,7 +4323,6 @@ private static void placeWSWSW() {
         }
     }
     private static void faceSSW() throws GameActionException {
-        if (CombatTracker.threatSWS != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTHWEST, Direction.SOUTH);
         if (moveCost == -1) return;
         baseScore = 0;
@@ -4391,7 +4374,6 @@ private static void placeSWSSW() {
         }
     }
     private static void faceWSW() throws GameActionException {
-        if (CombatTracker.threatSWW != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTHWEST, Direction.WEST);
         if (moveCost == -1) return;
         baseScore = 0;
@@ -4454,7 +4436,6 @@ private static void placeSWWSW() {
     }
 
     private static void faceWW() throws GameActionException {
-        if (CombatTracker.threatWW != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.WEST, Direction.WEST);
         if (moveCost == -1) return;
         baseScore = 0;
@@ -4506,7 +4487,6 @@ private static void placeSWWW() {
         }
     }
     private static void faceNWW() throws GameActionException {
-        if (CombatTracker.threatWNW != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.WEST, Direction.NORTHWEST);
         if (moveCost == -1) return;
         baseScore = 0;
@@ -4558,7 +4538,6 @@ private static void placeWNWW() {
         }
     }
     private static void faceSWW() throws GameActionException {
-        if (CombatTracker.threatWSW != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.WEST, Direction.SOUTHWEST);
         if (moveCost == -1) return;
         baseScore = 0;
@@ -4621,7 +4600,6 @@ private static void placeWSWW() {
     }
 
     private static void faceNWNW() throws GameActionException {
-        if (CombatTracker.threatNWNW != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTHWEST, Direction.NORTHWEST);
         if (moveCost == -1) return;
         baseScore = 0;
@@ -4673,7 +4651,6 @@ private static void placeWNWNW() {
         }
     }
     private static void faceNNW() throws GameActionException {
-        if (CombatTracker.threatNWN != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTHWEST, Direction.NORTH);
         if (moveCost == -1) return;
         baseScore = 0;
@@ -4725,7 +4702,6 @@ private static void placeNWNNW() {
         }
     }
     private static void faceWNW() throws GameActionException {
-        if (CombatTracker.threatNWW != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTHWEST, Direction.WEST);
         if (moveCost == -1) return;
         baseScore = 0;

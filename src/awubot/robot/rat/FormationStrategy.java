@@ -97,21 +97,20 @@ public class FormationStrategy extends Strategy {
         if (!rc.isMovementReady()) return;
         if (myLoc.equals(formationTarget)) return;
 
-        if (myLoc.distanceSquaredTo(formationTarget) > 2) {
+        if (myLoc.distanceSquaredTo(formationTarget) > 2 || shouldBecomeCentre()) {
             Pathfinder.makeMove(formationTarget);
             return;
-        }
-
-        if (shouldBecomeCentre()) {
-            Direction myDir = myLoc.directionTo(formationTarget);
-            if (rc.canMove(myDir)) {
-                Pathfinder.makeMove(myDir);
-            }
         }
     }
 
     private boolean shouldBecomeCentre() throws GameActionException {
-        RobotInfo robotAtCentre = rc.senseRobotAtLocation(formationTarget);
+        
+        if (rc.canSenseRobotAtLocation(formationTarget)) {
+            RobotInfo robotAtCentre = rc.senseRobotAtLocation(formationTarget);
+        } else {
+            return false;
+        }
+        
         if (robotAtCentre != null) {
             return false;
         }

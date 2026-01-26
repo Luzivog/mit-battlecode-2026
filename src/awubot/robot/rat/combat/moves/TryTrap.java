@@ -76,7 +76,7 @@ public final class TryTrap {
     }
 
     public static boolean shouldTrap(RobotInfo info) throws GameActionException {
-        if (info.getHealth() >= 50 && info.getHealth() >= rc.getHealth() + CombatStrategy.getBiteDamage() || info.getHealth() == 100) {
+        if (info.getHealth() >= 80 && info.getHealth() >= rc.getHealth() + CombatStrategy.getMaxBiteDamage() || info.getHealth() == 100) {
             println("ACCEPEETD CONIDIOTOINIS A;PLOSDKJF;LKAJSDAF;LKJASDA;LKFJDSA;DLKFJSD;LKFJA;SLKDFJ;SLAKJDFL;K");
             return true;
         }

@@ -425,11 +425,11 @@ public class CombatStrategy extends Strategy {
         }
     }
 
-    public static int getBiteDamage() {
-        if (rc.getAllCheese() < 300 || (rc.getRawCheese() % 20 == 0 && rc.getRawCheese() > 0)) return 10;
-        else return 11;
+    public static int getMaxBiteDamage() {
+        if (rc.getAllCheese() < 300 || (rc.getRawCheese() % 20 < 2 && rc.getRawCheese() > 0)) return 10;
+        else return 12;
     }
-    
+
     /*
 
         attacking another solo rat is safe as if:
@@ -444,29 +444,11 @@ public class CombatStrategy extends Strategy {
             return time > 500 && rc.getAllCheese() > 1000 && RobotTracker.numEnemies == 0 && rc.getRawCheese() == 0 && GlobalArray.numberOfRatsAlive >= 16 && (rc.getID() % 3 == 0 || time >= 1800);
         }
         if (enemy.getType() == UnitType.RAT_KING) return true;
-        if (enemy.getHealth() - getBiteDamage() <= rc.getHealth()) return true;
+        if (enemy.getHealth() - getMaxBiteDamage() <= rc.getHealth()) return true;
         if (!canSense(enemy.location, myLoc, enemy.direction)) return true;
         if (GlobalArray.nearestRatKing != null && GlobalArray.nearestRatKing.distanceSquaredTo(myLoc) <= 36) return true;
         if (RobotTracker.numAllies > RobotTracker.numEnemies) return true;
         return false;
-    }
-
-    // currently given arbitrary weights
-    public double scoreEnemy(RobotInfo info) {
-        if (info.getType() == UnitType.RAT_KING) return 5;
-        // one tap this guy
-        if (info.getHealth() - GameConstants.RAT_BITE_DAMAGE <= 0) {
-            return 3.0;
-        }
-        if (info.getHealth() <= 30) {
-            // try to get rid of low hp rats
-            return 1.3;
-        }
-        if (info.getHealth() >= rc.getHealth()) {
-            // try to bring enemy rats into napping distance
-            return 1.2;
-        }
-        return 1;
     }
 
     public static int getCheeseNeeded(int damageBuff) {
@@ -494,5 +476,30616 @@ public class CombatStrategy extends Strategy {
             if (shouldFight(info)) return info;
         }
         return null;
+    }
+
+    private static int maxBite;
+    public static int getDamageFor(RobotInfo info) {
+        if (info.getType() != UnitType.BABY_RAT) return 10;
+        maxBite = getMaxBiteDamage();
+        if (maxBite == 10) return 10;
+        switch (rc.getHealth()) {
+            case 1 -> { return getDamageFor1(info.getHealth()); }
+            case 2 -> { return getDamageFor2(info.getHealth()); }
+            case 3 -> { return getDamageFor3(info.getHealth()); }
+            case 4 -> { return getDamageFor4(info.getHealth()); }
+            case 5 -> { return getDamageFor5(info.getHealth()); }
+            case 6 -> { return getDamageFor6(info.getHealth()); }
+            case 7 -> { return getDamageFor7(info.getHealth()); }
+            case 8 -> { return getDamageFor8(info.getHealth()); }
+            case 9 -> { return getDamageFor9(info.getHealth()); }
+            case 10 -> { return getDamageFor10(info.getHealth()); }
+            case 11 -> { return getDamageFor11(info.getHealth()); }
+            case 12 -> { return getDamageFor12(info.getHealth()); }
+            case 13 -> { return getDamageFor13(info.getHealth()); }
+            case 14 -> { return getDamageFor14(info.getHealth()); }
+            case 15 -> { return getDamageFor15(info.getHealth()); }
+            case 16 -> { return getDamageFor16(info.getHealth()); }
+            case 17 -> { return getDamageFor17(info.getHealth()); }
+            case 18 -> { return getDamageFor18(info.getHealth()); }
+            case 19 -> { return getDamageFor19(info.getHealth()); }
+            case 20 -> { return getDamageFor20(info.getHealth()); }
+            case 21 -> { return getDamageFor21(info.getHealth()); }
+            case 22 -> { return getDamageFor22(info.getHealth()); }
+            case 23 -> { return getDamageFor23(info.getHealth()); }
+            case 24 -> { return getDamageFor24(info.getHealth()); }
+            case 25 -> { return getDamageFor25(info.getHealth()); }
+            case 26 -> { return getDamageFor26(info.getHealth()); }
+            case 27 -> { return getDamageFor27(info.getHealth()); }
+            case 28 -> { return getDamageFor28(info.getHealth()); }
+            case 29 -> { return getDamageFor29(info.getHealth()); }
+            case 30 -> { return getDamageFor30(info.getHealth()); }
+            case 31 -> { return getDamageFor31(info.getHealth()); }
+            case 32 -> { return getDamageFor32(info.getHealth()); }
+            case 33 -> { return getDamageFor33(info.getHealth()); }
+            case 34 -> { return getDamageFor34(info.getHealth()); }
+            case 35 -> { return getDamageFor35(info.getHealth()); }
+            case 36 -> { return getDamageFor36(info.getHealth()); }
+            case 37 -> { return getDamageFor37(info.getHealth()); }
+            case 38 -> { return getDamageFor38(info.getHealth()); }
+            case 39 -> { return getDamageFor39(info.getHealth()); }
+            case 40 -> { return getDamageFor40(info.getHealth()); }
+            case 41 -> { return getDamageFor41(info.getHealth()); }
+            case 42 -> { return getDamageFor42(info.getHealth()); }
+            case 43 -> { return getDamageFor43(info.getHealth()); }
+            case 44 -> { return getDamageFor44(info.getHealth()); }
+            case 45 -> { return getDamageFor45(info.getHealth()); }
+            case 46 -> { return getDamageFor46(info.getHealth()); }
+            case 47 -> { return getDamageFor47(info.getHealth()); }
+            case 48 -> { return getDamageFor48(info.getHealth()); }
+            case 49 -> { return getDamageFor49(info.getHealth()); }
+            case 50 -> { return getDamageFor50(info.getHealth()); }
+            case 51 -> { return getDamageFor51(info.getHealth()); }
+            case 52 -> { return getDamageFor52(info.getHealth()); }
+            case 53 -> { return getDamageFor53(info.getHealth()); }
+            case 54 -> { return getDamageFor54(info.getHealth()); }
+            case 55 -> { return getDamageFor55(info.getHealth()); }
+            case 56 -> { return getDamageFor56(info.getHealth()); }
+            case 57 -> { return getDamageFor57(info.getHealth()); }
+            case 58 -> { return getDamageFor58(info.getHealth()); }
+            case 59 -> { return getDamageFor59(info.getHealth()); }
+            case 60 -> { return getDamageFor60(info.getHealth()); }
+            case 61 -> { return getDamageFor61(info.getHealth()); }
+            case 62 -> { return getDamageFor62(info.getHealth()); }
+            case 63 -> { return getDamageFor63(info.getHealth()); }
+            case 64 -> { return getDamageFor64(info.getHealth()); }
+            case 65 -> { return getDamageFor65(info.getHealth()); }
+            case 66 -> { return getDamageFor66(info.getHealth()); }
+            case 67 -> { return getDamageFor67(info.getHealth()); }
+            case 68 -> { return getDamageFor68(info.getHealth()); }
+            case 69 -> { return getDamageFor69(info.getHealth()); }
+            case 70 -> { return getDamageFor70(info.getHealth()); }
+            case 71 -> { return getDamageFor71(info.getHealth()); }
+            case 72 -> { return getDamageFor72(info.getHealth()); }
+            case 73 -> { return getDamageFor73(info.getHealth()); }
+            case 74 -> { return getDamageFor74(info.getHealth()); }
+            case 75 -> { return getDamageFor75(info.getHealth()); }
+            case 76 -> { return getDamageFor76(info.getHealth()); }
+            case 77 -> { return getDamageFor77(info.getHealth()); }
+            case 78 -> { return getDamageFor78(info.getHealth()); }
+            case 79 -> { return getDamageFor79(info.getHealth()); }
+            case 80 -> { return getDamageFor80(info.getHealth()); }
+            case 81 -> { return getDamageFor81(info.getHealth()); }
+            case 82 -> { return getDamageFor82(info.getHealth()); }
+            case 83 -> { return getDamageFor83(info.getHealth()); }
+            case 84 -> { return getDamageFor84(info.getHealth()); }
+            case 85 -> { return getDamageFor85(info.getHealth()); }
+            case 86 -> { return getDamageFor86(info.getHealth()); }
+            case 87 -> { return getDamageFor87(info.getHealth()); }
+            case 88 -> { return getDamageFor88(info.getHealth()); }
+            case 89 -> { return getDamageFor89(info.getHealth()); }
+            case 90 -> { return getDamageFor90(info.getHealth()); }
+            case 91 -> { return getDamageFor91(info.getHealth()); }
+            case 92 -> { return getDamageFor92(info.getHealth()); }
+            case 93 -> { return getDamageFor93(info.getHealth()); }
+            case 94 -> { return getDamageFor94(info.getHealth()); }
+            case 95 -> { return getDamageFor95(info.getHealth()); }
+            case 96 -> { return getDamageFor96(info.getHealth()); }
+            case 97 -> { return getDamageFor97(info.getHealth()); }
+            case 98 -> { return getDamageFor98(info.getHealth()); }
+            case 99 -> { return getDamageFor99(info.getHealth()); }
+            case 100 -> { return getDamageFor100(info.getHealth()); }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+
+    private static int getDamageFor1(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 12;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor2(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 12;
+            }
+            case 14 -> {
+ return 12;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor3(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 12;
+            }
+            case 14 -> {
+ return 12;
+            }
+            case 15 -> {
+ return 12;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor4(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 12;
+            }
+            case 14 -> {
+ return 12;
+            }
+            case 15 -> {
+ return 12;
+            }
+            case 16 -> {
+ return 12;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor5(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 12;
+            }
+            case 14 -> {
+ return 12;
+            }
+            case 15 -> {
+ return 12;
+            }
+            case 16 -> {
+ return 12;
+            }
+            case 17 -> {
+ return 12;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor6(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 12;
+            }
+            case 14 -> {
+ return 12;
+            }
+            case 15 -> {
+ return 12;
+            }
+            case 16 -> {
+ return 12;
+            }
+            case 17 -> {
+ return 12;
+            }
+            case 18 -> {
+ return 12;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor7(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 12;
+            }
+            case 14 -> {
+ return 12;
+            }
+            case 15 -> {
+ return 12;
+            }
+            case 16 -> {
+ return 12;
+            }
+            case 17 -> {
+ return 12;
+            }
+            case 18 -> {
+ return 12;
+            }
+            case 19 -> {
+ return 12;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor8(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 12;
+            }
+            case 14 -> {
+ return 12;
+            }
+            case 15 -> {
+ return 12;
+            }
+            case 16 -> {
+ return 12;
+            }
+            case 17 -> {
+ return 12;
+            }
+            case 18 -> {
+ return 12;
+            }
+            case 19 -> {
+ return 12;
+            }
+            case 20 -> {
+ return 12;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor9(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 12;
+            }
+            case 14 -> {
+ return 12;
+            }
+            case 15 -> {
+ return 12;
+            }
+            case 16 -> {
+ return 12;
+            }
+            case 17 -> {
+ return 12;
+            }
+            case 18 -> {
+ return 12;
+            }
+            case 19 -> {
+ return 12;
+            }
+            case 20 -> {
+ return 12;
+            }
+            case 21 -> {
+ return 12;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor10(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 12;
+            }
+            case 14 -> {
+ return 12;
+            }
+            case 15 -> {
+ return 12;
+            }
+            case 16 -> {
+ return 12;
+            }
+            case 17 -> {
+ return 12;
+            }
+            case 18 -> {
+ return 12;
+            }
+            case 19 -> {
+ return 12;
+            }
+            case 20 -> {
+ return 12;
+            }
+            case 21 -> {
+ return 12;
+            }
+            case 22 -> {
+ return 12;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor11(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 12;
+            }
+            case 14 -> {
+ return 12;
+            }
+            case 15 -> {
+ return 12;
+            }
+            case 16 -> {
+ return 12;
+            }
+            case 17 -> {
+ return 12;
+            }
+            case 18 -> {
+ return 12;
+            }
+            case 19 -> {
+ return 12;
+            }
+            case 20 -> {
+ return 12;
+            }
+            case 21 -> {
+ return 12;
+            }
+            case 22 -> {
+ return 12;
+            }
+            case 23 -> {
+ return 12;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor12(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 12;
+            }
+            case 14 -> {
+ return 12;
+            }
+            case 15 -> {
+ return 12;
+            }
+            case 16 -> {
+ return 12;
+            }
+            case 17 -> {
+ return 12;
+            }
+            case 18 -> {
+ return 12;
+            }
+            case 19 -> {
+ return 12;
+            }
+            case 20 -> {
+ return 12;
+            }
+            case 21 -> {
+ return 12;
+            }
+            case 22 -> {
+ return 12;
+            }
+            case 23 -> {
+ return 12;
+            }
+            case 24 -> {
+ return 12;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor13(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 12;
+            }
+            case 14 -> {
+ return 12;
+            }
+            case 15 -> {
+ return 12;
+            }
+            case 16 -> {
+ return 12;
+            }
+            case 17 -> {
+ return 12;
+            }
+            case 18 -> {
+ return 12;
+            }
+            case 19 -> {
+ return 12;
+            }
+            case 20 -> {
+ return 12;
+            }
+            case 21 -> {
+ return 12;
+            }
+            case 22 -> {
+ return 12;
+            }
+            case 23 -> {
+ return 12;
+            }
+            case 24 -> {
+ return 12;
+            }
+            case 25 -> {
+ return 12;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor14(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 12;
+            }
+            case 14 -> {
+ return 12;
+            }
+            case 15 -> {
+ return 12;
+            }
+            case 16 -> {
+ return 12;
+            }
+            case 17 -> {
+ return 12;
+            }
+            case 18 -> {
+ return 12;
+            }
+            case 19 -> {
+ return 12;
+            }
+            case 20 -> {
+ return 12;
+            }
+            case 21 -> {
+ return 12;
+            }
+            case 22 -> {
+ return 12;
+            }
+            case 23 -> {
+ return 12;
+            }
+            case 24 -> {
+ return 12;
+            }
+            case 25 -> {
+ return 12;
+            }
+            case 26 -> {
+ return 12;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor15(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 12;
+            }
+            case 14 -> {
+ return 12;
+            }
+            case 15 -> {
+ return 12;
+            }
+            case 16 -> {
+ return 12;
+            }
+            case 17 -> {
+ return 12;
+            }
+            case 18 -> {
+ return 12;
+            }
+            case 19 -> {
+ return 12;
+            }
+            case 20 -> {
+ return 12;
+            }
+            case 21 -> {
+ return 12;
+            }
+            case 22 -> {
+ return 12;
+            }
+            case 23 -> {
+ return 12;
+            }
+            case 24 -> {
+ return 12;
+            }
+            case 25 -> {
+ return 12;
+            }
+            case 26 -> {
+ return 12;
+            }
+            case 27 -> {
+ return 12;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor16(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 12;
+            }
+            case 14 -> {
+ return 12;
+            }
+            case 15 -> {
+ return 12;
+            }
+            case 16 -> {
+ return 12;
+            }
+            case 17 -> {
+ return 12;
+            }
+            case 18 -> {
+ return 12;
+            }
+            case 19 -> {
+ return 12;
+            }
+            case 20 -> {
+ return 12;
+            }
+            case 21 -> {
+ return 12;
+            }
+            case 22 -> {
+ return 12;
+            }
+            case 23 -> {
+ return 12;
+            }
+            case 24 -> {
+ return 12;
+            }
+            case 25 -> {
+ return 12;
+            }
+            case 26 -> {
+ return 12;
+            }
+            case 27 -> {
+ return 12;
+            }
+            case 28 -> {
+ return 12;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor17(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 12;
+            }
+            case 14 -> {
+ return 12;
+            }
+            case 15 -> {
+ return 12;
+            }
+            case 16 -> {
+ return 12;
+            }
+            case 17 -> {
+ return 12;
+            }
+            case 18 -> {
+ return 12;
+            }
+            case 19 -> {
+ return 12;
+            }
+            case 20 -> {
+ return 12;
+            }
+            case 21 -> {
+ return 12;
+            }
+            case 22 -> {
+ return 12;
+            }
+            case 23 -> {
+ return 12;
+            }
+            case 24 -> {
+ return 12;
+            }
+            case 25 -> {
+ return 12;
+            }
+            case 26 -> {
+ return 12;
+            }
+            case 27 -> {
+ return 12;
+            }
+            case 28 -> {
+ return 12;
+            }
+            case 29 -> {
+ return 12;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor18(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 12;
+            }
+            case 14 -> {
+ return 12;
+            }
+            case 15 -> {
+ return 12;
+            }
+            case 16 -> {
+ return 12;
+            }
+            case 17 -> {
+ return 12;
+            }
+            case 18 -> {
+ return 12;
+            }
+            case 19 -> {
+ return 12;
+            }
+            case 20 -> {
+ return 12;
+            }
+            case 21 -> {
+ return 12;
+            }
+            case 22 -> {
+ return 12;
+            }
+            case 23 -> {
+ return 12;
+            }
+            case 24 -> {
+ return 12;
+            }
+            case 25 -> {
+ return 12;
+            }
+            case 26 -> {
+ return 12;
+            }
+            case 27 -> {
+ return 12;
+            }
+            case 28 -> {
+ return 12;
+            }
+            case 29 -> {
+ return 12;
+            }
+            case 30 -> {
+ return 12;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor19(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 12;
+            }
+            case 14 -> {
+ return 12;
+            }
+            case 15 -> {
+ return 12;
+            }
+            case 16 -> {
+ return 12;
+            }
+            case 17 -> {
+ return 12;
+            }
+            case 18 -> {
+ return 12;
+            }
+            case 19 -> {
+ return 12;
+            }
+            case 20 -> {
+ return 12;
+            }
+            case 21 -> {
+ return 12;
+            }
+            case 22 -> {
+ return 12;
+            }
+            case 23 -> {
+ return 12;
+            }
+            case 24 -> {
+ return 12;
+            }
+            case 25 -> {
+ return 12;
+            }
+            case 26 -> {
+ return 12;
+            }
+            case 27 -> {
+ return 12;
+            }
+            case 28 -> {
+ return 12;
+            }
+            case 29 -> {
+ return 12;
+            }
+            case 30 -> {
+ return 12;
+            }
+            case 31 -> {
+ return 12;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor20(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 12;
+            }
+            case 14 -> {
+ return 12;
+            }
+            case 15 -> {
+ return 12;
+            }
+            case 16 -> {
+ return 12;
+            }
+            case 17 -> {
+ return 12;
+            }
+            case 18 -> {
+ return 12;
+            }
+            case 19 -> {
+ return 12;
+            }
+            case 20 -> {
+ return 12;
+            }
+            case 21 -> {
+ return 12;
+            }
+            case 22 -> {
+ return 12;
+            }
+            case 23 -> {
+ return 12;
+            }
+            case 24 -> {
+ return 12;
+            }
+            case 25 -> {
+ return 12;
+            }
+            case 26 -> {
+ return 12;
+            }
+            case 27 -> {
+ return 12;
+            }
+            case 28 -> {
+ return 12;
+            }
+            case 29 -> {
+ return 12;
+            }
+            case 30 -> {
+ return 12;
+            }
+            case 31 -> {
+ return 12;
+            }
+            case 32 -> {
+ return 12;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor21(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 12;
+            }
+            case 14 -> {
+ return 12;
+            }
+            case 15 -> {
+ return 12;
+            }
+            case 16 -> {
+ return 12;
+            }
+            case 17 -> {
+ return 12;
+            }
+            case 18 -> {
+ return 12;
+            }
+            case 19 -> {
+ return 12;
+            }
+            case 20 -> {
+ return 12;
+            }
+            case 21 -> {
+ return 12;
+            }
+            case 22 -> {
+ return 12;
+            }
+            case 23 -> {
+ return 12;
+            }
+            case 24 -> {
+ return 12;
+            }
+            case 25 -> {
+ return 12;
+            }
+            case 26 -> {
+ return 12;
+            }
+            case 27 -> {
+ return 12;
+            }
+            case 28 -> {
+ return 12;
+            }
+            case 29 -> {
+ return 12;
+            }
+            case 30 -> {
+ return 12;
+            }
+            case 31 -> {
+ return 12;
+            }
+            case 32 -> {
+ return 12;
+            }
+            case 33 -> {
+ return 12;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor22(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 12;
+            }
+            case 14 -> {
+ return 12;
+            }
+            case 15 -> {
+ return 12;
+            }
+            case 16 -> {
+ return 12;
+            }
+            case 17 -> {
+ return 12;
+            }
+            case 18 -> {
+ return 12;
+            }
+            case 19 -> {
+ return 12;
+            }
+            case 20 -> {
+ return 12;
+            }
+            case 21 -> {
+ return 12;
+            }
+            case 22 -> {
+ return 12;
+            }
+            case 23 -> {
+ return 12;
+            }
+            case 24 -> {
+ return 12;
+            }
+            case 25 -> {
+ return 12;
+            }
+            case 26 -> {
+ return 12;
+            }
+            case 27 -> {
+ return 12;
+            }
+            case 28 -> {
+ return 12;
+            }
+            case 29 -> {
+ return 12;
+            }
+            case 30 -> {
+ return 12;
+            }
+            case 31 -> {
+ return 12;
+            }
+            case 32 -> {
+ return 12;
+            }
+            case 33 -> {
+ return 12;
+            }
+            case 34 -> {
+ return 12;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor23(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 12;
+            }
+            case 14 -> {
+ return 12;
+            }
+            case 15 -> {
+ return 12;
+            }
+            case 16 -> {
+ return 12;
+            }
+            case 17 -> {
+ return 12;
+            }
+            case 18 -> {
+ return 12;
+            }
+            case 19 -> {
+ return 12;
+            }
+            case 20 -> {
+ return 12;
+            }
+            case 21 -> {
+ return 12;
+            }
+            case 22 -> {
+ return 12;
+            }
+            case 23 -> {
+ return 12;
+            }
+            case 24 -> {
+ return 12;
+            }
+            case 25 -> {
+ return 12;
+            }
+            case 26 -> {
+ return 12;
+            }
+            case 27 -> {
+ return 12;
+            }
+            case 28 -> {
+ return 12;
+            }
+            case 29 -> {
+ return 12;
+            }
+            case 30 -> {
+ return 12;
+            }
+            case 31 -> {
+ return 12;
+            }
+            case 32 -> {
+ return 12;
+            }
+            case 33 -> {
+ return 12;
+            }
+            case 34 -> {
+ return 12;
+            }
+            case 35 -> {
+ return 12;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor24(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 12;
+            }
+            case 14 -> {
+ return 12;
+            }
+            case 15 -> {
+ return 12;
+            }
+            case 16 -> {
+ return 12;
+            }
+            case 17 -> {
+ return 12;
+            }
+            case 18 -> {
+ return 12;
+            }
+            case 19 -> {
+ return 12;
+            }
+            case 20 -> {
+ return 12;
+            }
+            case 21 -> {
+ return 12;
+            }
+            case 22 -> {
+ return 12;
+            }
+            case 23 -> {
+ return 12;
+            }
+            case 24 -> {
+ return 12;
+            }
+            case 25 -> {
+ return 12;
+            }
+            case 26 -> {
+ return 12;
+            }
+            case 27 -> {
+ return 12;
+            }
+            case 28 -> {
+ return 12;
+            }
+            case 29 -> {
+ return 12;
+            }
+            case 30 -> {
+ return 12;
+            }
+            case 31 -> {
+ return 12;
+            }
+            case 32 -> {
+ return 12;
+            }
+            case 33 -> {
+ return 12;
+            }
+            case 34 -> {
+ return 12;
+            }
+            case 35 -> {
+ return 12;
+            }
+            case 36 -> {
+ return 12;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor25(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 12;
+            }
+            case 14 -> {
+ return 12;
+            }
+            case 15 -> {
+ return 12;
+            }
+            case 16 -> {
+ return 12;
+            }
+            case 17 -> {
+ return 12;
+            }
+            case 18 -> {
+ return 12;
+            }
+            case 19 -> {
+ return 12;
+            }
+            case 20 -> {
+ return 12;
+            }
+            case 21 -> {
+ return 12;
+            }
+            case 22 -> {
+ return 12;
+            }
+            case 23 -> {
+ return 12;
+            }
+            case 24 -> {
+ return 12;
+            }
+            case 25 -> {
+ return 12;
+            }
+            case 26 -> {
+ return 12;
+            }
+            case 27 -> {
+ return 12;
+            }
+            case 28 -> {
+ return 12;
+            }
+            case 29 -> {
+ return 12;
+            }
+            case 30 -> {
+ return 12;
+            }
+            case 31 -> {
+ return 12;
+            }
+            case 32 -> {
+ return 12;
+            }
+            case 33 -> {
+ return 12;
+            }
+            case 34 -> {
+ return 12;
+            }
+            case 35 -> {
+ return 12;
+            }
+            case 36 -> {
+ return 12;
+            }
+            case 37 -> {
+ return 12;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor26(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 12;
+            }
+            case 15 -> {
+ return 12;
+            }
+            case 16 -> {
+ return 12;
+            }
+            case 17 -> {
+ return 12;
+            }
+            case 18 -> {
+ return 12;
+            }
+            case 19 -> {
+ return 12;
+            }
+            case 20 -> {
+ return 12;
+            }
+            case 21 -> {
+ return 12;
+            }
+            case 22 -> {
+ return 12;
+            }
+            case 23 -> {
+ return 12;
+            }
+            case 24 -> {
+ return 12;
+            }
+            case 25 -> {
+ return 12;
+            }
+            case 26 -> {
+ return 12;
+            }
+            case 27 -> {
+ return 12;
+            }
+            case 28 -> {
+ return 12;
+            }
+            case 29 -> {
+ return 12;
+            }
+            case 30 -> {
+ return 12;
+            }
+            case 31 -> {
+ return 12;
+            }
+            case 32 -> {
+ return 12;
+            }
+            case 33 -> {
+ return 12;
+            }
+            case 34 -> {
+ return 12;
+            }
+            case 35 -> {
+ return 12;
+            }
+            case 36 -> {
+ return 12;
+            }
+            case 37 -> {
+ return 12;
+            }
+            case 38 -> {
+ return 12;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor27(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 12;
+            }
+            case 16 -> {
+ return 12;
+            }
+            case 17 -> {
+ return 12;
+            }
+            case 18 -> {
+ return 12;
+            }
+            case 19 -> {
+ return 12;
+            }
+            case 20 -> {
+ return 12;
+            }
+            case 21 -> {
+ return 12;
+            }
+            case 22 -> {
+ return 12;
+            }
+            case 23 -> {
+ return 12;
+            }
+            case 24 -> {
+ return 12;
+            }
+            case 25 -> {
+ return 12;
+            }
+            case 26 -> {
+ return 12;
+            }
+            case 27 -> {
+ return 12;
+            }
+            case 28 -> {
+ return 12;
+            }
+            case 29 -> {
+ return 12;
+            }
+            case 30 -> {
+ return 12;
+            }
+            case 31 -> {
+ return 12;
+            }
+            case 32 -> {
+ return 12;
+            }
+            case 33 -> {
+ return 12;
+            }
+            case 34 -> {
+ return 12;
+            }
+            case 35 -> {
+ return 12;
+            }
+            case 36 -> {
+ return 12;
+            }
+            case 37 -> {
+ return 12;
+            }
+            case 38 -> {
+ return 12;
+            }
+            case 39 -> {
+ return 12;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor28(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 12;
+            }
+            case 17 -> {
+ return 12;
+            }
+            case 18 -> {
+ return 12;
+            }
+            case 19 -> {
+ return 12;
+            }
+            case 20 -> {
+ return 12;
+            }
+            case 21 -> {
+ return 12;
+            }
+            case 22 -> {
+ return 12;
+            }
+            case 23 -> {
+ return 12;
+            }
+            case 24 -> {
+ return 12;
+            }
+            case 25 -> {
+ return 12;
+            }
+            case 26 -> {
+ return 12;
+            }
+            case 27 -> {
+ return 12;
+            }
+            case 28 -> {
+ return 12;
+            }
+            case 29 -> {
+ return 12;
+            }
+            case 30 -> {
+ return 12;
+            }
+            case 31 -> {
+ return 12;
+            }
+            case 32 -> {
+ return 12;
+            }
+            case 33 -> {
+ return 12;
+            }
+            case 34 -> {
+ return 12;
+            }
+            case 35 -> {
+ return 12;
+            }
+            case 36 -> {
+ return 12;
+            }
+            case 37 -> {
+ return 12;
+            }
+            case 38 -> {
+ return 12;
+            }
+            case 39 -> {
+ return 12;
+            }
+            case 40 -> {
+ return 12;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor29(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 12;
+            }
+            case 18 -> {
+ return 12;
+            }
+            case 19 -> {
+ return 12;
+            }
+            case 20 -> {
+ return 12;
+            }
+            case 21 -> {
+ return 12;
+            }
+            case 22 -> {
+ return 12;
+            }
+            case 23 -> {
+ return 12;
+            }
+            case 24 -> {
+ return 12;
+            }
+            case 25 -> {
+ return 12;
+            }
+            case 26 -> {
+ return 12;
+            }
+            case 27 -> {
+ return 12;
+            }
+            case 28 -> {
+ return 12;
+            }
+            case 29 -> {
+ return 12;
+            }
+            case 30 -> {
+ return 12;
+            }
+            case 31 -> {
+ return 12;
+            }
+            case 32 -> {
+ return 12;
+            }
+            case 33 -> {
+ return 12;
+            }
+            case 34 -> {
+ return 12;
+            }
+            case 35 -> {
+ return 12;
+            }
+            case 36 -> {
+ return 12;
+            }
+            case 37 -> {
+ return 12;
+            }
+            case 38 -> {
+ return 12;
+            }
+            case 39 -> {
+ return 12;
+            }
+            case 40 -> {
+ return 12;
+            }
+            case 41 -> {
+ return 12;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor30(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 12;
+            }
+            case 19 -> {
+ return 12;
+            }
+            case 20 -> {
+ return 12;
+            }
+            case 21 -> {
+ return 12;
+            }
+            case 22 -> {
+ return 12;
+            }
+            case 23 -> {
+ return 12;
+            }
+            case 24 -> {
+ return 12;
+            }
+            case 25 -> {
+ return 12;
+            }
+            case 26 -> {
+ return 12;
+            }
+            case 27 -> {
+ return 12;
+            }
+            case 28 -> {
+ return 12;
+            }
+            case 29 -> {
+ return 12;
+            }
+            case 30 -> {
+ return 12;
+            }
+            case 31 -> {
+ return 12;
+            }
+            case 32 -> {
+ return 12;
+            }
+            case 33 -> {
+ return 12;
+            }
+            case 34 -> {
+ return 12;
+            }
+            case 35 -> {
+ return 12;
+            }
+            case 36 -> {
+ return 12;
+            }
+            case 37 -> {
+ return 12;
+            }
+            case 38 -> {
+ return 12;
+            }
+            case 39 -> {
+ return 12;
+            }
+            case 40 -> {
+ return 12;
+            }
+            case 41 -> {
+ return 12;
+            }
+            case 42 -> {
+ return 12;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor31(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 12;
+            }
+            case 20 -> {
+ return 12;
+            }
+            case 21 -> {
+ return 12;
+            }
+            case 22 -> {
+ return 12;
+            }
+            case 23 -> {
+ return 12;
+            }
+            case 24 -> {
+ return 12;
+            }
+            case 25 -> {
+ return 12;
+            }
+            case 26 -> {
+ return 12;
+            }
+            case 27 -> {
+ return 12;
+            }
+            case 28 -> {
+ return 12;
+            }
+            case 29 -> {
+ return 12;
+            }
+            case 30 -> {
+ return 12;
+            }
+            case 31 -> {
+ return 12;
+            }
+            case 32 -> {
+ return 12;
+            }
+            case 33 -> {
+ return 12;
+            }
+            case 34 -> {
+ return 12;
+            }
+            case 35 -> {
+ return 12;
+            }
+            case 36 -> {
+ return 12;
+            }
+            case 37 -> {
+ return 12;
+            }
+            case 38 -> {
+ return 12;
+            }
+            case 39 -> {
+ return 12;
+            }
+            case 40 -> {
+ return 12;
+            }
+            case 41 -> {
+ return 12;
+            }
+            case 42 -> {
+ return 12;
+            }
+            case 43 -> {
+ return 12;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor32(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 12;
+            }
+            case 21 -> {
+ return 12;
+            }
+            case 22 -> {
+ return 12;
+            }
+            case 23 -> {
+ return 12;
+            }
+            case 24 -> {
+ return 12;
+            }
+            case 25 -> {
+ return 12;
+            }
+            case 26 -> {
+ return 12;
+            }
+            case 27 -> {
+ return 12;
+            }
+            case 28 -> {
+ return 12;
+            }
+            case 29 -> {
+ return 12;
+            }
+            case 30 -> {
+ return 12;
+            }
+            case 31 -> {
+ return 12;
+            }
+            case 32 -> {
+ return 12;
+            }
+            case 33 -> {
+ return 12;
+            }
+            case 34 -> {
+ return 12;
+            }
+            case 35 -> {
+ return 12;
+            }
+            case 36 -> {
+ return 12;
+            }
+            case 37 -> {
+ return 12;
+            }
+            case 38 -> {
+ return 12;
+            }
+            case 39 -> {
+ return 12;
+            }
+            case 40 -> {
+ return 12;
+            }
+            case 41 -> {
+ return 12;
+            }
+            case 42 -> {
+ return 12;
+            }
+            case 43 -> {
+ return 12;
+            }
+            case 44 -> {
+ return 12;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor33(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 12;
+            }
+            case 22 -> {
+ return 12;
+            }
+            case 23 -> {
+ return 12;
+            }
+            case 24 -> {
+ return 12;
+            }
+            case 25 -> {
+ return 12;
+            }
+            case 26 -> {
+ return 12;
+            }
+            case 27 -> {
+ return 12;
+            }
+            case 28 -> {
+ return 12;
+            }
+            case 29 -> {
+ return 12;
+            }
+            case 30 -> {
+ return 12;
+            }
+            case 31 -> {
+ return 12;
+            }
+            case 32 -> {
+ return 12;
+            }
+            case 33 -> {
+ return 12;
+            }
+            case 34 -> {
+ return 12;
+            }
+            case 35 -> {
+ return 12;
+            }
+            case 36 -> {
+ return 12;
+            }
+            case 37 -> {
+ return 12;
+            }
+            case 38 -> {
+ return 12;
+            }
+            case 39 -> {
+ return 12;
+            }
+            case 40 -> {
+ return 12;
+            }
+            case 41 -> {
+ return 12;
+            }
+            case 42 -> {
+ return 12;
+            }
+            case 43 -> {
+ return 12;
+            }
+            case 44 -> {
+ return 12;
+            }
+            case 45 -> {
+ return 12;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor34(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 12;
+            }
+            case 23 -> {
+ return 12;
+            }
+            case 24 -> {
+ return 12;
+            }
+            case 25 -> {
+ return 12;
+            }
+            case 26 -> {
+ return 12;
+            }
+            case 27 -> {
+ return 12;
+            }
+            case 28 -> {
+ return 12;
+            }
+            case 29 -> {
+ return 12;
+            }
+            case 30 -> {
+ return 12;
+            }
+            case 31 -> {
+ return 12;
+            }
+            case 32 -> {
+ return 12;
+            }
+            case 33 -> {
+ return 12;
+            }
+            case 34 -> {
+ return 12;
+            }
+            case 35 -> {
+ return 12;
+            }
+            case 36 -> {
+ return 12;
+            }
+            case 37 -> {
+ return 12;
+            }
+            case 38 -> {
+ return 12;
+            }
+            case 39 -> {
+ return 12;
+            }
+            case 40 -> {
+ return 12;
+            }
+            case 41 -> {
+ return 12;
+            }
+            case 42 -> {
+ return 12;
+            }
+            case 43 -> {
+ return 12;
+            }
+            case 44 -> {
+ return 12;
+            }
+            case 45 -> {
+ return 12;
+            }
+            case 46 -> {
+ return 12;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor35(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 12;
+            }
+            case 24 -> {
+ return 12;
+            }
+            case 25 -> {
+ return 12;
+            }
+            case 26 -> {
+ return 12;
+            }
+            case 27 -> {
+ return 12;
+            }
+            case 28 -> {
+ return 12;
+            }
+            case 29 -> {
+ return 12;
+            }
+            case 30 -> {
+ return 12;
+            }
+            case 31 -> {
+ return 12;
+            }
+            case 32 -> {
+ return 12;
+            }
+            case 33 -> {
+ return 12;
+            }
+            case 34 -> {
+ return 12;
+            }
+            case 35 -> {
+ return 12;
+            }
+            case 36 -> {
+ return 12;
+            }
+            case 37 -> {
+ return 12;
+            }
+            case 38 -> {
+ return 12;
+            }
+            case 39 -> {
+ return 12;
+            }
+            case 40 -> {
+ return 12;
+            }
+            case 41 -> {
+ return 12;
+            }
+            case 42 -> {
+ return 12;
+            }
+            case 43 -> {
+ return 12;
+            }
+            case 44 -> {
+ return 12;
+            }
+            case 45 -> {
+ return 12;
+            }
+            case 46 -> {
+ return 12;
+            }
+            case 47 -> {
+ return 12;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor36(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 12;
+            }
+            case 25 -> {
+ return 12;
+            }
+            case 26 -> {
+ return 12;
+            }
+            case 27 -> {
+ return 12;
+            }
+            case 28 -> {
+ return 12;
+            }
+            case 29 -> {
+ return 12;
+            }
+            case 30 -> {
+ return 12;
+            }
+            case 31 -> {
+ return 12;
+            }
+            case 32 -> {
+ return 12;
+            }
+            case 33 -> {
+ return 12;
+            }
+            case 34 -> {
+ return 12;
+            }
+            case 35 -> {
+ return 12;
+            }
+            case 36 -> {
+ return 12;
+            }
+            case 37 -> {
+ return 12;
+            }
+            case 38 -> {
+ return 12;
+            }
+            case 39 -> {
+ return 12;
+            }
+            case 40 -> {
+ return 12;
+            }
+            case 41 -> {
+ return 12;
+            }
+            case 42 -> {
+ return 12;
+            }
+            case 43 -> {
+ return 12;
+            }
+            case 44 -> {
+ return 12;
+            }
+            case 45 -> {
+ return 12;
+            }
+            case 46 -> {
+ return 12;
+            }
+            case 47 -> {
+ return 12;
+            }
+            case 48 -> {
+ return 12;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor37(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 12;
+            }
+            case 26 -> {
+ return 12;
+            }
+            case 27 -> {
+ return 12;
+            }
+            case 28 -> {
+ return 12;
+            }
+            case 29 -> {
+ return 12;
+            }
+            case 30 -> {
+ return 12;
+            }
+            case 31 -> {
+ return 12;
+            }
+            case 32 -> {
+ return 12;
+            }
+            case 33 -> {
+ return 12;
+            }
+            case 34 -> {
+ return 12;
+            }
+            case 35 -> {
+ return 12;
+            }
+            case 36 -> {
+ return 12;
+            }
+            case 37 -> {
+ return 12;
+            }
+            case 38 -> {
+ return 12;
+            }
+            case 39 -> {
+ return 12;
+            }
+            case 40 -> {
+ return 12;
+            }
+            case 41 -> {
+ return 12;
+            }
+            case 42 -> {
+ return 12;
+            }
+            case 43 -> {
+ return 12;
+            }
+            case 44 -> {
+ return 12;
+            }
+            case 45 -> {
+ return 12;
+            }
+            case 46 -> {
+ return 12;
+            }
+            case 47 -> {
+ return 12;
+            }
+            case 48 -> {
+ return 12;
+            }
+            case 49 -> {
+ return 12;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor38(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 12;
+            }
+            case 27 -> {
+ return 12;
+            }
+            case 28 -> {
+ return 12;
+            }
+            case 29 -> {
+ return 12;
+            }
+            case 30 -> {
+ return 12;
+            }
+            case 31 -> {
+ return 12;
+            }
+            case 32 -> {
+ return 12;
+            }
+            case 33 -> {
+ return 12;
+            }
+            case 34 -> {
+ return 12;
+            }
+            case 35 -> {
+ return 12;
+            }
+            case 36 -> {
+ return 12;
+            }
+            case 37 -> {
+ return 12;
+            }
+            case 38 -> {
+ return 12;
+            }
+            case 39 -> {
+ return 12;
+            }
+            case 40 -> {
+ return 12;
+            }
+            case 41 -> {
+ return 12;
+            }
+            case 42 -> {
+ return 12;
+            }
+            case 43 -> {
+ return 12;
+            }
+            case 44 -> {
+ return 12;
+            }
+            case 45 -> {
+ return 12;
+            }
+            case 46 -> {
+ return 12;
+            }
+            case 47 -> {
+ return 12;
+            }
+            case 48 -> {
+ return 12;
+            }
+            case 49 -> {
+ return 12;
+            }
+            case 50 -> {
+ return 12;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor39(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 12;
+            }
+            case 28 -> {
+ return 12;
+            }
+            case 29 -> {
+ return 12;
+            }
+            case 30 -> {
+ return 12;
+            }
+            case 31 -> {
+ return 12;
+            }
+            case 32 -> {
+ return 12;
+            }
+            case 33 -> {
+ return 12;
+            }
+            case 34 -> {
+ return 12;
+            }
+            case 35 -> {
+ return 12;
+            }
+            case 36 -> {
+ return 12;
+            }
+            case 37 -> {
+ return 12;
+            }
+            case 38 -> {
+ return 12;
+            }
+            case 39 -> {
+ return 12;
+            }
+            case 40 -> {
+ return 12;
+            }
+            case 41 -> {
+ return 12;
+            }
+            case 42 -> {
+ return 12;
+            }
+            case 43 -> {
+ return 12;
+            }
+            case 44 -> {
+ return 12;
+            }
+            case 45 -> {
+ return 12;
+            }
+            case 46 -> {
+ return 12;
+            }
+            case 47 -> {
+ return 12;
+            }
+            case 48 -> {
+ return 12;
+            }
+            case 49 -> {
+ return 12;
+            }
+            case 50 -> {
+ return 12;
+            }
+            case 51 -> {
+ return 12;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor40(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 12;
+            }
+            case 29 -> {
+ return 12;
+            }
+            case 30 -> {
+ return 12;
+            }
+            case 31 -> {
+ return 12;
+            }
+            case 32 -> {
+ return 12;
+            }
+            case 33 -> {
+ return 12;
+            }
+            case 34 -> {
+ return 12;
+            }
+            case 35 -> {
+ return 12;
+            }
+            case 36 -> {
+ return 12;
+            }
+            case 37 -> {
+ return 12;
+            }
+            case 38 -> {
+ return 12;
+            }
+            case 39 -> {
+ return 12;
+            }
+            case 40 -> {
+ return 12;
+            }
+            case 41 -> {
+ return 12;
+            }
+            case 42 -> {
+ return 12;
+            }
+            case 43 -> {
+ return 12;
+            }
+            case 44 -> {
+ return 12;
+            }
+            case 45 -> {
+ return 12;
+            }
+            case 46 -> {
+ return 12;
+            }
+            case 47 -> {
+ return 12;
+            }
+            case 48 -> {
+ return 12;
+            }
+            case 49 -> {
+ return 12;
+            }
+            case 50 -> {
+ return 12;
+            }
+            case 51 -> {
+ return 12;
+            }
+            case 52 -> {
+ return 12;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor41(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 12;
+            }
+            case 30 -> {
+ return 12;
+            }
+            case 31 -> {
+ return 12;
+            }
+            case 32 -> {
+ return 12;
+            }
+            case 33 -> {
+ return 12;
+            }
+            case 34 -> {
+ return 12;
+            }
+            case 35 -> {
+ return 12;
+            }
+            case 36 -> {
+ return 12;
+            }
+            case 37 -> {
+ return 12;
+            }
+            case 38 -> {
+ return 12;
+            }
+            case 39 -> {
+ return 12;
+            }
+            case 40 -> {
+ return 12;
+            }
+            case 41 -> {
+ return 12;
+            }
+            case 42 -> {
+ return 12;
+            }
+            case 43 -> {
+ return 12;
+            }
+            case 44 -> {
+ return 12;
+            }
+            case 45 -> {
+ return 12;
+            }
+            case 46 -> {
+ return 12;
+            }
+            case 47 -> {
+ return 12;
+            }
+            case 48 -> {
+ return 12;
+            }
+            case 49 -> {
+ return 12;
+            }
+            case 50 -> {
+ return 12;
+            }
+            case 51 -> {
+ return 12;
+            }
+            case 52 -> {
+ return 12;
+            }
+            case 53 -> {
+ return 12;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor42(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 12;
+            }
+            case 31 -> {
+ return 12;
+            }
+            case 32 -> {
+ return 12;
+            }
+            case 33 -> {
+ return 12;
+            }
+            case 34 -> {
+ return 12;
+            }
+            case 35 -> {
+ return 12;
+            }
+            case 36 -> {
+ return 12;
+            }
+            case 37 -> {
+ return 12;
+            }
+            case 38 -> {
+ return 12;
+            }
+            case 39 -> {
+ return 12;
+            }
+            case 40 -> {
+ return 12;
+            }
+            case 41 -> {
+ return 12;
+            }
+            case 42 -> {
+ return 12;
+            }
+            case 43 -> {
+ return 12;
+            }
+            case 44 -> {
+ return 12;
+            }
+            case 45 -> {
+ return 12;
+            }
+            case 46 -> {
+ return 12;
+            }
+            case 47 -> {
+ return 12;
+            }
+            case 48 -> {
+ return 12;
+            }
+            case 49 -> {
+ return 12;
+            }
+            case 50 -> {
+ return 12;
+            }
+            case 51 -> {
+ return 12;
+            }
+            case 52 -> {
+ return 12;
+            }
+            case 53 -> {
+ return 12;
+            }
+            case 54 -> {
+ return 12;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor43(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 12;
+            }
+            case 32 -> {
+ return 12;
+            }
+            case 33 -> {
+ return 12;
+            }
+            case 34 -> {
+ return 12;
+            }
+            case 35 -> {
+ return 12;
+            }
+            case 36 -> {
+ return 12;
+            }
+            case 37 -> {
+ return 12;
+            }
+            case 38 -> {
+ return 12;
+            }
+            case 39 -> {
+ return 12;
+            }
+            case 40 -> {
+ return 12;
+            }
+            case 41 -> {
+ return 12;
+            }
+            case 42 -> {
+ return 12;
+            }
+            case 43 -> {
+ return 12;
+            }
+            case 44 -> {
+ return 12;
+            }
+            case 45 -> {
+ return 12;
+            }
+            case 46 -> {
+ return 12;
+            }
+            case 47 -> {
+ return 12;
+            }
+            case 48 -> {
+ return 12;
+            }
+            case 49 -> {
+ return 12;
+            }
+            case 50 -> {
+ return 12;
+            }
+            case 51 -> {
+ return 12;
+            }
+            case 52 -> {
+ return 12;
+            }
+            case 53 -> {
+ return 12;
+            }
+            case 54 -> {
+ return 12;
+            }
+            case 55 -> {
+ return 12;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor44(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 12;
+            }
+            case 33 -> {
+ return 12;
+            }
+            case 34 -> {
+ return 12;
+            }
+            case 35 -> {
+ return 12;
+            }
+            case 36 -> {
+ return 12;
+            }
+            case 37 -> {
+ return 12;
+            }
+            case 38 -> {
+ return 12;
+            }
+            case 39 -> {
+ return 12;
+            }
+            case 40 -> {
+ return 12;
+            }
+            case 41 -> {
+ return 12;
+            }
+            case 42 -> {
+ return 12;
+            }
+            case 43 -> {
+ return 12;
+            }
+            case 44 -> {
+ return 12;
+            }
+            case 45 -> {
+ return 12;
+            }
+            case 46 -> {
+ return 12;
+            }
+            case 47 -> {
+ return 12;
+            }
+            case 48 -> {
+ return 12;
+            }
+            case 49 -> {
+ return 12;
+            }
+            case 50 -> {
+ return 12;
+            }
+            case 51 -> {
+ return 12;
+            }
+            case 52 -> {
+ return 12;
+            }
+            case 53 -> {
+ return 12;
+            }
+            case 54 -> {
+ return 12;
+            }
+            case 55 -> {
+ return 12;
+            }
+            case 56 -> {
+ return 12;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor45(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 12;
+            }
+            case 34 -> {
+ return 12;
+            }
+            case 35 -> {
+ return 12;
+            }
+            case 36 -> {
+ return 12;
+            }
+            case 37 -> {
+ return 12;
+            }
+            case 38 -> {
+ return 12;
+            }
+            case 39 -> {
+ return 12;
+            }
+            case 40 -> {
+ return 12;
+            }
+            case 41 -> {
+ return 12;
+            }
+            case 42 -> {
+ return 12;
+            }
+            case 43 -> {
+ return 12;
+            }
+            case 44 -> {
+ return 12;
+            }
+            case 45 -> {
+ return 12;
+            }
+            case 46 -> {
+ return 12;
+            }
+            case 47 -> {
+ return 12;
+            }
+            case 48 -> {
+ return 12;
+            }
+            case 49 -> {
+ return 12;
+            }
+            case 50 -> {
+ return 12;
+            }
+            case 51 -> {
+ return 12;
+            }
+            case 52 -> {
+ return 12;
+            }
+            case 53 -> {
+ return 12;
+            }
+            case 54 -> {
+ return 12;
+            }
+            case 55 -> {
+ return 12;
+            }
+            case 56 -> {
+ return 12;
+            }
+            case 57 -> {
+ return 12;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor46(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 12;
+            }
+            case 35 -> {
+ return 12;
+            }
+            case 36 -> {
+ return 12;
+            }
+            case 37 -> {
+ return 12;
+            }
+            case 38 -> {
+ return 12;
+            }
+            case 39 -> {
+ return 12;
+            }
+            case 40 -> {
+ return 12;
+            }
+            case 41 -> {
+ return 12;
+            }
+            case 42 -> {
+ return 12;
+            }
+            case 43 -> {
+ return 12;
+            }
+            case 44 -> {
+ return 12;
+            }
+            case 45 -> {
+ return 12;
+            }
+            case 46 -> {
+ return 12;
+            }
+            case 47 -> {
+ return 12;
+            }
+            case 48 -> {
+ return 12;
+            }
+            case 49 -> {
+ return 12;
+            }
+            case 50 -> {
+ return 12;
+            }
+            case 51 -> {
+ return 12;
+            }
+            case 52 -> {
+ return 12;
+            }
+            case 53 -> {
+ return 12;
+            }
+            case 54 -> {
+ return 12;
+            }
+            case 55 -> {
+ return 12;
+            }
+            case 56 -> {
+ return 12;
+            }
+            case 57 -> {
+ return 12;
+            }
+            case 58 -> {
+ return 12;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor47(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 12;
+            }
+            case 36 -> {
+ return 12;
+            }
+            case 37 -> {
+ return 12;
+            }
+            case 38 -> {
+ return 12;
+            }
+            case 39 -> {
+ return 12;
+            }
+            case 40 -> {
+ return 12;
+            }
+            case 41 -> {
+ return 12;
+            }
+            case 42 -> {
+ return 12;
+            }
+            case 43 -> {
+ return 12;
+            }
+            case 44 -> {
+ return 12;
+            }
+            case 45 -> {
+ return 12;
+            }
+            case 46 -> {
+ return 12;
+            }
+            case 47 -> {
+ return 12;
+            }
+            case 48 -> {
+ return 12;
+            }
+            case 49 -> {
+ return 12;
+            }
+            case 50 -> {
+ return 12;
+            }
+            case 51 -> {
+ return 12;
+            }
+            case 52 -> {
+ return 12;
+            }
+            case 53 -> {
+ return 12;
+            }
+            case 54 -> {
+ return 12;
+            }
+            case 55 -> {
+ return 12;
+            }
+            case 56 -> {
+ return 12;
+            }
+            case 57 -> {
+ return 12;
+            }
+            case 58 -> {
+ return 12;
+            }
+            case 59 -> {
+ return 12;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor48(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 12;
+            }
+            case 37 -> {
+ return 12;
+            }
+            case 38 -> {
+ return 12;
+            }
+            case 39 -> {
+ return 12;
+            }
+            case 40 -> {
+ return 12;
+            }
+            case 41 -> {
+ return 12;
+            }
+            case 42 -> {
+ return 12;
+            }
+            case 43 -> {
+ return 12;
+            }
+            case 44 -> {
+ return 12;
+            }
+            case 45 -> {
+ return 12;
+            }
+            case 46 -> {
+ return 12;
+            }
+            case 47 -> {
+ return 12;
+            }
+            case 48 -> {
+ return 12;
+            }
+            case 49 -> {
+ return 12;
+            }
+            case 50 -> {
+ return 12;
+            }
+            case 51 -> {
+ return 12;
+            }
+            case 52 -> {
+ return 12;
+            }
+            case 53 -> {
+ return 12;
+            }
+            case 54 -> {
+ return 12;
+            }
+            case 55 -> {
+ return 12;
+            }
+            case 56 -> {
+ return 12;
+            }
+            case 57 -> {
+ return 12;
+            }
+            case 58 -> {
+ return 12;
+            }
+            case 59 -> {
+ return 12;
+            }
+            case 60 -> {
+ return 12;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor49(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 12;
+            }
+            case 38 -> {
+ return 12;
+            }
+            case 39 -> {
+ return 12;
+            }
+            case 40 -> {
+ return 12;
+            }
+            case 41 -> {
+ return 12;
+            }
+            case 42 -> {
+ return 12;
+            }
+            case 43 -> {
+ return 12;
+            }
+            case 44 -> {
+ return 12;
+            }
+            case 45 -> {
+ return 12;
+            }
+            case 46 -> {
+ return 12;
+            }
+            case 47 -> {
+ return 12;
+            }
+            case 48 -> {
+ return 12;
+            }
+            case 49 -> {
+ return 12;
+            }
+            case 50 -> {
+ return 12;
+            }
+            case 51 -> {
+ return 12;
+            }
+            case 52 -> {
+ return 12;
+            }
+            case 53 -> {
+ return 12;
+            }
+            case 54 -> {
+ return 12;
+            }
+            case 55 -> {
+ return 12;
+            }
+            case 56 -> {
+ return 12;
+            }
+            case 57 -> {
+ return 12;
+            }
+            case 58 -> {
+ return 12;
+            }
+            case 59 -> {
+ return 12;
+            }
+            case 60 -> {
+ return 12;
+            }
+            case 61 -> {
+ return 12;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor50(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 12;
+            }
+            case 39 -> {
+ return 12;
+            }
+            case 40 -> {
+ return 12;
+            }
+            case 41 -> {
+ return 12;
+            }
+            case 42 -> {
+ return 12;
+            }
+            case 43 -> {
+ return 12;
+            }
+            case 44 -> {
+ return 12;
+            }
+            case 45 -> {
+ return 12;
+            }
+            case 46 -> {
+ return 12;
+            }
+            case 47 -> {
+ return 12;
+            }
+            case 48 -> {
+ return 12;
+            }
+            case 49 -> {
+ return 12;
+            }
+            case 50 -> {
+ return 12;
+            }
+            case 51 -> {
+ return 12;
+            }
+            case 52 -> {
+ return 12;
+            }
+            case 53 -> {
+ return 12;
+            }
+            case 54 -> {
+ return 12;
+            }
+            case 55 -> {
+ return 12;
+            }
+            case 56 -> {
+ return 12;
+            }
+            case 57 -> {
+ return 12;
+            }
+            case 58 -> {
+ return 12;
+            }
+            case 59 -> {
+ return 12;
+            }
+            case 60 -> {
+ return 12;
+            }
+            case 61 -> {
+ return 12;
+            }
+            case 62 -> {
+ return 12;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor51(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 12;
+            }
+            case 40 -> {
+ return 12;
+            }
+            case 41 -> {
+ return 12;
+            }
+            case 42 -> {
+ return 12;
+            }
+            case 43 -> {
+ return 12;
+            }
+            case 44 -> {
+ return 12;
+            }
+            case 45 -> {
+ return 12;
+            }
+            case 46 -> {
+ return 12;
+            }
+            case 47 -> {
+ return 12;
+            }
+            case 48 -> {
+ return 12;
+            }
+            case 49 -> {
+ return 12;
+            }
+            case 50 -> {
+ return 12;
+            }
+            case 51 -> {
+ return 12;
+            }
+            case 52 -> {
+ return 12;
+            }
+            case 53 -> {
+ return 12;
+            }
+            case 54 -> {
+ return 12;
+            }
+            case 55 -> {
+ return 12;
+            }
+            case 56 -> {
+ return 12;
+            }
+            case 57 -> {
+ return 12;
+            }
+            case 58 -> {
+ return 12;
+            }
+            case 59 -> {
+ return 12;
+            }
+            case 60 -> {
+ return 12;
+            }
+            case 61 -> {
+ return 12;
+            }
+            case 62 -> {
+ return 12;
+            }
+            case 63 -> {
+ return 12;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor52(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 12;
+            }
+            case 41 -> {
+ return 12;
+            }
+            case 42 -> {
+ return 12;
+            }
+            case 43 -> {
+ return 12;
+            }
+            case 44 -> {
+ return 12;
+            }
+            case 45 -> {
+ return 12;
+            }
+            case 46 -> {
+ return 12;
+            }
+            case 47 -> {
+ return 12;
+            }
+            case 48 -> {
+ return 12;
+            }
+            case 49 -> {
+ return 12;
+            }
+            case 50 -> {
+ return 12;
+            }
+            case 51 -> {
+ return 12;
+            }
+            case 52 -> {
+ return 12;
+            }
+            case 53 -> {
+ return 12;
+            }
+            case 54 -> {
+ return 12;
+            }
+            case 55 -> {
+ return 12;
+            }
+            case 56 -> {
+ return 12;
+            }
+            case 57 -> {
+ return 12;
+            }
+            case 58 -> {
+ return 12;
+            }
+            case 59 -> {
+ return 12;
+            }
+            case 60 -> {
+ return 12;
+            }
+            case 61 -> {
+ return 12;
+            }
+            case 62 -> {
+ return 12;
+            }
+            case 63 -> {
+ return 12;
+            }
+            case 64 -> {
+ return 12;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor53(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 12;
+            }
+            case 42 -> {
+ return 12;
+            }
+            case 43 -> {
+ return 12;
+            }
+            case 44 -> {
+ return 12;
+            }
+            case 45 -> {
+ return 12;
+            }
+            case 46 -> {
+ return 12;
+            }
+            case 47 -> {
+ return 12;
+            }
+            case 48 -> {
+ return 12;
+            }
+            case 49 -> {
+ return 12;
+            }
+            case 50 -> {
+ return 12;
+            }
+            case 51 -> {
+ return 12;
+            }
+            case 52 -> {
+ return 12;
+            }
+            case 53 -> {
+ return 12;
+            }
+            case 54 -> {
+ return 12;
+            }
+            case 55 -> {
+ return 12;
+            }
+            case 56 -> {
+ return 12;
+            }
+            case 57 -> {
+ return 12;
+            }
+            case 58 -> {
+ return 12;
+            }
+            case 59 -> {
+ return 12;
+            }
+            case 60 -> {
+ return 12;
+            }
+            case 61 -> {
+ return 12;
+            }
+            case 62 -> {
+ return 12;
+            }
+            case 63 -> {
+ return 12;
+            }
+            case 64 -> {
+ return 12;
+            }
+            case 65 -> {
+ return 12;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor54(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 12;
+            }
+            case 43 -> {
+ return 12;
+            }
+            case 44 -> {
+ return 12;
+            }
+            case 45 -> {
+ return 12;
+            }
+            case 46 -> {
+ return 12;
+            }
+            case 47 -> {
+ return 12;
+            }
+            case 48 -> {
+ return 12;
+            }
+            case 49 -> {
+ return 12;
+            }
+            case 50 -> {
+ return 12;
+            }
+            case 51 -> {
+ return 12;
+            }
+            case 52 -> {
+ return 12;
+            }
+            case 53 -> {
+ return 12;
+            }
+            case 54 -> {
+ return 12;
+            }
+            case 55 -> {
+ return 12;
+            }
+            case 56 -> {
+ return 12;
+            }
+            case 57 -> {
+ return 12;
+            }
+            case 58 -> {
+ return 12;
+            }
+            case 59 -> {
+ return 12;
+            }
+            case 60 -> {
+ return 12;
+            }
+            case 61 -> {
+ return 12;
+            }
+            case 62 -> {
+ return 12;
+            }
+            case 63 -> {
+ return 12;
+            }
+            case 64 -> {
+ return 12;
+            }
+            case 65 -> {
+ return 12;
+            }
+            case 66 -> {
+ return 12;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor55(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 12;
+            }
+            case 44 -> {
+ return 12;
+            }
+            case 45 -> {
+ return 12;
+            }
+            case 46 -> {
+ return 12;
+            }
+            case 47 -> {
+ return 12;
+            }
+            case 48 -> {
+ return 12;
+            }
+            case 49 -> {
+ return 12;
+            }
+            case 50 -> {
+ return 12;
+            }
+            case 51 -> {
+ return 12;
+            }
+            case 52 -> {
+ return 12;
+            }
+            case 53 -> {
+ return 12;
+            }
+            case 54 -> {
+ return 12;
+            }
+            case 55 -> {
+ return 12;
+            }
+            case 56 -> {
+ return 12;
+            }
+            case 57 -> {
+ return 12;
+            }
+            case 58 -> {
+ return 12;
+            }
+            case 59 -> {
+ return 12;
+            }
+            case 60 -> {
+ return 12;
+            }
+            case 61 -> {
+ return 12;
+            }
+            case 62 -> {
+ return 12;
+            }
+            case 63 -> {
+ return 12;
+            }
+            case 64 -> {
+ return 12;
+            }
+            case 65 -> {
+ return 12;
+            }
+            case 66 -> {
+ return 12;
+            }
+            case 67 -> {
+ return 12;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor56(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 12;
+            }
+            case 45 -> {
+ return 12;
+            }
+            case 46 -> {
+ return 12;
+            }
+            case 47 -> {
+ return 12;
+            }
+            case 48 -> {
+ return 12;
+            }
+            case 49 -> {
+ return 12;
+            }
+            case 50 -> {
+ return 12;
+            }
+            case 51 -> {
+ return 12;
+            }
+            case 52 -> {
+ return 12;
+            }
+            case 53 -> {
+ return 12;
+            }
+            case 54 -> {
+ return 12;
+            }
+            case 55 -> {
+ return 12;
+            }
+            case 56 -> {
+ return 12;
+            }
+            case 57 -> {
+ return 12;
+            }
+            case 58 -> {
+ return 12;
+            }
+            case 59 -> {
+ return 12;
+            }
+            case 60 -> {
+ return 12;
+            }
+            case 61 -> {
+ return 12;
+            }
+            case 62 -> {
+ return 12;
+            }
+            case 63 -> {
+ return 12;
+            }
+            case 64 -> {
+ return 12;
+            }
+            case 65 -> {
+ return 12;
+            }
+            case 66 -> {
+ return 12;
+            }
+            case 67 -> {
+ return 12;
+            }
+            case 68 -> {
+ return 12;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor57(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 12;
+            }
+            case 46 -> {
+ return 12;
+            }
+            case 47 -> {
+ return 12;
+            }
+            case 48 -> {
+ return 12;
+            }
+            case 49 -> {
+ return 12;
+            }
+            case 50 -> {
+ return 12;
+            }
+            case 51 -> {
+ return 12;
+            }
+            case 52 -> {
+ return 12;
+            }
+            case 53 -> {
+ return 12;
+            }
+            case 54 -> {
+ return 12;
+            }
+            case 55 -> {
+ return 12;
+            }
+            case 56 -> {
+ return 12;
+            }
+            case 57 -> {
+ return 12;
+            }
+            case 58 -> {
+ return 12;
+            }
+            case 59 -> {
+ return 12;
+            }
+            case 60 -> {
+ return 12;
+            }
+            case 61 -> {
+ return 12;
+            }
+            case 62 -> {
+ return 12;
+            }
+            case 63 -> {
+ return 12;
+            }
+            case 64 -> {
+ return 12;
+            }
+            case 65 -> {
+ return 12;
+            }
+            case 66 -> {
+ return 12;
+            }
+            case 67 -> {
+ return 12;
+            }
+            case 68 -> {
+ return 12;
+            }
+            case 69 -> {
+ return 12;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor58(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 12;
+            }
+            case 47 -> {
+ return 12;
+            }
+            case 48 -> {
+ return 12;
+            }
+            case 49 -> {
+ return 12;
+            }
+            case 50 -> {
+ return 12;
+            }
+            case 51 -> {
+ return 12;
+            }
+            case 52 -> {
+ return 12;
+            }
+            case 53 -> {
+ return 12;
+            }
+            case 54 -> {
+ return 12;
+            }
+            case 55 -> {
+ return 12;
+            }
+            case 56 -> {
+ return 12;
+            }
+            case 57 -> {
+ return 12;
+            }
+            case 58 -> {
+ return 12;
+            }
+            case 59 -> {
+ return 12;
+            }
+            case 60 -> {
+ return 12;
+            }
+            case 61 -> {
+ return 12;
+            }
+            case 62 -> {
+ return 12;
+            }
+            case 63 -> {
+ return 12;
+            }
+            case 64 -> {
+ return 12;
+            }
+            case 65 -> {
+ return 12;
+            }
+            case 66 -> {
+ return 12;
+            }
+            case 67 -> {
+ return 12;
+            }
+            case 68 -> {
+ return 12;
+            }
+            case 69 -> {
+ return 12;
+            }
+            case 70 -> {
+ return 12;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor59(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 12;
+            }
+            case 48 -> {
+ return 12;
+            }
+            case 49 -> {
+ return 12;
+            }
+            case 50 -> {
+ return 12;
+            }
+            case 51 -> {
+ return 12;
+            }
+            case 52 -> {
+ return 12;
+            }
+            case 53 -> {
+ return 12;
+            }
+            case 54 -> {
+ return 12;
+            }
+            case 55 -> {
+ return 12;
+            }
+            case 56 -> {
+ return 12;
+            }
+            case 57 -> {
+ return 12;
+            }
+            case 58 -> {
+ return 12;
+            }
+            case 59 -> {
+ return 12;
+            }
+            case 60 -> {
+ return 12;
+            }
+            case 61 -> {
+ return 12;
+            }
+            case 62 -> {
+ return 12;
+            }
+            case 63 -> {
+ return 12;
+            }
+            case 64 -> {
+ return 12;
+            }
+            case 65 -> {
+ return 12;
+            }
+            case 66 -> {
+ return 12;
+            }
+            case 67 -> {
+ return 12;
+            }
+            case 68 -> {
+ return 12;
+            }
+            case 69 -> {
+ return 12;
+            }
+            case 70 -> {
+ return 12;
+            }
+            case 71 -> {
+ return 12;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor60(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 12;
+            }
+            case 49 -> {
+ return 12;
+            }
+            case 50 -> {
+ return 12;
+            }
+            case 51 -> {
+ return 12;
+            }
+            case 52 -> {
+ return 12;
+            }
+            case 53 -> {
+ return 12;
+            }
+            case 54 -> {
+ return 12;
+            }
+            case 55 -> {
+ return 12;
+            }
+            case 56 -> {
+ return 12;
+            }
+            case 57 -> {
+ return 12;
+            }
+            case 58 -> {
+ return 12;
+            }
+            case 59 -> {
+ return 12;
+            }
+            case 60 -> {
+ return 12;
+            }
+            case 61 -> {
+ return 12;
+            }
+            case 62 -> {
+ return 12;
+            }
+            case 63 -> {
+ return 12;
+            }
+            case 64 -> {
+ return 12;
+            }
+            case 65 -> {
+ return 12;
+            }
+            case 66 -> {
+ return 12;
+            }
+            case 67 -> {
+ return 12;
+            }
+            case 68 -> {
+ return 12;
+            }
+            case 69 -> {
+ return 12;
+            }
+            case 70 -> {
+ return 12;
+            }
+            case 71 -> {
+ return 12;
+            }
+            case 72 -> {
+ return 12;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor61(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 12;
+            }
+            case 50 -> {
+ return 12;
+            }
+            case 51 -> {
+ return 12;
+            }
+            case 52 -> {
+ return 12;
+            }
+            case 53 -> {
+ return 12;
+            }
+            case 54 -> {
+ return 12;
+            }
+            case 55 -> {
+ return 12;
+            }
+            case 56 -> {
+ return 12;
+            }
+            case 57 -> {
+ return 12;
+            }
+            case 58 -> {
+ return 12;
+            }
+            case 59 -> {
+ return 12;
+            }
+            case 60 -> {
+ return 12;
+            }
+            case 61 -> {
+ return 12;
+            }
+            case 62 -> {
+ return 12;
+            }
+            case 63 -> {
+ return 12;
+            }
+            case 64 -> {
+ return 12;
+            }
+            case 65 -> {
+ return 12;
+            }
+            case 66 -> {
+ return 12;
+            }
+            case 67 -> {
+ return 12;
+            }
+            case 68 -> {
+ return 12;
+            }
+            case 69 -> {
+ return 12;
+            }
+            case 70 -> {
+ return 12;
+            }
+            case 71 -> {
+ return 12;
+            }
+            case 72 -> {
+ return 12;
+            }
+            case 73 -> {
+ return 12;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor62(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 12;
+            }
+            case 51 -> {
+ return 12;
+            }
+            case 52 -> {
+ return 12;
+            }
+            case 53 -> {
+ return 12;
+            }
+            case 54 -> {
+ return 12;
+            }
+            case 55 -> {
+ return 12;
+            }
+            case 56 -> {
+ return 12;
+            }
+            case 57 -> {
+ return 12;
+            }
+            case 58 -> {
+ return 12;
+            }
+            case 59 -> {
+ return 12;
+            }
+            case 60 -> {
+ return 12;
+            }
+            case 61 -> {
+ return 12;
+            }
+            case 62 -> {
+ return 12;
+            }
+            case 63 -> {
+ return 12;
+            }
+            case 64 -> {
+ return 12;
+            }
+            case 65 -> {
+ return 12;
+            }
+            case 66 -> {
+ return 12;
+            }
+            case 67 -> {
+ return 12;
+            }
+            case 68 -> {
+ return 12;
+            }
+            case 69 -> {
+ return 12;
+            }
+            case 70 -> {
+ return 12;
+            }
+            case 71 -> {
+ return 12;
+            }
+            case 72 -> {
+ return 12;
+            }
+            case 73 -> {
+ return 12;
+            }
+            case 74 -> {
+ return 12;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor63(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 12;
+            }
+            case 52 -> {
+ return 12;
+            }
+            case 53 -> {
+ return 12;
+            }
+            case 54 -> {
+ return 12;
+            }
+            case 55 -> {
+ return 12;
+            }
+            case 56 -> {
+ return 12;
+            }
+            case 57 -> {
+ return 12;
+            }
+            case 58 -> {
+ return 12;
+            }
+            case 59 -> {
+ return 12;
+            }
+            case 60 -> {
+ return 12;
+            }
+            case 61 -> {
+ return 12;
+            }
+            case 62 -> {
+ return 12;
+            }
+            case 63 -> {
+ return 12;
+            }
+            case 64 -> {
+ return 12;
+            }
+            case 65 -> {
+ return 12;
+            }
+            case 66 -> {
+ return 12;
+            }
+            case 67 -> {
+ return 12;
+            }
+            case 68 -> {
+ return 12;
+            }
+            case 69 -> {
+ return 12;
+            }
+            case 70 -> {
+ return 12;
+            }
+            case 71 -> {
+ return 12;
+            }
+            case 72 -> {
+ return 12;
+            }
+            case 73 -> {
+ return 12;
+            }
+            case 74 -> {
+ return 12;
+            }
+            case 75 -> {
+ return 12;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor64(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 12;
+            }
+            case 53 -> {
+ return 12;
+            }
+            case 54 -> {
+ return 12;
+            }
+            case 55 -> {
+ return 12;
+            }
+            case 56 -> {
+ return 12;
+            }
+            case 57 -> {
+ return 12;
+            }
+            case 58 -> {
+ return 12;
+            }
+            case 59 -> {
+ return 12;
+            }
+            case 60 -> {
+ return 12;
+            }
+            case 61 -> {
+ return 12;
+            }
+            case 62 -> {
+ return 12;
+            }
+            case 63 -> {
+ return 12;
+            }
+            case 64 -> {
+ return 12;
+            }
+            case 65 -> {
+ return 12;
+            }
+            case 66 -> {
+ return 12;
+            }
+            case 67 -> {
+ return 12;
+            }
+            case 68 -> {
+ return 12;
+            }
+            case 69 -> {
+ return 12;
+            }
+            case 70 -> {
+ return 12;
+            }
+            case 71 -> {
+ return 12;
+            }
+            case 72 -> {
+ return 12;
+            }
+            case 73 -> {
+ return 12;
+            }
+            case 74 -> {
+ return 12;
+            }
+            case 75 -> {
+ return 12;
+            }
+            case 76 -> {
+ return 12;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor65(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 12;
+            }
+            case 54 -> {
+ return 12;
+            }
+            case 55 -> {
+ return 12;
+            }
+            case 56 -> {
+ return 12;
+            }
+            case 57 -> {
+ return 12;
+            }
+            case 58 -> {
+ return 12;
+            }
+            case 59 -> {
+ return 12;
+            }
+            case 60 -> {
+ return 12;
+            }
+            case 61 -> {
+ return 12;
+            }
+            case 62 -> {
+ return 12;
+            }
+            case 63 -> {
+ return 12;
+            }
+            case 64 -> {
+ return 12;
+            }
+            case 65 -> {
+ return 12;
+            }
+            case 66 -> {
+ return 12;
+            }
+            case 67 -> {
+ return 12;
+            }
+            case 68 -> {
+ return 12;
+            }
+            case 69 -> {
+ return 12;
+            }
+            case 70 -> {
+ return 12;
+            }
+            case 71 -> {
+ return 12;
+            }
+            case 72 -> {
+ return 12;
+            }
+            case 73 -> {
+ return 12;
+            }
+            case 74 -> {
+ return 12;
+            }
+            case 75 -> {
+ return 12;
+            }
+            case 76 -> {
+ return 12;
+            }
+            case 77 -> {
+ return 12;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor66(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 12;
+            }
+            case 55 -> {
+ return 12;
+            }
+            case 56 -> {
+ return 12;
+            }
+            case 57 -> {
+ return 12;
+            }
+            case 58 -> {
+ return 12;
+            }
+            case 59 -> {
+ return 12;
+            }
+            case 60 -> {
+ return 12;
+            }
+            case 61 -> {
+ return 12;
+            }
+            case 62 -> {
+ return 12;
+            }
+            case 63 -> {
+ return 12;
+            }
+            case 64 -> {
+ return 12;
+            }
+            case 65 -> {
+ return 12;
+            }
+            case 66 -> {
+ return 12;
+            }
+            case 67 -> {
+ return 12;
+            }
+            case 68 -> {
+ return 12;
+            }
+            case 69 -> {
+ return 12;
+            }
+            case 70 -> {
+ return 12;
+            }
+            case 71 -> {
+ return 12;
+            }
+            case 72 -> {
+ return 12;
+            }
+            case 73 -> {
+ return 12;
+            }
+            case 74 -> {
+ return 12;
+            }
+            case 75 -> {
+ return 12;
+            }
+            case 76 -> {
+ return 12;
+            }
+            case 77 -> {
+ return 12;
+            }
+            case 78 -> {
+ return 12;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor67(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 12;
+            }
+            case 56 -> {
+ return 12;
+            }
+            case 57 -> {
+ return 12;
+            }
+            case 58 -> {
+ return 12;
+            }
+            case 59 -> {
+ return 12;
+            }
+            case 60 -> {
+ return 12;
+            }
+            case 61 -> {
+ return 12;
+            }
+            case 62 -> {
+ return 12;
+            }
+            case 63 -> {
+ return 12;
+            }
+            case 64 -> {
+ return 12;
+            }
+            case 65 -> {
+ return 12;
+            }
+            case 66 -> {
+ return 12;
+            }
+            case 67 -> {
+ return 12;
+            }
+            case 68 -> {
+ return 12;
+            }
+            case 69 -> {
+ return 12;
+            }
+            case 70 -> {
+ return 12;
+            }
+            case 71 -> {
+ return 12;
+            }
+            case 72 -> {
+ return 12;
+            }
+            case 73 -> {
+ return 12;
+            }
+            case 74 -> {
+ return 12;
+            }
+            case 75 -> {
+ return 12;
+            }
+            case 76 -> {
+ return 12;
+            }
+            case 77 -> {
+ return 12;
+            }
+            case 78 -> {
+ return 12;
+            }
+            case 79 -> {
+ return 12;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor68(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 12;
+            }
+            case 57 -> {
+ return 12;
+            }
+            case 58 -> {
+ return 12;
+            }
+            case 59 -> {
+ return 12;
+            }
+            case 60 -> {
+ return 12;
+            }
+            case 61 -> {
+ return 12;
+            }
+            case 62 -> {
+ return 12;
+            }
+            case 63 -> {
+ return 12;
+            }
+            case 64 -> {
+ return 12;
+            }
+            case 65 -> {
+ return 12;
+            }
+            case 66 -> {
+ return 12;
+            }
+            case 67 -> {
+ return 12;
+            }
+            case 68 -> {
+ return 12;
+            }
+            case 69 -> {
+ return 12;
+            }
+            case 70 -> {
+ return 12;
+            }
+            case 71 -> {
+ return 12;
+            }
+            case 72 -> {
+ return 12;
+            }
+            case 73 -> {
+ return 12;
+            }
+            case 74 -> {
+ return 12;
+            }
+            case 75 -> {
+ return 12;
+            }
+            case 76 -> {
+ return 12;
+            }
+            case 77 -> {
+ return 12;
+            }
+            case 78 -> {
+ return 12;
+            }
+            case 79 -> {
+ return 12;
+            }
+            case 80 -> {
+ return 12;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor69(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 12;
+            }
+            case 58 -> {
+ return 12;
+            }
+            case 59 -> {
+ return 12;
+            }
+            case 60 -> {
+ return 12;
+            }
+            case 61 -> {
+ return 12;
+            }
+            case 62 -> {
+ return 12;
+            }
+            case 63 -> {
+ return 12;
+            }
+            case 64 -> {
+ return 12;
+            }
+            case 65 -> {
+ return 12;
+            }
+            case 66 -> {
+ return 12;
+            }
+            case 67 -> {
+ return 12;
+            }
+            case 68 -> {
+ return 12;
+            }
+            case 69 -> {
+ return 12;
+            }
+            case 70 -> {
+ return 12;
+            }
+            case 71 -> {
+ return 12;
+            }
+            case 72 -> {
+ return 12;
+            }
+            case 73 -> {
+ return 12;
+            }
+            case 74 -> {
+ return 12;
+            }
+            case 75 -> {
+ return 12;
+            }
+            case 76 -> {
+ return 12;
+            }
+            case 77 -> {
+ return 12;
+            }
+            case 78 -> {
+ return 12;
+            }
+            case 79 -> {
+ return 12;
+            }
+            case 80 -> {
+ return 12;
+            }
+            case 81 -> {
+ return 12;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor70(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 12;
+            }
+            case 59 -> {
+ return 12;
+            }
+            case 60 -> {
+ return 12;
+            }
+            case 61 -> {
+ return 12;
+            }
+            case 62 -> {
+ return 12;
+            }
+            case 63 -> {
+ return 12;
+            }
+            case 64 -> {
+ return 12;
+            }
+            case 65 -> {
+ return 12;
+            }
+            case 66 -> {
+ return 12;
+            }
+            case 67 -> {
+ return 12;
+            }
+            case 68 -> {
+ return 12;
+            }
+            case 69 -> {
+ return 12;
+            }
+            case 70 -> {
+ return 12;
+            }
+            case 71 -> {
+ return 12;
+            }
+            case 72 -> {
+ return 12;
+            }
+            case 73 -> {
+ return 12;
+            }
+            case 74 -> {
+ return 12;
+            }
+            case 75 -> {
+ return 12;
+            }
+            case 76 -> {
+ return 12;
+            }
+            case 77 -> {
+ return 12;
+            }
+            case 78 -> {
+ return 12;
+            }
+            case 79 -> {
+ return 12;
+            }
+            case 80 -> {
+ return 12;
+            }
+            case 81 -> {
+ return 12;
+            }
+            case 82 -> {
+ return 12;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor71(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 12;
+            }
+            case 60 -> {
+ return 12;
+            }
+            case 61 -> {
+ return 12;
+            }
+            case 62 -> {
+ return 12;
+            }
+            case 63 -> {
+ return 12;
+            }
+            case 64 -> {
+ return 12;
+            }
+            case 65 -> {
+ return 12;
+            }
+            case 66 -> {
+ return 12;
+            }
+            case 67 -> {
+ return 12;
+            }
+            case 68 -> {
+ return 12;
+            }
+            case 69 -> {
+ return 12;
+            }
+            case 70 -> {
+ return 12;
+            }
+            case 71 -> {
+ return 12;
+            }
+            case 72 -> {
+ return 12;
+            }
+            case 73 -> {
+ return 12;
+            }
+            case 74 -> {
+ return 12;
+            }
+            case 75 -> {
+ return 12;
+            }
+            case 76 -> {
+ return 12;
+            }
+            case 77 -> {
+ return 12;
+            }
+            case 78 -> {
+ return 12;
+            }
+            case 79 -> {
+ return 12;
+            }
+            case 80 -> {
+ return 12;
+            }
+            case 81 -> {
+ return 12;
+            }
+            case 82 -> {
+ return 12;
+            }
+            case 83 -> {
+ return 12;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor72(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 12;
+            }
+            case 61 -> {
+ return 12;
+            }
+            case 62 -> {
+ return 12;
+            }
+            case 63 -> {
+ return 12;
+            }
+            case 64 -> {
+ return 12;
+            }
+            case 65 -> {
+ return 12;
+            }
+            case 66 -> {
+ return 12;
+            }
+            case 67 -> {
+ return 12;
+            }
+            case 68 -> {
+ return 12;
+            }
+            case 69 -> {
+ return 12;
+            }
+            case 70 -> {
+ return 12;
+            }
+            case 71 -> {
+ return 12;
+            }
+            case 72 -> {
+ return 12;
+            }
+            case 73 -> {
+ return 12;
+            }
+            case 74 -> {
+ return 12;
+            }
+            case 75 -> {
+ return 12;
+            }
+            case 76 -> {
+ return 12;
+            }
+            case 77 -> {
+ return 12;
+            }
+            case 78 -> {
+ return 12;
+            }
+            case 79 -> {
+ return 12;
+            }
+            case 80 -> {
+ return 12;
+            }
+            case 81 -> {
+ return 12;
+            }
+            case 82 -> {
+ return 12;
+            }
+            case 83 -> {
+ return 12;
+            }
+            case 84 -> {
+ return 12;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor73(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 12;
+            }
+            case 62 -> {
+ return 12;
+            }
+            case 63 -> {
+ return 12;
+            }
+            case 64 -> {
+ return 12;
+            }
+            case 65 -> {
+ return 12;
+            }
+            case 66 -> {
+ return 12;
+            }
+            case 67 -> {
+ return 12;
+            }
+            case 68 -> {
+ return 12;
+            }
+            case 69 -> {
+ return 12;
+            }
+            case 70 -> {
+ return 12;
+            }
+            case 71 -> {
+ return 12;
+            }
+            case 72 -> {
+ return 12;
+            }
+            case 73 -> {
+ return 12;
+            }
+            case 74 -> {
+ return 12;
+            }
+            case 75 -> {
+ return 12;
+            }
+            case 76 -> {
+ return 12;
+            }
+            case 77 -> {
+ return 12;
+            }
+            case 78 -> {
+ return 12;
+            }
+            case 79 -> {
+ return 12;
+            }
+            case 80 -> {
+ return 12;
+            }
+            case 81 -> {
+ return 12;
+            }
+            case 82 -> {
+ return 12;
+            }
+            case 83 -> {
+ return 12;
+            }
+            case 84 -> {
+ return 12;
+            }
+            case 85 -> {
+ return 12;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor74(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 12;
+            }
+            case 63 -> {
+ return 12;
+            }
+            case 64 -> {
+ return 12;
+            }
+            case 65 -> {
+ return 12;
+            }
+            case 66 -> {
+ return 12;
+            }
+            case 67 -> {
+ return 12;
+            }
+            case 68 -> {
+ return 12;
+            }
+            case 69 -> {
+ return 12;
+            }
+            case 70 -> {
+ return 12;
+            }
+            case 71 -> {
+ return 12;
+            }
+            case 72 -> {
+ return 12;
+            }
+            case 73 -> {
+ return 12;
+            }
+            case 74 -> {
+ return 12;
+            }
+            case 75 -> {
+ return 12;
+            }
+            case 76 -> {
+ return 12;
+            }
+            case 77 -> {
+ return 12;
+            }
+            case 78 -> {
+ return 12;
+            }
+            case 79 -> {
+ return 12;
+            }
+            case 80 -> {
+ return 12;
+            }
+            case 81 -> {
+ return 12;
+            }
+            case 82 -> {
+ return 12;
+            }
+            case 83 -> {
+ return 12;
+            }
+            case 84 -> {
+ return 12;
+            }
+            case 85 -> {
+ return 12;
+            }
+            case 86 -> {
+ return 12;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor75(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 12;
+            }
+            case 64 -> {
+ return 12;
+            }
+            case 65 -> {
+ return 12;
+            }
+            case 66 -> {
+ return 12;
+            }
+            case 67 -> {
+ return 12;
+            }
+            case 68 -> {
+ return 12;
+            }
+            case 69 -> {
+ return 12;
+            }
+            case 70 -> {
+ return 12;
+            }
+            case 71 -> {
+ return 12;
+            }
+            case 72 -> {
+ return 12;
+            }
+            case 73 -> {
+ return 12;
+            }
+            case 74 -> {
+ return 12;
+            }
+            case 75 -> {
+ return 12;
+            }
+            case 76 -> {
+ return 12;
+            }
+            case 77 -> {
+ return 12;
+            }
+            case 78 -> {
+ return 12;
+            }
+            case 79 -> {
+ return 12;
+            }
+            case 80 -> {
+ return 12;
+            }
+            case 81 -> {
+ return 12;
+            }
+            case 82 -> {
+ return 12;
+            }
+            case 83 -> {
+ return 12;
+            }
+            case 84 -> {
+ return 12;
+            }
+            case 85 -> {
+ return 12;
+            }
+            case 86 -> {
+ return 12;
+            }
+            case 87 -> {
+ return 12;
+            }
+            case 88 -> {
+ return 10;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor76(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 12;
+            }
+            case 65 -> {
+ return 12;
+            }
+            case 66 -> {
+ return 12;
+            }
+            case 67 -> {
+ return 12;
+            }
+            case 68 -> {
+ return 12;
+            }
+            case 69 -> {
+ return 12;
+            }
+            case 70 -> {
+ return 12;
+            }
+            case 71 -> {
+ return 12;
+            }
+            case 72 -> {
+ return 12;
+            }
+            case 73 -> {
+ return 12;
+            }
+            case 74 -> {
+ return 12;
+            }
+            case 75 -> {
+ return 12;
+            }
+            case 76 -> {
+ return 12;
+            }
+            case 77 -> {
+ return 12;
+            }
+            case 78 -> {
+ return 12;
+            }
+            case 79 -> {
+ return 12;
+            }
+            case 80 -> {
+ return 12;
+            }
+            case 81 -> {
+ return 12;
+            }
+            case 82 -> {
+ return 12;
+            }
+            case 83 -> {
+ return 12;
+            }
+            case 84 -> {
+ return 12;
+            }
+            case 85 -> {
+ return 12;
+            }
+            case 86 -> {
+ return 12;
+            }
+            case 87 -> {
+ return 12;
+            }
+            case 88 -> {
+ return 12;
+            }
+            case 89 -> {
+ return 10;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor77(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 12;
+            }
+            case 66 -> {
+ return 12;
+            }
+            case 67 -> {
+ return 12;
+            }
+            case 68 -> {
+ return 12;
+            }
+            case 69 -> {
+ return 12;
+            }
+            case 70 -> {
+ return 12;
+            }
+            case 71 -> {
+ return 12;
+            }
+            case 72 -> {
+ return 12;
+            }
+            case 73 -> {
+ return 12;
+            }
+            case 74 -> {
+ return 12;
+            }
+            case 75 -> {
+ return 12;
+            }
+            case 76 -> {
+ return 12;
+            }
+            case 77 -> {
+ return 12;
+            }
+            case 78 -> {
+ return 12;
+            }
+            case 79 -> {
+ return 12;
+            }
+            case 80 -> {
+ return 12;
+            }
+            case 81 -> {
+ return 12;
+            }
+            case 82 -> {
+ return 12;
+            }
+            case 83 -> {
+ return 12;
+            }
+            case 84 -> {
+ return 12;
+            }
+            case 85 -> {
+ return 12;
+            }
+            case 86 -> {
+ return 12;
+            }
+            case 87 -> {
+ return 12;
+            }
+            case 88 -> {
+ return 12;
+            }
+            case 89 -> {
+ return 12;
+            }
+            case 90 -> {
+ return 10;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor78(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 12;
+            }
+            case 67 -> {
+ return 12;
+            }
+            case 68 -> {
+ return 12;
+            }
+            case 69 -> {
+ return 12;
+            }
+            case 70 -> {
+ return 12;
+            }
+            case 71 -> {
+ return 12;
+            }
+            case 72 -> {
+ return 12;
+            }
+            case 73 -> {
+ return 12;
+            }
+            case 74 -> {
+ return 12;
+            }
+            case 75 -> {
+ return 12;
+            }
+            case 76 -> {
+ return 12;
+            }
+            case 77 -> {
+ return 12;
+            }
+            case 78 -> {
+ return 12;
+            }
+            case 79 -> {
+ return 12;
+            }
+            case 80 -> {
+ return 12;
+            }
+            case 81 -> {
+ return 12;
+            }
+            case 82 -> {
+ return 12;
+            }
+            case 83 -> {
+ return 12;
+            }
+            case 84 -> {
+ return 12;
+            }
+            case 85 -> {
+ return 12;
+            }
+            case 86 -> {
+ return 12;
+            }
+            case 87 -> {
+ return 12;
+            }
+            case 88 -> {
+ return 12;
+            }
+            case 89 -> {
+ return 12;
+            }
+            case 90 -> {
+ return 12;
+            }
+            case 91 -> {
+ return 10;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor79(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 12;
+            }
+            case 68 -> {
+ return 12;
+            }
+            case 69 -> {
+ return 12;
+            }
+            case 70 -> {
+ return 12;
+            }
+            case 71 -> {
+ return 12;
+            }
+            case 72 -> {
+ return 12;
+            }
+            case 73 -> {
+ return 12;
+            }
+            case 74 -> {
+ return 12;
+            }
+            case 75 -> {
+ return 12;
+            }
+            case 76 -> {
+ return 12;
+            }
+            case 77 -> {
+ return 12;
+            }
+            case 78 -> {
+ return 12;
+            }
+            case 79 -> {
+ return 12;
+            }
+            case 80 -> {
+ return 12;
+            }
+            case 81 -> {
+ return 12;
+            }
+            case 82 -> {
+ return 12;
+            }
+            case 83 -> {
+ return 12;
+            }
+            case 84 -> {
+ return 12;
+            }
+            case 85 -> {
+ return 12;
+            }
+            case 86 -> {
+ return 12;
+            }
+            case 87 -> {
+ return 12;
+            }
+            case 88 -> {
+ return 12;
+            }
+            case 89 -> {
+ return 12;
+            }
+            case 90 -> {
+ return 12;
+            }
+            case 91 -> {
+ return 12;
+            }
+            case 92 -> {
+ return 10;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor80(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 12;
+            }
+            case 69 -> {
+ return 12;
+            }
+            case 70 -> {
+ return 12;
+            }
+            case 71 -> {
+ return 12;
+            }
+            case 72 -> {
+ return 12;
+            }
+            case 73 -> {
+ return 12;
+            }
+            case 74 -> {
+ return 12;
+            }
+            case 75 -> {
+ return 12;
+            }
+            case 76 -> {
+ return 12;
+            }
+            case 77 -> {
+ return 12;
+            }
+            case 78 -> {
+ return 12;
+            }
+            case 79 -> {
+ return 12;
+            }
+            case 80 -> {
+ return 12;
+            }
+            case 81 -> {
+ return 12;
+            }
+            case 82 -> {
+ return 12;
+            }
+            case 83 -> {
+ return 12;
+            }
+            case 84 -> {
+ return 12;
+            }
+            case 85 -> {
+ return 12;
+            }
+            case 86 -> {
+ return 12;
+            }
+            case 87 -> {
+ return 12;
+            }
+            case 88 -> {
+ return 12;
+            }
+            case 89 -> {
+ return 12;
+            }
+            case 90 -> {
+ return 12;
+            }
+            case 91 -> {
+ return 12;
+            }
+            case 92 -> {
+ return 12;
+            }
+            case 93 -> {
+ return 10;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor81(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 12;
+            }
+            case 70 -> {
+ return 12;
+            }
+            case 71 -> {
+ return 12;
+            }
+            case 72 -> {
+ return 12;
+            }
+            case 73 -> {
+ return 12;
+            }
+            case 74 -> {
+ return 12;
+            }
+            case 75 -> {
+ return 12;
+            }
+            case 76 -> {
+ return 12;
+            }
+            case 77 -> {
+ return 12;
+            }
+            case 78 -> {
+ return 12;
+            }
+            case 79 -> {
+ return 12;
+            }
+            case 80 -> {
+ return 12;
+            }
+            case 81 -> {
+ return 12;
+            }
+            case 82 -> {
+ return 12;
+            }
+            case 83 -> {
+ return 12;
+            }
+            case 84 -> {
+ return 12;
+            }
+            case 85 -> {
+ return 12;
+            }
+            case 86 -> {
+ return 12;
+            }
+            case 87 -> {
+ return 12;
+            }
+            case 88 -> {
+ return 12;
+            }
+            case 89 -> {
+ return 12;
+            }
+            case 90 -> {
+ return 12;
+            }
+            case 91 -> {
+ return 12;
+            }
+            case 92 -> {
+ return 12;
+            }
+            case 93 -> {
+ return 12;
+            }
+            case 94 -> {
+ return 10;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor82(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 12;
+            }
+            case 71 -> {
+ return 12;
+            }
+            case 72 -> {
+ return 12;
+            }
+            case 73 -> {
+ return 12;
+            }
+            case 74 -> {
+ return 12;
+            }
+            case 75 -> {
+ return 12;
+            }
+            case 76 -> {
+ return 12;
+            }
+            case 77 -> {
+ return 12;
+            }
+            case 78 -> {
+ return 12;
+            }
+            case 79 -> {
+ return 12;
+            }
+            case 80 -> {
+ return 12;
+            }
+            case 81 -> {
+ return 12;
+            }
+            case 82 -> {
+ return 12;
+            }
+            case 83 -> {
+ return 12;
+            }
+            case 84 -> {
+ return 12;
+            }
+            case 85 -> {
+ return 12;
+            }
+            case 86 -> {
+ return 12;
+            }
+            case 87 -> {
+ return 12;
+            }
+            case 88 -> {
+ return 12;
+            }
+            case 89 -> {
+ return 12;
+            }
+            case 90 -> {
+ return 12;
+            }
+            case 91 -> {
+ return 12;
+            }
+            case 92 -> {
+ return 12;
+            }
+            case 93 -> {
+ return 12;
+            }
+            case 94 -> {
+ return 12;
+            }
+            case 95 -> {
+ return 10;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor83(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 12;
+            }
+            case 72 -> {
+ return 12;
+            }
+            case 73 -> {
+ return 12;
+            }
+            case 74 -> {
+ return 12;
+            }
+            case 75 -> {
+ return 12;
+            }
+            case 76 -> {
+ return 12;
+            }
+            case 77 -> {
+ return 12;
+            }
+            case 78 -> {
+ return 12;
+            }
+            case 79 -> {
+ return 12;
+            }
+            case 80 -> {
+ return 12;
+            }
+            case 81 -> {
+ return 12;
+            }
+            case 82 -> {
+ return 12;
+            }
+            case 83 -> {
+ return 12;
+            }
+            case 84 -> {
+ return 12;
+            }
+            case 85 -> {
+ return 12;
+            }
+            case 86 -> {
+ return 12;
+            }
+            case 87 -> {
+ return 12;
+            }
+            case 88 -> {
+ return 12;
+            }
+            case 89 -> {
+ return 12;
+            }
+            case 90 -> {
+ return 12;
+            }
+            case 91 -> {
+ return 12;
+            }
+            case 92 -> {
+ return 12;
+            }
+            case 93 -> {
+ return 12;
+            }
+            case 94 -> {
+ return 12;
+            }
+            case 95 -> {
+ return 12;
+            }
+            case 96 -> {
+ return 10;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor84(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 12;
+            }
+            case 73 -> {
+ return 12;
+            }
+            case 74 -> {
+ return 12;
+            }
+            case 75 -> {
+ return 12;
+            }
+            case 76 -> {
+ return 12;
+            }
+            case 77 -> {
+ return 12;
+            }
+            case 78 -> {
+ return 12;
+            }
+            case 79 -> {
+ return 12;
+            }
+            case 80 -> {
+ return 12;
+            }
+            case 81 -> {
+ return 12;
+            }
+            case 82 -> {
+ return 12;
+            }
+            case 83 -> {
+ return 12;
+            }
+            case 84 -> {
+ return 12;
+            }
+            case 85 -> {
+ return 12;
+            }
+            case 86 -> {
+ return 12;
+            }
+            case 87 -> {
+ return 12;
+            }
+            case 88 -> {
+ return 12;
+            }
+            case 89 -> {
+ return 12;
+            }
+            case 90 -> {
+ return 12;
+            }
+            case 91 -> {
+ return 12;
+            }
+            case 92 -> {
+ return 12;
+            }
+            case 93 -> {
+ return 12;
+            }
+            case 94 -> {
+ return 12;
+            }
+            case 95 -> {
+ return 12;
+            }
+            case 96 -> {
+ return 12;
+            }
+            case 97 -> {
+ return 10;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor85(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 12;
+            }
+            case 74 -> {
+ return 12;
+            }
+            case 75 -> {
+ return 12;
+            }
+            case 76 -> {
+ return 12;
+            }
+            case 77 -> {
+ return 12;
+            }
+            case 78 -> {
+ return 12;
+            }
+            case 79 -> {
+ return 12;
+            }
+            case 80 -> {
+ return 12;
+            }
+            case 81 -> {
+ return 12;
+            }
+            case 82 -> {
+ return 12;
+            }
+            case 83 -> {
+ return 12;
+            }
+            case 84 -> {
+ return 12;
+            }
+            case 85 -> {
+ return 12;
+            }
+            case 86 -> {
+ return 12;
+            }
+            case 87 -> {
+ return 12;
+            }
+            case 88 -> {
+ return 12;
+            }
+            case 89 -> {
+ return 12;
+            }
+            case 90 -> {
+ return 12;
+            }
+            case 91 -> {
+ return 12;
+            }
+            case 92 -> {
+ return 12;
+            }
+            case 93 -> {
+ return 12;
+            }
+            case 94 -> {
+ return 12;
+            }
+            case 95 -> {
+ return 12;
+            }
+            case 96 -> {
+ return 12;
+            }
+            case 97 -> {
+ return 12;
+            }
+            case 98 -> {
+ return 10;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor86(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 12;
+            }
+            case 75 -> {
+ return 12;
+            }
+            case 76 -> {
+ return 12;
+            }
+            case 77 -> {
+ return 12;
+            }
+            case 78 -> {
+ return 12;
+            }
+            case 79 -> {
+ return 12;
+            }
+            case 80 -> {
+ return 12;
+            }
+            case 81 -> {
+ return 12;
+            }
+            case 82 -> {
+ return 12;
+            }
+            case 83 -> {
+ return 12;
+            }
+            case 84 -> {
+ return 12;
+            }
+            case 85 -> {
+ return 12;
+            }
+            case 86 -> {
+ return 12;
+            }
+            case 87 -> {
+ return 12;
+            }
+            case 88 -> {
+ return 12;
+            }
+            case 89 -> {
+ return 12;
+            }
+            case 90 -> {
+ return 12;
+            }
+            case 91 -> {
+ return 12;
+            }
+            case 92 -> {
+ return 12;
+            }
+            case 93 -> {
+ return 12;
+            }
+            case 94 -> {
+ return 12;
+            }
+            case 95 -> {
+ return 12;
+            }
+            case 96 -> {
+ return 12;
+            }
+            case 97 -> {
+ return 12;
+            }
+            case 98 -> {
+ return 12;
+            }
+            case 99 -> {
+ return 10;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor87(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 12;
+            }
+            case 76 -> {
+ return 12;
+            }
+            case 77 -> {
+ return 12;
+            }
+            case 78 -> {
+ return 12;
+            }
+            case 79 -> {
+ return 12;
+            }
+            case 80 -> {
+ return 12;
+            }
+            case 81 -> {
+ return 12;
+            }
+            case 82 -> {
+ return 12;
+            }
+            case 83 -> {
+ return 12;
+            }
+            case 84 -> {
+ return 12;
+            }
+            case 85 -> {
+ return 12;
+            }
+            case 86 -> {
+ return 12;
+            }
+            case 87 -> {
+ return 12;
+            }
+            case 88 -> {
+ return 12;
+            }
+            case 89 -> {
+ return 12;
+            }
+            case 90 -> {
+ return 12;
+            }
+            case 91 -> {
+ return 12;
+            }
+            case 92 -> {
+ return 12;
+            }
+            case 93 -> {
+ return 12;
+            }
+            case 94 -> {
+ return 12;
+            }
+            case 95 -> {
+ return 12;
+            }
+            case 96 -> {
+ return 12;
+            }
+            case 97 -> {
+ return 12;
+            }
+            case 98 -> {
+ return 12;
+            }
+            case 99 -> {
+ return 12;
+            }
+            case 100 -> {
+ return 10;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor88(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 12;
+            }
+            case 77 -> {
+ return 12;
+            }
+            case 78 -> {
+ return 12;
+            }
+            case 79 -> {
+ return 12;
+            }
+            case 80 -> {
+ return 12;
+            }
+            case 81 -> {
+ return 12;
+            }
+            case 82 -> {
+ return 12;
+            }
+            case 83 -> {
+ return 12;
+            }
+            case 84 -> {
+ return 12;
+            }
+            case 85 -> {
+ return 12;
+            }
+            case 86 -> {
+ return 12;
+            }
+            case 87 -> {
+ return 12;
+            }
+            case 88 -> {
+ return 12;
+            }
+            case 89 -> {
+ return 12;
+            }
+            case 90 -> {
+ return 12;
+            }
+            case 91 -> {
+ return 12;
+            }
+            case 92 -> {
+ return 12;
+            }
+            case 93 -> {
+ return 12;
+            }
+            case 94 -> {
+ return 12;
+            }
+            case 95 -> {
+ return 12;
+            }
+            case 96 -> {
+ return 12;
+            }
+            case 97 -> {
+ return 12;
+            }
+            case 98 -> {
+ return 12;
+            }
+            case 99 -> {
+ return 12;
+            }
+            case 100 -> {
+ return 12;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor89(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 12;
+            }
+            case 78 -> {
+ return 12;
+            }
+            case 79 -> {
+ return 12;
+            }
+            case 80 -> {
+ return 12;
+            }
+            case 81 -> {
+ return 12;
+            }
+            case 82 -> {
+ return 12;
+            }
+            case 83 -> {
+ return 12;
+            }
+            case 84 -> {
+ return 12;
+            }
+            case 85 -> {
+ return 12;
+            }
+            case 86 -> {
+ return 12;
+            }
+            case 87 -> {
+ return 12;
+            }
+            case 88 -> {
+ return 12;
+            }
+            case 89 -> {
+ return 12;
+            }
+            case 90 -> {
+ return 12;
+            }
+            case 91 -> {
+ return 12;
+            }
+            case 92 -> {
+ return 12;
+            }
+            case 93 -> {
+ return 12;
+            }
+            case 94 -> {
+ return 12;
+            }
+            case 95 -> {
+ return 12;
+            }
+            case 96 -> {
+ return 12;
+            }
+            case 97 -> {
+ return 12;
+            }
+            case 98 -> {
+ return 12;
+            }
+            case 99 -> {
+ return 12;
+            }
+            case 100 -> {
+ return 12;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor90(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 12;
+            }
+            case 79 -> {
+ return 12;
+            }
+            case 80 -> {
+ return 12;
+            }
+            case 81 -> {
+ return 12;
+            }
+            case 82 -> {
+ return 12;
+            }
+            case 83 -> {
+ return 12;
+            }
+            case 84 -> {
+ return 12;
+            }
+            case 85 -> {
+ return 12;
+            }
+            case 86 -> {
+ return 12;
+            }
+            case 87 -> {
+ return 12;
+            }
+            case 88 -> {
+ return 12;
+            }
+            case 89 -> {
+ return 12;
+            }
+            case 90 -> {
+ return 12;
+            }
+            case 91 -> {
+ return 12;
+            }
+            case 92 -> {
+ return 12;
+            }
+            case 93 -> {
+ return 12;
+            }
+            case 94 -> {
+ return 12;
+            }
+            case 95 -> {
+ return 12;
+            }
+            case 96 -> {
+ return 12;
+            }
+            case 97 -> {
+ return 12;
+            }
+            case 98 -> {
+ return 12;
+            }
+            case 99 -> {
+ return 12;
+            }
+            case 100 -> {
+ return 12;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor91(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 12;
+            }
+            case 80 -> {
+ return 12;
+            }
+            case 81 -> {
+ return 12;
+            }
+            case 82 -> {
+ return 12;
+            }
+            case 83 -> {
+ return 12;
+            }
+            case 84 -> {
+ return 12;
+            }
+            case 85 -> {
+ return 12;
+            }
+            case 86 -> {
+ return 12;
+            }
+            case 87 -> {
+ return 12;
+            }
+            case 88 -> {
+ return 12;
+            }
+            case 89 -> {
+ return 12;
+            }
+            case 90 -> {
+ return 12;
+            }
+            case 91 -> {
+ return 12;
+            }
+            case 92 -> {
+ return 12;
+            }
+            case 93 -> {
+ return 12;
+            }
+            case 94 -> {
+ return 12;
+            }
+            case 95 -> {
+ return 12;
+            }
+            case 96 -> {
+ return 12;
+            }
+            case 97 -> {
+ return 12;
+            }
+            case 98 -> {
+ return 12;
+            }
+            case 99 -> {
+ return 12;
+            }
+            case 100 -> {
+ return 12;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor92(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 12;
+            }
+            case 81 -> {
+ return 12;
+            }
+            case 82 -> {
+ return 12;
+            }
+            case 83 -> {
+ return 12;
+            }
+            case 84 -> {
+ return 12;
+            }
+            case 85 -> {
+ return 12;
+            }
+            case 86 -> {
+ return 12;
+            }
+            case 87 -> {
+ return 12;
+            }
+            case 88 -> {
+ return 12;
+            }
+            case 89 -> {
+ return 12;
+            }
+            case 90 -> {
+ return 12;
+            }
+            case 91 -> {
+ return 12;
+            }
+            case 92 -> {
+ return 12;
+            }
+            case 93 -> {
+ return 12;
+            }
+            case 94 -> {
+ return 12;
+            }
+            case 95 -> {
+ return 12;
+            }
+            case 96 -> {
+ return 12;
+            }
+            case 97 -> {
+ return 12;
+            }
+            case 98 -> {
+ return 12;
+            }
+            case 99 -> {
+ return 12;
+            }
+            case 100 -> {
+ return 12;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor93(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 12;
+            }
+            case 82 -> {
+ return 12;
+            }
+            case 83 -> {
+ return 12;
+            }
+            case 84 -> {
+ return 12;
+            }
+            case 85 -> {
+ return 12;
+            }
+            case 86 -> {
+ return 12;
+            }
+            case 87 -> {
+ return 12;
+            }
+            case 88 -> {
+ return 12;
+            }
+            case 89 -> {
+ return 12;
+            }
+            case 90 -> {
+ return 12;
+            }
+            case 91 -> {
+ return 12;
+            }
+            case 92 -> {
+ return 12;
+            }
+            case 93 -> {
+ return 12;
+            }
+            case 94 -> {
+ return 12;
+            }
+            case 95 -> {
+ return 12;
+            }
+            case 96 -> {
+ return 12;
+            }
+            case 97 -> {
+ return 12;
+            }
+            case 98 -> {
+ return 12;
+            }
+            case 99 -> {
+ return 12;
+            }
+            case 100 -> {
+ return 12;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor94(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 12;
+            }
+            case 83 -> {
+ return 12;
+            }
+            case 84 -> {
+ return 12;
+            }
+            case 85 -> {
+ return 12;
+            }
+            case 86 -> {
+ return 12;
+            }
+            case 87 -> {
+ return 12;
+            }
+            case 88 -> {
+ return 12;
+            }
+            case 89 -> {
+ return 12;
+            }
+            case 90 -> {
+ return 12;
+            }
+            case 91 -> {
+ return 12;
+            }
+            case 92 -> {
+ return 12;
+            }
+            case 93 -> {
+ return 12;
+            }
+            case 94 -> {
+ return 12;
+            }
+            case 95 -> {
+ return 12;
+            }
+            case 96 -> {
+ return 12;
+            }
+            case 97 -> {
+ return 12;
+            }
+            case 98 -> {
+ return 12;
+            }
+            case 99 -> {
+ return 12;
+            }
+            case 100 -> {
+ return 12;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor95(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 12;
+            }
+            case 84 -> {
+ return 12;
+            }
+            case 85 -> {
+ return 12;
+            }
+            case 86 -> {
+ return 12;
+            }
+            case 87 -> {
+ return 12;
+            }
+            case 88 -> {
+ return 12;
+            }
+            case 89 -> {
+ return 12;
+            }
+            case 90 -> {
+ return 12;
+            }
+            case 91 -> {
+ return 12;
+            }
+            case 92 -> {
+ return 12;
+            }
+            case 93 -> {
+ return 12;
+            }
+            case 94 -> {
+ return 12;
+            }
+            case 95 -> {
+ return 12;
+            }
+            case 96 -> {
+ return 12;
+            }
+            case 97 -> {
+ return 12;
+            }
+            case 98 -> {
+ return 12;
+            }
+            case 99 -> {
+ return 12;
+            }
+            case 100 -> {
+ return 12;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor96(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 12;
+            }
+            case 85 -> {
+ return 12;
+            }
+            case 86 -> {
+ return 12;
+            }
+            case 87 -> {
+ return 12;
+            }
+            case 88 -> {
+ return 12;
+            }
+            case 89 -> {
+ return 12;
+            }
+            case 90 -> {
+ return 12;
+            }
+            case 91 -> {
+ return 12;
+            }
+            case 92 -> {
+ return 12;
+            }
+            case 93 -> {
+ return 12;
+            }
+            case 94 -> {
+ return 12;
+            }
+            case 95 -> {
+ return 12;
+            }
+            case 96 -> {
+ return 12;
+            }
+            case 97 -> {
+ return 12;
+            }
+            case 98 -> {
+ return 12;
+            }
+            case 99 -> {
+ return 12;
+            }
+            case 100 -> {
+ return 12;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor97(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 12;
+            }
+            case 86 -> {
+ return 12;
+            }
+            case 87 -> {
+ return 12;
+            }
+            case 88 -> {
+ return 12;
+            }
+            case 89 -> {
+ return 12;
+            }
+            case 90 -> {
+ return 12;
+            }
+            case 91 -> {
+ return 12;
+            }
+            case 92 -> {
+ return 12;
+            }
+            case 93 -> {
+ return 12;
+            }
+            case 94 -> {
+ return 12;
+            }
+            case 95 -> {
+ return 12;
+            }
+            case 96 -> {
+ return 12;
+            }
+            case 97 -> {
+ return 12;
+            }
+            case 98 -> {
+ return 12;
+            }
+            case 99 -> {
+ return 12;
+            }
+            case 100 -> {
+ return 12;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor98(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 12;
+            }
+            case 87 -> {
+ return 12;
+            }
+            case 88 -> {
+ return 12;
+            }
+            case 89 -> {
+ return 12;
+            }
+            case 90 -> {
+ return 12;
+            }
+            case 91 -> {
+ return 12;
+            }
+            case 92 -> {
+ return 12;
+            }
+            case 93 -> {
+ return 12;
+            }
+            case 94 -> {
+ return 12;
+            }
+            case 95 -> {
+ return 12;
+            }
+            case 96 -> {
+ return 12;
+            }
+            case 97 -> {
+ return 12;
+            }
+            case 98 -> {
+ return 12;
+            }
+            case 99 -> {
+ return 12;
+            }
+            case 100 -> {
+ return 12;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor99(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 12;
+            }
+            case 88 -> {
+ return 12;
+            }
+            case 89 -> {
+ return 12;
+            }
+            case 90 -> {
+ return 12;
+            }
+            case 91 -> {
+ return 12;
+            }
+            case 92 -> {
+ return 12;
+            }
+            case 93 -> {
+ return 12;
+            }
+            case 94 -> {
+ return 12;
+            }
+            case 95 -> {
+ return 12;
+            }
+            case 96 -> {
+ return 12;
+            }
+            case 97 -> {
+ return 12;
+            }
+            case 98 -> {
+ return 12;
+            }
+            case 99 -> {
+ return 12;
+            }
+            case 100 -> {
+ return 12;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    private static int getDamageFor100(int enemyHealth) {
+        switch (enemyHealth) {
+            case 1 -> {
+ return 1;
+            }
+            case 2 -> {
+ return 2;
+            }
+            case 3 -> {
+ return 3;
+            }
+            case 4 -> {
+ return 4;
+            }
+            case 5 -> {
+ return 5;
+            }
+            case 6 -> {
+ return 6;
+            }
+            case 7 -> {
+ return 7;
+            }
+            case 8 -> {
+ return 8;
+            }
+            case 9 -> {
+ return 9;
+            }
+            case 10 -> {
+ return 10;
+            }
+            case 11 -> {
+ return 11;
+            }
+            case 12 -> {
+ return 12;
+            }
+            case 13 -> {
+ return 10;
+            }
+            case 14 -> {
+ return 10;
+            }
+            case 15 -> {
+ return 10;
+            }
+            case 16 -> {
+ return 10;
+            }
+            case 17 -> {
+ return 10;
+            }
+            case 18 -> {
+ return 10;
+            }
+            case 19 -> {
+ return 10;
+            }
+            case 20 -> {
+ return 10;
+            }
+            case 21 -> {
+ return 10;
+            }
+            case 22 -> {
+ return 10;
+            }
+            case 23 -> {
+ return 10;
+            }
+            case 24 -> {
+ return 10;
+            }
+            case 25 -> {
+ return 10;
+            }
+            case 26 -> {
+ return 10;
+            }
+            case 27 -> {
+ return 10;
+            }
+            case 28 -> {
+ return 10;
+            }
+            case 29 -> {
+ return 10;
+            }
+            case 30 -> {
+ return 10;
+            }
+            case 31 -> {
+ return 10;
+            }
+            case 32 -> {
+ return 10;
+            }
+            case 33 -> {
+ return 10;
+            }
+            case 34 -> {
+ return 10;
+            }
+            case 35 -> {
+ return 10;
+            }
+            case 36 -> {
+ return 10;
+            }
+            case 37 -> {
+ return 10;
+            }
+            case 38 -> {
+ return 10;
+            }
+            case 39 -> {
+ return 10;
+            }
+            case 40 -> {
+ return 10;
+            }
+            case 41 -> {
+ return 10;
+            }
+            case 42 -> {
+ return 10;
+            }
+            case 43 -> {
+ return 10;
+            }
+            case 44 -> {
+ return 10;
+            }
+            case 45 -> {
+ return 10;
+            }
+            case 46 -> {
+ return 10;
+            }
+            case 47 -> {
+ return 10;
+            }
+            case 48 -> {
+ return 10;
+            }
+            case 49 -> {
+ return 10;
+            }
+            case 50 -> {
+ return 10;
+            }
+            case 51 -> {
+ return 10;
+            }
+            case 52 -> {
+ return 10;
+            }
+            case 53 -> {
+ return 10;
+            }
+            case 54 -> {
+ return 10;
+            }
+            case 55 -> {
+ return 10;
+            }
+            case 56 -> {
+ return 10;
+            }
+            case 57 -> {
+ return 10;
+            }
+            case 58 -> {
+ return 10;
+            }
+            case 59 -> {
+ return 10;
+            }
+            case 60 -> {
+ return 10;
+            }
+            case 61 -> {
+ return 10;
+            }
+            case 62 -> {
+ return 10;
+            }
+            case 63 -> {
+ return 10;
+            }
+            case 64 -> {
+ return 10;
+            }
+            case 65 -> {
+ return 10;
+            }
+            case 66 -> {
+ return 10;
+            }
+            case 67 -> {
+ return 10;
+            }
+            case 68 -> {
+ return 10;
+            }
+            case 69 -> {
+ return 10;
+            }
+            case 70 -> {
+ return 10;
+            }
+            case 71 -> {
+ return 10;
+            }
+            case 72 -> {
+ return 10;
+            }
+            case 73 -> {
+ return 10;
+            }
+            case 74 -> {
+ return 10;
+            }
+            case 75 -> {
+ return 10;
+            }
+            case 76 -> {
+ return 10;
+            }
+            case 77 -> {
+ return 10;
+            }
+            case 78 -> {
+ return 10;
+            }
+            case 79 -> {
+ return 10;
+            }
+            case 80 -> {
+ return 10;
+            }
+            case 81 -> {
+ return 10;
+            }
+            case 82 -> {
+ return 10;
+            }
+            case 83 -> {
+ return 10;
+            }
+            case 84 -> {
+ return 10;
+            }
+            case 85 -> {
+ return 10;
+            }
+            case 86 -> {
+ return 10;
+            }
+            case 87 -> {
+ return 10;
+            }
+            case 88 -> {
+ return 12;
+            }
+            case 89 -> {
+ return 12;
+            }
+            case 90 -> {
+ return 12;
+            }
+            case 91 -> {
+ return 12;
+            }
+            case 92 -> {
+ return 12;
+            }
+            case 93 -> {
+ return 12;
+            }
+            case 94 -> {
+ return 12;
+            }
+            case 95 -> {
+ return 12;
+            }
+            case 96 -> {
+ return 12;
+            }
+            case 97 -> {
+ return 12;
+            }
+            case 98 -> {
+ return 12;
+            }
+            case 99 -> {
+ return 12;
+            }
+            case 100 -> {
+ return 12;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
     }
 }

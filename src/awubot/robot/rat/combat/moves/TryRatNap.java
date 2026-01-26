@@ -1259,6 +1259,7 @@ public final class TryRatNap {
         double score = weight + 20;
         score += CombatStrategy.getCellScoreFor(moveDir, facing, info);
         if (score <= 0.5) return;
+        if (moveCost == 1) score += 3;
         if (facing != myDir) {
             score += 2;
         }
@@ -1277,7 +1278,7 @@ public final class TryRatNap {
             info = RobotTracker.sortedEnemies[i];
             if (info.getTeam() == team) continue;
             if (info.location.distanceSquaredTo(myLoc) > 2) continue;
-            if (info.getHealth() <= CombatStrategy.getBiteDamage()) continue; // just kill
+            if (info.getHealth() <= CombatStrategy.getMaxBiteDamage()) continue; // just kill
             if (info.getType() != UnitType.BABY_RAT) continue;
             int dx = info.location.x - myLocX;
             int dy = info.location.y - myLocY;
@@ -1293,7 +1294,7 @@ public final class TryRatNap {
         for (int i = 0; i < RobotTracker.numEnemies && i < 3; i++) {
             info = RobotTracker.sortedEnemies[i];
             if (info.getTeam() == team) continue;
-            if (info.getHealth() <= CombatStrategy.getBiteDamage()) continue; // just kill
+            if (info.getHealth() <= CombatStrategy.getMaxBiteDamage()) continue; // just kill
             if (info.getType() != UnitType.BABY_RAT) continue;
             if (rc.canCarryRat(info.location)) {
                 rc.carryRat(info.location);

@@ -430,11 +430,11 @@ public class CombatStrategy extends Strategy {
         }
     }
 
-    public static int getBiteDamage() {
-        if (rc.getAllCheese() < 300 || (rc.getRawCheese() % 20 == 0 && rc.getRawCheese() > 0)) return 10;
-        else return 11;
+    public static int getMaxBiteDamage() {
+        if (rc.getAllCheese() < 300 || (rc.getRawCheese() % 20 < 2 && rc.getRawCheese() > 0)) return 10;
+        else return 12;
     }
-    
+
     /*
 
         attacking another solo rat is safe as if:
@@ -449,29 +449,11 @@ public class CombatStrategy extends Strategy {
             return time > 500 && rc.getAllCheese() > 1000 && RobotTracker.numEnemies == 0 && rc.getRawCheese() == 0 && GlobalArray.numberOfRatsAlive >= 16 && (rc.getID() % 3 == 0 || time >= 1800);
         }
         if (enemy.getType() == UnitType.RAT_KING) return true;
-        if (enemy.getHealth() - getBiteDamage() <= rc.getHealth()) return true;
+        if (enemy.getHealth() - getMaxBiteDamage() <= rc.getHealth()) return true;
         if (!canSense(enemy.location, myLoc, enemy.direction)) return true;
         if (GlobalArray.nearestRatKing != null && GlobalArray.nearestRatKing.distanceSquaredTo(myLoc) <= 36) return true;
         if (RobotTracker.numAllies > RobotTracker.numEnemies) return true;
         return false;
-    }
-
-    // currently given arbitrary weights
-    public double scoreEnemy(RobotInfo info) {
-        if (info.getType() == UnitType.RAT_KING) return 5;
-        // one tap this guy
-        if (info.getHealth() - GameConstants.RAT_BITE_DAMAGE <= 0) {
-            return 3.0;
-        }
-        if (info.getHealth() <= 30) {
-            // try to get rid of low hp rats
-            return 1.3;
-        }
-        if (info.getHealth() >= rc.getHealth()) {
-            // try to bring enemy rats into napping distance
-            return 1.2;
-        }
-        return 1;
     }
 
     public static int getCheeseNeeded(int damageBuff) {
@@ -500,4 +482,33 @@ public class CombatStrategy extends Strategy {
         }
         return null;
     }
+
+    private static int maxBite;
+    public static int getDamageFor(RobotInfo info) {
+        if (info.getType() != UnitType.BABY_RAT) return 10;
+        maxBite = getMaxBiteDamage();
+        if (maxBite == 10) return 10;
+        switch (rc.getHealth()) {
+            {% for me in range(1, 101) %}
+            case {{me}} -> { return getDamageFor{{ me }}(info.getHealth()); }
+            {% endfor %}
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+
+    {% for me in range(1, 101) %}
+    private static int getDamageFor{{ me }}(int enemyHealth) {
+        switch (enemyHealth) {
+            {% for them in range(1, 101) %}
+            case {{ them }} -> {
+                {% if them <= 12 %} return {{ them }};
+                {% elif them < me - 12 or them > me + 12 %} return 10;
+                {% else %} return 12;
+                {% endif %}
+            }
+            {% endfor %}
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+    {% endfor %}
 }

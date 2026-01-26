@@ -25,10 +25,10 @@ MAPS2 = [
 ]
 SCRIM_TEAMS = [
     "Old But Gold",
-    "Sloppy Joe Pirates",
-    "The Complex Merlin",
+    # "Sloppy Joe Pirates",
+    # "The Complex Merlin",
     # "muscallonge",
-    "Blue Dragon"
+    # "Blue Dragon"
 ]
 
 # "?" = alternate

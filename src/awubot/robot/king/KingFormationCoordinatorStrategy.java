@@ -22,7 +22,6 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     private static final int FORMATION_COOLDOWN = 150;
     private static final int MIN_TURN_FOR_FORMATION = 200;
 
-    private final ThreatContext context;
     private final KingMiningStrategy miningStrategy;
 
     private final int tabooMinX;
@@ -36,6 +35,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     private int coordinationStartTurn = 0;
     private int lastFormationTurn = -FORMATION_COOLDOWN;
     private int kingCount = 1;
+    private RobotInfo nearestCat = null;
 
     private enum FormationState {
         IDLE,
@@ -43,8 +43,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         MONITORING
     }
 
-    public KingFormationCoordinatorStrategy(ThreatContext aContext, KingMiningStrategy aMiningStrategy) {
-        context = aContext;
+    public KingFormationCoordinatorStrategy(KingMiningStrategy aMiningStrategy) {
         miningStrategy = aMiningStrategy;
 
         if (mapWidth < 40 && mapHeight < 40) {
@@ -75,6 +74,75 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         return CHEESE_THRESHOLDS[myIndex];
     }
 
+
+    private boolean isNormal() {
+        final int CAT_CRITICAL_DIST_SQ = 16;
+        final int CAT_DANGER_DIST_SQ = 36;
+        final int CRITICAL_HP = 150;
+
+        RobotInfo nearestEnemyRat = null;
+        RobotInfo nearestEnemyRatKing = null;
+        nearestCat = null;
+
+        int catDistSq = Integer.MAX_VALUE;
+        int enemyRatDistSq = Integer.MAX_VALUE;
+        int enemyRatKingDistSq = Integer.MAX_VALUE;
+
+        int catLimit = RobotTracker.numCats;
+        if (RobotTracker.sortedCats != null) catLimit = Math.min(catLimit, RobotTracker.sortedCats.length);
+
+        for (int i = 0; i < catLimit; i++) {
+            RobotInfo myCat = RobotTracker.sortedCats[i];
+            if (myCat == null) continue;
+
+            int myDistSq = myLoc.distanceSquaredTo(myCat.location);
+            if (myDistSq < catDistSq) {
+                catDistSq = myDistSq;
+                nearestCat = myCat;
+            }
+        }
+
+        int enemyLimit = RobotTracker.numEnemies;
+        if (RobotTracker.sortedEnemies != null) enemyLimit = Math.min(enemyLimit, RobotTracker.sortedEnemies.length);
+
+        for (int i = 0; i < enemyLimit; i++) {
+            RobotInfo myEnemy = RobotTracker.sortedEnemies[i];
+            if (myEnemy == null) continue;
+
+            int myDistSq = myLoc.distanceSquaredTo(myEnemy.location);
+            UnitType t = myEnemy.getType();
+
+            if (t == UnitType.RAT_KING) {
+                if (myDistSq < enemyRatKingDistSq) {
+                    enemyRatKingDistSq = myDistSq;
+                    nearestEnemyRatKing = myEnemy;
+                }
+            } else if (t == UnitType.BABY_RAT) {
+                if (myDistSq < enemyRatDistSq) {
+                    enemyRatDistSq = myDistSq;
+                    nearestEnemyRat = myEnemy;
+                }
+            }
+        }
+
+        if (nearestEnemyRatKing != null && enemyRatKingDistSq <= 25) {
+            return false; 
+        }
+
+        int myHp = rc.getHealth();
+
+        if (myHp <= CRITICAL_HP || catDistSq <= CAT_CRITICAL_DIST_SQ) {
+            return false; 
+        } else if (catDistSq <= CAT_DANGER_DIST_SQ || (enemyRatDistSq <= 8 && myHp <= 250)) {
+            return false;
+        } else if (nearestCat != null || nearestEnemyRat != null) {
+            return false; 
+        } else {
+            return true;  
+        }
+    }
+
+
     @Override
     public boolean runTick() throws GameActionException {
         int myKingCount = GlobalArray.countRatKings();
@@ -93,7 +161,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         }
         kingCount = myKingCount;
 
-        if (context.defenseState != ThreatContext.DefenseState.NORMAL) {
+        if (!isNormal()) {
             if (state == FormationState.COORDINATING) {
                 abortFormation();
             }
@@ -295,9 +363,9 @@ public class KingFormationCoordinatorStrategy extends Strategy {
             return;
         }
 
-        if (context.nearestCat != null &&
+        if (nearestCat != null &&
             formationTarget != null &&
-            context.nearestCat.location.distanceSquaredTo(formationTarget) < 625) {
+            nearestCat.location.distanceSquaredTo(formationTarget) < 625) {
             abortFormation();
             return;
         }

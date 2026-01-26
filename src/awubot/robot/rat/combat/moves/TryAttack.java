@@ -45,7 +45,7 @@ public final class TryAttack {
         bestSecondaryMove = null;
         bestScore = -1e9;
         bytecodeStart = Clock.getBytecodeNum();
-        bytecodeBudget = Math.min(3000, (int) (Clock.getBytecodesLeft() - 1000) / 2);
+        bytecodeBudget = Math.min(4000, (int) ((Clock.getBytecodesLeft() - 1000) / 1.5));
         isCat = false;
         for (int i = 0; i < RobotTracker.numEnemies && i < 3; i++) {
             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
@@ -56,7 +56,6 @@ public final class TryAttack {
             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget);
             else {
                 info = RobotTracker.sortedCats[0];
-                isCat = true;
                 considerEnemy();
             }
         }
@@ -1124,10 +1123,12 @@ public final class TryAttack {
     }
 
     private static void faceN() throws GameActionException {
-        if (!canSense(newLoc, t, Direction.NORTH)) return;
+        int x = getSenseLevel(newLoc, t, Direction.NORTH);
+        if (x == 0) return;
         int moveCost = CombatCommon.movementCost(moveDir, Direction.NORTH);
         if (moveCost == -1) return;
         score = weight;
+        if (x == 1) score += 5;
         if (moveCost == 0) score -= CombatCommon.strafeCost();
         if (Direction.NORTH != myDir) {
             score += 2; // prefer turning
@@ -1146,10 +1147,12 @@ public final class TryAttack {
         }
     }
     private static void faceNE() throws GameActionException {
-        if (!canSense(newLoc, t, Direction.NORTHEAST)) return;
+        int x = getSenseLevel(newLoc, t, Direction.NORTHEAST);
+        if (x == 0) return;
         int moveCost = CombatCommon.movementCost(moveDir, Direction.NORTHEAST);
         if (moveCost == -1) return;
         score = weight;
+        if (x == 1) score += 5;
         if (moveCost == 0) score -= CombatCommon.strafeCost();
         if (Direction.NORTHEAST != myDir) {
             score += 2; // prefer turning
@@ -1168,10 +1171,12 @@ public final class TryAttack {
         }
     }
     private static void faceE() throws GameActionException {
-        if (!canSense(newLoc, t, Direction.EAST)) return;
+        int x = getSenseLevel(newLoc, t, Direction.EAST);
+        if (x == 0) return;
         int moveCost = CombatCommon.movementCost(moveDir, Direction.EAST);
         if (moveCost == -1) return;
         score = weight;
+        if (x == 1) score += 5;
         if (moveCost == 0) score -= CombatCommon.strafeCost();
         if (Direction.EAST != myDir) {
             score += 2; // prefer turning
@@ -1190,10 +1195,12 @@ public final class TryAttack {
         }
     }
     private static void faceSE() throws GameActionException {
-        if (!canSense(newLoc, t, Direction.SOUTHEAST)) return;
+        int x = getSenseLevel(newLoc, t, Direction.SOUTHEAST);
+        if (x == 0) return;
         int moveCost = CombatCommon.movementCost(moveDir, Direction.SOUTHEAST);
         if (moveCost == -1) return;
         score = weight;
+        if (x == 1) score += 5;
         if (moveCost == 0) score -= CombatCommon.strafeCost();
         if (Direction.SOUTHEAST != myDir) {
             score += 2; // prefer turning
@@ -1212,10 +1219,12 @@ public final class TryAttack {
         }
     }
     private static void faceS() throws GameActionException {
-        if (!canSense(newLoc, t, Direction.SOUTH)) return;
+        int x = getSenseLevel(newLoc, t, Direction.SOUTH);
+        if (x == 0) return;
         int moveCost = CombatCommon.movementCost(moveDir, Direction.SOUTH);
         if (moveCost == -1) return;
         score = weight;
+        if (x == 1) score += 5;
         if (moveCost == 0) score -= CombatCommon.strafeCost();
         if (Direction.SOUTH != myDir) {
             score += 2; // prefer turning
@@ -1234,10 +1243,12 @@ public final class TryAttack {
         }
     }
     private static void faceSW() throws GameActionException {
-        if (!canSense(newLoc, t, Direction.SOUTHWEST)) return;
+        int x = getSenseLevel(newLoc, t, Direction.SOUTHWEST);
+        if (x == 0) return;
         int moveCost = CombatCommon.movementCost(moveDir, Direction.SOUTHWEST);
         if (moveCost == -1) return;
         score = weight;
+        if (x == 1) score += 5;
         if (moveCost == 0) score -= CombatCommon.strafeCost();
         if (Direction.SOUTHWEST != myDir) {
             score += 2; // prefer turning
@@ -1256,10 +1267,12 @@ public final class TryAttack {
         }
     }
     private static void faceW() throws GameActionException {
-        if (!canSense(newLoc, t, Direction.WEST)) return;
+        int x = getSenseLevel(newLoc, t, Direction.WEST);
+        if (x == 0) return;
         int moveCost = CombatCommon.movementCost(moveDir, Direction.WEST);
         if (moveCost == -1) return;
         score = weight;
+        if (x == 1) score += 5;
         if (moveCost == 0) score -= CombatCommon.strafeCost();
         if (Direction.WEST != myDir) {
             score += 2; // prefer turning
@@ -1278,10 +1291,12 @@ public final class TryAttack {
         }
     }
     private static void faceNW() throws GameActionException {
-        if (!canSense(newLoc, t, Direction.NORTHWEST)) return;
+        int x = getSenseLevel(newLoc, t, Direction.NORTHWEST);
+        if (x == 0) return;
         int moveCost = CombatCommon.movementCost(moveDir, Direction.NORTHWEST);
         if (moveCost == -1) return;
         score = weight;
+        if (x == 1) score += 5;
         if (moveCost == 0) score -= CombatCommon.strafeCost();
         if (Direction.NORTHWEST != myDir) {
             score += 2; // prefer turning
@@ -1304,6 +1319,7 @@ public final class TryAttack {
         int moveCost = CombatCommon.movementCost(moveDir, facing);
         if (moveCost == -1) return;
         double score = weight;
+        if (canHardSense(newLoc, t, facing)) score += 5;
         if (moveCost == 0) score -= CombatCommon.strafeCost();
         if (facing != myDir) {
             score += 2; // prefer turning

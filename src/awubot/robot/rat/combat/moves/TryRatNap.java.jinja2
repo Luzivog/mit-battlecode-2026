@@ -100,7 +100,7 @@ public final class TryRatNap {
                     {% else %}
                     if (canPerformSecondary) {
                         {% for facing_dir in related_map[ord] %}
-                            considerSecondaryMove({{ dir_opposite_map[move_dir] }}, {{ facing_dir }});
+                            considerSecondaryMove({{ move_dir }}, {{ facing_dir }});
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                         {% endfor %}
                     }
@@ -161,7 +161,7 @@ public final class TryRatNap {
     private static void considerSecondaryMove(Direction moveDir, Direction facing) throws GameActionException {
         int moveCost = CombatCommon.movementCost(moveDir, facing);
         if (moveCost == -1) return;
-        double score = weight + 5;
+        double score = weight + 20;
         score += CombatStrategy.getCellScoreFor(moveDir, facing, info);
         if (score <= 0.5) return;
         if (facing != myDir) {

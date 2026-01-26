@@ -91,12 +91,12 @@ public final class TryTrap {
         if (!shouldDefRun && !shouldRunEarlyExit()) return false;
 
         bytecodeStart = Clock.getBytecodeNum();
-        bytecodeBudget = Math.min(5000, (int) (Clock.getBytecodesLeft() - 1000) / 2);
+        bytecodeBudget = Math.min(6000, (int) (Clock.getBytecodesLeft() - 1000) / 2);
         computeWeights();
         resetBest();
         selectMoves();
         if (bestPlaceLoc == null) return false;
-        if (best < 0.5) return false;
+        if (best < 0.5 && best > -100) return false;
         if (bestMoveDir != null) {
             assert(CombatStrategy.performMoves(bestMoveDir, bestFacing));
             rc.placeRatTrap(bestPlaceLoc);
@@ -310,7 +310,7 @@ public final class TryTrap {
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     {% else %}
                     {% for facing_dir in related_map[ord] %}
-                        considerSecondaryMove({{ dir_opposite_map[move_dir] }}, {{ facing_dir }});
+                        considerSecondaryMove({{ move_dir }}, {{ facing_dir }});
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     {% endfor %}
                     {% endif %}
@@ -324,10 +324,7 @@ public final class TryTrap {
     private static void considerSecondaryMove(Direction moveDir, Direction facing) throws GameActionException {
         int moveCost = CombatCommon.movementCost(moveDir, facing);
         if (moveCost == -1) return;
-        baseScore = 0;
-        if (rc.getHealth() > 24) {
-            baseScore += CombatStrategy.getCellScoreFor(moveDir, facing);
-        }
+        baseScore = CombatStrategy.getCellScoreFor(moveDir, facing);
         switch (facing.ordinal()) {
             {% for f in range(8) %}
             case {{ f }} -> {

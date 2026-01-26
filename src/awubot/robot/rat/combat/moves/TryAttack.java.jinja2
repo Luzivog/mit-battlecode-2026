@@ -43,7 +43,7 @@ public final class TryAttack {
         bestSecondaryMove = null;
         bestScore = -1e9;
         bytecodeStart = Clock.getBytecodeNum();
-        bytecodeBudget = Math.min(3000, (int) (Clock.getBytecodesLeft() - 1000) / 2);
+        bytecodeBudget = Math.min(4000, (int) ((Clock.getBytecodesLeft() - 1000) / 1.5));
         isCat = false;
         for (int i = 0; i < RobotTracker.numEnemies && i < 3; i++) {
             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
@@ -54,7 +54,6 @@ public final class TryAttack {
             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget);
             else {
                 info = RobotTracker.sortedCats[0];
-                isCat = true;
                 considerEnemy();
             }
         }
@@ -144,10 +143,12 @@ public final class TryAttack {
 
     {% for face_dir in directions %}
     private static void face{{ dir_short_map[face_dir] }}() throws GameActionException {
-        if (!canSense(newLoc, t, {{ face_dir }})) return;
+        int x = getSenseLevel(newLoc, t, {{ face_dir }});
+        if (x == 0) return;
         int moveCost = CombatCommon.movementCost(moveDir, {{ face_dir }});
         if (moveCost == -1) return;
         score = weight;
+        if (x == 1) score += 5;
         if (moveCost == 0) score -= CombatCommon.strafeCost();
         if ({{ face_dir }} != myDir) {
             score += 2; // prefer turning
@@ -171,6 +172,7 @@ public final class TryAttack {
         int moveCost = CombatCommon.movementCost(moveDir, facing);
         if (moveCost == -1) return;
         double score = weight;
+        if (canHardSense(newLoc, t, facing)) score += 5;
         if (moveCost == 0) score -= CombatCommon.strafeCost();
         if (facing != myDir) {
             score += 2; // prefer turning

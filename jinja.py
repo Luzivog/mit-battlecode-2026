@@ -237,7 +237,18 @@ def compile_template(path: Path, debug: bool):
             debug=debug
         )
 
-        output_path.write_text(rendered)
+        try:
+            output_path.write_text(rendered, encoding="utf-8")
+        except OSError as e:
+            if e.errno != 22:
+                raise
+            tmp_path = output_path.with_suffix(output_path.suffix + ".tmp")
+            try:
+                tmp_path.write_text(rendered, encoding="utf-8")
+                tmp_path.replace(output_path)
+            finally:
+                if tmp_path.exists():
+                    tmp_path.unlink()
         print(f"[compiled] {path} -> {output_path}")
 
     except Exception as e:

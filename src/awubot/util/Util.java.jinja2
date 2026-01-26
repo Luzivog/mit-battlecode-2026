@@ -235,6 +235,10 @@ public class Util {
         }
     }
 
+    public static boolean canHardSense(MapLocation s, MapLocation t, Direction dir) {
+        return canHardSense(t.x - s.x, t.y - s.y, dir);
+    }
+
     public static boolean canHardSense(int dx, int dy, Direction dir) {
         switch(dir.ordinal()) {
             {% for i in range(8) %}
@@ -281,6 +285,12 @@ public class Util {
         if (!canSense(dx, dy, dir)) return 0;
         if (canHardSense(dx, dy, dir)) return 2;
         return 1;
+    }
+
+    public static int getSenseLevel(MapLocation s, MapLocation t, Direction dir) {
+        int dx = t.x - s.x;
+        int dy = t.y - s.y;
+        return getSenseLevel(dx, dy, dir);
     }
 
     public static boolean canSense(MapLocation s, MapLocation t, Direction dir) {

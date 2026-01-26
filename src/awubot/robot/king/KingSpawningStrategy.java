@@ -23,7 +23,7 @@ public class KingSpawningStrategy extends Strategy {
     public boolean runTick() throws GameActionException {
         indicate("spawned " + numSpawned);
 
-        int thresh = Math.min(rc.getGlobalCheese() / 20 + 10, 40);
+        int thresh = Math.min(rc.getGlobalCheese() / 20 + 10, 30);
         if (rc.getGlobalCheese() >= 5000) {
             thresh = 1000;
         } else if (rc.getGlobalCheese() >= 3000) {
@@ -35,7 +35,7 @@ public class KingSpawningStrategy extends Strategy {
         }
 
         if (EnemyManager.hasBeganCombat && rc.getAllCheese() >= 20) {
-            if (thresh < 40) thresh = 40;
+            // if (thresh < 40) thresh = 40;
         }
 
         MapLocation target = null;

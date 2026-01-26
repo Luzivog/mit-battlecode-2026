@@ -1,14 +1,21 @@
 package awubot.robot.king;
 
-import battlecode.common.*;
-import awubot.robot.Strategy;
 import awubot.CellTracker;
-import awubot.RobotTracker;
-import awubot.comms.GlobalArray;
-import awubot.comms.Squeaker;
-
-import static awubot.Game.*;
-import static awubot.util.Util.*;
+import static awubot.Game._rawMove;
+import static awubot.Game._turn;
+import static awubot.Game.mapHeight;
+import static awubot.Game.mapWidth;
+import static awubot.Game.myLoc;
+import static awubot.Game.rc;
+import awubot.robot.Strategy;
+import static awubot.util.Util.allDirections;
+import static awubot.util.Util.directions;
+import static awubot.util.Util.indicate;
+import battlecode.common.Clock;
+import battlecode.common.Direction;
+import battlecode.common.GameActionException;
+import battlecode.common.MapInfo;
+import battlecode.common.MapLocation;
 
 public class RatKing {
     public static Strategy primaryStrategy;
@@ -19,7 +26,6 @@ public class RatKing {
 
     public static void run() throws GameActionException {
         indicate(rc.getGlobalCheese() + " cheese, " + rc.getHealth() + " HP");
-
         CellTracker.storeVisibleCellsKing();
 
         tryPickUpCheese();
@@ -143,7 +149,7 @@ public class RatKing {
 
         if (targetDirt != null) {
             rc.removeDirt(targetDirt);
-            CellTracker.storeVisibleCellsKing();
+            CellTracker.storeCellKing(rc.senseMapInfo(targetDirt));
             return;
         }
 
@@ -208,7 +214,7 @@ public class RatKing {
 
         if(best != null) {
             rc.removeDirt(best);
-            CellTracker.storeVisibleCellsKing();
+            CellTracker.storeCellKing(rc.senseMapInfo(best));
         }
     }
 

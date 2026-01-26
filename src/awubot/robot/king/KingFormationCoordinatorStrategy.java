@@ -80,7 +80,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         int myKingCount = GlobalArray.countRatKings();
         int numRats = (rc.getCurrentRatCost() - 10) * 2 / 5;
 
-        if (myKingCount >= 5 || time >= 1100 || numRats < 15 * myKingCount) {
+        if (myKingCount >= 5 || (time >= 1100 && myKingCount >= 2) || numRats < 15 * myKingCount) {
             abortFormation();
             kingCount = myKingCount;
             return true;

@@ -64,7 +64,7 @@ public final class TryRatNap {
             selectSecondaryMoves();
 
             // allow allies
-            if (Game.ALLOW_ALLY_THROWING && i == 0 && GlobalArray.numberOfRatsAlive >= 12) {
+            if (Game.ALLOW_ALLY_THROWING && i == 0 && GlobalArray.numberOfRatsAlive >= 8 && rc.getHealth() > 62) {
                 int enemyMaxHP = 0;
                 for (int k = 0; k < RobotTracker.numEnemies; k++) {
                     RobotInfo enemy2 = RobotTracker.sortedEnemies[k];
@@ -76,13 +76,14 @@ public final class TryRatNap {
                     RobotInfo ally = RobotTracker.sortedAllies[j];
                     if (ally.getType() != UnitType.BABY_RAT) continue;
                     if (chebyshevDistance(myLoc, ally) > 2) continue;
-                    if (ally.getHealth() >= 30) continue;
+                    if (ally.getHealth() > 12) continue;
                     info = ally;
                     t = info.location;
                     weight = 10;
                     selectMoves();
                     if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                     selectSecondaryMoves();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                 }
             }
         }

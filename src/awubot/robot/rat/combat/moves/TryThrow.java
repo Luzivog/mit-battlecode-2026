@@ -12843,7 +12843,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_0_3 == null || occ_0_3.getTeam() != enemyTeam) return;
-        if (occ_0_3.getType() != UnitType.BABY_RAT && occ_0_3.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_0_3.getType() != UnitType.BABY_RAT || occ_0_3.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_0_3.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.NORTH, occ_0_3, 42);
         if (score > best) {
@@ -12863,7 +12863,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_2_3 == null || occ_2_3.getTeam() != enemyTeam) return;
-        if (occ_2_3.getType() != UnitType.BABY_RAT && occ_2_3.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_2_3.getType() != UnitType.BABY_RAT || occ_2_3.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_2_3.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.NORTHEAST, occ_2_3, 42);
         if (score > best) {
@@ -12883,7 +12883,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_2_1 == null || occ_2_1.getTeam() != enemyTeam) return;
-        if (occ_2_1.getType() != UnitType.BABY_RAT && occ_2_1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_2_1.getType() != UnitType.BABY_RAT || occ_2_1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_2_1.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.EAST, occ_2_1, 42);
         if (score > best) {
@@ -12903,7 +12903,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_2_m1 == null || occ_2_m1.getTeam() != enemyTeam) return;
-        if (occ_2_m1.getType() != UnitType.BABY_RAT && occ_2_m1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_2_m1.getType() != UnitType.BABY_RAT || occ_2_m1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_2_m1.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.SOUTHEAST, occ_2_m1, 42);
         if (score > best) {
@@ -12923,7 +12923,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_0_m1 == null || occ_0_m1.getTeam() != enemyTeam) return;
-        if (occ_0_m1.getType() != UnitType.BABY_RAT && occ_0_m1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_0_m1.getType() != UnitType.BABY_RAT || occ_0_m1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_0_m1.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.SOUTH, occ_0_m1, 42);
         if (score > best) {
@@ -12943,7 +12943,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_m2_m1 == null || occ_m2_m1.getTeam() != enemyTeam) return;
-        if (occ_m2_m1.getType() != UnitType.BABY_RAT && occ_m2_m1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_m2_m1.getType() != UnitType.BABY_RAT || occ_m2_m1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_m2_m1.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.SOUTHWEST, occ_m2_m1, 42);
         if (score > best) {
@@ -12963,7 +12963,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_m2_1 == null || occ_m2_1.getTeam() != enemyTeam) return;
-        if (occ_m2_1.getType() != UnitType.BABY_RAT && occ_m2_1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_m2_1.getType() != UnitType.BABY_RAT || occ_m2_1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_m2_1.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.WEST, occ_m2_1, 42);
         if (score > best) {
@@ -12983,7 +12983,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_m2_3 == null || occ_m2_3.getTeam() != enemyTeam) return;
-        if (occ_m2_3.getType() != UnitType.BABY_RAT && occ_m2_3.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_m2_3.getType() != UnitType.BABY_RAT || occ_m2_3.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_m2_3.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.NORTHWEST, occ_m2_3, 42);
         if (score > best) {
@@ -13003,7 +13003,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_1_3 == null || occ_1_3.getTeam() != enemyTeam) return;
-        if (occ_1_3.getType() != UnitType.BABY_RAT && occ_1_3.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_1_3.getType() != UnitType.BABY_RAT || occ_1_3.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_1_3.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.NORTH, occ_1_3, 42);
         if (score > best) {
@@ -13023,7 +13023,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_3_3 == null || occ_3_3.getTeam() != enemyTeam) return;
-        if (occ_3_3.getType() != UnitType.BABY_RAT && occ_3_3.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_3_3.getType() != UnitType.BABY_RAT || occ_3_3.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_3_3.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.NORTHEAST, occ_3_3, 42);
         if (score > best) {
@@ -13043,7 +13043,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_3_1 == null || occ_3_1.getTeam() != enemyTeam) return;
-        if (occ_3_1.getType() != UnitType.BABY_RAT && occ_3_1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_3_1.getType() != UnitType.BABY_RAT || occ_3_1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_3_1.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.EAST, occ_3_1, 42);
         if (score > best) {
@@ -13063,7 +13063,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_3_m1 == null || occ_3_m1.getTeam() != enemyTeam) return;
-        if (occ_3_m1.getType() != UnitType.BABY_RAT && occ_3_m1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_3_m1.getType() != UnitType.BABY_RAT || occ_3_m1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_3_m1.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.SOUTHEAST, occ_3_m1, 42);
         if (score > best) {
@@ -13083,7 +13083,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_1_m1 == null || occ_1_m1.getTeam() != enemyTeam) return;
-        if (occ_1_m1.getType() != UnitType.BABY_RAT && occ_1_m1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_1_m1.getType() != UnitType.BABY_RAT || occ_1_m1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_1_m1.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.SOUTH, occ_1_m1, 42);
         if (score > best) {
@@ -13103,7 +13103,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_m1_m1 == null || occ_m1_m1.getTeam() != enemyTeam) return;
-        if (occ_m1_m1.getType() != UnitType.BABY_RAT && occ_m1_m1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_m1_m1.getType() != UnitType.BABY_RAT || occ_m1_m1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_m1_m1.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.SOUTHWEST, occ_m1_m1, 42);
         if (score > best) {
@@ -13123,7 +13123,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_m1_1 == null || occ_m1_1.getTeam() != enemyTeam) return;
-        if (occ_m1_1.getType() != UnitType.BABY_RAT && occ_m1_1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_m1_1.getType() != UnitType.BABY_RAT || occ_m1_1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_m1_1.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.WEST, occ_m1_1, 42);
         if (score > best) {
@@ -13143,7 +13143,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_m1_3 == null || occ_m1_3.getTeam() != enemyTeam) return;
-        if (occ_m1_3.getType() != UnitType.BABY_RAT && occ_m1_3.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_m1_3.getType() != UnitType.BABY_RAT || occ_m1_3.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_m1_3.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.NORTHWEST, occ_m1_3, 42);
         if (score > best) {
@@ -13163,7 +13163,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_1_2 == null || occ_1_2.getTeam() != enemyTeam) return;
-        if (occ_1_2.getType() != UnitType.BABY_RAT && occ_1_2.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_1_2.getType() != UnitType.BABY_RAT || occ_1_2.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_1_2.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.NORTH, occ_1_2, 42);
         if (score > best) {
@@ -13183,7 +13183,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_3_2 == null || occ_3_2.getTeam() != enemyTeam) return;
-        if (occ_3_2.getType() != UnitType.BABY_RAT && occ_3_2.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_3_2.getType() != UnitType.BABY_RAT || occ_3_2.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_3_2.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.NORTHEAST, occ_3_2, 42);
         if (score > best) {
@@ -13203,7 +13203,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_3_0 == null || occ_3_0.getTeam() != enemyTeam) return;
-        if (occ_3_0.getType() != UnitType.BABY_RAT && occ_3_0.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_3_0.getType() != UnitType.BABY_RAT || occ_3_0.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_3_0.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.EAST, occ_3_0, 42);
         if (score > best) {
@@ -13223,7 +13223,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_3_m2 == null || occ_3_m2.getTeam() != enemyTeam) return;
-        if (occ_3_m2.getType() != UnitType.BABY_RAT && occ_3_m2.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_3_m2.getType() != UnitType.BABY_RAT || occ_3_m2.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_3_m2.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.SOUTHEAST, occ_3_m2, 42);
         if (score > best) {
@@ -13243,7 +13243,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_1_m2 == null || occ_1_m2.getTeam() != enemyTeam) return;
-        if (occ_1_m2.getType() != UnitType.BABY_RAT && occ_1_m2.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_1_m2.getType() != UnitType.BABY_RAT || occ_1_m2.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_1_m2.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.SOUTH, occ_1_m2, 42);
         if (score > best) {
@@ -13263,7 +13263,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_m1_m2 == null || occ_m1_m2.getTeam() != enemyTeam) return;
-        if (occ_m1_m2.getType() != UnitType.BABY_RAT && occ_m1_m2.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_m1_m2.getType() != UnitType.BABY_RAT || occ_m1_m2.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_m1_m2.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.SOUTHWEST, occ_m1_m2, 42);
         if (score > best) {
@@ -13283,7 +13283,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_m1_0 == null || occ_m1_0.getTeam() != enemyTeam) return;
-        if (occ_m1_0.getType() != UnitType.BABY_RAT && occ_m1_0.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_m1_0.getType() != UnitType.BABY_RAT || occ_m1_0.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_m1_0.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.WEST, occ_m1_0, 42);
         if (score > best) {
@@ -13303,7 +13303,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_m1_2 == null || occ_m1_2.getTeam() != enemyTeam) return;
-        if (occ_m1_2.getType() != UnitType.BABY_RAT && occ_m1_2.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_m1_2.getType() != UnitType.BABY_RAT || occ_m1_2.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_m1_2.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.NORTHWEST, occ_m1_2, 42);
         if (score > best) {
@@ -13323,7 +13323,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_1_1 == null || occ_1_1.getTeam() != enemyTeam) return;
-        if (occ_1_1.getType() != UnitType.BABY_RAT && occ_1_1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_1_1.getType() != UnitType.BABY_RAT || occ_1_1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_1_1.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.NORTH, occ_1_1, 42);
         if (score > best) {
@@ -13343,7 +13343,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_3_1 == null || occ_3_1.getTeam() != enemyTeam) return;
-        if (occ_3_1.getType() != UnitType.BABY_RAT && occ_3_1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_3_1.getType() != UnitType.BABY_RAT || occ_3_1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_3_1.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.NORTHEAST, occ_3_1, 42);
         if (score > best) {
@@ -13363,7 +13363,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_3_m1 == null || occ_3_m1.getTeam() != enemyTeam) return;
-        if (occ_3_m1.getType() != UnitType.BABY_RAT && occ_3_m1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_3_m1.getType() != UnitType.BABY_RAT || occ_3_m1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_3_m1.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.EAST, occ_3_m1, 42);
         if (score > best) {
@@ -13383,7 +13383,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_3_m3 == null || occ_3_m3.getTeam() != enemyTeam) return;
-        if (occ_3_m3.getType() != UnitType.BABY_RAT && occ_3_m3.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_3_m3.getType() != UnitType.BABY_RAT || occ_3_m3.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_3_m3.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.SOUTHEAST, occ_3_m3, 42);
         if (score > best) {
@@ -13403,7 +13403,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_1_m3 == null || occ_1_m3.getTeam() != enemyTeam) return;
-        if (occ_1_m3.getType() != UnitType.BABY_RAT && occ_1_m3.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_1_m3.getType() != UnitType.BABY_RAT || occ_1_m3.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_1_m3.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.SOUTH, occ_1_m3, 42);
         if (score > best) {
@@ -13423,7 +13423,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_m1_m3 == null || occ_m1_m3.getTeam() != enemyTeam) return;
-        if (occ_m1_m3.getType() != UnitType.BABY_RAT && occ_m1_m3.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_m1_m3.getType() != UnitType.BABY_RAT || occ_m1_m3.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_m1_m3.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.SOUTHWEST, occ_m1_m3, 42);
         if (score > best) {
@@ -13443,7 +13443,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_m1_m1 == null || occ_m1_m1.getTeam() != enemyTeam) return;
-        if (occ_m1_m1.getType() != UnitType.BABY_RAT && occ_m1_m1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_m1_m1.getType() != UnitType.BABY_RAT || occ_m1_m1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_m1_m1.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.WEST, occ_m1_m1, 42);
         if (score > best) {
@@ -13463,7 +13463,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_m1_1 == null || occ_m1_1.getTeam() != enemyTeam) return;
-        if (occ_m1_1.getType() != UnitType.BABY_RAT && occ_m1_1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_m1_1.getType() != UnitType.BABY_RAT || occ_m1_1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_m1_1.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.NORTHWEST, occ_m1_1, 42);
         if (score > best) {
@@ -13483,7 +13483,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_0_1 == null || occ_0_1.getTeam() != enemyTeam) return;
-        if (occ_0_1.getType() != UnitType.BABY_RAT && occ_0_1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_0_1.getType() != UnitType.BABY_RAT || occ_0_1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_0_1.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.NORTH, occ_0_1, 42);
         if (score > best) {
@@ -13503,7 +13503,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_2_1 == null || occ_2_1.getTeam() != enemyTeam) return;
-        if (occ_2_1.getType() != UnitType.BABY_RAT && occ_2_1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_2_1.getType() != UnitType.BABY_RAT || occ_2_1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_2_1.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.NORTHEAST, occ_2_1, 42);
         if (score > best) {
@@ -13523,7 +13523,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_2_m1 == null || occ_2_m1.getTeam() != enemyTeam) return;
-        if (occ_2_m1.getType() != UnitType.BABY_RAT && occ_2_m1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_2_m1.getType() != UnitType.BABY_RAT || occ_2_m1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_2_m1.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.EAST, occ_2_m1, 42);
         if (score > best) {
@@ -13543,7 +13543,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_2_m3 == null || occ_2_m3.getTeam() != enemyTeam) return;
-        if (occ_2_m3.getType() != UnitType.BABY_RAT && occ_2_m3.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_2_m3.getType() != UnitType.BABY_RAT || occ_2_m3.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_2_m3.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.SOUTHEAST, occ_2_m3, 42);
         if (score > best) {
@@ -13563,7 +13563,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_0_m3 == null || occ_0_m3.getTeam() != enemyTeam) return;
-        if (occ_0_m3.getType() != UnitType.BABY_RAT && occ_0_m3.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_0_m3.getType() != UnitType.BABY_RAT || occ_0_m3.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_0_m3.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.SOUTH, occ_0_m3, 42);
         if (score > best) {
@@ -13583,7 +13583,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_m2_m3 == null || occ_m2_m3.getTeam() != enemyTeam) return;
-        if (occ_m2_m3.getType() != UnitType.BABY_RAT && occ_m2_m3.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_m2_m3.getType() != UnitType.BABY_RAT || occ_m2_m3.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_m2_m3.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.SOUTHWEST, occ_m2_m3, 42);
         if (score > best) {
@@ -13603,7 +13603,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_m2_m1 == null || occ_m2_m1.getTeam() != enemyTeam) return;
-        if (occ_m2_m1.getType() != UnitType.BABY_RAT && occ_m2_m1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_m2_m1.getType() != UnitType.BABY_RAT || occ_m2_m1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_m2_m1.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.WEST, occ_m2_m1, 42);
         if (score > best) {
@@ -13623,7 +13623,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_m2_1 == null || occ_m2_1.getTeam() != enemyTeam) return;
-        if (occ_m2_1.getType() != UnitType.BABY_RAT && occ_m2_1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_m2_1.getType() != UnitType.BABY_RAT || occ_m2_1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_m2_1.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.NORTHWEST, occ_m2_1, 42);
         if (score > best) {
@@ -13643,7 +13643,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_m1_1 == null || occ_m1_1.getTeam() != enemyTeam) return;
-        if (occ_m1_1.getType() != UnitType.BABY_RAT && occ_m1_1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_m1_1.getType() != UnitType.BABY_RAT || occ_m1_1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_m1_1.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.NORTH, occ_m1_1, 42);
         if (score > best) {
@@ -13663,7 +13663,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_1_1 == null || occ_1_1.getTeam() != enemyTeam) return;
-        if (occ_1_1.getType() != UnitType.BABY_RAT && occ_1_1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_1_1.getType() != UnitType.BABY_RAT || occ_1_1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_1_1.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.NORTHEAST, occ_1_1, 42);
         if (score > best) {
@@ -13683,7 +13683,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_1_m1 == null || occ_1_m1.getTeam() != enemyTeam) return;
-        if (occ_1_m1.getType() != UnitType.BABY_RAT && occ_1_m1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_1_m1.getType() != UnitType.BABY_RAT || occ_1_m1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_1_m1.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.EAST, occ_1_m1, 42);
         if (score > best) {
@@ -13703,7 +13703,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_1_m3 == null || occ_1_m3.getTeam() != enemyTeam) return;
-        if (occ_1_m3.getType() != UnitType.BABY_RAT && occ_1_m3.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_1_m3.getType() != UnitType.BABY_RAT || occ_1_m3.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_1_m3.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.SOUTHEAST, occ_1_m3, 42);
         if (score > best) {
@@ -13723,7 +13723,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_m1_m3 == null || occ_m1_m3.getTeam() != enemyTeam) return;
-        if (occ_m1_m3.getType() != UnitType.BABY_RAT && occ_m1_m3.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_m1_m3.getType() != UnitType.BABY_RAT || occ_m1_m3.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_m1_m3.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.SOUTH, occ_m1_m3, 42);
         if (score > best) {
@@ -13743,7 +13743,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_m3_m3 == null || occ_m3_m3.getTeam() != enemyTeam) return;
-        if (occ_m3_m3.getType() != UnitType.BABY_RAT && occ_m3_m3.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_m3_m3.getType() != UnitType.BABY_RAT || occ_m3_m3.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_m3_m3.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.SOUTHWEST, occ_m3_m3, 42);
         if (score > best) {
@@ -13763,7 +13763,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_m3_m1 == null || occ_m3_m1.getTeam() != enemyTeam) return;
-        if (occ_m3_m1.getType() != UnitType.BABY_RAT && occ_m3_m1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_m3_m1.getType() != UnitType.BABY_RAT || occ_m3_m1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_m3_m1.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.WEST, occ_m3_m1, 42);
         if (score > best) {
@@ -13783,7 +13783,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_m3_1 == null || occ_m3_1.getTeam() != enemyTeam) return;
-        if (occ_m3_1.getType() != UnitType.BABY_RAT && occ_m3_1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_m3_1.getType() != UnitType.BABY_RAT || occ_m3_1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_m3_1.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.NORTHWEST, occ_m3_1, 42);
         if (score > best) {
@@ -13803,7 +13803,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_m1_2 == null || occ_m1_2.getTeam() != enemyTeam) return;
-        if (occ_m1_2.getType() != UnitType.BABY_RAT && occ_m1_2.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_m1_2.getType() != UnitType.BABY_RAT || occ_m1_2.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_m1_2.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.NORTH, occ_m1_2, 42);
         if (score > best) {
@@ -13823,7 +13823,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_1_2 == null || occ_1_2.getTeam() != enemyTeam) return;
-        if (occ_1_2.getType() != UnitType.BABY_RAT && occ_1_2.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_1_2.getType() != UnitType.BABY_RAT || occ_1_2.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_1_2.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.NORTHEAST, occ_1_2, 42);
         if (score > best) {
@@ -13843,7 +13843,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_1_0 == null || occ_1_0.getTeam() != enemyTeam) return;
-        if (occ_1_0.getType() != UnitType.BABY_RAT && occ_1_0.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_1_0.getType() != UnitType.BABY_RAT || occ_1_0.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_1_0.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.EAST, occ_1_0, 42);
         if (score > best) {
@@ -13863,7 +13863,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_1_m2 == null || occ_1_m2.getTeam() != enemyTeam) return;
-        if (occ_1_m2.getType() != UnitType.BABY_RAT && occ_1_m2.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_1_m2.getType() != UnitType.BABY_RAT || occ_1_m2.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_1_m2.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.SOUTHEAST, occ_1_m2, 42);
         if (score > best) {
@@ -13883,7 +13883,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_m1_m2 == null || occ_m1_m2.getTeam() != enemyTeam) return;
-        if (occ_m1_m2.getType() != UnitType.BABY_RAT && occ_m1_m2.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_m1_m2.getType() != UnitType.BABY_RAT || occ_m1_m2.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_m1_m2.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.SOUTH, occ_m1_m2, 42);
         if (score > best) {
@@ -13903,7 +13903,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_m3_m2 == null || occ_m3_m2.getTeam() != enemyTeam) return;
-        if (occ_m3_m2.getType() != UnitType.BABY_RAT && occ_m3_m2.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_m3_m2.getType() != UnitType.BABY_RAT || occ_m3_m2.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_m3_m2.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.SOUTHWEST, occ_m3_m2, 42);
         if (score > best) {
@@ -13923,7 +13923,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_m3_0 == null || occ_m3_0.getTeam() != enemyTeam) return;
-        if (occ_m3_0.getType() != UnitType.BABY_RAT && occ_m3_0.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_m3_0.getType() != UnitType.BABY_RAT || occ_m3_0.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_m3_0.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.WEST, occ_m3_0, 42);
         if (score > best) {
@@ -13943,7 +13943,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_m3_2 == null || occ_m3_2.getTeam() != enemyTeam) return;
-        if (occ_m3_2.getType() != UnitType.BABY_RAT && occ_m3_2.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_m3_2.getType() != UnitType.BABY_RAT || occ_m3_2.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_m3_2.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.NORTHWEST, occ_m3_2, 42);
         if (score > best) {
@@ -13963,7 +13963,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_m1_3 == null || occ_m1_3.getTeam() != enemyTeam) return;
-        if (occ_m1_3.getType() != UnitType.BABY_RAT && occ_m1_3.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_m1_3.getType() != UnitType.BABY_RAT || occ_m1_3.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_m1_3.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.NORTH, occ_m1_3, 42);
         if (score > best) {
@@ -13983,7 +13983,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_1_3 == null || occ_1_3.getTeam() != enemyTeam) return;
-        if (occ_1_3.getType() != UnitType.BABY_RAT && occ_1_3.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_1_3.getType() != UnitType.BABY_RAT || occ_1_3.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_1_3.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.NORTHEAST, occ_1_3, 42);
         if (score > best) {
@@ -14003,7 +14003,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_1_1 == null || occ_1_1.getTeam() != enemyTeam) return;
-        if (occ_1_1.getType() != UnitType.BABY_RAT && occ_1_1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_1_1.getType() != UnitType.BABY_RAT || occ_1_1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_1_1.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.EAST, occ_1_1, 42);
         if (score > best) {
@@ -14023,7 +14023,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_1_m1 == null || occ_1_m1.getTeam() != enemyTeam) return;
-        if (occ_1_m1.getType() != UnitType.BABY_RAT && occ_1_m1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_1_m1.getType() != UnitType.BABY_RAT || occ_1_m1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_1_m1.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.SOUTHEAST, occ_1_m1, 42);
         if (score > best) {
@@ -14043,7 +14043,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_m1_m1 == null || occ_m1_m1.getTeam() != enemyTeam) return;
-        if (occ_m1_m1.getType() != UnitType.BABY_RAT && occ_m1_m1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_m1_m1.getType() != UnitType.BABY_RAT || occ_m1_m1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_m1_m1.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.SOUTH, occ_m1_m1, 42);
         if (score > best) {
@@ -14063,7 +14063,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_m3_m1 == null || occ_m3_m1.getTeam() != enemyTeam) return;
-        if (occ_m3_m1.getType() != UnitType.BABY_RAT && occ_m3_m1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_m3_m1.getType() != UnitType.BABY_RAT || occ_m3_m1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_m3_m1.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.SOUTHWEST, occ_m3_m1, 42);
         if (score > best) {
@@ -14083,7 +14083,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_m3_1 == null || occ_m3_1.getTeam() != enemyTeam) return;
-        if (occ_m3_1.getType() != UnitType.BABY_RAT && occ_m3_1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_m3_1.getType() != UnitType.BABY_RAT || occ_m3_1.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_m3_1.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.WEST, occ_m3_1, 42);
         if (score > best) {
@@ -14103,7 +14103,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_m3_3 == null || occ_m3_3.getTeam() != enemyTeam) return;
-        if (occ_m3_3.getType() != UnitType.BABY_RAT && occ_m3_3.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_m3_3.getType() != UnitType.BABY_RAT || occ_m3_3.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_m3_3.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.NORTHWEST, occ_m3_3, 42);
         if (score > best) {
@@ -14123,7 +14123,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_0_2 == null || occ_0_2.getTeam() != enemyTeam) return;
-        if (occ_0_2.getType() != UnitType.BABY_RAT && occ_0_2.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_0_2.getType() != UnitType.BABY_RAT || occ_0_2.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_0_2.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.NORTH, occ_0_2, 42);
         if (score > best) {
@@ -14143,7 +14143,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_2_2 == null || occ_2_2.getTeam() != enemyTeam) return;
-        if (occ_2_2.getType() != UnitType.BABY_RAT && occ_2_2.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_2_2.getType() != UnitType.BABY_RAT || occ_2_2.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_2_2.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.NORTHEAST, occ_2_2, 42);
         if (score > best) {
@@ -14163,7 +14163,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_2_0 == null || occ_2_0.getTeam() != enemyTeam) return;
-        if (occ_2_0.getType() != UnitType.BABY_RAT && occ_2_0.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_2_0.getType() != UnitType.BABY_RAT || occ_2_0.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_2_0.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.EAST, occ_2_0, 42);
         if (score > best) {
@@ -14183,7 +14183,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_2_m2 == null || occ_2_m2.getTeam() != enemyTeam) return;
-        if (occ_2_m2.getType() != UnitType.BABY_RAT && occ_2_m2.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_2_m2.getType() != UnitType.BABY_RAT || occ_2_m2.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_2_m2.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.SOUTHEAST, occ_2_m2, 42);
         if (score > best) {
@@ -14203,7 +14203,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_0_m2 == null || occ_0_m2.getTeam() != enemyTeam) return;
-        if (occ_0_m2.getType() != UnitType.BABY_RAT && occ_0_m2.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_0_m2.getType() != UnitType.BABY_RAT || occ_0_m2.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_0_m2.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.SOUTH, occ_0_m2, 42);
         if (score > best) {
@@ -14223,7 +14223,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_m2_m2 == null || occ_m2_m2.getTeam() != enemyTeam) return;
-        if (occ_m2_m2.getType() != UnitType.BABY_RAT && occ_m2_m2.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_m2_m2.getType() != UnitType.BABY_RAT || occ_m2_m2.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_m2_m2.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.SOUTHWEST, occ_m2_m2, 42);
         if (score > best) {
@@ -14243,7 +14243,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_m2_0 == null || occ_m2_0.getTeam() != enemyTeam) return;
-        if (occ_m2_0.getType() != UnitType.BABY_RAT && occ_m2_0.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_m2_0.getType() != UnitType.BABY_RAT || occ_m2_0.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_m2_0.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.WEST, occ_m2_0, 42);
         if (score > best) {
@@ -14263,7 +14263,7 @@ public final class TryThrow {
         score = 0;
         RobotInfo enemyHit = null;
         if (occ_m2_2 == null || occ_m2_2.getTeam() != enemyTeam) return;
-        if (occ_m2_2.getType() != UnitType.BABY_RAT && occ_m2_2.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if (occ_m2_2.getType() != UnitType.BABY_RAT || occ_m2_2.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += occ_m2_2.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.NORTHWEST, occ_m2_2, 42);
         if (score > best) {

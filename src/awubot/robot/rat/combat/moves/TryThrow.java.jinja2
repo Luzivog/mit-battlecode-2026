@@ -396,7 +396,7 @@ public final class TryThrow {
         {% set dx = dir_dx[move_dir] + 2 * dir_dx[throw_dir] %}
         {% set dy = dir_dy[move_dir] + 2 * dir_dy[throw_dir] %}
         if ({{ occ_var(dx, dy) }} == null || {{ occ_var(dx, dy) }}.getTeam() != enemyTeam) return;
-        if ({{ occ_var(dx, dy) }}.getType() != UnitType.BABY_RAT && {{ occ_var(dx, dy) }}.getHealth() <= rc.getCarrying().getHealth() + 10) return;
+        if ({{ occ_var(dx, dy) }}.getType() != UnitType.BABY_RAT || {{ occ_var(dx, dy) }}.getHealth() <= rc.getCarrying().getHealth() + 10) return;
         score += {{ occ_var(dx, dy) }}.getHealth() / 10.0;
         score += CombatStrategy.getCellScoreFor({{ move_dir }}, {{ throw_dir }}, {{ occ_var(dx, dy) }}, 42);
         if (score > best) {

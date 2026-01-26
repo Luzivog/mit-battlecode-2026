@@ -215,7 +215,7 @@ public final class TryTrap {
                                 {%- set diff = (f - dord) | abs -%}
                                 {%- set ang = diff if diff < 8 - diff else 8 - diff -%}
                                 {%- if ang <= 1 -%}
-                                {{ wvar(cx, cy) }} += ({{ 3 - ang }}) * mult;
+                                {{ wvar(cx, cy) }} += ({{ 10 * (3 - ang) }}) * mult;
                                 {# println("incremented weight at " + (myLocX + {{cx}}) + ", " + (myLocY + {{cy}})); #}
                                 {%- endif -%}
                                 {%- endif -%}
@@ -323,17 +323,19 @@ public final class TryTrap {
     private static void considerSecondaryMove(Direction moveDir, Direction facing) throws GameActionException {
         int moveCost = CombatCommon.movementCost(moveDir, facing);
         if (moveCost == -1) return;
-        double moveScore = CombatStrategy.getCellScoreFor(moveDir, facing);
-        if (moveScore <= -100) return;
+        baseScore = 0;
+        if (rc.getHealth() > 24) {
+            baseScore += CombatStrategy.getCellScoreFor(moveDir, facing);
+        }
+        if (baseScore <= -100) return;
         switch (facing.ordinal()) {
             {% for f in range(8) %}
             case {{ f }} -> {
                 {% for place_dir in related_map[f] %}
                 if (moveDir != {{ place_dir }}) {
-                    double score = {{ wvar(dir_dx[place_dir], dir_dy[place_dir]) }};
+                    double score = {{ wvar(dir_dx[place_dir], dir_dy[place_dir]) }} + baseScore;
                     if (score >= 0) {
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
-                        score += moveScore;
                         if (facing != myDir) score *= 1.1;
                         if (score > best) {
                             best = score;
@@ -366,7 +368,11 @@ public final class TryTrap {
         if (CombatTracker.threat{{ dir_short_map[move_dir] }}{{ dir_short_map[facing] }} != 0L) return;
         int moveCost = CombatCommon.movementCost({{ move_dir }}, {{ facing }});
         if (moveCost == -1) return;
-        baseScore = CombatStrategy.getCellScoreFor({{ move_dir }}, {{ facing }});
+        baseScore = 0;
+        if (rc.getHealth() > 24) {
+            baseScore += CombatStrategy.getCellScoreFor({{ move_dir }}, {{ facing }});
+        }
+        if (baseScore <= -100) return;
         {% for place_dir in related_map[dir_ord_map[facing]] %}
         place{{ dir_short_map[place_dir] }}{{ dir_short_map[facing] }}{{ dir_short_map[move_dir] }}();
         {% endfor %}

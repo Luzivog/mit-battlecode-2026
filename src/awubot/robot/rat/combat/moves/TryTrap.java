@@ -702,17 +702,17 @@ public final class TryTrap {
 
                             case 0 -> {
 
-w_m2_m2 += (2) * mult;
+w_m2_m2 += (20) * mult;
 }
 
                             case 1 -> {
 
-w_m2_m2 += (3) * mult;
+w_m2_m2 += (30) * mult;
 }
 
                             case 2 -> {
 
-w_m2_m2 += (2) * mult;
+w_m2_m2 += (20) * mult;
 }
 
                             case 3 -> {
@@ -740,14 +740,14 @@ w_m2_m2 += (2) * mult;
 
                             case 1 -> {
 
-w_m2_m2 += (2) * mult;
-w_m2_m1 += (3) * mult;
+w_m2_m2 += (20) * mult;
+w_m2_m1 += (30) * mult;
 }
 
                             case 2 -> {
 
-w_m2_m2 += (3) * mult;
-w_m2_m1 += (2) * mult;
+w_m2_m2 += (30) * mult;
+w_m2_m1 += (20) * mult;
 }
 
                             case 3 -> {
@@ -775,15 +775,15 @@ w_m2_m1 += (2) * mult;
 
                             case 1 -> {
 
-w_m2_m1 += (2) * mult;
-w_m2_0 += (3) * mult;
+w_m2_m1 += (20) * mult;
+w_m2_0 += (30) * mult;
 }
 
                             case 2 -> {
 
-w_m2_m2 += (2) * mult;
-w_m2_m1 += (3) * mult;
-w_m2_0 += (2) * mult;
+w_m2_m2 += (20) * mult;
+w_m2_m1 += (30) * mult;
+w_m2_0 += (20) * mult;
 }
 
                             case 3 -> {
@@ -811,21 +811,21 @@ w_m2_0 += (2) * mult;
 
                             case 1 -> {
 
-w_m2_0 += (2) * mult;
-w_m2_1 += (3) * mult;
+w_m2_0 += (20) * mult;
+w_m2_1 += (30) * mult;
 }
 
                             case 2 -> {
 
-w_m2_m1 += (2) * mult;
-w_m2_0 += (3) * mult;
-w_m2_1 += (2) * mult;
+w_m2_m1 += (20) * mult;
+w_m2_0 += (30) * mult;
+w_m2_1 += (20) * mult;
 }
 
                             case 3 -> {
 
-w_m2_m1 += (3) * mult;
-w_m2_0 += (2) * mult;
+w_m2_m1 += (30) * mult;
+w_m2_0 += (20) * mult;
 }
 
                             case 4 -> {
@@ -853,15 +853,15 @@ w_m2_0 += (2) * mult;
 
                             case 2 -> {
 
-w_m2_0 += (2) * mult;
-w_m2_1 += (3) * mult;
-w_m2_2 += (2) * mult;
+w_m2_0 += (20) * mult;
+w_m2_1 += (30) * mult;
+w_m2_2 += (20) * mult;
 }
 
                             case 3 -> {
 
-w_m2_0 += (3) * mult;
-w_m2_1 += (2) * mult;
+w_m2_0 += (30) * mult;
+w_m2_1 += (20) * mult;
 }
 
                             case 4 -> {
@@ -889,14 +889,14 @@ w_m2_1 += (2) * mult;
 
                             case 2 -> {
 
-w_m2_1 += (2) * mult;
-w_m2_2 += (3) * mult;
+w_m2_1 += (20) * mult;
+w_m2_2 += (30) * mult;
 }
 
                             case 3 -> {
 
-w_m2_1 += (3) * mult;
-w_m2_2 += (2) * mult;
+w_m2_1 += (30) * mult;
+w_m2_2 += (20) * mult;
 }
 
                             case 4 -> {
@@ -924,17 +924,17 @@ w_m2_2 += (2) * mult;
 
                             case 2 -> {
 
-w_m2_2 += (2) * mult;
+w_m2_2 += (20) * mult;
 }
 
                             case 3 -> {
 
-w_m2_2 += (3) * mult;
+w_m2_2 += (30) * mult;
 }
 
                             case 4 -> {
 
-w_m2_2 += (2) * mult;
+w_m2_2 += (20) * mult;
 }
 
                             case 5 -> {
@@ -958,14 +958,14 @@ w_m2_2 += (2) * mult;
 
                             case 0 -> {
 
-w_m2_m2 += (3) * mult;
-w_m1_m2 += (2) * mult;
+w_m2_m2 += (30) * mult;
+w_m1_m2 += (20) * mult;
 }
 
                             case 1 -> {
 
-w_m2_m2 += (2) * mult;
-w_m1_m2 += (3) * mult;
+w_m2_m2 += (20) * mult;
+w_m1_m2 += (30) * mult;
 }
 
                             case 2 -> {
@@ -993,21 +993,21 @@ w_m1_m2 += (3) * mult;
 
                             case 0 -> {
 
-w_m2_m1 += (3) * mult;
-w_m1_m1 += (2) * mult;
+w_m2_m1 += (30) * mult;
+w_m1_m1 += (20) * mult;
 }
 
                             case 1 -> {
 
-w_m2_m1 += (2) * mult;
-w_m1_m2 += (2) * mult;
-w_m1_m1 += (3) * mult;
+w_m2_m1 += (20) * mult;
+w_m1_m2 += (20) * mult;
+w_m1_m1 += (30) * mult;
 }
 
                             case 2 -> {
 
-w_m1_m2 += (3) * mult;
-w_m1_m1 += (2) * mult;
+w_m1_m2 += (30) * mult;
+w_m1_m1 += (20) * mult;
 }
 
                             case 3 -> {
@@ -1035,16 +1035,16 @@ w_m1_m1 += (2) * mult;
 
                             case 1 -> {
 
-w_m2_0 += (2) * mult;
-w_m1_m1 += (2) * mult;
-w_m1_0 += (3) * mult;
+w_m2_0 += (20) * mult;
+w_m1_m1 += (20) * mult;
+w_m1_0 += (30) * mult;
 }
 
                             case 2 -> {
 
-w_m1_m2 += (2) * mult;
-w_m1_m1 += (3) * mult;
-w_m1_0 += (2) * mult;
+w_m1_m2 += (20) * mult;
+w_m1_m1 += (30) * mult;
+w_m1_0 += (20) * mult;
 }
 
                             case 3 -> {
@@ -1072,23 +1072,23 @@ w_m1_0 += (2) * mult;
 
                             case 1 -> {
 
-w_m2_1 += (2) * mult;
-w_m1_0 += (2) * mult;
-w_m1_1 += (3) * mult;
+w_m2_1 += (20) * mult;
+w_m1_0 += (20) * mult;
+w_m1_1 += (30) * mult;
 }
 
                             case 2 -> {
 
-w_m1_m1 += (2) * mult;
-w_m1_0 += (3) * mult;
-w_m1_1 += (2) * mult;
+w_m1_m1 += (20) * mult;
+w_m1_0 += (30) * mult;
+w_m1_1 += (20) * mult;
 }
 
                             case 3 -> {
 
-w_m2_m1 += (2) * mult;
-w_m1_m1 += (3) * mult;
-w_m1_0 += (2) * mult;
+w_m2_m1 += (20) * mult;
+w_m1_m1 += (30) * mult;
+w_m1_0 += (20) * mult;
 }
 
                             case 4 -> {
@@ -1116,16 +1116,16 @@ w_m1_0 += (2) * mult;
 
                             case 2 -> {
 
-w_m1_0 += (2) * mult;
-w_m1_1 += (3) * mult;
-w_m1_2 += (2) * mult;
+w_m1_0 += (20) * mult;
+w_m1_1 += (30) * mult;
+w_m1_2 += (20) * mult;
 }
 
                             case 3 -> {
 
-w_m2_0 += (2) * mult;
-w_m1_0 += (3) * mult;
-w_m1_1 += (2) * mult;
+w_m2_0 += (20) * mult;
+w_m1_0 += (30) * mult;
+w_m1_1 += (20) * mult;
 }
 
                             case 4 -> {
@@ -1153,21 +1153,21 @@ w_m1_1 += (2) * mult;
 
                             case 2 -> {
 
-w_m1_1 += (2) * mult;
-w_m1_2 += (3) * mult;
+w_m1_1 += (20) * mult;
+w_m1_2 += (30) * mult;
 }
 
                             case 3 -> {
 
-w_m2_1 += (2) * mult;
-w_m1_1 += (3) * mult;
-w_m1_2 += (2) * mult;
+w_m2_1 += (20) * mult;
+w_m1_1 += (30) * mult;
+w_m1_2 += (20) * mult;
 }
 
                             case 4 -> {
 
-w_m2_1 += (3) * mult;
-w_m1_1 += (2) * mult;
+w_m2_1 += (30) * mult;
+w_m1_1 += (20) * mult;
 }
 
                             case 5 -> {
@@ -1195,14 +1195,14 @@ w_m1_1 += (2) * mult;
 
                             case 3 -> {
 
-w_m2_2 += (2) * mult;
-w_m1_2 += (3) * mult;
+w_m2_2 += (20) * mult;
+w_m1_2 += (30) * mult;
 }
 
                             case 4 -> {
 
-w_m2_2 += (3) * mult;
-w_m1_2 += (2) * mult;
+w_m2_2 += (30) * mult;
+w_m1_2 += (20) * mult;
 }
 
                             case 5 -> {
@@ -1226,15 +1226,15 @@ w_m1_2 += (2) * mult;
 
                             case 0 -> {
 
-w_m2_m2 += (2) * mult;
-w_m1_m2 += (3) * mult;
-w_0_m2 += (2) * mult;
+w_m2_m2 += (20) * mult;
+w_m1_m2 += (30) * mult;
+w_0_m2 += (20) * mult;
 }
 
                             case 1 -> {
 
-w_m1_m2 += (2) * mult;
-w_0_m2 += (3) * mult;
+w_m1_m2 += (20) * mult;
+w_0_m2 += (30) * mult;
 }
 
                             case 2 -> {
@@ -1262,16 +1262,16 @@ w_0_m2 += (3) * mult;
 
                             case 0 -> {
 
-w_m2_m1 += (2) * mult;
-w_m1_m1 += (3) * mult;
-w_0_m1 += (2) * mult;
+w_m2_m1 += (20) * mult;
+w_m1_m1 += (30) * mult;
+w_0_m1 += (20) * mult;
 }
 
                             case 1 -> {
 
-w_m1_m1 += (2) * mult;
-w_0_m2 += (2) * mult;
-w_0_m1 += (3) * mult;
+w_m1_m1 += (20) * mult;
+w_0_m2 += (20) * mult;
+w_0_m1 += (30) * mult;
 }
 
                             case 2 -> {
@@ -1299,23 +1299,23 @@ w_0_m1 += (3) * mult;
 
                             case 0 -> {
 
-w_m2_0 += (2) * mult;
-w_m1_0 += (3) * mult;
-w_0_0 += (2) * mult;
+w_m2_0 += (20) * mult;
+w_m1_0 += (30) * mult;
+w_0_0 += (20) * mult;
 }
 
                             case 1 -> {
 
-w_m1_0 += (2) * mult;
-w_0_m1 += (2) * mult;
-w_0_0 += (3) * mult;
+w_m1_0 += (20) * mult;
+w_0_m1 += (20) * mult;
+w_0_0 += (30) * mult;
 }
 
                             case 2 -> {
 
-w_0_m2 += (2) * mult;
-w_0_m1 += (3) * mult;
-w_0_0 += (2) * mult;
+w_0_m2 += (20) * mult;
+w_0_m1 += (30) * mult;
+w_0_0 += (20) * mult;
 }
 
                             case 3 -> {
@@ -1343,23 +1343,23 @@ w_0_0 += (2) * mult;
 
                             case 1 -> {
 
-w_m1_1 += (2) * mult;
-w_0_0 += (2) * mult;
-w_0_1 += (3) * mult;
+w_m1_1 += (20) * mult;
+w_0_0 += (20) * mult;
+w_0_1 += (30) * mult;
 }
 
                             case 2 -> {
 
-w_0_m1 += (2) * mult;
-w_0_0 += (3) * mult;
-w_0_1 += (2) * mult;
+w_0_m1 += (20) * mult;
+w_0_0 += (30) * mult;
+w_0_1 += (20) * mult;
 }
 
                             case 3 -> {
 
-w_m1_m1 += (2) * mult;
-w_0_m1 += (3) * mult;
-w_0_0 += (2) * mult;
+w_m1_m1 += (20) * mult;
+w_0_m1 += (30) * mult;
+w_0_0 += (20) * mult;
 }
 
                             case 4 -> {
@@ -1387,23 +1387,23 @@ w_0_0 += (2) * mult;
 
                             case 2 -> {
 
-w_0_0 += (2) * mult;
-w_0_1 += (3) * mult;
-w_0_2 += (2) * mult;
+w_0_0 += (20) * mult;
+w_0_1 += (30) * mult;
+w_0_2 += (20) * mult;
 }
 
                             case 3 -> {
 
-w_m1_0 += (2) * mult;
-w_0_0 += (3) * mult;
-w_0_1 += (2) * mult;
+w_m1_0 += (20) * mult;
+w_0_0 += (30) * mult;
+w_0_1 += (20) * mult;
 }
 
                             case 4 -> {
 
-w_m2_0 += (2) * mult;
-w_m1_0 += (3) * mult;
-w_0_0 += (2) * mult;
+w_m2_0 += (20) * mult;
+w_m1_0 += (30) * mult;
+w_0_0 += (20) * mult;
 }
 
                             case 5 -> {
@@ -1431,16 +1431,16 @@ w_0_0 += (2) * mult;
 
                             case 3 -> {
 
-w_m1_1 += (2) * mult;
-w_0_1 += (3) * mult;
-w_0_2 += (2) * mult;
+w_m1_1 += (20) * mult;
+w_0_1 += (30) * mult;
+w_0_2 += (20) * mult;
 }
 
                             case 4 -> {
 
-w_m2_1 += (2) * mult;
-w_m1_1 += (3) * mult;
-w_0_1 += (2) * mult;
+w_m2_1 += (20) * mult;
+w_m1_1 += (30) * mult;
+w_0_1 += (20) * mult;
 }
 
                             case 5 -> {
@@ -1468,15 +1468,15 @@ w_0_1 += (2) * mult;
 
                             case 3 -> {
 
-w_m1_2 += (2) * mult;
-w_0_2 += (3) * mult;
+w_m1_2 += (20) * mult;
+w_0_2 += (30) * mult;
 }
 
                             case 4 -> {
 
-w_m2_2 += (2) * mult;
-w_m1_2 += (3) * mult;
-w_0_2 += (2) * mult;
+w_m2_2 += (20) * mult;
+w_m1_2 += (30) * mult;
+w_0_2 += (20) * mult;
 }
 
                             case 5 -> {
@@ -1500,15 +1500,15 @@ w_0_2 += (2) * mult;
 
                             case 0 -> {
 
-w_m1_m2 += (2) * mult;
-w_0_m2 += (3) * mult;
-w_1_m2 += (2) * mult;
+w_m1_m2 += (20) * mult;
+w_0_m2 += (30) * mult;
+w_1_m2 += (20) * mult;
 }
 
                             case 1 -> {
 
-w_0_m2 += (2) * mult;
-w_1_m2 += (3) * mult;
+w_0_m2 += (20) * mult;
+w_1_m2 += (30) * mult;
 }
 
                             case 2 -> {
@@ -1528,8 +1528,8 @@ w_1_m2 += (3) * mult;
 
                             case 7 -> {
 
-w_m1_m2 += (3) * mult;
-w_0_m2 += (2) * mult;
+w_m1_m2 += (30) * mult;
+w_0_m2 += (20) * mult;
 }
                             default -> { }
                         }
@@ -1539,16 +1539,16 @@ w_0_m2 += (2) * mult;
 
                             case 0 -> {
 
-w_m1_m1 += (2) * mult;
-w_0_m1 += (3) * mult;
-w_1_m1 += (2) * mult;
+w_m1_m1 += (20) * mult;
+w_0_m1 += (30) * mult;
+w_1_m1 += (20) * mult;
 }
 
                             case 1 -> {
 
-w_0_m1 += (2) * mult;
-w_1_m2 += (2) * mult;
-w_1_m1 += (3) * mult;
+w_0_m1 += (20) * mult;
+w_1_m2 += (20) * mult;
+w_1_m1 += (30) * mult;
 }
 
                             case 2 -> {
@@ -1568,9 +1568,9 @@ w_1_m1 += (3) * mult;
 
                             case 7 -> {
 
-w_m1_m2 += (2) * mult;
-w_m1_m1 += (3) * mult;
-w_0_m1 += (2) * mult;
+w_m1_m2 += (20) * mult;
+w_m1_m1 += (30) * mult;
+w_0_m1 += (20) * mult;
 }
                             default -> { }
                         }
@@ -1580,16 +1580,16 @@ w_0_m1 += (2) * mult;
 
                             case 0 -> {
 
-w_m1_0 += (2) * mult;
-w_0_0 += (3) * mult;
-w_1_0 += (2) * mult;
+w_m1_0 += (20) * mult;
+w_0_0 += (30) * mult;
+w_1_0 += (20) * mult;
 }
 
                             case 1 -> {
 
-w_0_0 += (2) * mult;
-w_1_m1 += (2) * mult;
-w_1_0 += (3) * mult;
+w_0_0 += (20) * mult;
+w_1_m1 += (20) * mult;
+w_1_0 += (30) * mult;
 }
 
                             case 2 -> {
@@ -1609,9 +1609,9 @@ w_1_0 += (3) * mult;
 
                             case 7 -> {
 
-w_m1_m1 += (2) * mult;
-w_m1_0 += (3) * mult;
-w_0_0 += (2) * mult;
+w_m1_m1 += (20) * mult;
+w_m1_0 += (30) * mult;
+w_0_0 += (20) * mult;
 }
                             default -> { }
                         }
@@ -1621,58 +1621,58 @@ w_0_0 += (2) * mult;
 
                             case 0 -> {
 
-w_m1_1 += (2) * mult;
-w_0_1 += (3) * mult;
-w_1_1 += (2) * mult;
+w_m1_1 += (20) * mult;
+w_0_1 += (30) * mult;
+w_1_1 += (20) * mult;
 }
 
                             case 1 -> {
 
-w_0_1 += (2) * mult;
-w_1_0 += (2) * mult;
-w_1_1 += (3) * mult;
+w_0_1 += (20) * mult;
+w_1_0 += (20) * mult;
+w_1_1 += (30) * mult;
 }
 
                             case 2 -> {
 
-w_1_m1 += (2) * mult;
-w_1_0 += (3) * mult;
-w_1_1 += (2) * mult;
+w_1_m1 += (20) * mult;
+w_1_0 += (30) * mult;
+w_1_1 += (20) * mult;
 }
 
                             case 3 -> {
 
-w_0_m1 += (2) * mult;
-w_1_m1 += (3) * mult;
-w_1_0 += (2) * mult;
+w_0_m1 += (20) * mult;
+w_1_m1 += (30) * mult;
+w_1_0 += (20) * mult;
 }
 
                             case 4 -> {
 
-w_m1_m1 += (2) * mult;
-w_0_m1 += (3) * mult;
-w_1_m1 += (2) * mult;
+w_m1_m1 += (20) * mult;
+w_0_m1 += (30) * mult;
+w_1_m1 += (20) * mult;
 }
 
                             case 5 -> {
 
-w_m1_m1 += (3) * mult;
-w_m1_0 += (2) * mult;
-w_0_m1 += (2) * mult;
+w_m1_m1 += (30) * mult;
+w_m1_0 += (20) * mult;
+w_0_m1 += (20) * mult;
 }
 
                             case 6 -> {
 
-w_m1_m1 += (2) * mult;
-w_m1_0 += (3) * mult;
-w_m1_1 += (2) * mult;
+w_m1_m1 += (20) * mult;
+w_m1_0 += (30) * mult;
+w_m1_1 += (20) * mult;
 }
 
                             case 7 -> {
 
-w_m1_0 += (2) * mult;
-w_m1_1 += (3) * mult;
-w_0_1 += (2) * mult;
+w_m1_0 += (20) * mult;
+w_m1_1 += (30) * mult;
+w_0_1 += (20) * mult;
 }
                             default -> { }
                         }
@@ -1691,23 +1691,23 @@ w_0_1 += (2) * mult;
 
                             case 3 -> {
 
-w_0_0 += (2) * mult;
-w_1_0 += (3) * mult;
-w_1_1 += (2) * mult;
+w_0_0 += (20) * mult;
+w_1_0 += (30) * mult;
+w_1_1 += (20) * mult;
 }
 
                             case 4 -> {
 
-w_m1_0 += (2) * mult;
-w_0_0 += (3) * mult;
-w_1_0 += (2) * mult;
+w_m1_0 += (20) * mult;
+w_0_0 += (30) * mult;
+w_1_0 += (20) * mult;
 }
 
                             case 5 -> {
 
-w_m1_0 += (3) * mult;
-w_m1_1 += (2) * mult;
-w_0_0 += (2) * mult;
+w_m1_0 += (30) * mult;
+w_m1_1 += (20) * mult;
+w_0_0 += (20) * mult;
 }
 
                             case 6 -> {
@@ -1732,23 +1732,23 @@ w_0_0 += (2) * mult;
 
                             case 3 -> {
 
-w_0_1 += (2) * mult;
-w_1_1 += (3) * mult;
-w_1_2 += (2) * mult;
+w_0_1 += (20) * mult;
+w_1_1 += (30) * mult;
+w_1_2 += (20) * mult;
 }
 
                             case 4 -> {
 
-w_m1_1 += (2) * mult;
-w_0_1 += (3) * mult;
-w_1_1 += (2) * mult;
+w_m1_1 += (20) * mult;
+w_0_1 += (30) * mult;
+w_1_1 += (20) * mult;
 }
 
                             case 5 -> {
 
-w_m1_1 += (3) * mult;
-w_m1_2 += (2) * mult;
-w_0_1 += (2) * mult;
+w_m1_1 += (30) * mult;
+w_m1_2 += (20) * mult;
+w_0_1 += (20) * mult;
 }
 
                             case 6 -> {
@@ -1773,21 +1773,21 @@ w_0_1 += (2) * mult;
 
                             case 3 -> {
 
-w_0_2 += (2) * mult;
-w_1_2 += (3) * mult;
+w_0_2 += (20) * mult;
+w_1_2 += (30) * mult;
 }
 
                             case 4 -> {
 
-w_m1_2 += (2) * mult;
-w_0_2 += (3) * mult;
-w_1_2 += (2) * mult;
+w_m1_2 += (20) * mult;
+w_0_2 += (30) * mult;
+w_1_2 += (20) * mult;
 }
 
                             case 5 -> {
 
-w_m1_2 += (3) * mult;
-w_0_2 += (2) * mult;
+w_m1_2 += (30) * mult;
+w_0_2 += (20) * mult;
 }
 
                             case 6 -> {
@@ -1808,9 +1808,9 @@ w_0_2 += (2) * mult;
 
                             case 0 -> {
 
-w_0_m2 += (2) * mult;
-w_1_m2 += (3) * mult;
-w_2_m2 += (2) * mult;
+w_0_m2 += (20) * mult;
+w_1_m2 += (30) * mult;
+w_2_m2 += (20) * mult;
 }
 
                             case 1 -> {
@@ -1833,8 +1833,8 @@ w_2_m2 += (2) * mult;
 
                             case 7 -> {
 
-w_0_m2 += (3) * mult;
-w_1_m2 += (2) * mult;
+w_0_m2 += (30) * mult;
+w_1_m2 += (20) * mult;
 }
                             default -> { }
                         }
@@ -1844,9 +1844,9 @@ w_1_m2 += (2) * mult;
 
                             case 0 -> {
 
-w_0_m1 += (2) * mult;
-w_1_m1 += (3) * mult;
-w_2_m1 += (2) * mult;
+w_0_m1 += (20) * mult;
+w_1_m1 += (30) * mult;
+w_2_m1 += (20) * mult;
 }
 
                             case 1 -> {
@@ -1869,9 +1869,9 @@ w_2_m1 += (2) * mult;
 
                             case 7 -> {
 
-w_0_m2 += (2) * mult;
-w_0_m1 += (3) * mult;
-w_1_m1 += (2) * mult;
+w_0_m2 += (20) * mult;
+w_0_m1 += (30) * mult;
+w_1_m1 += (20) * mult;
 }
                             default -> { }
                         }
@@ -1881,9 +1881,9 @@ w_1_m1 += (2) * mult;
 
                             case 0 -> {
 
-w_0_0 += (2) * mult;
-w_1_0 += (3) * mult;
-w_2_0 += (2) * mult;
+w_0_0 += (20) * mult;
+w_1_0 += (30) * mult;
+w_2_0 += (20) * mult;
 }
 
                             case 1 -> {
@@ -1903,16 +1903,16 @@ w_2_0 += (2) * mult;
 
                             case 6 -> {
 
-w_0_m2 += (2) * mult;
-w_0_m1 += (3) * mult;
-w_0_0 += (2) * mult;
+w_0_m2 += (20) * mult;
+w_0_m1 += (30) * mult;
+w_0_0 += (20) * mult;
 }
 
                             case 7 -> {
 
-w_0_m1 += (2) * mult;
-w_0_0 += (3) * mult;
-w_1_0 += (2) * mult;
+w_0_m1 += (20) * mult;
+w_0_0 += (30) * mult;
+w_1_0 += (20) * mult;
 }
                             default -> { }
                         }
@@ -1937,23 +1937,23 @@ w_1_0 += (2) * mult;
 
                             case 5 -> {
 
-w_0_m1 += (3) * mult;
-w_0_0 += (2) * mult;
-w_1_m1 += (2) * mult;
+w_0_m1 += (30) * mult;
+w_0_0 += (20) * mult;
+w_1_m1 += (20) * mult;
 }
 
                             case 6 -> {
 
-w_0_m1 += (2) * mult;
-w_0_0 += (3) * mult;
-w_0_1 += (2) * mult;
+w_0_m1 += (20) * mult;
+w_0_0 += (30) * mult;
+w_0_1 += (20) * mult;
 }
 
                             case 7 -> {
 
-w_0_0 += (2) * mult;
-w_0_1 += (3) * mult;
-w_1_1 += (2) * mult;
+w_0_0 += (20) * mult;
+w_0_1 += (30) * mult;
+w_1_1 += (20) * mult;
 }
                             default -> { }
                         }
@@ -1975,23 +1975,23 @@ w_1_1 += (2) * mult;
 
                             case 4 -> {
 
-w_0_0 += (2) * mult;
-w_1_0 += (3) * mult;
-w_2_0 += (2) * mult;
+w_0_0 += (20) * mult;
+w_1_0 += (30) * mult;
+w_2_0 += (20) * mult;
 }
 
                             case 5 -> {
 
-w_0_0 += (3) * mult;
-w_0_1 += (2) * mult;
-w_1_0 += (2) * mult;
+w_0_0 += (30) * mult;
+w_0_1 += (20) * mult;
+w_1_0 += (20) * mult;
 }
 
                             case 6 -> {
 
-w_0_0 += (2) * mult;
-w_0_1 += (3) * mult;
-w_0_2 += (2) * mult;
+w_0_0 += (20) * mult;
+w_0_1 += (30) * mult;
+w_0_2 += (20) * mult;
 }
 
                             case 7 -> {
@@ -2016,16 +2016,16 @@ w_0_2 += (2) * mult;
 
                             case 4 -> {
 
-w_0_1 += (2) * mult;
-w_1_1 += (3) * mult;
-w_2_1 += (2) * mult;
+w_0_1 += (20) * mult;
+w_1_1 += (30) * mult;
+w_2_1 += (20) * mult;
 }
 
                             case 5 -> {
 
-w_0_1 += (3) * mult;
-w_0_2 += (2) * mult;
-w_1_1 += (2) * mult;
+w_0_1 += (30) * mult;
+w_0_2 += (20) * mult;
+w_1_1 += (20) * mult;
 }
 
                             case 6 -> {
@@ -2053,15 +2053,15 @@ w_1_1 += (2) * mult;
 
                             case 4 -> {
 
-w_0_2 += (2) * mult;
-w_1_2 += (3) * mult;
-w_2_2 += (2) * mult;
+w_0_2 += (20) * mult;
+w_1_2 += (30) * mult;
+w_2_2 += (20) * mult;
 }
 
                             case 5 -> {
 
-w_0_2 += (3) * mult;
-w_1_2 += (2) * mult;
+w_0_2 += (30) * mult;
+w_1_2 += (20) * mult;
 }
 
                             case 6 -> {
@@ -2082,8 +2082,8 @@ w_1_2 += (2) * mult;
 
                             case 0 -> {
 
-w_1_m2 += (2) * mult;
-w_2_m2 += (3) * mult;
+w_1_m2 += (20) * mult;
+w_2_m2 += (30) * mult;
 }
 
                             case 1 -> {
@@ -2106,8 +2106,8 @@ w_2_m2 += (3) * mult;
 
                             case 7 -> {
 
-w_1_m2 += (3) * mult;
-w_2_m2 += (2) * mult;
+w_1_m2 += (30) * mult;
+w_2_m2 += (20) * mult;
 }
                             default -> { }
                         }
@@ -2117,8 +2117,8 @@ w_2_m2 += (2) * mult;
 
                             case 0 -> {
 
-w_1_m1 += (2) * mult;
-w_2_m1 += (3) * mult;
+w_1_m1 += (20) * mult;
+w_2_m1 += (30) * mult;
 }
 
                             case 1 -> {
@@ -2138,15 +2138,15 @@ w_2_m1 += (3) * mult;
 
                             case 6 -> {
 
-w_1_m2 += (3) * mult;
-w_1_m1 += (2) * mult;
+w_1_m2 += (30) * mult;
+w_1_m1 += (20) * mult;
 }
 
                             case 7 -> {
 
-w_1_m2 += (2) * mult;
-w_1_m1 += (3) * mult;
-w_2_m1 += (2) * mult;
+w_1_m2 += (20) * mult;
+w_1_m1 += (30) * mult;
+w_2_m1 += (20) * mult;
 }
                             default -> { }
                         }
@@ -2174,16 +2174,16 @@ w_2_m1 += (2) * mult;
 
                             case 6 -> {
 
-w_1_m2 += (2) * mult;
-w_1_m1 += (3) * mult;
-w_1_0 += (2) * mult;
+w_1_m2 += (20) * mult;
+w_1_m1 += (30) * mult;
+w_1_0 += (20) * mult;
 }
 
                             case 7 -> {
 
-w_1_m1 += (2) * mult;
-w_1_0 += (3) * mult;
-w_2_0 += (2) * mult;
+w_1_m1 += (20) * mult;
+w_1_0 += (30) * mult;
+w_2_0 += (20) * mult;
 }
                             default -> { }
                         }
@@ -2208,23 +2208,23 @@ w_2_0 += (2) * mult;
 
                             case 5 -> {
 
-w_1_m1 += (3) * mult;
-w_1_0 += (2) * mult;
-w_2_m1 += (2) * mult;
+w_1_m1 += (30) * mult;
+w_1_0 += (20) * mult;
+w_2_m1 += (20) * mult;
 }
 
                             case 6 -> {
 
-w_1_m1 += (2) * mult;
-w_1_0 += (3) * mult;
-w_1_1 += (2) * mult;
+w_1_m1 += (20) * mult;
+w_1_0 += (30) * mult;
+w_1_1 += (20) * mult;
 }
 
                             case 7 -> {
 
-w_1_0 += (2) * mult;
-w_1_1 += (3) * mult;
-w_2_1 += (2) * mult;
+w_1_0 += (20) * mult;
+w_1_1 += (30) * mult;
+w_2_1 += (20) * mult;
 }
                             default -> { }
                         }
@@ -2249,16 +2249,16 @@ w_2_1 += (2) * mult;
 
                             case 5 -> {
 
-w_1_0 += (3) * mult;
-w_1_1 += (2) * mult;
-w_2_0 += (2) * mult;
+w_1_0 += (30) * mult;
+w_1_1 += (20) * mult;
+w_2_0 += (20) * mult;
 }
 
                             case 6 -> {
 
-w_1_0 += (2) * mult;
-w_1_1 += (3) * mult;
-w_1_2 += (2) * mult;
+w_1_0 += (20) * mult;
+w_1_1 += (30) * mult;
+w_1_2 += (20) * mult;
 }
 
                             case 7 -> {
@@ -2283,21 +2283,21 @@ w_1_2 += (2) * mult;
 
                             case 4 -> {
 
-w_1_1 += (2) * mult;
-w_2_1 += (3) * mult;
+w_1_1 += (20) * mult;
+w_2_1 += (30) * mult;
 }
 
                             case 5 -> {
 
-w_1_1 += (3) * mult;
-w_1_2 += (2) * mult;
-w_2_1 += (2) * mult;
+w_1_1 += (30) * mult;
+w_1_2 += (20) * mult;
+w_2_1 += (20) * mult;
 }
 
                             case 6 -> {
 
-w_1_1 += (2) * mult;
-w_1_2 += (3) * mult;
+w_1_1 += (20) * mult;
+w_1_2 += (30) * mult;
 }
 
                             case 7 -> {
@@ -2322,14 +2322,14 @@ w_1_2 += (3) * mult;
 
                             case 4 -> {
 
-w_1_2 += (2) * mult;
-w_2_2 += (3) * mult;
+w_1_2 += (20) * mult;
+w_2_2 += (30) * mult;
 }
 
                             case 5 -> {
 
-w_1_2 += (3) * mult;
-w_2_2 += (2) * mult;
+w_1_2 += (30) * mult;
+w_2_2 += (20) * mult;
 }
 
                             case 6 -> {
@@ -2350,7 +2350,7 @@ w_2_2 += (2) * mult;
 
                             case 0 -> {
 
-w_2_m2 += (2) * mult;
+w_2_m2 += (20) * mult;
 }
 
                             case 1 -> {
@@ -2370,12 +2370,12 @@ w_2_m2 += (2) * mult;
 
                             case 6 -> {
 
-w_2_m2 += (2) * mult;
+w_2_m2 += (20) * mult;
 }
 
                             case 7 -> {
 
-w_2_m2 += (3) * mult;
+w_2_m2 += (30) * mult;
 }
                             default -> { }
                         }
@@ -2403,14 +2403,14 @@ w_2_m2 += (3) * mult;
 
                             case 6 -> {
 
-w_2_m2 += (3) * mult;
-w_2_m1 += (2) * mult;
+w_2_m2 += (30) * mult;
+w_2_m1 += (20) * mult;
 }
 
                             case 7 -> {
 
-w_2_m2 += (2) * mult;
-w_2_m1 += (3) * mult;
+w_2_m2 += (20) * mult;
+w_2_m1 += (30) * mult;
 }
                             default -> { }
                         }
@@ -2438,15 +2438,15 @@ w_2_m1 += (3) * mult;
 
                             case 6 -> {
 
-w_2_m2 += (2) * mult;
-w_2_m1 += (3) * mult;
-w_2_0 += (2) * mult;
+w_2_m2 += (20) * mult;
+w_2_m1 += (30) * mult;
+w_2_0 += (20) * mult;
 }
 
                             case 7 -> {
 
-w_2_m1 += (2) * mult;
-w_2_0 += (3) * mult;
+w_2_m1 += (20) * mult;
+w_2_0 += (30) * mult;
 }
                             default -> { }
                         }
@@ -2471,21 +2471,21 @@ w_2_0 += (3) * mult;
 
                             case 5 -> {
 
-w_2_m1 += (3) * mult;
-w_2_0 += (2) * mult;
+w_2_m1 += (30) * mult;
+w_2_0 += (20) * mult;
 }
 
                             case 6 -> {
 
-w_2_m1 += (2) * mult;
-w_2_0 += (3) * mult;
-w_2_1 += (2) * mult;
+w_2_m1 += (20) * mult;
+w_2_0 += (30) * mult;
+w_2_1 += (20) * mult;
 }
 
                             case 7 -> {
 
-w_2_0 += (2) * mult;
-w_2_1 += (3) * mult;
+w_2_0 += (20) * mult;
+w_2_1 += (30) * mult;
 }
                             default -> { }
                         }
@@ -2510,15 +2510,15 @@ w_2_1 += (3) * mult;
 
                             case 5 -> {
 
-w_2_0 += (3) * mult;
-w_2_1 += (2) * mult;
+w_2_0 += (30) * mult;
+w_2_1 += (20) * mult;
 }
 
                             case 6 -> {
 
-w_2_0 += (2) * mult;
-w_2_1 += (3) * mult;
-w_2_2 += (2) * mult;
+w_2_0 += (20) * mult;
+w_2_1 += (30) * mult;
+w_2_2 += (20) * mult;
 }
 
                             case 7 -> {
@@ -2546,14 +2546,14 @@ w_2_2 += (2) * mult;
 
                             case 5 -> {
 
-w_2_1 += (3) * mult;
-w_2_2 += (2) * mult;
+w_2_1 += (30) * mult;
+w_2_2 += (20) * mult;
 }
 
                             case 6 -> {
 
-w_2_1 += (2) * mult;
-w_2_2 += (3) * mult;
+w_2_1 += (20) * mult;
+w_2_2 += (30) * mult;
 }
 
                             case 7 -> {
@@ -2578,17 +2578,17 @@ w_2_2 += (3) * mult;
 
                             case 4 -> {
 
-w_2_2 += (2) * mult;
+w_2_2 += (20) * mult;
 }
 
                             case 5 -> {
 
-w_2_2 += (3) * mult;
+w_2_2 += (30) * mult;
 }
 
                             case 6 -> {
 
-w_2_2 += (2) * mult;
+w_2_2 += (20) * mult;
 }
 
                             case 7 -> {
@@ -3150,15 +3150,17 @@ w_2_2 += (2) * mult;
     private static void considerSecondaryMove(Direction moveDir, Direction facing) throws GameActionException {
         int moveCost = CombatCommon.movementCost(moveDir, facing);
         if (moveCost == -1) return;
-        double moveScore = CombatStrategy.getCellScoreFor(moveDir, facing);
-        if (moveScore <= -100) return;
+        baseScore = 0;
+        if (rc.getHealth() > 24) {
+            baseScore += CombatStrategy.getCellScoreFor(moveDir, facing);
+        }
+        if (baseScore <= -100) return;
         switch (facing.ordinal()) {
             case 0 -> {
                 if (moveDir != Direction.NORTH) {
-                    double score = w_0_1;
+                    double score = w_0_1 + baseScore;
                     if (score >= 0) {
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
-                        score += moveScore;
                         if (facing != myDir) score *= 1.1;
                         if (score > best) {
                             best = score;
@@ -3170,10 +3172,9 @@ w_2_2 += (2) * mult;
                     }
                 }
                 if (moveDir != Direction.NORTHEAST) {
-                    double score = w_1_1;
+                    double score = w_1_1 + baseScore;
                     if (score >= 0) {
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
-                        score += moveScore;
                         if (facing != myDir) score *= 1.1;
                         if (score > best) {
                             best = score;
@@ -3185,10 +3186,9 @@ w_2_2 += (2) * mult;
                     }
                 }
                 if (moveDir != Direction.NORTHWEST) {
-                    double score = w_m1_1;
+                    double score = w_m1_1 + baseScore;
                     if (score >= 0) {
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
-                        score += moveScore;
                         if (facing != myDir) score *= 1.1;
                         if (score > best) {
                             best = score;
@@ -3202,10 +3202,9 @@ w_2_2 += (2) * mult;
             }
             case 1 -> {
                 if (moveDir != Direction.NORTHEAST) {
-                    double score = w_1_1;
+                    double score = w_1_1 + baseScore;
                     if (score >= 0) {
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
-                        score += moveScore;
                         if (facing != myDir) score *= 1.1;
                         if (score > best) {
                             best = score;
@@ -3217,10 +3216,9 @@ w_2_2 += (2) * mult;
                     }
                 }
                 if (moveDir != Direction.NORTH) {
-                    double score = w_0_1;
+                    double score = w_0_1 + baseScore;
                     if (score >= 0) {
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
-                        score += moveScore;
                         if (facing != myDir) score *= 1.1;
                         if (score > best) {
                             best = score;
@@ -3232,10 +3230,9 @@ w_2_2 += (2) * mult;
                     }
                 }
                 if (moveDir != Direction.EAST) {
-                    double score = w_1_0;
+                    double score = w_1_0 + baseScore;
                     if (score >= 0) {
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
-                        score += moveScore;
                         if (facing != myDir) score *= 1.1;
                         if (score > best) {
                             best = score;
@@ -3249,10 +3246,9 @@ w_2_2 += (2) * mult;
             }
             case 2 -> {
                 if (moveDir != Direction.EAST) {
-                    double score = w_1_0;
+                    double score = w_1_0 + baseScore;
                     if (score >= 0) {
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
-                        score += moveScore;
                         if (facing != myDir) score *= 1.1;
                         if (score > best) {
                             best = score;
@@ -3264,10 +3260,9 @@ w_2_2 += (2) * mult;
                     }
                 }
                 if (moveDir != Direction.NORTHEAST) {
-                    double score = w_1_1;
+                    double score = w_1_1 + baseScore;
                     if (score >= 0) {
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
-                        score += moveScore;
                         if (facing != myDir) score *= 1.1;
                         if (score > best) {
                             best = score;
@@ -3279,10 +3274,9 @@ w_2_2 += (2) * mult;
                     }
                 }
                 if (moveDir != Direction.SOUTHEAST) {
-                    double score = w_1_m1;
+                    double score = w_1_m1 + baseScore;
                     if (score >= 0) {
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
-                        score += moveScore;
                         if (facing != myDir) score *= 1.1;
                         if (score > best) {
                             best = score;
@@ -3296,10 +3290,9 @@ w_2_2 += (2) * mult;
             }
             case 3 -> {
                 if (moveDir != Direction.SOUTHEAST) {
-                    double score = w_1_m1;
+                    double score = w_1_m1 + baseScore;
                     if (score >= 0) {
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
-                        score += moveScore;
                         if (facing != myDir) score *= 1.1;
                         if (score > best) {
                             best = score;
@@ -3311,10 +3304,9 @@ w_2_2 += (2) * mult;
                     }
                 }
                 if (moveDir != Direction.SOUTH) {
-                    double score = w_0_m1;
+                    double score = w_0_m1 + baseScore;
                     if (score >= 0) {
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
-                        score += moveScore;
                         if (facing != myDir) score *= 1.1;
                         if (score > best) {
                             best = score;
@@ -3326,10 +3318,9 @@ w_2_2 += (2) * mult;
                     }
                 }
                 if (moveDir != Direction.EAST) {
-                    double score = w_1_0;
+                    double score = w_1_0 + baseScore;
                     if (score >= 0) {
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
-                        score += moveScore;
                         if (facing != myDir) score *= 1.1;
                         if (score > best) {
                             best = score;
@@ -3343,10 +3334,9 @@ w_2_2 += (2) * mult;
             }
             case 4 -> {
                 if (moveDir != Direction.SOUTH) {
-                    double score = w_0_m1;
+                    double score = w_0_m1 + baseScore;
                     if (score >= 0) {
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
-                        score += moveScore;
                         if (facing != myDir) score *= 1.1;
                         if (score > best) {
                             best = score;
@@ -3358,10 +3348,9 @@ w_2_2 += (2) * mult;
                     }
                 }
                 if (moveDir != Direction.SOUTHEAST) {
-                    double score = w_1_m1;
+                    double score = w_1_m1 + baseScore;
                     if (score >= 0) {
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
-                        score += moveScore;
                         if (facing != myDir) score *= 1.1;
                         if (score > best) {
                             best = score;
@@ -3373,10 +3362,9 @@ w_2_2 += (2) * mult;
                     }
                 }
                 if (moveDir != Direction.SOUTHWEST) {
-                    double score = w_m1_m1;
+                    double score = w_m1_m1 + baseScore;
                     if (score >= 0) {
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
-                        score += moveScore;
                         if (facing != myDir) score *= 1.1;
                         if (score > best) {
                             best = score;
@@ -3390,10 +3378,9 @@ w_2_2 += (2) * mult;
             }
             case 5 -> {
                 if (moveDir != Direction.SOUTHWEST) {
-                    double score = w_m1_m1;
+                    double score = w_m1_m1 + baseScore;
                     if (score >= 0) {
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
-                        score += moveScore;
                         if (facing != myDir) score *= 1.1;
                         if (score > best) {
                             best = score;
@@ -3405,10 +3392,9 @@ w_2_2 += (2) * mult;
                     }
                 }
                 if (moveDir != Direction.SOUTH) {
-                    double score = w_0_m1;
+                    double score = w_0_m1 + baseScore;
                     if (score >= 0) {
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
-                        score += moveScore;
                         if (facing != myDir) score *= 1.1;
                         if (score > best) {
                             best = score;
@@ -3420,10 +3406,9 @@ w_2_2 += (2) * mult;
                     }
                 }
                 if (moveDir != Direction.WEST) {
-                    double score = w_m1_0;
+                    double score = w_m1_0 + baseScore;
                     if (score >= 0) {
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
-                        score += moveScore;
                         if (facing != myDir) score *= 1.1;
                         if (score > best) {
                             best = score;
@@ -3437,10 +3422,9 @@ w_2_2 += (2) * mult;
             }
             case 6 -> {
                 if (moveDir != Direction.WEST) {
-                    double score = w_m1_0;
+                    double score = w_m1_0 + baseScore;
                     if (score >= 0) {
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
-                        score += moveScore;
                         if (facing != myDir) score *= 1.1;
                         if (score > best) {
                             best = score;
@@ -3452,10 +3436,9 @@ w_2_2 += (2) * mult;
                     }
                 }
                 if (moveDir != Direction.NORTHWEST) {
-                    double score = w_m1_1;
+                    double score = w_m1_1 + baseScore;
                     if (score >= 0) {
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
-                        score += moveScore;
                         if (facing != myDir) score *= 1.1;
                         if (score > best) {
                             best = score;
@@ -3467,10 +3450,9 @@ w_2_2 += (2) * mult;
                     }
                 }
                 if (moveDir != Direction.SOUTHWEST) {
-                    double score = w_m1_m1;
+                    double score = w_m1_m1 + baseScore;
                     if (score >= 0) {
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
-                        score += moveScore;
                         if (facing != myDir) score *= 1.1;
                         if (score > best) {
                             best = score;
@@ -3484,10 +3466,9 @@ w_2_2 += (2) * mult;
             }
             case 7 -> {
                 if (moveDir != Direction.NORTHWEST) {
-                    double score = w_m1_1;
+                    double score = w_m1_1 + baseScore;
                     if (score >= 0) {
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
-                        score += moveScore;
                         if (facing != myDir) score *= 1.1;
                         if (score > best) {
                             best = score;
@@ -3499,10 +3480,9 @@ w_2_2 += (2) * mult;
                     }
                 }
                 if (moveDir != Direction.NORTH) {
-                    double score = w_0_1;
+                    double score = w_0_1 + baseScore;
                     if (score >= 0) {
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
-                        score += moveScore;
                         if (facing != myDir) score *= 1.1;
                         if (score > best) {
                             best = score;
@@ -3514,10 +3494,9 @@ w_2_2 += (2) * mult;
                     }
                 }
                 if (moveDir != Direction.WEST) {
-                    double score = w_m1_0;
+                    double score = w_m1_0 + baseScore;
                     if (score >= 0) {
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
-                        score += moveScore;
                         if (facing != myDir) score *= 1.1;
                         if (score > best) {
                             best = score;
@@ -3548,7 +3527,11 @@ w_2_2 += (2) * mult;
         if (CombatTracker.threatNN != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTH, Direction.NORTH);
         if (moveCost == -1) return;
-        baseScore = CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.NORTH);
+        baseScore = 0;
+        if (rc.getHealth() > 24) {
+            baseScore += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.NORTH);
+        }
+        if (baseScore <= -100) return;
         placeNNN();
         placeNENN();
         placeNWNN();
@@ -3597,7 +3580,11 @@ private static void placeNWNN() {
         if (CombatTracker.threatNNE != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTH, Direction.NORTHEAST);
         if (moveCost == -1) return;
-        baseScore = CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.NORTHEAST);
+        baseScore = 0;
+        if (rc.getHealth() > 24) {
+            baseScore += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.NORTHEAST);
+        }
+        if (baseScore <= -100) return;
         placeNENEN();
         placeNNEN();
         placeENEN();
@@ -3646,7 +3633,11 @@ private static void placeENEN() {
         if (CombatTracker.threatNNW != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTH, Direction.NORTHWEST);
         if (moveCost == -1) return;
-        baseScore = CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.NORTHWEST);
+        baseScore = 0;
+        if (rc.getHealth() > 24) {
+            baseScore += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.NORTHWEST);
+        }
+        if (baseScore <= -100) return;
         placeNWNWN();
         placeNNWN();
         placeWNWN();
@@ -3706,7 +3697,11 @@ private static void placeWNWN() {
         if (CombatTracker.threatNENE != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTHEAST, Direction.NORTHEAST);
         if (moveCost == -1) return;
-        baseScore = CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.NORTHEAST);
+        baseScore = 0;
+        if (rc.getHealth() > 24) {
+            baseScore += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.NORTHEAST);
+        }
+        if (baseScore <= -100) return;
         placeNENENE();
         placeNNENE();
         placeENENE();
@@ -3755,7 +3750,11 @@ private static void placeENENE() {
         if (CombatTracker.threatNEN != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTHEAST, Direction.NORTH);
         if (moveCost == -1) return;
-        baseScore = CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.NORTH);
+        baseScore = 0;
+        if (rc.getHealth() > 24) {
+            baseScore += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.NORTH);
+        }
+        if (baseScore <= -100) return;
         placeNNNE();
         placeNENNE();
         placeNWNNE();
@@ -3804,7 +3803,11 @@ private static void placeNWNNE() {
         if (CombatTracker.threatNEE != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTHEAST, Direction.EAST);
         if (moveCost == -1) return;
-        baseScore = CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.EAST);
+        baseScore = 0;
+        if (rc.getHealth() > 24) {
+            baseScore += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.EAST);
+        }
+        if (baseScore <= -100) return;
         placeEENE();
         placeNEENE();
         placeSEENE();
@@ -3864,7 +3867,11 @@ private static void placeSEENE() {
         if (CombatTracker.threatEE != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.EAST, Direction.EAST);
         if (moveCost == -1) return;
-        baseScore = CombatStrategy.getCellScoreFor(Direction.EAST, Direction.EAST);
+        baseScore = 0;
+        if (rc.getHealth() > 24) {
+            baseScore += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.EAST);
+        }
+        if (baseScore <= -100) return;
         placeEEE();
         placeNEEE();
         placeSEEE();
@@ -3913,7 +3920,11 @@ private static void placeSEEE() {
         if (CombatTracker.threatENE != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.EAST, Direction.NORTHEAST);
         if (moveCost == -1) return;
-        baseScore = CombatStrategy.getCellScoreFor(Direction.EAST, Direction.NORTHEAST);
+        baseScore = 0;
+        if (rc.getHealth() > 24) {
+            baseScore += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.NORTHEAST);
+        }
+        if (baseScore <= -100) return;
         placeNENEE();
         placeNNEE();
         placeENEE();
@@ -3962,7 +3973,11 @@ private static void placeENEE() {
         if (CombatTracker.threatESE != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.EAST, Direction.SOUTHEAST);
         if (moveCost == -1) return;
-        baseScore = CombatStrategy.getCellScoreFor(Direction.EAST, Direction.SOUTHEAST);
+        baseScore = 0;
+        if (rc.getHealth() > 24) {
+            baseScore += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.SOUTHEAST);
+        }
+        if (baseScore <= -100) return;
         placeSESEE();
         placeSSEE();
         placeESEE();
@@ -4022,7 +4037,11 @@ private static void placeESEE() {
         if (CombatTracker.threatSESE != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTHEAST, Direction.SOUTHEAST);
         if (moveCost == -1) return;
-        baseScore = CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.SOUTHEAST);
+        baseScore = 0;
+        if (rc.getHealth() > 24) {
+            baseScore += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.SOUTHEAST);
+        }
+        if (baseScore <= -100) return;
         placeSESESE();
         placeSSESE();
         placeESESE();
@@ -4071,7 +4090,11 @@ private static void placeESESE() {
         if (CombatTracker.threatSES != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTHEAST, Direction.SOUTH);
         if (moveCost == -1) return;
-        baseScore = CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.SOUTH);
+        baseScore = 0;
+        if (rc.getHealth() > 24) {
+            baseScore += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.SOUTH);
+        }
+        if (baseScore <= -100) return;
         placeSSSE();
         placeSESSE();
         placeSWSSE();
@@ -4120,7 +4143,11 @@ private static void placeSWSSE() {
         if (CombatTracker.threatSEE != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTHEAST, Direction.EAST);
         if (moveCost == -1) return;
-        baseScore = CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.EAST);
+        baseScore = 0;
+        if (rc.getHealth() > 24) {
+            baseScore += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.EAST);
+        }
+        if (baseScore <= -100) return;
         placeEESE();
         placeNEESE();
         placeSEESE();
@@ -4180,7 +4207,11 @@ private static void placeSEESE() {
         if (CombatTracker.threatSS != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTH, Direction.SOUTH);
         if (moveCost == -1) return;
-        baseScore = CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.SOUTH);
+        baseScore = 0;
+        if (rc.getHealth() > 24) {
+            baseScore += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.SOUTH);
+        }
+        if (baseScore <= -100) return;
         placeSSS();
         placeSESS();
         placeSWSS();
@@ -4229,7 +4260,11 @@ private static void placeSWSS() {
         if (CombatTracker.threatSSE != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTH, Direction.SOUTHEAST);
         if (moveCost == -1) return;
-        baseScore = CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.SOUTHEAST);
+        baseScore = 0;
+        if (rc.getHealth() > 24) {
+            baseScore += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.SOUTHEAST);
+        }
+        if (baseScore <= -100) return;
         placeSESES();
         placeSSES();
         placeESES();
@@ -4278,7 +4313,11 @@ private static void placeESES() {
         if (CombatTracker.threatSSW != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTH, Direction.SOUTHWEST);
         if (moveCost == -1) return;
-        baseScore = CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.SOUTHWEST);
+        baseScore = 0;
+        if (rc.getHealth() > 24) {
+            baseScore += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.SOUTHWEST);
+        }
+        if (baseScore <= -100) return;
         placeSWSWS();
         placeSSWS();
         placeWSWS();
@@ -4338,7 +4377,11 @@ private static void placeWSWS() {
         if (CombatTracker.threatSWSW != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTHWEST, Direction.SOUTHWEST);
         if (moveCost == -1) return;
-        baseScore = CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.SOUTHWEST);
+        baseScore = 0;
+        if (rc.getHealth() > 24) {
+            baseScore += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.SOUTHWEST);
+        }
+        if (baseScore <= -100) return;
         placeSWSWSW();
         placeSSWSW();
         placeWSWSW();
@@ -4387,7 +4430,11 @@ private static void placeWSWSW() {
         if (CombatTracker.threatSWS != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTHWEST, Direction.SOUTH);
         if (moveCost == -1) return;
-        baseScore = CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.SOUTH);
+        baseScore = 0;
+        if (rc.getHealth() > 24) {
+            baseScore += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.SOUTH);
+        }
+        if (baseScore <= -100) return;
         placeSSSW();
         placeSESSW();
         placeSWSSW();
@@ -4436,7 +4483,11 @@ private static void placeSWSSW() {
         if (CombatTracker.threatSWW != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTHWEST, Direction.WEST);
         if (moveCost == -1) return;
-        baseScore = CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.WEST);
+        baseScore = 0;
+        if (rc.getHealth() > 24) {
+            baseScore += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.WEST);
+        }
+        if (baseScore <= -100) return;
         placeWWSW();
         placeNWWSW();
         placeSWWSW();
@@ -4496,7 +4547,11 @@ private static void placeSWWSW() {
         if (CombatTracker.threatWW != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.WEST, Direction.WEST);
         if (moveCost == -1) return;
-        baseScore = CombatStrategy.getCellScoreFor(Direction.WEST, Direction.WEST);
+        baseScore = 0;
+        if (rc.getHealth() > 24) {
+            baseScore += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.WEST);
+        }
+        if (baseScore <= -100) return;
         placeWWW();
         placeNWWW();
         placeSWWW();
@@ -4545,7 +4600,11 @@ private static void placeSWWW() {
         if (CombatTracker.threatWNW != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.WEST, Direction.NORTHWEST);
         if (moveCost == -1) return;
-        baseScore = CombatStrategy.getCellScoreFor(Direction.WEST, Direction.NORTHWEST);
+        baseScore = 0;
+        if (rc.getHealth() > 24) {
+            baseScore += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.NORTHWEST);
+        }
+        if (baseScore <= -100) return;
         placeNWNWW();
         placeNNWW();
         placeWNWW();
@@ -4594,7 +4653,11 @@ private static void placeWNWW() {
         if (CombatTracker.threatWSW != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.WEST, Direction.SOUTHWEST);
         if (moveCost == -1) return;
-        baseScore = CombatStrategy.getCellScoreFor(Direction.WEST, Direction.SOUTHWEST);
+        baseScore = 0;
+        if (rc.getHealth() > 24) {
+            baseScore += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.SOUTHWEST);
+        }
+        if (baseScore <= -100) return;
         placeSWSWW();
         placeSSWW();
         placeWSWW();
@@ -4654,7 +4717,11 @@ private static void placeWSWW() {
         if (CombatTracker.threatNWNW != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTHWEST, Direction.NORTHWEST);
         if (moveCost == -1) return;
-        baseScore = CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.NORTHWEST);
+        baseScore = 0;
+        if (rc.getHealth() > 24) {
+            baseScore += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.NORTHWEST);
+        }
+        if (baseScore <= -100) return;
         placeNWNWNW();
         placeNNWNW();
         placeWNWNW();
@@ -4703,7 +4770,11 @@ private static void placeWNWNW() {
         if (CombatTracker.threatNWN != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTHWEST, Direction.NORTH);
         if (moveCost == -1) return;
-        baseScore = CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.NORTH);
+        baseScore = 0;
+        if (rc.getHealth() > 24) {
+            baseScore += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.NORTH);
+        }
+        if (baseScore <= -100) return;
         placeNNNW();
         placeNENNW();
         placeNWNNW();
@@ -4752,7 +4823,11 @@ private static void placeNWNNW() {
         if (CombatTracker.threatNWW != 0L) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTHWEST, Direction.WEST);
         if (moveCost == -1) return;
-        baseScore = CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.WEST);
+        baseScore = 0;
+        if (rc.getHealth() > 24) {
+            baseScore += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.WEST);
+        }
+        if (baseScore <= -100) return;
         placeWWNW();
         placeNWWNW();
         placeSWWNW();

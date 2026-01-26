@@ -95,7 +95,8 @@ public final class TryTrap {
         computeWeights();
         resetBest();
         selectMoves();
-        if (best <= 0.5) return false;
+        if (bestPlaceLoc == null) return false;
+        if (best <= 0.5 && best > -100) return false;
         if (bestMoveDir != null) {
             assert(CombatStrategy.performMoves(bestMoveDir, bestFacing));
             rc.placeRatTrap(bestPlaceLoc);
@@ -294,7 +295,7 @@ public final class TryTrap {
         bestMoveDir = null;
         bestSecondaryMoveDir = null;
         bestFacing = null;
-        best = -1;
+        best = -1e9;
     }
 
     private static void selectMoves() throws GameActionException {
@@ -327,23 +328,19 @@ public final class TryTrap {
         if (rc.getHealth() > 24) {
             baseScore += CombatStrategy.getCellScoreFor(moveDir, facing);
         }
-        if (baseScore <= -100) return;
         switch (facing.ordinal()) {
             {% for f in range(8) %}
             case {{ f }} -> {
                 {% for place_dir in related_map[f] %}
-                if (moveDir != {{ place_dir }}) {
+                if ({{ wvar(dir_dx[place_dir], dir_dy[place_dir]) }} >= 0) {
                     double score = {{ wvar(dir_dx[place_dir], dir_dy[place_dir]) }} + baseScore;
-                    if (score >= 0) {
-                        if (moveCost == 0) score -= CombatCommon.strafeCost();
-                        if (facing != myDir) score *= 1.1;
-                        if (score > best) {
-                            best = score;
-                            bestPlaceLoc = myLoc.add({{ place_dir }});
-                            bestMoveDir = null;
-                            bestSecondaryMoveDir = moveDir;
-                            bestFacing = facing;
-                        }
+                    if (facing != myDir) score *= 1.1;
+                    if (score > best) {
+                        best = score;
+                        bestPlaceLoc = myLoc.add({{ place_dir }});
+                        bestMoveDir = null;
+                        bestSecondaryMoveDir = moveDir;
+                        bestFacing = facing;
                     }
                 }
                 {% endfor %}
@@ -372,7 +369,6 @@ public final class TryTrap {
         if (rc.getHealth() > 24) {
             baseScore += CombatStrategy.getCellScoreFor({{ move_dir }}, {{ facing }});
         }
-        if (baseScore <= -100) return;
         {% for place_dir in related_map[dir_ord_map[facing]] %}
         place{{ dir_short_map[place_dir] }}{{ dir_short_map[facing] }}{{ dir_short_map[move_dir] }}();
         {% endfor %}
@@ -382,9 +378,9 @@ public final class TryTrap {
     {%- set dx_total = dir_dx[move_dir] + dir_dx[place_dir] -%}
     {%- set dy_total = dir_dy[move_dir] + dir_dy[place_dir] -%}
     private static void place{{ dir_short_map[place_dir] }}{{ dir_short_map[facing] }}{{ dir_short_map[move_dir] }}() {
-        if ({{ wvar(dx_total, dy_total) }} >= 0) {
+        if ({{ wvar(dx_total, dy_total) }} > 0) {
             double score = baseScore + {{ wvar(dx_total, dy_total) }};
-            if ({{ facing }} != myDir) score *= 1.1;
+            if ({{ facing }} != myDir) score += 2;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add({{ place_dir }});

@@ -41,7 +41,7 @@ public final class TryAttack {
         bestMove = null;
         bestFacing = null;
         bestSecondaryMove = null;
-        bestScore = -1;
+        bestScore = -1e9;
         bytecodeStart = Clock.getBytecodeNum();
         bytecodeBudget = Math.min(3000, (int) (Clock.getBytecodesLeft() - 1000) / 2);
         isCat = false;
@@ -59,7 +59,8 @@ public final class TryAttack {
             }
         }
         // Profiler.pop("try attack");
-        if (bestScore < 0.5) {
+        if (target == null) return false;
+        if (bestScore < 0.5 && bestScore > -100) {
             indicate("didnt find good attack");
             return false;
         }

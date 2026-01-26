@@ -55,8 +55,9 @@ public final class TryRatNap {
             if (chebyshevDistance(myLoc, t) > 2) continue;
             if (info.getHealth() <= GameConstants.RAT_BITE_DAMAGE) continue; // just kill
             if (info.getType() != UnitType.BABY_RAT) continue;
-            // double weight = scoreEnemy(info);
             weight = 30;
+            if (info.getCarryingRobot() != null) weight += 20;
+            // double weight = scoreEnemy(info);
             selectMoves();
             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
         }

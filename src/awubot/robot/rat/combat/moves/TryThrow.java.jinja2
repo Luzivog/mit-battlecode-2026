@@ -82,15 +82,20 @@ public final class TryThrow {
         populateThrowGrid();
         selectMoves();
         if (md == null || td == null) {
-            debugThrowFail();
             return true;
         }
-        if (best < 0) {
+        if (best < 0 && best > -100) {
             println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TryThrow found no good throws (best=" + best + ")");
             // debugThrowFail();
         }
-        assert(CombatStrategy.performMoves(md, td));
-        assert(rc.canThrowRat());
+        if (isSecondary) {
+            if (td != myDir) turn(td);
+            assert(rc.canThrowRat());
+            assert(CombatStrategy.performMoves(md, td));
+        } else {
+            assert(CombatStrategy.performMoves(md, td));
+            assert(rc.canThrowRat());
+        }
         rc.throwRat();
         println("threw a rat! come look ! <--------------------------------------------------------------------------------");
         println("movedir " + md + " throwdir " + td + " score " + best);

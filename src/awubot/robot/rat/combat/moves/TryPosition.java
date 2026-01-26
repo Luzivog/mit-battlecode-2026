@@ -26,13 +26,13 @@ public final class TryPosition {
     static double bestScore;
     static Direction moveDir;
     static MapLocation newLoc;
-    static double score;
+    static double score, bonus;
     static int bytecodeStart, bytecodeBudget;
 
     public static boolean run() throws GameActionException {
         if (!rc.isMovementReady()) return false;
         bytecodeStart = Clock.getBytecodeNum();
-        bytecodeBudget = Math.min(3000, Clock.getBytecodesLeft() - 1000);
+        bytecodeBudget = Math.min(5000, Clock.getBytecodesLeft() - 1000);
         // Profiler.push();
         bestMove = null;
         bestFacing = null;
@@ -49,162 +49,234 @@ public final class TryPosition {
     private static void selectMoves() throws GameActionException {
         switch (myDir.ordinal()) {
             case 0 -> {
+                bonus = 0;
                 moveC();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveN();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 10;
                 moveS();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveNE();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveNW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 10;
                 moveSE();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 10;
                 moveSW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveE();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 1 -> {
+                bonus = 0;
                 moveC();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveNE();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 10;
                 moveSW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveE();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveN();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 10;
                 moveS();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 10;
                 moveW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveSE();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveNW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 2 -> {
+                bonus = 0;
                 moveC();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveE();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 10;
                 moveW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveSE();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveNE();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 10;
                 moveSW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 10;
                 moveNW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveS();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveN();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 3 -> {
+                bonus = 0;
                 moveC();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveSE();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 10;
                 moveNW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveS();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveE();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 10;
                 moveW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 10;
                 moveN();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveSW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveNE();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 4 -> {
+                bonus = 0;
                 moveC();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveS();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 10;
                 moveN();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveSW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveSE();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 10;
                 moveNW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 10;
                 moveNE();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveE();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 5 -> {
+                bonus = 0;
                 moveC();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveSW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 10;
                 moveNE();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveS();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 10;
                 moveN();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 10;
                 moveE();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveNW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveSE();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 6 -> {
+                bonus = 0;
                 moveC();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 10;
                 moveE();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveNW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveSW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 10;
                 moveNE();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 10;
                 moveSE();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveN();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveS();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 7 -> {
+                bonus = 0;
                 moveC();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveNW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 10;
                 moveSE();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveN();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 10;
                 moveE();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 10;
                 moveS();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveNE();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                bonus = 0;
                 moveSW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
@@ -864,15 +936,11 @@ public final class TryPosition {
     private static void faceN() throws GameActionException {
         int moveCost = CombatCommon.movementCost(moveDir, Direction.NORTH);
         if (moveCost == -1) return;
-        score = 0;
-        if (moveCost == 1) score += 10;
+        score = bonus;
         if (moveDir != Direction.CENTER) score += 5;
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTH);
         if (Direction.NORTH != myDir) {
             score += 2;
-        }
-        if (am(11908, 24)) {
-            println("considered pos move " + moveDir + " face " + Direction.NORTH + " score " + score);
         }
         if (score > bestScore) {
             bestScore = score;
@@ -883,15 +951,11 @@ public final class TryPosition {
     private static void faceNE() throws GameActionException {
         int moveCost = CombatCommon.movementCost(moveDir, Direction.NORTHEAST);
         if (moveCost == -1) return;
-        score = 0;
-        if (moveCost == 1) score += 10;
+        score = bonus;
         if (moveDir != Direction.CENTER) score += 5;
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHEAST);
         if (Direction.NORTHEAST != myDir) {
             score += 2;
-        }
-        if (am(11908, 24)) {
-            println("considered pos move " + moveDir + " face " + Direction.NORTHEAST + " score " + score);
         }
         if (score > bestScore) {
             bestScore = score;
@@ -902,15 +966,11 @@ public final class TryPosition {
     private static void faceE() throws GameActionException {
         int moveCost = CombatCommon.movementCost(moveDir, Direction.EAST);
         if (moveCost == -1) return;
-        score = 0;
-        if (moveCost == 1) score += 10;
+        score = bonus;
         if (moveDir != Direction.CENTER) score += 5;
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.EAST);
         if (Direction.EAST != myDir) {
             score += 2;
-        }
-        if (am(11908, 24)) {
-            println("considered pos move " + moveDir + " face " + Direction.EAST + " score " + score);
         }
         if (score > bestScore) {
             bestScore = score;
@@ -921,15 +981,11 @@ public final class TryPosition {
     private static void faceSE() throws GameActionException {
         int moveCost = CombatCommon.movementCost(moveDir, Direction.SOUTHEAST);
         if (moveCost == -1) return;
-        score = 0;
-        if (moveCost == 1) score += 10;
+        score = bonus;
         if (moveDir != Direction.CENTER) score += 5;
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHEAST);
         if (Direction.SOUTHEAST != myDir) {
             score += 2;
-        }
-        if (am(11908, 24)) {
-            println("considered pos move " + moveDir + " face " + Direction.SOUTHEAST + " score " + score);
         }
         if (score > bestScore) {
             bestScore = score;
@@ -940,15 +996,11 @@ public final class TryPosition {
     private static void faceS() throws GameActionException {
         int moveCost = CombatCommon.movementCost(moveDir, Direction.SOUTH);
         if (moveCost == -1) return;
-        score = 0;
-        if (moveCost == 1) score += 10;
+        score = bonus;
         if (moveDir != Direction.CENTER) score += 5;
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTH);
         if (Direction.SOUTH != myDir) {
             score += 2;
-        }
-        if (am(11908, 24)) {
-            println("considered pos move " + moveDir + " face " + Direction.SOUTH + " score " + score);
         }
         if (score > bestScore) {
             bestScore = score;
@@ -959,15 +1011,11 @@ public final class TryPosition {
     private static void faceSW() throws GameActionException {
         int moveCost = CombatCommon.movementCost(moveDir, Direction.SOUTHWEST);
         if (moveCost == -1) return;
-        score = 0;
-        if (moveCost == 1) score += 10;
+        score = bonus;
         if (moveDir != Direction.CENTER) score += 5;
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHWEST);
         if (Direction.SOUTHWEST != myDir) {
             score += 2;
-        }
-        if (am(11908, 24)) {
-            println("considered pos move " + moveDir + " face " + Direction.SOUTHWEST + " score " + score);
         }
         if (score > bestScore) {
             bestScore = score;
@@ -978,15 +1026,11 @@ public final class TryPosition {
     private static void faceW() throws GameActionException {
         int moveCost = CombatCommon.movementCost(moveDir, Direction.WEST);
         if (moveCost == -1) return;
-        score = 0;
-        if (moveCost == 1) score += 10;
+        score = bonus;
         if (moveDir != Direction.CENTER) score += 5;
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.WEST);
         if (Direction.WEST != myDir) {
             score += 2;
-        }
-        if (am(11908, 24)) {
-            println("considered pos move " + moveDir + " face " + Direction.WEST + " score " + score);
         }
         if (score > bestScore) {
             bestScore = score;
@@ -997,15 +1041,11 @@ public final class TryPosition {
     private static void faceNW() throws GameActionException {
         int moveCost = CombatCommon.movementCost(moveDir, Direction.NORTHWEST);
         if (moveCost == -1) return;
-        score = 0;
-        if (moveCost == 1) score += 10;
+        score = bonus;
         if (moveDir != Direction.CENTER) score += 5;
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHWEST);
         if (Direction.NORTHWEST != myDir) {
             score += 2;
-        }
-        if (am(11908, 24)) {
-            println("considered pos move " + moveDir + " face " + Direction.NORTHWEST + " score " + score);
         }
         if (score > bestScore) {
             bestScore = score;

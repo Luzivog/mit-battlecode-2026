@@ -17,7 +17,7 @@ import awubot.util.Util;
 
 public class Game {
     public static boolean DISABLE_OUTPUT = false;
-    public static boolean ALLOW_ALLY_THROWING = false;
+    public static boolean ALLOW_ALLY_THROWING = true;
 
     public static RobotController rc;
     public static int mapWidth, mapHeight;

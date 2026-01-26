@@ -445,6 +445,7 @@ public class CombatStrategy extends Strategy {
     */
     public static boolean shouldFight(RobotInfo enemy) {
         if (enemy.getType() == UnitType.CAT) {
+            if (enemy.location.distanceSquaredTo(GlobalArray.nearestRatKing) <= 36) return true;
             return time > 500 && rc.getAllCheese() > 1000 && RobotTracker.numEnemies == 0 && rc.getRawCheese() == 0 && GlobalArray.numberOfRatsAlive >= 16 && (rc.getID() % 3 == 0 || time >= 1800);
         }
         if (enemy.getType() == UnitType.RAT_KING) return true;
